@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vsphere\Clicommands;
 
 use Icinga\Application\Benchmark;
+use Icinga\Module\Vsphere\ManagedObject\Folder;
 use Icinga\Module\Vsphere\ManagedObject\VirtualMachine;
 
 class FetchCommand extends CommandBase
@@ -35,5 +36,18 @@ class FetchCommand extends CommandBase
         $api->logout();
         Benchmark::measure('Logged out');
         print_r($vms);
+    }
+
+    public function folderAction()
+    {
+        Benchmark::measure('Preparing the API');
+        $api = $this->api();
+        $api->login();
+        Benchmark::measure('Logged in, ready to fetch');
+        $folder = Folder::fetchWithDefaults($api);
+        Benchmark::measure(sprintf("Got %d folder", count($folder)));
+        $api->logout();
+        Benchmark::measure('Logged out');
+        print_r($folder);
     }
 }
