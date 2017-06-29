@@ -17,13 +17,13 @@ class MySoapClient extends SoapClient
 
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
-        $headers = [
+        $headers = array(
             'User-Agent'   => 'Icinga vSphere Client/1.0.0',
             'Content-Type' => 'text/xml; charset=utf-8',
             'Connection'   => 'Keep-Alive',
             'Keep-Alive'   => '300',
             'SOAPAction'   => $action,
-        ];
+        );
 
         $result = $this->curl->post($location, $request, $headers);
         return $result;

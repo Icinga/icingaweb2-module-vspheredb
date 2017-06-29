@@ -14,7 +14,7 @@ class CurlLoader
     private $port = 443;
     private $persistCookies = false;
     private $cookieFile;
-    private $cookies = [];
+    private $cookies = array();
 
     public function __construct($host, $user = null, $pass = null)
     {
@@ -36,7 +36,7 @@ class CurlLoader
 
     public function forgetCookie()
     {
-        $this->cookies = [];
+        $this->cookies = array();
         if ($this->persistCookies) {
             unlink($this->cookieFile);
         }
@@ -57,14 +57,14 @@ class CurlLoader
         return $this->request('get', $url, $body, true);
     }
 
-    public function post($url, $body = null, $headers = [])
+    public function post($url, $body = null, $headers = array())
     {
         return $this->request('post', $url, $body, $headers);
     }
 
-    protected function request($method, $url, $body = null, $headers = [])
+    protected function request($method, $url, $body = null, $headers = array())
     {
-        $sendHeaders = ['Host: ' . $this->host];
+        $sendHeaders = array('Host: ' . $this->host);
         foreach ($this->cookies as $cookie) {
             $sendHeaders[] = 'Cookie: ' . $cookie;
         }
@@ -102,7 +102,7 @@ class CurlLoader
 
         if ($this->proxy) {
             // $opts[CURLOPT_PROXYTYPE] = CURLPROXY_SOCKS5;
-            $opts[CURLOPT_PROXY] = $proxy;
+            $opts[CURLOPT_PROXY] = $this->proxy;
         }
 
         if ($body !== null) {
