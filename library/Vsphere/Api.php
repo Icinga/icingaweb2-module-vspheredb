@@ -82,7 +82,7 @@ class Api
 
     protected function prepareWsdl()
     {
-        $files = [
+        $files = array(
             'vimService.wsdl',
             'vim.wsdl',
             'core-types.xsd',
@@ -92,7 +92,7 @@ class Api
             'reflect-messagetypes.xsd',
             'vim-types.xsd',
             'vim-messagetypes.xsd',
-        ];
+        );
 
         $curl = $this->curl();
         $dir = $this->wsdlDir();
