@@ -11,18 +11,25 @@ class VirtualMachine extends ManagedObject
     {
         return array(
             'configStatus',
+            'overallStatus',
             'name',
+            'parent',
+            'guest.hostName',
             'guest.ipAddress',
             'guest.guestState',
             'guest.guestId',
             'guest.guestFullName',
             'guest.guestState',
             'guest.toolsRunningStatus',
+            'runtime.bootTime',
+            'runtime.host',
             'runtime.powerState',
+            'config.annotation',
             'config.hardware.numCPU',
             'config.hardware.memoryMB',
+            'config.template',
+            'config.version',
             'config.uuid',
-            'parent'
         );
     }
 
