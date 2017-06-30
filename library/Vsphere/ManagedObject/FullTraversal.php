@@ -105,7 +105,8 @@ class FullTraversal
                     'type' => 'Datacenter',
                     'all' => 0,
                     'pathSet' => Datacenter::getDefaultPropertySet()
-                ),                array(
+                ),
+                array(
                     'type' => 'Folder',
                     'all' => 0,
                     'pathSet' => Folder::getDefaultPropertySet()

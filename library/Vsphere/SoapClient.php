@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vsphere;
 
-use SoapClient;
+use SoapClient as PhpSoapClient;
 
-class MySoapClient extends SoapClient
+class SoapClient extends PhpSoapClient
 {
     /** @var CurlLoader */
     protected $curl;

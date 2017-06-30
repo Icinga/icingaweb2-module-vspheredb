@@ -13,7 +13,7 @@ class Api
     private $wsdlDir;
     private $serviceInstance;
 
-    /** @var MySoapClient */
+    /** @var SoapClient */
     private $soapClient;
 
     public function __construct($host, $user, $pass)
@@ -44,21 +44,27 @@ class Api
         return $this->soapClient()->__soapCall($method, $arguments);
     }
 
+    protected function makeLocation()
+    {
+        return 'https://' . $this->host() . '/sdk';
+    }
+
     protected function soapClient()
     {
         if ($this->soapClient === null) {
             $this->prepareWsdl();
             $wsdlFile = $this->wsdlDir() . '/vimService.wsdl';
+            $features = SOAP_SINGLE_ELEMENT_ARRAYS + SOAP_USE_XSI_ARRAY_TYPE;
             $options = array(
-                'trace' => true,
-                'location' => 'https://' . $this->host() . '/sdk',
-                'exceptions' => true,
+                'trace'              => true,
+                'location'           => $this->makeLocation(),
+                'exceptions'         => true,
                 'connection_timeout' => 10,
-                // 'classmap' => $this->wsdlClassMapper->getClassMap(),
-                'features' => SOAP_SINGLE_ELEMENT_ARRAYS + SOAP_USE_XSI_ARRAY_TYPE
+                // 'classmap'        => $this->getClassMap(), // might become useful
+                'features'           => $features,
             );
 
-            $soap = new MySoapClient($wsdlFile, $options);
+            $soap = new SoapClient($wsdlFile, $options);
             $soap->setCurl($this->curl());
             $this->soapClient = $soap;
         }
