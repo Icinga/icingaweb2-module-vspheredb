@@ -10,9 +10,29 @@ class FullTraversal
 {
     public static function fetchAll(Api $api)
     {
+        $si = $api->getServiceInstance();
+        $specSet = array(
+            '_this'   => $si->propertyCollector,
+            'specSet' => static::prepareFullSpecSet($api)
+        );
         $result = $api->soapCall(
             'RetrieveProperties',
-            static::prepareRetrievePropertiesParam($api)
+            $specSet
+        );
+
+        return static::makeNiceResult($result);
+    }
+
+    public static function fetchNames(Api $api)
+    {
+        $si = $api->getServiceInstance();
+        $specSet = array(
+            '_this'   => $si->propertyCollector,
+            'specSet' => static::prepareNameSpecSet($api)
+        );
+        $result = $api->soapCall(
+            'RetrieveProperties',
+            $specSet
         );
 
         return static::makeNiceResult($result);
@@ -66,15 +86,6 @@ class FullTraversal
         return $res;
     }
 
-    protected static function prepareRetrievePropertiesParam(Api $api)
-    {
-        $si = $api->getServiceInstance();
-        return array(
-            '_this'   => $si->propertyCollector,
-            'specSet' => static::prepareFullSpecSet($api)
-        );
-    }
-
     protected static function makeSelectionSet($name)
     {
         return new SoapVar(
@@ -84,6 +95,44 @@ class FullTraversal
             null,
             'selectSet',
             null
+        );
+    }
+
+    protected static function prepareNameSpecSet(Api $api)
+    {
+        $types = array(
+            'Datacenter',
+            'Folder',
+            'ResourcePool',
+            'HostSystem',
+            'ComputeResource',
+            'VirtualMachine',
+        );
+        $pathSet = array('name', 'parent');
+
+        $propSet = array();
+        foreach ($types as $type) {
+            $propSet[] = array(
+                'type' => $type,
+                'all' => 0,
+                'pathSet' => $pathSet
+            );
+        }
+        return array(
+            'propSet' => $propSet,
+            'objectSet' => array(
+                'obj' => $api->getServiceInstance()->rootFolder,
+                'skip' => false,
+                'selectSet' => array(
+                    static::traverseDC1(),
+                    static::traverseDC2(),
+                    static::traverseFolder(),
+                    static::traverseCR1(),
+                    static::traverseCR2(),
+                    static::traverseRP1(),
+                    static::traverseRP2(),
+                ),
+            )
         );
     }
 

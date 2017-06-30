@@ -52,6 +52,19 @@ class FetchCommand extends CommandBase
         print_r($folder);
     }
 
+    public function namesAction()
+    {
+        Benchmark::measure('Preparing the API');
+        $api = $this->api();
+        $api->login();
+        Benchmark::measure('Logged in, ready to fetch');
+        $all = FullTraversal::fetchNames($api);
+        Benchmark::measure(sprintf("Got %d objects", count($all)));
+        $api->logout();
+        Benchmark::measure('Logged out');
+        print_r($all);
+    }
+
     public function fullAction()
     {
         Benchmark::measure('Preparing the API');
