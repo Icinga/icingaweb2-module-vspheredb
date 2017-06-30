@@ -34,6 +34,16 @@ class FetchCommand extends CommandBase
         Benchmark::measure('Logged in, ready to fetch');
         $vms = VirtualMachine::fetchWithDefaults($api);
         Benchmark::measure(sprintf("Got %d VMs", count($vms)));
+
+        if ($this->params->get('lookup-ids')) {
+            $ids = $api->idLookup();
+            foreach ($vms as $vm) {
+                $vm->folder = $ids->getInheritanceNamePathToId($vm->id);
+                $vm->parent = $ids->getNameForId($vm->parent);
+                $vm->{'runtime.host'} = $ids->getNameForId($vm->{'runtime.host'});
+            }
+        }
+        Benchmark::measure('Mapped properties');
         $api->logout();
         Benchmark::measure('Logged out');
         print_r($vms);
@@ -52,17 +62,18 @@ class FetchCommand extends CommandBase
         print_r($folder);
     }
 
-    public function namesAction()
+    public function treeAction()
     {
         Benchmark::measure('Preparing the API');
         $api = $this->api();
         $api->login();
         Benchmark::measure('Logged in, ready to fetch');
-        $all = FullTraversal::fetchNames($api);
-        Benchmark::measure(sprintf("Got %d objects", count($all)));
+        $ids = $api->idLookup();
+        $ids->refresh();
+        $ids->dump();
+        Benchmark::measure('Got them');
         $api->logout();
         Benchmark::measure('Logged out');
-        print_r($all);
     }
 
     public function fullAction()

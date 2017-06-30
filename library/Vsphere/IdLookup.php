@@ -85,8 +85,12 @@ class IdLookup
     public function getInheritanceNamePathToId($id, $separator = ' -> ')
     {
         $path = $this->getPathToId($id);
-        array_map($path, array($this, 'getNameForId'));
-        return implode($separator, $path);
+        $names = array();
+        foreach ($path as $id) {
+            $names[] = $this->getNameForId($id);
+        }
+
+        return implode($separator, $names);
     }
 
     /**
@@ -118,12 +122,24 @@ class IdLookup
         $all = FullTraversal::fetchNames($this->api);
         Benchmark::measure(sprintf("Got id/name/parent for %d objects", count($all)));
         foreach ($all as $obj) {
-            $idToName[$obj->id] = $obj->name;
-            $idToType[$obj->id] = $obj->type;
-            $idToParent[$obj->id] = $obj->parent;
+            $this->idToName[$obj->id] = $obj->name;
+            $this->idToType[$obj->id] = $obj->type;
+            if (property_exists($obj, 'parent')) {
+                $this->idToParent[$obj->id] = $obj->parent;
+            }
         }
+        $this->lastLookup = time();
+
+        echo "REA\n";
 
         return $this;
+    }
+
+    public function dump()
+    {
+        print_r($this->idToName);
+        print_r($this->idToParent);
+        print_r($this->idToType);
     }
 
     /**
