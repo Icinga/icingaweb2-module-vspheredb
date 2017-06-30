@@ -38,6 +38,9 @@ class CurlLoader
     private $proxy;
 
     /** @var string */
+    private $proxyType;
+
+    /** @var string */
     private $proxyUser;
 
     /** @var string */
@@ -109,6 +112,26 @@ class CurlLoader
     {
         $this->proxyUser = $user;
         $this->proxyPass = $pass;
+        return $this;
+    }
+
+    /**
+     * @param bool $disable
+     * @return $this
+     */
+    public function disableSslPeerVerification($disable = true)
+    {
+        $this->verifySslPeer = ! $disable;
+        return $this;
+    }
+
+    /**
+     * @param bool $disable
+     * @return $this
+     */
+    public function disableSslHostVerification($disable = true)
+    {
+        $this->verifySslHost = ! $disable;
         return $this;
     }
 
@@ -187,8 +210,8 @@ class CurlLoader
             CURLOPT_CUSTOMREQUEST  => strtoupper($method),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_SSL_VERIFYHOST => $this->verifySslHost,
             CURLOPT_SSL_VERIFYPEER => $this->verifySslPeer,
+            CURLOPT_SSL_VERIFYHOST => $this->verifySslHost ? 2 : 0,
             CURLOPT_HEADERFUNCTION => array($this, 'processHeaderLine'),
         );
 
@@ -198,10 +221,7 @@ class CurlLoader
 
         if ($this->proxy) {
             $opts[CURLOPT_PROXY] = $this->proxy;
-
-            if ($this->socksProxy) {
-                $opts[CURLOPT_PROXYTYPE] = CURLPROXY_SOCKS5;
-            }
+            $opts[CURLOPT_PROXYTYPE] = $this->proxyType;
 
             if ($this->proxyUser) {
                 $opts['CURLOPT_PROXYUSERPWD'] = sprintf(

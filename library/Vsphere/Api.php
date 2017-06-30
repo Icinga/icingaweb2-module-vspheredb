@@ -61,7 +61,7 @@ class Api
     /**
      * @return CurlLoader
      */
-    protected function curl()
+    public function curl()
     {
         if ($this->curl === null) {
             $this->curl = new CurlLoader($this->host());
