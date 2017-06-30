@@ -1,8 +1,8 @@
 vSphere - Icinga Web 2 module
 =============================
 
-At the time of This module is mainly an Import Source provider for the [Icinga Director](
-https://github.com/Icinga/icingaweb2-module-director). 
+At the time of this writing, this module is mainly an Import Source provider for
+the [Icinga Director](https://github.com/Icinga/icingaweb2-module-director).
 
 [![Import from VMware vSphere](doc/screenshot/00_preview/000_preview-vmware-vsphere-center-configuration-for-icinga-director.png)](doc/03-Import-Source.md)
 
