@@ -4,6 +4,7 @@ namespace Icinga\Module\Vsphere\Clicommands;
 
 use Icinga\Application\Benchmark;
 use Icinga\Module\Vsphere\ManagedObject\Folder;
+use Icinga\Module\Vsphere\ManagedObject\FullTraversal;
 use Icinga\Module\Vsphere\ManagedObject\VirtualMachine;
 
 class FetchCommand extends CommandBase
@@ -49,5 +50,18 @@ class FetchCommand extends CommandBase
         $api->logout();
         Benchmark::measure('Logged out');
         print_r($folder);
+    }
+
+    public function fullAction()
+    {
+        Benchmark::measure('Preparing the API');
+        $api = $this->api();
+        $api->login();
+        Benchmark::measure('Logged in, ready to fetch');
+        $all = FullTraversal::fetchAll($api);
+        Benchmark::measure(sprintf("Got %d objects", count($all)));
+        $api->logout();
+        Benchmark::measure('Logged out');
+        print_r($all);
     }
 }
