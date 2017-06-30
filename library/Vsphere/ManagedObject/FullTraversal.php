@@ -104,11 +104,11 @@ class FullTraversal
                 array(
                     'type' => 'Datacenter',
                     'all' => 0,
-                    'pathSet' => VirtualMachine::getDefaultPropertySet()
+                    'pathSet' => Datacenter::getDefaultPropertySet()
                 ),                array(
                     'type' => 'Folder',
                     'all' => 0,
-                    'pathSet' => VirtualMachine::getDefaultPropertySet()
+                    'pathSet' => Folder::getDefaultPropertySet()
                 ),
             ),
             'objectSet' => array(
