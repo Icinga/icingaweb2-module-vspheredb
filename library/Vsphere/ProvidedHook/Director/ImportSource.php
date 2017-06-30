@@ -94,6 +94,14 @@ class ImportSource extends ImportSourceHook
 
     public static function addSettingsFormFields(QuickForm $form)
     {
+        if (! class_exists('SoapClient')) {
+            $form->addError($form->translate(
+                'The PHP SOAP extension (php-soap) is not installed/enabled'
+            ));
+
+            return;
+        }
+
         $form->addElement('select', 'object_type', array(
             'label' => $form->translate('Object Type'),
             'description' => $form->translate(
