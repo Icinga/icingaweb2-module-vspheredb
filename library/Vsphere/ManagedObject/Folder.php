@@ -9,9 +9,9 @@ class Folder extends ManagedObject
     public static function getDefaultPropertySet()
     {
         return array(
-            'name',
-            'parent',
-            'childEntity'
+            'name',       // string
+            'parent',     // ManagedObjectReference:ManagedEntity (rootFolder -> Unset
+            'childEntity' // ManagedObjectReference:ManagedEntity[]
         );
     }
 
