@@ -19,6 +19,11 @@ class IdLookup
     /** @var array */
     private $idToParent = array();
 
+    private $lastLookup;
+
+    /** @var int */
+    private $cacheTimeout = 120;
+
     /**
      * IdLookup constructor.
      * @param Api $api
@@ -34,6 +39,7 @@ class IdLookup
      */
     public function getNameForId($id)
     {
+        $this->requireFreshMaps();
         if (array_key_exists($id, $this->idToName)) {
             return $this->idToName[$id];
         }
@@ -47,6 +53,7 @@ class IdLookup
      */
     public function getTypeForId($id)
     {
+        $this->requireFreshMaps();
         if (array_key_exists($id, $this->idToType)) {
             return $this->idToType[$id];
         }
@@ -60,6 +67,7 @@ class IdLookup
      */
     public function getParentForId($id)
     {
+        $this->requireFreshMaps();
         if (array_key_exists($id, $this->idToParent)) {
             return $this->idToParent[$id];
         }
@@ -118,6 +126,35 @@ class IdLookup
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getCacheTimeout()
+    {
+        return $this->cacheTimeout;
+    }
+
+    /**
+     * @param int $cacheTimeout
+     * @return $this;
+     */
+    public function setCacheTimeout($cacheTimeout)
+    {
+        $this->cacheTimeout = $cacheTimeout;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function requireFreshMaps()
+    {
+        if ($this->cacheTimeout === null || time() - $this->cacheTimeout > $this->lastLookup) {
+            $this->refresh();
+        }
+
+        return $this;
+    }
 
     public function __destruct()
     {
