@@ -101,6 +101,15 @@ class FullTraversal
                     'all' => 0,
                     'pathSet' => VirtualMachine::getDefaultPropertySet()
                 ),
+                array(
+                    'type' => 'Datacenter',
+                    'all' => 0,
+                    'pathSet' => VirtualMachine::getDefaultPropertySet()
+                ),                array(
+                    'type' => 'Folder',
+                    'all' => 0,
+                    'pathSet' => VirtualMachine::getDefaultPropertySet()
+                ),
             ),
             'objectSet' => array(
                 'obj' => $api->getServiceInstance()->rootFolder,

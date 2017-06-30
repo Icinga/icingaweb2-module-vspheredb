@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vsphere\ManagedObject;
 
-use Exception;
 use Icinga\Module\Vsphere\Api;
 use SoapVar;
 
