@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vsphere;
 
+use Icinga\Application\Benchmark;
+use Icinga\Module\Vsphere\ManagedObject\FullTraversal;
 use SoapVar;
 
 /**
@@ -14,14 +16,26 @@ class Api
     /** @var CurlLoader */
     private $curl;
 
+    /** @var string */
     private $host;
+
+    /** @var string */
     private $user;
+
+    /** @var string */
     private $pass;
+
+    /** @var string */
     private $wsdlDir;
+
+    /** @var mixed */
     private $serviceInstance;
 
     /** @var SoapClient */
     private $soapClient;
+
+    /** @var IdLookup */
+    private $idLookup;
 
     /**
      * Involved WSDL files
@@ -253,6 +267,18 @@ class Api
         );
         $this->soapCall('Logout', $request);
         $this->curl()->forgetCookie();
+    }
+
+    /**
+     * @return IdLookup
+     */
+    public function idLookup()
+    {
+        if ($this->idLookup === null) {
+            $this->idLookup = new IdLookup($this);
+        }
+
+        return $this->idLookup;
     }
 
     /**
