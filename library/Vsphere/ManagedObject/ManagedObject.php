@@ -24,36 +24,7 @@ abstract class ManagedObject
             static::prepareFetchDefaultsRequest($api)
         );
 
-        $vms = array();
-        if (! property_exists($result, 'returnval')) {
-            throw new Exception('Got invalid (empty?) result');
-        }
-
-        $knownRefs = array(
-            'parent',
-            'runtime.host'
-        );
-
-        foreach ($result->returnval as $row) {
-            $data = array(
-                'id'   => $row->obj->_,
-                'type' => $row->obj->type
-            );
-            foreach ($row->propSet as $prop) {
-                if (in_array($prop->name, $knownRefs)) {
-                    // [parent] => stdClass Object (
-                    //    [_] => group-v123456
-                    //    [type] => Folder, HostSystem etc
-                    // )
-                    $data[$prop->name] = $prop->val->_;
-                } else {
-                    $data[$prop->name] = $prop->val;
-                }
-            }
-            $vms[$row->obj->_] = (object) $data;
-        }
-
-        return $vms;
+        return FullTraversal::makeNiceResult($result);
     }
 
     public static function getFolderTraversalSpec()
