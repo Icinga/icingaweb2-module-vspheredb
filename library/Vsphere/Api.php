@@ -136,6 +136,7 @@ class Api
                 'connection_timeout' => 10,
                 // 'classmap'        => $this->getClassMap(), // might become useful
                 'features'           => $features,
+                'cache_wsdl'         => WSDL_CACHE_NONE
             );
 
             $soap = new SoapClient($wsdlFile, $options);
