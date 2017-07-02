@@ -9,8 +9,6 @@ class VirtualMachine extends ManagedObject
     public static function getDefaultPropertySet()
     {
         return array(
-            'configStatus',
-            'overallStatus',
             'name',
             'parent',
             'guest.hostName',
@@ -28,6 +26,8 @@ class VirtualMachine extends ManagedObject
             'config.template',
             'config.version',
             'config.uuid',
+            // 'configStatus',
+            // 'overallStatus',
         );
     }
 
