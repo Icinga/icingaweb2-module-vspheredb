@@ -25,10 +25,19 @@ class FetchCommand extends CommandBase
      *
      * OPTIONS
      *
-     *   --benchmark    Show benchmark summary
-     *   --lookup-ids   Replace id-references with their name
-     *                  This results in one additional API request
-     *   --json         Dump JSON-encoded
+     *   --lookup-ids             Replace id-references with their name
+     *                            This requires one additional API request
+     *   --no-ssl-verify-peer     Accept certificates signed by unknown CA
+     *   --no-ssl-verify-host     Accept certificates not matching the host
+     *   --use-insecure-http      Use plaintext HTTP requests
+     *   --proxy <proxy>          Use the given Proxy (ip, host or host:port)
+     *   --proxy-type <type>      HTTP (default) or SOCKS5
+     *   --proxy-username <user>  Username for authenticated HTTP proxy
+     *   --proxy-password <pass>  Password for authenticated HTTP proxy
+     *   --benchmark              Show resource usage summary
+     *   --json                   Dump JSON output
+     *   --benchmark              Show benchmark summary
+     *   --json                   Dump JSON-encoded
      */
     public function virtualmachinesAction()
     {
@@ -72,8 +81,17 @@ class FetchCommand extends CommandBase
      *
      * OPTIONS
      *
-     *   --benchmark    Show benchmark summary
-     *   --json         Dump JSON-encoded
+     *   --no-ssl-verify-peer     Accept certificates signed by unknown CA
+     *   --no-ssl-verify-host     Accept certificates not matching the host
+     *   --use-insecure-http      Use plaintext HTTP requests
+     *   --proxy <proxy>          Use the given Proxy (ip, host or host:port)
+     *   --proxy-type <type>      HTTP (default) or SOCKS5
+     *   --proxy-username <user>  Username for authenticated HTTP proxy
+     *   --proxy-password <pass>  Password for authenticated HTTP proxy
+     *   --benchmark              Show resource usage summary
+     *   --json                   Dump JSON output
+     *   --benchmark              Show benchmark summary
+     *   --json                   Dump JSON-encoded
      */
     public function hostsystemsAction()
     {

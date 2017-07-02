@@ -19,6 +19,7 @@ This command is mostly for test/debug reasons and gives you an output of all
 | `--<vhost> <host>`        | IP, host or URL to for your vCenter or ESX host |
 | `--<username> <user>`     | When authenticating, this username will be used |
 | `--<password> <pass>`     | The related password                            |
+| `--lookup-ids`            | Replace id-references with their name           |
 | `--no-ssl-verify-peer`    | Accept certificates signed by unknown CA        |
 | `--no-ssl-verify-host`    | Accept certificates not matching the host name  |
 | `--use-insecure-http`     | Use plaintext HTTP requests                     |

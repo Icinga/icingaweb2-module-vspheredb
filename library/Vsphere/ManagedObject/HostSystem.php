@@ -28,7 +28,7 @@ class HostSystem extends ManagedObject
 
     public static function getType()
     {
-        return 'VirtualMachine';
+        return 'HostSystem';
     }
 
     public static function objectSet($base)

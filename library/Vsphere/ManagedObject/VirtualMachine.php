@@ -67,7 +67,7 @@ class VirtualMachine extends ManagedObject
         $traversalSpec = array(
             'name' => 'TraverseDatacenter',
             'type' => 'Datacenter',
-            'path' => 'hostFolder',
+            'path' => 'vmFolder',
             'skip' => false,
             TraversalHelper::makeSelectionSet('TraverseFolder')
         );
