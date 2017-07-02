@@ -17,7 +17,7 @@ abstract class TraversalHelper
         return $res;
     }
 
-    protected static function makeSelectionSet($name)
+    public static function makeSelectionSet($name)
     {
         return new SoapVar(
             array('name' => $name),

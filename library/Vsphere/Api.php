@@ -4,6 +4,7 @@ namespace Icinga\Module\Vsphere;
 
 use Icinga\Application\Benchmark;
 use Icinga\Module\Vsphere\ManagedObject\FullTraversal;
+use Icinga\Module\Vsphere\ManagedObject\TraversalHelper;
 use SoapVar;
 
 /**
@@ -267,6 +268,18 @@ class Api
         );
         $this->soapCall('Logout', $request);
         $this->curl()->forgetCookie();
+    }
+
+    public function collectProperties($specSet)
+    {
+        $specSet = array(
+            '_this'   => $this->getServiceInstance()->propertyCollector,
+            'specSet' => $specSet
+        );
+
+        return TraversalHelper::makeNiceResult(
+            $this->soapCall('RetrieveProperties', $specSet)
+        );
     }
 
     /**

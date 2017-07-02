@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vsphere\ManagedObject;
 
-use Icinga\Module\Vsphere\Api;
+use SoapVar;
 
 class VirtualMachine extends ManagedObject
 {
@@ -15,7 +15,6 @@ class VirtualMachine extends ManagedObject
             'parent',
             'guest.hostName',
             'guest.ipAddress',
-            'guest.guestState',
             'guest.guestId',
             'guest.guestFullName',
             'guest.guestState',
@@ -32,24 +31,47 @@ class VirtualMachine extends ManagedObject
         );
     }
 
-    public static function defaultSpecSet(Api $api)
+    public static function getType()
+    {
+        return 'VirtualMachine';
+    }
+
+    public static function objectSet($base)
     {
         return array(
-            'propSet' => array(
-                array(
-                    'type' => 'VirtualMachine',
-                    'all' => 0,
-                    'pathSet' => static::getDefaultPropertySet()
-                ),
+            'obj'   => $base,
+            'skip'  => false,
+            'selectSet' => array(
+                static::traverseFolder(),
+                static::traverseDatacenter(),
             ),
-            'objectSet' => array(
-                'obj' => $api->getServiceInstance()->rootFolder,
-                'skip' => false,
-                'selectSet' => array(
-                    static::getFolderTraversalSpec(),
-                    static::getDataCenterVmTraversalSpec(),
-                ),
-            )
         );
+    }
+
+    public static function traverseFolder()
+    {
+        $folderTraversalSpec = array(
+            'name' => 'TraverseFolder',
+            'type' => 'Folder',
+            'path' => 'childEntity',
+            'skip' => false,
+            TraversalHelper::makeSelectionSet('TraverseFolder'),
+            TraversalHelper::makeSelectionSet('TraverseDatacenter')
+        );
+
+        return new SoapVar($folderTraversalSpec, SOAP_ENC_OBJECT, 'TraversalSpec');
+    }
+
+    public static function traverseDatacenter()
+    {
+        $traversalSpec = array(
+            'name' => 'TraverseDatacenter',
+            'type' => 'Datacenter',
+            'path' => 'hostFolder',
+            'skip' => false,
+            TraversalHelper::makeSelectionSet('TraverseFolder')
+        );
+
+        return new SoapVar($traversalSpec, SOAP_ENC_OBJECT, 'TraversalSpec');
     }
 }

@@ -9,32 +9,12 @@ class FullTraversal extends TraversalHelper
 {
     public static function fetchAll(Api $api)
     {
-        $si = $api->getServiceInstance();
-        $specSet = array(
-            '_this'   => $si->propertyCollector,
-            'specSet' => static::prepareFullSpecSet($api)
-        );
-        $result = $api->soapCall(
-            'RetrieveProperties',
-            $specSet
-        );
-
-        return static::makeNiceResult($result);
+        return $api->collectProperties(static::prepareFullSpecSet($api));
     }
 
     public static function fetchNames(Api $api)
     {
-        $si = $api->getServiceInstance();
-        $specSet = array(
-            '_this'   => $si->propertyCollector,
-            'specSet' => static::prepareNameSpecSet($api)
-        );
-        $result = $api->soapCall(
-            'RetrieveProperties',
-            $specSet
-        );
-
-        return static::makeNiceResult($result);
+        return $api->collectProperties(static::prepareNameSpecSet($api));
     }
 
     protected static function prepareNameSpecSet(Api $api)
