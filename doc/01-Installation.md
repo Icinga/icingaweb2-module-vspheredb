@@ -7,12 +7,13 @@ Requirements
 * Icinga Web 2 (&gt;= 2.4.1)
 * PHP (&gt;= 5.3 or 7.x)
 * php-soap
+* php-posix
 
 Once you got Icinga Web 2 up and running, all required dependencies should
-already be there. All, but `php-soap`. It is available on all major Linux
-distributions and can be installed with your package manager (yum, apt...).
-Same goes also for non-Linux systems. Please do not forget to restart your
-web server service afterwards.
+already be there. All, but `php-soap` and `php-posix`. They are available on
+all major Linux distributions and can be installed with your package manager
+(yum, apt...). Same goes also for non-Linux systems. Please do not forget to
+restart your web server service afterwards.
 
 Installation from .tar.gz
 -------------------------

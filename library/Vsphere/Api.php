@@ -2,8 +2,7 @@
 
 namespace Icinga\Module\Vsphere;
 
-use Icinga\Application\Benchmark;
-use Icinga\Module\Vsphere\ManagedObject\FullTraversal;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Vsphere\ManagedObject\TraversalHelper;
 use SoapVar;
 
@@ -28,6 +27,9 @@ class Api
 
     /** @var string */
     private $wsdlDir;
+
+    /** @var string */
+    private $cacheDir;
 
     /** @var mixed */
     private $serviceInstance;
@@ -155,12 +157,7 @@ class Api
     protected function wsdlDir()
     {
         if ($this->wsdlDir === null) {
-            $dir = '/tmp/vmwareWsdl';
-            if (! is_dir($dir)) {
-                mkdir($dir);
-            }
-
-            $this->wsdlDir = $dir;
+            $this->wsdlDir = $this->cacheDir();
         }
 
         return $this->wsdlDir;
@@ -293,6 +290,57 @@ class Api
         }
 
         return $this->idLookup;
+    }
+
+    protected function cacheDir()
+    {
+        if ($this->cacheDir === null) {
+            $user = $this->getCurrentUsername();
+            $dirname = sprintf(
+                '%s/%s-%s',
+                sys_get_temp_dir(),
+                'iwebVsphere',
+                $user
+            );
+
+            if (file_exists($dirname)) {
+                if ($this->uidToName(fileowner($dirname)) !== $user) {
+                    throw new ConfigurationError(
+                        '%s exists, but does not belong to %s',
+                        $dirname,
+                        $user
+                    );
+                }
+            } else {
+                if (! mkdir($dirname, 0700)) {
+                    throw new ConfigurationError(
+                        'Could not create %s',
+                        $dirname
+                    );
+                }
+            }
+
+            $this->cacheDir = $dirname;
+        }
+
+        return $this->cacheDir;
+    }
+
+    protected function uidToName($uid)
+    {
+        $info = posix_getpwuid($uid);
+        return $info['name'];
+    }
+
+    protected function getCurrentUsername()
+    {
+        if (function_exists('posix_geteuid')) {
+            return $this->uidToName(posix_geteuid());
+        } else {
+            throw new ConfigurationError(
+                'POSIX methods not available, is php-posix installed and enabled?'
+            );
+        }
     }
 
     /**
