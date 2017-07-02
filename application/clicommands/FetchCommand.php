@@ -49,14 +49,7 @@ class FetchCommand extends CommandBase
         Benchmark::measure(sprintf("Got %d VMs", count($objects)));
 
         if ($this->params->get('lookup-ids')) {
-            $ids = $api->idLookup();
-            foreach ($objects as $vm) {
-                $vm->folder = $ids->getInheritanceNamePathToId($vm->id);
-                $vm->parent = $ids->getNameForId($vm->parent);
-                if (property_exists($vm, 'runtime.host')) {
-                    $vm->{'runtime.host'} = $ids->getNameForId($vm->{'runtime.host'});
-                }
-            }
+            $api->idLookup()->enrichObjects($objects);
         }
         Benchmark::measure('Mapped properties');
         $api->logout();
@@ -83,6 +76,8 @@ class FetchCommand extends CommandBase
      *
      * OPTIONS
      *
+     *   --lookup-ids             Replace id-references with their name
+     *                            This requires one additional API request
      *   --no-ssl-verify-peer     Accept certificates signed by unknown CA
      *   --no-ssl-verify-host     Accept certificates not matching the host
      *   --use-insecure-http      Use plaintext HTTP requests
@@ -103,6 +98,9 @@ class FetchCommand extends CommandBase
         Benchmark::measure('Logged in, ready to fetch');
         $objects = HostSystem::fetchWithDefaults($api);
         Benchmark::measure(sprintf("Got %d Hosts", count($objects)));
+        if ($this->params->get('lookup-ids')) {
+            $api->idLookup()->enrichObjects($objects);
+        }
         $api->logout();
         Benchmark::measure('Logged out');
         if ($this->params->get('json')) {

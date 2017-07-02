@@ -111,6 +111,29 @@ class IdLookup
     }
 
     /**
+     * Lookup all known id-based references for the given objects
+     *
+     * @param $objects
+     */
+    public function enrichObjects($objects)
+    {
+        foreach ($objects as $object) {
+            $object->folder = $this->getInheritanceNamePathToId($object->id);
+            $object->parent = $this->getNameForId($object->parent);
+
+            if (property_exists($object, 'runtime.host')) {
+                $object->{'runtime.host'} = $this->getNameForId($object->{'runtime.host'});
+            }
+
+            if (property_exists($object, 'vm')) {
+                foreach ($object->vm as $k => $id) {
+                    $object->vm[$k] = $this->getNameForId($id);
+                }
+            }
+        }
+    }
+
+    /**
      * Refresh our internal ID cache
      *
      * @return $this
@@ -129,8 +152,6 @@ class IdLookup
             }
         }
         $this->lastLookup = time();
-
-        echo "REA\n";
 
         return $this;
     }
