@@ -53,7 +53,9 @@ class FetchCommand extends CommandBase
             foreach ($objects as $vm) {
                 $vm->folder = $ids->getInheritanceNamePathToId($vm->id);
                 $vm->parent = $ids->getNameForId($vm->parent);
-                $vm->{'runtime.host'} = $ids->getNameForId($vm->{'runtime.host'});
+                if (property_exists($vm, 'runtime.host')) {
+                    $vm->{'runtime.host'} = $ids->getNameForId($vm->{'runtime.host'});
+                }
             }
         }
         Benchmark::measure('Mapped properties');

@@ -31,7 +31,7 @@ abstract class TraversalHelper
     public static function makeNiceResult($result)
     {
         if (! property_exists($result, 'returnval')) {
-            throw new Exception('Got invalid (empty?) result');
+            return array();
         }
 
         $knownRefs = array(

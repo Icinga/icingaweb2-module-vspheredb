@@ -39,6 +39,7 @@ class HostSystem extends ManagedObject
             'selectSet' => array(
                 static::traverseFolder(),
                 static::traverseDatacenter(),
+                static::traverseComputeResource(),
             ),
         );
     }
