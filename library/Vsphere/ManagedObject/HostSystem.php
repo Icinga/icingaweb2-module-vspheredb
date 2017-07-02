@@ -11,10 +11,9 @@ class HostSystem extends ManagedObject
         return array(
             'name',
             'parent',
-            'configStatus',
-            'overallStatus',
-            'datastore',
             'vm',
+            'config.product.apiVersion',
+            'config.product.fullName',
             'hardware.biosInfo.biosVersion',
             'hardware.biosInfo.releaseDate',
             'hardware.systemInfo.model',
@@ -23,6 +22,9 @@ class HostSystem extends ManagedObject
             'summary.hardware.cpuModel',
             'summary.hardware.cpuMhz',
             'summary.hardware.memorySize',
+            // 'configStatus',
+            // 'overallStatus',
+            // 'datastore',
         );
     }
 
@@ -64,7 +66,7 @@ class HostSystem extends ManagedObject
         $traversalSpec = array(
             'name' => 'TraverseDatacenter',
             'type' => 'Datacenter',
-            'path' => 'vmFolder',
+            'path' => 'hostFolder',
             'skip' => false,
             TraversalHelper::makeSelectionSet('TraverseFolder')
         );
