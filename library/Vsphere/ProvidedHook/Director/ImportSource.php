@@ -64,8 +64,13 @@ class ImportSource extends ImportSourceHook
             );
             $curl = $this->api->curl();
 
-            if ($proxyType = $this->getSetting('proxy_type')) {
-                $curl->setProxy($this->getSetting('proxy'), $proxyType);
+            if ($proxy = $this->getSetting('proxy')) {
+                if ($proxyType = $this->getSetting('proxy_type')) {
+                    $curl->setProxy($proxy, $proxyType);
+                } else {
+                    $curl->setProxy($proxy);
+                }
+
                 if ($user = $this->getSetting('proxy_user')) {
                     $curl->setProxyAuth($user, $this->getSetting('proxy_pass'));
                 }
