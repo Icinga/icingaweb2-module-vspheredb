@@ -8,6 +8,12 @@ use Icinga\Module\Vsphere\ManagedObject\FullTraversal;
 use Icinga\Module\Vsphere\ManagedObject\HostSystem;
 use Icinga\Module\Vsphere\ManagedObject\VirtualMachine;
 
+/**
+ * Fetch information from a vCenter or ESXi host
+ *
+ * This is mostly for debugging purposes but might also be used for some kind
+ * of automation scripts
+ */
 class FetchCommand extends CommandBase
 {
     /**
