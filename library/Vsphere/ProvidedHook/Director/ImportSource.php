@@ -25,9 +25,10 @@ class ImportSource extends ImportSourceHook
     {
         $api = $this->api();
         $api->login();
-        $vms = $this->callOnManagedObject('fetchWithDefaults', $api);
+        $objects = $this->callOnManagedObject('fetchWithDefaults', $api);
+        $api->idLookup()->enrichObjects($objects);
         $api->logout();
-        return $vms;
+        return $objects;
     }
 
     public function listColumns()
