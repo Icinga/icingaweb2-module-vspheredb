@@ -108,7 +108,8 @@ class ImportSource extends ImportSourceHook
                 'The managed vSphere object type this Import Source should fetch'
             ),
             'multiOptions' => $form->optionalEnum(array(
-                'VirtualMachine' => 'VirtualMachine'
+                'VirtualMachine' => 'Virtual Machines',
+                'HostSystem'     => 'Host Systems',
             )),
             'required' => true,
         ));
