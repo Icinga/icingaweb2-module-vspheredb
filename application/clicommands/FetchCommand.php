@@ -25,6 +25,7 @@ class FetchCommand extends CommandBase
      * OPTIONS
      *
      *   --benchmark    Show benchmark summary
+     *   --json         Dump JSON-encoded
      */
     public function virtualmachinesAction()
     {
@@ -46,7 +47,11 @@ class FetchCommand extends CommandBase
         Benchmark::measure('Mapped properties');
         $api->logout();
         Benchmark::measure('Logged out');
-        print_r($vms);
+        if ($this->params->get('json')) {
+            echo json_encode($vms);
+        } else {
+            print_r($vms);
+        }
     }
 
     public function folderAction()
