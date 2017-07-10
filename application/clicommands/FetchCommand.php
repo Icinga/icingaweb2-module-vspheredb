@@ -7,6 +7,7 @@ use Icinga\Module\Vsphere\ManagedObject\Folder;
 use Icinga\Module\Vsphere\ManagedObject\FullTraversal;
 use Icinga\Module\Vsphere\ManagedObject\HostSystem;
 use Icinga\Module\Vsphere\ManagedObject\VirtualMachine;
+use Icinga\Module\Vsphere\Util;
 
 /**
  * Fetch information from a vCenter or ESXi host
@@ -60,6 +61,8 @@ class FetchCommand extends CommandBase
         Benchmark::measure('Mapped properties');
         $api->logout();
         Benchmark::measure('Logged out');
+        $objects = Util::createNestedObjects($objects);
+
         if ($this->params->get('json')) {
             echo json_encode($objects);
         } else {
@@ -109,6 +112,8 @@ class FetchCommand extends CommandBase
         }
         $api->logout();
         Benchmark::measure('Logged out');
+        $objects = Util::createNestedObjects($objects);
+
         if ($this->params->get('json')) {
             echo json_encode($objects);
         } else {

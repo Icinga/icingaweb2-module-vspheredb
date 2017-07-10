@@ -5,6 +5,7 @@ namespace Icinga\Module\Vsphere\ProvidedHook\Director;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vsphere\Api;
+use Icinga\Module\Vsphere\Util;
 
 /**
  * Class ImportSource
@@ -28,7 +29,7 @@ class ImportSource extends ImportSourceHook
         $objects = $this->callOnManagedObject('fetchWithDefaults', $api);
         $api->idLookup()->enrichObjects($objects);
         $api->logout();
-        return $objects;
+        return Util::createNestedObjects($objects);
     }
 
     public function listColumns()
