@@ -59,4 +59,6 @@ icingacli module enable vsphere
 ```
 
 ...or go to your Icinga Web 2 frontend, choose `Configuration` -&gt; `Modules`
--&gt; `vsphere` module - and `enable` it.
+-&gt; `vsphere` module - and `enable` it:
+
+![Enable the vSphere module](screenshot/01_installation/001_enable-module.png)
