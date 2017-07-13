@@ -19,6 +19,7 @@ Documentation
 * [Define an Import Source](doc/03-Import-Source.md)
 * [Working on the CLI](doc/04-CLI-Commands.md)
 * [Contributing](doc/81-Contributing.md)
+* [Changelog](doc/84-Changelog.md)
 
 Compatibility
 -------------
