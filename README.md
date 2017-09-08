@@ -1,6 +1,20 @@
 Icinga Web 2 module for vSphere
 ===============================
 
+Warning
+-------
+
+This is a fork of the [vsphere](https://github.com/Icinga/icingaweb2-module-vsphere)
+module. It currently breaks everything and should not be used at all. Work on
+this will be continued soon, and it should then be a replacement of the former
+one, but with much more functionality.
+
+![VMware vSphere Datastores](doc/screenshot/00_preview/00_preview_vmware-vsphere-datastores.png)
+
+
+Old Readme
+----------
+
 In case you want to have an automated import of your Virtual Machines and/or
 Physical Host from **VMware Sphere** (vCenter) into your Icinga monitoring
 system this module might be what you have been looking for.

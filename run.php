@@ -1,3 +1,4 @@
 <?php
 
-$this->provideHook('director/ImportSource');
+// Disabled for now
+// $this->provideHook('director/ImportSource');

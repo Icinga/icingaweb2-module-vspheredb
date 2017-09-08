@@ -1,8 +1,13 @@
-Name: vSphere
-Version: 1.1.0
-Depends: director>=1.3.0
-Description: VMware vSphere Import Source
- The main purpose of this module is being a Import Source provider for the
+Name: vSphereDB
+Version: 1.9.99alpha
+Depends: director>=1.4.0
+Description: VMware vSphere DB
+ This module replicates yout most important vCencer configuration items. It
+ provides a fast, lightweight (read-only) frontend and highlights potential
+ issues. The UI tries to visualize Virtual Machines, Hosts and Datastores
+ with lots of related information
+
+ Another purpose of this module is being a Import Source provider for the
  Icinga Director. It has no dependency on any SDK library, had been written
  from scratch for vCenter 6.x and tested with different installations of
  vCenter 6.0. Directly accessing ESXi 6.5 hosts also worked fine.

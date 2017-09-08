@@ -1,13 +1,19 @@
 <?php
 
-namespace Icinga\Module\Vsphere\Clicommands;
+namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Icinga\Application\Config;
 use Icinga\Cli\Command;
-use Icinga\Module\Vsphere\Api;
+use Icinga\Module\Vspheredb\Api;
+use Icinga\Module\Vspheredb\Db;
 
 class CommandBase extends Command
 {
+    /** @var Api */
     private $api;
+
+    /** @var Db */
+    private $db;
 
     protected function api()
     {
@@ -47,5 +53,16 @@ class CommandBase extends Command
         }
 
         return $this->api;
+    }
+
+    protected function db()
+    {
+        if ($this->db === null) {
+            $this->db = Db::fromResourceName(
+                Config::module('vsphere')->get('db', 'resource')
+            );
+        }
+
+        return $this->db;
     }
 }

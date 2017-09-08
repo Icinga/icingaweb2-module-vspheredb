@@ -1,0 +1,223 @@
+/** Action Bar **/
+div.action-bar a, div.action-bar form i {
+  color: @icinga-blue;
+}
+
+div.action-bar > a {
+  margin-right: 1em;
+}
+
+div.action-bar {
+  .pagination-control {
+    float: none;
+    clear: none;
+    display: inline-block;
+    line-height: inherit;
+    margin: 0;
+    vertical-align: middle;
+  }
+
+  form input {
+    margin: 0;
+  }
+}
+
+#layout.twocols div.action-bar .pagination-control {
+  li {
+    display: none;
+  }
+
+  li:nth-child(1), li.active, li:last-child {
+    display: list-item;
+  }
+
+  li.active a {
+    border-bottom: none;
+  }
+}
+
+/** Tree **/
+.tree li a {
+  display: inline-block;
+  padding-left: 1em;
+  line-height: 2em;
+  text-decoration: none;
+  color: #777;
+  outline: 0;
+  background-repeat: no-repeat;
+  background-position: 0.8em 0.4em;
+}
+
+ul.tree li > .handle {
+  background-image: none;
+  &:before {
+    content: '\e806';
+    font-family: 'ifont';
+    position: absolute;
+    font-size: 0.6em;
+    margin-left: 0.25em;
+    margin-top: 0.9em;
+  }
+}
+ul.tree li.collapsed > .handle {
+  background-image: none;
+  &:before {
+    content: '\e805';
+  }
+}
+/** Tree custom **/
+
+.tree li a.red::before {
+  color: @colorCritical;
+}
+
+.tree li a.yellow::before {
+  color: @colorWarning;
+}
+
+.tree li a.green::before {
+  color: @colorOk;
+}
+
+
+/** QuickSearch **/
+
+form.quicksearch {
+  display: block;
+  input.search {
+    width: 8em;
+    min-width: unset;
+    border: none;
+    background-size: 0.75em auto;
+    background-position: 0.5em 0.9em;
+    padding-left: 1.5em;
+    margin-left: 1.5em;
+    font-size: 0.75em;
+    font-weight: normal;
+    &:focus {
+      width: 16em;
+      .transition(width 0.5s ease);
+      border: none;
+    }
+  }
+}
+
+#layout.twocols form.quicksearch input.search {
+  float: right;
+}
+
+/** Path **/
+span.dc-path a {
+  color: @icinga-blue;
+}
+
+/** Table VM state **/
+table {
+
+  tr.poweredOn td:first-child, tr.poweredOff td:first-child, tr.datastore td:first-child {
+    padding-left: 2em;
+    &::before {
+      font-family: 'ifont';
+      // icon-help:
+      float: left;
+      content: '\e85b';
+      font-weight: bold;
+      margin-left: -1.5em;
+      margin-top: 0;
+    }
+  }
+
+  tr.poweredOn td:first-child::before {
+    // icon-ok
+    color: @color-ok;
+    content: '\e803';
+  }
+
+  tr.poweredOff td:first-child::before {
+    color: @gray;
+    // icon-off
+    content: '\e815';
+  }
+
+  tr.datastore td:first-child::before {
+    color: @gray;
+    // icon-database
+    content: '\e80c';
+  }
+
+  tr.datastore td:first-child::before {
+    color: @colorOk;
+  }
+  tr.yellow td:first-child::before {
+    color: @colorWarning;
+  }
+  tr.red td:first-child::before {
+    color: @colorCritical;
+  }
+}
+
+/** Various **/
+
+table.name-value-table a {
+  color: @icinga-blue;
+}
+
+/** Disk Usage **/
+
+div.disk-usage {
+  width: 100%;
+  min-width: 8em;
+  border: none;
+  padding: 0;
+  background-color: @gray-light;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  min-height: 1em;
+
+  a {
+    display: inline-block;
+    height: 6em;
+    vertical-align: top;
+    background-color: @gray;
+    text-decoration: none;
+    outline: none;
+    overflow: visible;
+    line-height:1em;
+    // min-width: 0.3em;
+    margin: 0;
+    padding: 0;
+    &:hover {
+      text-decoration: none;
+      background-color: rgb(70, 128, 255) !important;
+    }
+
+    &.free {
+      background-color: @color-ok;
+    }
+    &.free:hover {
+      background-color: inherit !important;
+    }
+
+    &.free.overcommitted {
+      background-color: @color-warning-handled;
+    }
+
+    &.free.overcommitted-twice {
+      background-color: @color-critical-handled;
+    }
+  }
+
+  &.compact {
+    margin: 0;
+    height: 1.2em;
+    a {
+      height: 1.2em;
+    }
+  }
+}
+
+/* Less spacing in rows */
+.common-table td {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
