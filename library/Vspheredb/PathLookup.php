@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb;
 
-use ipl\Html\Link;
+use dipl\Html\Link;
 
 class PathLookup
 {

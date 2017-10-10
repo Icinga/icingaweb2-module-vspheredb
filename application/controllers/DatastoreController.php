@@ -8,9 +8,9 @@ use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VmsOnDatastoreTable;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
-use ipl\Html\Html;
-use ipl\Html\Link;
-use ipl\Web\Widget\NameValueTable;
+use dipl\Html\Html;
+use dipl\Html\Link;
+use dipl\Web\Widget\NameValueTable;
 
 class DatastoreController extends Controller
 {

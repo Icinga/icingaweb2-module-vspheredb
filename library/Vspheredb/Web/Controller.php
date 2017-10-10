@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Web;
 
 use Icinga\Application\Config;
 use Icinga\Module\Vspheredb\Db;
-use ipl\Web\CompatController;
+use dipl\Web\CompatController;
 
 class Controller extends CompatController
 {

@@ -4,9 +4,9 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Util\Format;
-use ipl\Html\Attributes;
-use ipl\Html\BaseElement;
-use ipl\Html\Link;
+use dipl\Html\Attributes;
+use dipl\Html\BaseElement;
+use dipl\Html\Link;
 
 class DatastoreUsage extends BaseElement
 {

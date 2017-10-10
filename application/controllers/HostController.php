@@ -6,9 +6,9 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VmsOnHostTable;
-use ipl\Html\Html;
-use ipl\Html\Link;
-use ipl\Web\Widget\NameValueTable;
+use dipl\Html\Html;
+use dipl\Html\Link;
+use dipl\Web\Widget\NameValueTable;
 
 class HostController extends Controller
 {

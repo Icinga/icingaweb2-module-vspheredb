@@ -8,8 +8,8 @@ use Icinga\Module\Vspheredb\Web\OverviewTree;
 use Icinga\Module\Vspheredb\Web\Table\DatastoreInFolderTable;
 use Icinga\Module\Vspheredb\Web\Table\HostsInFolderTable;
 use Icinga\Module\Vspheredb\Web\Table\VmsInFolderTable;
-use ipl\Html\Html;
-use ipl\Html\Link;
+use dipl\Html\Html;
+use dipl\Html\Link;
 
 class OverviewController extends Controller
 {

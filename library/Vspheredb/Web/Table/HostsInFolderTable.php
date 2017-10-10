@@ -3,8 +3,8 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use Icinga\Util\Format;
-use ipl\Html\Link;
-use ipl\Web\Table\ZfQueryBasedTable;
+use dipl\Html\Link;
+use dipl\Web\Table\ZfQueryBasedTable;
 
 class HostsInFolderTable extends ZfQueryBasedTable
 {
