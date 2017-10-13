@@ -15,7 +15,7 @@ class Controller extends CompatController
     {
         if ($this->db === null) {
             $this->db = Db::fromResourceName(
-                Config::module('vsphere')->get('db', 'resource')
+                Config::module('vspheredb')->get('db', 'resource')
             );
         }
 
