@@ -56,6 +56,9 @@ class CurlLoader
     private $persistCookies = false;
 
     /** @var string */
+    private $cacheDir;
+
+    /** @var string */
     private $cookieFile;
 
     /** @var array */
@@ -71,11 +74,17 @@ class CurlLoader
      * @param $host
      * @param string $user
      * @param string $pass
+     * @param string $cacheDir
      */
-    public function __construct($host, $user = null, $pass = null)
+    public function __construct($host, $user = null, $pass = null, $cacheDir = null)
     {
+        if ($cacheDir !== null) {
+            $this->persistCookies = true;
+            $this->cacheDir = $cacheDir;
+        }
+
         if ($this->persistCookies) {
-            $this->cookieFile = "/tmp/vmwareWsdl/cookie-$host";
+            $this->cookieFile = $this->cacheDir . "/cookie-$host";
             if (file_exists($this->cookieFile)) {
                 $this->cookies[] = file_get_contents($this->cookieFile);
             }
