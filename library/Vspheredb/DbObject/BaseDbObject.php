@@ -15,7 +15,7 @@ abstract class BaseDbObject extends DirectorDbObject
 {
     protected $keyName = 'id';
 
-    /** @var DbObject */
+    /** @var ManagedObject */
     private $object;
 
     protected $propertyMap = [];
@@ -75,15 +75,19 @@ abstract class BaseDbObject extends DirectorDbObject
     public function object()
     {
         if ($this->object === null) {
-            $this->object = DbObject::load($this->get('id'), $this->connection);
+            $this->object = ManagedObject::load($this->get('id'), $this->connection);
         }
 
         return $this->object;
     }
 
+    /**
+     * @param Api $api
+     * @return array
+     */
     public static function fetchAllFromApi(Api $api)
     {
-        return $api->collectObjectProperties(
+        return $api->propertyCollector()->collectObjectProperties(
             new PropertySet(static::getType(), static::getDefaultPropertySet()),
             static::getSelectSet()
         );
@@ -114,6 +118,11 @@ abstract class BaseDbObject extends DirectorDbObject
         return static::create();
     }
 
+    /**
+     * @param Db $db
+     * @param BaseDbObject[] $dbObjects
+     * @param BaseDbObject[] $newObjects
+     */
     protected static function storeSync(Db $db, & $dbObjects, & $newObjects)
     {
         $type = static::getType();
@@ -121,8 +130,12 @@ abstract class BaseDbObject extends DirectorDbObject
         Benchmark::measure("Ready to store $type");
         $dba->beginTransaction();
         $modified = 0;
+        $dummy = static::dummyObject();
+        $newIds = [];
         foreach ($newObjects as $object) {
             $id = Util::extractNumericId($object->id);
+
+            $newIds[$id] = $id;
             if (array_key_exists($id, $dbObjects)) {
                 $dbObject = $dbObjects[$id];
             } else {
@@ -133,6 +146,20 @@ abstract class BaseDbObject extends DirectorDbObject
                 $dbObject->store();
                 $modified++;
             }
+        }
+
+        $del = [];
+        foreach ($dbObjects as $existing) {
+            $id = $existing->get('id');
+            if (! array_key_exists($id, $newIds)) {
+                $del[] = $id;
+            }
+        }
+        if (! empty($del)) {
+            $dba->delete(
+                $dummy->getTableName(),
+                $dba->quoteInto('id IN (?)', $del)
+            );
         }
         $dba->commit();
         Benchmark::measure(sprintf(
