@@ -1,0 +1,115 @@
+<?php
+
+namespace Icinga\Module\Vspheredb\Sync;
+
+use Icinga\Application\Benchmark;
+use Icinga\Module\Vspheredb\Api;
+use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Util;
+
+/**
+ * Strategy:
+ * - fetch vms in chunks
+ * - fetch existing counters for those
+ * - fetch current counters
+ * - remove (really) outdated counters with no values
+ * - update existing counters
+ * - insert missing counters
+ * - eventually fetch former values for missing counters in case [..]
+ */
+class SyncPerfCounters
+{
+    /** @var Api */
+    protected $api;
+
+    /** @var Db */
+    protected $db;
+
+    /** @var \Zend_Db_Adapter_Abstract */
+    protected $dba;
+
+    protected $table = 'counter_300x5';
+
+    public function __construct(Api $api, Db $db)
+    {
+        $this->api = $api;
+        $this->db = $db;
+        $this->dba = $db->getDbAdapter();
+    }
+
+    protected function getUuid()
+    {
+        $about = $this->api->getAbout();
+        return Util::uuidToBin($about->instanceUuid);
+    }
+
+    protected function listVirtualMachines()
+    {
+        $type = 'VirtualMachine';
+
+        $query = $this->dba->select()
+            ->from('object', 'moref')
+            ->where('object_type = ?', $type)
+            ->order('moref');
+
+        return $this->dba->fetchCol($query);
+    }
+
+    public function run()
+    {
+        $type = 'VirtualMachine';
+
+        $uuid = $this->api->getBinaryUuid();
+        $vms = $this->listVirtualMachines();
+        $db = $this->dba;
+        $chunkSize = 100;
+
+        foreach (array_chunk($vms, $chunkSize) as $objects) {
+            $currentTs = floor(time() / 300) * 300 * 1000;
+            $perf = $this->api->perfManager()->queryPerf($objects, $type, 300, 1);
+            $db->beginTransaction();
+            $count = 0;
+            // $keys = ['value_minus4', 'value_minus3', 'value_minus2', 'value_minus1', 'value_last'];
+            $keys = ['value_last'];
+            foreach ($perf->returnval as $p) {
+                $entity = $p->entity->_;
+                foreach ($p->value as $val) {
+                    $count++;
+                    $values = array_combine($keys, preg_split('/,/', $val->value));
+                    $db->insert($this->table, $values + [
+                            'vcenter_uuid'      => $uuid,
+                            'counter_key'       =>  $val->id->counterId,
+                            'instance'          => $val->id->instance,
+                            'object_textual_id' => $entity,
+                            'ts_last'           => $currentTs,
+                        ]);
+                }
+            }
+            $db->commit();
+            Benchmark::measure("Stored $count instances");
+        }
+
+        $currentTs = floor(time() / 300) * 300 * 1000;
+        $outdated = $currentTs - (5 * 300 * 1000);
+        $db->delete($this->table, $db->quoteInto('ts_last < ?', $outdated));
+    }
+
+    protected function updateValue($properties)
+    {
+        $currentTs = $properties['ts_last'];
+        $step1 = $currentTs - (1 * 300 * 1000);
+        $step2 = $currentTs - (2 * 300 * 1000);
+        $step3 = $currentTs - (3 * 300 * 1000);
+        $step4 = $currentTs - (4 * 300 * 1000);
+        $rep1 = "(CASE WHEN ts_last = $step4 THEN value_last ELSE NULL END)";
+        $rep2 = "(CASE WHEN ts_last = $step3 THEN value_minus1 ELSE $rep1 END)";
+        $rep3 = "(CASE WHEN ts_last = $step2 THEN value_minus2 ELSE $rep2 END)";
+        $rep4 = "(CASE WHEN ts_last = $step1 THEN value_minus3 ELSE $rep3 END)";
+        return $this->dba->update($this->table, [
+            'value_minus4' => $rep4,
+            'value_minus3' => $rep3,
+            'value_minus2' => $rep2,
+            'value_minus1' => $rep1,
+        ] + $properties);
+    }
+}
