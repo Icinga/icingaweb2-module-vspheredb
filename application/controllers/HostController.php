@@ -71,7 +71,7 @@ class HostController extends Controller
             $this->translate('UUID')         => $host->get('sysinfo_uuid'),
             $this->translate('API Version')  => $host->get('product_api_version'),
             $this->translate('Product Name') => $host->get('product_full_name'),
-            $this->translate('Memory')       => number_format($host->get('hardware_memory_size_mb'), 0, ',', '.') . ' MB',
+            $this->translate('Memory')       => $this->getFormattedMemory(),
             $this->translate('Path')         => $path,
             $this->translate('Power')        => $host->get('runtime_power_state'),
             $this->translate('BIOS Version') => $host->get('bios_version'),
@@ -92,6 +92,16 @@ class HostController extends Controller
         ]);
 
         $this->content()->add($table);
+    }
+
+    protected function getFormattedMemory()
+    {
+        return number_format(
+            $this->host->get('hardware_memory_size_mb'),
+            0,
+            ',',
+            '.'
+        ) . ' MB';
     }
 
     public function vmsAction()

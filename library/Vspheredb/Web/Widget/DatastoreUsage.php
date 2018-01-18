@@ -111,7 +111,10 @@ class DatastoreUsage extends BaseElement
             $url = '#';
             $urlParams = null;
         }
-$this->gotPercent += $percent;
+
+        // TODO: still unused
+        $this->gotPercent += $percent;
+
         $link = Link::create(
             '',
             $url,

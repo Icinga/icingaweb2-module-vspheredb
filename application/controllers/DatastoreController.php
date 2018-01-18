@@ -54,7 +54,6 @@ class DatastoreController extends Controller
 
     protected function sizingInfo(Datastore $ds)
     {
-
     }
 
     protected function bytes($bytes)
