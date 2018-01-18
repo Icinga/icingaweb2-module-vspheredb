@@ -1,35 +1,21 @@
 <?php
 
-namespace Icinga\Module\Vspheredb\Web\Table;
+namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
 use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
 
-class DatastoreInFolderTable extends ZfQueryBasedTable
+class DatastoreTable extends ObjectsTable
 {
-    protected $searchColumns = [
-        'object_name',
-    ];
-
-    protected $parentIds;
-
     public function getColumnsToBeRendered()
     {
         return [
             $this->translate('Name'),
             $this->translate('Usage'),
         ];
-    }
-
-    public function filterParentIds(array $ids)
-    {
-        $this->parentIds = $ids;
-
-        return $this;
     }
 
     public function renderRow($row)
