@@ -43,7 +43,7 @@ class VmInfoTable extends NameValueTable
         foreach ($lookup->getObjectNames($lookup->listPathTo($id, false)) as $parentId => $name) {
             $path->add(Link::create(
                 $name,
-                'vspheredb/overview/vms',
+                'vspheredb/vms',
                 ['id' => $parentId],
                 ['data-base-target' => '_main']
             ));

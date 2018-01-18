@@ -124,8 +124,8 @@ class OverviewTree extends BaseElement
                 $li->add(Link::create(
                     $label,
                     $tree->cnt_host > 0
-                        ? 'vspheredb/overview/hosts'
-                        : ($tree->cnt_ds > 0 ? 'vspheredb/overview/datastores' : 'vspheredb/overview/vms'),
+                        ? 'vspheredb/hosts'
+                        : ($tree->cnt_ds > 0 ? 'vspheredb/datastores' : 'vspheredb/vms'),
                     array('id' => $tree->id),
                     $attributes
                 ));

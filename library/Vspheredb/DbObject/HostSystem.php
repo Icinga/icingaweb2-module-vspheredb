@@ -53,6 +53,16 @@ class HostSystem extends BaseDbObject
         );
     }
 
+    public function countVms()
+    {
+        $db = $this->getDb();
+        return $db->fetchOne(
+            $db->select()
+                ->from('virtual_machine', 'COUNT(*)')
+                ->where('runtime_host_id = ?', $this->get('id'))
+        );
+    }
+
     public function setMapped($properties)
     {
         $this->set(

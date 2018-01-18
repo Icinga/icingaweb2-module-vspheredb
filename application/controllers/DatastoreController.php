@@ -29,7 +29,7 @@ class DatastoreController extends Controller
         foreach ($lookup->getObjectNames($lookup->listPathTo($id, false)) as $parentId => $name) {
             $path->add(Link::create(
                 $name,
-                'vspheredb/overview/datastores',
+                'vspheredb/datastores',
                 ['id' => $parentId],
                 ['data-base-target' => '_main']
             ));

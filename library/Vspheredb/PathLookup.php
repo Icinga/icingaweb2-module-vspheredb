@@ -46,11 +46,11 @@ class PathLookup
                 return 'vspheredb/vm';
             case 'ClusterComputeResource':
             case 'ComputeResource':
-                return 'vspheredb/overview/hosts';
+                return 'vspheredb/hosts';
             case 'Datacenter':
             case 'Folder':
             default:
-                return 'vspheredb/overview/vms';
+                return 'vspheredb/vms';
         }
     }
 

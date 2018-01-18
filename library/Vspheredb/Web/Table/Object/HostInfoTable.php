@@ -40,7 +40,7 @@ class HostInfoTable extends NameValueTable
         foreach ($lookup->getObjectNames($lookup->listPathTo($id, false)) as $parentId => $name) {
             $path->add(Link::create(
                 $name,
-                'vspheredb/overview/hosts',
+                'vspheredb/hosts',
                 ['id' => $parentId],
                 ['data-base-target' => '_main']
             ));
