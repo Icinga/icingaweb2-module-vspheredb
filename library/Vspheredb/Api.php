@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb;
 
+use DateTime;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Module\Vspheredb\DbObject\VmConfig;
-use Icinga\Module\Vspheredb\ManagedObject\TraversalHelper;
+use Icinga\Module\Vspheredb\DbObject\VcenterServer;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use SoapVar;
@@ -40,8 +40,11 @@ class Api
     /** @var SoapClient */
     private $soapClient;
 
-    /** @var IdLookup */
-    private $idLookup;
+    /** @var VcenterServer */
+    private $vCenterServer;
+
+    /** @var string */
+    private $binaryUuid;
 
     /** @var PerfManager */
     private $perfManager;
@@ -58,7 +61,7 @@ class Api
      *
      * @var array
      */
-    private $wsdlFiles = array(
+    private $wsdlFiles = [
         'vimService.wsdl',
         'vim.wsdl',
         'core-types.xsd',
@@ -68,7 +71,7 @@ class Api
         'reflect-messagetypes.xsd',
         'vim-types.xsd',
         'vim-messagetypes.xsd',
-    );
+    ];
 
     /**
      * Api constructor.
@@ -84,13 +87,70 @@ class Api
         $this->pass = $pass;
     }
 
+    public static function forServer(VcenterServer $server)
+    {
+        $api = new static(
+            $server->get('host'),
+            $server->get('username'),
+            $server->get('password')
+        );
+
+        $api->vCenterServer = $server;
+
+        $curl = $api->curl();
+
+        if ($type = $server->get('proxy_type')) {
+            $curl->setProxy($server->get('proxy_address'), $type);
+
+            if ($user = $server->get('proxy_user')) {
+                $curl->setProxyAuth($user, $server->get('proxy_pass'));
+            }
+        }
+
+        if ($server->get('scheme') === 'https') {
+            if ($server->get('ssl_verify_peer') === 'n') {
+                $curl->disableSslPeerVerification();
+            }
+            if ($server->get('ssl_verify_host') === 'n') {
+                $curl->disableSslHostVerification();
+            }
+        }
+
+        return $api;
+    }
+
+    public function getBinaryUuid()
+    {
+        if ($this->binaryUuid === null) {
+            $about = $this->getAbout();
+            $this->binaryUuid = Util::uuidToBin($about->instanceUuid);
+        }
+
+        return $this->binaryUuid;
+    }
+
+    public function getAbout()
+    {
+        return $this->getServiceInstance()->about;
+    }
+
+    public function getCurrentTime()
+    {
+        $result = $this->soapCall(
+            'CurrentTime',
+            $this->makeBaseServiceInstanceParam()
+        );
+
+        return new DateTime($result->returnval);
+    }
+
     /**
      * @return CurlLoader
      */
     public function curl()
     {
         if ($this->curl === null) {
-            $this->curl = new CurlLoader($this->host);
+            $this->curl = new CurlLoader($this->host, null, null, $this->cacheDir());
         }
 
         return $this->curl;
@@ -151,7 +211,7 @@ class Api
             $this->prepareWsdl();
             $wsdlFile = $this->wsdlDir() . '/' . $this->wsdlFiles[0];
             $features = SOAP_SINGLE_ELEMENT_ARRAYS + SOAP_USE_XSI_ARRAY_TYPE;
-            $options = array(
+            $options = [
                 'trace'              => true,
                 'location'           => $this->makeLocation(),
                 'exceptions'         => true,
@@ -159,7 +219,7 @@ class Api
                 // 'classmap'        => $this->getClassMap(), // might become useful
                 'features'           => $features,
                 'cache_wsdl'         => WSDL_CACHE_NONE
-            );
+            ];
 
             $soap = new SoapClient($wsdlFile, $options);
             $soap->setCurl($this->curl());
@@ -244,16 +304,21 @@ class Api
      */
     protected function fetchServiceInstance()
     {
+        $result = $this->soapCall(
+            'RetrieveServiceContent',
+            $this->makeBaseServiceInstanceParam()
+        );
+
+        return $result->returnval;
+    }
+
+    protected function makeBaseServiceInstanceParam()
+    {
         $param = array(
             $this->makeVar('ServiceInstance', 'ServiceInstance')
         );
 
-        $result = $this->soapCall(
-            'RetrieveServiceContent',
-            new SoapVar($param, SOAP_ENC_OBJECT)
-        );
-
-        return $result->returnval;
+        return new SoapVar($param, SOAP_ENC_OBJECT);
     }
 
     /**
@@ -264,7 +329,7 @@ class Api
     public function login()
     {
         if ($this->curl()->hasCookie()) {
-            return;
+            return $this;
         }
 
         $request = array(
@@ -274,6 +339,8 @@ class Api
         );
 
         $this->soapCall('Login', $request);
+
+        return $this;
     }
 
     /**
@@ -307,20 +374,6 @@ class Api
             'propSet'   => $propSet->toArray(),
             'objectSet' => $this->makeObjectSet($selectSet)
         );
-    }
-
-
-    /**
-     * @param Db $db
-     * @return IdLookup
-     */
-    public function idLookup(Db $db)
-    {
-        if ($this->idLookup === null) {
-            $this->idLookup = new IdLookup($this, $db);
-        }
-
-        return $this->idLookup;
     }
 
     protected function cacheDir()
