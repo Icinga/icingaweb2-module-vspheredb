@@ -167,6 +167,90 @@ CREATE TABLE vm_datastore_usage (
   PRIMARY KEY(vm_id, datastore_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE performance_unit (
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  name VARCHAR(32) NOT NULL,
+  label VARCHAR(16) NOT NULL,
+  summary VARCHAR(64) NOT NULL,
+  PRIMARY KEY (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE performance_group (
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  name VARCHAR(32) NOT NULL,
+  label VARCHAR(48) NOT NULL,
+  summary VARCHAR(64) NOT NULL,
+  PRIMARY KEY (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE performance_collection_interval (
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  name VARCHAR(32) NOT NULL,
+  label VARCHAR(48) NOT NULL,
+  summary VARCHAR(64) NOT NULL,
+  PRIMARY KEY (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE performance_counter (
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  counter_key INT UNSIGNED NOT NULL,
+  name VARCHAR(32) NOT NULL COLLATE utf8_bin,
+  label VARCHAR(96) NOT NULL,
+  group_name VARCHAR(32) NOT NULL,
+  unit_name VARCHAR(32) NOT NULL,
+  summary VARCHAR(255) NOT NULL,
+  stats_type ENUM( -- statsType
+    'absolute',
+    'delta',
+    'rate'
+  ) NOT NULL,
+  rollup_type ENUM(  -- rollupType
+    'average',
+    'maximum',
+    'minimum',
+    'latest',
+    'summation',
+    'none'
+  ) NOT NULL,
+  level TINYINT UNSIGNED NOT NULL, -- level 1-4
+  per_device_level TINYINT UNSIGNED NOT NULL, -- perDeviceLevel 1-4
+  -- collection_interval INT UNSIGNED NOT NULL, -- 300, 86400... -> nur pro el?
+  PRIMARY KEY (vcenter_uuid, counter_key),
+  -- UNIQUE INDEX combined (vcenter_uuid, group_name, name, unit_name),
+  CONSTRAINT performance_counter_vcenter
+    FOREIGN KEY vcenter (vcenter_uuid)
+    REFERENCES vcenter (instance_uuid)
+      ON DELETE RESTRICT
+      ON UPDATE RESTRICT,
+  CONSTRAINT performance_counter_group
+    FOREIGN KEY performance_group (group_name)
+    REFERENCES performance_group (name)
+      ON DELETE RESTRICT
+      ON UPDATE RESTRICT,
+  CONSTRAINT performance_counter_unit
+    FOREIGN KEY performance_unit (unit_name)
+    REFERENCES performance_unit (name)
+      ON DELETE RESTRICT
+      ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE counter_300x5 (
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  counter_key INT UNSIGNED NOT NULL,
+  object_textual_id VARCHAR(32) NOT NULL,
+  instance VARCHAR(64) NOT NULL,
+  -- TODO: object_uuid
+  ts_last BIGINT NOT NULL,
+  value_last BIGINT NOT NULL,
+  value_minus1 BIGINT DEFAULT NULL,
+  value_minus2 BIGINT DEFAULT NULL,
+  value_minus3 BIGINT DEFAULT NULL,
+  value_minus4 BIGINT DEFAULT NULL,
+  PRIMARY KEY (vcenter_uuid, counter_key, object_textual_id, instance)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 -- Not yet:
 -- CREATE TABLE vm_triggered_alarm (
 --   id BIGINT(20) UNSIGNED NOT NULL,
