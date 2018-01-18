@@ -15,3 +15,6 @@ $section->add(N_('Hosts'))
 $section->add(N_('Virtual Machines'))
     ->setUrl('vspheredb/overview?type=vm')
     ->setPriority(30);
+$section->add(N_('Performance Counter'))
+    ->setUrl('vspheredb/configuration/counters')
+    ->setPriority(50);
