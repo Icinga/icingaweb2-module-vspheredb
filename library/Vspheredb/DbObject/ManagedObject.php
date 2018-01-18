@@ -4,23 +4,25 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Director\Data\Db\DbObject as DirectorDbObject;
 
-class DbObject extends DirectorDbObject
+class ManagedObject extends DirectorDbObject
 {
     protected $keyName = 'id';
 
     protected $table = 'object';
 
     protected $defaultProperties = [
-        'id'             => null,
-        'textual_id'     => null,
-        'object_name'    => null,
-        'object_type'    => null,
-        'overall_status' => null,
-        'level'          => null,
-        'parent_id'      => null,
+        'object_checksum' => null,
+        'vcenter_uuid'    => null,
+        'id'              => null,
+        'moref'           => null,
+        'object_name'     => null,
+        'object_type'     => null,
+        'overall_status'  => null,
+        'level'           => null,
+        'parent_id'       => null,
     ];
 
-    /** @var DbObject */
+    /** @var ManagedObject */
     private $parent;
 
     protected function beforeStore()
@@ -33,7 +35,7 @@ class DbObject extends DirectorDbObject
         $this->set('level', $this->calculateLevel());
     }
 
-    public function setParent(DbObject $object)
+    public function setParent(ManagedObject $object)
     {
         $this->parent = $object;
         return $this;
