@@ -154,7 +154,7 @@ class OverviewTree extends BaseElement
             'Datacenter'             => 'sitemap',
             'Datastore'              => 'database',
             // 'DatastoreHostMount',
-            'Folder'                 =>  'folder-empty',
+            'Folder'                 => 'folder-empty',
             'ResourcePool'           => 'chart-pie',
             'StoragePod'             => 'cloud',
             'HostSystem'             => 'host',
