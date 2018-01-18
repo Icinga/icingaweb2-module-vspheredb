@@ -30,5 +30,7 @@ class Datastore extends BaseDbObject
         'summary.capacity'           => 'capacity',
         'summary.uncommitted'        => 'uncommitted',
         'summary.multipleHostAccess' => 'multiple_host_access',
+        // 'host',          // DatastoreHostMount[]
+        // 'info',          // DataStoreInfo
     ];
 }
