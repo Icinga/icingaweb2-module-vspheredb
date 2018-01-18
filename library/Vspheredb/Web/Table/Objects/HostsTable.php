@@ -1,19 +1,12 @@
 <?php
 
-namespace Icinga\Module\Vspheredb\Web\Table;
+namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use Icinga\Util\Format;
 use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
 
-class HostsInFolderTable extends ZfQueryBasedTable
+class HostsTable extends ObjectsTable
 {
-    protected $searchColumns = [
-        'object_name',
-    ];
-
-    protected $parentIds;
-
     public function getColumnsToBeRendered()
     {
         return [
@@ -23,13 +16,6 @@ class HostsInFolderTable extends ZfQueryBasedTable
             $this->translate('Memory'),
             $this->translate('VMs'),
         ];
-    }
-
-    public function filterParentIds(array $ids)
-    {
-        $this->parentIds = $ids;
-
-        return $this;
     }
 
     public function renderRow($row)
