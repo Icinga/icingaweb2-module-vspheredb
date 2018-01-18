@@ -258,7 +258,9 @@ class IdLookup
 
     public function fetchNames()
     {
-        return $this->api->collectProperties($this->prepareNameSpecSet());
+        return $this->api->propertyCollector()->collectProperties(
+            $this->prepareNameSpecSet()
+        );
     }
 
     protected function prepareNameSpecSet()
