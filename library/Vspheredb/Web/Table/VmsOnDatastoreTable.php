@@ -14,8 +14,6 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         'object_name',
     ];
 
-    protected $parentIds;
-
     /** @var Datastore */
     protected $datastore;
 
@@ -40,6 +38,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         $this->id          = $datastore->get('id');
         $this->capacity    = $datastore->get('capacity');
         $this->uncommitted = $datastore->get('uncommitted');
+
         return $this;
     }
 
