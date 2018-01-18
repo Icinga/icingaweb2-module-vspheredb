@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-class VcenterServer extends BaseDbObject
+class VCenterServer extends BaseDbObject
 {
     protected $table = 'vcenter_server';
 

@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 use DateTime;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Module\Vspheredb\DbObject\VcenterServer;
+use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use SoapVar;
@@ -40,7 +40,7 @@ class Api
     /** @var SoapClient */
     private $soapClient;
 
-    /** @var VcenterServer */
+    /** @var VCenterServer */
     private $vCenterServer;
 
     /** @var string */
@@ -87,7 +87,7 @@ class Api
         $this->pass = $pass;
     }
 
-    public static function forServer(VcenterServer $server)
+    public static function forServer(VCenterServer $server)
     {
         $api = new static(
             $server->get('host'),

@@ -7,11 +7,11 @@ use Icinga\Application\Config;
 use Icinga\Cli\Command;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\DbObject\VcenterServer;
+use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 
 class CommandBase extends Command
 {
-    /** @var VcenterServer */
+    /** @var VCenterServer */
     private $vCenterServer;
 
     /** @var Api */
@@ -23,7 +23,7 @@ class CommandBase extends Command
     protected function getVCenterServer()
     {
         if ($this->vCenterServer === null) {
-            $this->vCenterServer = VcenterServer::loadWithAutoIncId(
+            $this->vCenterServer = VCenterServer::loadWithAutoIncId(
                 $this->params->getRequired('server_id'),
                 $this->db()
             );

@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Form;
 
 use Icinga\Module\Director\Web\Form\QuickForm;
 
-class VcenterServerForm extends QuickForm
+class VCenterServerForm extends QuickForm
 {
     public function setup()
     {

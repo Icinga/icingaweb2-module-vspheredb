@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Util;
 
-class Vcenter extends BaseDbObject
+class VCenter extends BaseDbObject
 {
     protected $table = 'vcenter';
 

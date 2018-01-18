@@ -4,16 +4,16 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
-use Icinga\Module\Vspheredb\DbObject\Vcenter;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
 
-class VcenterInfoTable extends NameValueTable
+class VCenterInfoTable extends NameValueTable
 {
     use TranslationHelper;
 
     protected $vcenter;
 
-    public function __construct(Vcenter $vcenter)
+    public function __construct(VCenter $vcenter)
     {
         $this->vcenter = $vcenter;
     }

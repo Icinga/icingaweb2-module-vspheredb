@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use Icinga\Module\Vspheredb\Api;
-use Icinga\Module\Vspheredb\DbObject\VcenterServer;
+use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
@@ -25,7 +25,7 @@ class VmController extends Controller
     {
         $vm = $this->addVm();
         $api = Api::forServer(
-            VcenterServer::loadWithAutoIncId(1, $this->db())
+            VCenterServer::loadWithAutoIncId(1, $this->db())
         )->login();
 
         $this->content()->add(new VmLiveCountersTable($vm, $api));

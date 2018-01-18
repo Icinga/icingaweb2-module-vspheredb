@@ -5,7 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 use dipl\Html\BaseElement;
 use dipl\Html\Html;
 use dipl\Html\Link;
-use Icinga\Module\Vspheredb\DbObject\Vcenter;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 class VCenterSummaries extends BaseElement
 {
@@ -16,10 +16,10 @@ class VCenterSummaries extends BaseElement
         'data-base-target' => '_next'
     ];
 
-    /** @var Vcenter */
+    /** @var VCenter */
     protected $vCenter;
 
-    public function __construct(Vcenter $vCenter)
+    public function __construct(VCenter $vCenter)
     {
         $this->vCenter = $vCenter;
     }

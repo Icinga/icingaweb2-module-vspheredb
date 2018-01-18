@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Icinga\Application\Benchmark;
 use Icinga\Module\Vspheredb\Api;
-use Icinga\Module\Vspheredb\DbObject\Vcenter;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 /**
  * Health information for a vCenter or ESXi host
@@ -24,7 +24,7 @@ class HealthCommand extends CommandBase
                 printf("%0.3fms Time difference detected\n", $timediff * 1000);
             }
 
-            $vcenter = $this->getVcenter($api);
+            $vcenter = $this->getVCenter($api);
             printf("Connected to a %s\n", $vcenter->getFullName());
             echo $api->getVersionString();
         } catch (\Exception $e) {
@@ -35,14 +35,14 @@ class HealthCommand extends CommandBase
     }
 
     // Hint: this also updates the vCenter
-    protected function getVcenter(Api $api)
+    protected function getVCenter(Api $api)
     {
         $about = $api->getAbout();
         $uuid = $api->getBinaryUuid();
-        if (Vcenter::exists($uuid, $this->db())) {
-            $vcenter = Vcenter::load($uuid, $this->db());
+        if (VCenter::exists($uuid, $this->db())) {
+            $vcenter = VCenter::load($uuid, $this->db());
         } else {
-            $vcenter = Vcenter::create([], $this->db());
+            $vcenter = VCenter::create([], $this->db());
         }
         $vcenter->setMapped($about);
 
