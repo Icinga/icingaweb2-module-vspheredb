@@ -1,5 +1,14 @@
 SET sql_mode = 'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT,ANSI_QUOTES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER';
 
+-- CREATE TABLE trust_store (
+--   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+--   certificate
+-- );
+
+-- CREATE TABLE trust_store_ca (
+--   trust_store_id
+-- );
+
 CREATE TABLE vcenter (
   instance_uuid VARBINARY(16) NOT NULL,
   vcenter_name VARCHAR(64) NOT NULL,
