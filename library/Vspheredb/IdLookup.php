@@ -3,8 +3,9 @@
 namespace Icinga\Module\Vspheredb;
 
 use Icinga\Application\Benchmark;
-use Icinga\Module\Vspheredb\DbObject\DbObject;
-use Icinga\Module\Vspheredb\ManagedObject\FullTraversal;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Module\Vspheredb\DbObject\ManagedObject;
+use Icinga\Module\Vspheredb\SelectSet\FullSelectSet;
 
 class IdLookup
 {
@@ -143,29 +144,38 @@ class IdLookup
 
     /**
      * Refresh our internal ID cache
-     *
      * @return $this
+     * @throws ProgrammingError
      */
     public function refresh()
     {
-        $this->api->login();
         Benchmark::measure('Ready to fetch id/name/parent list');
-        $all = FullTraversal::fetchNames($this->api);
+        $all = $this->fetchNames();
         Benchmark::measure(sprintf("Got id/name/parent for %d objects", count($all)));
-        $this->objects = DbObject::loadAll($this->db, null, 'id');
+        $this->objects = ManagedObject::loadAll($this->db, null, 'id');
         $db = $this->db;
+        $fetched = [];
         foreach ($all as $obj) {
             $id = Util::extractNumericId($obj->id);
+            $fetched[$id] = $obj->name;
             if (array_key_exists($id, $this->objects)) {
                 $object = $this->objects[$id];
-                $object->set('textual_id', $obj->id);
+                if ($object->get('moref') !== $obj->id) {
+                    throw new ProgrammingError(
+                        'MoId sync failed, %s is %s and %s',
+                        $id,
+                        $obj->id,
+                        $object->get('moref')
+                    );
+                }
+                $object->set('moref', $obj->id);
                 $object->set('object_name', $obj->name);
                 $object->set('object_type', $obj->type);
                 $object->set('overall_status', $obj->overallStatus);
             } else {
-                $object = $this->objects[$id] = DbObject::create([
+                $this->objects[$id] = ManagedObject::create([
                     'id'          => $id,
-                    'textual_id'  => $obj->id,
+                    'moref'       => $obj->id,
                     'object_name' => $obj->name,
                     'object_type' => $obj->type,
                     'overall_status' => $obj->overallStatus,
@@ -187,6 +197,55 @@ class IdLookup
         Benchmark::measure('Storing object tree to DB');
         $dba = $db->getDbAdapter();
         $dba->beginTransaction();
+        $new = [];
+        $same = [];
+        $del = [];
+        $mod = [];
+        foreach ($this->objects as $object) {
+            if ($object->hasBeenLoadedFromDb()) {
+                if ($object->hasBeenModified()) {
+                    $mod[$object->id] = $object->object_name;
+                } else {
+                    $same[$object->id] = $object->object_name;
+                }
+            } else {
+                $new[$object->id] = $object->object_name;
+            }
+        }
+
+        $existing = $dba->fetchPairs(
+            $dba->select()->from('object', ['id', 'object_name'])
+        );
+
+        foreach ($existing as $id => $name) {
+            if (! array_key_exists($id, $fetched)) {
+                $del[$id] = $name;
+                // $this->objects[$id]->delete();
+                unset($this->objects[$id]);
+            }
+        }
+
+        if (! empty($del)) {
+            $dba->update(
+                'object',
+                ['parent_id' => null],
+                $dba->quoteInto('parent_id IN (?)', array_keys($del))
+            );
+            $dba->delete(
+                'object',
+                $dba->quoteInto('id IN (?)', array_keys($del))
+            );
+        }
+
+        printf("%d new: %s\n", count($new), implode(', ', $new));
+        printf("%d mod: %s\n", count($mod), implode(', ', $mod));
+        foreach ($mod as $id => $name) {
+            printf("%s has been modified:\n", $name);
+            print_r($this->objects[$id]->getModifiedProperties());
+        }
+        printf("%d del: %s\n", count($del), implode(', ', $del));
+        printf("%d unmodified\n", count($same));
+
         foreach ($this->objects as $object) {
             $object->store();
         }
@@ -195,6 +254,44 @@ class IdLookup
         $this->lastLookup = time();
 
         return $this;
+    }
+
+    public function fetchNames()
+    {
+        return $this->api->collectProperties($this->prepareNameSpecSet());
+    }
+
+    protected function prepareNameSpecSet()
+    {
+        $types = [
+            'Datacenter',
+            'Datastore',
+            'Folder',
+            'ResourcePool',
+            'HostSystem',
+            'ComputeResource',
+            'ClusterComputeResource',
+            'StoragePod',
+            'VirtualMachine',
+        ];
+        $pathSet = ['name', 'parent', 'overallStatus'];
+
+        $propSet = [];
+        foreach ($types as $type) {
+            $propSet[] = [
+                'type' => $type,
+                'all' => 0,
+                'pathSet' => $pathSet
+            ];
+        }
+        return [
+            'propSet' => $propSet,
+            'objectSet' => [
+                'obj'  => $this->api->getServiceInstance()->rootFolder,
+                'skip' => false,
+                'selectSet' => (new FullSelectSet())->toArray(),
+            ]
+        ];
     }
 
     public function dump()
