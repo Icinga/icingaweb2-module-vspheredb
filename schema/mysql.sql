@@ -1,4 +1,45 @@
-git staSET sql_mode = 'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT,ANSI_QUOTES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER';
+SET sql_mode = 'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT,ANSI_QUOTES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER';
+
+CREATE TABLE vcenter (
+  instance_uuid VARBINARY(16) NOT NULL,
+  vcenter_name VARCHAR(64) NOT NULL,
+  trust_store_id INT UNSIGNED DEFAULT NULL, -- TODO: not null?
+  name VARCHAR(64) NOT NULL, -- name	"VMware vCenter Server"
+  version VARCHAR(10) NOT NULL, -- version	"6.0.0"
+  os_type VARCHAR(32) NOT NULL, -- osType	"linux-x64"
+  api_type VARCHAR(64) NOT NULL, -- apiType	"VirtualCenter"
+  api_version VARCHAR(10) NOT NULL, -- apiVersion	"6.0"
+  build VARCHAR(32) DEFAULT NULL, -- build "5318203"
+  -- fullName -> "<api_type> <version> build-<build>"
+  vendor VARCHAR(64) NOT NULL, -- vendor	"VMware, Inc."
+  product_line VARCHAR(32) DEFAULT NULL, -- productLineId	string	"vpx"
+  license_product_name VARCHAR(64) DEFAULT NULL, -- licenseProductName	"VMware VirtualCenter Server"
+  license_product_version VARCHAR(10) DEFAULT NULL, -- licenseProductVersion"6.0"
+  locale_build VARCHAR(32) DEFAULT NULL, -- localeBuild	"000"
+  locale_version VARCHAR(10) DEFAULT NULL, -- localeVersion	"INTL"
+  PRIMARY KEY (instance_uuid),
+  UNIQUE INDEX vcenter_name (vcenter_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE vcenter_server (
+  host VARCHAR(255) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  scheme ENUM ('http', 'https') NOT NULL,
+  username VARCHAR(64) NOT NULL,
+  password VARCHAR(64) NOT NULL,
+  proxy_type ENUM('HTTP', 'SOCKS5') DEFAULT NULL,
+  proxy_address VARCHAR(255) DEFAULT NULL,
+  proxy_user VARCHAR(64) DEFAULT NULL,
+  proxy_pass VARCHAR(64) DEFAULT NULL,
+  ssl_verify_peer ENUM ('y', 'n') NOT NULL,
+  ssl_verify_host ENUM ('y', 'n') NOT NULL,
+  PRIMARY KEY (host),
+  CONSTRAINT server_vcenter
+    FOREIGN KEY server_vcenter_uuid (vcenter_uuid)
+    REFERENCES vcenter (vcenter_uuid)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE object (
   id INT(10) UNSIGNED NOT NULL,
