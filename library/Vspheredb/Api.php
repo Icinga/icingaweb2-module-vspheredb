@@ -43,6 +43,9 @@ class Api
     /** @var IdLookup */
     private $idLookup;
 
+    /** @var PropertyCollector */
+    private $propertyCollector;
+
     /**
      * Involved WSDL files
      *
@@ -98,6 +101,15 @@ class Api
         return $this->host;
     }
 
+    public function propertyCollector()
+    {
+        if ($this->propertyCollector === null) {
+            $this->propertyCollector = new PropertyCollector($this);
+        }
+
+        return $this->propertyCollector;
+    }
+
     /**
      * SOAP call wrapper
      *
@@ -110,6 +122,7 @@ class Api
     {
         $arguments = func_get_args();
         array_shift($arguments);
+
         return $this->soapClient()->__soapCall($method, $arguments);
     }
 
@@ -271,27 +284,6 @@ class Api
         $this->curl()->forgetCookie();
     }
 
-    public function collectProperties($specSet)
-    {
-        $specSet = array(
-            '_this'   => $this->getServiceInstance()->propertyCollector,
-            'specSet' => $specSet
-        );
-
-        return TraversalHelper::makeNiceResult(
-            $this->soapCall('RetrieveProperties', $specSet)
-        );
-    }
-
-    public function collectObjectProperties(PropertySet $propSet, SelectSet $selectSet)
-    {
-        $result = $this->collectProperties(
-            $this->makePropertyFilterSpec($propSet, $selectSet)
-        );
-
-        return $result;
-    }
-
     protected function makeObjectSet(SelectSet $selectSet, $base = null)
     {
         if ($base === null) {
@@ -305,7 +297,7 @@ class Api
         ];
     }
 
-    protected function makePropertyFilterSpec(PropertySet $propSet, SelectSet $selectSet)
+    public function makePropertyFilterSpec(PropertySet $propSet, SelectSet $selectSet)
     {
         return array(
             'propSet'   => $propSet->toArray(),
@@ -383,8 +375,13 @@ class Api
      *
      * @return SoapVar
      */
-    protected function makeVar($key, $val)
+    public function makeVar($key, $val)
     {
         return new SoapVar($val, XSD_STRING, $key, null, 'ns1:_this');
+    }
+
+    public function __destruct()
+    {
+        unset($this->propertyCollector);
     }
 }
