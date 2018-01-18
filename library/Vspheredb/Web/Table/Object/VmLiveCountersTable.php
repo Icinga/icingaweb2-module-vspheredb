@@ -9,20 +9,20 @@ use dipl\Web\Widget\NameValueTable;
 use Exception;
 use Icinga\Application\Benchmark;
 use Icinga\Module\Vspheredb\Api;
-use Icinga\Module\Vspheredb\DbObject\VmConfig;
+use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\CompactInOutSparkline;
 
 class VmLiveCountersTable extends NameValueTable
 {
     use TranslationHelper;
 
-    /** @var VmConfig */
+    /** @var VirtualMachine */
     protected $vm;
 
     /** @var Api */
     protected $api;
 
-    public function __construct(VmConfig $vm, Api $api)
+    public function __construct(VirtualMachine $vm, Api $api)
     {
         $this->vm = $vm;
         $this->api = $api;

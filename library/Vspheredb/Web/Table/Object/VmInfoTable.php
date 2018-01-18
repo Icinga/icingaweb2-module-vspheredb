@@ -6,20 +6,20 @@ use dipl\Html\Html;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
-use Icinga\Module\Vspheredb\DbObject\VmConfig;
+use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
 
 class VmInfoTable extends NameValueTable
 {
     use TranslationHelper;
 
-    /** @var VmConfig */
+    /** @var VirtualMachine */
     protected $vm;
 
     /** @var PathLookup */
     protected $pathLookup;
 
-    public function __construct(VmConfig $vm, PathLookup $loopup)
+    public function __construct(VirtualMachine $vm, PathLookup $loopup)
     {
         $this->vm = $vm;
         $this->pathLookup = $loopup;

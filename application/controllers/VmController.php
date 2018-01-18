@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VcenterServer;
-use Icinga\Module\Vspheredb\DbObject\VmConfig;
+use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
@@ -33,7 +33,7 @@ class VmController extends Controller
 
     protected function addVm()
     {
-        $vm = VmConfig::load($this->params->getRequired('id'), $this->db());
+        $vm = VirtualMachine::load($this->params->getRequired('id'), $this->db());
         $this->addTitle($vm->object()->get('object_name'));
         $this->handleTabs();
 

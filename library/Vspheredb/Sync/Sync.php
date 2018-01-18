@@ -7,7 +7,7 @@ use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
-use Icinga\Module\Vspheredb\DbObject\VmConfig;
+use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\IdLookup;
 
 class Sync
@@ -36,7 +36,7 @@ class Sync
         (new IdLookup($api, $db))->refresh();
         Benchmark::measure('Refreshed objects');
         HostSystem::syncFromApi($api, $db);
-        VmConfig::syncFromApi($api, $db);
+        VirtualMachine::syncFromApi($api, $db);
         Datastore::syncFromApi($api, $db);
 
         return $this;

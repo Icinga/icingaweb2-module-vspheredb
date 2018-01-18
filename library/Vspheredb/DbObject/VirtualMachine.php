@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Util;
 
-class VmConfig extends BaseDbObject
+class VirtualMachine extends BaseDbObject
 {
     protected $table = 'virtual_machine';
 
@@ -62,11 +62,6 @@ class VmConfig extends BaseDbObject
     ];
 
     protected $perDatastoreUsage;
-
-    public static function getType()
-    {
-        return 'VirtualMachine';
-    }
 
     protected function setPerDatastoreUsage($value)
     {

@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
-use Icinga\Module\Vspheredb\DbObject\VmConfig;
+use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
 use dipl\Html\Link;
@@ -18,19 +18,19 @@ class VmDatastoresTable extends ZfQueryBasedTable
 
     protected $parentIds;
 
-    /** @var VmConfig */
+    /** @var VirtualMachine */
     protected $vm;
 
     /** @var int */
     protected $id;
 
-    public static function create(VmConfig $vm)
+    public static function create(VirtualMachine $vm)
     {
         $tbl = new static($vm->getConnection());
         return $tbl->setVm($vm);
     }
 
-    protected function setVm(VmConfig $vm)
+    protected function setVm(VirtualMachine $vm)
     {
         $this->vm = $vm;
         $this->id = $vm->get('id');
