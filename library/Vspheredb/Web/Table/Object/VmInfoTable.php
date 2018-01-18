@@ -33,7 +33,7 @@ class VmInfoTable extends NameValueTable
     protected function assemble()
     {
         $vm = $this->vm;
-        $id = $vm->id;
+        $id = $vm->get('id');
         if ($vm->get('annotation')) {
             $this->addNameValueRow($this->translate('Annotation'), $vm->get('annotation'));
         }
