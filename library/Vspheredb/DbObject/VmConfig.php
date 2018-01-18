@@ -63,6 +63,11 @@ class VmConfig extends BaseDbObject
 
     protected $perDatastoreUsage;
 
+    public static function getType()
+    {
+        return 'VirtualMachine';
+    }
+
     protected function setPerDatastoreUsage($value)
     {
         $this->perDatastoreUsage = $this->normalizePerDatastoreUsage(
@@ -86,15 +91,35 @@ class VmConfig extends BaseDbObject
     protected function onInsert()
     {
         if ($this->perDatastoreUsage !== null) {
+            $id = $this->get('id');
             foreach ($this->perDatastoreUsage as $usage) {
-                $usage['vm_id'] = $this->get('id');
+                $usage['vm_id'] = $id;
                 $this->db->insert('vm_datastore_usage', $usage);
             }
         }
     }
 
-    public static function getType()
+    protected function onUpdate()
     {
-        return 'VirtualMachine';
+        if ($this->perDatastoreUsage !== null) {
+            $id = $this->get('id');
+            $db = $this->db;
+            $where = $db->quoteInto('vm_id = ?', $id) . ' AND datastore_id = ?';
+            foreach ($this->perDatastoreUsage as $usage) {
+                $thisWhere = $db->quoteInto($where, $usage['datastore_id']);
+                $updated = $db->update(
+                    'vm_datastore_usage',
+                    $usage,
+                    $thisWhere
+                );
+
+                if (! $updated) {
+                    // Doesn't work, fails when no change in above query. We need a better sync.
+                    // echo $db->quoteInto($where, $usage['datastore_id']);
+                    // $usage['vm_id'] = $id;
+                    // $this->db->insert('vm_datastore_usage', $usage);
+                }
+            }
+        }
     }
 }
