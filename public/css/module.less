@@ -1,3 +1,32 @@
+.table-vms {
+  td {
+    width: 10em;
+
+    &:first-of-type {
+      width: auto;
+    }
+  }
+}
+
+.sparks {
+  width: 4em;
+  height: 3em;
+  overflow: hidden;
+}
+
+#layout.twocols {
+  .table-vms {
+    td, th {
+      display: none;
+
+      &:first-of-type {
+        display: block;
+      }
+    }
+  }
+}
+
+
 /** Action Bar **/
 div.action-bar a, div.action-bar form i {
   color: @icinga-blue;
