@@ -83,7 +83,7 @@ CREATE TABLE object (
     REFERENCES object (id)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE host_system (
   id INT(10) UNSIGNED NOT NULL,
@@ -108,6 +108,7 @@ CREATE TABLE host_system (
   ) NOT NULL,
   PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE virtual_machine (
   id INT(10) UNSIGNED NOT NULL,
@@ -145,7 +146,7 @@ CREATE TABLE virtual_machine (
       -- 'suspend' -- ??
   ) NOT NULL,
   PRIMARY KEY(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE datastore (
   id INT(10) UNSIGNED NOT NULL,
@@ -165,7 +166,7 @@ CREATE TABLE datastore (
   --     'cifs'
   -- ) NOT NULL,
   PRIMARY KEY(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE vm_datastore_usage (
   vm_id INT(10) UNSIGNED NOT NULL,
@@ -174,7 +175,7 @@ CREATE TABLE vm_datastore_usage (
   uncommitted BIGINT(20) UNSIGNED DEFAULT NULL,
   unshared BIGINT(20) UNSIGNED DEFAULT NULL,
   PRIMARY KEY(vm_id, datastore_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE performance_unit (
   vcenter_uuid VARBINARY(16) NOT NULL,
