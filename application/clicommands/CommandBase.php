@@ -2,54 +2,43 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
 use Icinga\Cli\Command;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\DbObject\VcenterServer;
 
 class CommandBase extends Command
 {
+    /** @var VcenterServer */
+    private $vCenterServer;
+
     /** @var Api */
     private $api;
 
     /** @var Db */
     private $db;
 
+    protected function getVCenterServer()
+    {
+        if ($this->vCenterServer === null) {
+            $this->vCenterServer = VcenterServer::loadWithAutoIncId(
+                $this->params->getRequired('server_id'),
+                $this->db()
+            );
+        }
+
+        return $this->vCenterServer;
+    }
+
     protected function api()
     {
         if ($this->api === null) {
-            $p = $this->params;
-            $scheme = $p->get('use-insecure-http') ? 'HTTP' : 'HTTPS';
-
-            $this->api = new Api(
-                $p->getRequired('vhost'),
-                $p->getRequired('username'),
-                $p->getRequired('password'),
-                $scheme
-            );
-
-            $curl = $this->api->curl();
-
-            if ($proxy = $p->get('proxy')) {
-                if ($proxyType = $p->get('proxy-type')) {
-                    $curl->setProxy($proxy, $proxyType);
-                } else {
-                    $curl->setProxy($proxy);
-                }
-
-                if ($user = $p->get('proxy_user')) {
-                    $curl->setProxyAuth($user, $p->get('proxy_pass'));
-                }
-            }
-
-            if ($scheme === 'HTTPS') {
-                if ($p->get('no-ssl-verify-peer')) {
-                    $curl->disableSslPeerVerification();
-                }
-                if ($p->get('no-ssl-verify-host')) {
-                    $curl->disableSslHostVerification();
-                }
-            }
+            Benchmark::measure('Preparing the API');
+            $this->api = Api::forServer($this->getVCenterServer());
+            $this->api->login();
+            Benchmark::measure('Logged in, ready to fetch');
         }
 
         return $this->api;
@@ -59,7 +48,7 @@ class CommandBase extends Command
     {
         if ($this->db === null) {
             $this->db = Db::fromResourceName(
-                Config::module('vsphere')->get('db', 'resource')
+                Config::module('vspheredb')->get('db', 'resource')
             );
         }
 
