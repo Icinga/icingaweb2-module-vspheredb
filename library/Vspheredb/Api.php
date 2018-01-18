@@ -43,6 +43,9 @@ class Api
     /** @var IdLookup */
     private $idLookup;
 
+    /** @var PerfManager */
+    private $perfManager;
+
     /** @var PropertyCollector */
     private $propertyCollector;
 
@@ -87,18 +90,19 @@ class Api
     public function curl()
     {
         if ($this->curl === null) {
-            $this->curl = new CurlLoader($this->host());
+            $this->curl = new CurlLoader($this->host);
         }
 
         return $this->curl;
     }
 
-    /**
-     * @return string
-     */
-    protected function host()
+    public function perfManager()
     {
-        return $this->host;
+        if ($this->perfManager === null) {
+            $this->perfManager = new PerfManager($this);
+        }
+
+        return $this->perfManager;
     }
 
     public function propertyCollector()
@@ -133,7 +137,7 @@ class Api
      */
     protected function makeLocation()
     {
-        return 'https://' . $this->host() . '/sdk';
+        return 'https://' . $this->host . '/sdk';
     }
 
     /**
@@ -382,6 +386,7 @@ class Api
 
     public function __destruct()
     {
+        unset($this->perfManager);
         unset($this->propertyCollector);
     }
 }
