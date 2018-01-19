@@ -224,6 +224,21 @@ class IdLookup
                 unset($this->objects[$id]);
             }
         }
+        printf("%d new: %s\n", count($new), implode(', ', $new));
+        printf("%d mod: %s\n", count($mod), implode(', ', $mod));
+        foreach ($mod as $id => $name) {
+            printf("%s has been modified:\n", $name);
+            foreach ($this->objects[$id]->getModifiedProperties() as $prop => $newVal) {
+                printf(
+                    "%s changed from %s to %s\n",
+                    $prop,
+                    $this->objects[$id]->getOriginalProperty($prop),
+                    $newVal
+                );
+            }
+        }
+        printf("%d del: %s\n", count($del), implode(', ', $del));
+        printf("%d unmodified\n", count($same));
 
         if (! empty($del)) {
             $dba->update(
@@ -236,15 +251,6 @@ class IdLookup
                 $dba->quoteInto('id IN (?)', array_keys($del))
             );
         }
-
-        printf("%d new: %s\n", count($new), implode(', ', $new));
-        printf("%d mod: %s\n", count($mod), implode(', ', $mod));
-        foreach ($mod as $id => $name) {
-            printf("%s has been modified:\n", $name);
-            print_r($this->objects[$id]->getModifiedProperties());
-        }
-        printf("%d del: %s\n", count($del), implode(', ', $del));
-        printf("%d unmodified\n", count($same));
 
         foreach ($this->objects as $object) {
             $object->store();
