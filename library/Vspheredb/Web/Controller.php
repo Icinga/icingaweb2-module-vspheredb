@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web;
 
-use Icinga\Application\Config;
 use Icinga\Module\Vspheredb\Db;
 use dipl\Web\CompatController;
 use Icinga\Module\Vspheredb\PathLookup;
@@ -27,9 +26,7 @@ class Controller extends CompatController
     protected function db()
     {
         if ($this->db === null) {
-            $this->db = Db::fromResourceName(
-                Config::module('vspheredb')->get('db', 'resource')
-            );
+            $this->db = Db::newConfiguredInstance();
         }
 
         return $this->db;

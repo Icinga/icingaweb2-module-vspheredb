@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Icinga\Application\Benchmark;
-use Icinga\Application\Config;
 use Icinga\Cli\Command;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
@@ -47,9 +46,7 @@ class CommandBase extends Command
     protected function db()
     {
         if ($this->db === null) {
-            $this->db = Db::fromResourceName(
-                Config::module('vspheredb')->get('db', 'resource')
-            );
+            $this->db = Db::newConfiguredInstance();
         }
 
         return $this->db;
