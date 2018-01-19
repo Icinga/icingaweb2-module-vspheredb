@@ -4,8 +4,9 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
+use Icinga\Module\Vspheredb\Db;
 
-class VmsWithDuplicateBiosUuidTable extends ZfQueryBasedTable
+class VmsWithDuplicateProperty extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
@@ -16,16 +17,25 @@ class VmsWithDuplicateBiosUuidTable extends ZfQueryBasedTable
         'object_name',
     ];
 
-    protected $property = 'bios_uuid';
+    protected $property;
 
     protected $propertyTitle;
 
     protected $lastValue;
 
+    public static function create(Db $db, $property, $title)
+    {
+        $table = new static($db);
+        $table->property = $property;
+        $table->propertyTitle = $title;
+
+        return $table;
+    }
+
     public function getColumnsToBeRendered()
     {
         return [
-            $this->propertyTitle ?: $this->translate('Bios UUID'),
+            $this->propertyTitle,
             $this->translate('Name'),
         ];
     }

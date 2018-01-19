@@ -4,37 +4,49 @@ namespace Icinga\Module\Vspheredb\Controllers;
 
 use dipl\Html\Html;
 use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Table\VmsWithDuplicateBiosUuidTable;
+use Icinga\Module\Vspheredb\Web\Table\VmsWithDuplicateProperty;
 
 class AnomaliesController extends Controller
 {
+    // TODO: Overbooked datastores
     public function indexAction()
     {
         $this->addSingleTab($this->translate('Anomalies'));
-        $table = new VmsWithDuplicateBiosUuidTable($this->db());
-        if (count($table)) {
-            $this->content()->add([
-                Html::tag('h1', null, 'Virtual Machines with duplicate SM BIOS UUID'),
-                $table
-            ]);
-        }
+        $this->addTable('bios_uuid', $this->translate('Bios UUID'));
+        $this->addTable('instance_uuid', $this->translate('Instance UUID'));
+        $this->addTable('guest_host_name', $this->translate('Guest host name'));
+        $this->addTable('guest_ip_address', $this->translate('Guest IP address'));
+    }
 
-        $table = new VmsWithDuplicateBiosUuidTable($this->db());
-        $table->setProperty('instance_uuid', $this->translate('Instance UUID'));
-        if (count($table)) {
-            $this->content()->add([
-                Html::tag('h1', null, 'Virtual Machines with duplicate Instance UUID'),
-                $table
-            ]);
-        }
+    protected function addTable($property, $title)
+    {
+        $table = VmsWithDuplicateProperty::create($this->db(), $property, $title);
 
-        $table = new VmsWithDuplicateBiosUuidTable($this->db());
-        $table->setProperty('guest_host_name', $this->translate('Guest host name'));
-        if (count($table)) {
+        $count = count($table);
+        if ($count) {
             $this->content()->add([
-                Html::tag('h1', null, 'Virtual Machines with duplicate Guest host name'),
+                Html::tag(
+                    'h1',
+                    null,
+                    sprintf(
+                        '%d Virtual Machines with duplicate %s',
+                        $count,
+                        $title
+                    )
+                ),
                 $table
             ]);
+        } else {
+            $this->content()->add(
+                Html::tag(
+                    'h1',
+                    null,
+                    sprintf(
+                        'There are no Virtual Machines with duplicate %s',
+                        $title
+                    )
+                )
+            );
         }
     }
 }
