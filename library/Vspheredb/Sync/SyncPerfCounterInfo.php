@@ -3,32 +3,21 @@
 namespace Icinga\Module\Vspheredb\Sync;
 
 use Icinga\Application\Benchmark;
-use Icinga\Module\Vspheredb\Api;
-use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 class SyncPerfCounterInfo
 {
-    /** @var Api */
-    protected $api;
+    /** @var VCenter */
+    protected $vCenter;
 
-    /** @var Db */
-    protected $db;
-
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $dba;
-
-    protected $table = 'counter_300x5';
-
-    public function __construct(Api $api, Db $db)
+    public function __construct(VCenter $vCenter)
     {
-        $this->api = $api;
-        $this->db = $db;
-        $this->dba = $db->getDbAdapter();
+        $this->vCenter = $vCenter;
     }
 
     public function run()
     {
-        foreach ($this->api->perfManager()->getPerformanceCounterInfo() as $prop) {
+        foreach ($this->vCenter->getApi()->perfManager()->getPerformanceCounterInfo() as $prop) {
             switch ($prop->name) {
                 case 'description':
                     // counterType(s) and statsType(s), we use ENUMs
@@ -50,8 +39,8 @@ class SyncPerfCounterInfo
      */
     protected function processCounterInfo($info)
     {
-        $uuid = $this->api->getBinaryUuid();
-        $db = $this->dba;
+        $uuid = $this->vCenter->get('uuid');
+        $db = $this->vCenter->getDb();
         $units = [];
         $groups = [];
         $data = [];
@@ -113,7 +102,7 @@ class SyncPerfCounterInfo
 
     protected function processHistoricalIntervals($intervals)
     {
-        $db = $this->dba;
+        $db = $this->vCenter->getDb();
         foreach ($intervals as $interval) {
             $db->insert('performance_interval', [
                 'name' => $interval->key, // 1 ... 4
