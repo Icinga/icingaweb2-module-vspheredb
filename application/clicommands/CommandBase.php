@@ -6,10 +6,14 @@ use Icinga\Application\Benchmark;
 use Icinga\Cli\Command;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 
 class CommandBase extends Command
 {
+    /** @var VCenter */
+    private $vCenter;
+
     /** @var VCenterServer */
     private $vCenterServer;
 
@@ -18,6 +22,18 @@ class CommandBase extends Command
 
     /** @var Db */
     private $db;
+
+    protected function getVCenter()
+    {
+        if ($this->vCenter === null) {
+            $this->vCenter = VCenter::loadWithAutoIncId(
+                $this->params->getRequired('vCenter'),
+                $this->db()
+            );
+        }
+
+        return $this->vCenter;
+    }
 
     protected function getVCenterServer()
     {
