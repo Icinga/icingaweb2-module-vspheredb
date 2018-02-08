@@ -6,20 +6,19 @@ use Icinga\Module\Director\Data\Db\DbObject as DirectorDbObject;
 
 class ManagedObject extends DirectorDbObject
 {
-    protected $keyName = 'id';
+    protected $keyName = 'uuid';
 
     protected $table = 'object';
 
     protected $defaultProperties = [
-        'object_checksum' => null,
-        'vcenter_uuid'    => null,
-        'id'              => null,
-        'moref'           => null,
-        'object_name'     => null,
-        'object_type'     => null,
-        'overall_status'  => null,
-        'level'           => null,
-        'parent_id'       => null,
+        'uuid'           => null,
+        'vcenter_uuid'   => null,
+        'moref'          => null,
+        'object_name'    => null,
+        'object_type'    => null,
+        'overall_status' => null,
+        'level'          => null,
+        'parent_uuid'    => null,
     ];
 
     /** @var ManagedObject */
@@ -29,7 +28,7 @@ class ManagedObject extends DirectorDbObject
     {
         if (null !== $this->parent) {
             $this->parent->store();
-            $this->set('parent_id', $this->parent->get('id'));
+            $this->set('parent_uuid', $this->parent->get('uuid'));
         }
 
         $this->set('level', $this->calculateLevel());
