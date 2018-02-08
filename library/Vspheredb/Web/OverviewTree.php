@@ -55,11 +55,11 @@ class OverviewTree extends BaseElement
                 continue;
             }
             $item->children = [];
-            $all[$item->id] = $item;
-            if ($item->parent_id === null) {
-                $tree[$item->id] = $item;
+            $all[$item->uuid] = $item;
+            if ($item->parent_uuid === null) {
+                $tree[$item->uuid] = $item;
             } else {
-                $all[$item->parent_id]->children[$item->id] = $item;
+                $all[$item->parent_uuid]->children[$item->uuid] = $item;
             }
         }
 
@@ -68,23 +68,23 @@ class OverviewTree extends BaseElement
 
     protected function fetchTree()
     {
-        $hostCnt = "SELECT COUNT(*) as cnt, parent_id"
+        $hostCnt = "SELECT COUNT(*) as cnt, parent_uuid"
             . " FROM object WHERE object_type = 'HostSystem'"
-            . " GROUP BY parent_id";
-        $vmCnt = "SELECT COUNT(*) as cnt, parent_id"
+            . " GROUP BY parent_uuid";
+        $vmCnt = "SELECT COUNT(*) as cnt, parent_uuid"
             . " FROM object WHERE object_type = 'VirtualMachine'"
-            . " GROUP BY parent_id";
-        $dsCnt = "SELECT COUNT(*) as cnt, parent_id"
+            . " GROUP BY parent_uuid";
+        $dsCnt = "SELECT COUNT(*) as cnt, parent_uuid"
             . " FROM object WHERE object_type = 'DataStore'"
-            . " GROUP BY parent_id";
+            . " GROUP BY parent_uuid";
         $main = "SELECT * FROM object"
             . " WHERE object_type NOT IN ('VirtualMachine', 'HostSystem', 'Datastore')";
 
         $sql = "SELECT f.*, hc.cnt AS cnt_host, vc.cnt AS cnt_vm, dc.cnt AS cnt_ds"
              . " FROM ($main) f"
-             . " LEFT JOIN ($vmCnt) vc ON vc.parent_id = f.id"
-             . " LEFT JOIN ($hostCnt) hc ON hc.parent_id = f.id"
-             . " LEFT JOIN ($dsCnt) dc ON dc.parent_id = f.id"
+             . " LEFT JOIN ($vmCnt) vc ON vc.parent_uuid = f.uuid"
+             . " LEFT JOIN ($hostCnt) hc ON hc.parent_uuid = f.uuid"
+             . " LEFT JOIN ($dsCnt) dc ON dc.parent_uuid = f.uuid"
              . " ORDER BY f.level ASC, f.object_name";
 
         return $this->db->getDbAdapter()->fetchAll($sql);
@@ -126,7 +126,7 @@ class OverviewTree extends BaseElement
                     $tree->cnt_host > 0
                         ? 'vspheredb/hosts'
                         : ($tree->cnt_ds > 0 ? 'vspheredb/datastores' : 'vspheredb/vms'),
-                    array('id' => $tree->id),
+                    array('uuid' => bin2hex($tree->uuid)),
                     $attributes
                 ));
             } else {
