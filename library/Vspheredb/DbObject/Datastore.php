@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class Datastore extends BaseDbObject
 {
+    protected $keyName = 'uuid';
+
     protected $table = 'datastore';
 
     protected $defaultProperties = [
-        'id'                   => null,
+        'uuid'                 => null,
+        'vcenter_uuid'         => null,
         'maintenance_mode'     => null,
         // capacity and free_space require accessible datastore
         'capacity'             => null,
