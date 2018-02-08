@@ -129,6 +129,11 @@ class Api
         return $this->binaryUuid;
     }
 
+    public function makeGlobalUuid($moRefId)
+    {
+        return sha1($this->getBinaryUuid() . $moRefId, true);
+    }
+
     public function getAbout()
     {
         return $this->getServiceInstance()->about;
