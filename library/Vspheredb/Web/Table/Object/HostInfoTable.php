@@ -8,6 +8,7 @@ use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
 
 class HostInfoTable extends NameValueTable
 {
@@ -53,7 +54,7 @@ class HostInfoTable extends NameValueTable
             $this->translate('Memory')       => $this->getFormattedMemory(),
             $this->translate('Path')         => $path,
             $this->translate('Power')        => $host->get('runtime_power_state'),
-            $this->translate('BIOS Version') => $host->get('bios_version'),
+            $this->translate('BIOS Version') => new SpectreMelddownBiosInfo($host),
             // $this->translate('BIOS Release Date') => $vm->get('bios_release_date'),
             $this->translate('Vendor')       => $host->get('sysinfo_vendor'),
             $this->translate('Model')        => $host->get('sysinfo_model'),
