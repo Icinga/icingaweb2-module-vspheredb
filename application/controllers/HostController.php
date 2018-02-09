@@ -15,21 +15,22 @@ class HostController extends Controller
 
     public function init()
     {
-        $id = (int) $this->params->getRequired('id');
-        $this->host = HostSystem::load($id, $this->db());
+        $hexId = $this->params->getRequired('uuid');
+        $uuid = hex2bin($hexId);
+        $this->host = HostSystem::load($uuid, $this->db());
         $this->addTitle($this->host->object()->get('object_name'));
 
         $this->tabs()->add('index', [
             'label' => $this->translate('Host System'),
             'url' => 'vspheredb/host',
-            'urlParams' => ['id' => $id]
+            'urlParams' => ['uuid' => $hexId]
         ])->add('vms', [
             'label' => sprintf(
                 $this->translate('Virtual Machines (%d)'),
                 $this->host->countVms()
             ),
             'url' => 'vspheredb/host/vms',
-            'urlParams' => ['id' => $id]
+            'urlParams' => ['uuid' => $hexId]
         ])->activate($this->getRequest()->getActionName());
     }
 
@@ -51,7 +52,7 @@ class HostController extends Controller
             Link::create(
                 $this->translate('Back to Host'),
                 'vspheredb/host',
-                ['id' => $this->host->get('id')],
+                ['uuid' => bin2hex($this->host->get('uuid'))],
                 ['class' => 'icon-left-big']
             )
         );
