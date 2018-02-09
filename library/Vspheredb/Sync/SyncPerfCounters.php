@@ -3,9 +3,7 @@
 namespace Icinga\Module\Vspheredb\Sync;
 
 use Icinga\Application\Benchmark;
-use Icinga\Module\Vspheredb\Api;
-use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Util;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 /**
  * Strategy:
@@ -19,28 +17,18 @@ use Icinga\Module\Vspheredb\Util;
  */
 class SyncPerfCounters
 {
-    /** @var Api */
-    protected $api;
-
-    /** @var Db */
-    protected $db;
+    /** @var VCenter */
+    protected $vCenter;
 
     /** @var \Zend_Db_Adapter_Abstract */
     protected $dba;
 
     protected $table = 'counter_300x5';
 
-    public function __construct(Api $api, Db $db)
+    public function __construct(VCenter $vCenter)
     {
-        $this->api = $api;
-        $this->db = $db;
-        $this->dba = $db->getDbAdapter();
-    }
-
-    protected function getUuid()
-    {
-        $about = $this->api->getAbout();
-        return Util::uuidToBin($about->instanceUuid);
+        $this->vCenter = $vCenter;
+        $this->dba = $vCenter->getDb();
     }
 
     protected function listVirtualMachines()
@@ -59,14 +47,16 @@ class SyncPerfCounters
     {
         $type = 'VirtualMachine';
 
-        $uuid = $this->api->getBinaryUuid();
+        $vCenter = $this->vCenter;
+        $api = $vCenter->getApi();
+        $uuid = $vCenter->get('uuid');
         $vms = $this->listVirtualMachines();
         $db = $this->dba;
         $chunkSize = 100;
 
         foreach (array_chunk($vms, $chunkSize) as $objects) {
             $currentTs = floor(time() / 300) * 300 * 1000;
-            $perf = $this->api->perfManager()->queryPerf($objects, $type, 300, 1);
+            $perf = $api->perfManager()->queryPerf($objects, $type, 300, 1);
             $db->beginTransaction();
             $count = 0;
             // $keys = ['value_minus4', 'value_minus3', 'value_minus2', 'value_minus1', 'value_last'];
@@ -77,12 +67,12 @@ class SyncPerfCounters
                     $count++;
                     $values = array_combine($keys, preg_split('/,/', $val->value));
                     $db->insert($this->table, $values + [
-                            'vcenter_uuid'      => $uuid,
-                            'counter_key'       =>  $val->id->counterId,
-                            'instance'          => $val->id->instance,
-                            'object_textual_id' => $entity,
-                            'ts_last'           => $currentTs,
-                        ]);
+                        'vcenter_uuid' => $uuid,
+                        'counter_key'  => $val->id->counterId,
+                        'instance'     => $val->id->instance,
+                        'object_uuid'  => $vCenter->makeBinaryGlobalUuid($entity),
+                        'ts_last'      => $currentTs,
+                    ]);
                 }
             }
             $db->commit();
