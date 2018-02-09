@@ -20,7 +20,7 @@ class VmsInFolderTable extends VmsTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/vm',
-            ['id' => $row->id]
+            ['uuid' => bin2hex($row->uuid)]
         );
 
         $tr = $this::row([$caption, $row->hardware_numcpu, $row->hardware_memorymb]);
