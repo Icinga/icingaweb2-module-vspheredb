@@ -58,7 +58,7 @@ class VmsTable extends ObjectsTable
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             [
-                'id'                  => 'o.id',
+                'uuid'                => 'o.uuid',
                 'moref'               => 'o.moref',
                 'object_name'         => 'o.object_name',
                 'overall_status'      => 'o.overall_status',
@@ -69,12 +69,12 @@ class VmsTable extends ObjectsTable
             ]
         )->join(
             ['vc' => 'virtual_machine'],
-            'o.id = vc.id',
+            'o.uuid = vc.uuid',
             []
         )->order('object_name ASC')->limit(14);
 
-        if ($this->parentIds) {
-            $query->where('o.parent_id IN (?)', $this->parentIds);
+        if ($this->parentUuids) {
+            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
         }
 
         return $query;
@@ -82,17 +82,16 @@ class VmsTable extends ObjectsTable
 
     public function renderRow($row)
     {
-        $moid = $row->moref;
-        $this->requireVm($moid);
+        $this->requireVm($row->uuid);
         $caption = Link::create(
             $row->object_name,
             'vspheredb/vm',
-            ['id' => $row->id]
+            ['uuid' => bin2hex($row->uuid)]
         );
 
         $tr = $this::row(array_merge(
             [$caption],
-            $this->createPerfColumns($moid),
+            $this->createPerfColumns($row->uuid),
             [
                 $row->hardware_numcpu,
                 $row->hardware_memorymb
@@ -111,12 +110,12 @@ class VmsTable extends ObjectsTable
         ];
     }
 
-    protected function createPerfInOut($moid, $instance, $c1, $c2)
+    protected function createPerfInOut($uuid, $instance, $c1, $c2)
     {
-        return DeferredText::create(function () use ($moid, $instance, $c1, $c2) {
+        return DeferredText::create(function () use ($uuid, $instance, $c1, $c2) {
             return new CompactInOutSparkline(
-                $this->getVmValues($moid, $instance, $c1),
-                $this->getVmValues($moid, $instance, $c2)
+                $this->getVmValues($uuid, $instance, $c1),
+                $this->getVmValues($uuid, $instance, $c2)
             );
         })->setEscaped();
     }
@@ -150,11 +149,11 @@ class VmsTable extends ObjectsTable
         ]);
 
         $query = $db->select()->from('counter_300x5', [
-            'name' => 'object_textual_id',
+            'name' => 'object_uuid',
             'instance',
             'counter_key',
             'value' => $values,
-        ])->where('object_textual_id IN (?)', $this->requiredVms)
+        ])->where('vm_uuid IN (?)', $this->requiredVms)
             ->where('instance IN (?)', ['', 'scsi0:0'])
             ->where('counter_key IN (?)', array_keys($this->counters));
 
