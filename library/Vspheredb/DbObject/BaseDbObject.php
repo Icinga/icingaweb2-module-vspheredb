@@ -9,10 +9,12 @@ use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
-use Icinga\Module\Vspheredb\Util;
 
 abstract class BaseDbObject extends DirectorDbObject
 {
+    /** @var Db $connection Exists in parent, but IDEs need a berrer hint */
+    protected $connection;
+
     protected $keyName = 'id';
 
     /** @var ManagedObject */
@@ -50,7 +52,7 @@ abstract class BaseDbObject extends DirectorDbObject
         }
     }
 
-    public function setMapped($properties)
+    public function setMapped($properties, VCenter $vCenter)
     {
         foreach ($this->propertyMap as $key => $property) {
             if (property_exists($properties, $key)) {
@@ -58,8 +60,10 @@ abstract class BaseDbObject extends DirectorDbObject
                 if ($this->isObjectReference($property)) {
                     if (empty($value)) {
                         $value = null;
+                    } elseif (is_object($value)) {
+                        $value = $vCenter->makeBinaryGlobalUuid($value->_);
                     } else {
-                        $value = Util::extractNumericId($value);
+                        $value = $vCenter->makeBinaryGlobalUuid($value);
                     }
                 } elseif ($this->isBooleanProperty($property)) {
                     $value = $this->makeBooleanValue($value);
@@ -75,7 +79,7 @@ abstract class BaseDbObject extends DirectorDbObject
     public function object()
     {
         if ($this->object === null) {
-            $this->object = ManagedObject::load($this->get('id'), $this->connection);
+            $this->object = ManagedObject::load($this->get('uuid'), $this->connection);
         }
 
         return $this->object;
@@ -119,29 +123,31 @@ abstract class BaseDbObject extends DirectorDbObject
     }
 
     /**
-     * @param Db $db
+     * @param VCenter $vCenter
      * @param BaseDbObject[] $dbObjects
      * @param BaseDbObject[] $newObjects
      */
-    protected static function storeSync(Db $db, & $dbObjects, & $newObjects)
+    protected static function storeSync(VCenter $vCenter, & $dbObjects, & $newObjects)
     {
         $type = static::getType();
-        $dba = $db->getDbAdapter();
+        $db = $vCenter->getConnection();
+        $dba = $vCenter->getDb();
         Benchmark::measure("Ready to store $type");
         $dba->beginTransaction();
         $modified = 0;
         $dummy = static::dummyObject();
-        $newIds = [];
+        $newUuids = [];
         foreach ($newObjects as $object) {
-            $id = Util::extractNumericId($object->id);
+            $uuid = $vCenter->makeBinaryGlobalUuid($object->id);
 
-            $newIds[$id] = $id;
-            if (array_key_exists($id, $dbObjects)) {
-                $dbObject = $dbObjects[$id];
+            $newUuids[$uuid] = $uuid;
+            if (array_key_exists($uuid, $dbObjects)) {
+                $dbObject = $dbObjects[$uuid];
             } else {
-                $dbObjects[$id] = $dbObject = static::create(['id' => $id], $db);
+                $dbObjects[$uuid] = $dbObject = static::create(['uuid' => $uuid], $db);
+                $dbObject->set('vcenter_uuid', $vCenter->get('uuid'));
             }
-            $dbObject->setMapped($object);
+            $dbObject->setMapped($object, $vCenter);
             if ($dbObject->hasBeenModified()) {
                 $dbObject->store();
                 $modified++;
@@ -150,15 +156,15 @@ abstract class BaseDbObject extends DirectorDbObject
 
         $del = [];
         foreach ($dbObjects as $existing) {
-            $id = $existing->get('id');
-            if (! array_key_exists($id, $newIds)) {
-                $del[] = $id;
+            $uuid = $existing->get('uuid');
+            if (! array_key_exists($uuid, $newUuids)) {
+                $del[] = $uuid;
             }
         }
         if (! empty($del)) {
             $dba->delete(
                 $dummy->getTableName(),
-                $dba->quoteInto('id IN (?)', $del)
+                $dba->quoteInto('uuid IN (?)', $del)
             );
         }
         $dba->commit();
@@ -169,14 +175,20 @@ abstract class BaseDbObject extends DirectorDbObject
         ));
     }
 
-    public static function syncFromApi(Api $api, Db $db)
+    public static function onStoreSync(Db $db)
+    {
+    }
+
+    public static function syncFromApi(VCenter $vCenter)
     {
         $type = static::getType();
+        $db = $vCenter->getConnection();
         Benchmark::measure("Loading existing $type from DB");
-        $existing = static::loadAll($db, null, 'id');
+        $existing = static::loadAll($db, null, 'uuid');
         Benchmark::measure(sprintf("Got %d existing $type", count($existing)));
-        $objects = static::fetchAllFromApi($api);
+        $objects = static::fetchAllFromApi($vCenter->getApi());
         Benchmark::measure(sprintf("Got %d $type", count($objects)));
-        static::storeSync($db, $existing, $objects);
+        static::storeSync($vCenter, $existing, $objects);
+        static::onStoreSync($db);
     }
 }
