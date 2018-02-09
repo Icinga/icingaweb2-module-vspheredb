@@ -17,8 +17,8 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
     /** @var Datastore */
     protected $datastore;
 
-    /** @var int */
-    protected $id;
+    /** @var string */
+    protected $uuid;
 
     /** @var int */
     protected $capacity;
@@ -35,7 +35,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
     protected function setDatastore(Datastore $datastore)
     {
         $this->datastore   = $datastore;
-        $this->id          = $datastore->get('id');
+        $this->uuid        = $datastore->get('uuid');
         $this->capacity    = $datastore->get('capacity');
         $this->uncommitted = $datastore->get('uncommitted');
 
@@ -58,7 +58,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/vm',
-            ['id' => $row->id],
+            ['uuid' => bin2hex($row->uuid)],
             ['title' => sprintf(
                 $this->translate('Virtual Machine: %s'),
                 $row->object_name
@@ -89,16 +89,16 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             [
-                'id'          => 'o.id',
+                'uuid'        => 'o.uuid',
                 'object_name' => 'o.object_name',
                 'committed'   => 'vdu.committed',
                 'uncommitted' => 'vdu.uncommitted',
             ]
         )->join(
             ['vdu' => 'vm_datastore_usage'],
-            'vdu.vm_id = o.id',
+            'vdu.vm_uuid = o.uuid',
             []
-        )->where('vdu.datastore_id = ?', $this->id)->order('object_name ASC');
+        )->where('vdu.datastore_uuid = ?', $this->uuid)->order('object_name ASC');
 
         return $query;
     }
