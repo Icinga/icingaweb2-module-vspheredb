@@ -65,11 +65,4 @@ class VirtualMachine extends BaseDbObject
         // 'runtime_last_boot_time'    => $runtime->bootTime,
         // 'runtime_last_suspend_time' => $runtime->suspendTime,
     ];
-
-    public function setHardware($value)
-    {
-        $this->set('hardware_memorymb', $value->memoryMB);
-        $this->set('hardware_numcpu', $value->numCPU);
-        // $this->notifyHardware($value);
-    }
 }
