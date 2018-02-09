@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb;
 
 use DateTime;
+use Exception;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
@@ -356,7 +357,11 @@ class Api
         $request = array(
             '_this' => $this->getServiceInstance()->sessionManager
         );
-        $this->soapCall('Logout', $request);
+        try {
+            $this->soapCall('Logout', $request);
+        } catch (Exception $e) {
+            // Do nothing
+        }
         $this->curl()->forgetCookie();
     }
 
