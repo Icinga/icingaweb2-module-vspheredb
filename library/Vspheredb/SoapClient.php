@@ -19,6 +19,8 @@ class SoapClient extends PhpSoapClient
     /** @var CurlLoader */
     protected $curl;
 
+    protected $dumpRawData = false;
+
     /**
      * @param CurlLoader $curl
      * @return $this
@@ -52,8 +54,12 @@ class SoapClient extends PhpSoapClient
             'Keep-Alive'   => '300',
             'SOAPAction'   => $action,
         );
-
         $result = $this->curl->post($location, $request, $headers);
+
+        if ($this->dumpRawData) {
+            echo "$request\n====\n$result\n";
+        }
+
         return $result;
     }
 }
