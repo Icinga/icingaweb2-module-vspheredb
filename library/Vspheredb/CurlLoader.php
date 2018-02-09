@@ -158,7 +158,7 @@ class CurlLoader
     public function forgetCookie()
     {
         $this->cookies = array();
-        if ($this->persistCookies) {
+        if ($this->persistCookies && file_exists($this->cookieFile)) {
             unlink($this->cookieFile);
         }
     }
