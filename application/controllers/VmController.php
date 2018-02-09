@@ -6,6 +6,7 @@ use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\Object\VmHardwareTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
@@ -21,6 +22,14 @@ class VmController extends Controller
         ]);
     }
 
+    public function hardwareAction()
+    {
+        $vm = $this->addVm();
+        $this->content()->add([
+            new VmHardwareTable($vm),
+        ]);
+    }
+
     public function countersAction()
     {
         $vm = $this->addVm();
@@ -28,12 +37,13 @@ class VmController extends Controller
             VCenterServer::loadWithAutoIncId(1, $this->db())
         )->login();
 
+        $this->setAutorefreshInterval(10);
         $this->content()->add(new VmLiveCountersTable($vm, $api));
     }
 
     protected function addVm()
     {
-        $vm = VirtualMachine::load($this->params->getRequired('id'), $this->db());
+        $vm = VirtualMachine::load(hex2bin($this->params->getRequired('uuid')), $this->db());
         $this->addTitle($vm->object()->get('object_name'));
         $this->handleTabs();
 
@@ -42,10 +52,14 @@ class VmController extends Controller
 
     protected function handleTabs()
     {
-        $params = ['id' => $this->params->get('id')];
+        $params = ['uuid' => $this->params->get('uuid')];
         $this->tabs()->add('index', [
             'label'     => $this->translate('Virtual Machine'),
             'url'       => 'vspheredb/vm',
+            'urlParams' => $params
+        ])->add('hardware', [
+            'label'     => $this->translate('Hardware'),
+            'url'       => 'vspheredb/vm/hardware',
             'urlParams' => $params
         ])->add('counters', [
             'label'     => $this->translate('Live Counters'),
