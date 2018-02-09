@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb;
 
+use Icinga\Exception\AuthenticationException;
+use Icinga\Exception\IcingaException;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 
@@ -25,9 +27,17 @@ class PropertyCollector
             'specSet' => $specSet
         );
 
-        return $this->makeNiceResult(
-            $this->api->soapCall('RetrieveProperties', $specSet)
-        );
+        try {
+            return $this->makeNiceResult(
+                $this->api->soapCall('RetrieveProperties', $specSet)
+            );
+        } catch (AuthenticationException $e) {
+            $this->api->logout();
+            $this->api->login();
+            return $this->makeNiceResult(
+                $this->api->soapCall('RetrieveProperties', $specSet)
+            );
+        }
     }
 
     public function collectPropertiesEx($specSet, $options = null)
@@ -74,11 +84,20 @@ class PropertyCollector
         ];
 
         $nice = [];
+
         foreach ($result->returnval as $row) {
             $data = [
                 'id'   => $row->obj->_,
                 'type' => $row->obj->type
             ];
+
+            if (! property_exists($row, 'propSet') && property_exists($row, 'missingSet')) {
+                if ($row->missingSet[0]->fault->fault->privilegeId === 'System.View') {
+                    throw new AuthenticationException('System.View is required');
+                } else {
+                    throw new IcingaException('There is no propSet in the result');
+                }
+            }
             foreach ($row->propSet as $prop) {
                 $val = $prop->val;
                 if (in_array($prop->name, $knownRefs)) {
