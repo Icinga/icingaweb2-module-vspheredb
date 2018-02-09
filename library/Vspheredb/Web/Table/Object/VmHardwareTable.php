@@ -107,6 +107,8 @@ class VmHardwareTable extends NameValueTable
             }
         }
 
+        // TODO: show booleans split, write_through and thin_provisioned
+        //       Also show disk_mode. What about disk_uuid?
         if ($disk->capacity !== null) {
             $result[] = Format::bytes($disk->capacity);
         }
