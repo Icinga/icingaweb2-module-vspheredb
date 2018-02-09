@@ -335,19 +335,9 @@ CREATE TABLE counter_300x5 (
   value_minus3 BIGINT DEFAULT NULL,
   value_minus4 BIGINT DEFAULT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
-  counter_key INT UNSIGNED NOT NULL,
-  object_textual_id VARCHAR(32) NOT NULL,
-  instance VARCHAR(64) NOT NULL,
-  -- TODO: object_uuid
-  ts_last BIGINT NOT NULL,
-  value_last BIGINT NOT NULL,
-  value_minus1 BIGINT DEFAULT NULL,
-  value_minus2 BIGINT DEFAULT NULL,
-  value_minus3 BIGINT DEFAULT NULL,
-  value_minus4 BIGINT DEFAULT NULL,
-  PRIMARY KEY (vcenter_uuid, counter_key, object_textual_id, instance)
+  PRIMARY KEY (object_uuid, counter_key, instance),
+  INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 -- Not yet:
 -- CREATE TABLE vm_triggered_alarm (
