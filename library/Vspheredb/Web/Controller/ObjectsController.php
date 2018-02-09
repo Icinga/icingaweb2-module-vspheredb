@@ -28,17 +28,17 @@ class ObjectsController extends Controller
 
     protected function showTable(ObjectsTable $table, $url, $defaultTitle)
     {
-        $parent = $this->params->get('id');
+        $parent = hex2bin($this->params->get('uuid'));
 
         if ($parent) {
             $lookup = $this->pathLookup();
             $name = $lookup->getObjectName($parent);
-            $ids = $lookup->listFoldersBelongingTo($parent);
+            $uuids = $lookup->listFoldersBelongingTo($parent);
             $this->addTitle($name);
             if ($this->params->get('showDescendants')) {
-                $table->filterParentIds($ids);
+                $table->filterParentUuids($uuids);
             } else {
-                $table->filterParentIds([$parent]);
+                $table->filterParentUuids([$parent]);
             }
             $this->addPathTo($parent, $url);
         } else {
@@ -66,12 +66,12 @@ class ObjectsController extends Controller
     {
         $lookup = $this->pathLookup();
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
-        foreach ($lookup->getObjectNames($lookup->listPathTo($parent)) as $id => $name) {
+        foreach ($lookup->getObjectNames($lookup->listPathTo($parent)) as $uuid => $name) {
             $path->add(Link::create(
                 $name,
                 $url,
                 [
-                    'id'              => $id,
+                    'uuid'            => bin2hex($uuid),
                     'showDescendants' => true,
                 ]
             ));

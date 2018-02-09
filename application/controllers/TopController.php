@@ -9,7 +9,8 @@ class TopController extends Controller
 {
     public function vmsAction()
     {
-        $parentId = $this->params->get('parent_id');
+        $this->setAutorefreshInterval(10);
+        $parentId = $this->params->get('parent_uuid');
         if ($parentId === null) {
             $this->makeTabs();
         } else {
@@ -87,16 +88,16 @@ class TopController extends Controller
         ]);
     }
 
-    protected function fetchTop($counterId, $parentId = null)
+    protected function fetchTop($counterUuid, $parentUuid = null)
     {
-        $query = $this->fetchTopQuery($counterId);
-        if ($parentId !== null) {
-            $query->where('o.parent_id = ?', (int) $parentId);
+        $query = $this->fetchTopQuery($counterUuid);
+        if ($parentUuid !== null) {
+            $query->where('o.parent_uuid = ?', (int) $parentUuid);
         }
         return $this->db()->getDbAdapter()->fetchAll($query);
     }
 
-    protected function fetchTopPerParent($counterId, $agg)
+    protected function fetchTopPerParent($counterUuid, $agg)
     {
         $db = $this->db()->getDbAdapter();
         $query = $db->select()->from(
@@ -110,20 +111,20 @@ class TopController extends Controller
             ]
         )->join(
             ['o' => 'object'],
-            'o.id = c.object_id',
+            'o.uuid = c.object_uuid',
             [
-                'o.id',
+                'o.uuid',
                 'o.overall_status',
             ]
         )->join(
             ['p' => 'object'],
-            'o.parent_id = p.id',
+            'o.parent_uuid = p.uuid',
             [
-                'object_id' => 'p.id',
+                'object_uuid' => 'p.uuid',
                 'object_name' => 'p.object_name',
             ]
-        )->where('counter_key = ?', (int) $counterId)
-            ->group('p.id')
+        )->where('counter_key = ?', (int) $counterUuid)
+            ->group('p.uuid')
             ->order('value_last DESC')
             ->limit($this->params->get('limit', 10));
 
@@ -135,7 +136,7 @@ class TopController extends Controller
         return $this->db()->getDbAdapter()->select()->from(
             ['c' => 'counter_300x5'],
             [
-                'c.object_id',
+                'c.object_uuid',
                 'c.instance',
                 'c.ts_last',
                 'c.value_last',
@@ -146,9 +147,9 @@ class TopController extends Controller
             ]
         )->join(
             ['o' => 'object'],
-            'o.id = c.object_id',
+            'o.uuid = c.object_uuid',
             [
-                'o.id',
+                'o.uuid',
                 'object_name' => 'o.object_name',
                 'o.overall_status',
             ]

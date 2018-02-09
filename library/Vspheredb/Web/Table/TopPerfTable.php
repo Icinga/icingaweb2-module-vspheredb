@@ -39,7 +39,7 @@ class TopPerfTable extends Table
         return Link::create(
             $name,
             'vspheredb/vm',
-            ['id' => $row->object_id]
+            ['uuid' => bin2hex($row->object_uuid)]
         );
     }
 
@@ -48,7 +48,7 @@ class TopPerfTable extends Table
         return Link::create(
             $row->object_name,
             'vspheredb/top/vms',
-            ['parent_id' => $row->object_id]
+            ['parent_uuid' => bin2hex($row->object_uuid)]
         );
     }
 

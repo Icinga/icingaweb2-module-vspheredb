@@ -16,8 +16,8 @@ class DatastoreController extends Controller
 {
     public function indexAction()
     {
-        $id = $this->params->getRequired('id');
-        $ds = Datastore::load($id, $this->db());
+        $uuid = hex2bin($this->params->getRequired('uuid'));
+        $ds = Datastore::load($uuid, $this->db());
         $object = $ds->object();
 
         $this
@@ -26,11 +26,11 @@ class DatastoreController extends Controller
 
         $lookup = new PathLookup($this->db());
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
-        foreach ($lookup->getObjectNames($lookup->listPathTo($id, false)) as $parentId => $name) {
+        foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
             $path->add(Link::create(
                 $name,
                 'vspheredb/datastores',
-                ['id' => $parentId],
+                ['uuid' => bin2hex($parentUuid)],
                 ['data-base-target' => '_main']
             ));
         }

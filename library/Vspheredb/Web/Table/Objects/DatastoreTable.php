@@ -34,13 +34,13 @@ class DatastoreTable extends ObjectsTable
                 Format::bytes($row->capacity, Format::STANDARD_IEC)
             )),
             'vspheredb/datastore',
-            ['id' => $row->id],
+            ['uuid' => bin2hex($row->uuid)],
             ['title' => $title]
         );
 
         /** @var Db $connection */
         $connection = $this->connection();
-        $usage = new DatastoreUsage(Datastore::load($row->id, $connection));
+        $usage = new DatastoreUsage(Datastore::load($row->uuid, $connection));
         $usage->attributes()->add('class', 'compact');
         $usage->loadAllVmDisks()->addFreeDatastoreSpace();
         $tr = $this::tr([
@@ -73,28 +73,28 @@ class DatastoreTable extends ObjectsTable
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             [
-                'id'                   => 'o.id',
+                'uuid'                 => 'o.uuid',
                 'object_name'          => 'o.object_name',
                 'overall_status'       => 'o.overall_status',
                 'cnt_vm'               => 'COUNT(*)',
                 'capacity'             => 'ds.capacity',
                 'free_space'           => 'ds.free_space',
                 'uncommitted'          => 'ds.uncommitted',
-                'free_space_percent' => '(ds.free_space / ds.capacity) * 100',
+                'free_space_percent'   => '(ds.free_space / ds.capacity) * 100',
                 'uncommitted_percent'  => '(ds.uncommitted / ds.capacity) * 100',
             ]
         )->join(
             ['ds' => 'datastore'],
-            'o.id = ds.id',
+            'o.uuid = ds.uuid',
             []
         )->joinLeft(
             ['vdu' => 'vm_datastore_usage'],
-            'vdu.datastore_id = ds.id',
+            'vdu.datastore_uuid = ds.uuid',
             []
-        )->group('ds.id')->group('o.id')->order('object_name ASC');
+        )->group('ds.uuid')->group('o.uuid')->order('object_name ASC');
 
-        if ($this->parentIds) {
-            $query->where('o.parent_id IN (?)', $this->parentIds);
+        if ($this->parentUuids) {
+            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
         }
 
         return $query;

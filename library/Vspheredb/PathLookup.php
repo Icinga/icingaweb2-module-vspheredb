@@ -14,22 +14,26 @@ class PathLookup
         $this->db = $db->getDbAdapter();
     }
 
-    public function linkToObject($id)
+    /**
+     * @param $uuid
+     * @return string|Link
+     */
+    public function linkToObject($uuid)
     {
-        if (empty($id)) {
+        if (empty($uuid)) {
             return '-';
         }
 
         $query = $this->db->select()
             ->from(['o' => 'object'], ['object_name', 'object_type'])
-            ->where('id = ?', (int) $id);
+            ->where('uuid = ?', $uuid);
 
         $row = $this->db->fetchRow($query);
         if ($row) {
             return Link::create(
                 $row->object_name,
                 $this->getBaseUrlByType($row->object_type),
-                ['id' => $id],
+                ['uuid' => bin2hex($uuid)],
                 ['data-base-target' => '_next']
             );
         } else {
@@ -40,6 +44,8 @@ class PathLookup
     protected function getBaseUrlByType($type)
     {
         switch ($type) {
+            case 'Datastore':
+                return 'vspheredb/datastore';
             case 'HostSystem':
                 return 'vspheredb/host';
             case 'VirtualMachine':
@@ -54,37 +60,37 @@ class PathLookup
         }
     }
 
-    public function getObjectName($id)
+    public function getObjectName($uuid)
     {
         $query = $this->db->select()
             ->from(['o' => 'object'], 'object_name')
-            ->where('id = ?', (int) $id);
+            ->where('uuid = ?', $uuid);
 
         return $this->db->fetchOne($query);
     }
 
-    public function getObjectNames($ids)
+    public function getObjectNames($uuids)
     {
         $query = $this->db->select()
-            ->from(['o' => 'object'], ['id', 'object_name'])
-            ->where('id IN (?)', $ids)
+            ->from(['o' => 'object'], ['uuid', 'object_name'])
+            ->where('uuid IN (?)', $uuids)
             ->order('level');
 
         return $this->db->fetchPairs($query);
     }
 
-    public function listFoldersBelongingTo($id)
+    public function listFoldersBelongingTo($uuid)
     {
-        return array_merge($this->listChildFoldersFor($id), [$id]);
+        return array_merge($this->listChildFoldersFor($uuid), [$uuid]);
     }
 
-    public function listChildFoldersFor($id)
+    public function listChildFoldersFor($uuid)
     {
         $folders = [];
-        $pid = $id;
-        foreach ($this->fetchChildFolderListFor($pid) as $pid) {
-            $folders[] = $pid;
-            foreach ($this->listChildFoldersFor($pid) as $child) {
+        $puuid = $uuid;
+        foreach ($this->fetchChildFolderListFor($puuid) as $puuid) {
+            $folders[] = $puuid;
+            foreach ($this->listChildFoldersFor($puuid) as $child) {
                 $folders[] = $child;
             }
         }
@@ -92,40 +98,40 @@ class PathLookup
         return $folders;
     }
 
-    protected function fetchChildFolderListFor($id)
+    protected function fetchChildFolderListFor($uuid)
     {
-        $query = $this->db->select()->from('object', 'id')
-            ->where('parent_id = ?', $id)
+        $query = $this->db->select()->from('object', 'uuid')
+            ->where('parent_uuid = ?', $uuid)
             ->where('object_type NOT IN (?)', ['HostSystem', 'VirtualMachine']);
 
         return $this->db->fetchCol($query);
     }
 
-    public function listPathTo($id, $includeSelf = true)
+    public function listPathTo($uuid, $includeSelf = true)
     {
         if ($includeSelf) {
-            $parents = [$id];
+            $parents = [$uuid];
         } else {
             $parents = [];
         }
 
-        $pid = $id;
-        while ($pid = $this->fetchParentForId($pid)) {
-            $parents[] = $pid;
+        $puuid = $uuid;
+        while ($puuid = $this->fetchParentForId($puuid)) {
+            $parents[] = $puuid;
         }
 
         return $parents;
     }
 
-    public function fetchParentForId($id)
+    public function fetchParentForId($uuid)
     {
         $query = $this->db->select()
-            ->from('object', 'parent_id')
-            ->where('id = ?', $id);
+            ->from('object', 'parent_uuid')
+            ->where('uuid = ?', $uuid);
 
         $parent = $this->db->fetchOne($query);
         if ($parent) {
-            return (int) $parent;
+            return $parent;
         } else {
             return null;
         }
