@@ -23,8 +23,8 @@ class DatastoreUsage extends BaseElement
     /** @var \Zend_Db_Adapter_Abstract */
     protected $db;
 
-    /** @var int */
-    protected $id;
+    /** @var string */
+    protected $uuid;
 
     /** @var int */
     protected $capacity;
@@ -40,7 +40,7 @@ class DatastoreUsage extends BaseElement
     public function __construct(Datastore $datastore)
     {
         $this->datastore   = $datastore;
-        $this->id          = $datastore->get('id');
+        $this->uuid        = $datastore->get('uuid');
         $this->capacity    = $datastore->get('capacity');
         $this->uncommitted = $datastore->get('uncommitted');
         $this->db = $datastore->getDb();
@@ -57,12 +57,12 @@ class DatastoreUsage extends BaseElement
         $query = $this->db->select()
             ->from(
                 ['vdu' => 'vm_datastore_usage'],
-                ['o.id', 'o.object_name', 'vdu.committed', 'vdu.uncommitted']
+                ['o.uuid', 'o.object_name', 'vdu.committed', 'vdu.uncommitted']
             )->join(
                 ['o' => 'object'],
-                'o.id = vdu.vm_id',
+                'o.uuid = vdu.vm_uuid',
                 []
-            )->where('vdu.datastore_id = ?', $this->datastore->get('id'))
+            )->where('vdu.datastore_uuid = ?', $this->datastore->get('uuid'))
             ->order('o.object_name');
 
         foreach ($this->db->fetchAll($query) as $row) {
@@ -75,7 +75,7 @@ class DatastoreUsage extends BaseElement
     public function addDiskFromDbRow($row)
     {
         $info = $this->makeDisk($row);
-        $this->addVmDisk($info->title, $info->datastore_percent, $info->vm_id);
+        $this->addVmDisk($info->title, $info->datastore_percent, $info->vm_uuid);
         return $this;
     }
 
@@ -102,11 +102,11 @@ class DatastoreUsage extends BaseElement
         return $this;
     }
 
-    public function addVmDisk($title, $percent, $vm_id = null, $attributes = [])
+    public function addVmDisk($title, $percent, $vmUuid = null, $attributes = [])
     {
-        if ($vm_id) {
+        if ($vmUuid) {
             $url = 'vspheredb/vm';
-            $urlParams = ['id' => $vm_id];
+            $urlParams = ['uuid' => bin2hex($vmUuid)];
         } else {
             $url = '#';
             $urlParams = null;
@@ -127,11 +127,11 @@ class DatastoreUsage extends BaseElement
 
         $link->addAttributes($attributes);
 
-        if ($vm_id) {
-            $alpha = (20 + (crc32(sha1((string) $vm_id . $this->id)) % 60)) / 100;
+        if ($vmUuid) {
+            $alpha = (20 + (crc32(sha1((string) $vmUuid . $this->uuid)) % 60)) / 100;
             $color = sprintf('rgba(70, 128, 255, %.2F);', $alpha);
             $link->attributes()->add('style', "background-color: $color");
-            $this->diskLinks[$vm_id] = $link;
+            $this->diskLinks[$vmUuid] = $link;
         }
         $this->add($link);
 
@@ -141,7 +141,7 @@ class DatastoreUsage extends BaseElement
     protected function makeDisk($dbRow)
     {
         $share = (object) [
-            'vm_id' => $dbRow->id,
+            'vm_uuid' => $dbRow->uuid,
             'name'  => $dbRow->object_name,
             'size'  => $dbRow->committed + $dbRow->uncommitted,
             'used'  => $dbRow->committed,
