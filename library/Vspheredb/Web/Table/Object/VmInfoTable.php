@@ -33,18 +33,18 @@ class VmInfoTable extends NameValueTable
     protected function assemble()
     {
         $vm = $this->vm;
-        $id = $vm->get('id');
+        $uuid = $vm->get('uuid');
         if ($vm->get('annotation')) {
             $this->addNameValueRow($this->translate('Annotation'), $vm->get('annotation'));
         }
 
         $lookup = $this->pathLookup;
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
-        foreach ($lookup->getObjectNames($lookup->listPathTo($id, false)) as $parentId => $name) {
+        foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
             $path->add(Link::create(
                 $name,
                 'vspheredb/vms',
-                ['id' => $parentId],
+                ['uuid' => bin2hex($parentUuid)],
                 ['data-base-target' => '_main']
             ));
         }
@@ -69,8 +69,8 @@ class VmInfoTable extends NameValueTable
                 : $this->translate('false'),
             $this->translate('Path') => $path,
             $this->translate('Power') => $vm->get('runtime_power_state'),
-            $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_id')),
-            $this->translate('Host') => $lookup->linkToObject($vm->get('runtime_host_id')),
+            $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
+            $this->translate('Host') => $lookup->linkToObject($vm->get('runtime_host_uuid')),
             $this->translate('Guest State') => $vm->get('guest_state'),
             $this->translate('Guest Tools') => $vm->get('guest_tools_running_status'),
             $this->translate('Guest OS') => $guest,

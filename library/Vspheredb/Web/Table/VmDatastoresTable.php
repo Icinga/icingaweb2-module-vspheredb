@@ -21,8 +21,8 @@ class VmDatastoresTable extends ZfQueryBasedTable
     /** @var VirtualMachine */
     protected $vm;
 
-    /** @var int */
-    protected $id;
+    /** @var string */
+    protected $uuid;
 
     public static function create(VirtualMachine $vm)
     {
@@ -33,7 +33,8 @@ class VmDatastoresTable extends ZfQueryBasedTable
     protected function setVm(VirtualMachine $vm)
     {
         $this->vm = $vm;
-        $this->id = $vm->get('id');
+        $this->uuid = $vm->get('uuid');
+
         return $this;
     }
 
@@ -53,7 +54,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/datastore',
-            ['id' => $row->id],
+            ['uuid' => bin2hex($row->uuid)],
             ['title' => sprintf(
                 $this->translate('Datastore: %s'),
                 $row->object_name
@@ -62,7 +63,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
 
         /** @var Db $connection */
         $connection = $this->connection();
-        $datastore = Datastore::load($row->id, $connection);
+        $datastore = Datastore::load($row->uuid, $connection);
         $usage = new DatastoreUsage($datastore);
         $usage->setCapacity($size);
         $usage->attributes()->add('class', 'compact');
@@ -87,16 +88,16 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             [
-                'id'          => 'o.id',
+                'uuid'        => 'o.uuid',
                 'object_name' => 'o.object_name',
                 'committed'   => 'vdu.committed',
                 'uncommitted' => 'vdu.uncommitted',
             ]
         )->join(
             ['vdu' => 'vm_datastore_usage'],
-            'vdu.datastore_id = o.id',
+            'vdu.datastore_uuid = o.uuid',
             []
-        )->where('vdu.vm_id = ?', $this->id)->order('object_name ASC');
+        )->where('vdu.vm_uuid = ?', $this->uuid)->order('object_name ASC');
 
         return $query;
     }
