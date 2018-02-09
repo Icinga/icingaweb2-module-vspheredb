@@ -41,7 +41,7 @@ class VmLiveCountersTable extends NameValueTable
     protected function addLiveCounters()
     {
         $vm = $this->vm;
-        $id = $vm->get('id');
+        $uuid = $vm->get('uuid');
 
         $info = [
             526 => 'Data receive rate',
@@ -105,12 +105,12 @@ class VmLiveCountersTable extends NameValueTable
         } catch (Exception $e) {
             $this->addNameValueRow('ERROR', $e->getMessage());
         }
-        foreach ($this->fetchPerf($id) as $instance => $perf) {
+        foreach ($this->fetchPerf($uuid) as $instance => $perf) {
             $this->addNameValueRow($instance, $perf);
         }
     }
 
-    protected function fetchPerf($id)
+    protected function fetchPerf($uuid)
     {
         $db = $this->getDb()->getDbAdapter();
 
@@ -126,7 +126,7 @@ class VmLiveCountersTable extends NameValueTable
             'instance',
             'counter_key',
             'value' => $values,
-        ])->where('object_textual_id = ?', 'vm-' . $id)
+        ])->where('object_uuid = ?', $uuid)
             ->where('counter_key IN (?)', [171, 172, 526, 527])
             ->order('counter_key')->order('instance');
 

@@ -36,7 +36,7 @@ class VmsOnHostTable extends ZfQueryBasedTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/vm',
-            ['id' => $row->id]
+            ['uuid' => bin2hex($row->uuid)]
         );
 
         $tr = $this::row([$caption, $row->hardware_numcpu, $row->hardware_memorymb]);
@@ -50,7 +50,7 @@ class VmsOnHostTable extends ZfQueryBasedTable
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             [
-                'id'                => 'o.id',
+                'uuid'              => 'o.uuid',
                 'object_name'       => 'o.object_name',
                 'overall_status'    => 'o.overall_status',
                 'annotation'        => 'vc.annotation',
@@ -60,11 +60,11 @@ class VmsOnHostTable extends ZfQueryBasedTable
             ]
         )->join(
             ['vc' => 'virtual_machine'],
-            'o.id = vc.id',
+            'o.uuid = vc.uuid',
             []
         )->where(
-            'vc.runtime_host_id = ?',
-            $this->host->get('id')
+            'vc.runtime_host_uuid = ?',
+            $this->host->get('uuid')
         )->order('object_name ASC');
 
         return $query;
