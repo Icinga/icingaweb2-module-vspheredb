@@ -51,8 +51,9 @@ CREATE TABLE vcenter_server (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE object (
-  id INT(10) UNSIGNED NOT NULL,
-  textual_id VARCHAR(32) NOT NULL,
+  uuid VARBINARY(20) NOT NULL, -- sha1(vcenter_uuid + moref)
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  moref VARCHAR(32) NOT NULL, -- textual id
   object_name VARCHAR(255) NOT NULL,
   object_type ENUM(
     'ClusterComputeResource',
@@ -73,20 +74,27 @@ CREATE TABLE object (
      'red'
   ) NOT NULL,
   level TINYINT UNSIGNED NOT NULL,
-  parent_id INT(10) UNSIGNED DEFAULT NULL,
-  PRIMARY KEY(id),
-  UNIQUE KEY textual_id (textual_id),
+  parent_uuid VARBINARY(20) DEFAULT NULL,
+  PRIMARY KEY(uuid),
+  UNIQUE KEY vcenter_moref (vcenter_uuid, moref),
   INDEX object_type (object_type),
-  INDEX object_name (object_name),
+  INDEX object_name (object_name(64)),
   CONSTRAINT object_parent
-    FOREIGN KEY parent (parent_id)
-    REFERENCES object (id)
+    FOREIGN KEY parent (parent_uuid)
+    REFERENCES object (uuid)
       ON DELETE RESTRICT
-      ON UPDATE RESTRICT
+      ON UPDATE RESTRICT,
+  CONSTRAINT object_vcenter
+    FOREIGN KEY object_vcenter_uuid (vcenter_uuid)
+    REFERENCES vcenter (instance_uuid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE host_system (
-  id INT(10) UNSIGNED NOT NULL,
+  uuid VARBINARY(20) NOT NULL,
+  host_name VARCHAR(255) DEFAULT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
   product_api_version VARCHAR(32) NOT NULL, -- 6.0
   product_full_name VARCHAR(64) NOT NULL,   -- VMware ESXi 6.0.0 build-5572656
   bios_version VARCHAR(32) NOT NULL, -- P89
@@ -94,6 +102,7 @@ CREATE TABLE host_system (
   sysinfo_vendor VARCHAR(64) NOT NULL, -- HP
   sysinfo_model VARCHAR(64) NOT NULL,  -- ProLiant DL380 Gen9
   sysinfo_uuid VARCHAR(64) NOT NULL,   -- 30133937-3365-54a3-3544-30374a334d53
+  service_tag VARCHAR(32) NOT NULL, -- DQ6EXJ3
   hardware_cpu_model VARCHAR(64) NOT NULL, -- Intel(R) Xeon(R) CPU E5-2699A v4 @ 2.40GHz
   hardware_cpu_mhz INT UNSIGNED NOT NULL,
   hardware_cpu_packages SMALLINT UNSIGNED NOT NULL,
@@ -106,16 +115,16 @@ CREATE TABLE host_system (
     'poweredOff',
     'poweredOn'
   ) NOT NULL,
-  PRIMARY KEY(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY(uuid),
+  UNIQUE INDEX sysinfo_uuid (sysinfo_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE virtual_machine (
-  id INT(10) UNSIGNED NOT NULL,
-  annotation TEXT DEFAULT NULL,
+  uuid  VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
   hardware_memorymb INT UNSIGNED NOT NULL,
   hardware_numcpu TINYINT UNSIGNED NOT NULL,
-  template ENUM('y', 'n') NOT NULL,
+  template ENUM('y', 'n') NOT NULL, -- TODO: drop and skip templates? Or separate table?
   instance_uuid VARCHAR(64) NOT NULL,   -- 5004890e-8edd-fe5f-d116-d5704b2043e4
   bios_uuid VARCHAR(64) NOT NULL,       -- 42042ce7-1c4f-b339-2293-40357f1d6860
   version VARCHAR(32) NOT NULL,         -- vmx-11
@@ -127,29 +136,44 @@ CREATE TABLE virtual_machine (
     'standby',
     'unknown'
   ) NOT NULL,
+  guest_tools_status ENUM (
+    'toolsNotInstalled',
+    'toolsNotRunning',
+    'toolsOld',
+    'toolsOk'
+  ) NOT NULL,
   guest_tools_running_status ENUM (
     'guestToolsNotRunning',
     'guestToolsRunning',
     'guestToolsExecutingScripts' -- VMware Tools is starting.
   ) NOT NULL,
+  connection_state ENUM (
+    'connected',    -- server has access to the vm
+    'disconnected', -- disconnected from the virtual machine, since its host is disconnected
+    'inaccessible', -- vm config unaccessible
+    'invalid',      -- vm config is invalid
+    'orphaned'      -- vm no longer exists on host (but in vCenter)
+  ) NOT NULL,
   guest_id VARCHAR(64) DEFAULT NULL,        -- rhel7_64Guest
   guest_full_name VARCHAR(64) DEFAULT NULL, -- Red Hat Enterprise Linux 7 (64-bit)
   guest_host_name VARCHAR(255) DEFAULT NULL,
   guest_ip_address VARCHAR(50) DEFAULT NULL,
-  resource_pool_id INT(10) UNSIGNED DEFAULT NULL,
-  runtime_host_id INT(10) UNSIGNED DEFAULT NULL,
-  runtime_last_boot_time DATETIME DEFAULT NULL,
-  runtime_last_suspend_time DATETIME DEFAULT NULL,
+  resource_pool_uuid VARBINARY(20) DEFAULT NULL,
+  runtime_host_uuid VARBINARY(20) DEFAULT NULL,
+  runtime_last_boot_time DATETIME DEFAULT NULL, -- TODO: to BIGINT?
+  runtime_last_suspend_time DATETIME DEFAULT NULL, -- TODO: to BIGINT?
   runtime_power_state ENUM (
       'poweredOff',
-      'poweredOn'
-      -- 'suspend' -- ??
+      'poweredOn',
+      'suspended'
   ) NOT NULL,
-  PRIMARY KEY(id)
+  annotation TEXT DEFAULT NULL,
+  PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE datastore (
-  id INT(10) UNSIGNED NOT NULL,
+  uuid VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
   maintenance_mode ENUM(
       'normal',
       'enteringMaintenance',
@@ -165,16 +189,71 @@ CREATE TABLE datastore (
   --     'nfs',
   --     'cifs'
   -- ) NOT NULL,
-  PRIMARY KEY(id)
+  PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE vm_datastore_usage (
-  vm_id INT(10) UNSIGNED NOT NULL,
-  datastore_id INT(10) UNSIGNED NOT NULL,
+  vm_uuid VARBINARY(20) NOT NULL,
+  datastore_uuid  VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
   committed BIGINT(20) UNSIGNED DEFAULT NULL,
   uncommitted BIGINT(20) UNSIGNED DEFAULT NULL,
   unshared BIGINT(20) UNSIGNED DEFAULT NULL,
-  PRIMARY KEY(vm_id, datastore_id)
+  PRIMARY KEY(vm_uuid, datastore_uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE vm_hardware (
+  vm_uuid VARBINARY(20) NOT NULL,
+  hardware_key INT(10) UNSIGNED NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  bus_number INT(10) UNSIGNED DEFAULT NULL,
+  unit_number INT(10) UNSIGNED DEFAULT NULL, -- unit number of this device on its controller
+  controller_key INT(10) UNSIGNED DEFAULT NULL,
+  label VARCHAR(64) NOT NULL,
+  summary VARCHAR(128) NOT NULL,
+  PRIMARY KEY(vm_uuid, hardware_key),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE vm_disk (
+  vm_uuid VARBINARY(20) NOT NULL,
+  hardware_key INT(10) UNSIGNED DEFAULT NULL,
+  disk_uuid VARBINARY(16) NOT NULL, -- backing->uuid: 6000C272-5a6b-ca2f-1706-4d2493ba11f0
+  datastore_uuid VARBINARY(20) DEFAULT NULL, -- backing->datastore->_
+  file_name VARCHAR(255) DEFAULT NULL, -- backing->fileName: [DSNAME] <name>/<name>.vmdk
+  capacity BIGINT(20) UNSIGNED DEFAULT NULL, -- capacityInBytes
+  disk_mode ENUM(
+    'persistent', -- Changes are immediately and permanently written to the virtual disk.
+    'nonpersistent', -- Changes to virtual disk are made to a redo log and discarded at power off.
+    'undoable', -- Changes are made to a redo log, but you are given the option to commit or undo.
+    'independent_persistent', -- Same as persistent, but not affected by snapshots.
+    'independent_nonpersistent', -- Same as nonpersistent, but not affected by snapshots.
+    'append' -- Changes are appended to the redo log; you revoke changes by removing the undo log.
+  ) NOT NULL, -- backing->diskMode
+  split ENUM ('y', 'n') DEFAULT NULL, --  Flag to indicate the type of virtual disk file: split or monolithic.
+                                  -- If true, the virtual disk is stored in multiple files, each 2GB.
+  write_through ENUM ('y', 'n') DEFAULT NULL,
+  thin_provisioned ENUM ('y', 'n') DEFAULT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  PRIMARY KEY(vm_uuid, hardware_key),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE vm_network_adapter (
+  vm_uuid VARBINARY(20) NOT NULL,
+  hardware_key INT(10) UNSIGNED DEFAULT NULL,
+  portgroup_uuid VARBINARY(16) NOT NULL, -- port->portgroupKey (moid, dvportgroup-1288720)
+  port_key INT(10) UNSIGNED NOT NULL, -- port->portKey
+  mac_address VARCHAR(17) DEFAULT NULL, -- binary(6)? new xxeuid?
+  address_type ENUM(
+    'manual',    -- Statically assigned MAC address
+    'generated', -- Automatically generated MAC address
+    'assigned'   -- MAC address assigned by VirtualCenter
+  ) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  PRIMARY KEY(vm_uuid, hardware_key),
+  INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE performance_unit (
@@ -246,6 +325,15 @@ CREATE TABLE performance_counter (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE counter_300x5 (
+  object_uuid VARBINARY(20) NOT NULL,
+  counter_key INT UNSIGNED NOT NULL,
+  instance VARCHAR(64) NOT NULL,
+  ts_last BIGINT NOT NULL,
+  value_last BIGINT NOT NULL,
+  value_minus1 BIGINT DEFAULT NULL,
+  value_minus2 BIGINT DEFAULT NULL,
+  value_minus3 BIGINT DEFAULT NULL,
+  value_minus4 BIGINT DEFAULT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   counter_key INT UNSIGNED NOT NULL,
   object_textual_id VARCHAR(32) NOT NULL,
