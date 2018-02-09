@@ -23,7 +23,7 @@ class HostsTable extends ObjectsTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/host',
-            ['id' => $row->id]
+            ['uuid' => bin2hex($row->uuid)]
         );
 
         $tr = $this::row([
@@ -48,17 +48,17 @@ class HostsTable extends ObjectsTable
         $vms = $this->db()->select()->from(
             ['vc' => 'virtual_machine'],
             [
-                'cnt'             => 'COUNT(*)',
-                'cnt_cpu'         => 'SUM(vc.hardware_numcpu)',
-                'memorymb'        => 'SUM(vc.hardware_memorymb)',
-                'runtime_host_id' => 'vc.runtime_host_id',
+                'cnt'               => 'COUNT(*)',
+                'cnt_cpu'           => 'SUM(vc.hardware_numcpu)',
+                'memorymb'          => 'SUM(vc.hardware_memorymb)',
+                'runtime_host_uuid' => 'vc.runtime_host_uuid',
             ]
-        )->group('vc.runtime_host_id');
+        )->group('vc.runtime_host_uuid');
 
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             [
-                'id'                      => 'o.id',
+                'uuid'                    => 'o.uuid',
                 'object_name'             => 'o.object_name',
                 'overall_status'          => 'o.overall_status',
                 'sysinfo_model'           => 'h.sysinfo_model',
@@ -72,15 +72,15 @@ class HostsTable extends ObjectsTable
             ]
         )->join(
             ['h' => 'host_system'],
-            'o.id = h.id',
+            'o.uuid = h.uuid',
             []
         )->joinLeft(
             ['vms' => $vms],
-            'vms.runtime_host_id = h.id',
+            'vms.runtime_host_uuid = h.uuid',
             []
         )->order('object_name ASC');
-        if ($this->parentIds) {
-            $query->where('o.parent_id IN (?)', $this->parentIds);
+        if ($this->parentUuids) {
+            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
         }
 
         return $query;

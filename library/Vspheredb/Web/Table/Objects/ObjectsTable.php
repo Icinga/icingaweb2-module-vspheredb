@@ -10,11 +10,11 @@ abstract class ObjectsTable extends ZfQueryBasedTable
         'object_name',
     ];
 
-    protected $parentIds;
+    protected $parentUuids;
 
-    public function filterParentIds(array $ids)
+    public function filterParentUuids(array $uuids)
     {
-        $this->parentIds = $ids;
+        $this->parentUuids = $uuids;
 
         return $this;
     }
