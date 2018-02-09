@@ -53,7 +53,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/vm',
-            ['id' => $row->id]
+            ['uuid' => bin2hex($row->uuid)]
         );
 
         $value = $row->{$this->property};
@@ -82,13 +82,14 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         $property = $this->property;
         $this->searchColumns[] = $property;
         $duplicateQuery = $db->select()->from('virtual_machine', $property)
+            ->where("$property IS NOT NULL")
             ->group($property)
             ->having('(COUNT(*) > 1)');
 
         return $db->select()->from(
             ['vm' => 'virtual_machine'],
             [
-                'o.id',
+                'o.uuid',
                 'vm.guest_host_name',
                 "vm.$property",
                 'vm.runtime_power_state',
@@ -96,10 +97,12 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
             ]
         )->join(
             ['o' => 'object'],
-            'o.id = vm.id',
+            'o.uuid = vm.uuid',
             ['o.object_name']
-        )->where(
-            "$property IN (?)", $duplicateQuery
+        )->join(
+            ['dup' => $duplicateQuery],
+            "vm.$property = dup.$property",
+            []
         )->order($property)->order('object_name');
     }
 }
