@@ -27,6 +27,8 @@ class VmHardwareTree extends BaseElement
     /** @var VirtualMachine */
     protected $vm;
 
+    protected $devices = [];
+
     protected $parents = [];
 
     protected $children = [];
@@ -74,6 +76,7 @@ class VmHardwareTree extends BaseElement
             ->order('hardware_key');
 
         foreach ($db->fetchAll($query) as $row) {
+            $this->devices[$row->hardware_key] = $row;
             if ($row->controller_key === null) {
                 $this->parents[$row->hardware_key] = $row;
             } else {
@@ -82,7 +85,7 @@ class VmHardwareTree extends BaseElement
         }
     }
 
-    protected function renderDisk($disk)
+    protected function renderDisk($disk, $device, $controller)
     {
         $lookup = new PathLookup($this->getDb());
         $result = [];
@@ -104,6 +107,8 @@ class VmHardwareTree extends BaseElement
                 }
             }
         }
+        $scsi = sprintf('scsi%s:%s', $controller->bus_number, $device->unit_number);
+        $result[] = " ($scsi)";
 
         // TODO: show booleans split, write_through and thin_provisioned
         //       Also show disk_mode. What about disk_uuid?
@@ -112,7 +117,6 @@ class VmHardwareTree extends BaseElement
             $result[] = Format::bytes($disk->capacity);
         }
 
-        $scsi = 'scsi0:0';
         if (false && array_key_exists($scsi, $this->diskPerf)) {
             $result[] = new CompactInOutSparkline(
                 $this->diskPerf[$scsi][171],
@@ -205,7 +209,7 @@ class VmHardwareTree extends BaseElement
         }
 
         if ($isDisk) {
-            $li->add($this->renderDisk($this->disks[$key]));
+            $li->add($this->renderDisk($this->disks[$key], $device, $this->devices[$device->controller_key]));
         } else {
             $li->add(Link::create($desc, '#', null, ['class' => $class]));
         }
