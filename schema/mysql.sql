@@ -219,7 +219,7 @@ CREATE TABLE vm_hardware (
 CREATE TABLE vm_disk (
   vm_uuid VARBINARY(20) NOT NULL,
   hardware_key INT(10) UNSIGNED DEFAULT NULL,
-  disk_uuid VARBINARY(16) NOT NULL, -- backing->uuid: 6000C272-5a6b-ca2f-1706-4d2493ba11f0
+  disk_uuid VARBINARY(16) DEFAULT NULL, -- backing->uuid: 6000C272-5a6b-ca2f-1706-4d2493ba11f0
   datastore_uuid VARBINARY(20) DEFAULT NULL, -- backing->datastore->_
   file_name VARCHAR(255) DEFAULT NULL, -- backing->fileName: [DSNAME] <name>/<name>.vmdk
   capacity BIGINT(20) UNSIGNED DEFAULT NULL, -- capacityInBytes
