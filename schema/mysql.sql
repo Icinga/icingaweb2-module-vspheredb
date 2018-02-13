@@ -243,8 +243,8 @@ CREATE TABLE vm_disk (
 CREATE TABLE vm_network_adapter (
   vm_uuid VARBINARY(20) NOT NULL,
   hardware_key INT(10) UNSIGNED DEFAULT NULL,
-  portgroup_uuid VARBINARY(16) NOT NULL, -- port->portgroupKey (moid, dvportgroup-1288720)
-  port_key INT(10) UNSIGNED NOT NULL, -- port->portKey
+  portgroup_uuid VARBINARY(16) DEFAULT NULL, -- port->portgroupKey (moid, dvportgroup-1288720)
+  port_key INT(10) UNSIGNED DEFAULT NULL, -- port->portKey
   mac_address VARCHAR(17) DEFAULT NULL, -- binary(6)? new xxeuid?
   address_type ENUM(
     'manual',    -- Statically assigned MAC address
