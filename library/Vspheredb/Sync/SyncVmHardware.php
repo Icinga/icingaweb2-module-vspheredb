@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmDisk;
 use Icinga\Module\Vspheredb\DbObject\VmHardware;
+use Icinga\Module\Vspheredb\DbObject\VmNetworkAdapter;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 
 class SyncVmHardware
@@ -55,6 +56,11 @@ class SyncVmHardware
             'Got %d vm_disk objects from DB',
             count($disks)
         ));
+        $nics = VmNetworkAdapter::loadAllForVCenter($vCenter);
+        Benchmark::measure(sprintf(
+            'Got %d vm_network_adapter objects from DB',
+            count($nics)
+        ));
 
         $seen = [];
         foreach ($result as $vm) {
@@ -82,17 +88,23 @@ class SyncVmHardware
                         ], $connection);
                     }
                     $disks[$idx]->setMapped($device, $vCenter);
-                }
-                if (property_exists($device, 'macAddress')
+                } elseif (property_exists($device, 'macAddress')
                     && property_exists($device, 'addressType')
                 ) {
-                    $this->handleNetworkAdapter($device);
+                    if (! array_key_exists($idx, $disks)) {
+                        $nics[$idx] = VmNetworkAdapter::create([
+                            'vm_uuid'      => $uuid,
+                            'hardware_key' => $key
+                        ], $connection);
+                    }
+                    $nics[$idx]->setMapped($device, $vCenter);
                 }
             }
         }
 
         $this->storeObjects($vCenter->getDb(), $hardware, $seen);
         $this->storeObjects($vCenter->getDb(), $disks, $seen);
+        $this->storeObjects($vCenter->getDb(), $nics, $seen);
     }
 
     /**
@@ -123,15 +135,5 @@ class SyncVmHardware
 
         $db->commit();
         Benchmark::measure("$insert created, $update changed, $delete deleted");
-    }
-
-    protected function handleNetworkAdapter($device)
-    {
-        $map = [
-            'port.portgroupKey' => 'portgroup_uuid', // make binary uuid
-            'port.portKey' => 'port_key',
-            'macAddress' => 'mac_address', // binary(6)? new xxeuid?
-            'addressType' => 'address_type',
-        ];
     }
 }
