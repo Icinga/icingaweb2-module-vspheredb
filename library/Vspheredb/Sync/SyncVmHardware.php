@@ -91,7 +91,7 @@ class SyncVmHardware
                 } elseif (property_exists($device, 'macAddress')
                     && property_exists($device, 'addressType')
                 ) {
-                    if (! array_key_exists($idx, $disks)) {
+                    if (! array_key_exists($idx, $nics)) {
                         $nics[$idx] = VmNetworkAdapter::create([
                             'vm_uuid'      => $uuid,
                             'hardware_key' => $key
