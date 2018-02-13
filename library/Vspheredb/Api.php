@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 use DateTime;
 use Exception;
+use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
@@ -193,7 +194,17 @@ class Api
         $arguments = func_get_args();
         array_shift($arguments);
 
-        return $this->soapClient()->__soapCall($method, $arguments);
+        try {
+            return $this->soapClient()->__soapCall($method, $arguments);
+        } catch (AuthenticationException $e) {
+            if ($method === 'Login') {
+                throw $e;
+            } else {
+                $this->logout();
+                $this->login();
+                return $this->soapClient()->__soapCall($method, $arguments);
+            }
+        }
     }
 
     /**

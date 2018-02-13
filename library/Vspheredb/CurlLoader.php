@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb;
 
 use Exception;
+use Icinga\Exception\AuthenticationException;
 
 /**
  * Class CurlLoader
@@ -260,6 +261,9 @@ class CurlLoader
         }
 
         if ($statusCode >= 400) {
+            if (preg_match('/NotAuthenticated/', $res)) {
+                throw new AuthenticationException('Not authenticated');
+            }
             // TODO: This should be transformed in a Soap error and deal with such
             var_dump($body);
             var_dump($res);
