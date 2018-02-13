@@ -6,10 +6,10 @@ use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Table\Object\VmHardwareTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
+use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 
 class VmController extends Controller
 {
@@ -25,9 +25,7 @@ class VmController extends Controller
     public function hardwareAction()
     {
         $vm = $this->addVm();
-        $this->content()->add([
-            new VmHardwareTable($vm),
-        ]);
+        $this->content()->add(new VmHardwareTree($vm));
     }
 
     public function countersAction()

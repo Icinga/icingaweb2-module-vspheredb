@@ -287,3 +287,38 @@ div.disk-usage {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
 }
+
+/* Tree, stolen from Director */
+
+.tree li a {
+  display: inline-block;
+  padding-left: 2.4em;
+  line-height: 2em;
+  text-decoration: none;
+  color: #777;
+  outline: 0;
+  background-repeat: no-repeat;
+  background-position: 0.8em 0.4em;
+}
+
+ul.tree li > .handle {
+  background-image: none;
+  &:before {
+    content: '\e806';
+    font-family: 'ifont';
+    position: absolute;
+    font-size: 0.6em;
+    margin-left: 0.25em;
+    margin-top: 0.9em;
+  }
+}
+ul.tree li.collapsed > .handle {
+  background-image: none;
+  &:before {
+    content: '\e805';
+  }
+}
+.tree li a {
+  padding-left: 1em;
+}
+/* End of tree */
