@@ -113,7 +113,7 @@ class VmHardwareTree extends BaseElement
         }
 
         $scsi = 'scsi0:0';
-        if (array_key_exists($scsi, $this->diskPerf)) {
+        if (false && array_key_exists($scsi, $this->diskPerf)) {
             $result[] = new CompactInOutSparkline(
                 $this->diskPerf[$scsi][171],
                 $this->diskPerf[$scsi][172]
