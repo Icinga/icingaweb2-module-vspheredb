@@ -140,13 +140,13 @@ class VmsTable extends ObjectsTable
     {
         $db = $this->db();
 
-        $values = implode(" || ',' || ", [
-            'value_minus4',
-            'value_minus3',
-            'value_minus2',
-            'value_minus1',
+        $values = '(' . implode(" || ',' || ", [
+            "COALESCE(value_minus4, '0')",
+            "COALESCE(value_minus3, '0')",
+            "COALESCE(value_minus2, '0')",
+            "COALESCE(value_minus1, '0')",
             'value_last',
-        ]);
+        ]) . ')';
 
         $query = $db->select()->from('counter_300x5', [
             'name' => 'object_uuid',
