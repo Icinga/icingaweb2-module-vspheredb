@@ -21,9 +21,9 @@ class VmNetworkAdapter extends BaseVmHardwareDbObject
     ];
 
     protected $propertyMap = [
-        'port.portgroupKey' => 'portgroup_uuid',
-        'port.portKey'      => 'port_key',
-        'macAddress'        => 'mac_address', // binary(6)? new xxeuid?
-        'addressType'       => 'address_type',
+        'backing.port.portgroupKey' => 'portgroup_uuid',
+        'backing.port.portKey'      => 'port_key',
+        'macAddress'                => 'mac_address', // binary(6)? new xxeuid?
+        'addressType'               => 'address_type',
     ];
 }
