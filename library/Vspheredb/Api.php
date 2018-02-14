@@ -188,6 +188,7 @@ class Api
      *
      * @param $method
      * @return mixed
+     * @throws AuthenticationException
      */
     public function soapCall($method)
     {
@@ -197,11 +198,16 @@ class Api
         try {
             return $this->soapClient()->__soapCall($method, $arguments);
         } catch (AuthenticationException $e) {
-            if ($method === 'Login') {
+            if ($method === 'Login' || $method === 'Logout') {
                 throw $e;
             } else {
-                $this->logout();
+                try {
+                    $this->logout();
+                } catch (AuthenticationException $ae) {
+                    // That's fine.
+                }
                 $this->login();
+
                 return $this->soapClient()->__soapCall($method, $arguments);
             }
         }
