@@ -28,7 +28,7 @@ CREATE TABLE vcenter (
   locale_version VARCHAR(10) DEFAULT NULL, -- localeVersion	"INTL"
   PRIMARY KEY (instance_uuid),
   UNIQUE INDEX vcenter_name (vcenter_name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vcenter_server (
   host VARCHAR(255) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE vcenter_server (
     REFERENCES vcenter (vcenter_uuid)
     ON DELETE SET NULL
     ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE object (
   uuid VARBINARY(20) NOT NULL, -- sha1(vcenter_uuid + moref)
@@ -89,7 +89,7 @@ CREATE TABLE object (
     REFERENCES vcenter (instance_uuid)
     ON DELETE RESTRICT
     ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_system (
   uuid VARBINARY(20) NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE host_system (
   ) NOT NULL,
   PRIMARY KEY(uuid),
   UNIQUE INDEX sysinfo_uuid (sysinfo_uuid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE virtual_machine (
   uuid  VARBINARY(20) NOT NULL,
@@ -169,7 +169,7 @@ CREATE TABLE virtual_machine (
   ) NOT NULL,
   annotation TEXT DEFAULT NULL,
   PRIMARY KEY(uuid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE datastore (
   uuid VARBINARY(20) NOT NULL,
@@ -190,7 +190,7 @@ CREATE TABLE datastore (
   --     'cifs'
   -- ) NOT NULL,
   PRIMARY KEY(uuid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_datastore_usage (
   vm_uuid VARBINARY(20) NOT NULL,
@@ -201,7 +201,7 @@ CREATE TABLE vm_datastore_usage (
   unshared BIGINT(20) UNSIGNED DEFAULT NULL,
   PRIMARY KEY(vm_uuid, datastore_uuid),
   INDEX vcenter_uuid (vcenter_uuid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_hardware (
   vm_uuid VARBINARY(20) NOT NULL,
@@ -214,7 +214,7 @@ CREATE TABLE vm_hardware (
   summary VARCHAR(128) NOT NULL,
   PRIMARY KEY(vm_uuid, hardware_key),
   INDEX vcenter_uuid (vcenter_uuid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_disk (
   vm_uuid VARBINARY(20) NOT NULL,
@@ -238,7 +238,7 @@ CREATE TABLE vm_disk (
   vcenter_uuid VARBINARY(16) NOT NULL,
   PRIMARY KEY(vm_uuid, hardware_key),
   INDEX vcenter_uuid (vcenter_uuid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_network_adapter (
   vm_uuid VARBINARY(20) NOT NULL,
@@ -254,7 +254,7 @@ CREATE TABLE vm_network_adapter (
   vcenter_uuid VARBINARY(16) NOT NULL,
   PRIMARY KEY(vm_uuid, hardware_key),
   INDEX vcenter_uuid (vcenter_uuid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_unit (
   vcenter_uuid VARBINARY(16) NOT NULL,
@@ -262,7 +262,7 @@ CREATE TABLE performance_unit (
   label VARCHAR(16) NOT NULL,
   summary VARCHAR(64) NOT NULL,
   PRIMARY KEY (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_group (
   vcenter_uuid VARBINARY(16) NOT NULL,
@@ -270,7 +270,7 @@ CREATE TABLE performance_group (
   label VARCHAR(48) NOT NULL,
   summary VARCHAR(64) NOT NULL,
   PRIMARY KEY (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 
 CREATE TABLE performance_collection_interval (
@@ -279,7 +279,7 @@ CREATE TABLE performance_collection_interval (
   label VARCHAR(48) NOT NULL,
   summary VARCHAR(64) NOT NULL,
   PRIMARY KEY (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_counter (
   vcenter_uuid VARBINARY(16) NOT NULL,
@@ -322,7 +322,7 @@ CREATE TABLE performance_counter (
     REFERENCES performance_unit (name)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE counter_300x5 (
   object_uuid VARBINARY(20) NOT NULL,
@@ -337,7 +337,7 @@ CREATE TABLE counter_300x5 (
   vcenter_uuid VARBINARY(16) NOT NULL,
   PRIMARY KEY (object_uuid, counter_key, instance),
   INDEX vcenter_uuid (vcenter_uuid)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 -- Not yet:
 -- CREATE TABLE vm_triggered_alarm (
