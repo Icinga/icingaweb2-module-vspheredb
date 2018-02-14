@@ -128,6 +128,15 @@ CREATE TABLE virtual_machine (
   instance_uuid VARCHAR(64) NOT NULL,   -- 5004890e-8edd-fe5f-d116-d5704b2043e4
   bios_uuid VARCHAR(64) NOT NULL,       -- 42042ce7-1c4f-b339-2293-40357f1d6860
   version VARCHAR(32) NOT NULL,         -- vmx-11
+  online_standby ENUM('y', 'n') NOT NULL,
+  paused ENUM('y', 'n') NOT NULL,
+  connection_state ENUM (
+    'connected',    -- server has access to the vm
+    'disconnected', -- disconnected from the virtual machine, since its host is disconnected
+    'inaccessible', -- vm config unaccessible
+    'invalid',      -- vm config is invalid
+    'orphaned'      -- vm no longer exists on host (but in vCenter)
+  ) NOT NULL,
   guest_state ENUM (
     'notRunning',
     'resetting',
@@ -147,13 +156,6 @@ CREATE TABLE virtual_machine (
     'guestToolsRunning',
     'guestToolsExecutingScripts' -- VMware Tools is starting.
   ) NOT NULL,
-  connection_state ENUM (
-    'connected',    -- server has access to the vm
-    'disconnected', -- disconnected from the virtual machine, since its host is disconnected
-    'inaccessible', -- vm config unaccessible
-    'invalid',      -- vm config is invalid
-    'orphaned'      -- vm no longer exists on host (but in vCenter)
-  ) NOT NULL,
   guest_id VARCHAR(64) DEFAULT NULL,        -- rhel7_64Guest
   guest_full_name VARCHAR(64) DEFAULT NULL, -- Red Hat Enterprise Linux 7 (64-bit)
   guest_host_name VARCHAR(255) DEFAULT NULL,
@@ -167,6 +169,8 @@ CREATE TABLE virtual_machine (
       'poweredOn',
       'suspended'
   ) NOT NULL,
+  boot_network_protocol ENUM('ipv4', 'ipv6') DEFAULT NULL,
+  boot_order VARCHAR(128) DEFAULT NULL,
   annotation TEXT DEFAULT NULL,
   PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;

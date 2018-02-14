@@ -18,6 +18,9 @@ class VirtualMachine extends BaseDbObject
         'bios_uuid'         => null,
         'instance_uuid'     => null,
         'version'           => null,
+        'connection_state'  => null,
+        'online_standby'    => null,
+        'paused'            => null,
         'guest_id'          => null,
         'guest_full_name'   => null,
         'guest_state'       => null,
@@ -30,6 +33,8 @@ class VirtualMachine extends BaseDbObject
         'runtime_last_boot_time'     => null,
         'runtime_last_suspend_time'  => null,
         'runtime_power_state'        => null,
+        'boot_network_protocol'      => null,
+        'boot_order'                 => null,
     ];
 
     protected $objectReferences = [
@@ -38,7 +43,9 @@ class VirtualMachine extends BaseDbObject
     ];
 
     protected $booleanProperties = [
-        'template'
+        'template',
+        'online_standby',
+        'paused',
     ];
 
     protected $propertyMap = [
@@ -55,6 +62,9 @@ class VirtualMachine extends BaseDbObject
         'resourcePool'               => 'resource_pool_uuid',
         'runtime.host'               => 'runtime_host_uuid',
         'runtime.powerState'         => 'runtime_power_state',
+        'runtime.connectionState'    => 'connection_state',
+        'runtime.onlineStandby'      => 'online_standby',
+        'runtime.paused'             => 'paused',
         'guest.guestState'           => 'guest_state',
         'guest.toolsRunningStatus'   => 'guest_tools_running_status',
         'summary.guest.toolsStatus'  => 'guest_tools_status',
@@ -62,7 +72,29 @@ class VirtualMachine extends BaseDbObject
         'guest.guestFullName'        => 'guest_full_name',
         'guest.hostName'             => 'guest_host_name',
         'guest.ipAddress'            => 'guest_ip_address',
-        // 'runtime_last_boot_time'    => $runtime->bootTime,
-        // 'runtime_last_suspend_time' => $runtime->suspendTime,
+        'config.bootOptions'         => 'bootOptions',
+        // 'runtime.bootTime' => 'runtime_last_boot_time',
+        // 'runtime.suspendTime' 'runtime_last_suspend_time',
     ];
+
+    protected function setBootOptions($value)
+    {
+        if (property_exists($value, 'networkBootProtocol')) {
+            $this->set('boot_network_protocol', $value->networkBootProtocol);
+        } else {
+            $this->set('boot_network_protocol', null);
+        }
+
+        // bootOrder might be missing, should then default to disk, net
+        if (property_exists($value, 'bootOrder')) {
+            $keys = [];
+            foreach ($value->bootOrder as $device) {
+                $keys[] = $device->deviceKey;
+            }
+
+            $this->set('boot_order', implode(',', $keys));
+        } else {
+            $this->set('boot_order', null);
+        }
+    }
 }
