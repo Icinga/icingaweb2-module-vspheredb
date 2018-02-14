@@ -78,6 +78,12 @@ class VCenter extends BaseDbObject
 
     public function createNewApiConnection()
     {
+
+        return Api::forServer($this->getFirstServer());
+    }
+
+    public function getFirstServer()
+    {
         $db = $this->getConnection()->getDbAdapter();
         $serverId = $db->fetchOne(
             $db->select()
@@ -86,9 +92,7 @@ class VCenter extends BaseDbObject
                 ->limit(1)
         );
 
-        $server = VCenterServer::loadWithAutoIncId($serverId, $this->getConnection());
-
-        return Api::forServer($server);
+        return VCenterServer::loadWithAutoIncId($serverId, $this->getConnection());
     }
 
     public function makeBinaryGlobalUuid($moRefId)
