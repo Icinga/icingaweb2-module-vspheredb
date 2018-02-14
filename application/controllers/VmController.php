@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
+use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 
 class VmController extends Controller
@@ -20,6 +21,11 @@ class VmController extends Controller
             new VmInfoTable($vm, $this->vCenter(), $this->pathLookup()),
             VmDatastoresTable::create($vm)
         ]);
+
+        $disks = VmDiskUsageTable::create($vm);
+        if (count($disks)) {
+            $this->content()->add($disks);
+        }
     }
 
     public function hardwareAction()
