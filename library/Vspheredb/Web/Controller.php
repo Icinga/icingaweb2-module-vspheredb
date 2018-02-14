@@ -6,6 +6,7 @@ use dipl\Html\HtmlString;
 use dipl\Html\Util;
 use Icinga\Module\Vspheredb\Db;
 use dipl\Web\CompatController;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
 
 class Controller extends CompatController
@@ -15,6 +16,9 @@ class Controller extends CompatController
 
     /** @var PathLookup */
     protected $pathLookup;
+
+    /** @var VCenter */
+    private $vCenter;
 
     protected function runFailSafe($callback)
     {
@@ -38,6 +42,15 @@ class Controller extends CompatController
         }
 
         return $this->pathLookup;
+    }
+
+    /**
+     * @return VCenter
+     */
+    protected function vCenter()
+    {
+        // TODO: remove hardcoded id=1
+        return VCenter::loadWithAutoIncId(1, $this->db());
     }
 
     protected function db()
