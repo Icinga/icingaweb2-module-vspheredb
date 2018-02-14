@@ -26,6 +26,9 @@ class OverviewController extends ObjectsController
         ])->add('vm', [
             'label' => $this->translate('VMs'),
             'url'   => 'vspheredb/overview?type=vm'
+        ])->add('network', [
+            'label' => $this->translate('Networks'),
+            'url'   => 'vspheredb/overview?type=network'
         ])->activate($name);
 
         return $this;

@@ -12,6 +12,7 @@ class FullSelectSet extends SelectSet
             static::traverseDC1(),
             static::traverseDC2(),
             static::traverseDC3(),
+            static::traverseDC4(),
             static::traverseFolder(),
             static::traverseStoragePod(),
             static::traverseCR1(),
@@ -53,12 +54,27 @@ class FullSelectSet extends SelectSet
 
     protected static function traverseDC3()
     {
-        // Another TraversalSpec object has the type Datacenter and name TraverseDC2
-        // Set the path property to vmFolder
+        // Another TraversalSpec object has the type Datacenter and name TraverseDC3
+        // Set the path property to datastoreFolder
         $spec = array(
             'name' => 'TraverseDC3',
             'type' => 'Datacenter',
             'path' => 'datastoreFolder',
+            'skip' => false,
+            static::makeSelectionSet('TraverseFolder')
+        );
+
+        return new SoapVar($spec, SOAP_ENC_OBJECT, 'TraversalSpec');
+    }
+
+    protected static function traverseDC4()
+    {
+        // Another TraversalSpec object has the type Datacenter and name TraverseDC4
+        // Set the path property to networkFolder
+        $spec = array(
+            'name' => 'TraverseDC4',
+            'type' => 'Datacenter',
+            'path' => 'networkFolder',
             'skip' => false,
             static::makeSelectionSet('TraverseFolder')
         );
@@ -86,6 +102,7 @@ class FullSelectSet extends SelectSet
             static::makeSelectionSet('TraverseDC1'),
             static::makeSelectionSet('TraverseDC2'),
             static::makeSelectionSet('TraverseDC3'),
+            static::makeSelectionSet('TraverseDC4'),
             static::makeSelectionSet('TraverseCR1'),
             static::makeSelectionSet('TraverseCR2')
         );

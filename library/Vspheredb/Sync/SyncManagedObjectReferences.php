@@ -153,6 +153,10 @@ class SyncManagedObjectReferences
             'ClusterComputeResource',
             'StoragePod',
             'VirtualMachine',
+            'VirtualApp',
+            'Network',
+            'DistributedVirtualSwitch',
+            'DistributedVirtualPortgroup',
         ];
         $pathSet = ['name', 'parent', 'overallStatus'];
 

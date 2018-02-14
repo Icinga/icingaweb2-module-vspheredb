@@ -77,14 +77,18 @@ class OverviewTree extends BaseElement
         $dsCnt = "SELECT COUNT(*) as cnt, parent_uuid"
             . " FROM object WHERE object_type = 'DataStore'"
             . " GROUP BY parent_uuid";
+        $networkCnt = "SELECT COUNT(*) as cnt, parent_uuid"
+            . " FROM object WHERE object_type = 'DistributedVirtualSwitch'"
+            . " GROUP BY parent_uuid";
         $main = "SELECT * FROM object"
             . " WHERE object_type NOT IN ('VirtualMachine', 'HostSystem', 'Datastore')";
 
-        $sql = "SELECT f.*, hc.cnt AS cnt_host, vc.cnt AS cnt_vm, dc.cnt AS cnt_ds"
+        $sql = "SELECT f.*, hc.cnt AS cnt_host, vc.cnt AS cnt_vm, dc.cnt AS cnt_ds, nc.cnt AS cnt_network"
              . " FROM ($main) f"
              . " LEFT JOIN ($vmCnt) vc ON vc.parent_uuid = f.uuid"
              . " LEFT JOIN ($hostCnt) hc ON hc.parent_uuid = f.uuid"
              . " LEFT JOIN ($dsCnt) dc ON dc.parent_uuid = f.uuid"
+             . " LEFT JOIN ($networkCnt) nc ON dc.parent_uuid = f.uuid"
              . " ORDER BY f.level ASC, f.object_name";
 
         return $this->db->getDbAdapter()->fetchAll($sql);
@@ -151,10 +155,14 @@ class OverviewTree extends BaseElement
         $typeClasses = [
             'ComputeResource'        => 'cubes',
             'ClusterComputeResource' => 'cubes',
-            'Datacenter'             => 'sitemap',
+            'Datacenter'             => 'home',
+            'DistributedVirtualPortgroup' => 'plug',
+            'DistributedVirtualSwitch' => 'sitemap',
+            'VmwareDistributedVirtualSwitch' => 'sitemap',
             'Datastore'              => 'database',
             // 'DatastoreHostMount',
             'Folder'                 => 'folder-empty',
+            'Network'                 => 'arrows-cw',
             'ResourcePool'           => 'chart-pie',
             'StoragePod'             => 'cloud',
             'HostSystem'             => 'host',

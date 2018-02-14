@@ -56,16 +56,22 @@ CREATE TABLE object (
   moref VARCHAR(32) NOT NULL, -- textual id
   object_name VARCHAR(255) NOT NULL,
   object_type ENUM(
+    'ComputeResource',
     'ClusterComputeResource',
     'Datacenter',
     'Datastore',
     'DatastoreHostMount',
+    'DistributedVirtualPortgroup',
+    'DistributedVirtualSwitch',
     'Folder',
     'HostMountInfo',
     'HostSystem',
+    'Network',
     'ResourcePool',
     'StoragePod',
-    'VirtualMachine'
+    'VirtualApp',
+    'VirtualMachine',
+    'VmwareDistributedVirtualSwitch'
   ) NOT NULL,
   overall_status ENUM(
      'gray',
