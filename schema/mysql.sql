@@ -240,6 +240,16 @@ CREATE TABLE vm_disk (
   INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE vm_disk_usage (
+  vm_uuid VARBINARY(20) NOT NULL,
+  disk_path VARCHAR(128) NOT NULL,
+  capacity BIGINT(20) NOT NULL,
+  free_space BIGINT(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  PRIMARY KEY(vm_uuid, disk_path),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE vm_network_adapter (
   vm_uuid VARBINARY(20) NOT NULL,
   hardware_key INT(10) UNSIGNED DEFAULT NULL,

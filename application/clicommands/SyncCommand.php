@@ -6,6 +6,7 @@ use Icinga\Module\Vspheredb\Sync\SyncAllObjects;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounterInfo;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounters;
 use Icinga\Module\Vspheredb\Sync\SyncVmDatastoreUsage;
+use Icinga\Module\Vspheredb\Sync\SyncVmDiskUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmHardware;
 
 /**
@@ -43,6 +44,12 @@ class SyncCommand extends CommandBase
     public function vmhardwareAction()
     {
         $sync = new SyncVmHardware($this->getVCenter());
+        $sync->run();
+    }
+
+    public function vmdiskusageAction()
+    {
+        $sync = new SyncVmDiskUsage($this->getVCenter());
         $sync->run();
     }
 
