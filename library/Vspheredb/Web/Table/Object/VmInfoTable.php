@@ -6,6 +6,7 @@ use dipl\Html\Html;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
 
@@ -19,10 +20,14 @@ class VmInfoTable extends NameValueTable
     /** @var PathLookup */
     protected $pathLookup;
 
-    public function __construct(VirtualMachine $vm, PathLookup $loopup)
+    /** @var VCenter */
+    protected $vCenter;
+
+    public function __construct(VirtualMachine $vm, VCenter $vCenter, PathLookup $lookup)
     {
         $this->vm = $vm;
-        $this->pathLookup = $loopup;
+        $this->pathLookup = $lookup;
+        $this->vCenter = $vCenter;
     }
 
     protected function getDb()
@@ -63,6 +68,7 @@ class VmInfoTable extends NameValueTable
             $this->translate('UUID') => $vm->get('bios_uuid'),
             $this->translate('Instance UUID') => $vm->get('instance_uuid'),
             $this->translate('CPUs') => $vm->get('hardware_numcpu'),
+            $this->translate('MO Ref') => $this->linkToVCenter($vm->object()->get('moref')),
             $this->translate('Memory')      => number_format($vm->get('hardware_memorymb'), 0, ',', '.') . ' MB',
             $this->translate('Is Template') => $vm->get('template') === 'y'
                 ? $this->translate('true')
@@ -77,5 +83,18 @@ class VmInfoTable extends NameValueTable
             $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
             $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
         ]);
+    }
+
+    protected function linkToVCenter($moRef)
+    {
+        return Html::tag('a', [
+            'href' => sprintf(
+                'https://%s/mob/?moid=%s',
+                $this->vCenter->getFirstServer()->get('host'),
+                rawurlencode($moRef)
+            ),
+            'target' => '_blank',
+            'title' => $this->translate('Jump to the Managed Object browser')
+        ], $moRef);
     }
 }

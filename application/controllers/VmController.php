@@ -17,7 +17,7 @@ class VmController extends Controller
     {
         $vm = $this->addVm();
         $this->content()->add([
-            new VmInfoTable($vm, $this->pathLookup()),
+            new VmInfoTable($vm, $this->vCenter(), $this->pathLookup()),
             VmDatastoresTable::create($vm)
         ]);
     }
@@ -32,6 +32,7 @@ class VmController extends Controller
     {
         $vm = $this->addVm();
         $api = Api::forServer(
+            // TODO: remove hardcoded id=1
             VCenterServer::loadWithAutoIncId(1, $this->db())
         )->login();
 
