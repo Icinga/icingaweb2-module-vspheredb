@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Clicommands;
 use Icinga\Module\Vspheredb\Sync\SyncAllObjects;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounterInfo;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounters;
+use Icinga\Module\Vspheredb\Sync\SyncQuickStats;
 use Icinga\Module\Vspheredb\Sync\SyncVmDatastoreUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmDiskUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmHardware;
@@ -38,6 +39,12 @@ class SyncCommand extends CommandBase
     public function perfcounterinfoAction()
     {
         $sync = new SyncPerfCounterInfo($this->getVCenter());
+        $sync->run();
+    }
+
+    public function quickstatsAction()
+    {
+        $sync = new SyncQuickStats($this->getVCenter());
         $sync->run();
     }
 

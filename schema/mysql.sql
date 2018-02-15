@@ -276,6 +276,45 @@ CREATE TABLE vm_network_adapter (
   INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE host_quick_stats (
+  uuid VARBINARY(20) NOT NULL,
+  distributed_cpu_fairness INT(10) UNSIGNED NOT NULL,
+  distributed_memory_fairness INT(10) UNSIGNED NOT NULL,
+  overall_cpu_usage INT(10) UNSIGNED NOT NULL,
+  overall_memory_usage_mb INT(10) UNSIGNED NOT NULL,
+  uptime INT(10) UNSIGNED NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  PRIMARY KEY(uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vm_quick_stats (
+  uuid VARBINARY(20) NOT NULL,
+  ballooned_memory_mb INT(10) UNSIGNED NOT NULL,
+  compressed_memory_kb BIGINT(20) UNSIGNED NOT NULL,
+  consumed_overhead_memory_mb INT(10) UNSIGNED NOT NULL,
+  distributed_cpu_entitlement INT(10) UNSIGNED NOT NULL, -- mhz
+  distributed_memory_entitlement_mb INT(10) UNSIGNED NOT NULL,
+  ft_latency_status ENUM('gray', 'green', 'red', 'yellow') NOT NULL,
+  ft_log_bandwidth INT(10) DEFAULT NULL, -- Hint -1 -> NULL
+  ft_secondary_latency INT(10) DEFAULT NULL, -- Hint -1 -> NULL
+  guest_heartbeat_status ENUM('gray', 'green', 'red', 'yellow') NOT NULL,
+  guest_memory_usage_mb INT(10) UNSIGNED NOT NULL,
+  host_memory_usage_mb INT(10) UNSIGNED NOT NULL,
+  overall_cpu_demand INT(10) UNSIGNED NOT NULL, -- mhz
+  overall_cpu_usage INT(10) UNSIGNED NOT NULL, -- mhz
+  private_memory_mb INT(10) UNSIGNED NOT NULL,
+  shared_memory_mb INT(10) UNSIGNED NOT NULL,
+  ssd_swapped_memory_kb BIGINT(10) UNSIGNED NOT NULL,
+  static_cpu_entitlement INT(10) UNSIGNED NOT NULL, -- mhz
+  static_memory_entitlement_mb INT(10) UNSIGNED NOT NULL,
+  swapped_memory_mb INT(10) UNSIGNED NOT NULL,
+  uptime INT(10) UNSIGNED NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  PRIMARY KEY(uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE performance_unit (
   vcenter_uuid VARBINARY(16) NOT NULL,
   name VARCHAR(32) NOT NULL,
@@ -291,7 +330,6 @@ CREATE TABLE performance_group (
   summary VARCHAR(64) NOT NULL,
   PRIMARY KEY (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
-
 
 CREATE TABLE performance_collection_interval (
   vcenter_uuid VARBINARY(16) NOT NULL,
