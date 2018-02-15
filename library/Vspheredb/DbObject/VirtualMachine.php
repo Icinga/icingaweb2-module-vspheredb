@@ -77,6 +77,17 @@ class VirtualMachine extends BaseDbObject
         // 'runtime.suspendTime' 'runtime_last_suspend_time',
     ];
 
+    protected $quickStats;
+
+    public function quickStats()
+    {
+        if ($this->quickStats === null) {
+            $this->quickStats = VmQuickStats::load($this->get('uuid'), $this->connection);
+        }
+
+        return $this->quickStats;
+    }
+
     protected function setBootOptions($value)
     {
         if (property_exists($value, 'networkBootProtocol')) {

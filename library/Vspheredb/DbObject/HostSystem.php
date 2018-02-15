@@ -52,6 +52,17 @@ class HostSystem extends BaseDbObject
         'summary.hardware.numNics'        => 'hardware_num_nic',
     ];
 
+    protected $quickStats;
+
+    public function quickStats()
+    {
+        if ($this->quickStats === null) {
+            $this->quickStats = HostQuickStats::load($this->get('uuid'), $this->connection);
+        }
+
+        return $this->quickStats;
+    }
+
     protected static function getDefaultPropertySet()
     {
         return array_merge(
