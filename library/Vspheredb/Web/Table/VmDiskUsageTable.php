@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use dipl\Html\Html;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Util\Format;
 use dipl\Web\Table\ZfQueryBasedTable;
 
@@ -49,7 +50,6 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $this->root = $row;
         }
 
-//        if (in_array($caption, ['/tmp', '/var/tmp']))
         $free = Format::bytes($row->free_space, Format::STANDARD_IEC)
             . sprintf(' (%0.3f%%)', ($row->free_space / $row->capacity) * 100);
 
@@ -67,17 +67,8 @@ class VmDiskUsageTable extends ZfQueryBasedTable
     protected function makeDisk($disk)
     {
         $used = $disk->capacity - $disk->free_space;
-        $usedPercent = $used / $disk->capacity;
-        $el = Html::tag('div', ['class' => 'disk-usage compact']);
-        $el->add(Html::tag('a', [
-            'href' => '#',
-            'style' => sprintf(
-                'width: %0.3F%%; background-color: rgba(70, 128, 255, 0.75)',
-                $usedPercent * 100
-            )
-        ]));
 
-        return $el;
+        return new SimpleUsageBar($used, $disk->capacity, $disk->disk_path);
     }
 
     public function prepareQuery()
