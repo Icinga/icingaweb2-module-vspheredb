@@ -6,9 +6,12 @@ use dipl\Html\Html;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
+use Icinga\Util\Format;
 
 class HostInfoTable extends NameValueTable
 {
@@ -51,9 +54,11 @@ class HostInfoTable extends NameValueTable
             $this->translate('UUID')         => $host->get('sysinfo_uuid'),
             $this->translate('API Version')  => $host->get('product_api_version'),
             $this->translate('Product Name') => $host->get('product_full_name'),
+            $this->translate('CPU Usage')    => $this->showCpuUsage($host),
             $this->translate('Memory')       => $this->getFormattedMemory(),
             $this->translate('Path')         => $path,
             $this->translate('Power')        => $host->get('runtime_power_state'),
+            $this->translate('Uptime')       => DateFormatter::formatDuration($host->quickStats()->get('uptime')),
             $this->translate('BIOS Version') => new SpectreMelddownBiosInfo($host),
             // $this->translate('BIOS Release Date') => $vm->get('bios_release_date'),
             $this->translate('Vendor')       => $host->get('sysinfo_vendor'),
@@ -97,13 +102,26 @@ class HostInfoTable extends NameValueTable
         }
     }
 
+    protected function showCpuUsage(HostSystem $host)
+    {
+        $total = $host->get('hardware_cpu_cores') * $host->get('hardware_cpu_mhz');
+        $used = $host->quickStats()->get('overall_cpu_usage');
+        $title = sprintf('Used %s / %s MHz', $used, $total);
+
+        return [new SimpleUsageBar($used, $total, $title), ' ' . $title];
+    }
+
     protected function getFormattedMemory()
     {
-        return number_format(
-            $this->host->get('hardware_memory_size_mb'),
-            0,
-            ',',
-            '.'
-        ) . ' MB';
+        $size = $this->host->get('hardware_memory_size_mb') * 1024 * 1024;
+        $used = $this->host->quickStats()->get('overall_memory_usage_mb') * 1024 * 1024;
+        $title = sprintf(
+            'Used %s / %s',
+            Format::bytes($used),
+            Format::bytes($size)
+        );
+        $bar = new SimpleUsageBar($used, $size, $title);
+
+        return [$bar, ' ' . $title];
     }
 }
