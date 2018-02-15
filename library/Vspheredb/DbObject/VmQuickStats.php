@@ -44,7 +44,7 @@ class VmQuickStats extends BaseDbObject
         'summary.quickStats.ftSecondaryLatency'           => 'ft_secondary_latency',
         'summary.quickStats.guestHeartbeatStatus'         => 'guest_heartbeat_status',
         'summary.quickStats.guestMemoryUsage'             => 'guest_memory_usage_mb',
-        'summary.quickStats.hostMemoryUsage'              => 'host_memory_usage',
+        'summary.quickStats.hostMemoryUsage'              => 'host_memory_usage_mb',
         'summary.quickStats.overallCpuDemand'             => 'overall_cpu_demand',
         'summary.quickStats.overallCpuUsage'              => 'overall_cpu_usage',
         'summary.quickStats.privateMemory'                => 'private_memory_mb',
