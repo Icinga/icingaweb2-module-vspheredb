@@ -19,7 +19,7 @@ class SyncQuickStats
     public function run()
     {
         $vCenter = $this->vCenter;
-        // HostQuickStats::syncFromApi($vCenter);
+        HostQuickStats::syncFromApi($vCenter);
         VmQuickStats::syncFromApi($vCenter);
 
         return $this;
