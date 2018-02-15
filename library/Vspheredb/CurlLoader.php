@@ -204,6 +204,7 @@ class CurlLoader
      */
     protected function request($method, $url, $body = null, $headers = array())
     {
+        $method = strtoupper($method);
         $sendHeaders = array('Host: ' . $this->host);
         foreach ($this->cookies as $cookie) {
             $sendHeaders[] = 'Cookie: ' . $cookie;
@@ -217,7 +218,7 @@ class CurlLoader
         $opts = array(
             CURLOPT_URL            => $url,
             CURLOPT_HTTPHEADER     => $sendHeaders,
-            CURLOPT_CUSTOMREQUEST  => strtoupper($method),
+            CURLOPT_CUSTOMREQUEST  => $method,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 5,
             CURLOPT_SSL_VERIFYPEER => $this->verifySslPeer,
