@@ -58,6 +58,7 @@ class SyncVmDiskUsage
                 continue;
             }
             $root = null;
+            $var = null;
             foreach ($vm->{'guest.disk'}->GuestDiskInfo as $info) {
                 $path = $info->diskPath;
 
@@ -65,13 +66,23 @@ class SyncVmDiskUsage
                 // run by systemd with PrivateTmp=true
                 if ($path === '/') {
                     $root = $info;
+                } elseif ($path === '/var') {
+                    $var = $info;
                 } elseif (is_object($root) && in_array($path, ['/tmp', '/var/tmp'])) {
-                    if ($info->capacity === $root->capacity
-                        && $info->freeSpace === $root->freeSpace
+                    if ($path === '/var/tmp' && is_object($var)) {
+                        $base = $var;
+                    } else {
+                        $base = $root;
+                    }
+
+                    /** @var \stdClass $base */
+                    if ($info->capacity === $base->capacity
+                        && $info->freeSpace === $base->freeSpace
                     ) {
                         continue;
                     }
                 }
+                // End of workaround
 
                 $idx = "$uuid$path";
                 $seen[$idx] = $idx;
