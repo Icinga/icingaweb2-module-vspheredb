@@ -63,7 +63,7 @@ class HostInfoTable extends NameValueTable
             // $this->translate('BIOS Release Date') => $vm->get('bios_release_date'),
             $this->translate('Vendor')       => $host->get('sysinfo_vendor'),
             $this->translate('Model')        => $host->get('sysinfo_model'),
-            $this->translate('Service Tag')  => $this->getFormattedServiceTag(),
+            $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
             $this->translate('CPU Model')    => $host->get('hardware_cpu_model'),
             $this->translate('CPU Packages') => $host->get('hardware_cpu_packages'),
             $this->translate('CPU Cores')    => $host->get('hardware_cpu_cores'),
@@ -78,28 +78,34 @@ class HostInfoTable extends NameValueTable
         ]);
     }
 
-    protected function getFormattedServiceTag()
+    protected function getFormattedServiceTag(HostSystem $host)
     {
-        $host = $this->host;
-        $tag = $host->get('service_tag');
-        if ($host->get('sysinfo_vendor') === 'Dell Inc.') {
-            $url = sprintf(
-                'http://www.dell.com/support/home/de/de/debsdt1/product-support/servicetag/%s/drivers',
-                strtolower($tag)
-            );
-
-            return Html::tag(
-                'a',
-                [
-                    'href'   => $url,
-                    'target' => '_blank',
-                    'title'  => $this->translate('Dell Support Page')
-                ],
-                $tag
-            );
+        if ($this->host->get('sysinfo_vendor') === 'Dell Inc.') {
+            return $this->linkToDellSupport($host->get('service_tag'));
         } else {
-            return $tag;
+            return $host->get('service_tag');
         }
+    }
+
+    protected function linkToDellSupport($serviceTag)
+    {
+        $urlPattern = 'http://www.dell.com/support/home/product-support/servicetag/%s/drivers';
+
+        $url = sprintf(
+            $urlPattern,
+            strtolower($serviceTag)
+        );
+
+        return Html::tag(
+            'a',
+            [
+                'href'   => $url,
+                'target' => '_blank',
+                'title'  => $this->translate('Dell Support Page'),
+                'rel'    => 'noreferrer'
+            ],
+            $serviceTag
+        );
     }
 
     protected function showCpuUsage(HostSystem $host)
