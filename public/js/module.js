@@ -17,6 +17,27 @@
             this.module.on('keydown', '', this.keyDown);
             this.module.on('keyup', '', this.keyUp);
             this.module.on('keyup', 'form.quicksearch input.search', this.keyUpInQuickSearch);
+            $(document).keydown(this.bodyKeyDown);
+        },
+
+        bodyKeyDown: function (ev) {
+            if (document.activeElement.id !== 'body') {
+                return;
+            }
+
+            if (ev.ctrlKey || ev.altKey) {
+                return;
+            }
+
+            if (ev.keyCode < 31 && ev.keyCode !== 8 && ev.keyCode !== 27) {
+                return;
+            }
+
+            var $input = $('form.quicksearch input.search').last();
+            var $container = $input.closest('.container.module-vspheredb');
+            if ($container.length) {
+                $input.focus();
+            }
         },
 
         keyDown: function (ev) {
