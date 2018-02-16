@@ -35,6 +35,8 @@ class VirtualMachine extends BaseDbObject
         'runtime_power_state'        => null,
         'boot_network_protocol'      => null,
         'boot_order'                 => null,
+        'cpu_hot_add_enabled'        => null,
+        'memory_hot_add_enabled'     => null,
     ];
 
     protected $objectReferences = [
@@ -46,6 +48,8 @@ class VirtualMachine extends BaseDbObject
         'template',
         'online_standby',
         'paused',
+        'cpu_hot_add_enabled',
+        'memory_hot_add_enabled',
     ];
 
     protected $propertyMap = [
@@ -73,6 +77,8 @@ class VirtualMachine extends BaseDbObject
         'guest.hostName'             => 'guest_host_name',
         'guest.ipAddress'            => 'guest_ip_address',
         'config.bootOptions'         => 'bootOptions',
+        'config.cpuHotAddEnabled'    => 'cpu_hot_add_enabled',
+        'config.memoryHotAddEnabled' => 'memory_hot_add_enabled',
         // 'runtime.bootTime' => 'runtime_last_boot_time',
         // 'runtime.suspendTime' 'runtime_last_suspend_time',
     ];

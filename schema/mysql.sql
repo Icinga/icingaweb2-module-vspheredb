@@ -136,6 +136,8 @@ CREATE TABLE virtual_machine (
   version VARCHAR(32) NOT NULL,         -- vmx-11
   online_standby ENUM('y', 'n') NOT NULL,
   paused ENUM('y', 'n') NOT NULL,
+  cpu_hot_add_enabled ENUM('y', 'n') NOT NULL,
+  memory_hot_add_enabled ENUM('y', 'n') NOT NULL,
   connection_state ENUM (
     'connected',    -- server has access to the vm
     'disconnected', -- disconnected from the virtual machine, since its host is disconnected
