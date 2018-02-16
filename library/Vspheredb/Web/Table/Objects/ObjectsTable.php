@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Web\Table\ZfQueryBasedTable;
+use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 
-abstract class ObjectsTable extends ZfQueryBasedTable
+abstract class ObjectsTable extends BaseTable
 {
     protected $searchColumns = [
         'object_name',
