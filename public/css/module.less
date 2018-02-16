@@ -235,10 +235,21 @@ div.disk-usage {
   min-width: 8em;
   border: none;
   padding: 0;
-  background-color: @gray-light;
+  background-color: @gray-lighter;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   min-height: 1em;
+  border-radius: 0.3em;
+  -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
+  box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
+  overflow: hidden;
+
+  span {
+    display: inline-block;
+    border-bottom-left-radius: 0.3em;
+    border-top-left-radius: 0.3em;
+  }
 
   a {
     display: inline-block;
