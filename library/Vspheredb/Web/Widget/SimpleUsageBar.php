@@ -12,7 +12,7 @@ class SimpleUsageBar extends BaseElement
     protected $defaultAttributes = [
         'class' => 'disk-usage compact',
         'data-base-target' => '_next',
-        'style' => 'display: inline-block; width: 6em;'
+        'style' => 'display: inline-block'
     ];
 
     /** @var int */
