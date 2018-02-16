@@ -14,6 +14,46 @@
             this.module.on('sparklineRegionChange', '.overspark', this.change);
             this.module.on('mouseleave', '.overspark', this.leave);
             this.module.on('render', this.rendered);
+            this.module.on('keydown', '', this.keyDown);
+            this.module.on('keyup', '', this.keyUp);
+            this.module.on('keyup', 'form.quicksearch input.search', this.keyUpInQuickSearch);
+        },
+
+        keyDown: function (ev) {
+            if ((ev.keyCode > 31 || ev.keyCode === 8)  && ! (ev.ctrlKey || ev.altKey)) {
+                $(ev.currentTarget).find('input.search').first().focus();
+            }
+        },
+
+        keyUp: function (ev) {
+            if (ev.keyCode === 27 && ! (ev.ctrlKey || ev.altKey)) {
+                this.clearQuickSearch($(ev.currentTarget).find('input.search'));
+            }
+        },
+
+        keyUpInQuickSearch: function (ev) {
+            if (ev.keyCode === 27 && ! (ev.ctrlKey || ev.altKey)) {
+                ev.stopPropagation();
+                this.clearQuickSearch($(ev.currentTarget));
+            }
+        },
+
+        clearQuickSearch: function ($input) {
+            if ($input.length > 0) {
+                $input = $input.first();
+            } else {
+                return;
+            }
+
+            if ($input.val().length === 0) {
+                return;
+            }
+
+            var attrValue = $input.attr('value');
+            $input.val('');
+            if (typeof attrValue !== 'undefined' && attrValue !== '') {
+                $input.closest('form').submit();
+            }
         },
 
         leave: function (ev) {
