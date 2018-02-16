@@ -94,7 +94,7 @@ class VmsTable extends ObjectsTable
             $this->createPerfColumns($row->uuid),
             [
                 $row->hardware_numcpu,
-                $row->hardware_memorymb
+                $this->formatMb($row->hardware_memorymb)
             ]
         ));
         $tr->attributes()->add('class', [$row->runtime_power_state, $row->overall_status]);

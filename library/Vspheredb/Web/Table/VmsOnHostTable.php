@@ -4,9 +4,8 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
 
-class VmsOnHostTable extends ZfQueryBasedTable
+class VmsOnHostTable extends BaseTable
 {
     protected $searchColumns = [
         'object_name',
@@ -39,7 +38,11 @@ class VmsOnHostTable extends ZfQueryBasedTable
             ['uuid' => bin2hex($row->uuid)]
         );
 
-        $tr = $this::row([$caption, $row->hardware_numcpu, $row->hardware_memorymb]);
+        $tr = $this::row([
+            $caption,
+            $row->hardware_numcpu,
+            $this->formatMb($row->hardware_memorymb)
+        ]);
         $tr->attributes()->add('class', [$row->runtime_power_state, $row->overall_status]);
 
         return $tr;

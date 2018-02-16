@@ -23,7 +23,11 @@ class VmsInFolderTable extends VmsTable
             ['uuid' => bin2hex($row->uuid)]
         );
 
-        $tr = $this::row([$caption, $row->hardware_numcpu, $row->hardware_memorymb]);
+        $tr = $this::row([
+            $caption,
+            $row->hardware_numcpu,
+            $this->formatMb($row->hardware_memorymb * 1024 * 1024)
+        ]);
         $tr->attributes()->add('class', [$row->runtime_power_state, $row->overall_status]);
 
         return $tr;
