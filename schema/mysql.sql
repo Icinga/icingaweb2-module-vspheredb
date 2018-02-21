@@ -119,7 +119,9 @@ CREATE TABLE host_system (
   hardware_num_nic SMALLINT UNSIGNED NOT NULL,
   runtime_power_state ENUM (
     'poweredOff',
-    'poweredOn'
+    'poweredOn',
+    'standby',
+    'unknown'
   ) NOT NULL,
   PRIMARY KEY(uuid),
   UNIQUE INDEX sysinfo_uuid (sysinfo_uuid)
