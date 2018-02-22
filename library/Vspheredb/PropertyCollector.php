@@ -91,13 +91,19 @@ class PropertyCollector
                 'type' => $row->obj->type
             ];
 
-            if (! property_exists($row, 'propSet') && property_exists($row, 'missingSet')) {
-                if ($row->missingSet[0]->fault->fault->privilegeId === 'System.View') {
-                    throw new AuthenticationException('System.View is required');
-                } else {
-                    throw new IcingaException('There is no propSet in the result');
+            if (! property_exists($row, 'propSet')) {
+                if (property_exists($row, 'missingSet')) {
+                    if ($row->missingSet[0]->fault->fault->privilegeId === 'System.View') {
+                        throw new AuthenticationException('System.View is required');
+                    }
                 }
+
+                // This can happen for disconnected/unknown objects. No data? Fine.
+                $nice[$row->obj->_] = (object) $data;
+
+                continue;
             }
+
             foreach ($row->propSet as $prop) {
                 $val = $prop->val;
                 if (in_array($prop->name, $knownRefs)) {
