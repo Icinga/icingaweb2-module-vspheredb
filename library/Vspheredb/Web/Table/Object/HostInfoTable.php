@@ -8,6 +8,7 @@ use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
@@ -23,10 +24,14 @@ class HostInfoTable extends NameValueTable
     /** @var PathLookup */
     protected $pathLookup;
 
-    public function __construct(HostSystem $host, PathLookup $loopup)
+    /** @var VCenter */
+    protected $vCenter;
+
+    public function __construct(HostSystem $host, VCenter $vCenter, PathLookup $loopup)
     {
         $this->host = $host;
         $this->pathLookup = $loopup;
+        $this->vCenter = $vCenter;
     }
 
     protected function getDb()
@@ -54,6 +59,7 @@ class HostInfoTable extends NameValueTable
             $this->translate('UUID')         => $host->get('sysinfo_uuid'),
             $this->translate('API Version')  => $host->get('product_api_version'),
             $this->translate('Product Name') => $host->get('product_full_name'),
+            $this->translate('MO Ref')       => $this->linkToVCenter($host->object()->get('moref')),
             $this->translate('CPU Usage')    => $this->showCpuUsage($host),
             $this->translate('Memory')       => $this->getFormattedMemory(),
             $this->translate('Path')         => $path,
@@ -76,6 +82,19 @@ class HostInfoTable extends NameValueTable
                 ['uuid' => bin2hex($uuid)]
             ),
         ]);
+    }
+
+    protected function linkToVCenter($moRef)
+    {
+        return Html::tag('a', [
+            'href' => sprintf(
+                'https://%s/mob/?moid=%s',
+                $this->vCenter->getFirstServer()->get('host'),
+                rawurlencode($moRef)
+            ),
+            'target' => '_blank',
+            'title' => $this->translate('Jump to the Managed Object browser')
+        ], $moRef);
     }
 
     protected function getFormattedServiceTag(HostSystem $host)
