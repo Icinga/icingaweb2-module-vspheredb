@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Util\Format;
 use dipl\Html\Link;
@@ -10,66 +11,87 @@ class HostsTable extends ObjectsTable
 {
     public function getColumnsToBeRendered()
     {
-        return [
-            $this->translate('Name'),
-            $this->translate('Model'),
-            $this->translate('CPU Usage'),
-            $this->translate('Memory Usage'),
-            $this->translate('CPU Cores'),
-            $this->translate('Memory'),
-            $this->translate('VMs'),
-        ];
+        return $this->getChosenTitles();
     }
 
-    public function renderRow($row)
+    protected function initialize()
     {
-        $caption = Link::create(
-            $row->object_name,
-            'vspheredb/host',
-            ['uuid' => bin2hex($row->uuid)]
-        );
+        $this->addAvailableColumns([
+            (new SimpleColumn('object_name', $this->translate('Name'), [
+                'object_name' => 'o.object_name',
+                'uuid'        => 'o.uuid',
+            ]))->setRenderer(function ($row) {
+                return Link::create(
+                    $row->object_name,
+                    'vspheredb/host',
+                    ['uuid' => bin2hex($row->uuid)]
+                );
+            }),
+            new SimpleColumn('sysinfo_model', $this->translate('Model'), 'h.sysinfo_model'),
+            (new SimpleColumn('cpu_usage', $this->translate('CPU Usage'), [
+                'cpu_usage' => 'hqs.overall_cpu_usage',
+                'cpu_total' => '(hardware_cpu_cores * hardware_cpu_mhz)',
+            ]))->setRenderer(function ($row) {
+                $title = sprintf('%s / %s MHz', $row->cpu_usage, $row->cpu_total);
 
-        $tr = $this::row([
-            $caption,
-            $row->sysinfo_model,
-            $this->showCpuUsage($row),
-            $this->showMemoryUsage($row),
-            sprintf('%d / %d', $row->hardware_cpu_cores, $row->vms_cnt_cpu),
-            sprintf(
-                '%s / %s',
-                Format::bytes($row->hardware_memory_size_mb * 1024 * 1024, Format::STANDARD_IEC),
-                Format::bytes($row->vms_memorymb * 1024 * 1024, Format::STANDARD_IEC)
-            ),
-            $row->running_vms,
+                return new SimpleUsageBar($row->cpu_usage, $row->cpu_total, $title);
+            })->setSortExpression(
+                'hqs.overall_cpu_usage / (h.hardware_cpu_cores * h.hardware_cpu_mhz)'
+            )->setDefaultSortDirection('DESC'),
+            (new SimpleColumn('memory_usage', $this->translate('Memory Usage'), [
+                'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
+                'memory_usage_mb'         => 'hqs.overall_memory_usage_mb',
+            ]))->setRenderer(function ($row) {
+                $used = $row->memory_usage_mb * 1024 * 1024;
+                $total = $row->hardware_memory_size_mb * 1024 * 1024;
+                $title = sprintf(
+                    '%s / %s',
+                    Format::bytes($used),
+                    Format::bytes($total)
+                );
+
+                return new SimpleUsageBar($used, $total, $title);
+            })->setSortExpression(
+                '(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)'
+            )->setDefaultSortDirection('DESC'),
+            new SimpleColumn('hardware_numcpu', 'Memory', 'vc.hardware_numcpu'),
+            (new SimpleColumn('hardware_memorymb', 'CPUs', 'vc.hardware_memorymb'))
+                ->setRenderer(function ($row) {
+                    return $this->formatMb($row->hardware_memorymb);
+                }),
+            (new SimpleColumn('cpu_cores', $this->translate('CPU Cores'), [
+                // 'hardware_cpu_packages'   => 'h.hardware_cpu_packages',
+                'hardware_cpu_cores'      => 'h.hardware_cpu_cores',
+                'vms_cnt_cpu'             => 'vms.cnt_cpu',
+            ]))->setRenderer(function ($row) {
+                return sprintf('%d / %d', $row->hardware_cpu_cores, $row->vms_cnt_cpu);
+            }),
+            (new SimpleColumn('memory_size', $this->translate('Memory'), [
+                'vms_memorymb'            => 'vms.memorymb',
+                'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
+            ]))->setRenderer(function ($row) {
+                return sprintf(
+                    '%s / %s',
+                    Format::bytes($row->hardware_memory_size_mb * 1024 * 1024, Format::STANDARD_IEC),
+                    Format::bytes($row->vms_memorymb * 1024 * 1024, Format::STANDARD_IEC)
+                );
+            }),
+            new SimpleColumn('vms_cnt_cpu', $this->translate('VMs'), 'vms.cnt_cpu'),
         ]);
-        $tr->attributes()->add('class', [$row->runtime_power_state, $row->overall_status]);
 
-        return $tr;
-    }
-
-    protected function showCpuUsage($host)
-    {
-        $title = sprintf('%s / %s MHz', $host->cpu_usage, $host->cpu_total);
-
-        return new SimpleUsageBar($host->cpu_usage, $host->cpu_total, $title);
-    }
-
-    protected function showMemoryUsage($host)
-    {
-        $used = $host->memory_usage_mb * 1024 * 1024;
-        $total = $host->hardware_memory_size_mb * 1024 * 1024;
-        $title = sprintf(
-            '%s / %s',
-            Format::bytes($used),
-            Format::bytes($total)
-        );
-
-        return new SimpleUsageBar($used, $total, $title);
+        $this->chooseColumns([
+            'object_name',
+            'sysinfo_model',
+            'cpu_usage',
+            'memory_usage',
+            'cpu_cores',
+            'memory_size',
+            'vms_cnt_cpu',
+        ]);
     }
 
     public function prepareQuery()
     {
-
         $vms = $this->db()->select()->from(
             ['vc' => 'virtual_machine'],
             [
@@ -82,24 +104,7 @@ class HostsTable extends ObjectsTable
 
         $query = $this->db()->select()->from(
             ['o' => 'object'],
-            [
-                'uuid'                    => 'o.uuid',
-                'object_name'             => 'o.object_name',
-                'overall_status'          => 'o.overall_status',
-                'sysinfo_model'           => 'h.sysinfo_model',
-                'hardware_cpu_packages'   => 'h.hardware_cpu_packages',
-                'hardware_cpu_cores'      => 'h.hardware_cpu_cores',
-                'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
-                'runtime_power_state'     => 'h.runtime_power_state',
-                'running_vms'             => 'vms.cnt',
-                'vms_cnt_cpu'             => 'vms.cnt_cpu',
-                'vms_memorymb'            => 'vms.memorymb',
-                'memory_usage_mb'         => 'hqs.overall_memory_usage_mb',
-                'memory_usage_percent'    => '(100 * hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)',
-                'cpu_usage'               => 'hqs.overall_cpu_usage',
-                'cpu_total'               => '(hardware_cpu_cores * hardware_cpu_mhz)',
-                'cpu_usage_percent'       => '100 * hqs.overall_cpu_usage / (hardware_cpu_cores * hardware_cpu_mhz)',
-            ]
+            $this->getRequiredDbColumns()
         )->join(
             ['h' => 'host_system'],
             'o.uuid = h.uuid',
@@ -112,9 +117,26 @@ class HostsTable extends ObjectsTable
             ['vms' => $vms],
             'vms.runtime_host_uuid = h.uuid',
             []
-        )->order('object_name ASC');
+        )->limit(100);
+
         if ($this->parentUuids) {
             $query->where('o.parent_uuid IN (?)', $this->parentUuids);
+        }
+
+        return $this->sortQuery($query, [
+            'object_name',
+            // 'memory_usage',
+        ]);
+    }
+
+    protected function sortQuery(\Zend_Db_Select $query, $sortColumns)
+    {
+        foreach ($sortColumns as $columnName) {
+            $sortColumn = $this->getAvailableColumn($columnName);
+            $query->order(
+                $sortColumn->getSortExpression()
+                . ' ' . $sortColumn->getDefaultSortDirection()
+            );
         }
 
         return $query;
