@@ -2,8 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use dipl\Html\Table;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
-use Icinga\Module\Vspheredb\Web\Table\Objects\VmsInFolderTable;
+use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
 
 class VmsController extends ObjectsController
 {
@@ -12,7 +13,7 @@ class VmsController extends ObjectsController
         $this->addSingleTab($this->translate('VMs'));
         $this->linkBackToOverview('vm');
         $this->showTable(
-            new VmsInFolderTable($this->db()),
+            new VmsTable($this->db()),
             'vspheredb/vms',
             $this->translate('Virtual Machines')
         );

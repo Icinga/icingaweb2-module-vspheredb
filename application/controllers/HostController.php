@@ -5,7 +5,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostInfoTable;
-use Icinga\Module\Vspheredb\Web\Table\VmsOnHostTable;
+use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
 use dipl\Html\Link;
 
 class HostController extends Controller
@@ -43,7 +43,8 @@ class HostController extends Controller
     public function vmsAction()
     {
         $this->addLinkBackToHost();
-        VmsOnHostTable::create($this->host)->renderTo($this);
+        (new VmsTable($this->db()))->filterHost($this->host->get('uuid'))
+            ->renderTo($this);
     }
 
     protected function addLinkBackToHost()
