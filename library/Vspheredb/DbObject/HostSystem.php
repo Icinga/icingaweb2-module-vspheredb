@@ -87,13 +87,18 @@ class HostSystem extends BaseDbObject
 
     public function setMapped($properties, VCenter $vCenter)
     {
-        $this->setOtherIdentifyingInfo(
-            $properties->{'summary.hardware.otherIdentifyingInfo'}->HostSystemIdentificationInfo
-        );
-        $this->set(
-            'bios_release_date',
-            $this->formatBiosReleaseDate($properties->{'hardware.biosInfo.releaseDate'})
-        );
+        $otherInfo = $properties->{'summary.hardware.otherIdentifyingInfo'};
+        if (property_exists($otherInfo, 'HostSystemIdentificationInfo')) {
+            $this->setOtherIdentifyingInfo(
+                $otherInfo->HostSystemIdentificationInfo
+            );
+        }
+        if (property_exists($properties, 'hardware.biosInfo.releaseDate')) {
+            $this->set(
+                'bios_release_date',
+                $this->formatBiosReleaseDate($properties->{'hardware.biosInfo.releaseDate'})
+            );
+        }
         $this->set(
             'hardware_memory_size_mb',
             floor($properties->{'summary.hardware.memorySize'} / (1024 * 1024))
