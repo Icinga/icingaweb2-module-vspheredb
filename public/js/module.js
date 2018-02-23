@@ -14,10 +14,16 @@
             this.module.on('sparklineRegionChange', '.overspark', this.change);
             this.module.on('mouseleave', '.overspark', this.leave);
             this.module.on('render', this.rendered);
+            this.module.on('mouseover', 'thead tr', this.checkForHeaderHref);
             this.module.on('keydown', '', this.keyDown);
             this.module.on('keyup', '', this.keyUp);
             this.module.on('keyup', 'form.quicksearch input.search', this.keyUpInQuickSearch);
             $(document).keydown(this.bodyKeyDown);
+        },
+
+        checkForHeaderHref: function (ev) {
+            // href will be added because of sort icons
+            $(ev.currentTarget).removeAttr('href');
         },
 
         bodyKeyDown: function (ev) {
