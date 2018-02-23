@@ -85,27 +85,37 @@ class AdditionalTableActions
         if ($enabled === null) {
             $enabled = $table->getChosenColumnNames();
         } else {
+            $links[] = Link::create(
+                $this->translate('Reset'),
+                $url->without('columns'),
+                null,
+                ['class' => 'icon-reply']
+            );
             $enabled = preg_split('/,/', $enabled, -1, PREG_SPLIT_NO_EMPTY);
             $table->chooseColumns($enabled);
         }
-
 
         foreach ($this->table->getAvailableColumns() as $column) {
             $title = $column->getTitle();
             $alias = $column->getAlias();
             if (in_array($alias, $enabled)) {
                 $links[] = Link::create(
-                    "- $title",
+                    $title,
                     $url->with('columns', implode(',', array_diff($enabled, [
                         $alias
-                    ])))
+                    ]))),
+                    null,
+                    ['class' => 'icon-ok']
                 );
             } else {
                 $links[] = Link::create(
-                    "+ $title",
+                    $title,
                     $url->with('columns', implode(',', array_merge($enabled, [
                         $alias
-                    ])))
+                    ]))),
+                    null,
+                    ['class' => 'icon-plus']
+
                 );
             }
         }
