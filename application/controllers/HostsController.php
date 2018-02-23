@@ -15,10 +15,11 @@ class HostsController extends ObjectsController
         $this->addSingleTab($this->translate('Hosts'));
         $this->linkBackToOverview('host');
         $table = new HostsTable($this->db());
-
-        $this->showTable($table, 'vspheredb/hosts', $this->translate('Hosts'));
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
+        $table->handleSortUrl($this->url());
+
+        $this->showTable($table, 'vspheredb/hosts', $this->translate('Hosts'));
     }
 
     public function spectreAction()
