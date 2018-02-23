@@ -96,6 +96,8 @@ abstract class BaseTable extends ZfQueryBasedTable
     protected function getChosenColumns()
     {
         $this->assertInitialized();
+        // TODO: I do not want to call this:
+        $this->getChosenColumnNames();
 
         return $this->chosenColumns;
     }
