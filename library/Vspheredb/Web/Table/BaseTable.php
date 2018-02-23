@@ -2,7 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
+use dipl\Html\Element;
+use dipl\Html\Html;
+use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
+use dipl\Web\Url;
 use Icinga\Exception\IcingaException;
 use Icinga\Util\Format;
 
@@ -15,6 +19,12 @@ abstract class BaseTable extends ZfQueryBasedTable
     private $chosenColumns = [];
 
     private $isInitialized = false;
+
+    /** @var Url */
+    private $sortUrl;
+
+    /** @var string */
+    private $sortParam;
 
     public function chooseColumns(array $columnNames)
     {
@@ -35,9 +45,27 @@ abstract class BaseTable extends ZfQueryBasedTable
     public function assertInitialized()
     {
         if (! $this->isInitialized) {
-            $this->initialize();
             $this->isInitialized = true;
+            $this->initialize();
         }
+    }
+
+    public function nextHeader()
+    {
+        return parent::nextHeader()->setAttributes([
+            'data-base-target' => '_self'
+        ]);
+    }
+
+    protected function addHeaderColumnsTo(Element $parent)
+    {
+        if ($this->sortUrl) {
+            $this->addSortHeadersTo($parent);
+        } else {
+            parent::addHeaderColumnsTo($parent);
+        }
+
+        return $parent;
     }
 
     protected function initialize()
@@ -116,5 +144,69 @@ abstract class BaseTable extends ZfQueryBasedTable
     protected function formatMb($mb)
     {
         return Format::bytes($mb * 1024 * 1024);
+    }
+
+    public function handleSortUrl(Url $url, $sortParam = 'sort')
+    {
+        $this->sortParam = $sortParam;
+        $this->sortUrl = $url;
+        $sort = $url->getParam($sortParam);
+        if (null !== $sort) {
+            $this->sortBy($sort);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string|array $columns
+     * @return $this
+     */
+    public function sortBy($columns)
+    {
+        if (! is_array($columns)) {
+            $columns = [$columns];
+        }
+
+        $query = $this->getQuery();
+        foreach ($columns as $columnName) {
+            $space = strpos($columnName, ' ');
+            if (false === $space) {
+                $sortColumn = $this->getAvailableColumn($columnName);
+                $direction = $sortColumn->getDefaultSortDirection();
+            } else {
+                $direction = substr($columnName, $space + 1);
+                $columnName = substr($columnName, 0, $space);
+                $sortColumn = $this->getAvailableColumn($columnName);
+            }
+            $query->order($sortColumn->getSortExpression() . " $direction");
+        }
+
+        return $this;
+    }
+
+    /**
+     * TODO: we should consider introducing TablePlugins for similar tasks
+     *
+     * @param Element $parent
+     * @return Element
+     */
+    protected function addSortHeadersTo(Element $parent)
+    {
+        // Hint: MUST be set
+        $url = $this->sortUrl;
+
+        foreach ($this->getChosenColumns() as $column) {
+            $parent->add(
+                Html::tag('th')->setContent(
+                    Link::create(
+                        $column->getTitle(),
+                        $url->with($this->sortParam, $column->getAlias())
+                    )
+                )
+            );
+        }
+
+        return $parent;
     }
 }
