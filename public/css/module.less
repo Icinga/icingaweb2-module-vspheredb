@@ -14,6 +14,36 @@
   overflow: hidden;
 }
 
+i.state::before {
+  color: white;
+  border-radius: 50%;
+  width: 2em;
+  height: 2em;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 2em;
+}
+
+i.poweredOn::before, i.green::before {
+  background-color: @color-ok;
+}
+
+i.poweredOff::before, i.red::before {
+  background-color: @color-critical;
+}
+
+i.standby::before, i.yellow::before {
+  background-color: @color-warning;
+}
+
+i.unknown::before {
+  background-color: @color-unknown;
+}
+
+i.gray::before {
+  background-color: @gray;
+}
+
 #layout.twocols {
   .table-vms {
     td, th {
