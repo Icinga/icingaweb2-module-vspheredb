@@ -54,11 +54,6 @@ class HostsTable extends ObjectsTable
             })->setSortExpression(
                 '(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)'
             )->setDefaultSortDirection('DESC'),
-            new SimpleColumn('hardware_numcpu', 'Memory', 'vc.hardware_numcpu'),
-            (new SimpleColumn('hardware_memorymb', 'CPUs', 'vc.hardware_memorymb'))
-                ->setRenderer(function ($row) {
-                    return $this->formatMb($row->hardware_memorymb);
-                }),
             (new SimpleColumn('cpu_cores', $this->translate('CPU Cores'), [
                 // 'hardware_cpu_packages'   => 'h.hardware_cpu_packages',
                 'hardware_cpu_cores'      => 'h.hardware_cpu_cores',
@@ -84,8 +79,8 @@ class HostsTable extends ObjectsTable
             'sysinfo_model',
             'cpu_usage',
             'memory_usage',
-            'cpu_cores',
-            'memory_size',
+            // 'cpu_cores',
+            // 'memory_size',
             'vms_cnt_cpu',
         ]);
     }
