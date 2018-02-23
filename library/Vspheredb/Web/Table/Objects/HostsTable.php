@@ -2,8 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
+use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
 use Icinga\Util\Format;
 use dipl\Html\Link;
 
@@ -22,6 +24,7 @@ class HostsTable extends ObjectsTable
                     ['uuid' => bin2hex($row->uuid)]
                 );
             }),
+            new SimpleColumn('sysinfo_vendor', $this->translate('Vendor'), 'h.sysinfo_vendor'),
             new SimpleColumn('sysinfo_model', $this->translate('Model'), 'h.sysinfo_model'),
             (new SimpleColumn('cpu_usage', $this->translate('CPU Usage'), [
                 'cpu_usage' => 'hqs.overall_cpu_usage',
@@ -49,24 +52,32 @@ class HostsTable extends ObjectsTable
             })->setSortExpression(
                 '(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)'
             )->setDefaultSortDirection('DESC'),
-            (new SimpleColumn('cpu_cores', $this->translate('CPU Cores'), [
-                // 'hardware_cpu_packages'   => 'h.hardware_cpu_packages',
-                'hardware_cpu_cores'      => 'h.hardware_cpu_cores',
-                'vms_cnt_cpu'             => 'vms.cnt_cpu',
+            new SimpleColumn('hardware_cpu_cores', $this->translate('CPU Cores'), 'h.hardware_cpu_cores'),
+            new SimpleColumn('vms_cnt_cpu', $this->translate('VM CPUs'), 'vms.cnt_cpu'),
+            (new SimpleColumn('hardware_memory_size_mb', $this->translate('Memory'), 'h.hardware_memory_size_mb'))
+                ->setRenderer(function ($row) {
+                    return Format::bytes($row->hardware_memory_size_mb * 1024 * 1024, Format::STANDARD_IEC);
+                }),
+            (new SimpleColumn('vms_memorymb', $this->translate('VMs Memory'), 'vms.memorymb'))
+                ->setRenderer(function ($row) {
+                    return Format::bytes($row->vms_memorymb * 1024 * 1024, Format::STANDARD_IEC);
+                }),
+            new SimpleColumn('vms_cnt', $this->translate('VMs'), 'vms.cnt'),
+            (new SimpleColumn('spectre_meltdown', $this->translate('Spectre / Meltdown'), [
+                'sysinfo_vendor'    => 'h.sysinfo_vendor',
+                'sysinfo_model'     => 'h.sysinfo_model',
+                'bios_version'      => 'h.bios_version',
+                'bios_release_date' => 'h.bios_release_date',
             ]))->setRenderer(function ($row) {
-                return sprintf('%d / %d', $row->hardware_cpu_cores, $row->vms_cnt_cpu);
-            }),
-            (new SimpleColumn('memory_size', $this->translate('Memory'), [
-                'vms_memorymb'            => 'vms.memorymb',
-                'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
-            ]))->setRenderer(function ($row) {
-                return sprintf(
-                    '%s / %s',
-                    Format::bytes($row->hardware_memory_size_mb * 1024 * 1024, Format::STANDARD_IEC),
-                    Format::bytes($row->vms_memorymb * 1024 * 1024, Format::STANDARD_IEC)
-                );
-            }),
-            new SimpleColumn('vms_cnt_cpu', $this->translate('VMs'), 'vms.cnt_cpu'),
+                $host = HostSystem::create((array) [
+                    'sysinfo_vendor'    => $row->sysinfo_vendor,
+                    'sysinfo_model'     => $row->sysinfo_model,
+                    'bios_version'      => $row->bios_version,
+                    'bios_release_date' => $row->bios_release_date,
+                ]);
+
+                return new SpectreMelddownBiosInfo($host);
+            })
         ]);
     }
 
