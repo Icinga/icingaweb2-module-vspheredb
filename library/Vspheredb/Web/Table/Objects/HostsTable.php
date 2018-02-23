@@ -73,16 +73,16 @@ class HostsTable extends ObjectsTable
             }),
             new SimpleColumn('vms_cnt_cpu', $this->translate('VMs'), 'vms.cnt_cpu'),
         ]);
+    }
 
-        $this->chooseColumns([
+    public function getDefaultColumnNames()
+    {
+        return [
             'object_name',
-            'sysinfo_model',
             'cpu_usage',
             'memory_usage',
-            // 'cpu_cores',
-            // 'memory_size',
             'vms_cnt_cpu',
-        ]);
+        ];
     }
 
     public function prepareQuery()
