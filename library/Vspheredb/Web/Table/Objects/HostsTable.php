@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use dipl\Html\Icon;
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
@@ -26,6 +28,11 @@ class HostsTable extends ObjectsTable
             }),
             new SimpleColumn('sysinfo_vendor', $this->translate('Vendor'), 'h.sysinfo_vendor'),
             new SimpleColumn('sysinfo_model', $this->translate('Model'), 'h.sysinfo_model'),
+            new SimpleColumn('bios_version', $this->translate('BIOS Version'), 'h.bios_version'),
+            (new SimpleColumn('bios_release_date', $this->translate('BIOS Release Date'), 'h.bios_release_date'))
+                ->setRenderer(function ($row) {
+                    return DateFormatter::formatDate(strtotime($row->bios_release_date));
+                }),
             (new SimpleColumn('cpu_usage', $this->translate('CPU Usage'), [
                 'cpu_usage' => 'hqs.overall_cpu_usage',
                 'cpu_total' => '(hardware_cpu_cores * hardware_cpu_mhz)',
@@ -77,7 +84,18 @@ class HostsTable extends ObjectsTable
                 ]);
 
                 return new SpectreMelddownBiosInfo($host);
-            })
+            }),
+            (new SimpleColumn('runtime_power_state', $this->translate('Power'), 'runtime_power_state'))
+                ->setRenderer(function ($row) {
+                    switch ($row->runtime_power_state) {
+                        case 'poweredOn':
+                            return Icon::create('off', [
+                                'class' => $row->runtime_power_state
+                            ]);
+                        default:
+                            return $row->runtime_power_state;
+                    }
+                })
         ]);
     }
 
@@ -105,7 +123,10 @@ class HostsTable extends ObjectsTable
 
         $query = $this->db()->select()->from(
             ['o' => 'object'],
-            $this->getRequiredDbColumns()
+            [
+                'runtime_power_state' => 'h.runtime_power_state',
+                'overall_status'      => 'o.overall_status',
+            ] + $this->getRequiredDbColumns()
         )->join(
             ['h' => 'host_system'],
             'o.uuid = h.uuid',
@@ -125,5 +146,13 @@ class HostsTable extends ObjectsTable
         }
 
         return $query;
+    }
+
+    public function renderRow($row)
+    {
+        return parent::renderRow($row)->addAttributes(['class' => [
+            $row->runtime_power_state,
+            $row->overall_status
+        ]]);
     }
 }
