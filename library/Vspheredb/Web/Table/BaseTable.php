@@ -16,7 +16,7 @@ abstract class BaseTable extends ZfQueryBasedTable
     private $availableColumns = [];
 
     /** @var TableColumn[] */
-    private $chosenColumns = [];
+    private $chosenColumns;
 
     private $isInitialized = false;
 
@@ -28,9 +28,25 @@ abstract class BaseTable extends ZfQueryBasedTable
 
     public function chooseColumns(array $columnNames)
     {
-        foreach ($columnNames as $alias) {
-            $this->chosenColumns[$alias] = $this->getAvailableColumn($alias);
+        $this->assertInitialized();
+
+        $this->chosenColumns = [];
+        foreach ($this->getAvailableColumns() as $column) {
+            $alias = $column->getAlias();
+            if (in_array($alias, $columnNames)) {
+                $this->chosenColumns[$alias] = $column;
+            }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return TableColumn[]
+     */
+    public function getAvailableColumns()
+    {
+        return $this->availableColumns;
     }
 
     public function getAvailableColumn($alias)
@@ -79,6 +95,21 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this->chosenColumns;
     }
 
+    public function getDefaultColumnNames()
+    {
+        return array_keys($this->getAvailableColumns());
+    }
+
+    public function getChosenColumnNames()
+    {
+        $this->assertInitialized();
+        if ($this->chosenColumns === null) {
+            $this->chooseColumns($this->getDefaultColumnNames());
+        }
+
+        return array_keys($this->chosenColumns);
+    }
+
     protected function getChosenTitles()
     {
         $titles = [];
@@ -111,14 +142,6 @@ abstract class BaseTable extends ZfQueryBasedTable
         }
 
         return $tr;
-    }
-
-    /**
-     * @return TableColumn[]
-     */
-    protected function getAvaliableColumns()
-    {
-        return $this->availableColumns;
     }
 
     public function addAvailableColumn(TableColumn $column)

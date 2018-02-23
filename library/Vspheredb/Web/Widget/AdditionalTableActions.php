@@ -75,9 +75,51 @@ class AdditionalTableActions
         return $link;
     }
 
+    protected function toggleColumnsOptions()
+    {
+        $links = [];
+        $table = $this->table;
+        $url = $this->url;
+
+        $enabled = $url->getParam('columns');
+        if ($enabled === null) {
+            $enabled = $table->getChosenColumnNames();
+        } else {
+            $enabled = preg_split('/,/', $enabled, -1, PREG_SPLIT_NO_EMPTY);
+            $table->chooseColumns($enabled);
+        }
+
+
+        foreach ($this->table->getAvailableColumns() as $column) {
+            $title = $column->getTitle();
+            $alias = $column->getAlias();
+            if (in_array($alias, $enabled)) {
+                $links[] = Link::create(
+                    "- $title",
+                    $url->with('columns', implode(',', array_diff($enabled, [
+                        $alias
+                    ])))
+                );
+            } else {
+                $links[] = Link::create(
+                    "+ $title",
+                    $url->with('columns', implode(',', array_merge($enabled, [
+                        $alias
+                    ])))
+                );
+            }
+        }
+
+        return $links;
+    }
+
     protected function moreOptions($links)
     {
         $options = $this->ul([
+            $this->li([
+                Link::create('Columns', '#'),
+                $this->linkList($this->toggleColumnsOptions())
+            ]),
             $this->li([
                 Link::create(Icon::create('down-open'), '#'),
                 $this->linkList($links)
