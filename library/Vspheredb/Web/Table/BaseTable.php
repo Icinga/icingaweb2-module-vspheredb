@@ -41,6 +41,11 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this;
     }
 
+    public function getColumnsToBeRendered()
+    {
+        return $this->getChosenTitles();
+    }
+
     /**
      * @return TableColumn[]
      */

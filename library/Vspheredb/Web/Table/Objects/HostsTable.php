@@ -9,11 +9,6 @@ use dipl\Html\Link;
 
 class HostsTable extends ObjectsTable
 {
-    public function getColumnsToBeRendered()
-    {
-        return $this->getChosenTitles();
-    }
-
     protected function initialize()
     {
         $this->addAvailableColumns([
@@ -116,22 +111,6 @@ class HostsTable extends ObjectsTable
 
         if ($this->parentUuids) {
             $query->where('o.parent_uuid IN (?)', $this->parentUuids);
-        }
-
-        return $this->sortQuery($query, [
-            'object_name',
-            // 'memory_usage',
-        ]);
-    }
-
-    protected function sortQuery(\Zend_Db_Select $query, $sortColumns)
-    {
-        foreach ($sortColumns as $columnName) {
-            $sortColumn = $this->getAvailableColumn($columnName);
-            $query->order(
-                $sortColumn->getSortExpression()
-                . ' ' . $sortColumn->getDefaultSortDirection()
-            );
         }
 
         return $query;
