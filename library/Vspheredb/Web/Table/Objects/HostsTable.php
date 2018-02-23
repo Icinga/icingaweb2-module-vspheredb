@@ -16,6 +16,20 @@ class HostsTable extends ObjectsTable
     protected function initialize()
     {
         $this->addAvailableColumns([
+            (new SimpleColumn('overall_status', $this->translate('Status'), 'o.overall_status'))
+                ->setRenderer(function ($row) {
+                    return Icon::create('ok', [
+                        'title' => $this->getStatusDescription($row->overall_status),
+                        'class' => [ 'state', $row->overall_status ]
+                    ]);
+                }),
+            (new SimpleColumn('runtime_power_state', $this->translate('Power'), 'h.runtime_power_state'))
+                ->setRenderer(function ($row) {
+                    return Icon::create('off', [
+                        'title' => $this->getPowerStateDescription($row->runtime_power_state),
+                        'class' => [ 'state', $row->runtime_power_state ]
+                    ]);
+                }),
             (new SimpleColumn('object_name', $this->translate('Name'), [
                 'object_name' => 'o.object_name',
                 'uuid'        => 'o.uuid',
@@ -76,7 +90,7 @@ class HostsTable extends ObjectsTable
                 'bios_version'      => 'h.bios_version',
                 'bios_release_date' => 'h.bios_release_date',
             ]))->setRenderer(function ($row) {
-                $host = HostSystem::create((array) [
+                $host = HostSystem::create([
                     'sysinfo_vendor'    => $row->sysinfo_vendor,
                     'sysinfo_model'     => $row->sysinfo_model,
                     'bios_version'      => $row->bios_version,
@@ -85,27 +99,41 @@ class HostsTable extends ObjectsTable
 
                 return new SpectreMelddownBiosInfo($host);
             }),
-            (new SimpleColumn('runtime_power_state', $this->translate('Power'), 'runtime_power_state'))
-                ->setRenderer(function ($row) {
-                    switch ($row->runtime_power_state) {
-                        case 'poweredOn':
-                            return Icon::create('off', [
-                                'class' => $row->runtime_power_state
-                            ]);
-                        default:
-                            return $row->runtime_power_state;
-                    }
-                })
         ]);
+    }
+
+    protected function getPowerStateDescription($state)
+    {
+        $descriptions = [
+            'poweredOn'  => $this->translate('Powered on'),
+            'poweredOff' => $this->translate('Powered off'),
+            'suspended'  => $this->translate('Suspended'),
+            'unknown'    => $this->translate('Power state is unknown (disconnected?)'),
+        ];
+
+        return $descriptions[$state];
+    }
+
+    protected function getStatusDescription($status)
+    {
+        $descriptions = [
+            'gray'   => $this->translate('Gray - status is unknown'),
+            'green'  => $this->translate('Green - everything is fine'),
+            'yellow' => $this->translate('Yellow - there are warnings'),
+            'red'    => $this->translate('Red - there is a problem'),
+        ];
+
+        return $descriptions[$status];
     }
 
     public function getDefaultColumnNames()
     {
         return [
+            'overall_status',
+            'runtime_power_state',
             'object_name',
             'cpu_usage',
             'memory_usage',
-            'vms_cnt_cpu',
         ];
     }
 
@@ -135,24 +163,20 @@ class HostsTable extends ObjectsTable
             ['hqs' => 'host_quick_stats'],
             'h.uuid = hqs.uuid',
             []
-        )->joinLeft(
-            ['vms' => $vms],
-            'vms.runtime_host_uuid = h.uuid',
-            []
         )->limit(100);
+
+        if ($wantsVms) {
+            $query->joinLeft(
+                ['vms' => $this->createVmSubQuery()],
+                'vms.runtime_host_uuid = h.uuid',
+                []
+            );
+        }
 
         if ($this->parentUuids) {
             $query->where('o.parent_uuid IN (?)', $this->parentUuids);
         }
 
         return $query;
-    }
-
-    public function renderRow($row)
-    {
-        return parent::renderRow($row)->addAttributes(['class' => [
-            $row->runtime_power_state,
-            $row->overall_status
-        ]]);
     }
 }
