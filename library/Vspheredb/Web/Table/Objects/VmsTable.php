@@ -22,11 +22,6 @@ class VmsTable extends ObjectsTable
         'data-base-target' => '_next',
     ];
 
-    public function getColumnsToBeRendered()
-    {
-        return $this->getChosenTitles();
-    }
-
     public function filterHost($uuid)
     {
         $this->getQuery()->where('vc.runtime_host_uuid = ?', $uuid);
@@ -39,7 +34,6 @@ class VmsTable extends ObjectsTable
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             [
-                'uuid'                => 'o.uuid',
                 'overall_status'      => 'o.overall_status',
                 'runtime_power_state' => 'vc.runtime_power_state',
             ] + $this->getRequiredDbColumns()
@@ -60,15 +54,16 @@ class VmsTable extends ObjectsTable
     {
         $perf = new DelayedPerfdataRenderer($this->db());
         $this->addAvailableColumns([
-            (new SimpleColumn('object_name', 'Name', 'o.object_name'))
-                // TODO: require also uuid!
-                ->setRenderer(function ($row) {
-                    return Link::create(
-                        $row->object_name,
-                        'vspheredb/vm',
-                        ['uuid' => bin2hex($row->uuid)]
-                    );
-                }),
+            (new SimpleColumn('object_name', 'Name', [
+                'object_name' => 'o.object_name',
+                'uuid'        => 'o.uuid',
+            ]))->setRenderer(function ($row) {
+                return Link::create(
+                    $row->object_name,
+                    'vspheredb/vm',
+                    ['uuid' => bin2hex($row->uuid)]
+                );
+            }),
             $perf->getDiskColumn(),
             $perf->getNetColumn(),
             new SimpleColumn('hardware_numcpu', 'Memory', 'vc.hardware_numcpu'),
@@ -77,14 +72,15 @@ class VmsTable extends ObjectsTable
                     return $this->formatMb($row->hardware_memorymb);
                 })
         ]);
+    }
 
-        $this->chooseColumns([
+    public function getDefaultColumnNames()
+    {
+        return [
             'object_name',
-            'disk_io',
-            'network_io',
             'hardware_numcpu',
             'hardware_memorymb'
-        ]);
+        ];
     }
 
     public function renderRow($row)

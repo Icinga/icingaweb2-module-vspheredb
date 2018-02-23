@@ -21,13 +21,23 @@ class SpectreMelddownBiosInfo extends BaseElement
 
     protected $hpSpectre;
 
+    protected static $dell;
+
+    protected static $hp;
+
     public function __construct(HostSystem $host)
     {
         $this->host = $host;
         $baseDir = dirname(dirname(dirname(dirname(__DIR__))));
         $dataDir = "$baseDir/sample-data";
-        $this->dellSpectre = json_decode(file_get_contents("$dataDir/dell.json"));
-        $this->hpSpectre = json_decode(file_get_contents("$dataDir/hp.json"));
+        if (static::$dell === null) {
+            static::$dell = json_decode(file_get_contents("$dataDir/dell.json"));
+        }
+        if (static::$hp === null) {
+            static::$hp = json_decode(file_get_contents("$dataDir/hp.json"));
+        }
+        $this->dellSpectre = & static::$dell;
+        $this->hpSpectre = & static::$hp;
     }
 
     protected function showDell($series, $model, $version, $releaseDate)
@@ -60,9 +70,8 @@ class SpectreMelddownBiosInfo extends BaseElement
     protected function showHp($series, $model, $version, $releaseDate)
     {
         $strVersion = sprintf('%s (%s)', $version, $releaseDate);
-
-        if (array_key_exists($model, $this->dellSpectre)) {
-            $info = $this->dellSpectre->$model;
+        if (array_key_exists($model, $this->hpSpectre)) {
+            $info = $this->hpSpectre->$model;
             if ($info->bios_version) {
                 if (version_compare($info->bios_version, $version, '>')) {
                     return [
@@ -77,7 +86,7 @@ class SpectreMelddownBiosInfo extends BaseElement
                     ];
                 }
             } else {
-                return [$strVersion, sprintf(' Spectre/Meltdown: %s', $info->hint)];
+                return [$strVersion, ' (Spectre/Meltdown: no information)'];
             }
         }
 
