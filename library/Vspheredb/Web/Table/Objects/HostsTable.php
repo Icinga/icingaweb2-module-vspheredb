@@ -137,9 +137,9 @@ class HostsTable extends ObjectsTable
         ];
     }
 
-    public function prepareQuery()
+    protected function createVmSubQuery()
     {
-        $vms = $this->db()->select()->from(
+        return $this->db()->select()->from(
             ['vc' => 'virtual_machine'],
             [
                 'cnt'               => 'COUNT(*)',
@@ -148,13 +148,22 @@ class HostsTable extends ObjectsTable
                 'runtime_host_uuid' => 'vc.runtime_host_uuid',
             ]
         )->group('vc.runtime_host_uuid');
+    }
+
+    public function prepareQuery()
+    {
+        $columns = $this->getRequiredDbColumns();
+        $wantsVms = false;
+        foreach ($columns as $column) {
+            if (substr($column, 0, 4) === 'vms.') {
+                $wantsVms = true;
+                break;
+            }
+        }
 
         $query = $this->db()->select()->from(
             ['o' => 'object'],
-            [
-                'runtime_power_state' => 'h.runtime_power_state',
-                'overall_status'      => 'o.overall_status',
-            ] + $this->getRequiredDbColumns()
+            $columns
         )->join(
             ['h' => 'host_system'],
             'o.uuid = h.uuid',
