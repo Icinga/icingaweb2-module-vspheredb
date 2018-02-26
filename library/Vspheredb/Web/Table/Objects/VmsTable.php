@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use dipl\Html\Icon;
 use dipl\Html\Link;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
@@ -31,20 +32,34 @@ class VmsTable extends ObjectsTable
 
     public function prepareQuery()
     {
+        $columns = $this->getRequiredDbColumns();
+        $wantsHosts = false;
+        foreach ($columns as $column) {
+            if (substr($column, 0, 2) === 'h.') {
+                $wantsHosts = true;
+                break;
+            }
+        }
+
         $query = $this->db()->select()->from(
             ['o' => 'object'],
-            [
-                'overall_status'      => 'o.overall_status',
-                'runtime_power_state' => 'vc.runtime_power_state',
-            ] + $this->getRequiredDbColumns()
+            $columns
         )->join(
             ['vc' => 'virtual_machine'],
             'o.uuid = vc.uuid',
             []
-        )->order('object_name ASC')->limit(14);
+        )->limit(14);
 
         if ($this->parentUuids) {
             $query->where('o.parent_uuid IN (?)', $this->parentUuids);
+        }
+
+        if ($wantsHosts) {
+            $query->joinLeft(
+                ['h' => 'host_system'],
+                'vc.runtime_host_uuid = h.uuid',
+                []
+            );
         }
 
         return $query;
@@ -54,6 +69,20 @@ class VmsTable extends ObjectsTable
     {
         $perf = new DelayedPerfdataRenderer($this->db());
         $this->addAvailableColumns([
+            (new SimpleColumn('overall_status', $this->translate('Status'), 'o.overall_status'))
+                ->setRenderer(function ($row) {
+                    return Icon::create('ok', [
+                        'title' => $this->getStatusDescription($row->overall_status),
+                        'class' => [ 'state', $row->overall_status ]
+                    ]);
+                }),
+            (new SimpleColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state'))
+                ->setRenderer(function ($row) {
+                    return Icon::create('off', [
+                        'title' => $this->getPowerStateDescription($row->runtime_power_state),
+                        'class' => [ 'state', $row->runtime_power_state ]
+                    ]);
+                }),
             (new SimpleColumn('object_name', 'Name', [
                 'object_name' => 'o.object_name',
                 'uuid'        => 'o.uuid',
@@ -64,10 +93,13 @@ class VmsTable extends ObjectsTable
                     ['uuid' => bin2hex($row->uuid)]
                 );
             }),
+            (new SimpleColumn('host_name', 'Host', [
+                'host_name' => 'h.host_name',
+            ])),
             $perf->getDiskColumn(),
             $perf->getNetColumn(),
-            new SimpleColumn('hardware_numcpu', 'Memory', 'vc.hardware_numcpu'),
-            (new SimpleColumn('hardware_memorymb', 'CPUs', 'vc.hardware_memorymb'))
+            new SimpleColumn('hardware_numcpu', 'CPUs', 'vc.hardware_numcpu'),
+            (new SimpleColumn('hardware_memorymb', 'Memory', 'vc.hardware_memorymb'))
                 ->setRenderer(function ($row) {
                     return $this->formatMb($row->hardware_memorymb);
                 })
@@ -77,17 +109,40 @@ class VmsTable extends ObjectsTable
     public function getDefaultColumnNames()
     {
         return [
+            'overall_status',
+            'runtime_power_state',
             'object_name',
             'hardware_numcpu',
             'hardware_memorymb'
         ];
     }
 
-    public function renderRow($row)
+    protected function getPowerStateDescription($state)
     {
-        return parent::renderRow($row)->addAttributes(['class' => [
-            $row->runtime_power_state,
-            $row->overall_status
-        ]]);
+        $descriptions = [
+            'poweredOn'  => $this->translate('Powered on'),
+            'poweredOff' => $this->translate('Powered off'),
+            'suspended'  => $this->translate('Suspended'),
+            'standby'    => $this->translate('Standby'),
+            'unknown'    => $this->translate('Power state is unknown (disconnected?)'),
+        ];
+
+        if (! array_key_exists($state, $descriptions)) {
+            var_dump($state);
+            return 'nono';
+        }
+        return $descriptions[$state];
+    }
+
+    protected function getStatusDescription($status)
+    {
+        $descriptions = [
+            'gray'   => $this->translate('Gray - status is unknown'),
+            'green'  => $this->translate('Green - everything is fine'),
+            'yellow' => $this->translate('Yellow - there are warnings'),
+            'red'    => $this->translate('Red - there is a problem'),
+        ];
+
+        return $descriptions[$status];
     }
 }
