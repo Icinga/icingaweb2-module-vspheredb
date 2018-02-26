@@ -3,8 +3,10 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use dipl\Html\Table;
+use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
+use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 
 class VmsController extends ObjectsController
 {
@@ -12,8 +14,15 @@ class VmsController extends ObjectsController
     {
         $this->addSingleTab($this->translate('VMs'));
         $this->linkBackToOverview('vm');
+
+        $table = new VmsTable($this->db());
+        $table->handleSortUrl($this->url());
+
+        (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
+            ->appendTo($this->actions());
+
         $this->showTable(
-            new VmsTable($this->db()),
+            $table,
             'vspheredb/vms',
             $this->translate('Virtual Machines')
         );
