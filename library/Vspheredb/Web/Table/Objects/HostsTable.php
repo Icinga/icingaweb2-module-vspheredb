@@ -108,6 +108,7 @@ class HostsTable extends ObjectsTable
             'poweredOn'  => $this->translate('Powered on'),
             'poweredOff' => $this->translate('Powered off'),
             'suspended'  => $this->translate('Suspended'),
+            'standby'    => $this->translate('Standby'),
             'unknown'    => $this->translate('Power state is unknown (disconnected?)'),
         ];
 
