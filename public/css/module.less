@@ -41,7 +41,7 @@ i.poweredOn::before, i.green::before {
   background-color: @color-ok;
 }
 
-i.poweredOff::before, i.red::before {
+i.poweredOff::before, i.suspended::before, i.red::before {
   background-color: @color-critical;
 }
 
@@ -55,18 +55,6 @@ i.unknown::before {
 
 i.gray::before {
   background-color: @gray;
-}
-
-#layout.twocols {
-  .table-vms {
-    td, th {
-      display: none;
-
-      &:first-of-type {
-        display: block;
-      }
-    }
-  }
 }
 
 .vcenter-summaries {
