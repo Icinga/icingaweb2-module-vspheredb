@@ -10,6 +10,7 @@ use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
 use Icinga\Util\Format;
@@ -44,7 +45,7 @@ class HostInfoTable extends NameValueTable
         $host = $this->host;
         $uuid = $host->get('uuid');
         $lookup = $this->pathLookup;
-
+        $powerStateRenderer = new PowerStateRenderer();
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
         foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
             $path->add(Link::create(
@@ -63,7 +64,7 @@ class HostInfoTable extends NameValueTable
             $this->translate('CPU Usage')    => $this->showCpuUsage($host),
             $this->translate('Memory')       => $this->getFormattedMemory(),
             $this->translate('Path')         => $path,
-            $this->translate('Power')        => $host->get('runtime_power_state'),
+            $this->translate('Power')        => $powerStateRenderer($host->get('runtime_power_state')),
             $this->translate('Uptime')       => DateFormatter::formatDuration($host->quickStats()->get('uptime')),
             $this->translate('BIOS Version') => new SpectreMelddownBiosInfo($host),
             // $this->translate('BIOS Release Date') => $vm->get('bios_release_date'),

@@ -6,6 +6,8 @@ use dipl\Html\Icon;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
+use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\ServiceTagRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
 use Icinga\Util\Format;
@@ -15,6 +17,8 @@ class HostsTable extends ObjectsTable
 {
     protected function initialize()
     {
+        $serviceTagRenderer = new ServiceTagRenderer();
+        $powerStateRenderer = new PowerStateRenderer();
         $this->addAvailableColumns([
             (new SimpleColumn('overall_status', $this->translate('Status'), 'o.overall_status'))
                 ->setRenderer(function ($row) {
@@ -24,12 +28,7 @@ class HostsTable extends ObjectsTable
                     ]);
                 }),
             (new SimpleColumn('runtime_power_state', $this->translate('Power'), 'h.runtime_power_state'))
-                ->setRenderer(function ($row) {
-                    return Icon::create('off', [
-                        'title' => $this->getPowerStateDescription($row->runtime_power_state),
-                        'class' => [ 'state', $row->runtime_power_state ]
-                    ]);
-                }),
+                ->setRenderer($powerStateRenderer),
             (new SimpleColumn('object_name', $this->translate('Name'), [
                 'object_name' => 'o.object_name',
                 'uuid'        => 'o.uuid',
@@ -47,6 +46,10 @@ class HostsTable extends ObjectsTable
                 ->setRenderer(function ($row) {
                     return DateFormatter::formatDate(strtotime($row->bios_release_date));
                 }),
+            (new SimpleColumn('service_tag', $this->translate('Service Tag'), [
+                'service_tag'    => 'h.service_tag',
+                'sysinfo_vendor' => 'h.sysinfo_vendor',
+            ]))->setRenderer($serviceTagRenderer),
             (new SimpleColumn('cpu_usage', $this->translate('CPU Usage'), [
                 'cpu_usage' => 'hqs.overall_cpu_usage',
                 'cpu_total' => '(hardware_cpu_cores * hardware_cpu_mhz)',
@@ -100,19 +103,6 @@ class HostsTable extends ObjectsTable
                 return new SpectreMelddownBiosInfo($host);
             }),
         ]);
-    }
-
-    protected function getPowerStateDescription($state)
-    {
-        $descriptions = [
-            'poweredOn'  => $this->translate('Powered on'),
-            'poweredOff' => $this->translate('Powered off'),
-            'suspended'  => $this->translate('Suspended'),
-            'standby'    => $this->translate('Standby'),
-            'unknown'    => $this->translate('Power state is unknown (disconnected?)'),
-        ];
-
-        return $descriptions[$state];
     }
 
     protected function getStatusDescription($status)

@@ -6,6 +6,7 @@ use dipl\Html\Icon;
 use dipl\Html\Link;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 
 // Other filter ideas:
 // Problems:
@@ -68,6 +69,7 @@ class VmsTable extends ObjectsTable
     protected function initialize()
     {
         $perf = new DelayedPerfdataRenderer($this->db());
+        $powerStateRenderer = new PowerStateRenderer();
         $this->addAvailableColumns([
             (new SimpleColumn('overall_status', $this->translate('Status'), 'o.overall_status'))
                 ->setRenderer(function ($row) {
@@ -77,12 +79,7 @@ class VmsTable extends ObjectsTable
                     ]);
                 }),
             (new SimpleColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state'))
-                ->setRenderer(function ($row) {
-                    return Icon::create('off', [
-                        'title' => $this->getPowerStateDescription($row->runtime_power_state),
-                        'class' => [ 'state', $row->runtime_power_state ]
-                    ]);
-                }),
+                ->setRenderer($powerStateRenderer),
             (new SimpleColumn('object_name', 'Name', [
                 'object_name' => 'o.object_name',
                 'uuid'        => 'o.uuid',
@@ -115,23 +112,6 @@ class VmsTable extends ObjectsTable
             'hardware_numcpu',
             'hardware_memorymb'
         ];
-    }
-
-    protected function getPowerStateDescription($state)
-    {
-        $descriptions = [
-            'poweredOn'  => $this->translate('Powered on'),
-            'poweredOff' => $this->translate('Powered off'),
-            'suspended'  => $this->translate('Suspended'),
-            'standby'    => $this->translate('Standby'),
-            'unknown'    => $this->translate('Power state is unknown (disconnected?)'),
-        ];
-
-        if (! array_key_exists($state, $descriptions)) {
-            var_dump($state);
-            return 'nono';
-        }
-        return $descriptions[$state];
     }
 
     protected function getStatusDescription($status)

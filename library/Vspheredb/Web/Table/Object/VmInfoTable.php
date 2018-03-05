@@ -9,6 +9,7 @@ use dipl\Web\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 
 class VmInfoTable extends NameValueTable
 {
@@ -63,6 +64,7 @@ class VmInfoTable extends NameValueTable
         } else {
             $guest = '-';
         }
+        $powerStateRenderer = new PowerStateRenderer();
 
         $this->addNameValuePairs([
             $this->translate('UUID') => $vm->get('bios_uuid'),
@@ -74,7 +76,7 @@ class VmInfoTable extends NameValueTable
                 ? $this->translate('true')
                 : $this->translate('false'),
             $this->translate('Path') => $path,
-            $this->translate('Power') => $vm->get('runtime_power_state'),
+            $this->translate('Power') => $powerStateRenderer($vm->get('runtime_power_state')),
             $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
             $this->translate('Host') => $lookup->linkToObject($vm->get('runtime_host_uuid')),
             $this->translate('Guest State') => $vm->get('guest_state'),
