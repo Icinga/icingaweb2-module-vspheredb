@@ -77,7 +77,7 @@ class VmsTable extends ObjectsTable
                         'title' => $this->getStatusDescription($row->overall_status),
                         'class' => [ 'state', $row->overall_status ]
                     ]);
-                }),
+                })->setDefaultSortDirection('DESC'),
             (new SimpleColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state'))
                 ->setRenderer($powerStateRenderer),
             (new SimpleColumn('object_name', 'Name', [
