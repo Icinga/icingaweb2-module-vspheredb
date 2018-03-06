@@ -9,7 +9,7 @@ class DatastoresController extends ObjectsController
 {
     public function indexAction()
     {
-        $this->addSingleTab($this->translate('Datatores'));
+        $this->handleTabs();
         $this->linkBackToOverview('datastore');
         $this->showTable(
             new DatastoreTable($this->db()),

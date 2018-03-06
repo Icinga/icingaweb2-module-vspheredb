@@ -79,4 +79,18 @@ class ObjectsController extends Controller
 
         $this->content()->add($path);
     }
+
+    protected function handleTabs()
+    {
+        $this->tabs()->add('vms', [
+            'label'     => $this->translate('Virtual Machine'),
+            'url'       => 'vspheredb/vms',
+        ])->add('hosts', [
+            'label'     => $this->translate('Hosts'),
+            'url'       => 'vspheredb/hosts',
+        ])->add('datastores', [
+            'label'     => $this->translate('Datastores'),
+            'url'       => 'vspheredb/datastores',
+        ])->activate($this->getRequest()->getControllerName());
+    }
 }

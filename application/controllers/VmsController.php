@@ -12,7 +12,7 @@ class VmsController extends ObjectsController
 {
     public function indexAction()
     {
-        $this->addSingleTab($this->translate('VMs'));
+        $this->handleTabs();
         $this->linkBackToOverview('vm');
 
         $table = new VmsTable($this->db());
