@@ -65,10 +65,17 @@ class VmInfoTable extends NameValueTable
             $guest = '-';
         }
         $powerStateRenderer = new PowerStateRenderer();
+        if ($vm->get('guest_id')) {
+            $this->addNameValuePairs([
+                $this->translate('Guest OS') => $guest,
+                $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
+                $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
+            ]);
+        }
 
         $this->addNameValuePairs([
-            $this->translate('UUID') => $vm->get('bios_uuid'),
-            $this->translate('Instance UUID') => $vm->get('instance_uuid'),
+            // $this->translate('UUID') => $vm->get('bios_uuid'),
+            // $this->translate('Instance UUID') => $vm->get('instance_uuid'),
             $this->translate('CPUs') => $vm->get('hardware_numcpu'),
             $this->translate('MO Ref') => $this->linkToVCenter($vm->object()->get('moref')),
             $this->translate('Memory')      => number_format($vm->get('hardware_memorymb'), 0, ',', '.') . ' MB',
@@ -76,14 +83,17 @@ class VmInfoTable extends NameValueTable
                 ? $this->translate('true')
                 : $this->translate('false'),
             $this->translate('Path') => $path,
-            $this->translate('Power') => $powerStateRenderer($vm->get('runtime_power_state')),
+            $this->translate('Power') => [
+                $powerStateRenderer($vm->get('runtime_power_state')),
+                sprintf(
+                    '%s (Guest %s)',
+                    $vm->get('guest_tools_running_status'),
+                    $vm->get('guest_state')
+                ),
+            ],
             $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
             $this->translate('Host') => $lookup->linkToObject($vm->get('runtime_host_uuid')),
-            $this->translate('Guest State') => $vm->get('guest_state'),
-            $this->translate('Guest Tools') => $vm->get('guest_tools_running_status'),
-            $this->translate('Guest OS') => $guest,
-            $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
-            $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
+
         ]);
     }
 
