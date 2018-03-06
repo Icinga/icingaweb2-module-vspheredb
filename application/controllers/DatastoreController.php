@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmsOnDatastoreTable;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
@@ -17,12 +18,7 @@ class DatastoreController extends Controller
     public function indexAction()
     {
         $uuid = hex2bin($this->params->getRequired('uuid'));
-        $ds = Datastore::load($uuid, $this->db());
-        $object = $ds->object();
-
-        $this
-            ->addSingleTab($this->translate('Datastore'))
-            ->addTitle($object->get('object_name'));
+        $ds = $this->addDatastore();
 
         $lookup = new PathLookup($this->db());
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
@@ -50,6 +46,37 @@ class DatastoreController extends Controller
         $vms = VmsOnDatastoreTable::create($ds);
 
         $this->content()->add([$table, $usage, $vms]);
+    }
+
+    public function vmotionsAction()
+    {
+        $ds = $this->addDatastore();
+        $table = new VMotionHistoryTable($this->db());
+        $table->filterDatastore($ds)
+            ->renderTo($this);
+    }
+
+    protected function addDatastore()
+    {
+        $ds = Datastore::load(hex2bin($this->params->getRequired('uuid')), $this->db());
+        $this->addTitle($ds->object()->get('object_name'));
+        $this->handleTabs();
+
+        return $ds;
+    }
+
+    protected function handleTabs()
+    {
+        $params = ['uuid' => $this->params->get('uuid')];
+        $this->tabs()->add('index', [
+            'label'     => $this->translate('Datastore'),
+            'url'       => 'vspheredb/datastore',
+            'urlParams' => $params
+        ])->add('vmotions', [
+            'label'     => $this->translate('VMotions'),
+            'url'       => 'vspheredb/datastore/vmotions',
+            'urlParams' => $params
+        ])->activate($this->getRequest()->getActionName());
     }
 
     protected function sizingInfo(Datastore $ds)

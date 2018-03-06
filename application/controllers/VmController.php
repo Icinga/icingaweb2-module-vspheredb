@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
+use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 
 class VmController extends Controller
@@ -32,6 +33,12 @@ class VmController extends Controller
     {
         $vm = $this->addVm();
         $this->content()->add(new VmHardwareTree($vm));
+    }
+
+    public function vmotionsAction()
+    {
+        $table = new VMotionHistoryTable($this->db());
+        $table->filterVm($this->addVm())->renderTo($this);
     }
 
     public function countersAction()
@@ -65,6 +72,10 @@ class VmController extends Controller
         ])->add('hardware', [
             'label'     => $this->translate('Hardware'),
             'url'       => 'vspheredb/vm/hardware',
+            'urlParams' => $params
+        ])->add('vmotions', [
+            'label'     => $this->translate('VMotions'),
+            'url'       => 'vspheredb/vm/vmotions',
             'urlParams' => $params
         ])->add('counters', [
             'label'     => $this->translate('Live Counters'),
