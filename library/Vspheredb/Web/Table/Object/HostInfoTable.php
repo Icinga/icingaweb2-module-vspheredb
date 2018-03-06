@@ -57,24 +57,34 @@ class HostInfoTable extends NameValueTable
         }
 
         $this->addNameValuePairs([
+            $this->translate('Power')        => $powerStateRenderer($host->get('runtime_power_state')),
+            $this->translate('CPU / Memory') => [
+                Html::tag('div', ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
+                $this->showCpuUsage($host)),
+                Html::tag('div', ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
+                    $this->getFormattedMemory()),
+            ],
             $this->translate('UUID')         => $host->get('sysinfo_uuid'),
             $this->translate('API Version')  => $host->get('product_api_version'),
             $this->translate('Product Name') => $host->get('product_full_name'),
             $this->translate('MO Ref')       => $this->linkToVCenter($host->object()->get('moref')),
-            $this->translate('CPU Usage')    => $this->showCpuUsage($host),
-            $this->translate('Memory')       => $this->getFormattedMemory(),
             $this->translate('Path')         => $path,
-            $this->translate('Power')        => $powerStateRenderer($host->get('runtime_power_state')),
             $this->translate('Uptime')       => DateFormatter::formatDuration($host->quickStats()->get('uptime')),
             $this->translate('BIOS Version') => new SpectreMelddownBiosInfo($host),
             // $this->translate('BIOS Release Date') => $vm->get('bios_release_date'),
-            $this->translate('Vendor')       => $host->get('sysinfo_vendor'),
-            $this->translate('Model')        => $host->get('sysinfo_model'),
-            $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
-            $this->translate('CPU Model')    => $host->get('hardware_cpu_model'),
-            $this->translate('CPU Packages') => $host->get('hardware_cpu_packages'),
-            $this->translate('CPU Cores')    => $host->get('hardware_cpu_cores'),
-            $this->translate('CPU Threads')  => $host->get('hardware_cpu_threads'),
+            $this->translate('Vendor / Model')       => Html::sprintf(
+                '%s %s (%s)',
+                $host->get('sysinfo_vendor'),
+                $host->get('sysinfo_model'),
+                $this->getFormattedServiceTag($host)
+            ),
+            $this->translate('CPU')    => sprintf(
+                $this->translate('%d Packages, %d Cores, %d Threads (%s)'),
+                $host->get('hardware_cpu_packages'),
+                $host->get('hardware_cpu_cores'),
+                $host->get('hardware_cpu_threads'),
+                $host->get('hardware_cpu_model')
+            ),
             $this->translate('HBAs')         => $host->get('hardware_num_hba'),
             $this->translate('NICs')         => $host->get('hardware_num_nic'),
             $this->translate('Vms')          => Link::create(
