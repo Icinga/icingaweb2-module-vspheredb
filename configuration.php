@@ -2,7 +2,7 @@
 
 /** @var \Icinga\Application\Modules\Module $this */
 
-$section = $this->menuSection(N_('VMware vSphere DB'))
+$section = $this->menuSection(N_('Cloud (VMware)'))
     ->setIcon('cloud')
     ->setUrl('vspheredb/vcenter')
     ->setPriority(70);
