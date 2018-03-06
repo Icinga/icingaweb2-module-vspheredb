@@ -18,6 +18,9 @@ $section->add(N_('Datastores'))
 $section->add(N_('Anomalies'))
     ->setUrl('vspheredb/anomalies')
     ->setPriority(45);
+$section->add(N_('VMotion History'))
+    ->setUrl('vspheredb/vmotions')
+    ->setPriority(49);
 $section->add(N_('Performance Counter'))
     ->setUrl('vspheredb/configuration/counters')
     ->setPriority(50);
