@@ -2,8 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
+use dipl\Html\BaseElement;
 use dipl\Html\Element;
 use dipl\Html\Html;
+use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
 use dipl\Web\Url;
@@ -25,6 +27,9 @@ abstract class BaseTable extends ZfQueryBasedTable
 
     /** @var string */
     private $sortParam;
+
+    /** @var array */
+    private $sortColums = [];
 
     public function chooseColumns(array $columnNames)
     {
@@ -209,10 +214,24 @@ abstract class BaseTable extends ZfQueryBasedTable
                 $columnName = substr($columnName, 0, $space);
                 $sortColumn = $this->getAvailableColumn($columnName);
             }
+            $this->sortColums[$columnName] = $direction;
             $query->order($sortColumn->getSortExpression() . " $direction");
         }
 
         return $this;
+    }
+
+    protected function addSortIcon(TableColumn $column, BaseElement $element)
+    {
+        $icons = [
+            'ASC'  => 'up-dir',
+            'DESC' => 'down-dir',
+        ];
+        if (array_key_exists($column->getAlias(), $this->sortColums)) {
+            $element->add(Icon::create($icons[$this->sortColums[$column->getAlias()]]));
+        }
+
+        return $element;
     }
 
     /**
@@ -228,12 +247,13 @@ abstract class BaseTable extends ZfQueryBasedTable
 
         foreach ($this->getChosenColumns() as $column) {
             $parent->add(
-                Html::tag('th')->setContent(
+                Html::tag('th')->setContent($this->addSortIcon(
+                    $column,
                     Link::create(
                         $column->getTitle(),
                         $url->with($this->sortParam, $column->getAlias())
                     )
-                )
+                ))
             );
         }
 
