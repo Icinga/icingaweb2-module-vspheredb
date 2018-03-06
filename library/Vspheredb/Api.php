@@ -48,6 +48,9 @@ class Api
     /** @var string */
     private $binaryUuid;
 
+    /** @var EventManager */
+    private $eventManager;
+
     /** @var PerfManager */
     private $perfManager;
 
@@ -161,6 +164,15 @@ class Api
         }
 
         return $this->curl;
+    }
+
+    public function eventManager()
+    {
+        if ($this->eventManager === null) {
+            $this->eventManager = new EventManager($this);
+        }
+
+        return $this->eventManager;
     }
 
     public function perfManager()
