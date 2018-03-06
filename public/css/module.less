@@ -338,6 +338,60 @@ table.name-value-table a {
   color: @icinga-blue;
 }
 
+tr.state td:first-child {
+  padding-left: 2em;
+  &::before {
+    font-family: 'ifont';
+    // icon-help:
+    float: left;
+    content: '\e85b';
+    font-weight: bold;
+    margin-left: -1.5em;
+    margin-top: 0;
+  }
+}
+
+tr.state.error td:first-child::before {
+  color: @color-critical;
+  // icon-cancel
+  content: '\e804';
+}
+
+
+tr.state td:first-child::before {
+  font-family: 'ifont';
+  // icon-help:
+  float: left;
+  content: '\e85b';
+  font-weight: bold;
+  margin-left: -1.5em;
+  margin-top: 0;
+}
+
+tr.state.migration-failed td:first-child::before {
+  color: @color-critical;
+  // icon-cancel
+  content: '\e804';
+}
+
+tr.state.migrated td:first-child::before {
+  color: @color-ok;
+  // icon-ok
+  content: '\e803';
+}
+
+tr.state.migrating td:first-child::before {
+  color: @color-warning;
+  // icon-flapping
+  content: '\e85d';
+}
+
+tr.state.emigrating td:first-child::before {
+  color: @color-warning;
+  // icon-starttime
+  content: '\e83a';
+}
+
 /** Disk Usage **/
 
 div.disk-usage {
