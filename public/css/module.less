@@ -57,6 +57,27 @@ i.gray::before {
   background-color: @gray;
 }
 
+thead th {
+  white-space: nowrap;
+}
+
+table.vm-disk-usage-table {
+  td:not(:first-of-type), th:not(:first-of-type) {
+    text-align: right;
+  }
+
+  th:last-of-type {
+    text-align: left;
+  }
+
+  td:first-of-type {
+    overflow: hidden;
+    display: inline-block;
+    height: 2em;
+    min-width: 8em;
+  }
+}
+
 .vcenter-summaries {
   > a {
     width: 20em;
