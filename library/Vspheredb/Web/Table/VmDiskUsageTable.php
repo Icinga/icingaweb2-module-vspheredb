@@ -10,6 +10,15 @@ use dipl\Web\Table\ZfQueryBasedTable;
 
 class VmDiskUsageTable extends ZfQueryBasedTable
 {
+    protected $defaultAttributes = [
+        'class' => ['vm-disk-usage-table', 'common-table', 'table-row-selectable'],
+        'data-base-target' => '_next',
+    ];
+
+    protected $totalSize = 0;
+
+    protected $totalFree = 0;
+
     /** @var VirtualMachine */
     protected $vm;
 
@@ -55,13 +64,39 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
         $tr = $this::tr([
             // TODO: move to CSS
-            $this::td($caption, ['style' => 'overflow: hidden; display: inline-block; height: 2em; min-width: 8em;']),
+            $this::td($caption),
             $this::td(Format::bytes($row->capacity, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
             $this::td($free, ['style' => 'width: 25%;']),
             $this::td($this->makeDisk($row), ['style' => 'width: 25%;'])
         ]);
 
+        $this->totalSize += $row->capacity;
+        $this->totalFree += $row->free_space;
+
         return $tr;
+    }
+
+    protected function fetchRows()
+    {
+        parent::fetchRows();
+
+        $free = Format::bytes($this->totalFree, Format::STANDARD_IEC)
+            . sprintf(' (%0.3f%%)', ($this->totalFree / $this->totalSize) * 100);
+        $this->footer()->add($this::tr([
+            $this::th(Html::tag('strong', null, $this->translate('Total'))),
+            $this::th(Format::bytes($this->totalSize, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
+            $this::th($free, ['style' => 'width: 25%;']),
+            $this::th($this->makeDisk((object) [
+                'disk_path' => $this->translate('Total'),
+                'capacity'  => $this->totalSize,
+                'free_space' => $this->totalFree
+            ]), ['style' => 'width: 25%;'])
+        ]));
+    }
+
+    public function generateFooter()
+    {
+        return Html::tag('tfoot');
     }
 
     protected function makeDisk($disk)
