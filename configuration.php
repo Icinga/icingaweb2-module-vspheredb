@@ -6,15 +6,14 @@ $section = $this->menuSection(N_('VMware vSphere DB'))
     ->setIcon('cloud')
     ->setUrl('vspheredb/vcenter')
     ->setPriority(70);
-
-$section->add(N_('Datastores'))
-    ->setUrl('vspheredb/overview?type=datastore')
+$section->add(N_('Virtual Machines'))
+    ->setUrl('vspheredb/vms')
     ->setPriority(10);
 $section->add(N_('Hosts'))
-    ->setUrl('vspheredb/overview?type=host')
+    ->setUrl('vspheredb/hosts')
     ->setPriority(20);
-$section->add(N_('Virtual Machines'))
-    ->setUrl('vspheredb/overview?type=vm')
+$section->add(N_('Datastores'))
+    ->setUrl('vspheredb/datastores')
     ->setPriority(30);
 $section->add(N_('Anomalies'))
     ->setUrl('vspheredb/anomalies')
