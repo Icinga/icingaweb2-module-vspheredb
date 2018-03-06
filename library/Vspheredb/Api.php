@@ -239,7 +239,7 @@ class Api
                 'location'           => $this->makeLocation(),
                 'exceptions'         => true,
                 'connection_timeout' => 10,
-                // 'classmap'        => $this->getClassMap(), // might become useful
+                'classmap'           => $this->getClassMap(),
                 'features'           => $features,
                 'cache_wsdl'         => WSDL_CACHE_NONE
             ];
@@ -250,6 +250,20 @@ class Api
         }
 
         return $this->soapClient;
+    }
+
+    protected function getClassMap()
+    {
+        $base = "Icinga\\Module\\Vspheredb\\MappedClass";
+
+        return [
+            'VmFailedMigrateEvent'    => "$base\\VmFailedMigrateEvent",
+            'MigrationEvent'          => "$base\\MigrationEvent",
+            'VmBeingMigratedEvent'    => "$base\\VmBeingMigratedEvent",
+            'VmBeingHotMigratedEvent' => "$base\\VmBeingHotMigratedEvent",
+            'VmEmigratingEvent'       => "$base\\VmEmigratingEvent",
+            'VmMigratedEvent'         => "$base\\VmMigratedEvent",
+        ];
     }
 
     /**
