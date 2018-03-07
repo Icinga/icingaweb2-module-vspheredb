@@ -43,12 +43,57 @@ class DelayedPerfdataRenderer
 
     public function getNetColumn()
     {
-        return (new SimpleColumn('network_io', 'Network I/O', 'o.uuid'))
+        return (new SimpleColumn('network_io_perf', 'Network I/O (perf)', 'o.uuid'))
             ->setRenderer(function ($row) {
                 $this->requireVm($row->uuid);
 
                 return $this->createPerfInOut($row->uuid, '', 526, 527);
             });
+    }
+
+    public function getCurrentNetColumn()
+    {
+        return (new SimpleColumn('network_io', 'Network I/O', 'o.uuid'))
+            ->setRenderer(function ($row) {
+                $this->requireVm($row->uuid);
+
+                return $this->createKbInOut($row->uuid, '', 526, 527);
+            });
+    }
+
+    protected function formatMicroSeconds($num)
+    {
+        if ($num > 500) {
+            return sprintf('%0.2Fms', $num / 1000);
+        } else {
+            return sprintf('%dµs', $num);
+        }
+    }
+
+    protected function formatKiloBytesPerSecond($num)
+    {
+        $num *= 8;
+        if ($num > 500000) {
+            return sprintf('%0.2F Gbit/s', $num / 1024 / 1024);
+        } elseif ($num > 500) {
+            return sprintf('%0.2F Mbit/s', $num / 1024);
+        } else {
+            return sprintf('%0.2F Kbit/s', $num);
+        }
+    }
+
+    protected function createKbInOut($uuid, $instance, $c1, $c2)
+    {
+        return DeferredText::create(function () use ($uuid, $instance, $c1, $c2) {
+            $in = explode(',', $this->getVmValues($uuid, $instance, $c1));
+            $out = explode(',', $this->getVmValues($uuid, $instance, $c2));
+
+            return sprintf(
+                '%s / %s',
+                $this->formatKiloBytesPerSecond(array_pop($in)),
+                $this->formatKiloBytesPerSecond(array_pop($out))
+            );
+        })->setEscaped();
     }
 
     protected function createPerfInOut($uuid, $instance, $c1, $c2)
@@ -94,6 +139,7 @@ class DelayedPerfdataRenderer
             'instance',
             'counter_key',
             'value' => $values,
+            'value_last'
         ])->where('object_uuid IN (?)', $this->requiredVms)
             ->where('instance IN (?)', ['', 'scsi0:0'])
             ->where('counter_key IN (?)', array_keys($this->counters));
