@@ -31,7 +31,6 @@ class HostQuickStats extends BaseDbObject
         return HostSystem::getType();
     }
 
-
     public static function getSelectSet()
     {
         return HostSystem::getSelectSet();
