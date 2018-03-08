@@ -282,8 +282,8 @@ CREATE TABLE vm_network_adapter (
 
 CREATE TABLE host_quick_stats (
   uuid VARBINARY(20) NOT NULL,
-  distributed_cpu_fairness INT(10) UNSIGNED NOT NULL,
-  distributed_memory_fairness INT(10) UNSIGNED NOT NULL,
+  distributed_cpu_fairness INT(10) NOT NULL,
+  distributed_memory_fairness INT(10) NOT NULL,
   overall_cpu_usage INT(10) UNSIGNED NOT NULL,
   overall_memory_usage_mb INT(10) UNSIGNED NOT NULL,
   uptime INT(10) UNSIGNED NOT NULL,
