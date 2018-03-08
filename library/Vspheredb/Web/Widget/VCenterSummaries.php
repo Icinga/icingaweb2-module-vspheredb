@@ -63,6 +63,14 @@ class VCenterSummaries extends BaseElement
             'VM Templates',
             'vspheredb/vmtemplates'
         );
+        $this->addCountlet(
+            $db->fetchOne(
+                $db->select()->from('object', 'COUNT(*)')
+                    ->where('object_type = ?', 'ResourcePool')
+            ),
+            'Resource Pools',
+            'vspheredb/resourcepools'
+        );
     }
 
     protected function addCountlet($count, $title, $url)
