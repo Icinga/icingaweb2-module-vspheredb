@@ -26,7 +26,7 @@ class ObjectsController extends Controller
         return $this;
     }
 
-    protected function showTable(ObjectsTable $table, $url, $defaultTitle)
+    protected function eventuallyFilterByParent(ObjectsTable $table, $url, $defaultTitle)
     {
         $parent = hex2bin($this->params->get('uuid'));
 
@@ -44,7 +44,11 @@ class ObjectsController extends Controller
         } else {
             $this->addTitle($defaultTitle);
         }
+    }
 
+    protected function showTable(ObjectsTable $table, $url, $defaultTitle)
+    {
+        $this->eventuallyFilterByParent($table, $url, $defaultTitle);
         $this->renderTableWithCount($table, $defaultTitle);
 
         return $this;
