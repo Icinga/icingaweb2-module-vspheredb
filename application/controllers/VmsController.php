@@ -7,6 +7,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
+use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class VmsController extends ObjectsController
 {
@@ -26,5 +27,7 @@ class VmsController extends ObjectsController
             'vspheredb/vms',
             $this->translate('Virtual Machines')
         );
+        $summaries = new Summaries($table, $this->db(), $this->url());
+        $this->content()->prepend($summaries->addPowerState());
     }
 }

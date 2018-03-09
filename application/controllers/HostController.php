@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
 use dipl\Html\Link;
 use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
+use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class HostController extends Controller
 {
@@ -37,6 +38,8 @@ class HostController extends Controller
         $table->handleSortUrl($this->url())
             ->filterHost($this->host->get('uuid'))
             ->renderTo($this);
+        $summaries = new Summaries($table, $this->db(), $this->url());
+        $this->content()->prepend($summaries->addPowerState());
     }
 
     public function vmotionsAction()
