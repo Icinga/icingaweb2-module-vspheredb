@@ -17,10 +17,10 @@ class VcenterController extends Controller
     public function indexAction()
     {
         $this->handleTabs();
-        $vcenter = VCenter::loadWithAutoIncId(1, $this->db());
+        $vCenter = VCenter::loadWithAutoIncId(1, $this->db());
         $this->content()->add([
-            new VCenterInfoTable($vcenter),
-            new VCenterSummaries($vcenter),
+            new VCenterInfoTable($vCenter),
+            new VCenterSummaries($vCenter),
         ]);
     }
 
