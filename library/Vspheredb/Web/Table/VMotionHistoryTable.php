@@ -247,7 +247,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
                     'vspheredb/host',
                     ['uuid' => bin2hex($row->host_uuid)]
                 ),
-                Icon::create('flapping')
+                Icon::create('right-big')
             );
         } else {
             return Html::sprintf(
@@ -257,7 +257,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
                     'vspheredb/host',
                     ['uuid' => bin2hex($row->host_uuid)]
                 ),
-                Icon::create('flapping'),
+                Icon::create('right-big'),
                 Link::create(
                     $this->getUuidName($row->destination_host_uuid),
                     'vspheredb/host',
@@ -276,7 +276,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
                 'vspheredb/datastore',
                 ['uuid' => bin2hex($row->datastore_uuid)]
             ),
-            Icon::create('flapping'),
+            Icon::create('right-big'),
             Link::create(
                 $this->getUuidName($row->destination_datastore_uuid),
                 'vspheredb/datastore',
