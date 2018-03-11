@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use dipl\Html\DeferredText;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
+use Icinga\Module\Vspheredb\Web\Table\TableColumn;
 
 class DelayedPerfdataRenderer
 {
@@ -31,6 +32,9 @@ class DelayedPerfdataRenderer
         $this->requiredVms[] = $uuid;
     }
 
+    /**
+     * @return TableColumn
+     */
     public function getDiskColumn()
     {
         return (new SimpleColumn('disk_io', '5x5min Disk I/O', 'o.uuid'))
@@ -41,6 +45,9 @@ class DelayedPerfdataRenderer
             });
     }
 
+    /**
+     * @return TableColumn
+     */
     public function getNetColumn()
     {
         return (new SimpleColumn('network_io_perf', 'Network I/O (perf)', 'o.uuid'))
@@ -51,6 +58,9 @@ class DelayedPerfdataRenderer
             });
     }
 
+    /**
+     * @return TableColumn
+     */
     public function getCurrentNetColumn()
     {
         return (new SimpleColumn('network_io', 'Network I/O', 'o.uuid'))
