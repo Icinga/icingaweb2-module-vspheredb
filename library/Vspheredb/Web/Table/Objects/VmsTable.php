@@ -4,18 +4,8 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use dipl\Html\Icon;
 use dipl\Html\Link;
-use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
-
-// Other filter ideas:
-// Problems:
-// $query->where('overall_status IN (?)', ['yellow', 'red']);
-
-// No Guest utils:
-//$query->where('guest_tools_running_status != ?', 'guestToolsRunning')
-//    ->where('runtime_power_state = ?', 'poweredOn')
-//    ->where('guest_state = ?', 'running')
 
 class VmsTable extends ObjectsTable
 {
@@ -71,35 +61,37 @@ class VmsTable extends ObjectsTable
         $perf = new DelayedPerfdataRenderer($this->db());
         $powerStateRenderer = new PowerStateRenderer();
         $this->addAvailableColumns([
-            (new SimpleColumn('overall_status', $this->translate('Status'), 'o.overall_status'))
+            $this->createColumn('overall_status', $this->translate('Status'), 'o.overall_status')
                 ->setRenderer(function ($row) {
                     return Icon::create('ok', [
                         'title' => $this->getStatusDescription($row->overall_status),
                         'class' => [ 'state', $row->overall_status ]
                     ]);
                 })->setDefaultSortDirection('DESC'),
-            (new SimpleColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state'))
+            $this->createColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
-            (new SimpleColumn('object_name', 'Name', [
+            $this->createColumn('object_name', 'Name', [
                 'object_name' => 'o.object_name',
                 'uuid'        => 'o.uuid',
-            ]))->setRenderer(function ($row) {
+            ])->setRenderer(function ($row) {
                 return Link::create(
                     $row->object_name,
                     'vspheredb/vm',
                     ['uuid' => bin2hex($row->uuid)]
                 );
             }),
-            (new SimpleColumn('host_name', 'Host', [
+            $this->createColumn('host_name', 'Host', [
                 'host_name' => 'h.host_name',
-            ])),
-            $perf->getDiskColumn(),
-            $perf->getNetColumn(),
-            new SimpleColumn('hardware_numcpu', 'CPUs', 'vc.hardware_numcpu'),
-            (new SimpleColumn('hardware_memorymb', 'Memory', 'vc.hardware_memorymb'))
+            ]),
+            $perf->getDiskColumn()->setDefaultSortDirection('DESC'),
+            $perf->getNetColumn()->setDefaultSortDirection('DESC'),
+            $perf->getCurrentNetColumn()->setDefaultSortDirection('DESC'),
+            $this->createColumn('hardware_numcpu', 'CPUs', 'vc.hardware_numcpu')
+                ->setDefaultSortDirection('DESC'),
+            $this->createColumn('hardware_memorymb', 'Memory', 'vc.hardware_memorymb')
                 ->setRenderer(function ($row) {
                     return $this->formatMb($row->hardware_memorymb);
-                })
+                })->setDefaultSortDirection('DESC')
         ]);
     }
 
