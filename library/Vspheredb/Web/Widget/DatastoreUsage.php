@@ -86,8 +86,10 @@ class DatastoreUsage extends BaseElement
         if ($this->uncommitted < $free) {
             $class = 'free';
         } elseif ($this->uncommitted > 2 * $this->capacity) {
+            $title = sprintf('Committed space');
             $class = 'free overcommitted-twice';
         } else {
+            $title = sprintf('Committed space');
             $class = 'free overcommitted';
         }
 
@@ -112,8 +114,12 @@ class DatastoreUsage extends BaseElement
             $urlParams = null;
         }
 
+        $percent = round($percent * 1000) / 1000;
         // TODO: still unused
         $this->gotPercent += $percent;
+        if ($this->gotPercent > 100) {
+            $percent = $percent + 100 - $this->gotPercent;
+        }
 
         $link = Link::create(
             '',
