@@ -181,6 +181,11 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this;
     }
 
+    protected function createColumn($alias, $title = null, $column = null)
+    {
+        return new SimpleColumn($alias, $title, $column);
+    }
+
     protected function formatMb($mb)
     {
         return Format::bytes($mb * 1024 * 1024);
@@ -239,6 +244,25 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $element;
     }
 
+    protected function getNextSortLinkString(TableColumn $column)
+    {
+        $string = $column->getAlias();
+        if (array_key_exists($column->getAlias(), $this->sortColums)) {
+            $current = $this->sortColums[$column->getAlias()];
+            if ($current === $column->getDefaultSortDirection()) {
+                $string .= ' ' . ($current === 'ASC' ? 'DESC' : 'ASC');
+            }
+
+            return $string;
+        }
+
+        if ($column->getDefaultSortDirection() === 'ASC') {
+            return $string;
+        } else {
+            return "$string DESC";
+        }
+    }
+
     /**
      * TODO: we should consider introducing TablePlugins for similar tasks
      *
@@ -256,7 +280,7 @@ abstract class BaseTable extends ZfQueryBasedTable
                     $column,
                     Link::create(
                         $column->getTitle(),
-                        $url->with($this->sortParam, $column->getAlias())
+                        $url->with($this->sortParam, $this->getNextSortLinkString($column))
                     )
                 ))
             );
