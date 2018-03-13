@@ -50,6 +50,44 @@ CREATE TABLE vcenter_server (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE vcenter_sync (
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  hostname VARCHAR(255) NOT NULL,
+  username VARCHAR(64) NOT NULL,
+  pid INT UNSIGNED NOT NULL,
+  ts_last_refresh BIGINT(20) NOT NULL
+  PRIMARY KEY (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vcenter_session (
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  session_id VARBINARY(20) NOT NULL, -- hex2bin(sid)
+  session_cookie_string VARCHAR(255) NOT NULL,
+  session_cookie_name VARCHAR(64) NOT NULL,
+  scope VARCHAR(32) NOT NULL,
+  -- vmware_soap_session="72bb45defccdf97b1945e686228279af0c3746a9"; Path=/; HttpOnly; Secure;
+  ts_created BIGINT(20) NOT NULL,
+  ts_last_check BIGINT(20) NOT NULL,
+  PRIMARY KEY (session_id),
+  CONSTRAINT server_vcenter
+    FOREIGN KEY server_vcenter_uuid (vcenter_uuid)
+    REFERENCES vcenter (vcenter_uuid)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vcenter_event_history_collector (
+  session_id VARBINARY(20) NOT NULL,
+  -- session[52dd54f1-28a1-4b84-6bd4-fc45fd9f3b78]52fc6d14-1c07-ffcd-107c-7132b2d263b0"
+  ref_string VARCHAR(128) NOT NULL,
+  ts_created BIGINT(20) NOT NULL,
+  CONSTRAINT server_session
+    FOREIGN KEY ehc_session (session_id)
+    REFERENCES vcenter_session (session_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE object (
   uuid VARBINARY(20) NOT NULL, -- sha1(vcenter_uuid + moref)
   vcenter_uuid VARBINARY(16) NOT NULL,
