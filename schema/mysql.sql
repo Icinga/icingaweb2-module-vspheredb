@@ -390,6 +390,62 @@ CREATE TABLE vmotion_history (
   INDEX search_host_idx (host_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE monitoring_connection (
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  source_type ENUM (
+      'ido'
+  ) NOT NULL,
+  source_resource_name VARCHAR(64) DEFAULT NULL, -- null means default resource
+  host_property VARCHAR(128) DEFAULT NULL,
+  monitoring_host_property VARCHAR(128) DEFAULT NULL,
+  vm_property VARCHAR(128) DEFAULT NULL,
+  monitoring_vm_host_property VARCHAR(128) DEFAULT NULL,
+  PRIMARY KEY (vcenter_uuid),
+  CONSTRAINT monitoring_vcenter
+    FOREIGN KEY monitoring_vcenter_uuid (vcenter_uuid)
+    REFERENCES vcenter (instance_uuid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE host_monitoring_hoststate (
+  host_uuid VARBINARY(20) NOT NULL,
+  ido_connection_id INT(10) UNSIGNED NOT NULL,
+  icinga_object_id BIGINT(20) NOT NULL,
+  current_state ENUM(
+    'UP',
+    'DOWN',
+    'UNREACHABLE',
+    'MISSING'
+  ) NOT NULL,
+  PRIMARY KEY (host_uuid),
+  INDEX sync_idx (ido_connection_id),
+  CONSTRAINT host_monitoring_host
+    FOREIGN KEY host_uuid (host_uuid)
+    REFERENCES host_system (uuid)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vm_monitoring_hoststate (
+  vm_uuid VARBINARY(20) NOT NULL,
+  ido_connection_id INT(10) UNSIGNED NOT NULL,
+  icinga_object_id BIGINT(20) NOT NULL,
+  current_state ENUM(
+    'UP',
+    'DOWN',
+    'UNREACHABLE',
+    'MISSING'
+  ) NOT NULL,
+  PRIMARY KEY (vm_uuid),
+  INDEX sync_idx (ido_connection_id),
+  CONSTRAINT vm_monitoring_host
+    FOREIGN KEY vm_uuid (vm_uuid)
+    REFERENCES virtual_machine (uuid)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE performance_unit (
   vcenter_uuid VARBINARY(16) NOT NULL,
   name VARCHAR(32) NOT NULL,
