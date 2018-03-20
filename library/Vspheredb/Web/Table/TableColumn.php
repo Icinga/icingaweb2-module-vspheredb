@@ -35,6 +35,16 @@ abstract class TableColumn
         }
     }
 
+    public function getMainColumnExpression()
+    {
+        $column = $this->getColumn();
+        if (is_array($column)) {
+            return array_shift($column);
+        } else {
+            return $column;
+        }
+    }
+
     public function setRenderer($callback)
     {
         $this->renderer = $callback;
@@ -105,13 +115,6 @@ abstract class TableColumn
 
             return $func($row);
         }
-    }
-
-    public function addToQuery(ZfSelect $query)
-    {
-        $query->columns([
-            $this->getAlias() => $this->getColumn()
-        ]);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Icon;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
@@ -10,34 +9,20 @@ use Icinga\Module\Vspheredb\Web\Widget\ServiceTagRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
 use Icinga\Util\Format;
-use dipl\Html\Link;
 
 class HostsTable extends ObjectsTable
 {
+    protected $baseUrl = 'vspheredb/host';
+
     protected function initialize()
     {
         $serviceTagRenderer = new ServiceTagRenderer();
         $powerStateRenderer = new PowerStateRenderer();
         $this->addAvailableColumns([
-            $this->createColumn('overall_status', $this->translate('Status'), 'o.overall_status')
-                ->setRenderer(function ($row) {
-                    return Icon::create('ok', [
-                        'title' => $this->getStatusDescription($row->overall_status),
-                        'class' => [ 'state', $row->overall_status ]
-                    ]);
-                })->setDefaultSortDirection('DESC'),
+            $this->createOverallStatusColumn(),
             $this->createColumn('runtime_power_state', $this->translate('Power'), 'h.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
-            $this->createColumn('object_name', $this->translate('Name'), [
-                'object_name' => 'o.object_name',
-                'uuid'        => 'o.uuid',
-            ])->setRenderer(function ($row) {
-                return Link::create(
-                    $row->object_name,
-                    'vspheredb/host',
-                    ['uuid' => bin2hex($row->uuid)]
-                );
-            }),
+            $this->createObjectNameColumn(),
             $this->createColumn('sysinfo_vendor', $this->translate('Vendor'), 'h.sysinfo_vendor'),
             $this->createColumn('sysinfo_model', $this->translate('Model'), 'h.sysinfo_model'),
             $this->createColumn('bios_version', $this->translate('BIOS Version'), 'h.bios_version'),
@@ -105,18 +90,6 @@ class HostsTable extends ObjectsTable
                 return new SpectreMelddownBiosInfo($host);
             }),
         ]);
-    }
-
-    protected function getStatusDescription($status)
-    {
-        $descriptions = [
-            'gray'   => $this->translate('Gray - status is unknown'),
-            'green'  => $this->translate('Green - everything is fine'),
-            'yellow' => $this->translate('Yellow - there are warnings'),
-            'red'    => $this->translate('Red - there is a problem'),
-        ];
-
-        return $descriptions[$status];
     }
 
     public function getDefaultColumnNames()

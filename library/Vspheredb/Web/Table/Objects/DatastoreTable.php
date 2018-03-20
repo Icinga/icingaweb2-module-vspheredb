@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Icon;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
@@ -14,13 +13,7 @@ class DatastoreTable extends ObjectsTable
     protected function initialize()
     {
         $this->addAvailableColumns([
-            $this->createColumn('overall_status', $this->translate('Status'), 'o.overall_status')
-                ->setRenderer(function ($row) {
-                    return Icon::create('ok', [
-                        'title' => $this->getStatusDescription($row->overall_status),
-                        'class' => [ 'state', $row->overall_status ]
-                    ]);
-                })->setDefaultSortDirection('DESC'),
+            $this->createOverallStatusColumn(),
             $this->createColumn('object_name', $this->translate('Name'), [
                 'object_name'          => 'o.object_name',
                 'uuid'                 => 'o.uuid',
@@ -109,18 +102,6 @@ class DatastoreTable extends ObjectsTable
     protected function formatPercent($value)
     {
         return sprintf('%0.2f%%', $value);
-    }
-
-    protected function getStatusDescription($status)
-    {
-        $descriptions = [
-            'gray'   => $this->translate('Gray - status is unknown'),
-            'green'  => $this->translate('Green - everything is fine'),
-            'yellow' => $this->translate('Yellow - there are warnings'),
-            'red'    => $this->translate('Red - there is a problem'),
-        ];
-
-        return $descriptions[$status];
     }
 
     public function sortBy($columns)

@@ -2,17 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Icon;
-use dipl\Html\Link;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 
 class VmsTable extends ObjectsTable
 {
-    protected $defaultAttributes = [
-        'class' => ['common-table', 'table-row-selectable', 'table-vms'],
-        'data-base-target' => '_next',
-    ];
+    protected $baseUrl = 'vsphere/vm';
 
     public function filterHost($uuid)
     {
@@ -61,28 +56,11 @@ class VmsTable extends ObjectsTable
         $perf = new DelayedPerfdataRenderer($this->db());
         $powerStateRenderer = new PowerStateRenderer();
         $this->addAvailableColumns([
-            $this->createColumn('overall_status', $this->translate('Status'), 'o.overall_status')
-                ->setRenderer(function ($row) {
-                    return Icon::create('ok', [
-                        'title' => $this->getStatusDescription($row->overall_status),
-                        'class' => [ 'state', $row->overall_status ]
-                    ]);
-                })->setDefaultSortDirection('DESC'),
+            $this->createOverallStatusColumn(),
             $this->createColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
-            $this->createColumn('object_name', 'Name', [
-                'object_name' => 'o.object_name',
-                'uuid'        => 'o.uuid',
-            ])->setRenderer(function ($row) {
-                return Link::create(
-                    $row->object_name,
-                    'vspheredb/vm',
-                    ['uuid' => bin2hex($row->uuid)]
-                );
-            }),
-            $this->createColumn('host_name', 'Host', [
-                'host_name' => 'h.host_name',
-            ]),
+            $this->createObjectNameColumn(),
+            $this->createColumn('host_name', 'Host', 'h.host_name'),
             $perf->getDiskColumn()->setDefaultSortDirection('DESC'),
             $perf->getNetColumn()->setDefaultSortDirection('DESC'),
             $perf->getCurrentNetColumn()->setDefaultSortDirection('DESC'),
@@ -104,17 +82,5 @@ class VmsTable extends ObjectsTable
             'hardware_numcpu',
             'hardware_memorymb'
         ];
-    }
-
-    protected function getStatusDescription($status)
-    {
-        $descriptions = [
-            'gray'   => $this->translate('Gray - status is unknown'),
-            'green'  => $this->translate('Green - everything is fine'),
-            'yellow' => $this->translate('Yellow - there are warnings'),
-            'red'    => $this->translate('Red - there is a problem'),
-        ];
-
-        return $descriptions[$status];
     }
 }
