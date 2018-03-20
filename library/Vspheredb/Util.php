@@ -17,6 +17,13 @@ class Util
         return $objects;
     }
 
+    public static function currentTimestamp()
+    {
+        $time = explode(' ', microtime());
+
+        return round(1000 * ((int) $time[1] + (float) $time[0]));
+    }
+
     public static function uuidToBin($uuid)
     {
         // 401daca3-42cf-bd89-94a1-463e448ea8d1
