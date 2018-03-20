@@ -7,7 +7,7 @@ use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 
 class VmsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vsphere/vm';
+    protected $baseUrl = 'vspheredb/vm';
 
     public function filterHost($uuid)
     {
