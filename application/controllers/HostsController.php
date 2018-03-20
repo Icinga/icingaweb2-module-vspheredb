@@ -20,6 +20,6 @@ class HostsController extends ObjectsController
         $table->handleSortUrl($this->url());
         $this->showTable($table, 'vspheredb/hosts', $this->translate('Hosts'));
         $summaries = new Summaries($table, $this->db(), $this->url());
-        $this->content()->prepend($summaries->addPowerState());
+        $this->content()->prepend($summaries);
     }
 }

@@ -39,7 +39,7 @@ class HostController extends Controller
             ->filterHost($this->host->get('uuid'))
             ->renderTo($this);
         $summaries = new Summaries($table, $this->db(), $this->url());
-        $this->content()->prepend($summaries->addPowerState());
+        $this->content()->prepend($summaries);
     }
 
     public function vmotionsAction()

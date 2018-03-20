@@ -40,6 +40,22 @@ class Summaries extends BaseElement
         $this->db = $db->getDbAdapter();
         $this->setQueryFromTable($table);
         $this->addColumn('o.overall_status', ['gray', 'green', 'yellow', 'red']);
+        if ($table->hasColumn('runtime_power_state')) {
+            $column = $table
+                ->getAvailableColumn('runtime_power_state')
+                ->getMainColumnExpression();
+
+            $this->addColumn($column, [
+                'poweredOn',
+                'poweredOff',
+                'unknown',
+                'standby',
+                'suspended',
+            ]);
+
+            $this->wantsPowerState = true;
+        }
+
         $this->applyUrlFilters($table);
     }
 
@@ -107,15 +123,6 @@ class Summaries extends BaseElement
 
     public function addPowerState()
     {
-        $this->addColumn('runtime_power_state', [
-            'poweredOn',
-            'poweredOff',
-            'unknown',
-            'standby',
-            'suspended',
-        ]);
-        $this->wantsPowerState = true;
-
         return $this;
     }
 
