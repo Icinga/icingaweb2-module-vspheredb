@@ -4,6 +4,8 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
+use Icinga\Util\Format;
 
 class VmsTable extends ObjectsTable
 {
@@ -20,10 +22,13 @@ class VmsTable extends ObjectsTable
     {
         $columns = $this->getRequiredDbColumns();
         $wantsHosts = false;
+        $wantsStats = false;
         foreach ($columns as $column) {
             if (substr($column, 0, 2) === 'h.') {
                 $wantsHosts = true;
-                break;
+            }
+            if (substr($column, 0, 4) === 'vqs.') {
+                $wantsStats = true;
             }
         }
 
@@ -38,6 +43,14 @@ class VmsTable extends ObjectsTable
 
         if ($this->parentUuids) {
             $query->where('o.parent_uuid IN (?)', $this->parentUuids);
+        }
+
+        if ($wantsStats) {
+            $query->join(
+                ['vqs' => 'vm_quick_stats'],
+                'vqs.uuid = vc.uuid',
+                []
+            );
         }
 
         if ($wantsHosts) {
