@@ -15,19 +15,13 @@ class VmsController extends ObjectsController
     {
         $this->handleTabs();
         $this->linkBackToOverview('vm');
-
         $table = new VmsTable($this->db());
-        $table->handleSortUrl($this->url());
-
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
-
-        $this->showTable(
-            $table,
-            'vspheredb/vms',
-            $this->translate('Virtual Machines')
-        );
+        $table->handleSortUrl($this->url());
+        $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machines'));
         $summaries = new Summaries($table, $this->db(), $this->url());
-        $this->content()->prepend($summaries->addPowerState());
+        $this->content()->prepend($summaries);
+
     }
 }
