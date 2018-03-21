@@ -9,6 +9,7 @@ use dipl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
 
 class VmHardwareTree extends BaseElement
@@ -183,6 +184,10 @@ class VmHardwareTree extends BaseElement
                 $uuid
             )->group('o.uuid')
         );
+
+        if (false === $info) {
+            return sprintf('Port group %s not found', Util::uuidToHex($uuid));
+        }
 
         return Link::create(
             sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics),
