@@ -12,6 +12,8 @@ class ResourcePoolsTable extends ObjectsTable
             $this->createOverallStatusColumn(),
             $this->createObjectNameColumn(),
             $this->createMorefColumn(),
+            $this->createColumn('cnt_vms', $this->translate('VMs'), 'COUNT(*)')
+                ->setDefaultSortDirection('DESC'),
         ]);
     }
 
@@ -20,6 +22,7 @@ class ResourcePoolsTable extends ObjectsTable
         return [
             'overall_status',
             'object_name',
+            'cnt_vms',
         ];
     }
 
@@ -29,6 +32,14 @@ class ResourcePoolsTable extends ObjectsTable
             ['o' => 'object'],
             $this->getRequiredDbColumns()
         )->where('object_type = ?', 'ResourcePool');
+
+        if ($this->hasColumn('cnt_vms')) {
+            $query->joinLeft(
+                ['vm' => 'virtual_machine'],
+                'vm.resource_pool_uuid = o.uuid',
+                []
+            )->group('o.uuid');
+        }
 
         if ($this->parentUuids) {
             $query->where('o.parent_uuid IN (?)', $this->parentUuids);
