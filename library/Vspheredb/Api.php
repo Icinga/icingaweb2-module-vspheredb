@@ -268,7 +268,7 @@ class Api
     {
         $base = "Icinga\\Module\\Vspheredb\\MappedClass";
 
-        return [
+        $map = [
             'VmFailedMigrateEvent'    => "$base\\VmFailedMigrateEvent",
             'MigrationEvent'          => "$base\\MigrationEvent",
             'VmBeingMigratedEvent'    => "$base\\VmBeingMigratedEvent",
@@ -276,6 +276,15 @@ class Api
             'VmEmigratingEvent'       => "$base\\VmEmigratingEvent",
             'VmMigratedEvent'         => "$base\\VmMigratedEvent",
         ];
+
+        $base = "Icinga\\Module\\Vspheredb\\VmwareDataType";
+
+        $map += [
+            'ManagedObjectReference' => "$base\\ManagedObjectReference",
+            'NumericRange'           => "$base\\NumericRange",
+        ];
+
+        return $map;
     }
 
     /**

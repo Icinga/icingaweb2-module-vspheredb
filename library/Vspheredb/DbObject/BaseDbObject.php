@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
+use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 abstract class BaseDbObject extends DirectorDbObject
 {
@@ -28,7 +29,7 @@ abstract class BaseDbObject extends DirectorDbObject
 
     public function isObjectReference($property)
     {
-        return in_array($property, $this->objectReferences);
+        return $property === 'parent' || in_array($property, $this->objectReferences);
     }
 
     public function isBooleanProperty($property)
@@ -58,13 +59,7 @@ abstract class BaseDbObject extends DirectorDbObject
             if (property_exists($properties, $key)) {
                 $value = $properties->$key;
                 if ($this->isObjectReference($property)) {
-                    if (empty($value)) {
-                        $value = null;
-                    } elseif (is_object($value)) {
-                        $value = $vCenter->makeBinaryGlobalUuid($value->_);
-                    } else {
-                        $value = $vCenter->makeBinaryGlobalUuid($value);
-                    }
+                    $value = $this->createUuidForMoref($value, $vCenter);
                 } elseif ($this->isBooleanProperty($property)) {
                     $value = $this->makeBooleanValue($value);
                 }
@@ -74,6 +69,17 @@ abstract class BaseDbObject extends DirectorDbObject
         }
 
         return $this;
+    }
+
+    protected function createUuidForMoref($value, VCenter $vCenter)
+    {
+        if (empty($value)) {
+            return null;
+        } elseif ($value instanceof ManagedObjectReference) {
+            return $vCenter->makeBinaryGlobalUuid($value->_);
+        } else {
+            return $vCenter->makeBinaryGlobalUuid($value);
+        }
     }
 
     public function object()
