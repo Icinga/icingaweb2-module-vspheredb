@@ -52,10 +52,11 @@ CREATE TABLE vcenter_server (
 
 CREATE TABLE vcenter_sync (
   vcenter_uuid VARBINARY(16) NOT NULL,
-  hostname VARCHAR(255) NOT NULL,
+  fqdn VARCHAR(255) NOT NULL,
   username VARCHAR(64) NOT NULL,
   pid INT UNSIGNED NOT NULL,
-  ts_last_refresh BIGINT(20) NOT NULL
+  php_version VARCHAR(64) NOT NULL,
+  ts_last_refresh BIGINT(20) NOT NULL,
   PRIMARY KEY (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
