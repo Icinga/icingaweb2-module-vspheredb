@@ -62,7 +62,7 @@ class SyncManagedObjectReferences
                 ], $db);
             }
             if (property_exists($obj, 'parent')) {
-                $idToParent[$uuid] = $obj->parent;
+                $idToParent[$uuid] = $obj->parent->_;
             }
         }
         foreach ($idToParent as $uuid => $parentName) {
