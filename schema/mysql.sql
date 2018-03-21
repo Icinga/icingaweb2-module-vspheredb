@@ -224,6 +224,36 @@ CREATE TABLE virtual_machine (
   PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE distributed_virtual_switch (
+  uuid VARBINARY(20) NOT NULL,
+  num_hosts INT(10) NOT NULL,
+  num_ports INT(10) NOT NULL,
+  max_ports INT(10) NOT NULL,
+  hostmembers_checksum VARBINARY(20) DEFAULT NULL,
+  portgroups_checksum VARBINARY(20) DEFAULT NULL,
+  vms_checksum VARBINARY(20) DEFAULT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  description TEXT DEFAULT NULL,
+  PRIMARY KEY(uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE distributed_virtual_portgroup (
+  uuid VARBINARY(20) NOT NULL,
+  portgroup_type ENUM (
+    'earlyBinding', -- assigned when reconfigured
+    'ephemeral',    -- assigned when powered on
+    'lateBinding'   -- Deprecated as of vSphere API 5.0.
+  ) NOT NULL,
+  vlan INT(10) DEFAULT NULL,
+  vlan_ranges VARCHAR(255) DEFAULT NULL,
+  num_ports INT(10) NOT NULL,
+  distributed_virtual_switch_uuid VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  PRIMARY KEY(uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE datastore (
   uuid VARBINARY(20) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
