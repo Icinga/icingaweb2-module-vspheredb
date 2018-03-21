@@ -65,9 +65,23 @@ class VmHardwareTree extends BaseElement
         }
     }
 
+    protected function fetchNics()
+    {
+        $db = $this->getDb()->getDbAdapter();
+        $query = $db->select()
+            ->from('vm_network_adapter')
+            ->where('vm_uuid = ?', $this->vm->get('uuid'))
+            ->order('hardware_key');
+
+        foreach ($db->fetchAll($query) as $nic) {
+            $this->nics[$nic->hardware_key] = $nic;
+        }
+    }
+
     protected function fetchHardware()
     {
         $this->fetchDisks();
+        $this->fetchNics();
         $this->diskPerf = $this->fetchDiskPerf();
         $db = $this->getDb()->getDbAdapter();
         $query = $db->select()
@@ -125,6 +139,56 @@ class VmHardwareTree extends BaseElement
         }
 
         return $result;
+    }
+
+    protected function renderNic($nic, $device, $controller)
+    {
+        $desc = $device->label;
+
+        $parts[] = $nic->mac_address;
+        if ($device->summary !== $device->label) {
+             // $parts[] = $device->summary;
+        }
+
+        $desc = $desc . ': ' . implode(', ', $parts);
+
+        $result = Link::create($desc, '#', null, [
+            'class' => 'icon-sitemap',
+        ]);
+
+        if ($nic->portgroup_uuid === null) {
+            return $result;
+        } else {
+            return [$result, $this->linkToPortGroup($nic->portgroup_uuid)];
+        }
+    }
+
+    protected function linkToPortGroup($uuid)
+    {
+        $db = $this->getDb()->getDbAdapter();
+        $info = $db->fetchRow(
+            $db->select()->from(
+                ['o' => 'object'],
+                [
+                    'uuid'        => 'o.uuid',
+                    'object_name' => 'o.object_name',
+                    'cnt_nics'    => 'COUNT(*)',
+                ]
+            )->join(
+                ['vna' => 'vm_network_adapter'],
+                'vna.portgroup_uuid = o.uuid',
+                []
+            )->where(
+                'o.uuid = ?',
+                $uuid
+            )->group('o.uuid')
+        );
+
+        return Link::create(
+            sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics),
+            'vspheredb/portgroup',
+            ['uuid' => bin2hex($info->uuid)]
+        );
     }
 
     protected function fetchDiskPerf()
@@ -210,6 +274,12 @@ class VmHardwareTree extends BaseElement
 
         if ($isDisk) {
             $li->add($this->renderDisk($this->disks[$key], $device, $this->devices[$device->controller_key]));
+        } elseif ($isNic) {
+            if (array_key_exists($key, $this->nics)) {
+                $li->add($this->renderNic($this->nics[$key], $device, $this->devices[$device->controller_key]));
+            } else {
+                $li->add(Link::create($desc, '#', null, ['class' => $class, 'title' => 'No more details available']));
+            }
         } else {
             $li->add(Link::create($desc, '#', null, ['class' => $class]));
         }
