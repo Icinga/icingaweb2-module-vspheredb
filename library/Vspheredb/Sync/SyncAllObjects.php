@@ -4,6 +4,8 @@ namespace Icinga\Module\Vspheredb\Sync;
 
 use Icinga\Application\Benchmark;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
+use Icinga\Module\Vspheredb\DbObject\DistributedVirtualPortgroup;
+use Icinga\Module\Vspheredb\DbObject\DistributedVirtualSwitch;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
@@ -27,6 +29,8 @@ class SyncAllObjects
         HostSystem::syncFromApi($vCenter);
         VirtualMachine::syncFromApi($vCenter);
         Datastore::syncFromApi($vCenter);
+        DistributedVirtualPortgroup::syncFromApi($vCenter);
+        DistributedVirtualSwitch::syncFromApi($vCenter);
 
         return $this;
     }
