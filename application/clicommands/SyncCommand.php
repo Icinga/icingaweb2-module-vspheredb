@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Icinga\Module\Vspheredb\Sync\SyncAllObjects;
+use Icinga\Module\Vspheredb\Sync\SyncHostHardware;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounterInfo;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounters;
 use Icinga\Module\Vspheredb\Sync\SyncQuickStats;
@@ -51,6 +52,12 @@ class SyncCommand extends CommandBase
     public function vmhardwareAction()
     {
         $sync = new SyncVmHardware($this->getVCenter());
+        $sync->run();
+    }
+
+    public function hosthardwareAction()
+    {
+        $sync = new SyncHostHardware($this->getVCenter());
         $sync->run();
     }
 

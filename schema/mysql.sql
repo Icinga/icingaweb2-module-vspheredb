@@ -147,7 +147,7 @@ CREATE TABLE host_system (
   sysinfo_vendor VARCHAR(64) NOT NULL, -- HP
   sysinfo_model VARCHAR(64) NOT NULL,  -- ProLiant DL380 Gen9
   sysinfo_uuid VARCHAR(64) NOT NULL,   -- 30133937-3365-54a3-3544-30374a334d53
-  service_tag VARCHAR(32) NOT NULL, -- DQ6EXJ3
+  service_tag VARCHAR(32) DEFAULT NULL, -- DQ6EXJ3
   hardware_cpu_model VARCHAR(64) NOT NULL, -- Intel(R) Xeon(R) CPU E5-2699A v4 @ 2.40GHz
   hardware_cpu_mhz INT UNSIGNED NOT NULL,
   hardware_cpu_packages SMALLINT UNSIGNED NOT NULL,
@@ -164,6 +164,24 @@ CREATE TABLE host_system (
   ) NOT NULL,
   PRIMARY KEY(uuid),
   UNIQUE INDEX sysinfo_uuid (sysinfo_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE host_pci_device (
+  id VARCHAR(16) NOT NULL, -- bus:slot.function . But: 0000:00:00.0
+  host_uuid  VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  bus BINARY(1) NOT NULL, -- byte
+  slot BINARY(1) NOT NULL, -- byte
+  function BINARY(1) NOT NULL, -- byte
+  class_id SMALLINT NOT NULL, -- short
+  device_id SMALLINT NOT NULL, -- short
+  device_name VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  sub_device_id SMALLINT NOT NULL, -- short
+  vendor_id SMALLINT NOT NULL, -- short
+  vendor_name VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  sub_vendor_id SMALLINT NOT NULL, -- short
+  parent_bridge VARCHAR(64) DEFAULT NULL,
+  PRIMARY KEY(host_uuid, id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE virtual_machine (
