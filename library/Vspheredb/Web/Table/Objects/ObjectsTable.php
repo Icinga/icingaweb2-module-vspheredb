@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use dipl\Html\Html;
 use dipl\Html\Icon;
 use dipl\Html\Link;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
@@ -21,6 +22,27 @@ abstract class ObjectsTable extends BaseTable
         $this->parentUuids = $uuids;
 
         return $this;
+    }
+
+    protected function createMorefColumn()
+    {
+        return $this->createColumn('moref', 'MO Ref')
+            ->setRenderer(function ($row) {
+                return $this->linkToVCenter($row->moref);
+            });
+    }
+
+    protected function linkToVCenter($moRef)
+    {
+        return Html::tag('a', [
+            'href' => sprintf(
+                'https://%s/mob/?moid=%s',
+                $this->vCenter->getFirstServer()->get('host'),
+                rawurlencode($moRef)
+            ),
+            'target' => '_blank',
+            'title' => $this->translate('Jump to the Managed Object browser')
+        ], $moRef);
     }
 
     protected function createOverallStatusColumn()
