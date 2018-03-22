@@ -6,6 +6,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
+use Icinga\Module\Vspheredb\Web\Table\HostSensorsTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
 use dipl\Html\Link;
@@ -43,6 +44,13 @@ class HostController extends Controller
         $this->content()->prepend($summaries);
     }
 
+    public function sensorsAction()
+    {
+        $table = new HostSensorsTable($this->db());
+        $table->filterHost($this->addHost());
+        $table->renderTo($this);
+    }
+
     public function pcidevicesAction()
     {
         $table = new HostPciDevicesTable($this->db());
@@ -76,6 +84,10 @@ class HostController extends Controller
                 $this->host->countVms()
             ),
             'url' => 'vspheredb/host/vms',
+            'urlParams' => ['uuid' => $hexId]
+        ])->add('sensors', [
+            'label' => $this->translate('Sensors'),
+            'url' => 'vspheredb/host/sensors',
             'urlParams' => ['uuid' => $hexId]
         ])->add('pcidevices', [
             'label' => $this->translate('PCI Devices'),

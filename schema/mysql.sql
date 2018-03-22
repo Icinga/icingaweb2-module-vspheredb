@@ -184,6 +184,28 @@ CREATE TABLE host_pci_device (
   PRIMARY KEY(host_uuid, id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE host_sensor (
+  name VARCHAR(128) NOT NULL,
+  host_uuid  VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  health_state ENUM(
+    'green',
+    'yellow',
+    'unknown',
+    'red'
+  ) NOT NULL,
+  current_reading INT NOT NULL,
+  unit_modifier SMALLINT NOT NULL,
+  base_units VARCHAR(32) DEFAULT NULL,
+  rate_units VARCHAR(32) DEFAULT NULL,
+  sensor_type VARCHAR(32) NOT NULL,
+  -- Seen so far:
+  -- fan, power, system, temperature, voltage, other,
+  -- Battery, Cable/Interconnect, Chassis, Management Subsystem Health,
+  -- Memory, Processors, Software Components, Storage, System, Watchdog
+  PRIMARY KEY(host_uuid, name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE virtual_machine (
   uuid  VARBINARY(20) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
