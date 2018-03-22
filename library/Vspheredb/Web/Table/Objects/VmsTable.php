@@ -77,12 +77,54 @@ class VmsTable extends ObjectsTable
             $perf->getDiskColumn()->setDefaultSortDirection('DESC'),
             $perf->getNetColumn()->setDefaultSortDirection('DESC'),
             $perf->getCurrentNetColumn()->setDefaultSortDirection('DESC'),
+            $perf->getCurrentDiskColumn()->setDefaultSortDirection('DESC'),
             $this->createColumn('hardware_numcpu', 'CPUs', 'vc.hardware_numcpu')
                 ->setDefaultSortDirection('DESC'),
             $this->createColumn('hardware_memorymb', 'Memory', 'vc.hardware_memorymb')
                 ->setRenderer(function ($row) {
                     return $this->formatMb($row->hardware_memorymb);
-                })->setDefaultSortDirection('DESC')
+                })->setDefaultSortDirection('DESC'),
+            $this->createColumn('ballooned_memory_mb', 'Balloon', 'vqs.ballooned_memory_mb')
+                ->setRenderer(function ($row) {
+                    return $this->formatMb($row->ballooned_memory_mb);
+                })->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('guest_memory_usage_mb', 'Memory Usage', [
+                'guest_memory_usage_mb' => 'vqs.guest_memory_usage_mb',
+                'hardware_memorymb'     => 'vc.hardware_memorymb',
+            ])->setRenderer(function ($row) {
+                $used = $row->guest_memory_usage_mb * 1024 * 1024;
+                $total = $row->hardware_memorymb * 1024 * 1024;
+                $title = sprintf(
+                    '%s / %s',
+                    Format::bytes($used),
+                    Format::bytes($total)
+                );
+
+                return new SimpleUsageBar($used, $total, $title);
+            })->setSortExpression(
+                '(vqs.guest_memory_usage_mb / vc.hardware_memorymb)'
+            )->setDefaultSortDirection('DESC'),
+
+
+            $this->createColumn('host_memory_usage_mb', 'Host Memory Usage', [
+                'host_memory_usage_mb' => 'vqs.host_memory_usage_mb',
+                'hardware_memorymb'     => 'vc.hardware_memorymb',
+            ])->setRenderer(function ($row) {
+                $used = $row->host_memory_usage_mb * 1024 * 1024;
+                $total = $row->hardware_memorymb * 1024 * 1024;
+                $title = sprintf(
+                    '%s / %s',
+                    Format::bytes($used),
+                    Format::bytes($total)
+                );
+
+                return new SimpleUsageBar($used, $total, $title);
+            })->setSortExpression(
+                '(vqs.host_memory_usage_mb / vc.hardware_memorymb)'
+            )->setDefaultSortDirection('DESC'),
+
+
         ]);
     }
 

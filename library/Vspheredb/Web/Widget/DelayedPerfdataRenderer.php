@@ -37,7 +37,7 @@ class DelayedPerfdataRenderer
      */
     public function getDiskColumn()
     {
-        return (new SimpleColumn('disk_io', '5x5min Disk I/O', 'o.uuid'))
+        return (new SimpleColumn('disk_io_perf', '5x5min Disk I/O', 'o.uuid'))
             ->setRenderer(function ($row) {
                 $this->requireVm($row->uuid);
 
@@ -68,6 +68,19 @@ class DelayedPerfdataRenderer
                 $this->requireVm($row->uuid);
 
                 return $this->createKbInOut($row->uuid, '', 526, 527);
+            });
+    }
+
+    /**
+     * @return TableColumn
+     */
+    public function getCurrentDiskColumn()
+    {
+        return (new SimpleColumn('disk_io', 'Disk I/O', 'o.uuid'))
+            ->setRenderer(function ($row) {
+                $this->requireVm($row->uuid);
+
+                return $this->createKbInOut($row->uuid, 'scsi0:0', 171, 172);
             });
     }
 
