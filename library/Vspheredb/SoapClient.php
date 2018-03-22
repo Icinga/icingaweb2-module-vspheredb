@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb;
 
+use Icinga\Application\Logger;
+use Icinga\Util\Format;
 use SoapClient as PhpSoapClient;
 
 /**
@@ -54,7 +56,14 @@ class SoapClient extends PhpSoapClient
             'Keep-Alive'   => '300',
             'SOAPAction'   => $action,
         );
+        $start = microtime(true);
         $result = $this->curl->post($location, $request, $headers);
+        $duration = microtime(true) - $start;
+        Logger::debug(
+            'SOAPClient: got %s response in %0.2fms',
+            Format::bytes(strlen($result)),
+            $duration
+        );
 
         if ($this->dumpRawData) {
             echo "$request\n====\n$result\n";
