@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use dipl\Html\Html;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
@@ -11,6 +12,7 @@ use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
 use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
+use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 
 class VmController extends Controller
@@ -18,15 +20,38 @@ class VmController extends Controller
     public function indexAction()
     {
         $vm = $this->addVm();
-        $this->content()->add([
-            new VmInfoTable($vm, $this->vCenter(), $this->pathLookup()),
+        $this->content()->add(
+            new VmInfoTable($vm, $this->vCenter(), $this->pathLookup())
+        );
+        $this->addSubTitle($this->translate('DataStore Usage'), 'database');
+        $this->content()->add(
             VmDatastoresTable::create($vm)
-        ]);
+        );
 
+        $this->addSubTitle($this->translate('Snapshots'), 'history');
+        $snapshots = VmSnapshotTable::create($vm);
+        if (count($snapshots)) {
+            $this->content()->add($snapshots);
+        } else {
+            $this->content()->add(Html::tag('p', null, $this->translate('No snapshots have been created for this VM')));
+        }
+
+        $this->addSubTitle($this->translate('Guest Disk Usage'), 'chart-pie');
         $disks = VmDiskUsageTable::create($vm);
         if (count($disks)) {
             $this->content()->add($disks);
         }
+    }
+
+    protected function addSubTitle($title, $icon = null)
+    {
+        $title = Html::tag('h2', null, $title);
+
+        if ($icon !== null) {
+            $title->addAttributes(['class' => "icon-$icon"]);
+        }
+
+        $this->content()->add($title);
     }
 
     public function hardwareAction()

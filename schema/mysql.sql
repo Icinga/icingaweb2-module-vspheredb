@@ -315,6 +315,26 @@ CREATE TABLE datastore (
   PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE vm_snapshot (
+  uuid VARBINARY(20) NOT NULL,
+  parent_uuid VARBINARY(20) DEFAULT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  vm_uuid VARBINARY(20) NOT NULL,
+  id INT UNSIGNED NOT NULL,
+  moref VARCHAR(32) NOT NULL, -- textual id, we have no object entry
+  name VARCHAR(255) NOT NULL,
+  description TEXT DEFAULT NULL,
+  ts_create BIGINT NOT NULL,
+  state ENUM (
+    'poweredOff',
+    'poweredOn',
+    'suspended'
+  ) NOT NULL, -- VM power state when the snapshot was taken
+  quiesced ENUM('y', 'n') NOT NULL,
+  PRIMARY KEY (uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE vm_datastore_usage (
   vm_uuid VARBINARY(20) NOT NULL,
   datastore_uuid  VARBINARY(20) NOT NULL,
