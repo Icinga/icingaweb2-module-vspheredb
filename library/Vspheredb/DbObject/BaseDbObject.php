@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 abstract class BaseDbObject extends DirectorDbObject
@@ -27,6 +28,8 @@ abstract class BaseDbObject extends DirectorDbObject
 
     protected $booleanProperties = [];
 
+    protected $dateTimeProperties = [];
+
     public function isObjectReference($property)
     {
         return $property === 'parent' || in_array($property, $this->objectReferences);
@@ -35,6 +38,11 @@ abstract class BaseDbObject extends DirectorDbObject
     public function isBooleanProperty($property)
     {
         return in_array($property, $this->booleanProperties);
+    }
+
+    public function isDateTimeProperty($property)
+    {
+        return in_array($property, $this->dateTimeProperties);
     }
 
     protected function makeBooleanValue($value)
@@ -62,6 +70,8 @@ abstract class BaseDbObject extends DirectorDbObject
                     $value = $this->createUuidForMoref($value, $vCenter);
                 } elseif ($this->isBooleanProperty($property)) {
                     $value = $this->makeBooleanValue($value);
+                } elseif ($this->isDateTimeProperty($property)) {
+                    $value = Util::timeStringToUnixMs($value);
                 }
 
                 $this->set($property, $value);
