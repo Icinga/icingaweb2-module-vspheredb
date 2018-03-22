@@ -266,8 +266,6 @@ class CurlLoader
                 throw new AuthenticationException('Not authenticated');
             }
             // TODO: This should be transformed in a Soap error and deal with such
-            var_dump($body);
-            var_dump($res);
             throw new Exception(
                 "Got $statusCode: " . var_export($res, 1)
             );
@@ -308,6 +306,7 @@ class CurlLoader
      */
     public function processHeaderLine($curl, $header)
     {
+        // echo "H: $header";
         $len = strlen($header);
         $header = explode(':', $header, 2);
         if (count($header) < 2) {
