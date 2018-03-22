@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb;
 
+use DateTime;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\InvalidPropertyException;
 use stdClass;
@@ -22,6 +23,13 @@ class Util
         $time = explode(' ', microtime());
 
         return round(1000 * ((int) $time[1] + (float) $time[0]));
+    }
+
+    public static function timeStringToUnixMs($string)
+    {
+        $time = new DateTime($string);
+
+        return (int) (1000 * $time->format('U.u'));
     }
 
     public static function uuidToBin($uuid)
