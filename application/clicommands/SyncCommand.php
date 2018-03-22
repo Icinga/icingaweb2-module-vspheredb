@@ -4,12 +4,14 @@ namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Icinga\Module\Vspheredb\Sync\SyncAllObjects;
 use Icinga\Module\Vspheredb\Sync\SyncHostHardware;
+use Icinga\Module\Vspheredb\Sync\SyncHostSensors;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounterInfo;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounters;
 use Icinga\Module\Vspheredb\Sync\SyncQuickStats;
 use Icinga\Module\Vspheredb\Sync\SyncVmDatastoreUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmDiskUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmHardware;
+use Icinga\Module\Vspheredb\Sync\SyncVmSnapshots;
 
 /**
  * Sync a vCenter or ESXi host
@@ -61,9 +63,21 @@ class SyncCommand extends CommandBase
         $sync->run();
     }
 
+    public function hostsensorsAction()
+    {
+        $sync = new SyncHostSensors($this->getVCenter());
+        $sync->run();
+    }
+
     public function vmdiskusageAction()
     {
         $sync = new SyncVmDiskUsage($this->getVCenter());
+        $sync->run();
+    }
+
+    public function vmsnapshotAction()
+    {
+        $sync = new SyncVmSnapshots($this->getVCenter());
         $sync->run();
     }
 
