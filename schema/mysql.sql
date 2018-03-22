@@ -142,7 +142,7 @@ CREATE TABLE host_system (
   vcenter_uuid VARBINARY(16) NOT NULL,
   product_api_version VARCHAR(32) NOT NULL, -- 6.0
   product_full_name VARCHAR(64) NOT NULL,   -- VMware ESXi 6.0.0 build-5572656
-  bios_version VARCHAR(32) NOT NULL, -- P89
+  bios_version VARCHAR(32) DEFAULT NULL, -- P89
   bios_release_date DATETIME DEFAULT NULL, -- 2017-02-17T00:00:00Z
   sysinfo_vendor VARCHAR(64) NOT NULL, -- HP
   sysinfo_model VARCHAR(64) NOT NULL,  -- ProLiant DL380 Gen9
