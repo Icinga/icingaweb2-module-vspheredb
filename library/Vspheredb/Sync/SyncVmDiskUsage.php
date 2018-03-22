@@ -2,16 +2,18 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
-use Icinga\Application\Benchmark;
+use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
-use Icinga\Module\Vspheredb\DbObject\BaseVmHardwareDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmDiskUsage;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
+use Icinga\Module\Vspheredb\Util;
 
 class SyncVmDiskUsage
 {
+    use SyncHelper;
+
     /** @var VCenter */
     protected $vCenter;
 
@@ -38,18 +40,17 @@ class SyncVmDiskUsage
             new PropertySet('VirtualMachine', ['guest.disk']),
             VirtualMachine::getSelectSet()
         );
-
-        Benchmark::measure(sprintf(
+        Logger::debug(
             'Got %d VirtualMachines with guest.disk',
             count($result)
-        ));
+        );
 
         $connection = $vCenter->getConnection();
         $usage = VmDiskUsage::loadAllForVCenter($vCenter);
-        Benchmark::measure(sprintf(
+        Logger::debug(
             'Got %d vm_disk_usage objects from DB',
             count($usage)
-        ));
+        );
 
         $seen = [];
         foreach ($result as $vm) {
@@ -102,35 +103,5 @@ class SyncVmDiskUsage
         }
 
         $this->storeObjects($vCenter->getDb(), $usage, $seen);
-    }
-
-    /**
-     * @param \Zend_Db_Adapter_Abstract $db
-     * @param BaseVmHardwareDbObject[] $objects
-     * @param $seen
-     */
-    protected function storeObjects(\Zend_Db_Adapter_Abstract $db, array $objects, $seen)
-    {
-        $insert = 0;
-        $update = 0;
-        $delete = 0;
-        $db->beginTransaction();
-        foreach ($objects as $key => $object) {
-            if (! array_key_exists($key, $seen)) {
-                $object->delete();
-                $delete++;
-            } elseif ($object->hasBeenLoadedFromDb()) {
-                if ($object->hasBeenModified()) {
-                    $update++;
-                    $object->store();
-                }
-            } else {
-                $object->store();
-                $insert++;
-            }
-        }
-
-        $db->commit();
-        Benchmark::measure("$insert created, $update changed, $delete deleted");
     }
 }

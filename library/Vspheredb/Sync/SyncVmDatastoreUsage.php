@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
-use Icinga\Application\Benchmark;
+use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
@@ -25,7 +25,7 @@ class SyncVmDatastoreUsage
             new PropertySet('VirtualMachine', ['storage.perDatastoreUsage']),
             VirtualMachine::getSelectSet()
         );
-        Benchmark::measure('Got VirtualMachine perDatastoreUsage');
+        Logger::debug('Got VirtualMachine perDatastoreUsage');
 
         $vCenterUuid = $vCenter->get('uuid');
         $table = 'vm_datastore_usage';
@@ -81,7 +81,7 @@ class SyncVmDatastoreUsage
         }
 
         $db->commit();
-        Benchmark::measure("$insert created, $update changed, $delete deleted");
+        Logger::debug("$insert created, $update changed, $delete deleted");
     }
 
     protected function makeWhere(\Zend_Db_Adapter_Abstract $db, $vmUuid, $dsUuid)

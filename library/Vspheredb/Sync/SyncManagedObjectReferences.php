@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
-use Icinga\Application\Benchmark;
+use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\SelectSet\FullSelectSet;
@@ -27,9 +27,9 @@ class SyncManagedObjectReferences
     public function sync()
     {
         $vCenter = $this->vCenter;
-        Benchmark::measure('Ready to fetch id/name/parent list');
+        Logger::debug('Ready to fetch id/name/parent list');
         $all = $this->fetchNames();
-        Benchmark::measure(sprintf("Got id/name/parent for %d objects", count($all)));
+        Logger::debug('Got id/name/parent for %d objects', count($all));
         $db = $this->vCenter->getConnection();
 
         /** @var ManagedObject[] $objects */
@@ -71,14 +71,14 @@ class SyncManagedObjectReferences
                     $objects[$nameUuids[$parentName]]
                 );
             } else {
-                printf(
+                Logger::error(
                     "Could not find parent $parentName for %s",
                     $fetched[$uuid]
                 );
             }
         }
 
-        Benchmark::measure('Storing object tree to DB');
+        Logger::debug('Storing object tree to DB');
         $dba = $this->vCenter->getDb();
         $dba->beginTransaction();
         $new = $same = $del = $mod = [];
@@ -97,6 +97,8 @@ class SyncManagedObjectReferences
             }
         }
 
+        /*
+        // Debug only:
         printf("%d new: %s\n", count($new), implode(', ', $new));
         printf("%d mod: %s\n", count($mod), implode(', ', $mod));
         foreach ($mod as $id => $name) {
@@ -112,6 +114,7 @@ class SyncManagedObjectReferences
         }
         printf("%d del: %s\n", count($del), implode(', ', $del));
         printf("%d unmodified\n", count($same));
+        */
 
         if (! empty($del)) {
             $dba->update(
@@ -129,7 +132,7 @@ class SyncManagedObjectReferences
             $object->store();
         }
         $dba->commit();
-        Benchmark::measure(sprintf('Committed %d objects', count($objects)));
+        Logger::debug('Committed %d objects', count($objects));
 
         return $this;
     }

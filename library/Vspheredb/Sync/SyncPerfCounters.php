@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
-use Icinga\Application\Benchmark;
+use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 /**
@@ -76,7 +76,7 @@ class SyncPerfCounters
                 }
             }
             $db->commit();
-            Benchmark::measure("Stored $count instances");
+            Logger::debug("Stored $count instances");
         }
 
         $currentTs = floor(time() / 300) * 300 * 1000;

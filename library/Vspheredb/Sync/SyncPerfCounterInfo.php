@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
-use Icinga\Application\Benchmark;
+use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 class SyncPerfCounterInfo
@@ -44,7 +44,7 @@ class SyncPerfCounterInfo
         $units = [];
         $groups = [];
         $data = [];
-        Benchmark::measure('Preparing Counters for DB');
+        Logger::debug('Preparing Counters for DB');
         foreach ($info as $c) {
             $name  = $c->nameInfo->key;
             $group = $c->groupInfo->key;
@@ -85,7 +85,7 @@ class SyncPerfCounterInfo
             }
         }
 
-        Benchmark::measure('Ready to store Counters to DB');
+        Logger::debug('Ready to store Counters to DB');
         $db->beginTransaction();
         foreach ($groups as $group) {
             // $db->insert('performance_group', $group);
@@ -97,7 +97,7 @@ class SyncPerfCounterInfo
             $db->insert('performance_counter', $c);
         }
         $db->commit();
-        Benchmark::measure('Counters stored to DB');
+        Logger::debug('Counters stored to DB');
     }
 
     protected function processHistoricalIntervals($intervals)

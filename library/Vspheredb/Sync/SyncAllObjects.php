@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
-use Icinga\Application\Benchmark;
+use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualPortgroup;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualSwitch;
@@ -23,9 +23,9 @@ class SyncAllObjects
     public function run()
     {
         $vCenter = $this->vCenter;
-        Benchmark::measure('Refreshing objects');
+        Logger::debug('Refreshing objects');
         (new SyncManagedObjectReferences($vCenter))->sync();
-        Benchmark::measure('Refreshed objects');
+        Logger::debug('Refreshed objects');
         HostSystem::syncFromApi($vCenter);
         VirtualMachine::syncFromApi($vCenter);
         Datastore::syncFromApi($vCenter);

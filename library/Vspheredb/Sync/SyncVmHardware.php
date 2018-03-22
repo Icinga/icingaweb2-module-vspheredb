@@ -2,10 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
-use Icinga\Application\Benchmark;
+use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
-use Icinga\Module\Vspheredb\DbObject\BaseVmHardwareDbObject;
-use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmDisk;
 use Icinga\Module\Vspheredb\DbObject\VmHardware;
@@ -14,13 +12,7 @@ use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 
 class SyncVmHardware
 {
-    /** @var VCenter */
-    protected $vCenter;
-
-    public function __construct(VCenter $vCenter)
-    {
-        $this->vCenter = $vCenter;
-    }
+    use SyncHelper;
 
     protected function assertValidDeviceKey($device)
     {
@@ -40,27 +32,27 @@ class SyncVmHardware
             VirtualMachine::getSelectSet()
         );
 
-        Benchmark::measure(sprintf(
+        Logger::debug(
             'Got %d VirtualMachines with config.hardware',
             count($result)
-        ));
+        );
 
         $connection = $vCenter->getConnection();
         $hardware = VmHardware::loadAllForVCenter($vCenter);
-        Benchmark::measure(sprintf(
+        Logger::debug(
             'Got %d vm_hardware objects from DB',
             count($hardware)
-        ));
+        );
         $disks = VmDisk::loadAllForVCenter($vCenter);
-        Benchmark::measure(sprintf(
+        Logger::debug(
             'Got %d vm_disk objects from DB',
             count($disks)
-        ));
+        );
         $nics = VmNetworkAdapter::loadAllForVCenter($vCenter);
-        Benchmark::measure(sprintf(
+        Logger::debug(
             'Got %d vm_network_adapter objects from DB',
             count($nics)
-        ));
+        );
 
         $seen = [];
         foreach ($result as $vm) {
@@ -105,35 +97,5 @@ class SyncVmHardware
         $this->storeObjects($vCenter->getDb(), $hardware, $seen);
         $this->storeObjects($vCenter->getDb(), $disks, $seen);
         $this->storeObjects($vCenter->getDb(), $nics, $seen);
-    }
-
-    /**
-     * @param \Zend_Db_Adapter_Abstract $db
-     * @param BaseVmHardwareDbObject[] $objects
-     * @param $seen
-     */
-    protected function storeObjects(\Zend_Db_Adapter_Abstract $db, array $objects, $seen)
-    {
-        $insert = 0;
-        $update = 0;
-        $delete = 0;
-        $db->beginTransaction();
-        foreach ($objects as $key => $object) {
-            if (! array_key_exists($key, $seen)) {
-                $object->delete();
-                $delete++;
-            } elseif ($object->hasBeenLoadedFromDb()) {
-                if ($object->hasBeenModified()) {
-                    $update++;
-                    $object->store();
-                }
-            } else {
-                $object->store();
-                $insert++;
-            }
-        }
-
-        $db->commit();
-        Benchmark::measure("$insert created, $update changed, $delete deleted");
     }
 }
