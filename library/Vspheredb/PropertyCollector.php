@@ -78,13 +78,7 @@ class PropertyCollector
             return [];
         }
 
-        $knownRefs = [
-            'parent',
-            'runtime.host',
-        ];
-
         $nice = [];
-
         foreach ($result->returnval as $row) {
             $data = [
                 'id'   => $row->obj->_,
@@ -99,27 +93,16 @@ class PropertyCollector
                 }
 
                 // This can happen for disconnected/unknown objects. No data? Fine.
-                $nice[$row->obj->_] = (object) $data;
+                // TODO: check out whether this happens with an invalid/no session
+                $nice[$data['id']] = (object) $data;
 
                 continue;
             }
-
             foreach ($row->propSet as $prop) {
-                $val = $prop->val;
-                if (in_array($prop->name, $knownRefs)) {
-                    // [parent] => stdClass Object (
-                    //    [_] => group-v123456
-                    //    [type] => Folder, HostSystem etc
-                    // )
-                    $data[$prop->name] = $val->_;
-                } else {
-                    if (is_object($val) && property_exists($val, 'ManagedObjectReference')) {
-                        $val = $this->flattenReference($val->ManagedObjectReference);
-                    }
-                    $data[$prop->name] = $val;
-                }
+                $data[$prop->name] = $prop->val;
             }
-            $nice[$row->obj->_] = (object) $data;
+
+            $nice[$data['id']] = (object) $data;
         }
 
         return $nice;
