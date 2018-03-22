@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Application\Benchmark;
+use Icinga\Application\Logger;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Director\Data\Db\DbObject as DirectorDbObject;
 use Icinga\Module\Vspheredb\Api;
@@ -136,11 +136,13 @@ abstract class BaseDbObject extends DirectorDbObject
     protected static function storeSync(VCenter $vCenter, & $dbObjects, & $newObjects)
     {
         $type = static::getType();
+        $vCenterUuid = $vCenter->getUuid();
         $db = $vCenter->getConnection();
         $dba = $vCenter->getDb();
-        Benchmark::measure("Ready to store $type");
+        Logger::debug("Ready to store $type");
         $dba->beginTransaction();
         $modified = 0;
+        $created = 0;
         $dummy = static::dummyObject();
         $newUuids = [];
         foreach ($newObjects as $object) {
@@ -150,13 +152,20 @@ abstract class BaseDbObject extends DirectorDbObject
             if (array_key_exists($uuid, $dbObjects)) {
                 $dbObject = $dbObjects[$uuid];
             } else {
-                $dbObjects[$uuid] = $dbObject = static::create(['uuid' => $uuid], $db);
-                $dbObject->set('vcenter_uuid', $vCenter->get('uuid'));
+                $dbObjects[$uuid] = $dbObject = static::create([
+                    'uuid' => $uuid,
+                    'vcenter_uuid' => $vCenterUuid
+                ], $db);
             }
             $dbObject->setMapped($object, $vCenter);
-            if ($dbObject->hasBeenModified()) {
+            if ($dbObject->hasBeenLoadedFromDb()) {
+                if ($dbObject->hasBeenModified()) {
+                    $dbObject->store();
+                    $modified++;
+                }
+            } else {
                 $dbObject->store();
-                $modified++;
+                $created++;
             }
         }
 
@@ -172,28 +181,49 @@ abstract class BaseDbObject extends DirectorDbObject
                 $dummy->getTableName(),
                 $dba->quoteInto('uuid IN (?)', $del)
             );
+
         }
         $dba->commit();
-        Benchmark::measure(sprintf(
-            "Stored %d modified $type out of %d",
+        Logger::debug(
+            "$type: %d new, %d modified, %d deleted (got %d from API)",
+            $created,
             $modified,
+            count($del),
             count($newObjects)
-        ));
+        );
     }
 
     public static function onStoreSync(Db $db)
     {
     }
 
+    /**
+     * @param VCenter $vCenter
+     * @return static[]
+     */
+    public static function loadAllForVCenter(VCenter $vCenter)
+    {
+        $dummy = new static();
+
+        return static::loadAll(
+            $vCenter->getConnection(),
+            $vCenter->getDb()
+                ->select()
+                ->from($dummy->getTableName())
+                ->where('vcenter_uuid = ?', $vCenter->get('uuid')),
+            $dummy->keyName
+        );
+    }
+
     public static function syncFromApi(VCenter $vCenter)
     {
         $type = static::getType();
         $db = $vCenter->getConnection();
-        Benchmark::measure("Loading existing $type from DB");
-        $existing = static::loadAll($db, null, 'uuid');
-        Benchmark::measure(sprintf("Got %d existing $type", count($existing)));
+        Logger::debug("Loading existing $type from DB");
+        $existing = static::loadAllForVCenter($vCenter);
+        Logger::debug("Got %d existing $type", count($existing));
         $objects = static::fetchAllFromApi($vCenter->getApi());
-        Benchmark::measure(sprintf("Got %d $type", count($objects)));
+        Logger::debug("Got %d $type from VCenter", count($objects));
         static::storeSync($vCenter, $existing, $objects);
         static::onStoreSync($db);
     }
