@@ -35,20 +35,28 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     public function renderRow($row)
     {
         $this->renderDayIfNew($row->ts_event_ms / 1000);
-        $cols = [
-            date('H:i:s', $row->ts_event_ms / 1000),
-        ];
+        $content = [];
 
         if (null === $this->vm) {
-            $cols[] = Link::create(
+            $content[] = 'VM: ';
+            $content[] = Link::create(
                 $row->object_name,
                 'vspheredb/vm/vmotions',
                 ['uuid' => bin2hex($row->vm_uuid)]
             );
+            $content[] = Html::tag('br');
         }
 
-        $cols[] = $this->deferredVMotionPath($row);
-        $tr = $this::row($cols);
+        $content[] = 'Path: ';
+        $content[] = $this->deferredVMotionPath($row);
+        if ($row->user_name !== null) {
+            $content[] = Html::tag('br');
+            $content[] = sprintf('User: %s', $row->user_name);
+        }
+        $tr = $this::row([
+            $content,
+            DateFormatter::formatTime($row->ts_event_ms / 1000)
+        ]);
 
         switch ($row->event_type) {
             case 'VmFailedMigrateEvent':
@@ -155,6 +163,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
             'vh.event_type',
             'vh.vm_uuid',
             'vh.host_uuid',
+            'vh.user_name',
             'vh.datastore_uuid',
             'vh.destination_host_uuid',
             'vh.destination_datastore_uuid',
