@@ -24,7 +24,7 @@ class HostPciDevice extends BaseDbObject
     ];
 
     protected $objectReferences = [
-        'vm_uuid',
+        'host_uuid',
     ];
 
     protected $propertyMap = [
