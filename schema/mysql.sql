@@ -239,7 +239,7 @@ CREATE TABLE virtual_machine (
     'toolsNotRunning',
     'toolsOld',
     'toolsOk'
-  ) NOT NULL,
+  ) DEFAULT NULL,
   guest_tools_running_status ENUM (
     'guestToolsNotRunning',
     'guestToolsRunning',
@@ -411,11 +411,11 @@ CREATE TABLE vm_network_adapter (
 
 CREATE TABLE host_quick_stats (
   uuid VARBINARY(20) NOT NULL,
-  distributed_cpu_fairness INT(10) NOT NULL,
-  distributed_memory_fairness INT(10) NOT NULL,
-  overall_cpu_usage INT(10) UNSIGNED NOT NULL,
-  overall_memory_usage_mb INT(10) UNSIGNED NOT NULL,
-  uptime INT(10) UNSIGNED NOT NULL,
+  distributed_cpu_fairness INT(10) DEFAULT NULL,
+  distributed_memory_fairness INT(10) DEFAULT NULL,
+  overall_cpu_usage INT(10) UNSIGNED DEFAULT NULL,
+  overall_memory_usage_mb INT(10) UNSIGNED DEFAULT NULL,
+  uptime INT(10) UNSIGNED DEFAULT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   PRIMARY KEY(uuid),
   INDEX vcenter_uuid (vcenter_uuid)
@@ -442,7 +442,7 @@ CREATE TABLE vm_quick_stats (
   static_cpu_entitlement INT(10) UNSIGNED NOT NULL, -- mhz
   static_memory_entitlement_mb INT(10) UNSIGNED NOT NULL,
   swapped_memory_mb INT(10) UNSIGNED NOT NULL,
-  uptime INT(10) UNSIGNED NOT NULL,
+  uptime INT(10) UNSIGNED DEFAULT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   PRIMARY KEY(uuid),
   INDEX vcenter_uuid (vcenter_uuid)
