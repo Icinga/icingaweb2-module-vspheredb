@@ -60,4 +60,13 @@ class VmQuickStats extends BaseDbObject
     {
         return VirtualMachine::getType();
     }
+
+    protected function setUptime($value)
+    {
+        if ($value === 0) {
+            $value = null;
+        }
+
+        return parent::reallySet('uptime', $value);
+    }
 }
