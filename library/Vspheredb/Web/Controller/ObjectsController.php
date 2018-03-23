@@ -26,6 +26,29 @@ class ObjectsController extends Controller
         return $this;
     }
 
+    protected function addTreeViewToggle()
+    {
+        if ($this->params->get('render') === 'tree') {
+            $this->actions()->add(
+                Link::create(
+                    $this->translate('Table'),
+                    $this->url()->without('render'),
+                    null,
+                    ['class' => 'icon-sitemap']
+                )
+            );
+        } else {
+            $this->actions()->add(
+                Link::create(
+                    $this->translate('Tree'),
+                    $this->url()->with('render', 'tree'),
+                    null,
+                    ['class' => 'icon-sitemap']
+                )
+            );
+        }
+    }
+
     protected function eventuallyFilterByParent(ObjectsTable $table, $url, $defaultTitle)
     {
         $parent = hex2bin($this->params->get('uuid'));
