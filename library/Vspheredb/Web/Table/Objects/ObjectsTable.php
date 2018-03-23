@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 use dipl\Html\Html;
 use dipl\Html\Icon;
 use dipl\Html\Link;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 
 abstract class ObjectsTable extends BaseTable
@@ -12,6 +13,9 @@ abstract class ObjectsTable extends BaseTable
     protected $searchColumns = [
         'object_name',
     ];
+
+    /** @var VCenter */
+    protected $filterVCenter;
 
     protected $parentUuids;
 
@@ -24,11 +28,21 @@ abstract class ObjectsTable extends BaseTable
         return $this;
     }
 
+    public function filterVCenter(VCenter $vCenter)
+    {
+        $this->filterVCenter = $vCenter;
+
+        return $this;
+    }
+
     public function getQuery()
     {
         $query = parent::getQuery();
         if ($this->parentUuids) {
             $query->where('o.parent_uuid IN (?)', $this->parentUuids);
+        }
+        if ($this->filterVCenter) {
+            $query->where('o.vcenter_uuid = ?', $this->filterVCenter->getUuid());
         }
 
         return $query;
