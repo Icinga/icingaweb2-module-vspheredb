@@ -62,7 +62,7 @@ class SoapClient extends PhpSoapClient
         Logger::debug(
             'SOAPClient: got %s response in %0.2fms',
             Format::bytes(strlen($result)),
-            $duration
+            $duration * 1000
         );
 
         if ($this->dumpRawData) {
