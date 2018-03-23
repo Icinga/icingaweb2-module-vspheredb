@@ -11,6 +11,11 @@ class CommandBase extends Command
     /** @var VCenter */
     private $vCenter;
 
+    public function init()
+    {
+        $this->app->getModuleManager()->loadEnabledModules();
+    }
+
     protected function getVCenter()
     {
         if ($this->vCenter === null) {
