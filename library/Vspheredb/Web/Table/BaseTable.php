@@ -34,6 +34,11 @@ abstract class BaseTable extends ZfQueryBasedTable
     public function chooseColumns(array $columnNames)
     {
         $this->assertInitialized();
+        if ($columnNames === ['___ALL___']) {
+            $this->chosenColumns = $this->getAvailableColumns();
+
+            return $this;
+        }
 
         $this->chosenColumns = [];
         foreach ($this->getAvailableColumns() as $column) {
