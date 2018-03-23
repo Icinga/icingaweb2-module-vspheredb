@@ -66,7 +66,7 @@ class HostInfoTable extends NameValueTable
             ],
             $this->translate('UUID')         => $host->get('sysinfo_uuid'),
             $this->translate('API Version')  => $host->get('product_api_version'),
-            $this->translate('Product Name') => $host->get('product_full_name'),
+            $this->translate('Hypervisor')   => $host->get('product_full_name'),
             $this->translate('MO Ref')       => $this->linkToVCenter($host->object()->get('moref')),
             $this->translate('Path')         => $path,
             $this->translate('Uptime')       => DateFormatter::formatDuration($host->quickStats()->get('uptime')),
