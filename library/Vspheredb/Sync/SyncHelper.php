@@ -22,6 +22,8 @@ trait SyncHelper
      */
     protected function storeObjects(\Zend_Db_Adapter_Abstract $db, array $objects, array $seen)
     {
+        $cntTotal = count($objects);
+        $cntSeen = count($seen);
         $insert = 0;
         $update = 0;
         $delete = 0;
@@ -42,6 +44,6 @@ trait SyncHelper
         }
 
         $db->commit();
-        Logger::debug("$insert created, $update changed, $delete deleted");
+        Logger::debug("$insert created, $update changed, $delete deleted out of $cntTotal objects (seen: $cntSeen)");
     }
 }
