@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb;
 
+use Evenement\EventEmitter;
 use Exception;
 use Icinga\Exception\AuthenticationException;
 
@@ -12,7 +13,7 @@ use Icinga\Exception\AuthenticationException;
  * implemented for debug reasons and to be able to work with various kinds of
  * HTTP or SOCKS proxies
  */
-class CurlLoader
+class CurlLoader extends EventEmitter
 {
     /** @var resource */
     private $curl;
@@ -315,6 +316,7 @@ class CurlLoader
 
         if ($header[0] === 'Set-Cookie') {
             $cookie = trim($header[1]);
+            $this->emit('cookie', [$cookie]);
             if ($this->persistCookies) {
                 file_put_contents($this->cookieFile, $cookie);
             }

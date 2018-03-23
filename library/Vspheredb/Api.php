@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 use DateTime;
 use Exception;
+use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
@@ -161,9 +162,15 @@ class Api
     {
         if ($this->curl === null) {
             $this->curl = new CurlLoader($this->host, null, null, $this->cacheDir());
+            $this->curl->on('cookie', [$this, 'gotCookie']);
         }
 
         return $this->curl;
+    }
+
+    public function gotCookie($cookie)
+    {
+        Logger::info('Got new session cookie from VCenter');
     }
 
     public function eventManager()
@@ -387,9 +394,11 @@ class Api
     public function login()
     {
         if ($this->curl()->hasCookie()) {
+            Logger::debug('Using existing Cookie');
             return $this;
         }
 
+        Logger::debug('Sending Login request to %s', $this->makeLocation());
         $request = array(
             '_this'    => $this->getServiceInstance()->sessionManager,
             'userName' => $this->user,
