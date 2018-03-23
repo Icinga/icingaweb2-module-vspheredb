@@ -110,12 +110,18 @@ class DelayedPerfdataRenderer
         return DeferredText::create(function () use ($uuid, $instance, $c1, $c2) {
             $in = explode(',', $this->getVmValues($uuid, $instance, $c1));
             $out = explode(',', $this->getVmValues($uuid, $instance, $c2));
+            if ($in[0] === '') {
+                $in = '-';
+            } else {
+                $in = $this->formatKiloBytesPerSecond(array_pop($in));
+            }
+            if ($out[0] === '') {
+                $out = '-';
+            } else {
+                $out = $this->formatKiloBytesPerSecond(array_pop($out));
+            }
 
-            return sprintf(
-                '%s / %s',
-                $this->formatKiloBytesPerSecond(array_pop($in)),
-                $this->formatKiloBytesPerSecond(array_pop($out))
-            );
+            return sprintf('%s / %s', $in, $out);
         })->setEscaped();
     }
 
