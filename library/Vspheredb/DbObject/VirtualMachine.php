@@ -94,6 +94,20 @@ class VirtualMachine extends BaseDbObject
         return $this->quickStats;
     }
 
+    public function setPaused($value)
+    {
+        // powered off?
+        if ($value === null) {
+            $value = 'n';
+        }
+
+        if (is_bool($value)) {
+            $value = $this->makeBooleanValue($value);
+        }
+
+        return $this->reallySet('paused', $value);
+    }
+
     protected function setBootOptions($value)
     {
         if (property_exists($value, 'networkBootProtocol')) {
@@ -106,7 +120,10 @@ class VirtualMachine extends BaseDbObject
         if (property_exists($value, 'bootOrder')) {
             $keys = [];
             foreach ($value->bootOrder as $device) {
-                $keys[] = $device->deviceKey;
+                // we might get an empty bootOrder
+                if (property_exists($device, 'deviceKey')) {
+                    $keys[] = $device->deviceKey;
+                }
             }
 
             $this->set('boot_order', implode(',', $keys));
