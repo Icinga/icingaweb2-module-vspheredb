@@ -30,10 +30,6 @@ class DatacentersTable extends ObjectsTable
             $this->getRequiredDbColumns()
         )->where('object_type = ?', 'DataCenter');
 
-        if ($this->parentUuids) {
-            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
-        }
-
         return $query;
     }
 }

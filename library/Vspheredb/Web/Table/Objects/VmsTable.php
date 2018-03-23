@@ -39,11 +39,7 @@ class VmsTable extends ObjectsTable
             ['vc' => 'virtual_machine'],
             'o.uuid = vc.uuid',
             []
-        )->limit(14);
-
-        if ($this->parentUuids) {
-            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
-        }
+        );
 
         if ($wantsStats) {
             $query->join(

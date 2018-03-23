@@ -138,7 +138,7 @@ class HostsTable extends ObjectsTable
             ['hqs' => 'host_quick_stats'],
             'h.uuid = hqs.uuid',
             []
-        )->limit(100);
+        );
 
         if ($wantsVms) {
             $query->joinLeft(
@@ -146,10 +146,6 @@ class HostsTable extends ObjectsTable
                 'vms.runtime_host_uuid = h.uuid',
                 []
             );
-        }
-
-        if ($this->parentUuids) {
-            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
         }
 
         return $query;

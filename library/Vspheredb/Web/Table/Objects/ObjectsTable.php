@@ -24,6 +24,16 @@ abstract class ObjectsTable extends BaseTable
         return $this;
     }
 
+    public function getQuery()
+    {
+        $query = parent::getQuery();
+        if ($this->parentUuids) {
+            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
+        }
+
+        return $query;
+    }
+
     protected function createMorefColumn()
     {
         return $this->createColumn('moref', 'MO Ref')

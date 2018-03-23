@@ -137,10 +137,6 @@ class DatastoreTable extends ObjectsTable
             );
         }
 
-        if ($this->parentUuids) {
-            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
-        }
-
         return $query;
     }
 }
