@@ -11,13 +11,17 @@ use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
 use Icinga\Module\Vspheredb\Web\Table\Object\VCenterInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
+use Icinga\Module\Vspheredb\Web\Widget\VCenterSyncInfo;
 
 class VcenterController extends Controller
 {
     public function indexAction()
     {
         $this->handleTabs();
-        $vCenter = VCenter::loadWithAutoIncId(1, $this->db());
+        $vCenters = VCenter::loadAll($this->db());
+        foreach ($vCenters as $vCenter) {
+            $this->content()->add(new VCenterSyncInfo($vCenter));
+        }
         $this->content()->add([
             new VCenterInfoTable($vCenter),
             new VCenterSummaries($vCenter),
