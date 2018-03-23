@@ -40,6 +40,24 @@ class ManagedObject extends DirectorDbObject
         return $this;
     }
 
+    /**
+     * @param VCenter $vCenter
+     * @return static[]
+     */
+    public static function loadAllForVCenter(VCenter $vCenter)
+    {
+        $dummy = new static();
+
+        return static::loadAll(
+            $vCenter->getConnection(),
+            $vCenter->getDb()
+                ->select()
+                ->from($dummy->getTableName())
+                ->where('vcenter_uuid = ?', $vCenter->get('uuid')),
+            $dummy->keyName
+        );
+    }
+
     public function calculateLevel()
     {
         if ($this->parent === null) {

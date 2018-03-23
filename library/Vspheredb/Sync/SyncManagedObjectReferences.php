@@ -33,7 +33,7 @@ class SyncManagedObjectReferences
         $db = $this->vCenter->getConnection();
 
         /** @var ManagedObject[] $objects */
-        $objects = ManagedObject::loadAll($db, null, 'uuid');
+        $objects = ManagedObject::loadAllForVCenter($vCenter);
         $fetched = [];
         $nameUuids = [];
         $idToParent = [];
