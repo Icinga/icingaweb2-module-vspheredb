@@ -412,6 +412,19 @@ div.object-summaries {
   }
 }
 
+div.health {
+  border-left: 0.5em solid transparent;
+  margin-bottom: 1em;
+  padding: 0.5em 1em;
+
+  &.red {
+    border-color: @color-critical;
+  }
+  &.green {
+    border-color: @color-ok;
+  }
+}
+
 /** Various **/
 
 table.name-value-table a {
@@ -542,6 +555,7 @@ div.disk-usage {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   word-break: keep-all;
+  white-space: nowrap;
 }
 
 /* Tree, stolen from Director */
