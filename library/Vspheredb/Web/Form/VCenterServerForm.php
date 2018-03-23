@@ -19,6 +19,18 @@ class VCenterServerForm extends DirectorObjectForm
             return;
         }
 
+        $this->addElement('text', 'host', array(
+            'label' => $this->translate('vCenter (or ESX) host'),
+            'description' => $this->translate(
+                'It is strongly suggested to access the API through your vCenter.'
+                . ' Usually this is just a fully qualified domain name (and should'
+                . ' match it\'s certificate. Alternatively, an IP address is fine.'
+                . ' Please use <host>:<port> in case you\'re not using default'
+                . ' HTTP(s) ports'
+            ),
+            'required' => true,
+        ));
+
         $this->addElement('select', 'scheme', array(
             'label' => $this->translate('Protocol'),
             'description' => $this->translate(
@@ -52,18 +64,6 @@ class VCenterServerForm extends DirectorObjectForm
                 )
             ), 'y');
         }
-
-        $this->addElement('text', 'host', array(
-            'label' => $this->translate('vCenter (or ESX) host'),
-            'description' => $this->translate(
-                'It is strongly suggested to access the API through your vCenter.'
-                . ' Usually this is just a fully qualified domain name (and should'
-                . ' match it\'s certificate. Alternatively, an IP address is fine.'
-                . ' Please use <host>:<port> in case you\'re not using default'
-                . ' HTTP(s) ports'
-            ),
-            'required' => true,
-        ));
 
         $this->addElement('text', 'username', array(
             'label' => $this->translate('Username'),
