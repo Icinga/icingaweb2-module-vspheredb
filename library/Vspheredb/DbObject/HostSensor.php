@@ -36,14 +36,15 @@ class HostSensor extends BaseDbObject
 
     public function setMapped($properties, VCenter $vCenter)
     {
+        $properties = (array) $properties;
         $this->set('vcenter_uuid', $vCenter->get('uuid'));
 
         foreach ($this->propertyMap as $key => $property) {
-            if (property_exists($properties, $key)) {
+            if (array_key_exists($key, $properties)) {
                 if ($key === 'healthState') {
-                    $this->set($property, $properties->$key->key);
+                    $this->set($property, $properties[$key]->key);
                 } else {
-                    $this->set($property, $properties->$key);
+                    $this->set($property, $properties[$key]);
                 }
             } else {
                 $this->set($property, null);
