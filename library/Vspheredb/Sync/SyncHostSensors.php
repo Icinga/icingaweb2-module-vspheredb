@@ -36,6 +36,10 @@ class SyncHostSensors
         $seen = [];
         foreach ($result as $host) {
             $uuid = $vCenter->makeBinaryGlobalUuid($host->id);
+            if (! property_exists($host->$baseKey, 'HostNumericSensorInfo')) {
+                // No sensor information for this host
+                continue;
+            }
             foreach ($host->$baseKey->HostNumericSensorInfo as $sensor) {
                 $key = $sensor->name;
                 $idx = "$uuid$key";
