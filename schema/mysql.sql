@@ -92,7 +92,9 @@ CREATE TABLE vcenter_event_history_collector (
 CREATE TABLE object (
   uuid VARBINARY(20) NOT NULL, -- sha1(vcenter_uuid + moref)
   vcenter_uuid VARBINARY(16) NOT NULL,
-  moref VARCHAR(32) NOT NULL, -- textual id
+  -- Hint: 64 Bytes might seem overkill for MoRefs, but there is
+  --       52d4e949-55c225c2923-a7ba-009689221ad9-datastorebrowser on ESXi
+  moref VARCHAR(64) NOT NULL, -- textual id
   object_name VARCHAR(255) NOT NULL,
   object_type ENUM(
     'ComputeResource',
@@ -301,7 +303,7 @@ CREATE TABLE datastore (
       'normal',
       'enteringMaintenance',
       'inMaintenance'
-  ) NOT NULL,
+  ) DEFAULT NULL,
   is_accessible ENUM('y', 'n') NOT NULL,
   capacity BIGINT(20) UNSIGNED DEFAULT NULL,
   free_space BIGINT(20) UNSIGNED DEFAULT NULL,
@@ -354,7 +356,7 @@ CREATE TABLE vm_hardware (
   unit_number INT(10) UNSIGNED DEFAULT NULL, -- unit number of this device on its controller
   controller_key INT(10) UNSIGNED DEFAULT NULL,
   label VARCHAR(64) NOT NULL,
-  summary VARCHAR(128) NOT NULL,
+  summary VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY(vm_uuid, hardware_key),
   INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -423,25 +425,25 @@ CREATE TABLE host_quick_stats (
 
 CREATE TABLE vm_quick_stats (
   uuid VARBINARY(20) NOT NULL,
-  ballooned_memory_mb INT(10) UNSIGNED NOT NULL,
-  compressed_memory_kb BIGINT(20) UNSIGNED NOT NULL,
-  consumed_overhead_memory_mb INT(10) UNSIGNED NOT NULL,
-  distributed_cpu_entitlement INT(10) UNSIGNED NOT NULL, -- mhz
-  distributed_memory_entitlement_mb INT(10) UNSIGNED NOT NULL,
-  ft_latency_status ENUM('gray', 'green', 'red', 'yellow') NOT NULL,
+  ballooned_memory_mb INT(10) UNSIGNED DEFAULT NULL,
+  compressed_memory_kb BIGINT(20) UNSIGNED DEFAULT NULL,
+  consumed_overhead_memory_mb INT(10) UNSIGNED DEFAULT NULL,
+  distributed_cpu_entitlement INT(10) UNSIGNED DEFAULT NULL, -- mhz
+  distributed_memory_entitlement_mb INT(10) UNSIGNED DEFAULT NULL,
+  ft_latency_status ENUM('gray', 'green', 'red', 'yellow') DEFAULT NULL,
   ft_log_bandwidth INT(10) DEFAULT NULL, -- Hint -1 -> NULL
   ft_secondary_latency INT(10) DEFAULT NULL, -- Hint -1 -> NULL
   guest_heartbeat_status ENUM('gray', 'green', 'red', 'yellow') NOT NULL,
-  guest_memory_usage_mb INT(10) UNSIGNED NOT NULL,
-  host_memory_usage_mb INT(10) UNSIGNED NOT NULL,
-  overall_cpu_demand INT(10) UNSIGNED NOT NULL, -- mhz
-  overall_cpu_usage INT(10) UNSIGNED NOT NULL, -- mhz
-  private_memory_mb INT(10) UNSIGNED NOT NULL,
-  shared_memory_mb INT(10) UNSIGNED NOT NULL,
-  ssd_swapped_memory_kb BIGINT(10) UNSIGNED NOT NULL,
-  static_cpu_entitlement INT(10) UNSIGNED NOT NULL, -- mhz
-  static_memory_entitlement_mb INT(10) UNSIGNED NOT NULL,
-  swapped_memory_mb INT(10) UNSIGNED NOT NULL,
+  guest_memory_usage_mb INT(10) UNSIGNED DEFAULT NULL,
+  host_memory_usage_mb INT(10) UNSIGNED DEFAULT NULL,
+  overall_cpu_demand INT(10) UNSIGNED DEFAULT NULL, -- mhz
+  overall_cpu_usage INT(10) UNSIGNED DEFAULT NULL, -- mhz
+  private_memory_mb INT(10) UNSIGNED DEFAULT NULL,
+  shared_memory_mb INT(10) UNSIGNED DEFAULT NULL,
+  ssd_swapped_memory_kb BIGINT(10) UNSIGNED DEFAULT NULL,
+  static_cpu_entitlement INT(10) UNSIGNED DEFAULT NULL, -- mhz
+  static_memory_entitlement_mb INT(10) UNSIGNED DEFAULT NULL,
+  swapped_memory_mb INT(10) UNSIGNED DEFAULT NULL,
   uptime INT(10) UNSIGNED DEFAULT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   PRIMARY KEY(uuid),
