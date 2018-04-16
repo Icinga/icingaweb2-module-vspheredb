@@ -134,6 +134,9 @@ class VCenter extends BaseDbObject
         } else {
             $vcenter = VCenter::create([], $db);
         }
+
+        // Workaround for ESXi, about has no instanceUuid
+        $about->instanceUuid = $uuid;
         $vcenter->setMapped($about, $vcenter);
 
         if ($vcenter->hasBeenModified()) {

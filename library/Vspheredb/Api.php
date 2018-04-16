@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
@@ -129,7 +130,18 @@ class Api
     {
         if ($this->binaryUuid === null) {
             $about = $this->getAbout();
-            $this->binaryUuid = Util::uuidToBin($about->instanceUuid);
+
+            if ($about->apiType === 'VirtualCenter') {
+                $this->binaryUuid = Util::uuidToBin($about->instanceUuid);
+            } elseif ($about->apiType === 'HostAgent') {
+                /// NONO, TODO: bios uuid?!
+                $this->binaryUuid = Util::uuidToBin(md5($this->host));
+            } else {
+                throw new IcingaException(
+                    'Unsupported API type "%s"',
+                    $about->apiType
+                );
+            }
         }
 
         return $this->binaryUuid;
