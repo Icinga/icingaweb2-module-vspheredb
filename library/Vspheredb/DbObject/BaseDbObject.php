@@ -45,6 +45,11 @@ abstract class BaseDbObject extends DirectorDbObject
         return in_array($property, $this->dateTimeProperties);
     }
 
+    /**
+     * @param $value
+     * @return null|string
+     * @throws ProgrammingError
+     */
     protected function makeBooleanValue($value)
     {
         if ($value === true) {
@@ -61,6 +66,13 @@ abstract class BaseDbObject extends DirectorDbObject
         }
     }
 
+    /**
+     * @param $properties
+     * @param VCenter $vCenter
+     * @return $this
+     * @throws ProgrammingError
+     * @throws \Icinga\Exception\IcingaException
+     */
     public function setMapped($properties, VCenter $vCenter)
     {
         foreach ($this->propertyMap as $key => $property) {
@@ -75,6 +87,8 @@ abstract class BaseDbObject extends DirectorDbObject
                 }
 
                 $this->set($property, $value);
+            } else {
+                $this->set($property, null);
             }
         }
 
@@ -92,6 +106,10 @@ abstract class BaseDbObject extends DirectorDbObject
         }
     }
 
+    /**
+     * @return ManagedObject
+     * @throws \Icinga\Exception\IcingaException
+     */
     public function object()
     {
         if ($this->object === null) {
@@ -141,7 +159,8 @@ abstract class BaseDbObject extends DirectorDbObject
     /**
      * @param VCenter $vCenter
      * @param BaseDbObject[] $dbObjects
-     * @param BaseDbObject[] $newObjects
+     * @param \stdClass[] $newObjects
+     * @throws \Icinga\Exception\IcingaException
      */
     protected static function storeSync(VCenter $vCenter, & $dbObjects, & $newObjects)
     {
@@ -191,7 +210,6 @@ abstract class BaseDbObject extends DirectorDbObject
                 $dummy->getTableName(),
                 $dba->quoteInto('uuid IN (?)', $del)
             );
-
         }
         $dba->commit();
         Logger::debug(
@@ -210,6 +228,7 @@ abstract class BaseDbObject extends DirectorDbObject
     /**
      * @param VCenter $vCenter
      * @return static[]
+     * @throws \Icinga\Exception\IcingaException
      */
     public static function loadAllForVCenter(VCenter $vCenter)
     {
@@ -225,6 +244,10 @@ abstract class BaseDbObject extends DirectorDbObject
         );
     }
 
+    /**
+     * @param VCenter $vCenter
+     * @throws \Icinga\Exception\IcingaException
+     */
     public static function syncFromApi(VCenter $vCenter)
     {
         $type = static::getType();
