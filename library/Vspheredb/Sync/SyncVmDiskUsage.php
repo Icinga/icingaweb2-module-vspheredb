@@ -8,7 +8,6 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmDiskUsage;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
-use Icinga\Module\Vspheredb\Util;
 
 class SyncVmDiskUsage
 {
@@ -22,6 +21,10 @@ class SyncVmDiskUsage
         $this->vCenter = $vCenter;
     }
 
+    /**
+     * @param \stdClass $device
+     * @throws IcingaException
+     */
     protected function assertValidDeviceKey($device)
     {
         if (! is_int($device->key)) {
@@ -35,7 +38,7 @@ class SyncVmDiskUsage
     public function run()
     {
         $vCenter = $this->vCenter;
-        $vCenterUuid = $vCenter->get('uuid');
+        $vCenterUuid = $vCenter->getUuid();
         $result = $vCenter->getApi()->propertyCollector()->collectObjectProperties(
             new PropertySet('VirtualMachine', ['guest.disk']),
             VirtualMachine::getSelectSet()
