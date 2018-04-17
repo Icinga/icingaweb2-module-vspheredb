@@ -50,6 +50,10 @@ table.preformatted td {
   padding: 0;
 }
 
+tr[href].same-link-hovered {
+  background-color: @tr-hover-color;
+}
+
 table.vm-disk-usage-table {
   td:not(:first-of-type), th:not(:first-of-type) {
     text-align: right;
@@ -520,7 +524,7 @@ div.disk-usage {
     // min-width: 0.3em;
     margin: 0;
     padding: 0;
-    &:hover {
+    &:hover, &.same-link-hovered {
       text-decoration: none;
       background-color: rgb(70, 128, 255) !important;
     }

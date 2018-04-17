@@ -3,6 +3,8 @@
     var Vspheredb = function(module) {
         this.module = module;
 
+        this.matchingLinks = null;
+
         this.initialize();
 
         this.module.icinga.logger.debug('VsphereDB module loaded');
@@ -15,10 +17,39 @@
             this.module.on('mouseleave', '.overspark', this.leave);
             this.module.on('render', this.rendered);
             this.module.on('mouseover', 'thead tr', this.checkForHeaderHref);
+            this.module.on('mouseover', '.content [href]', this.highlightMatchingLinks);
+            this.module.on('mouseout', '.content [href]', this.removeMatchingLinksHighlight);
             this.module.on('keydown', '', this.keyDown);
             this.module.on('keyup', '', this.keyUp);
             this.module.on('keyup', 'form.quicksearch input.search', this.keyUpInQuickSearch);
             $(document).keydown(this.bodyKeyDown);
+        },
+
+        removeMatchingLinksHighlight: function (ev) {
+            if (this.matchingLinks !== null) {
+                this.matchingLinks.each(function (idx, el) {
+                    $(el).removeClass('same-link-hovered');
+                });
+            }
+
+            this.matchingLinks = null;
+        },
+
+        highlightMatchingLinks: function (ev) {
+            console.log('in', ev);
+            var $link = $(ev.currentTarget);
+            var href = $link.attr('href');
+            if (typeof href === 'undefined') {
+                console.log('undef', $link);
+                return;
+            }
+            console.log(href);
+            this.removeMatchingLinksHighlight(ev);
+            var match = href.match(/uuid=([a-f0-9]{32,40})/);
+            if (match) {
+                this.matchingLinks = $('div.container.module-vspheredb .content [href*="' + match[1] + '"]').not($link);
+                this.matchingLinks.addClass('same-link-hovered');
+            }
         },
 
         checkForHeaderHref: function (ev) {
