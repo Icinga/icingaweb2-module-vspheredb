@@ -39,6 +39,13 @@ class DatastoreTable extends ObjectsTable
                     ['title' => $title]
                 );
             }),
+            $this->createColumn(
+                'multiple_host_access',
+                $this->translate('Multiple Hosts'),
+                'ds.multiple_host_access'
+            )->setRenderer(function ($row) {
+                return $row->multiple_host_access === 'y' ? $this->translate('Yes') : $this->translate('No');
+            }),
             $this->createColumn('free_space', $this->translate('Free'), 'ds.free_space')
                 ->setRenderer(function ($row) {
                     return Format::bytes($row->free_space, Format::STANDARD_IEC);
