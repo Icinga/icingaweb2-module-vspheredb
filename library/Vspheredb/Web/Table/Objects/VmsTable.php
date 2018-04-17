@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
@@ -103,6 +104,15 @@ class VmsTable extends ObjectsTable
             )->setDefaultSortDirection('DESC'),
 
 
+            $this->createColumn('uptime', $this->translate('Uptime'), [
+                'uptime' => 'vqs.uptime',
+            ])->setRenderer(function ($row) {
+                if ($row->uptime === null) {
+                    return null;
+                }
+
+                return DateFormatter::formatDuration($row->uptime);
+            }),
             $this->createColumn('host_memory_usage_mb', 'Host Memory Usage', [
                 'host_memory_usage_mb' => 'vqs.host_memory_usage_mb',
                 'hardware_memorymb'     => 'vc.hardware_memorymb',
