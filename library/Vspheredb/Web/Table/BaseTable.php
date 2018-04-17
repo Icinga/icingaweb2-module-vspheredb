@@ -69,6 +69,11 @@ abstract class BaseTable extends ZfQueryBasedTable
         return array_key_exists($name, $this->availableColumns);
     }
 
+    /**
+     * @param string $alias
+     * @return TableColumn
+     * @throws IcingaException
+     */
     public function getAvailableColumn($alias)
     {
         if (array_key_exists($alias, $this->availableColumns)) {
@@ -191,11 +196,22 @@ abstract class BaseTable extends ZfQueryBasedTable
         return new SimpleColumn($alias, $title, $column);
     }
 
-    protected function formatMb($mb)
+    protected function formatBytes($bytes)
     {
-        return Format::bytes($mb * 1024 * 1024);
+        return Format::bytes($bytes);
     }
 
+    protected function formatMb($mb)
+    {
+        return $this->formatBytes($mb * 1024 * 1024);
+    }
+
+    /**
+     * @param Url $url
+     * @param string $sortParam
+     * @return $this
+     * @throws IcingaException
+     */
     public function handleSortUrl(Url $url, $sortParam = 'sort')
     {
         $this->sortParam = $sortParam;
@@ -211,6 +227,7 @@ abstract class BaseTable extends ZfQueryBasedTable
     /**
      * @param string|array $columns
      * @return $this
+     * @throws IcingaException
      */
     public function sortBy($columns)
     {
