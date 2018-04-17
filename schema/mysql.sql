@@ -464,12 +464,12 @@ CREATE TABLE vmotion_history (
   event_key BIGINT(20) UNSIGNED NOT NULL,
   event_chain_id BIGINT(20) UNSIGNED NOT NULL,
   is_template ENUM('y', 'n') NOT NULL,
-  vm_uuid VARBINARY(20) NOT NULL,
   datacenter_uuid VARBINARY(20) DEFAULT NULL,
-  datastore_uuid VARBINARY(20) DEFAULT NULL,
   compute_resource_uuid VARBINARY(20) DEFAULT NULL,
-  dvs_uuid VARBINARY(20) DEFAULT NULL,
   host_uuid VARBINARY(20) DEFAULT NULL,
+  vm_uuid VARBINARY(20) NOT NULL,
+  datastore_uuid VARBINARY(20) DEFAULT NULL,
+  dvs_uuid VARBINARY(20) DEFAULT NULL,
   destination_host_uuid VARBINARY(20) DEFAULT NULL,
   destination_datacenter_uuid VARBINARY(20) DEFAULT NULL,
   destination_datastore_uuid VARBINARY(20) DEFAULT NULL,
@@ -479,8 +479,9 @@ CREATE TABLE vmotion_history (
   fault_reason TEXT DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX time_idx (ts_event_ms),
+  INDEX search_host_idx (host_uuid),
   INDEX search_vm_idx (vm_uuid),
-  INDEX search_host_idx (host_uuid)
+  INDEX search_ds_idx (datastore_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE monitoring_connection (
