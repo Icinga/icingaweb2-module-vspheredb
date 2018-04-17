@@ -82,7 +82,7 @@ abstract class ObjectsTable extends BaseTable
 
     protected function createObjectNameColumn()
     {
-        return $this->createColumn('object_name', 'Name', [
+        return $this->createColumn('object_name', $this->translate('Name'), [
             'object_name' => 'o.object_name',
             'uuid'        => 'o.uuid',
         ])->setRenderer(function ($row) {
