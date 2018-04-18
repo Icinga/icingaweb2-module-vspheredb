@@ -56,11 +56,11 @@ class SyncPerfCounters
 
         foreach (array_chunk($vms, $chunkSize) as $objects) {
             $currentTs = floor(time() / 300) * 300 * 1000;
-            $perf = $api->perfManager()->queryPerf($objects, $type, 300, 1);
+            // $keys = ['value_last'];
+            $keys = ['value_minus4', 'value_minus3', 'value_minus2', 'value_minus1', 'value_last'];
+            $perf = $api->perfManager()->queryPerf($objects, $type, 300, count($keys));
             $db->beginTransaction();
             $count = 0;
-            // $keys = ['value_minus4', 'value_minus3', 'value_minus2', 'value_minus1', 'value_last'];
-            $keys = ['value_last'];
             foreach ($perf->returnval as $p) {
                 $entity = $p->entity->_;
                 foreach ($p->value as $val) {
