@@ -36,6 +36,9 @@ class MainRunner
     /** @var Db */
     protected $connection;
 
+    /** @var EventManager */
+    protected $eventManager;
+
     /** @var bool */
     protected $useDefaultConnection = true;
 
@@ -109,14 +112,23 @@ class MainRunner
                 $this->reset();
             }
         });
+        $loop->addPeriodicTimer(5, function () {
+            $this->runFailSafe(function () {
+                $this->streamEvents();
+            });
+        });
         $loop->run();
     }
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Zend_Db_Select_Exception
+     */
     protected function initialize()
     {
         Logger::debug('MainRunner::initialize()');
         if ($this->useDefaultConnection) {
-            unset($this->connection);
+            $this->connection = null;
             $this->connection = Db::newConfiguredInstance();
         }
 
@@ -124,6 +136,9 @@ class MainRunner
             $this->vCenterId,
             $this->connection
         );
+
+        $this->eventManager = $this->vCenter->getApi()->eventManager()
+            ->persistFor($this->vCenter);
 
         Logger::info(
             'Loaded VCenter information for %s from DB',
@@ -133,6 +148,9 @@ class MainRunner
         $this->updateMyState();
     }
 
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     */
     public function syncAllObjects()
     {
         $this->syncObjectReferences();
@@ -146,6 +164,9 @@ class MainRunner
         (new SyncManagedObjectReferences($this->vCenter))->sync();
     }
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     */
     protected function refreshMyState()
     {
         $db = $this->connection->getDbAdapter();
@@ -158,6 +179,9 @@ class MainRunner
         }
     }
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     */
     protected function updateMyState()
     {
         $db = $this->connection->getDbAdapter();
@@ -174,6 +198,9 @@ class MainRunner
         }
     }
 
+    /**
+     * @throws \Zend_Db_Adapter_Exception
+     */
     protected function insertMyState()
     {
         $db = $this->connection->getDbAdapter();
@@ -233,6 +260,21 @@ class MainRunner
     {
         $sync = new SyncVmDatastoreUsage($this->vCenter);
         $sync->run();
+    }
+
+    /**
+     * @throws \Icinga\Exception\AuthenticationException
+     * @throws \Icinga\Exception\ConfigurationError
+     * @throws \Zend_Db_Adapter_Exception
+     */
+    public function streamEvents()
+    {
+        $cnt = $this->eventManager->streamToDb();
+        if ($cnt < 1000) {
+            Logger::debug('Got %d event(s), there might be more', $cnt);
+        } else {
+            Logger::debug('Got %d events', $cnt);
+        }
     }
 
     protected function closeDbConnection()
