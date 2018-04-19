@@ -248,7 +248,7 @@ CREATE TABLE virtual_machine (
     'guestToolsExecutingScripts' -- VMware Tools is starting.
   ) NOT NULL,
   guest_id VARCHAR(64) DEFAULT NULL,        -- rhel7_64Guest
-  guest_full_name VARCHAR(64) DEFAULT NULL, -- Red Hat Enterprise Linux 7 (64-bit)
+  guest_full_name VARCHAR(128) DEFAULT NULL, -- Red Hat Enterprise Linux 7 (64-bit)
   guest_host_name VARCHAR(255) DEFAULT NULL,
   guest_ip_address VARCHAR(50) DEFAULT NULL,
   resource_pool_uuid VARBINARY(20) DEFAULT NULL,
