@@ -5,16 +5,22 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Widget\EventHeatmapCalendars;
 use Icinga\Module\Vspheredb\Web\Widget\VMotionHeatmap;
 
 class VmotionsController extends Controller
 {
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function init()
     {
         $this->handleTabs();
     }
 
+    /**
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function indexAction()
     {
         $day = $this->params->shift('day');
@@ -42,6 +48,10 @@ class VmotionsController extends Controller
         $this->content()->add(VMotionHeatmap::create($this->vCenter(), 'vspheredb/vmotions'));
     }
 
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function handleTabs()
     {
         $tabs = $this->tabs()->add('index', [

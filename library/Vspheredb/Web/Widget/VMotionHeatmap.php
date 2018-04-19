@@ -12,7 +12,7 @@ class VMotionHeatmap extends EventHeatmapCalendars
 
         $events = $db->fetchPairs(
             $db->select()
-                ->from('vmotion_history', [
+                ->from('vm_event_history', [
                     // TODO: / 86400 + offset
                     'day' => 'DATE(FROM_UNIXTIME(ts_event_ms / 1000))',
                     'cnt' => 'COUNT(*)'

@@ -88,7 +88,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         }
 
         $tr->addAttributes([
-            'title' => sprintf('%s (%s)', $row->message, $row->event_type)
+            'title' => sprintf('%s (%s)', $row->full_message, $row->event_type)
         ]);
 
         return $tr;
@@ -156,7 +156,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     protected function prepareQuery()
     {
         $query = $this->db()->select()->from([
-            'vh' => 'vmotion_history'
+            'vh' => 'vm_event_history'
         ], [
             'o.object_name',
             'vh.ts_event_ms',
@@ -167,7 +167,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
             'vh.datastore_uuid',
             'vh.destination_host_uuid',
             'vh.destination_datastore_uuid',
-            'vh.message',
+            'vh.full_message',
             'vh.fault_reason',
         ])->join(
             ['o' => 'object'],
