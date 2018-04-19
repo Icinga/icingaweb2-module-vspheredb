@@ -66,6 +66,8 @@ class CurlLoader extends EventEmitter
     /** @var array */
     private $cookies = array();
 
+    private $lastResponse;
+
     /**
      * CurlLoader constructor.
      *
@@ -251,11 +253,15 @@ class CurlLoader extends EventEmitter
         curl_setopt_array($curl, $opts);
 
         $res = curl_exec($curl);
+
         if ($res === false) {
             throw new Exception('CURL ERROR: ' . curl_error($curl));
         }
+        $this->lastResponse = $res;
 
         $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $this->debugResponse($res, $statusCode);
+
         if ($statusCode === 401) {
             throw new Exception(
                 'Unable to authenticate, please check your API credentials'
@@ -266,6 +272,10 @@ class CurlLoader extends EventEmitter
             if (preg_match('/NotAuthenticated/', $res)) {
                 throw new AuthenticationException('Not authenticated');
             }
+
+            if (strpos($res, '<soapenv:Fault>') !== false) {
+                return $res;
+            }
             // TODO: This should be transformed in a Soap error and deal with such
             throw new Exception(
                 "Got $statusCode: " . var_export($res, 1)
@@ -273,6 +283,11 @@ class CurlLoader extends EventEmitter
         }
 
         return $res;
+    }
+
+    public function getLastResponse()
+    {
+        return $this->lastResponse;
     }
 
     /**
@@ -287,12 +302,24 @@ class CurlLoader extends EventEmitter
             return;
         }
 
-        // Testing:
         echo "--> Sending Reqest\n";
         printf("%s %s\n", $method, $url);
         echo implode("\n", $headers);
         echo "\n\n";
         echo $body;
+        echo "\n\n--\n";
+    }
+
+    protected function debugResponse($response, $statusCode)
+    {
+        if (true) {
+            return;
+        }
+
+        echo "<-- Got Response\n";
+        printf("Status: %d\n", $statusCode);
+        echo "\n\n";
+        echo $response;
         echo "\n\n--\n";
     }
 
