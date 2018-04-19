@@ -450,7 +450,44 @@ CREATE TABLE vm_quick_stats (
   INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
-CREATE TABLE vmotion_history (
+CREATE TABLE alarm_history (
+  id BIGINT(20) UNSIGNED AUTO_INCREMENT NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  ts_event_ms BIGINT(20) NOT NULL,
+  event_type ENUM (
+    'AlarmAcknowledgedEvent',
+    'AlarmClearedEvent',
+    'AlarmCreatedEvent',
+    'AlarmReconfiguredEvent',
+    'AlarmRemovedEvent',
+    'AlarmStatusChangedEvent'
+  ) NOT NULL,
+  event_key BIGINT(20) UNSIGNED NOT NULL,
+  event_chain_id BIGINT(20) UNSIGNED NOT NULL,
+  entity_uuid VARBINARY(20) DEFAULT NULL,
+  source_uuid VARBINARY(20) DEFAULT NULL,
+  alarm_name VARCHAR(255) DEFAULT NULL,
+  alarm_moref VARCHAR(48) DEFAULT NULL,
+  status_from ENUM(
+    'gray',
+    'green',
+    'yellow',
+    'red'
+  ) DEFAULT NULL,
+  status_to ENUM(
+    'gray',
+    'green',
+    'yellow',
+    'red'
+  ) DEFAULT NULL,
+  full_message TEXT DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX time_idx (ts_event_ms),
+  INDEX search_type_idx (event_type, ts_event_ms),
+  INDEX search_entity_idx (entity_uuid, ts_event_ms)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vm_event_history (
   id BIGINT(20) UNSIGNED AUTO_INCREMENT NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   ts_event_ms BIGINT(20) NOT NULL,
@@ -459,29 +496,45 @@ CREATE TABLE vmotion_history (
     'VmBeingHotMigratedEvent',
     'VmEmigratingEvent',
     'VmFailedMigrateEvent',
-    'VmMigratedEvent'
+    'VmMigratedEvent',
+    'DrsVmMigratedEvent',
+    'VmBeingCreatedEvent',
+    'VmCreatedEvent',
+    'VmStartingEvent',
+    'VmPoweredOnEvent',
+    'VmPoweredOffEvent',
+    'VmStoppingEvent',
+    'VmBeingDeployedEvent',
+    'VmReconfiguredEvent',
+    'VmBeingClonedEvent',
+    'VmBeingClonedNoFolderEvent',
+    'VmClonedEvent',
+    'VmCloneFailedEvent'
   ) NOT NULL,
   event_key BIGINT(20) UNSIGNED NOT NULL,
   event_chain_id BIGINT(20) UNSIGNED NOT NULL,
-  is_template ENUM('y', 'n') NOT NULL,
+  is_template ENUM('y', 'n') DEFAULT NULL,
   datacenter_uuid VARBINARY(20) DEFAULT NULL,
   compute_resource_uuid VARBINARY(20) DEFAULT NULL,
   host_uuid VARBINARY(20) DEFAULT NULL,
-  vm_uuid VARBINARY(20) NOT NULL,
+  vm_uuid VARBINARY(20) DEFAULT NULL,
   datastore_uuid VARBINARY(20) DEFAULT NULL,
   dvs_uuid VARBINARY(20) DEFAULT NULL,
   destination_host_uuid VARBINARY(20) DEFAULT NULL,
   destination_datacenter_uuid VARBINARY(20) DEFAULT NULL,
   destination_datastore_uuid VARBINARY(20) DEFAULT NULL,
-  message TEXT DEFAULT NULL,
+  full_message TEXT DEFAULT NULL,
   user_name VARCHAR(128) DEFAULT NULL,
   fault_message TEXT DEFAULT NULL,
   fault_reason TEXT DEFAULT NULL,
+  config_spec MEDIUMTEXT DEFAULT NULL,
+  config_changes MEDIUMTEXT DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX time_idx (ts_event_ms),
-  INDEX search_host_idx (host_uuid),
-  INDEX search_vm_idx (vm_uuid),
-  INDEX search_ds_idx (datastore_uuid)
+  INDEX search_type_idx (event_type, ts_event_ms),
+  INDEX search_host_idx (host_uuid, ts_event_ms),
+  INDEX search_vm_idx (vm_uuid, ts_event_ms),
+  INDEX search_ds_idx (datastore_uuid, ts_event_ms)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE monitoring_connection (
