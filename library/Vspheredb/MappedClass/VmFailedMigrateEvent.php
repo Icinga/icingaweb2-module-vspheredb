@@ -8,9 +8,15 @@ class VmFailedMigrateEvent extends BaseMigrationEvent
 {
     public function getMigrationDetails(VCenter $vCenter)
     {
-        return parent::getMigrationDetails($vCenter) + [
-            'fault_message' => json_encode($this->reason->fault->faultMessage),
-            'fault_reason'  => $this->reason->fault->reason,
-        ];
+        $data = [];
+
+        if (isset($this->reason->fault->faultMessage)) {
+            $data['fault_message'] = json_encode($this->reason->fault->faultMessage);
+        }
+        if (isset($this->reason->fault->reason)) {
+            $data['fault_reason'] = json_encode($this->reason->fault->reason);
+        }
+
+        return parent::getMigrationDetails($vCenter) + $data;
     }
 }

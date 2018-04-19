@@ -220,6 +220,7 @@ class Api
      * @param $method
      * @return mixed
      * @throws AuthenticationException
+     * @throws ConfigurationError
      */
     public function soapCall($method)
     {
@@ -258,6 +259,7 @@ class Api
      * Lazy-instantiation of our SoapClient
      *
      * @return SoapClient
+     * @throws ConfigurationError
      */
     protected function soapClient()
     {
@@ -288,12 +290,61 @@ class Api
         $base = "Icinga\\Module\\Vspheredb\\MappedClass";
 
         $map = [
+            //'ManagedObjectNotFoundFault' => "$base\\ManagedObjectNotFoundFault",
+            // 'AlarmEvent'              => "$base\\AlarmEvent",
+            'AlarmAcknowledgedEvent'  => "$base\\AlarmAcknowledgedEvent",
+            'AlarmClearedEvent'       => "$base\\AlarmClearedEvent",
+            'AlarmCreatedEvent'       => "$base\\AlarmCreatedEvent",
+            'AlarmReconfiguredEvent'  => "$base\\AlarmReconfiguredEvent",
+            'AlarmRemovedEvent'       => "$base\\AlarmRemovedEvent",
+            'AlarmStatusChangedEvent' => "$base\\AlarmStatusChangedEvent",
+
+            // AlarmActionTriggeredEvent
+            // AlarmEmailCompletedEvent
+            // AlarmEmailFailedEvent
+            // AlarmScriptCompleteEvent
+            // AlarmScriptFailedEvent
+            // AlarmSnmpCompletedEvent
+            // AlarmSnmpFailedEvent
+
+            'UserLoginSessionEvent'            => "$base\\UserLoginSessionEvent",
+            'SessionTerminatedEvent'           => "$base\\SessionTerminatedEvent",
+            'NoAccessUserEvent'                => "$base\\NoAccessUserEvent",
+            'BadUsernameSessionEvent'          => "$base\\BadUsernameSessionEvent",
+            'GlobalMessageChangedEvent'        => "$base\\GlobalMessageChangedEvent",
+            'UserLogoutSessionEvent'           => "$base\\UserLogoutSessionEvent",
+            'AlreadyAuthenticatedSessionEvent' => "$base\\AlreadyAuthenticatedSessionEvent",
+
+            // VmMessageEvent
+            // TaskEvent
+            // VmResettingEvent
+            // EventEx
+            // AlarmStatusChangedEvent
+            // UserLoginSessionEvent
+            // DrsRuleViolationEvent
+            // DrsSoftRuleViolationEvent
+            // NonVIWorkloadDetectedOnDatastoreEvent
+            // VmAcquiredTicketEvent
+            // CustomFieldValueChangedEvent
+            //
+
             'VmFailedMigrateEvent'    => "$base\\VmFailedMigrateEvent",
             'MigrationEvent'          => "$base\\MigrationEvent",
             'VmBeingMigratedEvent'    => "$base\\VmBeingMigratedEvent",
             'VmBeingHotMigratedEvent' => "$base\\VmBeingHotMigratedEvent",
             'VmEmigratingEvent'       => "$base\\VmEmigratingEvent",
             'VmMigratedEvent'         => "$base\\VmMigratedEvent",
+
+            'VmBeingCreatedEvent'  => "$base\\VmBeingCreatedEvent",
+            'VmCreatedEvent'       => "$base\\VmCreatedEvent",
+            'VmPoweredOnEvent'     => "$base\\VmPoweredOnEvent",
+            'VmPoweredOffEvent'    => "$base\\VmPoweredOffEvent",
+            // VmPoweredOffEvent
+            'VmReconfiguredEvent'  => "$base\\VmReconfiguredEvent",
+            'VmStartingEvent'      => "$base\\VmStartingEvent",
+            'VmStoppingEvent'      => "$base\\VmStoppingEvent",
+            // Not seen yet:
+            'VmBeingDeployedEvent' => "$base\\VmBeingDeployedEvent",
         ];
 
         $base = "Icinga\\Module\\Vspheredb\\VmwareDataType";
@@ -310,6 +361,7 @@ class Api
      * Our WSDL cache
      *
      * @return string
+     * @throws ConfigurationError
      */
     protected function wsdlDir()
     {
@@ -322,6 +374,7 @@ class Api
 
     /**
      * Make sure all our WSDL files are in place, fetch missing ones
+     * @throws ConfigurationError
      */
     protected function prepareWsdl()
     {
@@ -341,6 +394,7 @@ class Api
      * This is a stdClass for now, might become a dedicated class
      *
      * @return mixed
+     * @throws AuthenticationException
      */
     public function getServiceInstance()
     {
@@ -358,6 +412,7 @@ class Api
      * is for visualization purposes only and might change without pre-announcement
      *
      * @return string
+     * @throws AuthenticationException
      */
     public function getVersionString()
     {
@@ -378,6 +433,7 @@ class Api
      * @see getServiceInstance()
      *
      * @return mixed
+     * @throws AuthenticationException
      */
     protected function fetchServiceInstance()
     {
@@ -402,6 +458,7 @@ class Api
      * Log in to to API
      *
      * This will retrieve a session cookie and pass it with subsequent requests
+     * @throws AuthenticationException
      */
     public function login()
     {
@@ -459,6 +516,10 @@ class Api
         );
     }
 
+    /**
+     * @return string
+     * @throws ConfigurationError
+     */
     protected function cacheDir()
     {
         if ($this->cacheDir === null) {
@@ -499,6 +560,10 @@ class Api
         return $info['name'];
     }
 
+    /**
+     * @return mixed
+     * @throws ConfigurationError
+     */
     protected function getCurrentUsername()
     {
         if (function_exists('posix_geteuid')) {
