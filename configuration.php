@@ -21,9 +21,12 @@ $section->add(N_('Anomalies'))
 $section->add(N_('VMotion History'))
     ->setUrl('vspheredb/vmotions')
     ->setPriority(49);
+$section->add(N_('Alarm History'))
+    ->setUrl('vspheredb/alarms')
+    ->setPriority(49);
 $section->add(N_('Performance Counter'))
     ->setUrl('vspheredb/configuration/counters')
-    ->setPriority(50);
+    ->setPriority(60);
 $section->add(N_('Top VMs'))
     ->setUrl('vspheredb/top/vms')
-    ->setPriority(50);
+    ->setPriority(70);
