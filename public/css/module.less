@@ -1,6 +1,49 @@
 a:focus {
   outline: none;
 }
+
+a.ManagedObject {
+  padding-left: 0.5em;
+}
+a.ManagedObject::before {
+  font-family: 'ifont';
+  // icon-help:
+  content: '\e85b';
+  float: left;
+  font-weight: bold;
+}
+
+a.ManagedObject.VirtualMachine::before {
+  // icon-service:
+  content: '\e840';
+}
+
+a.ManagedObject.HostSystem::before {
+  // icon-host:
+  content: '\e866';
+}
+
+a.ManagedObject.Datastore::before {
+  // icon-database:
+  content: '\e80c';
+}
+
+a.ManagedObject.red::before {
+  color: @color-critical;
+}
+
+a.ManagedObject.green::before {
+  color: @color-ok;
+}
+
+a.ManagedObject.yellow::before {
+  color: @color-warning;
+}
+
+a.ManagedObject.gray::before {
+  color: @gray;
+}
+
 .sparks {
   width: 4em;
   height: 3em;
