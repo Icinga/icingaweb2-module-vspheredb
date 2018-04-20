@@ -13,14 +13,6 @@ class SyncVmDiskUsage
 {
     use SyncHelper;
 
-    /** @var VCenter */
-    protected $vCenter;
-
-    public function __construct(VCenter $vCenter)
-    {
-        $this->vCenter = $vCenter;
-    }
-
     /**
      * @param \stdClass $device
      * @throws IcingaException
