@@ -37,8 +37,8 @@ class VCenterServerForm extends DirectorObjectForm
                 'Whether to use encryption when talking to your vCenter'
             ),
             'multiOptions' => array(
-                'HTTPS' => $this->translate('HTTPS (strongly recommended)'),
-                'HTTP'  => $this->translate('HTTP (this is plaintext!)'),
+                'https' => $this->translate('HTTPS (strongly recommended)'),
+                'http'  => $this->translate('HTTP (this is plaintext!)'),
             ),
             'class' => 'autosubmit',
             'value' => 'HTTPS',
