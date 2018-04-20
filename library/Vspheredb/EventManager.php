@@ -147,7 +147,7 @@ class EventManager
      * @return int
      * @throws AuthenticationException
      * @throws \Icinga\Exception\ConfigurationError
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Zend_Db_Exception
      */
     public function streamToDb()
     {
@@ -160,24 +160,19 @@ class EventManager
         $db->beginTransaction();
         $skipped = 0;
         foreach ($events as $key => $event) {
-            if ($event->key < $this->lastEventKey) {
+            // printf("%s <= %s\n", $event->key, $this->lastEventKey);
+            if ($this->lastEventKey && $event->key <= $this->lastEventKey) {
                 $skipped++;
+                // echo "Skip\n";
                 continue;
             }
-            $this->lastEventTimestamp = $event->getTimestampMs();
-            $this->lastEventKey = $event->key;
 
             if ($event instanceof SessionEvent) {
                 // not yet
             } elseif ($event instanceof KnownEvent) {
                 try {
                     $event->store($db, $this->vCenter);
-                } catch (\Zend_Db_Statement_Exception $e) {
-                    // TODO: Improve error handling. Where to store the details?
-                    print_r($event);
-                    print_r($event->getDbData($this->vCenter));
-                    throw($e);
-                } catch (\Zend_Db_Adapter_Exception $e) {
+                } catch (\Zend_Db_Exception $e) {
                     // TODO: Improve error handling. Where to store the details?
                     print_r($event);
                     print_r($event->getDbData($this->vCenter));
