@@ -503,6 +503,7 @@ CREATE TABLE vm_event_history (
     'VmStartingEvent',
     'VmPoweredOnEvent',
     'VmPoweredOffEvent',
+    'VmSuspendedEvent',
     'VmStoppingEvent',
     'VmBeingDeployedEvent',
     'VmReconfiguredEvent',

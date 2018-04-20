@@ -339,7 +339,7 @@ class Api
             'VmCreatedEvent'       => "$base\\VmCreatedEvent",
             'VmPoweredOnEvent'     => "$base\\VmPoweredOnEvent",
             'VmPoweredOffEvent'    => "$base\\VmPoweredOffEvent",
-            // VmPoweredOffEvent
+            'VmSuspendedEvent'     => "$base\\VmSuspendedEvent",
             'VmReconfiguredEvent'  => "$base\\VmReconfiguredEvent",
             'VmStartingEvent'      => "$base\\VmStartingEvent",
             'VmStoppingEvent'      => "$base\\VmStoppingEvent",
