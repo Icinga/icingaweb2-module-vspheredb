@@ -7,63 +7,38 @@ use Icinga\Date\DateFormatter;
 
 class AlarmHistoryTable extends ZfQueryBasedTable
 {
+    use UuidLinkHelper;
+
+    protected $entityUuid;
+
     protected $defaultAttributes = [
         'class' => 'common-table',
         'data-base-target' => '_next',
     ];
 
-    protected $requiredUuids = [];
+    public function filterEntityUuid($uuid)
+    {
+        $this->entityUuid = $uuid;
 
-    protected $fetchedUuids;
+        return $this;
+    }
 
     public function renderRow($row)
     {
         $this->renderDayIfNew($row->ts_event_ms / 1000);
         $content = [
-            $row->full_message
+            DateFormatter::formatTime($row->ts_event_ms / 1000),
         ];
 
-        $tr = $this::row([
-            $content,
-            DateFormatter::formatTime($row->ts_event_ms / 1000)
-        ]);
+        if ($this->entityUuid === null) {
+            $this->linkToUuid($row->entity_uuid);
+        }
+        $content[] = $row->full_message;
+
+        $tr = $this::row($content);
 
         return $tr;
     }
-
-    protected function getUuidName($uuid)
-    {
-        if ($uuid === null) {
-            return '[NULL]';
-        }
-
-        if ($this->fetchedUuids === null) {
-            $this->fetchUuidNames();
-        }
-
-        if (array_key_exists($uuid, $this->fetchedUuids)) {
-            return $this->fetchedUuids[$uuid];
-        } else {
-            return '[UNKNOWN]';
-        }
-    }
-
-    protected function fetchUuidNames()
-    {
-        $db = $this->db();
-        if (empty($this->requiredUuids)) {
-            $this->fetchedUuids = [];
-
-            return;
-        }
-
-        $this->fetchedUuids = $db->fetchPairs(
-            $db->select()
-                ->from('object', ['uuid', 'object_name'])
-                ->where('uuid IN (?)', array_values($this->requiredUuids))
-        );
-    }
-
     protected function timeSince($ms)
     {
         return DateFormatter::timeAgo($ms);
@@ -73,11 +48,17 @@ class AlarmHistoryTable extends ZfQueryBasedTable
     {
         $query = $this->db()->select()->from([
             'ah' => 'alarm_history'
-        ])->join(
-            ['o' => 'object'],
-            'o.uuid = ah.entity_uuid',
-            []
-        )->order('ts_event_ms DESC');
+        ])->order('ts_event_ms DESC');
+
+        if ($this->entityUuid === null) {
+            $query->join(
+                ['o' => 'object'],
+                'o.uuid = ah.entity_uuid',
+                []
+            );
+        } else {
+            $query->where('ah.entity_uuid = ?', $this->entityUuid);
+        }
 
         return $query;
     }

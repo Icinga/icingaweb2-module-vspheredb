@@ -7,6 +7,7 @@ use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
@@ -17,6 +18,12 @@ use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 
 class VmController extends Controller
 {
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function indexAction()
     {
         $vm = $this->addVm();
@@ -54,32 +61,71 @@ class VmController extends Controller
         $this->content()->add($title);
     }
 
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function hardwareAction()
     {
         $vm = $this->addVm();
         $this->content()->add(new VmHardwareTree($vm));
     }
 
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function vmotionsAction()
     {
         $table = new VMotionHistoryTable($this->db());
         $table->filterVm($this->addVm())->renderTo($this);
     }
 
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
+    public function alarmsAction()
+    {
+        $table = new AlarmHistoryTable($this->db());
+        $table->filterEntityUuid($this->addVm()->get('uuid'))->renderTo($this);
+    }
+
+    /**
+     * @throws \Icinga\Exception\AuthenticationException
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function countersAction()
     {
         $vm = $this->addVm();
-        $api = Api::forServer(
-            // TODO: remove hardcoded id=1
-            VCenterServer::loadWithAutoIncId(1, $this->db())
-        )->login();
+        // TODO: remove hardcoded id=1
+        /** @var VCenterServer $vCenterServer */
+        $vCenterServer = VCenterServer::loadWithAutoIncId(1, $this->db());
+        $api = Api::forServer($vCenterServer)->login();
 
         $this->setAutorefreshInterval(10);
         $this->content()->add(new VmLiveCountersTable($vm, $api));
     }
 
+    /**
+     * @return VirtualMachine
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function addVm()
     {
+        /** @var VirtualMachine $vm */
         $vm = VirtualMachine::load(hex2bin($this->params->getRequired('uuid')), $this->db());
         $this->addTitle($vm->object()->get('object_name'));
         $this->handleTabs();
@@ -87,6 +133,10 @@ class VmController extends Controller
         return $vm;
     }
 
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function handleTabs()
     {
         $params = ['uuid' => $this->params->get('uuid')];
@@ -101,6 +151,10 @@ class VmController extends Controller
         ])->add('vmotions', [
             'label'     => $this->translate('VMotions'),
             'url'       => 'vspheredb/vm/vmotions',
+            'urlParams' => $params
+        ])->add('alarms', [
+            'label'     => $this->translate('Alarms'),
+            'url'       => 'vspheredb/vm/alarms',
             'urlParams' => $params
         ])->add('counters', [
             'label'     => $this->translate('Live Counters'),
