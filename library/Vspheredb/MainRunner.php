@@ -70,9 +70,15 @@ class MainRunner
 
                 // TODO: We need better scheduling
                 $this->syncAllObjects();
+                $this->streamEvents();
                 $this->syncVmHardware();
                 $this->syncHostHardware();
                 $this->syncHostSensors();
+            });
+        });
+        $loop->addPeriodicTimer(2, function () {
+            $this->runFailSafe(function () {
+                $this->streamEvents();
             });
         });
         $loop->addPeriodicTimer(900, function () {
@@ -91,7 +97,7 @@ class MainRunner
                 $this->syncHostSensors();
             });
         });
-        $loop->addPeriodicTimer(120, function () {
+        $loop->addPeriodicTimer(300, function () {
             $this->runFailSafe(function () {
                 $this->syncVmDiskUsage();
                 $this->syncVmDatastoreUsage();
@@ -111,11 +117,6 @@ class MainRunner
             if (! $this->isReady) {
                 $this->reset();
             }
-        });
-        $loop->addPeriodicTimer(5, function () {
-            $this->runFailSafe(function () {
-                $this->streamEvents();
-            });
         });
         $loop->run();
     }
@@ -271,9 +272,9 @@ class MainRunner
     {
         $cnt = $this->eventManager->streamToDb();
         if ($cnt < 1000) {
-            Logger::debug('Got %d event(s), there might be more', $cnt);
-        } else {
             Logger::debug('Got %d events', $cnt);
+        } else {
+            Logger::debug('Got %d event(s), there might be more', $cnt);
         }
     }
 
