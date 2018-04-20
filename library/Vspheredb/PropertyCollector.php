@@ -71,11 +71,18 @@ class PropertyCollector
         return $res;
     }
 
-    // Might be obsolete:
+    /**
+     * TOOD: I'd love to replace this
+     *
+     * @param $result
+     * @return array
+     * @throws AuthenticationException
+     * @throws IcingaException
+     */
     protected function makeNiceResult($result)
     {
         if (! property_exists($result, 'returnval')) {
-            return [];
+            throw new IcingaException('Got no returnval');
         }
 
         $nice = [];
