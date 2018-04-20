@@ -10,8 +10,8 @@ SET sql_mode = 'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTIT
 -- );
 
 CREATE TABLE vcenter (
+  id int(10) unsigned NOT NULL AUTO_INCREMENT,
   instance_uuid VARBINARY(16) NOT NULL,
-  vcenter_name VARCHAR(64) NOT NULL,
   trust_store_id INT UNSIGNED DEFAULT NULL, -- TODO: not null?
   name VARCHAR(64) NOT NULL, -- name	"VMware vCenter Server"
   version VARCHAR(10) NOT NULL, -- version	"6.0.0"
@@ -26,13 +26,17 @@ CREATE TABLE vcenter (
   license_product_version VARCHAR(10) DEFAULT NULL, -- licenseProductVersion"6.0"
   locale_build VARCHAR(32) DEFAULT NULL, -- localeBuild	"000"
   locale_version VARCHAR(10) DEFAULT NULL, -- localeVersion	"INTL"
-  PRIMARY KEY (instance_uuid),
-  UNIQUE INDEX vcenter_name (vcenter_name)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `instance_uuid` (`instance_uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+-- currently: id!
 CREATE TABLE vcenter_server (
+  id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  vcenter_id INT(10) UNSIGNED DEFAULT NULL,
+  -- vcenter_uuid VARBINARY(16) NOT NULL,
+  -- server_uuid VARBINARY(16) NOT NULL, -- md5(vcenter_uuid:scheme://host
   host VARCHAR(255) NOT NULL,
-  vcenter_uuid VARBINARY(16) NOT NULL,
   scheme ENUM ('http', 'https') NOT NULL,
   username VARCHAR(64) NOT NULL,
   password VARCHAR(64) NOT NULL,
@@ -42,10 +46,10 @@ CREATE TABLE vcenter_server (
   proxy_pass VARCHAR(64) DEFAULT NULL,
   ssl_verify_peer ENUM ('y', 'n') NOT NULL,
   ssl_verify_host ENUM ('y', 'n') NOT NULL,
-  PRIMARY KEY (host),
+  PRIMARY KEY (id),
   CONSTRAINT server_vcenter
-    FOREIGN KEY server_vcenter_uuid (vcenter_uuid)
-    REFERENCES vcenter (vcenter_uuid)
+    FOREIGN KEY server_vcenter_uuid (vcenter_id)
+    REFERENCES vcenter (id)
     ON DELETE SET NULL
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -61,8 +65,8 @@ CREATE TABLE vcenter_sync (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vcenter_session (
-  vcenter_uuid VARBINARY(16) NOT NULL,
   session_id VARBINARY(20) NOT NULL, -- hex2bin(sid)
+  vcenter_server_id INT(10) UNSIGNED NOT NULL,
   session_cookie_string VARCHAR(255) NOT NULL,
   session_cookie_name VARCHAR(64) NOT NULL,
   scope VARCHAR(32) NOT NULL,
@@ -70,9 +74,9 @@ CREATE TABLE vcenter_session (
   ts_created BIGINT(20) NOT NULL,
   ts_last_check BIGINT(20) NOT NULL,
   PRIMARY KEY (session_id),
-  CONSTRAINT server_vcenter
-    FOREIGN KEY server_vcenter_uuid (vcenter_uuid)
-    REFERENCES vcenter (vcenter_uuid)
+  CONSTRAINT session_vcenter_server
+    FOREIGN KEY session_vcenter_server_id (vcenter_server_id)
+    REFERENCES vcenter_server (id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
