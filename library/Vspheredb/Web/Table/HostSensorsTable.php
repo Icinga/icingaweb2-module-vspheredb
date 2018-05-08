@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
+use dipl\Html\Html;
 use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
@@ -36,12 +37,16 @@ class HostSensorsTable extends ZfQueryBasedTable
         ]);
     }
 
+    /**
+     * @param $type
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function renderTypeIfNew($type)
     {
         if ($this->lastType !== $type) {
             $summary = $this->getSummaryByType($type);
 
-            $div = $this::tag('div', ['class' => 'object-summaries']);
+            $div = Html::tag('div', ['class' => 'object-summaries']);
             $title = [$div, ucfirst($type)];
             foreach ($summary as $state => $count) {
                 if ($count > 0) {
@@ -66,6 +71,11 @@ class HostSensorsTable extends ZfQueryBasedTable
         return Link::create($count, '/', null, ['class' => ['state', $state]]);
     }
 
+    /**
+     * @param $type
+     * @return mixed
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function getSummaryByType($type)
     {
         if ($this->summaries === null) {
@@ -115,6 +125,10 @@ class HostSensorsTable extends ZfQueryBasedTable
         return $this;
     }
 
+    /**
+     * @return array
+     * @throws \Icinga\Exception\IcingaException
+     */
     public function fetchSummaries()
     {
         // Well... ROLLUP would help.
@@ -151,6 +165,10 @@ class HostSensorsTable extends ZfQueryBasedTable
         return $sums;
     }
 
+    /**
+     * @return \Zend_Db_Select
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function prepareQuery()
     {
         $query = $this->db()->select()->from([

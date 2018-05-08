@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use dipl\Html\DeferredText;
 use dipl\Html\Html;
+use dipl\Html\HtmlDocument;
 use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
@@ -153,6 +154,10 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         return DateFormatter::timeAgo($ms);
     }
 
+    /**
+     * @return \Zend_Db_Select
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function prepareQuery()
     {
         $query = $this->db()->select()->from([
@@ -174,6 +179,26 @@ class VMotionHistoryTable extends ZfQueryBasedTable
             'o.uuid = vh.vm_uuid',
             []
         )->order('ts_event_ms DESC');
+
+        $query->where('event_type IN (?)', [
+
+
+            'VmFailedMigrateEvent',
+            'MigrationEvent',
+            'VmBeingMigratedEvent',
+            'VmBeingHotMigratedEvent',
+            'VmEmigratingEvent',
+            'VmMigratedEvent',
+
+
+            'VmBeingCreatedEvent',
+            'VmCreatedEvent',
+            'VmStartingEvent',
+            'VmStoppingEvent',
+            'VmPoweredOnEvent',
+            'VmPoweredOffEvent',
+            'VmReconfiguredEvent',
+        ]);
 
         if ($this->datastore) {
             $query->where('datastore_uuid = ?', $this->datastore->get('uuid'))
@@ -212,9 +237,14 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         return $content->setEscaped();
     }
 
+    /**
+     * @param $row
+     * @return HtmlDocument
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function showMotionPath($row)
     {
-        $html = new Html();
+        $html = new HtmlDocument();
         if ($row->host_uuid !== $row->destination_host_uuid) {
             if ($this->host) {
                 if ($row->host_uuid === $this->host->get('uuid')) {
@@ -246,6 +276,11 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         return $html;
     }
 
+    /**
+     * @param $row
+     * @return \dipl\Html\FormattedString
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function showHostToHostMigration($row)
     {
         if ($row->event_type === 'VmEmigratingEvent') {
@@ -276,6 +311,11 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         }
     }
 
+    /**
+     * @param $row
+     * @return \dipl\Html\FormattedString
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function showDatastoreToDatastoreMigration($row)
     {
         return Html::sprintf(
@@ -294,6 +334,11 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         );
     }
 
+    /**
+     * @param $row
+     * @return \dipl\Html\FormattedString
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function showToDatastoreMigration($row)
     {
         return Html::sprintf(
@@ -307,6 +352,11 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         );
     }
 
+    /**
+     * @param $row
+     * @return \dipl\Html\FormattedString
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function showFromDatastoreMigration($row)
     {
         return Html::sprintf(
@@ -320,6 +370,11 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         );
     }
 
+    /**
+     * @param $row
+     * @return \dipl\Html\FormattedString
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function showToHostMigration($row)
     {
         return Html::sprintf(
@@ -333,6 +388,11 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         );
     }
 
+    /**
+     * @param $row
+     * @return \dipl\Html\FormattedString
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function showFromHostMigration($row)
     {
         return Html::sprintf(
