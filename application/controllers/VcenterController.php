@@ -19,6 +19,9 @@ class VcenterController extends Controller
     {
         $this->handleTabs();
         $vCenters = VCenter::loadAll($this->db());
+        if (empty($vCenters)) {
+            $this->redirectNow('vspheredb/vcenter/servers');
+        }
         foreach ($vCenters as $vCenter) {
             $this->content()->add(new VCenterSyncInfo($vCenter));
         }
