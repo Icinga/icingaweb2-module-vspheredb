@@ -18,8 +18,8 @@ restart your web server service afterwards.
 Installation from .tar.gz
 -------------------------
 
-Download the latest version and extract it to a folder named `vspheredb`
-in one of your Icinga Web 2 module path directories.
+Download the ~~latest version~~ (not yet) and extract it to a folder named
+`vspheredb` in one of your Icinga Web 2 module path directories.
 
 You might want to use a script as follows for this task:
 ```sh
@@ -43,11 +43,58 @@ It will be immediately ready for use:
 ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"
 REPO_URL="https://github.com/Icinga/icingaweb2-module-vspheredb"
 TARGET_DIR="${ICINGAWEB_MODULEPATH}/vspheredb"
-MODULE_VERSION="1.0.0"
 git clone "${REPO_URL}" "${TARGET_DIR}"
 ```
 
 You can now directly use our current GIT master or check out a specific version.
+
+Database
+--------
+
+### Create an empty database on MariaDB (or MySQL)
+
+HINT: You should replace `some-password` with a secure custom password.
+
+    mysql -e "CREATE DATABASE vspheredb CHARACTER SET 'utf8mb4';
+       GRANT ALL ON vspheredb.* TO vspheredb@localhost IDENTIFIED BY 'some-password';"
+
+### Create the vSphereDB module schema
+
+    mysql vspheredb < schema/mysql.sql
+
+### Create a related Icinga Web 2 Database resource
+
+In your web frontend please go to `Configuration / Application / Resources`
+and create a new database resource pointing to your newly created database.
+Please make sure that you choose `utf8mb4` as an encoding.
+
+Alternatively, you could also manally add a resource definition to your
+resources.ini:
+
+#### /etc/icingaweb2/resources.ini
+
+```ini
+[vSphereDB]
+type = "db"
+db = "mysql"
+host = "localhost"
+; port = 3306
+dbname = "vspheredb"
+username = "vspheredb"
+password = "***"
+charset = "utf8mb4"
+```
+
+Tell vSphereDB about it's database
+----------------------------------
+
+In the module's config.ini (usually `/etc/icingaweb2/module/vspheredb/config.ini`)
+you need to reference above DB connection:
+
+```ini
+[db]
+resource = "vSphereDB"
+```
 
 Enable the newly installed module
 ---------------------------------
@@ -62,3 +109,43 @@ icingacli module enable vspheredb
 -&gt; `vspheredb` module - and `enable` it:
 
 ![Enable the vSphere module](screenshot/01_installation/001_enable-module.png)
+
+
+Connect to your vCenter
+-----------------------
+
+The GUI should lead you to a table allowing you to configure connections for
+multiple vCenters. Once done, please initialize your connection on the CLI:
+
+    icingacli vspheredb vcenter initialize --serverId 1
+
+Hint: CLI commands expect IDs for now, you can figure them out by having a
+look at the links in the frontend. Working with IDs is no fun, so this will
+change in the final version.
+
+Once that worked out, your vSphereDB Dashboard should finally show an empty
+summary. Now  let's try to sync our vCenter, we're doing so at debug level in
+the foreground to get an idea of what happens:
+
+    icingacli vspheredb daemon run --vCenterId 1 --debug --trace
+
+If what you see looks good to you, it's time to enable the background daemon.
+
+Enabling and running the background daemon
+------------------------------------------
+
+For now, you need to run one daemon per vCenter. This will change in the final
+version.
+
+Once you played around with this modules and everything works fine when running
+on commandline, time has come to enable a background daemon synchronizing your
+vCenter to our vSphereDb.
+
+    cp contrib/systemd/icinga-vspheredb@.service  /etc/systemd/system/
+    systemctl daemon-reload
+    systemctl enable icinga-vspheredb@1
+    systemctl start icinga-vspheredb@1
+
+That's it, your daemon should now be running. Feel free to configure as many
+vCenter Servers as you want, each of them with a distinct systemd service
+instance.
