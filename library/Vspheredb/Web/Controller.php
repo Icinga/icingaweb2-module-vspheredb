@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web;
 
+use dipl\Html\Html;
 use dipl\Html\HtmlString;
-use dipl\Html\Util;
 use Icinga\Module\Vspheredb\Db;
 use dipl\Web\CompatController;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -29,9 +29,9 @@ class Controller extends CompatController
                 $this->$callback();
             }
         } catch (\Exception $e) {
-            $this->content()->add(HtmlString::create(Util::renderError($e)));
+            $this->content()->add(HtmlString::create(Html::renderError($e)));
         } catch (\Error $e) {
-            $this->content()->add(HtmlString::create(Util::renderError($e)));
+            $this->content()->add(HtmlString::create(Html::renderError($e)));
         }
     }
 

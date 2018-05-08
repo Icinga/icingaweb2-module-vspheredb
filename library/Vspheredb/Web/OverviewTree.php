@@ -2,13 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web;
 
+use dipl\Html\BaseHtmlElement;
 use Icinga\Module\Vspheredb\Db;
-use dipl\Html\BaseElement;
 use dipl\Html\Html;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
 
-class OverviewTree extends BaseElement
+class OverviewTree extends BaseHtmlElement
 {
     use TranslationHelper;
 
@@ -100,7 +100,7 @@ class OverviewTree extends BaseElement
         $type = $tree->object_type;
         $li = Html::tag('li');
         if (! $hasChildren) {
-            $li->attributes()->add('class', 'collapsed');
+            $li->getAttributes()->add('class', 'collapsed');
         }
 
         if ($hasChildren) {

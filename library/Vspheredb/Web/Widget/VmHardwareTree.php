@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseElement;
+use dipl\Html\BaseHtmlElement;
 use dipl\Html\Html;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
@@ -12,7 +12,7 @@ use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
 
-class VmHardwareTree extends BaseElement
+class VmHardwareTree extends BaseHtmlElement
 {
     use TranslationHelper;
 
@@ -107,7 +107,7 @@ class VmHardwareTree extends BaseElement
         if ($disk->datastore_uuid !== null) {
             $link = $lookup->linkToObject($disk->datastore_uuid);
             if ($link instanceof Link) {
-                $link->attributes()->add('class', 'icon-database');
+                $link->getAttributes()->add('class', 'icon-database');
                 $caption = (string) current($link->getContent());
                 if ($disk->file_name) {
                     $fileName = $disk->file_name;
@@ -270,7 +270,7 @@ class VmHardwareTree extends BaseElement
 
         $li = Html::tag('li');
         if (! $hasChildren) {
-            $li->attributes()->add('class', 'collapsed');
+            $li->getAttributes()->add('class', 'collapsed');
         }
 
         if ($hasChildren) {

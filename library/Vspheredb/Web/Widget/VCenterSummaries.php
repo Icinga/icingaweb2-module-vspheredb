@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseElement;
+use dipl\Html\BaseHtmlElement;
 use dipl\Html\Html;
 use dipl\Html\Link;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 
-class VCenterSummaries extends BaseElement
+class VCenterSummaries extends BaseHtmlElement
 {
     protected $tag = 'div';
 

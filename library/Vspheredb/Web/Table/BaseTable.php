@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\BaseElement;
-use dipl\Html\Element;
+use dipl\Html\BaseHtmlElement;
 use dipl\Html\Html;
+use dipl\Html\HtmlElement;
 use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
@@ -98,7 +98,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         ]);
     }
 
-    protected function addHeaderColumnsTo(Element $parent)
+    protected function addHeaderColumnsTo(HtmlElement $parent)
     {
         if ($this->sortUrl) {
             $this->addSortHeadersTo($parent);
@@ -253,7 +253,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this;
     }
 
-    protected function addSortIcon(TableColumn $column, BaseElement $element)
+    protected function addSortIcon(TableColumn $column, BaseHtmlElement $element)
     {
         $icons = [
             'ASC'  => 'up-dir',
@@ -288,10 +288,10 @@ abstract class BaseTable extends ZfQueryBasedTable
     /**
      * TODO: we should consider introducing TablePlugins for similar tasks
      *
-     * @param Element $parent
-     * @return Element
+     * @param HtmlElement $parent
+     * @return HtmlElement
      */
-    protected function addSortHeadersTo(Element $parent)
+    protected function addSortHeadersTo(HtmlElement $parent)
     {
         // Hint: MUST be set
         $url = $this->sortUrl;

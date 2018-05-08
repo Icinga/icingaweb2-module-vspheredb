@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseElement;
+use dipl\Html\BaseHtmlElement;
 use dipl\Html\Html;
 use dipl\Translation\TranslationHelper;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Sync\VcenterSyncState;
 
-class VCenterSyncInfo extends BaseElement
+class VCenterSyncInfo extends BaseHtmlElement
 {
     use TranslationHelper;
 
@@ -36,7 +36,7 @@ class VCenterSyncInfo extends BaseElement
         ));
         $this->add($title);
         if ($sync->isAlive()) {
-            $this->attributes()->add('class', 'green');
+            $this->getAttributes()->add('class', 'green');
             $this->add(Html::sprintf(
                 $this->translate('Sync is running as PID %s by user %s on %s, last refresh happened %s'),
                 (int) $syncInfo->pid,
@@ -45,7 +45,7 @@ class VCenterSyncInfo extends BaseElement
                 $this->timeAgo($syncInfo->ts_last_refresh / 1000)
             ));
         } elseif ($syncInfo) {
-            $this->attributes()->add('class', 'red');
+            $this->getAttributes()->add('class', 'red');
             $this->add(Html::sprintf(
                 $this->translate('Sync is not running. Last refresh occured %s by %s on %s'),
                 $this->timeAgo($syncInfo->ts_last_refresh / 1000),
@@ -53,7 +53,7 @@ class VCenterSyncInfo extends BaseElement
                 $syncInfo->fqdn
             ));
         } else {
-            $this->attributes()->add('class', 'red');
+            $this->getAttributes()->add('class', 'red');
             $this->add($this->translate('Sync has never been running'));
         }
     }

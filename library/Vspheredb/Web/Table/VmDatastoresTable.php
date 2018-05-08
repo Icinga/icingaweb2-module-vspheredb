@@ -66,10 +66,10 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $datastore = Datastore::load($row->uuid, $connection);
         $usage = new DatastoreUsage($datastore);
         $usage->setCapacity($size);
-        $usage->attributes()->add('class', 'compact');
+        $usage->getAttributes()->add('class', 'compact');
         $usage->addDiskFromDbRow($row);
         $dsUsage = new DatastoreUsage($datastore);
-        $dsUsage->attributes()->add('class', 'compact');
+        $dsUsage->getAttributes()->add('class', 'compact');
         $dsUsage->addDiskFromDbRow($row);
 
         $tr = $this::tr([

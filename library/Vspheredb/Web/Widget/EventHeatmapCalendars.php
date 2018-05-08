@@ -2,13 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseElement;
+use dipl\Html\BaseHtmlElement;
 use dipl\Html\Html;
 use dipl\Html\Link;
 use dipl\Html\Table;
 use dipl\Web\Url;
 
-class EventHeatmapCalendars extends BaseElement
+class EventHeatmapCalendars extends BaseHtmlElement
 {
     protected $tag = 'div';
 
@@ -121,14 +121,14 @@ class EventHeatmapCalendars extends BaseElement
         $this->closeWeek($row, $weekday);
     }
 
-    protected function prefillWeek(BaseElement $row, $weekday)
+    protected function prefillWeek(BaseHtmlElement $row, $weekday)
     {
         for ($i = 1; $i < $weekday; $i++) {
             $row->add(Html::tag('td', null, ''));
         }
     }
 
-    protected function closeWeek(BaseElement $row, $weekday)
+    protected function closeWeek(BaseHtmlElement $row, $weekday)
     {
         for ($i = $weekday + 1; $i <= 7; $i++) {
             $row->add(Html::tag('td', null, ''));

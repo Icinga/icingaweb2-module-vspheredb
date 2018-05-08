@@ -67,10 +67,10 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
 
         $usage = new DatastoreUsage($this->datastore);
         $usage->setCapacity($size);
-        $usage->attributes()->add('class', 'compact');
+        $usage->getAttributes()->add('class', 'compact');
         $usage->addDiskFromDbRow($row);
         $dsUsage = new DatastoreUsage($this->datastore);
-        $dsUsage->attributes()->add('class', 'compact');
+        $dsUsage->getAttributes()->add('class', 'compact');
         $dsUsage->addDiskFromDbRow($row);
 
         $tr = $this::tr([

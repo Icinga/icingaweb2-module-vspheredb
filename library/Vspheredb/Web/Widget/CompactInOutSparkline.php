@@ -2,10 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseElement;
+use dipl\Html\BaseHtmlElement;
 use dipl\Html\Html;
 
-class CompactInOutSparkline extends BaseElement
+class CompactInOutSparkline extends BaseHtmlElement
 {
     protected $tag = 'div';
 

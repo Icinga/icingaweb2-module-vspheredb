@@ -2,13 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use dipl\Html\BaseHtmlElement;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Util\Format;
-use dipl\Html\Attributes;
-use dipl\Html\BaseElement;
 use dipl\Html\Link;
 
-class DatastoreUsage extends BaseElement
+class DatastoreUsage extends BaseHtmlElement
 {
     protected $tag = 'div';
 
@@ -136,7 +135,7 @@ class DatastoreUsage extends BaseElement
         if ($vmUuid) {
             $alpha = (20 + (crc32(sha1((string) $vmUuid . $this->uuid)) % 60)) / 100;
             $color = sprintf('rgba(70, 128, 255, %.2F);', $alpha);
-            $link->attributes()->add('style', "background-color: $color");
+            $link->getAttributes()->add('style', "background-color: $color");
             $this->diskLinks[$vmUuid] = $link;
         }
         $this->add($link);

@@ -2,8 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Util;
-use Zend_Db_Select as ZfSelect;
+use dipl\Html\Html;
 
 abstract class TableColumn
 {
@@ -109,7 +108,7 @@ abstract class TableColumn
     public function renderRow($row)
     {
         if ($this->renderer === null) {
-            return Util::wantHtml($row->{$this->getAlias()});
+            return Html::wantHtml($row->{$this->getAlias()});
         } else {
             $func = $this->renderer;
 

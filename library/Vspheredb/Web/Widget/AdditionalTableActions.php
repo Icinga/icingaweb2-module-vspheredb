@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use dipl\Html\Html;
+use dipl\Html\HtmlDocument;
 use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
@@ -30,7 +31,7 @@ class AdditionalTableActions
         $this->table = $table;
     }
 
-    public function appendTo(Html $parent)
+    public function appendTo(HtmlDocument $parent)
     {
         $links = [];
         if (false && $this->hasPermission('vspheredb/admin')) {

@@ -78,7 +78,7 @@ class DatastoreTable extends ObjectsTable
                     /** @var Db $connection */
                     $connection = $this->connection();
                     $usage = new DatastoreUsage(Datastore::load($row->uuid, $connection));
-                    $usage->attributes()->add('class', 'compact');
+                    $usage->getAttributes()->add('class', 'compact');
                     $usage->loadAllVmDisks()->addFreeDatastoreSpace();
 
                     return $usage;

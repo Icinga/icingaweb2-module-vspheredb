@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseElement;
+use dipl\Html\BaseHtmlElement;
 use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
@@ -11,7 +11,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use Zend_Db_Select as ZfSelect;
 
-class Summaries extends BaseElement
+class Summaries extends BaseHtmlElement
 {
     use TranslationHelper;
 

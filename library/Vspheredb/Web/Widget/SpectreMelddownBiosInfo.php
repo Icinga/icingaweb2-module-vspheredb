@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use dipl\Html\BaseHtmlElement;
 use dipl\Html\Html;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
-use dipl\Html\BaseElement;
 
-class SpectreMelddownBiosInfo extends BaseElement
+class SpectreMelddownBiosInfo extends BaseHtmlElement
 {
     protected $tag = 'span';
 

@@ -70,7 +70,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
             ]);
             $this->lastValue = $value;
         }
-        $tr->attributes()->add('class', [$row->runtime_power_state, $row->overall_status]);
+        $tr->getAttributes()->add('class', [$row->runtime_power_state, $row->overall_status]);
 
         return $tr;
     }
