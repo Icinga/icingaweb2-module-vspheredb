@@ -18,6 +18,7 @@ use Icinga\Module\Vspheredb\Sync\SyncQuickStats;
 use Icinga\Module\Vspheredb\Sync\SyncVmDatastoreUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmDiskUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmHardware;
+use Icinga\Module\Vspheredb\Sync\SyncVmSnapshots;
 use React\EventLoop\Factory as Loop;
 
 class MainRunner
@@ -74,6 +75,8 @@ class MainRunner
                 $this->syncVmHardware();
                 $this->syncHostHardware();
                 $this->syncHostSensors();
+                $this->syncVmSnapshots();
+                $this->syncQuickStatsAction();
             });
         });
         $loop->addPeriodicTimer(2, function () {
@@ -89,6 +92,7 @@ class MainRunner
         $loop->addPeriodicTimer(1800, function () {
             $this->runFailSafe(function () {
                 $this->syncVmHardware();
+                $this->syncVmSnapshots();
             });
         });
         $loop->addPeriodicTimer(7200, function () {
@@ -122,6 +126,8 @@ class MainRunner
     }
 
     /**
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\NotFoundError
      * @throws \Zend_Db_Adapter_Exception
      * @throws \Zend_Db_Select_Exception
      */
@@ -263,10 +269,17 @@ class MainRunner
         $sync->run();
     }
 
+    public function syncVmSnapshots()
+    {
+        $sync = new SyncVmSnapshots($this->vCenter);
+        $sync->run();
+    }
+
     /**
      * @throws \Icinga\Exception\AuthenticationException
      * @throws \Icinga\Exception\ConfigurationError
      * @throws \Zend_Db_Adapter_Exception
+     * @throws \Zend_Db_Exception
      */
     public function streamEvents()
     {
