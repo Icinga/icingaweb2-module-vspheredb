@@ -2,6 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Module\Vspheredb\Api;
+use Icinga\Module\Vspheredb\PropertySet\PropertySet;
+
 class VirtualMachine extends BaseDbObject
 {
     protected $keyName = 'uuid';
@@ -85,6 +88,11 @@ class VirtualMachine extends BaseDbObject
 
     protected $quickStats;
 
+    /**
+     * @return VmQuickStats
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\NotFoundError
+     */
     public function quickStats()
     {
         if ($this->quickStats === null) {
@@ -94,6 +102,30 @@ class VirtualMachine extends BaseDbObject
         return $this->quickStats;
     }
 
+    /**
+     * @param Api $api
+     * @return array
+     */
+    public static function fetchAllFromApi(Api $api)
+    {
+        // Temporarily override parent method. This should be replaced by some
+        // map defining minimum version requirements for certain properties.
+        $propertySet = static::getDefaultPropertySet();
+        if (version_compare($api->getAbout()->apiVersion, '6.0', '<')) {
+            unset($propertySet['runtime.paused']);
+        }
+
+        return $api->propertyCollector()->collectObjectProperties(
+            new PropertySet(static::getType(), $propertySet),
+            static::getSelectSet()
+        );
+    }
+
+    /**
+     * @param $value
+     * @return $this
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function setPaused($value)
     {
         // powered off?
@@ -108,6 +140,10 @@ class VirtualMachine extends BaseDbObject
         return $this->reallySet('paused', $value);
     }
 
+    /**
+     * @param $value
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function setBootOptions($value)
     {
         if (property_exists($value, 'networkBootProtocol')) {
