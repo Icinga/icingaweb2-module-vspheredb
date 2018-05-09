@@ -5,6 +5,7 @@ Requirements
 ------------
 
 * Icinga Web 2 (&gt;= 2.4.1)
+* Icinga Web 2 module [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.2.0)
 * PHP (&gt;= 5.4 or 7.x)
 * php-soap
 * php-posix
