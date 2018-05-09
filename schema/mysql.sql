@@ -222,7 +222,7 @@ CREATE TABLE virtual_machine (
   bios_uuid VARCHAR(64) NOT NULL,       -- 42042ce7-1c4f-b339-2293-40357f1d6860
   version VARCHAR(32) NOT NULL,         -- vmx-11
   online_standby ENUM('y', 'n') NOT NULL,
-  paused ENUM('y', 'n') NOT NULL,
+  paused ENUM('y', 'n') DEFAULT NULL,
   cpu_hot_add_enabled ENUM('y', 'n') NOT NULL,
   memory_hot_add_enabled ENUM('y', 'n') NOT NULL,
   connection_state ENUM (
