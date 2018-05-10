@@ -6,38 +6,62 @@ use Icinga\Exception\ConfigurationError;
 
 class SafeCacheDir
 {
+    protected static $currentUser;
+
     /**
      * @return string
      * @throws ConfigurationError
      */
     public static function getDirectory()
     {
-        $user = static::getCurrentUsername();
-        $dirname = sprintf(
+        $directory = sprintf(
             '%s/%s-%s',
             sys_get_temp_dir(),
             'iwebVsphere',
-            $user
+            static::getCurrentUsername()
         );
 
-        if (file_exists($dirname)) {
-            if (static::uidToName(fileowner($dirname)) !== $user) {
+        static::claimDirectory($directory);
+
+        return $directory;
+    }
+
+    /**
+     * @param $directory
+     * @return string
+     * @throws ConfigurationError
+     */
+    public static function getSubDirectory($directory)
+    {
+        echo "Getting sub dir $directory\n";
+        $subDir = static::getDirectory() . "/$directory";
+        static::claimDirectory($subDir);
+
+        return $subDir;
+    }
+
+    /**
+     * @param $directory
+     * @throws ConfigurationError
+     */
+    protected static function claimDirectory($directory)
+    {
+        if (file_exists($directory)) {
+            if (static::uidToName(fileowner($directory)) !== static::getCurrentUsername()) {
                 throw new ConfigurationError(
                     '%s exists, but does not belong to %s',
-                    $dirname,
-                    $user
+                    $directory,
+                    static::getCurrentUsername()
                 );
             }
         } else {
-            if (! mkdir($dirname, 0700)) {
+            if (! mkdir($directory, 0700)) {
                 throw new ConfigurationError(
                     'Could not create %s',
-                    $dirname
+                    $directory
                 );
             }
         }
-
-        return $dirname;
     }
 
     /**
@@ -46,13 +70,17 @@ class SafeCacheDir
      */
     protected static function getCurrentUsername()
     {
-        if (function_exists('posix_geteuid')) {
-            return static::uidToName(posix_geteuid());
-        } else {
-            throw new ConfigurationError(
-                'POSIX methods not available, is php-posix installed and enabled?'
-            );
+        if (static::$currentUser === null) {
+            if (function_exists('posix_geteuid')) {
+                static::$currentUser = static::uidToName(posix_geteuid());
+            } else {
+                throw new ConfigurationError(
+                    'POSIX methods not available, is php-posix installed and enabled?'
+                );
+            }
         }
+
+        return static::$currentUser;
     }
 
     protected static function uidToName($uid)

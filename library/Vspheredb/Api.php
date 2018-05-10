@@ -451,7 +451,7 @@ class Api
     protected function cacheDir()
     {
         if ($this->cacheDir === null) {
-            $this->cacheDir = SafeCacheDir::getDirectory();
+            $this->cacheDir = SafeCacheDir::getSubDirectory($this->host);
         }
 
         return $this->cacheDir;
