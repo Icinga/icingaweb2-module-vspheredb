@@ -3,6 +3,10 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use dipl\Html\Html;
+use Icinga\Module\Vspheredb\Addon\BackupTool;
+use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
+use Icinga\Module\Vspheredb\Addon\VeeamBackup;
+use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
@@ -43,6 +47,24 @@ class VmController extends Controller
             $this->content()->add(Html::tag('p', null, $this->translate('No snapshots have been created for this VM')));
         }
 
+        $this->addSubTitle($this->translate('Backup-Tools'), 'download');
+        $tools = $this->getBackupTools();
+        if (count($tools)) {
+            foreach ($tools as $tool) {
+                if ($tool->wants($vm)) {
+                    $tool->handle($vm);
+                    $this->content()->add(Html::tag('h3', null, $tool->getName()));
+                    $this->content()->add($tool->getInfoRenderer());
+                }
+            }
+        } else {
+            $this->content()->add(Html::tag(
+                'p',
+                null,
+                $this->translate('No known backup tool has been used for this VM')
+            ));
+        }
+
         $this->addSubTitle($this->translate('Guest Disk Usage'), 'chart-pie');
         $disks = VmDiskUsageTable::create($vm);
         if (count($disks)) {
@@ -50,6 +72,25 @@ class VmController extends Controller
         }
     }
 
+    /**
+     * TODO: Use a hook once the API stabilized
+     * @return BackupTool[]
+     */
+    protected function getBackupTools()
+    {
+        return [
+            new IbmSpectrumProtect(),
+            new VeeamBackup(),
+            new VRangerBackup(),
+        ];
+    }
+
+    /**
+     * @param $title
+     * @param null $icon
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function addSubTitle($title, $icon = null)
     {
         $title = Html::tag('h2', null, $title);
