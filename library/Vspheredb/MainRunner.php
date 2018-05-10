@@ -64,7 +64,7 @@ class MainRunner
     {
         $loop = $this->loop = Loop::create();
 
-        $loop->nextTick(function () {
+        $loop->futureTick(function () {
             $this->isReady = true;
             $this->runFailSafe(function () {
                 $this->initialize();
