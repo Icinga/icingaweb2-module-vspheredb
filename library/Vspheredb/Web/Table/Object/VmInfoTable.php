@@ -36,12 +36,32 @@ class VmInfoTable extends NameValueTable
         return $this->vm->getConnection();
     }
 
+    /**
+     * @param $annotation
+     * @return string|\dipl\Html\HtmlElement
+     */
+    protected function formatAnnotation($annotation)
+    {
+        if (strpos($annotation, "\n") === false) {
+            return $annotation;
+        } else {
+            return Html::tag('pre', null, $annotation);
+        }
+    }
+
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function assemble()
     {
         $vm = $this->vm;
         $uuid = $vm->get('uuid');
-        if ($vm->get('annotation')) {
-            $this->addNameValueRow($this->translate('Annotation'), $vm->get('annotation'));
+        if ($annotation = $vm->get('annotation')) {
+            $this->addNameValueRow(
+                $this->translate('Annotation'),
+                $this->formatAnnotation($annotation)
+            );
         }
 
         $lookup = $this->pathLookup;
@@ -76,9 +96,9 @@ class VmInfoTable extends NameValueTable
         $this->addNameValuePairs([
             // $this->translate('UUID') => $vm->get('bios_uuid'),
             // $this->translate('Instance UUID') => $vm->get('instance_uuid'),
-            $this->translate('CPUs') => $vm->get('hardware_numcpu'),
+            $this->translate('CPUs')   => $vm->get('hardware_numcpu'),
             $this->translate('MO Ref') => $this->linkToVCenter($vm->object()->get('moref')),
-            $this->translate('Memory')      => number_format($vm->get('hardware_memorymb'), 0, ',', '.') . ' MB',
+            $this->translate('Memory') => number_format($vm->get('hardware_memorymb'), 0, ',', '.') . ' MB',
             $this->translate('Is Template') => $vm->get('template') === 'y'
                 ? $this->translate('true')
                 : $this->translate('false'),
@@ -92,9 +112,9 @@ class VmInfoTable extends NameValueTable
                 ),
             ],
             $this->translate('Connection State') => $this->getConnectionStateDetails($vm->get('connection_state')),
-            $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
-            $this->translate('Host') => $lookup->linkToObject($vm->get('runtime_host_uuid')),
-            $this->translate('Version') => $vm->get('version'),
+            $this->translate('Resource Pool')    => $lookup->linkToObject($vm->get('resource_pool_uuid')),
+            $this->translate('Host')             => $lookup->linkToObject($vm->get('runtime_host_uuid')),
+            $this->translate('Version')          => $vm->get('version'),
 
         ]);
     }
