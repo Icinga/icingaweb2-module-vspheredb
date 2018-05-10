@@ -49,15 +49,16 @@ class VmController extends Controller
 
         $this->addSubTitle($this->translate('Backup-Tools'), 'download');
         $tools = $this->getBackupTools();
-        if (count($tools)) {
-            foreach ($tools as $tool) {
-                if ($tool->wants($vm)) {
-                    $tool->handle($vm);
-                    $this->content()->add(Html::tag('h3', null, $tool->getName()));
-                    $this->content()->add($tool->getInfoRenderer());
-                }
+        $seenBackupTools = 0;
+        foreach ($tools as $tool) {
+            if ($tool->wants($vm)) {
+                $seenBackupTools++;
+                $tool->handle($vm);
+                $this->content()->add(Html::tag('h3', null, $tool->getName()));
+                $this->content()->add($tool->getInfoRenderer());
             }
-        } else {
+        }
+        if ($seenBackupTools === 0) {
             $this->content()->add(Html::tag(
                 'p',
                 null,
