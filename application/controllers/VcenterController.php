@@ -8,7 +8,6 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
-use Icinga\Module\Vspheredb\Web\Table\Object\VCenterInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSyncInfo;
@@ -27,7 +26,7 @@ class VcenterController extends Controller
             $this->content()->add(new VCenterSyncInfo($vCenter));
         }
         $this->content()->add([
-            new VCenterInfoTable($vCenter),
+            // new VCenterInfoTable($vCenter),
             new VCenterSummaries($vCenter),
         ]);
     }

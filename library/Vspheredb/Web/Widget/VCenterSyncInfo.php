@@ -25,6 +25,10 @@ class VCenterSyncInfo extends BaseHtmlElement
         $this->vCenter = $vCenter;
     }
 
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function assemble()
     {
         $sync = new VcenterSyncState($this->vCenter);
@@ -38,7 +42,8 @@ class VCenterSyncInfo extends BaseHtmlElement
         if ($sync->isAlive()) {
             $this->getAttributes()->add('class', 'green');
             $this->add(Html::sprintf(
-                $this->translate('Sync is running as PID %s by user %s on %s, last refresh happened %s'),
+                $this->translate('Sync for %s is running as PID %s by user %s on %s, last refresh happened %s'),
+                $this->getVersionInfoString(),
                 (int) $syncInfo->pid,
                 $syncInfo->username,
                 $syncInfo->fqdn,
@@ -56,6 +61,18 @@ class VCenterSyncInfo extends BaseHtmlElement
             $this->getAttributes()->add('class', 'red');
             $this->add($this->translate('Sync has never been running'));
         }
+    }
+
+    protected function getVersionInfoString()
+    {
+        $c = $this->vCenter;
+
+        return sprintf(
+            '%s %s build-%s',
+            $c->get('api_type'),
+            $c->get('version'),
+            $c->get('build')
+        );
     }
 
     protected function healthDiv($state, $content = null)
