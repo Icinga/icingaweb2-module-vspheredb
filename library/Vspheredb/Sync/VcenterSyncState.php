@@ -25,7 +25,7 @@ class VcenterSyncState
             return false;
         }
 
-        return abs(Util::currentTimestamp() - $info->ts_last_refresh) < 5000;
+        return abs(Util::currentTimestamp() - $info->ts_last_refresh) < 60000;
     }
 
     public function getInfo()

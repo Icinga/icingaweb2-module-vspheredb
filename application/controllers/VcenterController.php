@@ -17,6 +17,7 @@ class VcenterController extends Controller
 {
     public function indexAction()
     {
+        $this->setAutorefreshInterval(10);
         $this->handleTabs();
         $vCenters = VCenter::loadAll($this->db());
         if (empty($vCenters)) {
