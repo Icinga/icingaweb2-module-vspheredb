@@ -112,7 +112,9 @@ class VirtualMachine extends BaseDbObject
         // map defining minimum version requirements for certain properties.
         $propertySet = static::getDefaultPropertySet();
         if (version_compare($api->getAbout()->apiVersion, '6.0', '<')) {
-            unset($propertySet['runtime.paused']);
+            $propertySet = array_values(array_filter($propertySet, function ($value) {
+                return $value !== 'runtime.paused';
+            }));
         }
 
         return $api->propertyCollector()->collectObjectProperties(
