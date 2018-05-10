@@ -20,10 +20,11 @@ use Icinga\Module\Vspheredb\Sync\SyncVmDiskUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmHardware;
 use Icinga\Module\Vspheredb\Sync\SyncVmSnapshots;
 use React\EventLoop\Factory as Loop;
+use React\EventLoop\LoopInterface;
 
 class MainRunner
 {
-    /** @var Loop */
+    /** @var LoopInterface */
     private $loop;
 
     /** @var int */
@@ -63,19 +64,48 @@ class MainRunner
     public function run()
     {
         $loop = $this->loop = Loop::create();
+        $loop->addSignal(SIGINT, $func = function ($signal) use (&$func) {
+            $this->shutdownWithSignal($signal, $func);
+        });
+        $loop->addSignal(SIGTERM, $func = function ($signal) use (&$func) {
+            $this->shutdownWithSignal($signal, $func);
+        });
 
         $loop->futureTick(function () {
             $this->isReady = true;
             $this->runFailSafe(function () {
                 $this->initialize();
+            });
+        });
 
-                // TODO: We need better scheduling
+        // TODO: We need better scheduling
+        $loop->futureTick(function () {
+            $this->runFailSafe(function () {
                 $this->syncAllObjects();
-                $this->streamEvents();
+            });
+        });
+        $loop->futureTick(function () {
+            $this->runFailSafe(function () {
                 $this->syncVmHardware();
+            });
+        });
+        $loop->futureTick(function () {
+            $this->runFailSafe(function () {
                 $this->syncHostHardware();
+            });
+        });
+        $loop->futureTick(function () {
+            $this->runFailSafe(function () {
                 $this->syncHostSensors();
+            });
+        });
+        $loop->futureTick(function () {
+            $this->runFailSafe(function () {
                 $this->syncVmSnapshots();
+            });
+        });
+        $loop->futureTick(function () {
+            $this->runFailSafe(function () {
                 $this->syncQuickStatsAction();
             });
         });
@@ -322,6 +352,34 @@ class MainRunner
                 $e->getTraceAsString()
             );
         }
+    }
+
+    protected function shutdownWithSignal($signal, &$func)
+    {
+        $this->loop->removeSignal($signal, $func);
+        $this->shutdown();
+    }
+
+    protected function shutdown()
+    {
+        $this->isReady = false;
+        try {
+            Logger::info(
+                'Shutting down vSphereDB main runner for %s',
+                $this->getLogName()
+            );
+            $this->eventuallyLogout();
+            $this->closeDbConnection();
+        } catch (Exception $e) {
+            Logger::error(
+                'Failed to safely shutdown vSphereDB main runner for %s: %s -> %s, stopping anyways',
+                $this->getLogName(),
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+        }
+
+        $this->loop->stop();
     }
 
     protected function eventuallyLogout()
