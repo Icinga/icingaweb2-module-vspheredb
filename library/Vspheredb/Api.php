@@ -20,6 +20,8 @@ use SoapVar;
  */
 class Api
 {
+    use LazyApiHelpers;
+
     /** @var CurlLoader */
     private $curl;
 
@@ -38,26 +40,11 @@ class Api
     /** @var string */
     private $cacheDir;
 
-    /** @var mixed */
-    private $serviceInstance;
-
     /** @var SoapClient */
     private $soapClient;
 
     /** @var VCenterServer */
     private $vCenterServer;
-
-    /** @var string */
-    private $binaryUuid;
-
-    /** @var EventManager */
-    private $eventManager;
-
-    /** @var PerfManager */
-    private $perfManager;
-
-    /** @var PropertyCollector */
-    private $propertyCollector;
 
     /**
      * Involved WSDL files
@@ -94,6 +81,11 @@ class Api
         $this->pass = $pass;
     }
 
+    /**
+     * @param VCenterServer $server
+     * @return static
+     * @throws IcingaException
+     */
     public static function forServer(VCenterServer $server)
     {
         $api = new static(
@@ -126,37 +118,12 @@ class Api
         return $api;
     }
 
-    public function getBinaryUuid()
-    {
-        if ($this->binaryUuid === null) {
-            $about = $this->getAbout();
 
-            if ($about->apiType === 'VirtualCenter') {
-                $this->binaryUuid = Util::uuidToBin($about->instanceUuid);
-            } elseif ($about->apiType === 'HostAgent') {
-                /// NONO, TODO: bios uuid?!
-                $this->binaryUuid = Util::uuidToBin(md5($this->host));
-            } else {
-                throw new IcingaException(
-                    'Unsupported API type "%s"',
-                    $about->apiType
-                );
-            }
-        }
-
-        return $this->binaryUuid;
-    }
-
-    public function makeGlobalUuid($moRefId)
-    {
-        return sha1($this->getBinaryUuid() . $moRefId, true);
-    }
-
-    public function getAbout()
-    {
-        return $this->getServiceInstance()->about;
-    }
-
+    /**
+     * @return DateTime
+     * @throws AuthenticationException
+     * @throws ConfigurationError
+     */
     public function getCurrentTime()
     {
         $result = $this->soapCall(
@@ -169,6 +136,7 @@ class Api
 
     /**
      * @return CurlLoader
+     * @throws ConfigurationError
      */
     public function curl()
     {
@@ -183,33 +151,6 @@ class Api
     public function gotCookie($cookie)
     {
         Logger::info('Got new session cookie from VCenter');
-    }
-
-    public function eventManager()
-    {
-        if ($this->eventManager === null) {
-            $this->eventManager = new EventManager($this);
-        }
-
-        return $this->eventManager;
-    }
-
-    public function perfManager()
-    {
-        if ($this->perfManager === null) {
-            $this->perfManager = new PerfManager($this);
-        }
-
-        return $this->perfManager;
-    }
-
-    public function propertyCollector()
-    {
-        if ($this->propertyCollector === null) {
-            $this->propertyCollector = new PropertyCollector($this);
-        }
-
-        return $this->propertyCollector;
     }
 
     /**
@@ -265,7 +206,7 @@ class Api
     {
         if ($this->soapClient === null) {
             $this->prepareWsdl();
-            $wsdlFile = $this->wsdlDir() . '/' . $this->wsdlFiles[0];
+            $wsdlFile = $this->cacheDir() . '/' . $this->wsdlFiles[0];
             $features = SOAP_SINGLE_ELEMENT_ARRAYS + SOAP_USE_XSI_ARRAY_TYPE;
             $options = [
                 'trace'              => true,
@@ -286,28 +227,13 @@ class Api
     }
 
     /**
-     * Our WSDL cache
-     *
-     * @return string
-     * @throws ConfigurationError
-     */
-    protected function wsdlDir()
-    {
-        if ($this->wsdlDir === null) {
-            $this->wsdlDir = $this->cacheDir();
-        }
-
-        return $this->wsdlDir;
-    }
-
-    /**
      * Make sure all our WSDL files are in place, fetch missing ones
      * @throws ConfigurationError
      */
     protected function prepareWsdl()
     {
         $curl = $this->curl();
-        $dir = $this->wsdlDir();
+        $dir = $this->cacheDir();
         foreach ($this->wsdlFiles as $file) {
             if (! file_exists("$dir/$file")) {
                 $wsdl = $curl->get($curl->url("sdk/$file"));
@@ -317,51 +243,13 @@ class Api
     }
 
     /**
-     * A ServiceInstance, lazy-loaded only once
-     *
-     * This is a stdClass for now, might become a dedicated class
-     *
-     * @return mixed
-     * @throws AuthenticationException
-     */
-    public function getServiceInstance()
-    {
-        if ($this->serviceInstance === null) {
-            $this->serviceInstance = $this->fetchServiceInstance();
-        }
-
-        return $this->serviceInstance;
-    }
-
-    /**
-     * Just a custom version string
-     *
-     * Please to not make assumptions based on the format of this string, it
-     * is for visualization purposes only and might change without pre-announcement
-     *
-     * @return string
-     * @throws AuthenticationException
-     */
-    public function getVersionString()
-    {
-        $about = $this->getServiceInstance()->about;
-
-        return sprintf(
-            "%s on %s, api=%s (%s)\n",
-            $about->fullName,
-            $about->osType,
-            $about->apiType,
-            $about->licenseProductName
-        );
-    }
-
-    /**
      * Really fetch the ServiceInstance
      *
      * @see getServiceInstance()
      *
      * @return mixed
      * @throws AuthenticationException
+     * @throws ConfigurationError
      */
     protected function fetchServiceInstance()
     {
@@ -387,6 +275,7 @@ class Api
      *
      * This will retrieve a session cookie and pass it with subsequent requests
      * @throws AuthenticationException
+     * @throws ConfigurationError
      */
     public function login()
     {
@@ -409,6 +298,9 @@ class Api
 
     /**
      * Logout, destroy our session
+     *
+     * @throws AuthenticationException
+     * @throws ConfigurationError
      */
     public function logout()
     {
@@ -423,6 +315,12 @@ class Api
         $this->curl()->forgetCookie();
     }
 
+    /**
+     * @param SelectSet $selectSet
+     * @param null $base
+     * @return array
+     * @throws AuthenticationException
+     */
     protected function makeObjectSet(SelectSet $selectSet, $base = null)
     {
         if ($base === null) {
@@ -436,6 +334,12 @@ class Api
         ];
     }
 
+    /**
+     * @param PropertySet $propSet
+     * @param SelectSet $selectSet
+     * @return array
+     * @throws AuthenticationException
+     */
     public function makePropertyFilterSpec(PropertySet $propSet, SelectSet $selectSet)
     {
         return array(
@@ -465,11 +369,5 @@ class Api
     public function makeVar($key, $val)
     {
         return new SoapVar($val, XSD_STRING, $key, null, 'ns1:_this');
-    }
-
-    public function __destruct()
-    {
-        unset($this->perfManager);
-        unset($this->propertyCollector);
     }
 }
