@@ -6,9 +6,15 @@ Requirements
 
 * Icinga Web 2 (&gt;= 2.4.1)
 * Icinga Web 2 module [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.3.0)
+* Icinga Director (&gt; v1.5.0 current master)
 * PHP (&gt;= 5.4 or 7.x)
 * php-soap
 * php-posix
+
+> **Hint**: this module will hook into Icinga Director, but shouldn't depend on it
+> at all. Currently it is based on some libraries provided by the Director, that's
+> why you need to have a very recent version installed. We will ship those libraries
+> separately in the near future to get rid of this dependency.
 
 Once you got Icinga Web 2 up and running, all required dependencies should
 already be there. All, but `php-soap` and `php-posix`. They are available on
