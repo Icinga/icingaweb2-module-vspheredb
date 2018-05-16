@@ -66,6 +66,17 @@ class VCenterSummaries extends BaseHtmlElement
         $this->addCountlet(
             $db->fetchOne(
                 $db->select()->from('object', 'COUNT(*)')
+                    ->where('object_type IN (?)', [
+                        'DistributedVirtualSwitch',
+                        'VmwareDistributedVirtualSwitch'
+                    ])
+            ),
+            'Virtual Switches',
+            'vspheredb/switches'
+        );
+        $this->addCountlet(
+            $db->fetchOne(
+                $db->select()->from('object', 'COUNT(*)')
                     ->where('object_type = ?', 'ResourcePool')
             ),
             'Resource Pools',
