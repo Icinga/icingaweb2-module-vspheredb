@@ -7,6 +7,7 @@ use dipl\Html\Icon;
 use dipl\Html\Link;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
+use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 
 abstract class ObjectsTable extends BaseTable
 {
@@ -20,6 +21,8 @@ abstract class ObjectsTable extends BaseTable
     protected $parentUuids;
 
     protected $baseUrl;
+
+    protected $overallStatusRenderer;
 
     public function filterParentUuids(array $uuids)
     {
@@ -56,6 +59,15 @@ abstract class ObjectsTable extends BaseTable
             });
     }
 
+    protected function overallStatusRenderer()
+    {
+        if ($this->overallStatusRenderer === null) {
+            $this->overallStatusRenderer = new OverallStatusRenderer();
+        }
+
+        return $this->overallStatusRenderer;
+    }
+
     protected function linkToVCenter($moRef)
     {
         return Html::tag('a', [
@@ -72,12 +84,8 @@ abstract class ObjectsTable extends BaseTable
     protected function createOverallStatusColumn()
     {
         return $this->createColumn('overall_status', $this->translate('Status'), 'o.overall_status')
-            ->setRenderer(function ($row) {
-                return Icon::create('ok', [
-                    'title' => $this->getStatusDescription($row->overall_status),
-                    'class' => [ 'state', $row->overall_status ]
-                ]);
-            })->setDefaultSortDirection('DESC');
+            ->setRenderer($this->overallStatusRenderer())
+            ->setDefaultSortDirection('DESC');
     }
 
     protected function createObjectNameColumn()
@@ -96,17 +104,5 @@ abstract class ObjectsTable extends BaseTable
                 );
             }
         });
-    }
-
-    protected function getStatusDescription($status)
-    {
-        $descriptions = [
-            'gray'   => $this->translate('Gray - status is unknown'),
-            'green'  => $this->translate('Green - everything is fine'),
-            'yellow' => $this->translate('Yellow - there are warnings'),
-            'red'    => $this->translate('Red - there is a problem'),
-        ];
-
-        return $descriptions[$status];
     }
 }
