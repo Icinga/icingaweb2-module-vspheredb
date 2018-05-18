@@ -6,6 +6,11 @@ use dipl\Html\Html;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
+use Icinga\Module\Vspheredb\Addon\BackupTool;
+use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
+use Icinga\Module\Vspheredb\Addon\VeeamBackup;
+use Icinga\Module\Vspheredb\Addon\VRangerBackup;
+use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
@@ -42,6 +47,18 @@ class VmInfoTable extends NameValueTable
      */
     protected function formatAnnotation($annotation)
     {
+        $tools = [
+            new IbmSpectrumProtect(),
+            new VeeamBackup(),
+            new VRangerBackup(),
+        ];
+        /** @var BackupTool $tool */
+        foreach ($tools as $tool) {
+            $tool->stripAnnotation($annotation);
+        }
+
+        $annotation = trim($annotation);
+
         if (strpos($annotation, "\n") === false) {
             return $annotation;
         } else {
