@@ -64,16 +64,24 @@ i.state::before {
   line-height: 2em;
 }
 
-i.poweredOn::before, i.green::before {
+i.poweredOn::before, i.green::before, i.UP::before {
   background-color: @color-ok;
 }
 
-i.poweredOff::before, i.suspended::before, i.red::before {
+i.poweredOff::before, i.suspended::before, i.red::before, i.DOWN::before {
   background-color: @color-critical;
 }
 
 i.standby::before, i.yellow::before {
   background-color: @color-warning;
+}
+
+i.UNREACHABLE::before {
+  background-color: @color-unreachable;
+}
+
+i.PENDING::before {
+  background-color: @color-pending;
 }
 
 i.unknown::before {
