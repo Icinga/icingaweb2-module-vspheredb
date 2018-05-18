@@ -14,6 +14,7 @@ class VmsController extends ObjectsController
 {
     /**
      * @throws \Icinga\Exception\ProgrammingError
+     * @throws \Icinga\Exception\IcingaException
      */
     public function indexAction()
     {
@@ -38,6 +39,7 @@ class VmsController extends ObjectsController
 
     /**
      * @throws \Icinga\Exception\ProgrammingError
+     * @throws \Icinga\Exception\IcingaException
      */
     public function diskusageAction()
     {

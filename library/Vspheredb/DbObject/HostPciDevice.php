@@ -74,6 +74,7 @@ class HostPciDevice extends BaseDbObject
     /**
      * @param VCenter $vCenter
      * @return static[]
+     * @throws \Icinga\Exception\IcingaException
      */
     public static function loadAllForVCenter(VCenter $vCenter)
     {
