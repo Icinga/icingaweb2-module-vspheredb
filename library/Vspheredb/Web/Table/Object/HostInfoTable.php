@@ -10,6 +10,7 @@ use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
@@ -40,12 +41,17 @@ class HostInfoTable extends NameValueTable
         return $this->host->getConnection();
     }
 
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function assemble()
     {
         $host = $this->host;
         $uuid = $host->get('uuid');
         $lookup = $this->pathLookup;
         $powerStateRenderer = new PowerStateRenderer();
+        $overallStatusRenderer = new OverallStatusRenderer();
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
         foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
             $path->add(Link::create(
@@ -57,6 +63,7 @@ class HostInfoTable extends NameValueTable
         }
 
         $this->addNameValuePairs([
+            $this->translate('Status')       => $overallStatusRenderer($host->object()->get('overall_status')),
             $this->translate('Power')        => $powerStateRenderer($host->get('runtime_power_state')),
             $this->translate('CPU / Memory') => [
                 Html::tag('div', ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
@@ -95,6 +102,11 @@ class HostInfoTable extends NameValueTable
         ]);
     }
 
+    /**
+     * @param $moRef
+     * @return \dipl\Html\HtmlElement
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function linkToVCenter($moRef)
     {
         return Html::tag('a', [
@@ -108,6 +120,11 @@ class HostInfoTable extends NameValueTable
         ], $moRef);
     }
 
+    /**
+     * @param HostSystem $host
+     * @return \dipl\Html\HtmlElement|mixed
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function getFormattedServiceTag(HostSystem $host)
     {
         if ($this->host->get('sysinfo_vendor') === 'Dell Inc.') {
@@ -138,6 +155,11 @@ class HostInfoTable extends NameValueTable
         );
     }
 
+    /**
+     * @param HostSystem $host
+     * @return array
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function showCpuUsage(HostSystem $host)
     {
         $total = $host->get('hardware_cpu_cores') * $host->get('hardware_cpu_mhz');
@@ -147,6 +169,10 @@ class HostInfoTable extends NameValueTable
         return [new SimpleUsageBar($used, $total, $title), ' ' . $title];
     }
 
+    /**
+     * @return array
+     * @throws \Icinga\Exception\IcingaException
+     */
     protected function getFormattedMemory()
     {
         $size = $this->host->get('hardware_memory_size_mb') * 1024 * 1024;
