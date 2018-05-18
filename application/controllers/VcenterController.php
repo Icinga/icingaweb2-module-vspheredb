@@ -14,6 +14,10 @@ use Icinga\Module\Vspheredb\Web\Widget\VCenterSyncInfo;
 
 class VcenterController extends Controller
 {
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function indexAction()
     {
         $this->setAutorefreshInterval(10);
@@ -25,14 +29,16 @@ class VcenterController extends Controller
         foreach ($vCenters as $vCenter) {
             $this->content()->add(new VCenterSyncInfo($vCenter));
         }
-        $this->content()->add([
-            // new VCenterInfoTable($vCenter),
-            new VCenterSummaries($vCenter),
-        ]);
+        $this->content()->add(new VCenterSummaries($vCenter));
     }
 
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     public function serversAction()
     {
+        $this->setAutorefreshInterval(10);
         $this->handleTabs();
         $this->addTitle($this->translate('vCenter Servers'));
         $this->actions()->add(
@@ -51,6 +57,9 @@ class VcenterController extends Controller
         $table->renderTo($this);
     }
 
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     */
     public function serverAction()
     {
         $this->addSingleTab($this->translate('vCenter Server'));
@@ -69,6 +78,10 @@ class VcenterController extends Controller
         ));
     }
 
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function handleTabs()
     {
         $this->tabs()->add('index', [
