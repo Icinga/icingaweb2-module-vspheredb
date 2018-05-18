@@ -8,6 +8,7 @@ use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
@@ -65,6 +66,21 @@ class HostInfoTable extends NameValueTable
         $this->addNameValuePairs([
             $this->translate('Status')       => $overallStatusRenderer($host->object()->get('overall_status')),
             $this->translate('Power')        => $powerStateRenderer($host->get('runtime_power_state')),
+        ]);
+
+        $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
+        if ($monitoring && $monitoring->hasHost($host->get('host_name'))) {
+            $this->addNameValueRow(
+                $this->translate('Monitoring'),
+                print_r($monitoring->getHostState($host->get('host_name')), 1)
+            );
+        } else {
+            $this->addNameValueRow(
+                $this->translate('Monitoring'),
+                'no'
+            );
+        }
+        $this->addNameValuePairs([
             $this->translate('CPU / Memory') => [
                 Html::tag('div', ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
                 $this->showCpuUsage($host)),

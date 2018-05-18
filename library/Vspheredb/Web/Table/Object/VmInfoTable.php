@@ -14,6 +14,7 @@ use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 
 class VmInfoTable extends NameValueTable
@@ -101,6 +102,12 @@ class VmInfoTable extends NameValueTable
         } else {
             $guest = '-';
         }
+
+        $this->addNameValueRow(
+            $this->translate('Monitoring'),
+            $this->getMonitoringInfo($vm)
+        );
+
         $powerStateRenderer = new PowerStateRenderer();
         if ($vm->get('guest_id')) {
             $this->addNameValuePairs([
@@ -134,6 +141,37 @@ class VmInfoTable extends NameValueTable
             $this->translate('Version')          => $vm->get('version'),
 
         ]);
+    }
+
+    /**
+     * @param VirtualMachine $vm
+     * @return array|null
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\NotFoundError
+     */
+    protected function getMonitoringInfo(VirtualMachine $vm)
+    {
+        $name = $vm->get('guest_host_name');
+        $statusRenderer = new IcingaHostStatusRenderer();
+        $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
+        if ($monitoring && $monitoring->hasHost($name)) {
+            $monitoringState = $monitoring->getHostState($name);
+            return [
+                // TODO: is_acknowledged, is_in_downtime
+                $statusRenderer($monitoringState->current_state),
+                ' ',
+                $monitoringState->output,
+                ' ',
+                Link::create(
+                    $this->translate('more'),
+                    'monitoring/host/show',
+                    ['host' => $name],
+                    ['class' => 'icon-right-small']
+                )
+            ];
+        } else {
+            return null;
+        }
     }
 
     protected function linkToVCenter($moRef)
