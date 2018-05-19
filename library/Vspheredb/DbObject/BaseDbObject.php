@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Application\Logger;
+use Icinga\Exception\NotFoundError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Director\Data\Db\DbObject as DirectorDbObject;
 use Icinga\Module\Vspheredb\Api;
@@ -29,6 +30,54 @@ abstract class BaseDbObject extends DirectorDbObject
     protected $booleanProperties = [];
 
     protected $dateTimeProperties = [];
+
+    /**
+     * @param array $filter
+     * @param Db $connection
+     * @return static
+     * @throws NotFoundError
+     * @throws \Icinga\Exception\IcingaException
+     */
+    public static function findOneBy($filter, Db $connection)
+    {
+        $result = static::findBy($filter, $connection);
+
+        if (empty($result)) {
+            throw new NotFoundError('No object found for given filter');
+        }
+
+        if (count($result) > 1) {
+            throw new NotFoundError('More than one object found for given filter');
+        }
+
+        return (new static())
+            ->setConnection($connection)
+            ->setDbProperties($result[0]);
+    }
+
+    /**
+     * @param array $filter
+     * @param Db $connection
+     * @return array
+     * @throws \Icinga\Exception\IcingaException
+     */
+    private static function findBy($filter, Db $connection)
+    {
+        $db = $connection->getDbAdapter();
+        $select = $db->select()->from(static::create()->getTableName());
+
+        foreach ($filter as $key => $value) {
+            if ($value === null) {
+                $select->where($key);
+            } elseif (strpos($key, '?') === false) {
+                $select->where("$key = ?", $value);
+            } else {
+                $select->where($key, $value);
+            }
+        }
+
+        return $db->fetchAll($select);
+    }
 
     public function isObjectReference($property)
     {
