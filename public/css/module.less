@@ -544,6 +544,24 @@ tr.state.emigrating td:first-child::before {
   content: '\e83a';
 }
 
+tr.state.poweredOn td:first-child::before {
+  color: @color-ok;
+  // icon-plug
+  content: '\e862';
+}
+
+tr.state.starting td:first-child::before {
+  color: @color-warning;
+  // icon-plug
+  content: '\e862';
+}
+
+tr.state.poweredOff td:first-child::before {
+  color: @color-critical;
+  // icon-plug
+  content: '\e862';
+}
+
 /** Disk Usage **/
 
 div.disk-usage {

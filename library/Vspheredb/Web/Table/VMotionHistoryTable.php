@@ -22,6 +22,21 @@ class VMotionHistoryTable extends ZfQueryBasedTable
 
     protected $requiredUuids = [];
 
+    protected $vMotionEvents = [
+        'VmFailedMigrateEvent',
+        'MigrationEvent',
+        'VmBeingMigratedEvent',
+        'VmBeingHotMigratedEvent',
+        'VmEmigratingEvent',
+        'VmMigratedEvent',
+    ];
+
+    protected $otherKnownEvents = [
+        'VmPoweredOnEvent',
+        'VmStartingEvent',
+        'VmPoweredOffEvent',
+    ];
+
     protected $fetchedUuids;
 
     /** @var Datastore */
@@ -48,11 +63,15 @@ class VMotionHistoryTable extends ZfQueryBasedTable
             $content[] = Html::tag('br');
         }
 
-        $content[] = 'Path: ';
-        $content[] = $this->deferredVMotionPath($row);
-        if ($row->user_name !== null) {
-            $content[] = Html::tag('br');
-            $content[] = sprintf('User: %s', $row->user_name);
+        if (in_array($row->event_type, $this->vMotionEvents)) {
+            $content[] = 'Path: ';
+            $content[] = $this->deferredVMotionPath($row);
+            if ($row->user_name !== null) {
+                $content[] = Html::tag('br');
+                $content[] = sprintf('User: %s', $row->user_name);
+            }
+        } elseif (in_array($row->event_type, $this->otherKnownEvents)) {
+            $content[] = $row->full_message;
         }
         $tr = $this::row([
             $content,
@@ -86,6 +105,23 @@ class VMotionHistoryTable extends ZfQueryBasedTable
                     'class' => 'state emigrating',
                 ]);
                 break;
+            case 'VmPoweredOffEvent':
+                $tr->addAttributes([
+                    'class' => 'state poweredOff',
+                ]);
+                break;
+            case 'VmStartingEvent':
+                $tr->addAttributes([
+                    'class' => 'state starting',
+                ]);
+                break;
+            case 'VmPoweredOnEvent':
+                $tr->addAttributes([
+                    'class' => 'state poweredOn',
+                ]);
+                break;
+            default:
+                $tr->add($this::td(Html::tag('pre', null, print_r($row, 1))));
         }
 
         $tr->addAttributes([
