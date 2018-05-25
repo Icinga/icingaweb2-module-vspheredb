@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
@@ -62,24 +63,15 @@ class HostInfoTable extends NameValueTable
                 ['data-base-target' => '_main']
             ));
         }
-
+        $this->addNameValueRow(
+            $this->translate('Monitoring'),
+            $this->getMonitoringInfo($host)
+        );
         $this->addNameValuePairs([
             $this->translate('Status')       => $overallStatusRenderer($host->object()->get('overall_status')),
             $this->translate('Power')        => $powerStateRenderer($host->get('runtime_power_state')),
         ]);
 
-        $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
-        if ($monitoring && $monitoring->hasHost($host->get('host_name'))) {
-            $this->addNameValueRow(
-                $this->translate('Monitoring'),
-                print_r($monitoring->getHostState($host->get('host_name')), 1)
-            );
-        } else {
-            $this->addNameValueRow(
-                $this->translate('Monitoring'),
-                'no'
-            );
-        }
         $this->addNameValuePairs([
             $this->translate('CPU / Memory') => [
                 Html::tag('div', ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
@@ -116,6 +108,47 @@ class HostInfoTable extends NameValueTable
                 ['uuid' => bin2hex($uuid)]
             ),
         ]);
+    }
+
+    /**
+     * @param HostSystem $host
+     * @return array|null
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\NotFoundError
+     */
+    protected function getMonitoringInfo(HostSystem $host)
+    {
+        $name = $host->get('host_name');
+        $statusRenderer = new IcingaHostStatusRenderer();
+        $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
+
+        try {
+            if ($monitoring && $monitoring->hasHost($name)) {
+                $monitoringState = $monitoring->getHostState($name);
+                return [
+                    // TODO: is_acknowledged, is_in_downtime
+                    $statusRenderer($monitoringState->current_state),
+                    ' ',
+                    $monitoringState->output,
+                    ' ',
+                    Link::create(
+                        $this->translate('more'),
+                        'monitoring/host/show',
+                        ['host' => $name],
+                        ['class' => 'icon-right-small']
+                    )
+                ];
+            } else {
+                return null;
+            }
+        } catch (\Exception $e) {
+            return [
+                Html::tag('p', ['class' => 'error'], sprintf(
+                    $this->translate('Unable to check monitoring state: %s'),
+                    $e->getMessage()
+                ))
+            ];
+        }
     }
 
     /**

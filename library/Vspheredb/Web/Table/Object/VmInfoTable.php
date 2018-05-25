@@ -154,23 +154,32 @@ class VmInfoTable extends NameValueTable
         $name = $vm->get('guest_host_name');
         $statusRenderer = new IcingaHostStatusRenderer();
         $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
-        if ($monitoring && $monitoring->hasHost($name)) {
-            $monitoringState = $monitoring->getHostState($name);
+        try {
+            if ($monitoring && $monitoring->hasHost($name)) {
+                $monitoringState = $monitoring->getHostState($name);
+                return [
+                    // TODO: is_acknowledged, is_in_downtime
+                    $statusRenderer($monitoringState->current_state),
+                    ' ',
+                    $monitoringState->output,
+                    ' ',
+                    Link::create(
+                        $this->translate('more'),
+                        'monitoring/host/show',
+                        ['host' => $name],
+                        ['class' => 'icon-right-small']
+                    )
+                ];
+            } else {
+                return null;
+            }
+        } catch (\Exception $e) {
             return [
-                // TODO: is_acknowledged, is_in_downtime
-                $statusRenderer($monitoringState->current_state),
-                ' ',
-                $monitoringState->output,
-                ' ',
-                Link::create(
-                    $this->translate('more'),
-                    'monitoring/host/show',
-                    ['host' => $name],
-                    ['class' => 'icon-right-small']
-                )
+                Html::tag('p', ['class' => 'error'], sprintf(
+                    $this->translate('Unable to check monitoring state: %s'),
+                    $e->getMessage()
+                ))
             ];
-        } else {
-            return null;
         }
     }
 
