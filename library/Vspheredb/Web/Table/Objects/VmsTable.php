@@ -12,6 +12,11 @@ class VmsTable extends ObjectsTable
 {
     protected $baseUrl = 'vspheredb/vm';
 
+    protected $searchColumns = [
+        'object_name',
+        'guest_host_name'
+    ];
+
     public function filterHost($uuid)
     {
         $this->getQuery()->where('vc.runtime_host_uuid = ?', $uuid);
