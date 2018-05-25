@@ -145,15 +145,18 @@ class DatastoreUsage extends BaseHtmlElement
 
     protected function makeDisk($dbRow)
     {
+        $size = $dbRow->committed + $dbRow->uncommitted;
         $share = (object) [
             'vm_uuid' => $dbRow->uuid,
             'name'  => $dbRow->object_name,
-            'size'  => $dbRow->committed + $dbRow->uncommitted,
+            'size'  => $size,
             'used'  => $dbRow->committed,
-            'used_percent'        => ($dbRow->committed / ($dbRow->committed + $dbRow->uncommitted)) * 100,
+            'used_percent'        => ($dbRow->committed / $size) * 100,
             'datastore_percent'   => ($dbRow->committed / $this->capacity) * 100,
             'uncommitted'         => $dbRow->uncommitted,
-            'uncommitted_percent' => ($dbRow->uncommitted / $this->uncommitted) * 100,
+            'uncommitted_percent' => $this->uncommitted > 0
+                ? ($dbRow->uncommitted / $this->uncommitted) * 100
+                : 0,
             'extra-class' => null,
         ];
         $share->title = sprintf(
