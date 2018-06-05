@@ -134,7 +134,7 @@ abstract class TableColumn
     }
 
     /**
-     * @param null|string $sortExpression
+     * @param null|string|array $sortExpression
      * @return $this
      */
     public function setSortExpression($sortExpression)

@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use dipl\Html\Html;
+use dipl\Html\Link;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
@@ -22,6 +24,39 @@ class HostsTable extends ObjectsTable
             $this->createOverallStatusColumn(),
             $this->createColumn('runtime_power_state', $this->translate('Power'), 'h.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
+            $this->createColumn('vms_overall_status', $this->translate('VM Status'), [
+                'vms_cnt_overall_gray'   => 'vms.vms_cnt_overall_gray',
+                'vms_cnt_overall_green'  => 'vms.vms_cnt_overall_green',
+                'vms_cnt_overall_yellow' => 'vms.vms_cnt_overall_yellow',
+                'vms_cnt_overall_red'    => 'vms.vms_cnt_overall_red',
+            ])->setRenderer(function ($row) {
+                $result = [];
+                foreach (['red', 'yellow', 'gray', 'green'] as $state) {
+                    $column = "vms_cnt_overall_$state";
+                    if ($row->$column > 0) {
+                        $result[] = Link::create(
+                            $row->$column,
+                            'vspheredb/host/vms',
+                            [
+                                'uuid'           => bin2hex($row->uuid),
+                                'overall_status' => $state
+                            ],
+                            ['class' => ['state', $state]]
+                        );
+                    }
+                }
+
+                if (empty($result)) {
+                    return '-';
+                } else {
+                    return $result;
+                }
+            })->setSortExpression([
+                'vms.vms_cnt_overall_red',
+                'vms.vms_cnt_overall_yellow',
+                'vms.vms_cnt_overall_gray',
+                'vms.vms_cnt_overall_green',
+            ])->setDefaultSortDirection('DESC'),
             $this->createObjectNameColumn(),
             $this->createColumn('sysinfo_vendor', $this->translate('Vendor'), 'h.sysinfo_vendor'),
             $this->createColumn('sysinfo_model', $this->translate('Model'), 'h.sysinfo_model'),
@@ -108,11 +143,19 @@ class HostsTable extends ObjectsTable
         return $this->db()->select()->from(
             ['vc' => 'virtual_machine'],
             [
-                'cnt'               => 'COUNT(*)',
-                'cnt_cpu'           => 'SUM(vc.hardware_numcpu)',
-                'memorymb'          => 'SUM(vc.hardware_memorymb)',
-                'runtime_host_uuid' => 'vc.runtime_host_uuid',
+                'cnt'                    => 'COUNT(*)',
+                'cnt_cpu'                => 'SUM(vc.hardware_numcpu)',
+                'memorymb'               => 'SUM(vc.hardware_memorymb)',
+                'runtime_host_uuid'      => 'vc.runtime_host_uuid',
+                'vms_cnt_overall_gray'   => "SUM(CASE WHEN vo.overall_status = 'gray' THEN 1 ELSE 0 END)",
+                'vms_cnt_overall_green'  => "SUM(CASE WHEN vo.overall_status = 'green' THEN 1 ELSE 0 END)",
+                'vms_cnt_overall_yellow' => "SUM(CASE WHEN vo.overall_status = 'yellow' THEN 1 ELSE 0 END)",
+                'vms_cnt_overall_red'    => "SUM(CASE WHEN vo.overall_status = 'red' THEN 1 ELSE 0 END)",
             ]
+        )->join(
+            ['vo' => 'object'],
+            'vo.uuid = vc.uuid',
+            []
         )->group('vc.runtime_host_uuid');
     }
 

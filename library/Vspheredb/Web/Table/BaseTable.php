@@ -247,7 +247,14 @@ abstract class BaseTable extends ZfQueryBasedTable
                 $sortColumn = $this->getAvailableColumn($columnName);
             }
             $this->sortColums[$columnName] = $direction;
-            $query->order($sortColumn->getSortExpression() . " $direction");
+            $sort = $sortColumn->getSortExpression();
+            if (is_array($sort)) {
+                foreach ($sort as $s) {
+                    $query->order("$s $direction");
+                }
+            } else {
+                $query->order("$sort $direction");
+            }
         }
 
         return $this;

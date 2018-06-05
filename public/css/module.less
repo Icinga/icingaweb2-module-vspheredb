@@ -471,6 +471,55 @@ div.object-summaries {
   }
 }
 
+table {
+  a.state {
+    color: white;
+    display: inline-block;
+    min-width: 2em;
+    font-weight: bold;
+    text-align: center;
+    margin: 0.2em;
+    height: 2em;
+    border: 0.2em solid transparent;
+    line-height: 1.6em;
+    overflow: hidden;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    vertical-align: middle;
+    border-radius: 1em;
+    &:focus {
+      outline: none;
+    }
+    &:hover {
+      text-decoration: none;
+      box-shadow: inset 0 0 4em 4em rgba(255,255,255,0.3);
+    }
+    &.chosen {
+      border-color: white;
+    }
+
+    &.red, &.poweredoff, &.suspended {
+      background-color: @color-critical;
+    }
+
+    &.yellow, &.standby {
+      background-color: @color-warning;
+    }
+
+    &.green, &.poweredon {
+      background-color: @color-ok;
+    }
+
+    &.unknown {
+      background-color: @color-unknown;
+    }
+
+    &.gray {
+      background-color: @gray;
+    }
+  }
+}
+
 div.health {
   border-left: 0.5em solid transparent;
   margin-bottom: 1em;
