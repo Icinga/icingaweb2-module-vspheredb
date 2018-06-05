@@ -71,6 +71,10 @@ class PathLookup
 
     public function getObjectNames($uuids)
     {
+        if (empty($uuids)) {
+            return [];
+        }
+
         $query = $this->db->select()
             ->from(['o' => 'object'], ['uuid', 'object_name'])
             ->where('uuid IN (?)', $uuids)
