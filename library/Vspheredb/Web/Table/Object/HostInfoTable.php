@@ -45,7 +45,6 @@ class HostInfoTable extends NameValueTable
 
     /**
      * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     protected function assemble()
     {
@@ -154,7 +153,6 @@ class HostInfoTable extends NameValueTable
     /**
      * @param $moRef
      * @return \dipl\Html\HtmlElement
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function linkToVCenter($moRef)
     {
@@ -172,7 +170,6 @@ class HostInfoTable extends NameValueTable
     /**
      * @param HostSystem $host
      * @return \dipl\Html\HtmlElement|mixed
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function getFormattedServiceTag(HostSystem $host)
     {
