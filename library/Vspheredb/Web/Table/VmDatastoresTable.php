@@ -6,6 +6,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
+use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Util\Format;
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
@@ -24,9 +25,13 @@ class VmDatastoresTable extends ZfQueryBasedTable
     /** @var string */
     protected $uuid;
 
+    /** @var OverallStatusRenderer */
+    protected $renderStatus;
+
     public static function create(VirtualMachine $vm)
     {
         $tbl = new static($vm->getConnection());
+        $tbl->renderStatus = new OverallStatusRenderer();
         return $tbl->setVm($vm);
     }
 
@@ -41,6 +46,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
     public function getColumnsToBeRendered()
     {
         return [
+            $this->translate('Status'),
             $this->translate('Datastore'),
             $this->translate('Size'),
             $this->translate('Usage'),
@@ -72,7 +78,10 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $dsUsage->getAttributes()->add('class', 'compact');
         $dsUsage->addDiskFromDbRow($row);
 
+
+        $renderStatus = $this->renderStatus;
         $tr = $this::tr([
+            $this::td($renderStatus($row->overall_status)),
             // TODO: move to CSS
             $this::td($caption, ['style' => 'overflow: hidden; display: inline-block; height: 2em; min-width: 8em;']),
             $this::td(Format::bytes($size, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
@@ -88,10 +97,11 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             [
-                'uuid'        => 'o.uuid',
-                'object_name' => 'o.object_name',
-                'committed'   => 'vdu.committed',
-                'uncommitted' => 'vdu.uncommitted',
+                'uuid'           => 'o.uuid',
+                'overall_status' => 'o.overall_status',
+                'object_name'    => 'o.object_name',
+                'committed'      => 'vdu.committed',
+                'uncommitted'    => 'vdu.uncommitted',
             ]
         )->join(
             ['vdu' => 'vm_datastore_usage'],
