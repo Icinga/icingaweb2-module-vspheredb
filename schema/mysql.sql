@@ -360,7 +360,7 @@ CREATE TABLE vm_hardware (
   unit_number INT(10) UNSIGNED DEFAULT NULL, -- unit number of this device on its controller
   controller_key INT(10) UNSIGNED DEFAULT NULL,
   label VARCHAR(64) NOT NULL,
-  summary VARCHAR(128) DEFAULT NULL,
+  summary VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY(vm_uuid, hardware_key),
   INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
