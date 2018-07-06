@@ -192,7 +192,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
 
     /**
      * @return \Zend_Db_Select
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function prepareQuery()
     {
@@ -276,7 +275,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     /**
      * @param $row
      * @return HtmlDocument
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function showMotionPath($row)
     {
@@ -315,7 +313,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     /**
      * @param $row
      * @return \dipl\Html\FormattedString
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function showHostToHostMigration($row)
     {
@@ -350,7 +347,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     /**
      * @param $row
      * @return \dipl\Html\FormattedString
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function showDatastoreToDatastoreMigration($row)
     {
@@ -373,7 +369,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     /**
      * @param $row
      * @return \dipl\Html\FormattedString
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function showToDatastoreMigration($row)
     {
@@ -391,7 +386,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     /**
      * @param $row
      * @return \dipl\Html\FormattedString
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function showFromDatastoreMigration($row)
     {
@@ -409,7 +403,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     /**
      * @param $row
      * @return \dipl\Html\FormattedString
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function showToHostMigration($row)
     {
@@ -427,7 +420,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     /**
      * @param $row
      * @return \dipl\Html\FormattedString
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function showFromHostMigration($row)
     {
