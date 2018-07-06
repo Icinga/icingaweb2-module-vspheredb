@@ -238,7 +238,7 @@ class CurlLoader extends EventEmitter
             $opts[CURLOPT_PROXYTYPE] = $this->proxyType;
 
             if ($this->proxyUser) {
-                $opts['CURLOPT_PROXYUSERPWD'] = sprintf(
+                $opts[CURLOPT_PROXYUSERPWD] = sprintf(
                     '%s:%s',
                     $this->proxyUser,
                     $this->proxyPass
