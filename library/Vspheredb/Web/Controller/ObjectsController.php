@@ -9,6 +9,8 @@ use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 
 class ObjectsController extends Controller
 {
+    protected $otherTabActions = [];
+
     protected function linkBackToOverview($type)
     {
         $this->actions()->add(
@@ -109,6 +111,11 @@ class ObjectsController extends Controller
 
     protected function handleTabs()
     {
+        $action = $this->getRequest()->getControllerName();
+        if (isset($this->otherTabActions[$action])) {
+            $action = $this->otherTabActions[$action];
+        }
+
         $this->tabs()->add('vms', [
             'label'     => $this->translate('Virtual Machine'),
             'url'       => 'vspheredb/vms',
@@ -121,6 +128,6 @@ class ObjectsController extends Controller
         ])->add('switches', [
             'label'     => $this->translate('Switches'),
             'url'       => 'vspheredb/switches',
-        ])->activate($this->getRequest()->getControllerName());
+        ])->activate($action);
     }
 }
