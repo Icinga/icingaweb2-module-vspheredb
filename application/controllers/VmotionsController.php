@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use dipl\Html\Form;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -41,9 +42,46 @@ class VmotionsController extends Controller
 
     public function heatmapAction()
     {
+        $form = new Form();
+        $form->setMethod('GET');
+        $form->addElement('parent', 'select', [
+            'options' => [
+                null => $this->translate('- filter -')
+            ] + $this->enumHostParents(),
+            'class' => 'autosubmit',
+        ]);
+        $form->handleRequest($this->getRequest());
         $this->addTitle('VMotion Heatmap');
+
         $heatMap = new VMotionHeatmap($this->vCenter(), 'vspheredb/vmotions');
+        if ($parent = $this->params->get('parent')) {
+            $heatMap->filterParent(hex2bin($parent));
+        }
+        $this->content()->add($form);
         $this->content()->add($heatMap);
+    }
+
+    protected function enumHostParents()
+    {
+        $db = $this->db()->getDbAdapter();
+        $query = $db->select()->from(
+            ['p' => 'object'],
+            ['p.uuid', 'p.object_name']
+        )->join(
+            ['c' => 'object'],
+            'c.parent_uuid = p.uuid AND '
+            . $db->quoteInto('c.object_type = ?', 'HostSystem')
+            . ' AND '
+            . $db->quoteInto('p.object_type = ?', 'ClusterComputeResource'),
+            []
+        )->group('p.uuid')->order('p.object_name');
+
+        $enum = [];
+        foreach ($db->fetchPairs($query) as $k => $v) {
+            $enum[bin2hex($k)] = $v;
+        }
+
+        return $enum;
     }
 
     /**
