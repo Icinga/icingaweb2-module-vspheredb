@@ -18,9 +18,6 @@ class VmotionsController extends Controller
         $this->handleTabs();
     }
 
-    /**
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     public function indexAction()
     {
         $day = $this->params->shift('day');
@@ -45,7 +42,8 @@ class VmotionsController extends Controller
     public function heatmapAction()
     {
         $this->addTitle('VMotion Heatmap');
-        $this->content()->add(VMotionHeatmap::create($this->vCenter(), 'vspheredb/vmotions'));
+        $heatMap = new VMotionHeatmap($this->vCenter(), 'vspheredb/vmotions');
+        $this->content()->add($heatMap);
     }
 
     /**

@@ -8,7 +8,7 @@ use dipl\Html\Link;
 use dipl\Html\Table;
 use dipl\Web\Url;
 
-class EventHeatmapCalendars extends BaseHtmlElement
+abstract class EventHeatmapCalendars extends BaseHtmlElement
 {
     protected $tag = 'div';
 
@@ -18,6 +18,8 @@ class EventHeatmapCalendars extends BaseHtmlElement
 
     /** @var Url */
     protected $baseUrl;
+
+    abstract public function getEvents();
 
     protected function newTable($month)
     {
@@ -61,9 +63,13 @@ class EventHeatmapCalendars extends BaseHtmlElement
         }
     }
 
-    public function __construct($events, $baseUrl)
+    public function assemble()
     {
-        $this->setBaseUrl($baseUrl);
+        $events = $this->getEvents();
+        if (empty($events)) {
+            return;
+        }
+
         $max = max($events);
 
         $firstRow = true;
