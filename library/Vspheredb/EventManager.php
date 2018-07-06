@@ -270,7 +270,7 @@ class EventManager
             'AlarmCreatedEvent',
             'AlarmReconfiguredEvent',
             'AlarmRemovedEvent',
-            'AlarmStatusChangedEvent',
+            'AlarmStatusChangedEvent', // -> THIS!
 
             'VmBeingMigratedEvent',
             'VmBeingHotMigratedEvent',

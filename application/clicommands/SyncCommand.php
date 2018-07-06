@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Icinga\Module\Vspheredb\DbObject\Alarm;
+use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\Sync\SyncAllObjects;
 use Icinga\Module\Vspheredb\Sync\SyncHostHardware;
 use Icinga\Module\Vspheredb\Sync\SyncHostSensors;
@@ -55,6 +57,23 @@ class SyncCommand extends CommandBase
     {
         $sync = new SyncVmHardware($this->getVCenter());
         $sync->run();
+    }
+
+    public function testAction()
+    {
+        $vCenter = $this->getVCenter();
+
+        var_dump($vCenter->getApi()->alarmManager()->queryAlarms());
+        return;
+        $objects = Alarm::fetchAllFromApi($vCenter->getApi());
+        print_r($objects);
+
+        return;
+
+        $result = $vCenter->getApi()->propertyCollector()->collectObjectProperties(
+            new PropertySet('Alarm'),
+            VirtualMachine::getSelectSet()
+        );
     }
 
     public function hosthardwareAction()

@@ -142,6 +142,24 @@ CREATE TABLE object (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE triggered_alarm (
+  entity_uuid VARBINARY(20) NOT NULL,
+  alarm_uuid VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  ts_created BIGINT NOT NULL,
+  overall_status ENUM(
+    'green',
+    'yellow',
+    'red'
+  ) NOT NULL,
+  CONSTRAINT alarm_vcenter
+    FOREIGN KEY alarm_vcenter_uuid (vcenter_uuid)
+    REFERENCES vcenter (instance_uuid)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  PRIMARY KEY(vcenter_uuid, entity_uuid, alarm_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE host_system (
   uuid VARBINARY(20) NOT NULL,
   host_name VARCHAR(255) DEFAULT NULL,

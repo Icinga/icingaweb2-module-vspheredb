@@ -15,6 +15,9 @@ trait LazyApiHelpers
     /** @var object */
     private $serviceInstance;
 
+    /** @var AlarmManager */
+    private $alarmManager;
+
     /** @var EventManager */
     private $eventManager;
 
@@ -34,6 +37,19 @@ trait LazyApiHelpers
     public function getAbout()
     {
         return $this->getServiceInstance()->about;
+    }
+
+    /**
+     * @return AlarmManager
+     * @throws AuthenticationException
+     */
+    public function alarmManager()
+    {
+        if ($this->alarmManager === null) {
+            $this->alarmManager = new AlarmManager($this);
+        }
+
+        return $this->alarmManager;
     }
 
     /**

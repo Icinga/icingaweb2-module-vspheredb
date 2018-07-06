@@ -6,6 +6,7 @@ use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\SelectSet\FullSelectSet;
+use Icinga\Module\Vspheredb\Util;
 
 class SyncManagedObjectReferences
 {
@@ -23,6 +24,8 @@ class SyncManagedObjectReferences
 
     /**
      * @return $this
+     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
+     * @throws \Zend_Db_Adapter_Exception
      */
     public function sync()
     {
@@ -31,7 +34,8 @@ class SyncManagedObjectReferences
         $all = $this->fetchNames();
         Logger::debug('Got id/name/parent for %d objects', count($all));
         $db = $this->vCenter->getConnection();
-
+        $triggeredAlarms = [];
+        //$declaredAlarms = [];
         /** @var ManagedObject[] $objects */
         $objects = ManagedObject::loadAllForVCenter($vCenter);
         $fetched = [];
@@ -39,6 +43,18 @@ class SyncManagedObjectReferences
         $idToParent = [];
         $vCenterUuid = $vCenter->get('uuid');
         foreach ($all as $obj) {
+            foreach ($obj->triggeredAlarmState as $alarms) {
+                foreach ($alarms as $alarm) {
+                    $triggeredAlarms[$alarm->key] = $alarm;
+                }
+            }
+            /*
+            foreach ($obj->declaredAlarmState as $alarms) {
+                foreach ($alarms as $alarm) {
+                    $declaredAlarms[] = $alarm;
+                }
+            }
+            */
             $moRef = $obj->id;
             $name = $obj->name;
             $uuid = $vCenter->makeBinaryGlobalUuid($moRef);
@@ -65,6 +81,7 @@ class SyncManagedObjectReferences
                 $idToParent[$uuid] = $obj->parent->_;
             }
         }
+
         foreach ($idToParent as $uuid => $parentName) {
             if (array_key_exists($parentName, $nameUuids)) {
                 $objects[$uuid]->setParent(
@@ -97,6 +114,22 @@ class SyncManagedObjectReferences
             }
         }
 
+
+        $dba->delete(
+            'triggered_alarm',
+            $dba->quoteInto('vcenter_uuid = ?', $vCenterUuid)
+        );
+        foreach ($triggeredAlarms as $alarm) {
+            $dba->insert('triggered_alarm', [
+                'entity_uuid'    => $vCenter->makeBinaryGlobalUuid($alarm->entity),
+                'alarm_uuid'     => $vCenter->makeBinaryGlobalUuid($alarm->alarm),
+                'vcenter_uuid'   => $vCenterUuid,
+                'overall_status' => $alarm->overallStatus,
+                'ts_created'     => Util::timeStringToUnixMs($alarm->time),
+                // acknowledged
+            ]);
+        }
+
         /*
         // Debug only:
         printf("%d new: %s\n", count($new), implode(', ', $new));
@@ -115,6 +148,7 @@ class SyncManagedObjectReferences
         printf("%d del: %s\n", count($del), implode(', ', $del));
         printf("%d unmodified\n", count($same));
         */
+        // print_r($declaredAlarms);
 
         if (! empty($del)) {
             $dba->update(
@@ -161,7 +195,13 @@ class SyncManagedObjectReferences
             'DistributedVirtualSwitch',
             'DistributedVirtualPortgroup',
         ];
-        $pathSet = ['name', 'parent', 'overallStatus'];
+        $pathSet = [
+            'name',
+            'parent',
+            'overallStatus',
+            // 'declaredAlarmState',
+            'triggeredAlarmState'
+        ];
 
         $propSet = [];
         foreach ($types as $type) {
