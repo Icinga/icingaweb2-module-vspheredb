@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmsOnDatastoreTable;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
+use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Util\Format;
 use dipl\Html\Html;
 use dipl\Html\Link;
@@ -33,7 +34,9 @@ class DatastoreController extends Controller
 
         $usage = (new DatastoreUsage($ds))->loadAllVmDisks()->addFreeDatastoreSpace();
         $table = new NameValueTable();
+        $statusRenderer = new OverallStatusRenderer();
         $table->addNameValuePairs([
+            $this->translate('Status') => $statusRenderer($ds->object()->get('overall_status')),
             $this->translate('Path') => $path,
             $this->translate('Capacity') => $this->bytes($ds->get('capacity')),
             $this->translate('Free') => $this->bytes($ds->get('free_space')),
