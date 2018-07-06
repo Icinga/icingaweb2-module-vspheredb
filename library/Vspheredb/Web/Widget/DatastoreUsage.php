@@ -102,7 +102,7 @@ class DatastoreUsage extends BaseHtmlElement
                 $this->translate('Unknown / not used by any visible Virtual Machine'),
                 $unknownPercent,
                 null,
-                ['class' => '']
+                ['class' => 'unknown']
             );
         }
         $this->addVmDisk(
