@@ -684,6 +684,27 @@ div.disk-usage {
   white-space: nowrap;
 }
 
+/* SVG Test */
+rect.vmotion {
+  fill: url(#fillOk);
+  stroke: white;
+  stroke-width: 0;
+  &.failed {
+    fill: url(#fillProblem);
+  }
+  &.pending {
+    fill: url(#fillPending);
+  }
+}
+
+rect.vmarker, rect.vpos {
+  fill: white;
+  fill-opacity: 0.3;
+  stroke: black;
+  stroke-width: 0.5;
+}
+/* End of SVG Test */
+
 /* Tree, stolen from Director */
 
 .tree li a {
