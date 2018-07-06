@@ -35,21 +35,21 @@ class HostSystem extends BaseDbObject
 
     protected $propertyMap = [
         // config.fileSystemVolume.mountInfo
-        'name'                            => 'host_name',
-        'config.product.apiVersion'       => 'product_api_version',
-        'config.product.fullName'         => 'product_full_name',
-        'hardware.biosInfo.biosVersion'   => 'bios_version',
-        'hardware.cpuInfo.numCpuPackages' => 'hardware_cpu_packages',
-        'hardware.cpuInfo.numCpuCores'    => 'hardware_cpu_cores',
-        'hardware.cpuInfo.numCpuThreads'  => 'hardware_cpu_threads',
-        'hardware.systemInfo.model'       => 'sysinfo_model',
-        'hardware.systemInfo.uuid'        => 'sysinfo_uuid',
-        'hardware.systemInfo.vendor'      => 'sysinfo_vendor',
-        'runtime.powerState'              => 'runtime_power_state',
-        'summary.hardware.cpuMhz'         => 'hardware_cpu_mhz',
-        'summary.hardware.cpuModel'       => 'hardware_cpu_model',
-        'summary.hardware.numHBAs'        => 'hardware_num_hba',
-        'summary.hardware.numNics'        => 'hardware_num_nic',
+        'name'                              => 'host_name',
+        'summary.config.product.apiVersion' => 'product_api_version',
+        'summary.config.product.fullName'   => 'product_full_name',
+        'hardware.biosInfo.biosVersion'     => 'bios_version',
+        'hardware.cpuInfo.numCpuPackages'   => 'hardware_cpu_packages',
+        'hardware.cpuInfo.numCpuCores'      => 'hardware_cpu_cores',
+        'hardware.cpuInfo.numCpuThreads'    => 'hardware_cpu_threads',
+        'hardware.systemInfo.model'         => 'sysinfo_model',
+        'hardware.systemInfo.uuid'          => 'sysinfo_uuid',
+        'hardware.systemInfo.vendor'        => 'sysinfo_vendor',
+        'runtime.powerState'                => 'runtime_power_state',
+        'summary.hardware.cpuMhz'           => 'hardware_cpu_mhz',
+        'summary.hardware.cpuModel'         => 'hardware_cpu_model',
+        'summary.hardware.numHBAs'          => 'hardware_num_hba',
+        'summary.hardware.numNics'          => 'hardware_num_nic',
     ];
 
     protected $quickStats;
