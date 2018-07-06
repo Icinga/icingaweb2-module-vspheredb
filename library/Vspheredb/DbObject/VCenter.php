@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
+use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 class VCenter extends BaseDbObject
 {
@@ -97,7 +98,11 @@ class VCenter extends BaseDbObject
 
     public function makeBinaryGlobalUuid($moRefId)
     {
-        return sha1($this->get('uuid') . $moRefId, true);
+        if ($moRefId instanceof ManagedObjectReference) {
+            return sha1($this->get('uuid') . $moRefId->_, true);
+        } else {
+            return sha1($this->get('uuid') . $moRefId, true);
+        }
     }
 
     /**
