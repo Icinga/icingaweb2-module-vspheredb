@@ -26,7 +26,6 @@ class MonitoringConnection extends BaseDbObject
     /**
      * @param VCenter $vCenter
      * @return Ido|null
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\NotFoundError
      */
     public static function eventuallyLoadForVCenter(VCenter $vCenter)
@@ -44,7 +43,6 @@ class MonitoringConnection extends BaseDbObject
 
     /**
      * @return Ido
-     * @throws \Icinga\Exception\IcingaException
      */
     public function getMonitoring()
     {
