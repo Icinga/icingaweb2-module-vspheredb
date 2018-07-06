@@ -36,7 +36,6 @@ abstract class BaseDbObject extends DirectorDbObject
      * @param Db $connection
      * @return static
      * @throws NotFoundError
-     * @throws \Icinga\Exception\IcingaException
      */
     public static function findOneBy($filter, Db $connection)
     {
@@ -59,14 +58,22 @@ abstract class BaseDbObject extends DirectorDbObject
      * @param array $filter
      * @param Db $connection
      * @return array
-     * @throws \Icinga\Exception\IcingaException
      */
     private static function findBy($filter, Db $connection)
     {
         $db = $connection->getDbAdapter();
-        $select = $db->select()->from(static::create()->getTableName());
+        $table = static::create()->getTableName();
+        $select = $db->select()->from($table);
 
         foreach ($filter as $key => $value) {
+            if ($key === 'object_name') {
+                $type = static::getType();
+                $select->join(
+                    'object',
+                    $db->quoteInto("object.uuid = $table.uuid AND object.object_type = ?", $type),
+                    []
+                );
+            }
             if ($value === null) {
                 $select->where($key);
             } elseif (strpos($key, '?') === false) {
@@ -277,7 +284,6 @@ abstract class BaseDbObject extends DirectorDbObject
     /**
      * @param VCenter $vCenter
      * @return static[]
-     * @throws \Icinga\Exception\IcingaException
      */
     public static function loadAllForVCenter(VCenter $vCenter)
     {

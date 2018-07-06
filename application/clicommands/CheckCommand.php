@@ -6,6 +6,7 @@ use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
+use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
@@ -59,6 +60,24 @@ class CheckCommand extends CommandBase
             $this->checkOverallHealth($vm->object())
                 ->checkRuntimePowerState($vm)
                 ->checkUptime($quickStats);
+        });
+    }
+
+    /**
+     * Check Datastore Health
+     *
+     * USAGE
+     *
+     * icingacli vspheredb check datastore [--name <name>]
+     */
+    public function datastoreAction()
+    {
+        $this->run(function () {
+            $db = Db::newConfiguredInstance();
+            $datastore = Datastore::findOneBy([
+                'object_name' => $this->params->getRequired('name')
+            ], $db);
+            $this->checkOverallHealth($datastore->object());
         });
     }
 
