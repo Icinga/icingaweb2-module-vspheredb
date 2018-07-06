@@ -41,6 +41,19 @@ class CheckCommand extends CommandBase
         });
     }
 
+    /**
+     * Check all Hosts
+     *
+     * USAGE
+     *
+     * icingacli vspheredb check hosts
+     */
+    public function hostsAction()
+    {
+        $this->showOverallStatusForProblems(
+            HostSystem::listNonGreenObjects(Db::newConfiguredInstance())
+        );
+    }
 
     /**
      * Check Virtual Machine Health
@@ -64,6 +77,20 @@ class CheckCommand extends CommandBase
     }
 
     /**
+     * Check all Virtual Machines
+     *
+     * USAGE
+     *
+     * icingacli vspheredb check vms
+     */
+    public function vmsAction()
+    {
+        $this->showOverallStatusForProblems(
+            VirtualMachine::listNonGreenObjects(Db::newConfiguredInstance())
+        );
+    }
+
+    /**
      * Check Datastore Health
      *
      * USAGE
@@ -82,10 +109,62 @@ class CheckCommand extends CommandBase
     }
 
     /**
-     * @param VirtualMachine $vm
+     * Check all Datastores
+     *
+     * USAGE
+     *
+     * icingacli vspheredb check datastores
+     */
+    public function datastoresAction()
+    {
+        $this->showOverallStatusForProblems(
+            Datastore::listNonGreenObjects(Db::newConfiguredInstance())
+        );
+    }
+
+    protected function showOverallStatusForProblems($problems)
+    {
+        $this->run(function () use ($problems) {
+            if (empty($problems)) {
+                $this->addMessage('Everything is fine');
+            } else {
+                foreach ($problems as $color => $objects) {
+                    $this->raiseState($this->getStateForColor($color));
+                    $this->addProblematicObjectNames($color, $objects);
+                }
+            }
+        });
+    }
+
+    protected function addProblematicObjectNames($color, $objects)
+    {
+        $showMax = 5;
+        $stateName = $this->getStateForColor($color);
+        if (count($objects) === 1) {
+            $name = array_shift($objects);
+            $this->addProblem($stateName, sprintf('Overall status for %s is "%s"', $name, $color));
+        } elseif (count($objects) <= $showMax) {
+            $last = array_pop($objects);
+            $this->addProblem($stateName, sprintf(
+                'Overall status is "%s" for %s and %s',
+                $color,
+                implode(', ', $objects),
+                $last
+            ));
+        } else {
+            $names = array_slice($objects, 0, $showMax);
+            $this->addProblem($stateName, sprintf(
+                'Overall status is "%s" for %s and %d more',
+                $color,
+                implode(', ', $names),
+                count($objects) - $showMax
+            ));
+        }
+    }
+
+    /**
+     * @param ManagedObject $object
      * @return $this
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     protected function checkOverallHealth(ManagedObject $object)
     {
@@ -109,18 +188,28 @@ class CheckCommand extends CommandBase
         return $this;
     }
 
+    protected function getStateForColor($color)
+    {
+        $colors = [
+            'green'  => 'OK',
+            'gray'   => 'CRITICAL',
+            'yellow' => 'WARNING',
+            'red'    => 'CRITICAL',
+        ];
+
+        return $colors[$color];
+    }
+
     /**
-     * @param VirtualMachine $vm
+     * @param BaseDbObject $object
      * @return $this
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     protected function checkRuntimePowerState(BaseDbObject $object)
     {
         if ($object instanceof VirtualMachine) {
             $what = 'Virtual Machine';
-        } elseif ($object instanceof VirtualMachine) {
-            $what = 'Virtual Machine';
+        } elseif ($object instanceof HostSystem) {
+            $what = 'Host System';
         } else {
             $what = 'Object';
         }
@@ -147,8 +236,6 @@ class CheckCommand extends CommandBase
     /**
      * @param BaseDbObject $object
      * @return $this
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     protected function checkUptime(BaseDbObject $object)
     {

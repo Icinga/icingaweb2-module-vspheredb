@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 use Error;
 use Exception;
-use Icinga\Exception\ProgrammingError;
+use InvalidArgumentException;
 
 trait CheckPluginHelper
 {
@@ -61,7 +61,6 @@ trait CheckPluginHelper
     /**
      * @param null $state
      * @return mixed
-     * @throws ProgrammingError
      */
     protected function getStateName($state = null)
     {
@@ -76,7 +75,6 @@ trait CheckPluginHelper
      * @param int|string $state
      * @param string $message
      * @return $this
-     * @throws ProgrammingError
      */
     protected function addProblem($state, $message)
     {
@@ -112,7 +110,6 @@ trait CheckPluginHelper
     /**
      * @param int|string $state
      * @return $this
-     * @throws ProgrammingError
      */
     protected function raiseState($state)
     {
@@ -135,7 +132,6 @@ trait CheckPluginHelper
     /**
      * @param $state
      * @return int
-     * @throws ProgrammingError
      */
     protected function wantNumericState($state)
     {
@@ -143,13 +139,13 @@ trait CheckPluginHelper
             if (array_key_exists($state, $this->stateNameMap)) {
                 return (int) $state;
             } else {
-                throw new ProgrammingError('%d is not a valid numeric state', $state);
+                throw new InvalidArgumentException('%d is not a valid numeric state', $state);
             }
         } else {
             if (array_key_exists($state, $this->nameStateMap)) {
                 return $this->nameStateMap[$state];
             } else {
-                throw new ProgrammingError('%s is not a valid state name', $state);
+                throw new InvalidArgumentException('%s is not a valid state name', $state);
             }
         }
     }

@@ -86,6 +86,29 @@ abstract class BaseDbObject extends DirectorDbObject
         return $db->fetchAll($select);
     }
 
+    public static function listNonGreenObjects(Db $connection)
+    {
+        $db = $connection->getDbAdapter();
+        $type = static::getType();
+        $select = $db->select()
+            ->from('object', ['uuid', 'overall_status', 'object_name'])
+            ->where('object_type = ?', $type)
+            ->where('overall_status != ?', 'green')
+            ->order('object_name');
+
+        $result = [];
+        foreach ($db->fetchAll($select) as $row) {
+            $status = $row->overall_status;
+            if (isset($result[$status])) {
+                $result[$status][$row->uuid] = $row->object_name;
+            } else {
+                $result[$status] = [$row->uuid => $row->object_name];
+            }
+        }
+
+        return $result;
+    }
+
     public function isObjectReference($property)
     {
         return $property === 'parent' || in_array($property, $this->objectReferences);
