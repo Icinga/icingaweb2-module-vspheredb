@@ -16,6 +16,11 @@ use dipl\Web\Widget\NameValueTable;
 
 class DatastoreController extends Controller
 {
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\NotFoundError
+     */
     public function indexAction()
     {
         $uuid = hex2bin($this->params->getRequired('uuid'));
@@ -51,6 +56,11 @@ class DatastoreController extends Controller
         $this->content()->add([$table, $usage, $vms]);
     }
 
+    /**
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\NotFoundError
+     */
     public function vmotionsAction()
     {
         $ds = $this->addDatastore();
@@ -59,6 +69,12 @@ class DatastoreController extends Controller
             ->renderTo($this);
     }
 
+    /**
+     * @return Datastore
+     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\NotFoundError
+     */
     protected function addDatastore()
     {
         $ds = Datastore::load(hex2bin($this->params->getRequired('uuid')), $this->db());
@@ -68,6 +84,10 @@ class DatastoreController extends Controller
         return $ds;
     }
 
+    /**
+     * @throws \Icinga\Exception\Http\HttpNotFoundException
+     * @throws \Icinga\Exception\ProgrammingError
+     */
     protected function handleTabs()
     {
         $params = ['uuid' => $this->params->get('uuid')];

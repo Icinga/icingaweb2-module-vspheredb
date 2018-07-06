@@ -3,12 +3,15 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use dipl\Html\BaseHtmlElement;
+use dipl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Util\Format;
 use dipl\Html\Link;
 
 class DatastoreUsage extends BaseHtmlElement
 {
+    use TranslationHelper;
+
     protected $tag = 'div';
 
     protected $defaultAttributes = [
@@ -88,11 +91,20 @@ class DatastoreUsage extends BaseHtmlElement
             $title = sprintf('Committed space');
             $class = 'free overcommitted-twice';
         } else {
-            $title = sprintf('Committed space');
+            $title = sprintf('Free space');
             $class = 'free overcommitted';
         }
 
         $percent = ($free / $this->capacity) * 100;
+        $unknownPercent = 100 - $percent - $this->gotPercent;
+        if ($unknownPercent > 0) {
+            $this->addVmDisk(
+                $this->translate('Unknown / not used by any visible Virtual Machine'),
+                $unknownPercent,
+                null,
+                ['class' => '']
+            );
+        }
         $this->addVmDisk(
             $title,
             $percent,
