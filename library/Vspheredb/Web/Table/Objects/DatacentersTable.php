@@ -28,7 +28,7 @@ class DatacentersTable extends ObjectsTable
         $query = $this->db()->select()->from(
             ['o' => 'object'],
             $this->getRequiredDbColumns()
-        )->where('object_type = ?', 'DataCenter');
+        )->where('object_type = ?', 'Datacenter');
 
         return $query;
     }
