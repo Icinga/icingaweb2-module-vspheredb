@@ -13,7 +13,6 @@ class VRangerBackupRunDetails extends NameValueTable
 
     /**
      * @param VRangerBackup $details
-     * @throws \Icinga\Exception\IcingaException
      */
     public function __construct(VRangerBackup $details)
     {

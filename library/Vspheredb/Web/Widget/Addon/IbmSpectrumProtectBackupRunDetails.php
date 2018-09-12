@@ -15,7 +15,6 @@ class IbmSpectrumProtectBackupRunDetails extends NameValueTable
     /**
      * IbmSpectrumProtectBackupRunDetails constructor.
      * @param IbmSpectrumProtect $details
-     * @throws \Icinga\Exception\IcingaException
      */
     public function __construct(IbmSpectrumProtect $details)
     {

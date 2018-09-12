@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Addon;
 
 use dipl\Html\HtmlDocument;
-use Icinga\Exception\IcingaException;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 
 /**
@@ -30,7 +29,6 @@ interface BackupTool
 
     /**
      * @param VirtualMachine $vm
-     * @throws IcingaException
      */
     public function handle(VirtualMachine $vm);
 

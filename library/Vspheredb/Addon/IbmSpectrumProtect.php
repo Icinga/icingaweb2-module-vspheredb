@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Addon;
 
-use Icinga\Exception\IcingaException;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\Addon\IbmSpectrumProtectBackupRunDetails;
+use RuntimeException;
 
 class IbmSpectrumProtect implements BackupTool
 {
@@ -22,7 +22,6 @@ class IbmSpectrumProtect implements BackupTool
     /**
      * @param VirtualMachine $vm
      * @return bool
-     * @throws IcingaException
      */
     public function wants(VirtualMachine $vm)
     {
@@ -31,7 +30,6 @@ class IbmSpectrumProtect implements BackupTool
 
     /**
      * @param VirtualMachine $vm
-     * @throws IcingaException
      */
     public function handle(VirtualMachine $vm)
     {
@@ -40,7 +38,6 @@ class IbmSpectrumProtect implements BackupTool
 
     /**
      * @return IbmSpectrumProtectBackupRunDetails
-     * @throws IcingaException
      */
     public function getInfoRenderer()
     {
@@ -57,14 +54,13 @@ class IbmSpectrumProtect implements BackupTool
     }
 
     /**
-     * @return array|null
-     * @throws IcingaException
+     * @return array
      */
     public function requireParsedAttributes()
     {
         $attributes = $this->getAttributes();
         if ($attributes === null) {
-            throw new IcingaException('Got no IBM Spectrum protect flags');
+            throw new RuntimeException('Got no IBM Spectrum protect flags');
         }
 
         return $attributes;

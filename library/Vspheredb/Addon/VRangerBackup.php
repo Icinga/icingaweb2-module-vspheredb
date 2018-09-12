@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Addon;
 
-use Icinga\Exception\IcingaException;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\Addon\VRangerBackupRunDetails;
+use RuntimeException;
 
 class VRangerBackup implements BackupTool
 {
@@ -20,7 +20,6 @@ class VRangerBackup implements BackupTool
     /**
      * @param VirtualMachine $vm
      * @return bool
-     * @throws IcingaException
      */
     public function wants(VirtualMachine $vm)
     {
@@ -29,7 +28,6 @@ class VRangerBackup implements BackupTool
 
     /**
      * @param VirtualMachine $vm
-     * @throws IcingaException
      */
     public function handle(VirtualMachine $vm)
     {
@@ -38,7 +36,6 @@ class VRangerBackup implements BackupTool
 
     /**
      * @return VRangerBackupRunDetails
-     * @throws IcingaException
      */
     public function getInfoRenderer()
     {
@@ -55,14 +52,13 @@ class VRangerBackup implements BackupTool
     }
 
     /**
-     * @return array|null
-     * @throws IcingaException
+     * @return array
      */
     public function requireParsedAttributes()
     {
         $attributes = $this->getAttributes();
         if ($attributes === null) {
-            throw new IcingaException('Got no VRangerBackup annotation info');
+            throw new RuntimeException('Got no VRangerBackup annotation info');
         }
 
         return $attributes;

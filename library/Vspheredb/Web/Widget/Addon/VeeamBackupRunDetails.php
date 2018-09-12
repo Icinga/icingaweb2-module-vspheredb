@@ -14,7 +14,6 @@ class VeeamBackupRunDetails extends NameValueTable
     /**
      * VeeamBackupRunDetails constructor.
      * @param VeeamBackup $details
-     * @throws \Icinga\Exception\IcingaException
      */
     public function __construct(VeeamBackup $details)
     {
