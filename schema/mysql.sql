@@ -367,7 +367,7 @@ CREATE TABLE vm_hardware (
 
 CREATE TABLE vm_disk (
   vm_uuid VARBINARY(20) NOT NULL,
-  hardware_key INT(10) UNSIGNED DEFAULT NULL,
+  hardware_key INT(10) UNSIGNED NOT NULL,
   disk_uuid VARBINARY(16) DEFAULT NULL, -- backing->uuid: 6000C272-5a6b-ca2f-1706-4d2493ba11f0
   datastore_uuid VARBINARY(20) DEFAULT NULL, -- backing->datastore->_
   file_name VARCHAR(255) DEFAULT NULL, -- backing->fileName: [DSNAME] <name>/<name>.vmdk
@@ -401,7 +401,7 @@ CREATE TABLE vm_disk_usage (
 
 CREATE TABLE vm_network_adapter (
   vm_uuid VARBINARY(20) NOT NULL,
-  hardware_key INT(10) UNSIGNED DEFAULT NULL,
+  hardware_key INT(10) UNSIGNED NOT NULL,
   portgroup_uuid VARBINARY(20) DEFAULT NULL, -- port->portgroupKey (moid, dvportgroup-1288720)
   port_key INT(10) UNSIGNED DEFAULT NULL, -- port->portKey
   mac_address VARCHAR(17) DEFAULT NULL, -- binary(6)? new xxeuid?
