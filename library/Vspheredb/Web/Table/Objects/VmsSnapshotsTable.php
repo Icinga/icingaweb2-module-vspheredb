@@ -11,7 +11,7 @@ class VmsSnapshotsTable extends ObjectsTable
 
     protected $searchColumns = [
         'object_name',
-        'disk_path',
+        'guest_host_name',
     ];
 
     public function filterHost($uuid)
