@@ -124,6 +124,16 @@ class HostsTable extends ObjectsTable
 
                 return new SpectreMelddownBiosInfo($host);
             }),
+            $this->createColumn('uptime', $this->translate('Uptime'), [
+                'uptime' => 'hqs.uptime',
+            ])->setRenderer(function ($row) {
+                if ($row->uptime === null) {
+                    return null;
+                }
+
+                return DateFormatter::formatDuration($row->uptime);
+            }),
+
         ]);
     }
 
