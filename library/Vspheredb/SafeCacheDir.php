@@ -33,7 +33,6 @@ class SafeCacheDir
      */
     public static function getSubDirectory($directory)
     {
-        echo "Getting sub dir $directory\n";
         $subDir = static::getDirectory() . "/$directory";
         static::claimDirectory($subDir);
 
