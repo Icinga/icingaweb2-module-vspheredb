@@ -32,9 +32,19 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     ];
 
     protected $otherKnownEvents = [
-        'VmPoweredOnEvent',
         'VmStartingEvent',
+        'VmPoweredOnEvent',
+        'VmStoppingEvent',
         'VmPoweredOffEvent',
+        'VmBeingCreatedEvent',
+        'VmCreatedEvent',
+        'VmReconfiguredEvent',
+        'VmSuspendedEvent',
+        'VmBeingDeployedEvent',
+        'VmBeingClonedEvent',
+        'VmBeingClonedNoFolderEvent',
+        'VmClonedEvent',
+        'VmCloneFailedEvent'
     ];
 
     protected $fetchedUuids;
@@ -48,6 +58,12 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     /** @var VirtualMachine */
     protected $vm;
 
+    /** @var string */
+    protected $eventType;
+
+    /** @var string */
+    protected $parent;
+
     public function renderRow($row)
     {
         $this->renderDayIfNew($row->ts_event_ms / 1000);
@@ -56,7 +72,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         if (null === $this->vm) {
             $content[] = 'VM: ';
             $content[] = Link::create(
-                $row->object_name,
+                $this->deferredObjectName($row->vm_uuid),
                 'vspheredb/vm/vmotions',
                 ['uuid' => bin2hex($row->vm_uuid)]
             );
@@ -78,6 +94,13 @@ class VMotionHistoryTable extends ZfQueryBasedTable
             DateFormatter::formatTime($row->ts_event_ms / 1000)
         ]);
 
+        // TODO:
+        // 'VmSuspendedEvent',
+        // 'VmBeingDeployedEvent',
+        // 'VmBeingClonedEvent',
+        // 'VmBeingClonedNoFolderEvent',
+        // 'VmClonedEvent',
+        // 'VmCloneFailedEvent'
         switch ($row->event_type) {
             case 'VmFailedMigrateEvent':
                 $tr->addAttributes([
@@ -120,6 +143,27 @@ class VMotionHistoryTable extends ZfQueryBasedTable
                     'class' => 'state poweredOn',
                 ]);
                 break;
+            case 'VmStoppingEvent':
+                $tr->addAttributes([
+                    'class' => 'state stopping',
+                ]);
+                break;
+            case 'VmReconfiguredEvent':
+                $tr->addAttributes([
+                    'class' => 'event reconfigured',
+                ]);
+                break;
+            case 'VmBeingCreatedEvent':
+            case 'VmBeingDeployedEvent':
+                $tr->addAttributes([
+                    'class' => 'event being-created',
+                ]);
+                break;
+            case 'VmCreatedEvent':
+                $tr->addAttributes([
+                    'class' => 'event created',
+                ]);
+                break;
             default:
                 $tr->add($this::td(Html::tag('pre', null, print_r($row, 1))));
         }
@@ -148,6 +192,26 @@ class VMotionHistoryTable extends ZfQueryBasedTable
     public function filterDatastore(Datastore $datastore)
     {
         $this->datastore = $datastore;
+
+        return $this;
+    }
+
+    public function filterEventType($type)
+    {
+        if (is_array($type)) {
+            $this->eventType = $type;
+        } elseif (strlen($type)) {
+            $this->eventType = $type;
+        }
+
+        return $this;
+    }
+
+    public function filterParent($uuid)
+    {
+        if (strlen($uuid)) {
+            $this->parent = $uuid;
+        }
 
         return $this;
     }
@@ -198,7 +262,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
         $query = $this->db()->select()->from([
             'vh' => 'vm_event_history'
         ], [
-            'o.object_name',
             'vh.ts_event_ms',
             'vh.event_type',
             'vh.vm_uuid',
@@ -209,31 +272,24 @@ class VMotionHistoryTable extends ZfQueryBasedTable
             'vh.destination_datastore_uuid',
             'vh.full_message',
             'vh.fault_reason',
-        ])->join(
-            ['o' => 'object'],
-            'o.uuid = vh.vm_uuid',
-            []
-        )->order('ts_event_ms DESC');
+        ])->order('ts_event_ms DESC');
 
-        $query->where('event_type IN (?)', [
+        if (is_string($this->eventType) && strlen($this->eventType)) {
+            $query->where('event_type = ?', $this->eventType);
+        } elseif (is_array($this->eventType) && ! empty($this->eventType)) {
+            $query->where('event_type IN (?)', $this->eventType);
+        }
 
-
-            'VmFailedMigrateEvent',
-            'MigrationEvent',
-            'VmBeingMigratedEvent',
-            'VmBeingHotMigratedEvent',
-            'VmEmigratingEvent',
-            'VmMigratedEvent',
-
-
-            'VmBeingCreatedEvent',
-            'VmCreatedEvent',
-            'VmStartingEvent',
-            'VmStoppingEvent',
-            'VmPoweredOnEvent',
-            'VmPoweredOffEvent',
-            'VmReconfiguredEvent',
-        ]);
+        if ($this->parent !== null) {
+            $query->join(
+                ['h' => 'object'],
+                $this->db()->quoteInto(
+                    'h.uuid = vh.host_uuid AND h.parent_uuid = UNHEX(?)',
+                    $this->parent
+                ),
+                []
+            );
+        }
 
         if ($this->datastore) {
             $query->where('datastore_uuid = ?', $this->datastore->get('uuid'))
@@ -249,7 +305,6 @@ class VMotionHistoryTable extends ZfQueryBasedTable
             $query->where('vm_uuid = ?', $this->vm->get('uuid'));
         }
 
-        // $query->where('event_type = ?', 'VmFailedMigrateEvent');
         return $query;
     }
 
@@ -267,6 +322,17 @@ class VMotionHistoryTable extends ZfQueryBasedTable
 
         $content = new DeferredText(function () use ($row) {
             return $this->showMotionPath($row);
+        });
+
+        return $content->setEscaped();
+    }
+
+    protected function deferredObjectName($uuid)
+    {
+        $this->requiredUuids[$uuid] = $uuid;
+
+        $content = new DeferredText(function () use ($uuid) {
+            return $this->getUuidName($uuid);
         });
 
         return $content->setEscaped();

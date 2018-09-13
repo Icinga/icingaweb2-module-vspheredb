@@ -10,6 +10,8 @@ class VMotionHeatmap extends EventHeatmapCalendars
 
     protected $query;
 
+    protected $eventType;
+
     public function __construct(VCenter $vCenter, $baseUrl)
     {
         $this->setBaseUrl($baseUrl);
@@ -23,6 +25,13 @@ class VMotionHeatmap extends EventHeatmapCalendars
         }
 
         return $this->query;
+    }
+
+    public function filterEventType($type)
+    {
+        $this->eventType = $type;
+
+        return $this;
     }
 
     public function filterParent($uuid)
@@ -41,14 +50,20 @@ class VMotionHeatmap extends EventHeatmapCalendars
 
     protected function prepareQuery()
     {
-        return $this->db->select()->from(['veh' => 'vm_event_history'], [
+        $query = $this->db->select()->from(['veh' => 'vm_event_history'], [
             // TODO: / 86400 + offset
             'day' => 'DATE(FROM_UNIXTIME(veh.ts_event_ms / 1000))',
             'cnt' => 'COUNT(*)'
-        ])->where(
-            'veh.event_type = ?',
-            'VmMigratedEvent'
-        )->group('day');
+        ])->group('day');
+
+        if ($this->eventType !== null && $this->eventType !== '') {
+            $query->where(
+                'veh.event_type = ?',
+                $this->eventType
+            );
+        }
+
+        return $query;
     }
 
     public function getEvents()

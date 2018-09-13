@@ -8,6 +8,9 @@ use dipl\Html\Link;
 use dipl\Html\Table;
 use dipl\Web\Url;
 
+/**
+ * @deprecated
+ */
 abstract class EventHeatmapCalendars extends BaseHtmlElement
 {
     protected $tag = 'div';

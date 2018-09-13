@@ -138,22 +138,62 @@ div.event-heatmap-calendars > table.calendar {
   display: inline-block;
   margin-right: 1em;
   vertical-align: top;
+  caption {
+    font-weight: bold;
+    text-align: center;
+  }
   th, td {
     text-align: center;
   }
 
   td {
     padding: 0 2px 2px 0;
+    font-size: 1.25em;
+    line-height: 2em;
+    width: 2.2em;
+  }
+
+  tbody th {
+    width: 2.6667em;
+    vertical-align: top;
+    font-size: 0.75em;
   }
 
   td a {
     display: block;
     border-radius: 0.2em;
-    width: 2em;
-    line-height: 2em;
-    font-size: 1.25em;
     color: @text-color;
   }
+
+  td.today a {
+    border-radius: 0;
+    // No, this jumps when there is no link
+    // border: @text-color solid 1px;
+  }
+
+  td.other-month, td.other-month a, td.future-day, td.future-day a {
+    color: @gray-light;
+  }
+}
+
+p.information, p.warning, p.critical {
+  margin: 0.5em 0 0.5em 0;
+  background-color: @color-ok;
+  color: white;
+  font-weight: bold;
+  padding: 1em;
+}
+
+p.warning {
+  background-color: @color-warning;
+}
+
+p.critical {
+  background-color: @color-critical;
+}
+
+.controls .refresh-container-control:focus {
+  background-color: inherit;
 }
 
 .vcenter-summaries {
@@ -551,7 +591,7 @@ table.name-value-table a {
   color: @icinga-blue;
 }
 
-tr.state td:first-child {
+tr.state td:first-child, tr.event td:first-child {
   padding-left: 2em;
   &::before {
     font-family: 'ifont';
@@ -571,7 +611,7 @@ tr.state.error td:first-child::before {
 }
 
 
-tr.state td:first-child::before {
+tr.state td:first-child::before, tr.event td:first-child::before {
   font-family: 'ifont';
   // icon-help:
   float: left;
@@ -612,15 +652,39 @@ tr.state.poweredOn td:first-child::before {
 }
 
 tr.state.starting td:first-child::before {
-  color: @color-warning;
+  color: @color-pending;
   // icon-plug
   content: '\e862';
+}
+
+tr.state.stopping td:first-child::before {
+  color: @color-critical;
+  // icon-spinner
+  content: '\e869';
 }
 
 tr.state.poweredOff td:first-child::before {
   color: @color-critical;
   // icon-plug
   content: '\e862';
+}
+
+tr.event.reconfigured td:first-child::before {
+  color: @color-warning;
+  // icon-edit
+  content: '\e84f';
+}
+
+tr.event.created td:first-child::before {
+  color: @color-ok;
+  // icon-plus
+  content: '\e805';
+}
+
+tr.event.being-created td:first-child::before {
+  color: @color-pending;
+  // icon-spinner
+  content: '\e869';
 }
 
 /** Disk Usage **/
