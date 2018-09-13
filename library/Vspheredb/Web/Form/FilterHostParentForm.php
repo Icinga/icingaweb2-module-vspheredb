@@ -102,4 +102,21 @@ class FilterHostParentForm extends Form
 
         return $enum;
     }
+
+    /**
+     * Hint: this is required unless we're using a Director release
+     * including 095de49
+     *
+     * @param \Icinga\Web\Request $request
+     * @return $this
+     */
+    public function setRequest($request)
+    {
+        if ($this->getAction() === null) {
+            $this->setAction($request->getUrl()->getAbsoluteUrl('&'));
+        }
+        parent::setRequest($request);
+
+        return $this;
+    }
 }
