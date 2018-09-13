@@ -84,10 +84,6 @@ class DatastoreController extends Controller
         return $ds;
     }
 
-    /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     protected function handleTabs()
     {
         $params = ['uuid' => $this->params->get('uuid')];

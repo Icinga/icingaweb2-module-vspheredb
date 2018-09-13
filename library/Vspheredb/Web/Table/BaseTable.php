@@ -9,8 +9,8 @@ use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
 use dipl\Web\Url;
-use Icinga\Exception\IcingaException;
 use Icinga\Util\Format;
+use InvalidArgumentException;
 
 abstract class BaseTable extends ZfQueryBasedTable
 {
@@ -72,14 +72,13 @@ abstract class BaseTable extends ZfQueryBasedTable
     /**
      * @param string $alias
      * @return TableColumn
-     * @throws IcingaException
      */
     public function getAvailableColumn($alias)
     {
         if (array_key_exists($alias, $this->availableColumns)) {
             return $this->availableColumns[$alias];
         } else {
-            throw new IcingaException('No column named "%s" is available', $alias);
+            throw new InvalidArgumentException('No column named "%s" is available', $alias);
         }
     }
 
@@ -210,7 +209,6 @@ abstract class BaseTable extends ZfQueryBasedTable
      * @param Url $url
      * @param string $sortParam
      * @return $this
-     * @throws IcingaException
      */
     public function handleSortUrl(Url $url, $sortParam = 'sort')
     {
@@ -227,7 +225,6 @@ abstract class BaseTable extends ZfQueryBasedTable
     /**
      * @param string|array $columns
      * @return $this
-     * @throws IcingaException
      */
     public function sortBy($columns)
     {

@@ -19,6 +19,9 @@ class HostController extends Controller
     /** @var HostSystem */
     protected $host;
 
+    /**
+     * @throws \Icinga\Exception\MissingParameterException
+     */
     public function init()
     {
         $this->host = $this->addHost();
@@ -71,6 +74,9 @@ class HostController extends Controller
         return $host;
     }
 
+    /**
+     * @throws \Icinga\Exception\MissingParameterException
+     */
     protected function handleTabs()
     {
         $hexId = $this->params->getRequired('uuid');

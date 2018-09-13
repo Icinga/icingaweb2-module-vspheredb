@@ -19,10 +19,6 @@ class VmsController extends ObjectsController
         'snapshot'  => 'index',
     ];
 
-    /**
-     * @throws \Icinga\Exception\ProgrammingError
-     * @throws \Icinga\Exception\IcingaException
-     */
     public function indexAction()
     {
         $this->handleTabs();
@@ -86,9 +82,6 @@ class VmsController extends ObjectsController
         $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machine Guest Disks'));
     }
 
-    /**
-     * @throws \Icinga\Exception\IcingaException
-     */
     public function snapshotAction()
     {
         $this->handleTabs();

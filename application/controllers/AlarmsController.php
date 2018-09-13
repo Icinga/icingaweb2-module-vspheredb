@@ -9,18 +9,11 @@ use Icinga\Module\Vspheredb\Web\Widget\AlarmHeatmap;
 
 class AlarmsController extends Controller
 {
-    /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     public function init()
     {
         $this->handleTabs();
     }
 
-    /**
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     public function indexAction()
     {
         $day = $this->params->shift('day');
@@ -48,10 +41,6 @@ class AlarmsController extends Controller
         $this->content()->add(new AlarmHeatmap($this->vCenter(), 'vspheredb/alarms'));
     }
 
-    /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     protected function handleTabs()
     {
         $tabs = $this->tabs()->add('index', [

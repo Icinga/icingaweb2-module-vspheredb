@@ -10,10 +10,6 @@ use Icinga\Module\Vspheredb\Web\Widget\VMotionHeatmap;
 
 class VmotionsController extends Controller
 {
-    /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     public function init()
     {
         $this->handleTabs();
@@ -84,10 +80,6 @@ class VmotionsController extends Controller
         return $enum;
     }
 
-    /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     protected function handleTabs()
     {
         $tabs = $this->tabs()->add('index', [

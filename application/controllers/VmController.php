@@ -23,10 +23,8 @@ use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 class VmController extends Controller
 {
     /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
      * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     public function indexAction()
     {
@@ -89,8 +87,6 @@ class VmController extends Controller
     /**
      * @param $title
      * @param null $icon
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     protected function addSubTitle($title, $icon = null)
     {
@@ -104,10 +100,8 @@ class VmController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
      * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     public function hardwareAction()
     {
@@ -116,10 +110,8 @@ class VmController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
      * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     public function vmotionsAction()
     {
@@ -128,10 +120,8 @@ class VmController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
      * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     public function alarmsAction()
     {
@@ -141,10 +131,8 @@ class VmController extends Controller
 
     /**
      * @throws \Icinga\Exception\AuthenticationException
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
      * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     public function countersAction()
     {
@@ -160,10 +148,8 @@ class VmController extends Controller
 
     /**
      * @return VirtualMachine
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
      * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\ProgrammingError
      */
     protected function addVm()
     {
@@ -175,10 +161,6 @@ class VmController extends Controller
         return $vm;
     }
 
-    /**
-     * @throws \Icinga\Exception\Http\HttpNotFoundException
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     protected function handleTabs()
     {
         $params = ['uuid' => $this->params->get('uuid')];

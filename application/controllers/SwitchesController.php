@@ -10,10 +10,6 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class SwitchesController extends ObjectsController
 {
-    /**
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     public function indexAction()
     {
         $this->handleTabs();
