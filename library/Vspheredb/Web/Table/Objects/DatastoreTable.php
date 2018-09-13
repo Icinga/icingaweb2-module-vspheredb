@@ -65,7 +65,7 @@ class DatastoreTable extends ObjectsTable
             $this->createColumn('uncommitted_percent', $this->translate('Uncommitted (%)'), [
                 'uncommitted_percent'  => '(ds.uncommitted / ds.capacity) * 100'
             ])->setRenderer(function ($row) {
-                return $this->formatPercent($row->free_space_percent);
+                return $this->formatPercent($row->uncommitted_percent);
             }),
             $this->createColumn('size', $this->translate('Size'), 'ds.capacity')
                 ->setRenderer(function ($row) {
