@@ -18,6 +18,8 @@ class WatchDog extends EventEmitter
 
     protected $command;
 
+    protected $pid;
+
     protected $childPid;
 
     protected $reRunScheduled = false;
