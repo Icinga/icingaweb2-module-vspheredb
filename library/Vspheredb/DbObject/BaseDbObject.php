@@ -4,7 +4,6 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Application\Logger;
 use Icinga\Exception\NotFoundError;
-use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Director\Data\Db\DbObject as DirectorDbObject;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
@@ -12,6 +11,7 @@ use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use InvalidArgumentException;
 
 abstract class BaseDbObject extends DirectorDbObject
 {
@@ -49,9 +49,10 @@ abstract class BaseDbObject extends DirectorDbObject
             throw new NotFoundError('More than one object found for given filter');
         }
 
-        return (new static())
-            ->setConnection($connection)
-            ->setDbProperties($result[0]);
+        $object = new static();
+        $object->setConnection($connection)->setDbProperties($result[0]);
+
+        return $object;
     }
 
     /**
@@ -127,7 +128,6 @@ abstract class BaseDbObject extends DirectorDbObject
     /**
      * @param $value
      * @return null|string
-     * @throws ProgrammingError
      */
     protected function makeBooleanValue($value)
     {
@@ -138,7 +138,7 @@ abstract class BaseDbObject extends DirectorDbObject
         } elseif ($value === null) {
             return null;
         } else {
-            throw new ProgrammingError(
+            throw new InvalidArgumentException(
                 'Boolean expected, got %s',
                 var_export($value, 1)
             );
@@ -149,8 +149,6 @@ abstract class BaseDbObject extends DirectorDbObject
      * @param $properties
      * @param VCenter $vCenter
      * @return $this
-     * @throws ProgrammingError
-     * @throws \Icinga\Exception\IcingaException
      */
     public function setMapped($properties, VCenter $vCenter)
     {
@@ -187,7 +185,7 @@ abstract class BaseDbObject extends DirectorDbObject
 
     /**
      * @return ManagedObject
-     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Exception\NotFoundError
      */
     public function object()
     {
@@ -239,7 +237,7 @@ abstract class BaseDbObject extends DirectorDbObject
      * @param VCenter $vCenter
      * @param BaseDbObject[] $dbObjects
      * @param \stdClass[] $newObjects
-     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
      */
     protected static function storeSync(VCenter $vCenter, & $dbObjects, & $newObjects)
     {
@@ -324,7 +322,7 @@ abstract class BaseDbObject extends DirectorDbObject
 
     /**
      * @param VCenter $vCenter
-     * @throws \Icinga\Exception\IcingaException
+     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
      */
     public static function syncFromApi(VCenter $vCenter)
     {

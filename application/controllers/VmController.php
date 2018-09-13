@@ -23,8 +23,8 @@ use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 class VmController extends Controller
 {
     /**
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\NotFoundError
      */
     public function indexAction()
     {
@@ -148,8 +148,8 @@ class VmController extends Controller
 
     /**
      * @return VirtualMachine
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\NotFoundError
      */
     protected function addVm()
     {

@@ -17,7 +17,6 @@ use dipl\Web\Widget\NameValueTable;
 class DatastoreController extends Controller
 {
     /**
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
@@ -71,7 +70,6 @@ class DatastoreController extends Controller
 
     /**
      * @return Datastore
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
