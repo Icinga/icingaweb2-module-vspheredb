@@ -14,7 +14,8 @@ class VmsTable extends ObjectsTable
 
     protected $searchColumns = [
         'object_name',
-        'guest_host_name'
+        'guest_host_name',
+        'guest_ip_address'
     ];
 
     public function filterHost($uuid)
@@ -76,6 +77,7 @@ class VmsTable extends ObjectsTable
                 ->setRenderer($powerStateRenderer),
             $this->createObjectNameColumn(),
             $this->createColumn('host_name', 'Host', 'h.host_name'),
+            $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vc.guest_ip_address'),
             $perf->getDiskColumn()->setDefaultSortDirection('DESC'),
             $perf->getNetColumn()->setDefaultSortDirection('DESC'),
             $perf->getCurrentNetColumn()->setDefaultSortDirection('DESC'),
