@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Html;
 use dipl\Html\Link;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -199,6 +198,12 @@ class HostsTable extends ObjectsTable
                 'vms.runtime_host_uuid = h.uuid',
                 []
             );
+        }
+        if ($this->parentUuids) {
+            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
+        }
+        if ($this->filterVCenter) {
+            $query->where('o.vcenter_uuid = ?', $this->filterVCenter->getUuid());
         }
 
         return $query;
