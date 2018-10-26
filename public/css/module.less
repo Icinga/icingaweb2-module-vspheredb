@@ -6,6 +6,29 @@ a:hover::before {
   text-decoration: none;
 }
 
+p.error, p.warning, p.information {
+  color: white;
+  padding: 1em 2em;
+  font-weight: bold;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+p.error {
+  background-color: @colorCritical;
+}
+
+p.warning {
+  background-color: @colorWarning;
+}
+
+p.information {
+  background-color: @colorOk;
+}
+
 a.ManagedObject {
   padding-left: 0.5em;
 }
@@ -130,7 +153,7 @@ th.table-header-day {
   text-align: right;
 }
 
-h2 {
+.vm-info h2 {
   margin-top: 2em;
 }
 
