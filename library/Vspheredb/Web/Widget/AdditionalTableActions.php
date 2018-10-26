@@ -96,9 +96,12 @@ class AdditionalTableActions
             $table->chooseColumns($enabled);
         }
 
+        $all = [];
+        $disabled = [];
         foreach ($this->table->getAvailableColumns() as $column) {
             $title = $column->getTitle();
             $alias = $column->getAlias();
+            $all[] = $alias;
             if (in_array($alias, $enabled)) {
                 $links[] = Link::create(
                     $title,
@@ -109,6 +112,7 @@ class AdditionalTableActions
                     ['class' => 'icon-ok']
                 );
             } else {
+                $disabled[] = $alias;
                 $links[] = Link::create(
                     $title,
                     $url->with('columns', implode(',', array_merge($enabled, [
@@ -119,6 +123,15 @@ class AdditionalTableActions
 
                 );
             }
+        }
+        if (! empty($disabled)) {
+            $links[] = Link::create(
+                $this->translate('All'),
+                $url->with('columns', implode(',', $all)),
+                null,
+                ['class' => 'icon-resize-horizontal']
+
+            );
         }
 
         return $links;
