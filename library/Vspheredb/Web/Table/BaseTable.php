@@ -205,6 +205,17 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this->formatBytes($mb * 1024 * 1024);
     }
 
+    protected function formatMhz($mhz)
+    {
+        if ($mhz > 1000000) {
+            return sprintf('%.2f THz', $mhz / 1000000);
+        } elseif ($mhz > 1000) {
+            return sprintf('%.2f GHz', $mhz / 1000);
+        } else {
+            return sprintf('%.2f MHz', $mhz);
+        }
+    }
+
     /**
      * @param Url $url
      * @param string $sortParam
