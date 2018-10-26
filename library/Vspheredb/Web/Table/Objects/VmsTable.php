@@ -115,6 +115,10 @@ class VmsTable extends ObjectsTable
             })->setSortExpression(
                 '(vqs.guest_memory_usage_mb / vc.hardware_memorymb)'
             )->setDefaultSortDirection('DESC'),
+            $this->createColumn('overall_cpu_usage', 'CPU Usage', 'vqs.overall_cpu_usage')
+                ->setRenderer(function ($row) {
+                    return $this->formatMhz($row->overall_cpu_usage);
+                })->setDefaultSortDirection('DESC'),
 
 
             $this->createColumn('uptime', $this->translate('Uptime'), [
