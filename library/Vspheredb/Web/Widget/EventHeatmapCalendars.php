@@ -81,6 +81,7 @@ abstract class EventHeatmapCalendars extends BaseHtmlElement
         $weekday = '7';
 
         $lastMonth = null;
+        $lastDayOfMonth = 0;
 
         foreach ($events as $day => $count) {
             $time = strtotime($day);
@@ -101,6 +102,22 @@ abstract class EventHeatmapCalendars extends BaseHtmlElement
                 $this->prefillWeek($row, $weekday);
 
                 $lastMonth = $month;
+            } else {
+                $dayDiff = $dayOfMonth - $lastDayOfMonth;
+                if ($dayDiff > 1) {
+                    if ($row === null) {
+                        $row = $table::tr();
+                        $body->add($row);
+                    }
+                }
+                for ($miss = $lastDayOfMonth + 1; $miss < $dayOfMonth; $miss++) {
+                    $link = Link::create($miss, '#');
+                    if ($miss % 7 === 0) {
+                        $row = $table::tr();
+                        $body->add($row);
+                    }
+                    $row->add(Table::td($link));
+                }
             }
 
             if ($weekday === '1') {
@@ -125,6 +142,7 @@ abstract class EventHeatmapCalendars extends BaseHtmlElement
                 )
             ]);
             $row->add(Table::td($link));
+            $lastDayOfMonth = $dayOfMonth;
         }
 
         $this->closeWeek($row, $weekday);
@@ -133,14 +151,14 @@ abstract class EventHeatmapCalendars extends BaseHtmlElement
     protected function prefillWeek(BaseHtmlElement $row, $weekday)
     {
         for ($i = 1; $i < $weekday; $i++) {
-            $row->add(Html::tag('td', null, ''));
+            $row->add(Html::tag('td'));
         }
     }
 
     protected function closeWeek(BaseHtmlElement $row, $weekday)
     {
         for ($i = $weekday + 1; $i <= 7; $i++) {
-            $row->add(Html::tag('td', null, ''));
+            $row->add(Html::tag('td'));
         }
     }
 }
