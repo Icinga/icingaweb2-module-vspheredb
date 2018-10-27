@@ -16,6 +16,7 @@ use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
+use Icinga\Module\Vspheredb\Web\Table\VmNetworkAdapterTable;
 use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
@@ -29,8 +30,15 @@ class VmController extends Controller
     public function indexAction()
     {
         $vm = $this->addVm();
+        $this->content()->addAttributes([
+            'class' => 'vm-info'
+        ]);
         $this->content()->add(
             new VmInfoTable($vm, $this->vCenter(), $this->pathLookup())
+        );
+        $this->addSubTitle($this->translate('Network'), 'sitemap');
+        $this->content()->add(
+            new VmNetworkAdapterTable($vm)
         );
         $this->addSubTitle($this->translate('DataStore Usage'), 'database');
         $this->content()->add(
