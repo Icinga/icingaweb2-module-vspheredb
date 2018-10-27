@@ -2,12 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use Icinga\Date\DateFormatter;
-use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
-use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
-use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
-use Icinga\Util\Format;
-
 class SwitchesTable extends ObjectsTable
 {
     protected $baseUrl = 'vspheredb/switch';
