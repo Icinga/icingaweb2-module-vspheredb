@@ -4,12 +4,13 @@
 Requirements
 ------------
 
-* Icinga Web 2 (&gt;= 2.4.1)
-* Icinga Web 2 module [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.3.0)
-* Icinga Director (&gt; v1.5.0 current master)
-* PHP (&gt;= 5.4 or 7.x)
+* Icinga Web 2 (&gt;= 2.5)
+* Icinga Web 2 module [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.3)
+* Icinga Director (&gt;= v1.5 or current master)
+* PHP (&gt;= 5.6, preferably 7.x)
 * php-soap
 * php-posix
+* MySQL (&gt;= 5.6) or MariaDB (&gt;= 5.5.3)
 
 > **Hint**: this module will hook into Icinga Director, but shouldn't depend on it
 > at all. Currently it is based on some libraries provided by the Director, that's
