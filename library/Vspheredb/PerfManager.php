@@ -33,6 +33,12 @@ class PerfManager
         // );
     }
 
+    /**
+     * @param PropertySet $propSet
+     * @param SelectSet $selectSet
+     * @return mixed
+     * @throws \Icinga\Exception\AuthenticationException
+     */
     public function collectObjectPerfdata(PropertySet $propSet, SelectSet $selectSet)
     {
         $result = $this->collectPerfdata(
@@ -42,6 +48,13 @@ class PerfManager
         return $result;
     }
 
+    /**
+     * @param $name
+     * @param $type
+     * @return mixed
+     * @throws \Icinga\Exception\AuthenticationException
+     * @throws \Icinga\Exception\ConfigurationError
+     */
     public function queryPerfProviderSummary($name, $type)
     {
         $specSet = [
@@ -81,7 +94,7 @@ class PerfManager
         // net.bytesRx.average
     }
 
-    public function queryPerf($name, $type, $interval = 20, $count = 60)
+    public function queryPerf($names, $type, $interval = 20, $count = 60)
     {
         $metrics = [
             (object) ['counterId' => 526, 'instance' => '*'],
@@ -92,7 +105,7 @@ class PerfManager
             (object) ['counterId' => 544, 'instance' => '*'],
         ];
 
-        return $this->fetchMetrics($metrics, $name, $type, $interval, $count);
+        return $this->fetchMetrics($metrics, $names, $type, $interval, $count);
     }
 
     public function getPerformanceCounterInfo()
