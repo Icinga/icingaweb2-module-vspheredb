@@ -9,10 +9,10 @@ use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
 use Icinga\Module\Vspheredb\Web\Table\HostSensorsTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
-use dipl\Html\Link;
 use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
+use dipl\Html\Link;
 
 class HostController extends Controller
 {
@@ -100,7 +100,7 @@ class HostController extends Controller
             'url' => 'vspheredb/host/pcidevices',
             'urlParams' => ['uuid' => $hexId]
         ])->add('vmotions', [
-            'label' => $this->translate('VMotions'),
+            'label' => $this->translate('Events'),
             'url' => 'vspheredb/host/vmotions',
             'urlParams' => ['uuid' => $hexId]
         ])->activate($this->getRequest()->getActionName());

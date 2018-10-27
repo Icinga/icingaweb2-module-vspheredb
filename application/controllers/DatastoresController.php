@@ -26,8 +26,8 @@ class DatastoresController extends ObjectsController
         $table = new DatastoreTable($this->db());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
-        $table->handleSortUrl($this->url());
         $this->showTable($table, 'vspheredb/datastores', $this->translate('Datastores'));
+        $table->handleSortUrl($this->url());
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
     }

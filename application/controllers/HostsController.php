@@ -26,8 +26,11 @@ class HostsController extends ObjectsController
         $table = new HostsTable($this->db());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
-        $table->handleSortUrl($this->url());
         $this->showTable($table, 'vspheredb/hosts', $this->translate('Hosts'));
+        // Hint: handleSortUrl MUST be done AFTER showTable, otherwise
+        //       eventuallyFilter and similar will not be applied
+        // TODO: This is error-prone and should be solved differently
+        $table->handleSortUrl($this->url());
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
     }
