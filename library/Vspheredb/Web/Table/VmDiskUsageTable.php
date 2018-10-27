@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use dipl\Html\Html;
+use dipl\Html\Img;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Util\Format;
@@ -26,6 +27,8 @@ class VmDiskUsageTable extends ZfQueryBasedTable
     protected $uuid;
 
     private $root;
+
+    private $withHistory = false;
 
     public static function create(VirtualMachine $vm)
     {
@@ -51,6 +54,11 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         ];
     }
 
+    /**
+     * @param $row
+     * @return \dipl\Html\HtmlElement
+     * @throws \Icinga\Exception\NotFoundError
+     */
     public function renderRow($row)
     {
         $caption = $row->disk_path;
@@ -72,6 +80,35 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
         $this->totalSize += $row->capacity;
         $this->totalFree += $row->free_space;
+
+        if ($this->withHistory) {
+            $ciName = str_replace(' ', '_', $this->vm->object()->get('object_name'));
+            $path = str_replace('/', '_', $row->disk_path);
+            $path = str_replace(' ', '_', $path);
+            $ci = $ciName . ':' . $path;
+            $now = time();
+            $end = floor($now / 60) * 60;
+            $start = $end - 3600 * 4;
+            $start = $end - 3600 * 24 * 14;
+            $end = $start + 3600 * 24 * 4;
+            $this->body()->add($tr);
+
+            $tr = static::tr(static::td(
+                Img::create('rrd/graph/img', [
+                    'file'     => $ci . '.rrd',
+                    'rnd'      => time(),
+                    'height'   => 120,
+                    'width'    => 480,
+                    'start'    => $start,
+                    'end'      => $end,
+                    'template' => 'vm_disk',
+                ]), [
+                    'colspan' => 4,
+                    'style' => 'height: auto'
+                ]
+            ));
+
+        }
 
         return $tr;
     }
