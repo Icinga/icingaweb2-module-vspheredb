@@ -40,6 +40,15 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         ];
     }
 
+    public function getColor()
+    {
+        if (count($this) > 0) {
+            return 'yellow';
+        }
+
+        return 'green';
+    }
+
     public function setProperty($name, $title)
     {
         $this->property = $name;
