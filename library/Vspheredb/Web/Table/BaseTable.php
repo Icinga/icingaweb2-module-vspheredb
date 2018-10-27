@@ -9,7 +9,6 @@ use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
 use dipl\Web\Url;
-use Icinga\Util\Format;
 use InvalidArgumentException;
 
 abstract class BaseTable extends ZfQueryBasedTable
@@ -193,27 +192,6 @@ abstract class BaseTable extends ZfQueryBasedTable
     protected function createColumn($alias, $title = null, $column = null)
     {
         return new SimpleColumn($alias, $title, $column);
-    }
-
-    protected function formatBytes($bytes)
-    {
-        return Format::bytes($bytes);
-    }
-
-    protected function formatMb($mb)
-    {
-        return $this->formatBytes($mb * 1024 * 1024);
-    }
-
-    protected function formatMhz($mhz)
-    {
-        if ($mhz > 1000000) {
-            return sprintf('%.2f THz', $mhz / 1000000);
-        } elseif ($mhz > 1000) {
-            return sprintf('%.2f GHz', $mhz / 1000);
-        } else {
-            return sprintf('%.2f MHz', $mhz);
-        }
     }
 
     /**
