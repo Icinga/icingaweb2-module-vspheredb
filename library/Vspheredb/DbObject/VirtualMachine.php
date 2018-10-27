@@ -17,6 +17,7 @@ class VirtualMachine extends BaseDbObject
         'annotation'        => null,
         'hardware_memorymb' => null,
         'hardware_numcpu'   => null,
+        'hardware_numcorespersocket' => null,
         'template'          => null,
         'bios_uuid'         => null,
         'instance_uuid'     => null,
@@ -60,6 +61,7 @@ class VirtualMachine extends BaseDbObject
         // TODO: Delegate to vm_hardware sync?
         'config.hardware.memoryMB'   => 'hardware_memorymb',
         'config.hardware.numCPU'     => 'hardware_numcpu',
+        'config.hardware.numCoresPerSocket' => 'hardware_numcorespersocket',
         'config.template'            => 'template',
         'config.uuid'                => 'bios_uuid',
         'config.instanceUuid'        => 'instance_uuid',
@@ -90,7 +92,6 @@ class VirtualMachine extends BaseDbObject
 
     /**
      * @return VmQuickStats
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\NotFoundError
      */
     public function quickStats()
@@ -105,6 +106,7 @@ class VirtualMachine extends BaseDbObject
     /**
      * @param Api $api
      * @return array
+     * @throws \Icinga\Exception\AuthenticationException
      */
     public static function fetchAllFromApi(Api $api)
     {
@@ -126,7 +128,6 @@ class VirtualMachine extends BaseDbObject
     /**
      * @param $value
      * @return $this
-     * @throws \Icinga\Exception\ProgrammingError
      */
     public function setPaused($value)
     {
@@ -144,7 +145,6 @@ class VirtualMachine extends BaseDbObject
 
     /**
      * @param $value
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function setBootOptions($value)
     {

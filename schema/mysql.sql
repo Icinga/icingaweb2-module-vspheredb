@@ -217,6 +217,7 @@ CREATE TABLE virtual_machine (
   vcenter_uuid VARBINARY(16) NOT NULL,
   hardware_memorymb INT UNSIGNED NOT NULL,
   hardware_numcpu TINYINT UNSIGNED NOT NULL,
+  hardware_numcorespersocket TINYINT UNSIGNED DEFAULT 1 NOT NULL,
   template ENUM('y', 'n') NOT NULL, -- TODO: drop and skip templates? Or separate table?
   instance_uuid VARCHAR(64) NOT NULL,   -- 5004890e-8edd-fe5f-d116-d5704b2043e4
   bios_uuid VARCHAR(64) NOT NULL,       -- 42042ce7-1c4f-b339-2293-40357f1d6860
