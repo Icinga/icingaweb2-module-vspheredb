@@ -12,6 +12,7 @@ class DatastoreTable extends ObjectsTable
 {
     protected function initialize()
     {
+        $this->addAttributes(['class' => 'datastores-table']);
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
             $this->createColumn('object_name', $this->translate('Name'), [
@@ -73,16 +74,17 @@ class DatastoreTable extends ObjectsTable
                 }),
             $this->createColumn('usage', $this->translate('Usage'), [
                 'uuid' => 'uuid'
-            ])->setSortExpression('1 - (ds.free_space / ds.capacity) ')
-                ->setRenderer(function ($row) {
-                    /** @var Db $connection */
-                    $connection = $this->connection();
-                    $usage = new DatastoreUsage(Datastore::load($row->uuid, $connection));
-                    $usage->getAttributes()->add('class', 'compact');
-                    $usage->loadAllVmDisks()->addFreeDatastoreSpace();
+            ])->setRenderer(function ($row) {
+                /** @var Db $connection */
+                $connection = $this->connection();
+                $usage = new DatastoreUsage(Datastore::load($row->uuid, $connection));
+                $usage->getAttributes()->add('class', 'compact');
+                $usage->loadAllVmDisks()->addFreeDatastoreSpace();
 
-                    return $usage;
-                }),
+                return $usage;
+            })->setSortExpression(
+                '1 - (ds.free_space / ds.capacity)'
+            )->setDefaultSortDirection('DESC'),
         ]);
     }
 
@@ -142,6 +144,12 @@ class DatastoreTable extends ObjectsTable
                 'vdu.ds_uuid = o.uuid',
                 []
             );
+        }
+        if ($this->parentUuids) {
+            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
+        }
+        if ($this->filterVCenter) {
+            $query->where('o.vcenter_uuid = ?', $this->filterVCenter->getUuid());
         }
 
         return $query;
