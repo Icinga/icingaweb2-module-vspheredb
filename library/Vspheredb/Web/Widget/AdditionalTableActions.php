@@ -129,7 +129,10 @@ class AdditionalTableActions
                 $this->translate('All'),
                 $url->with('columns', implode(',', $all)),
                 null,
-                ['class' => 'icon-resize-horizontal']
+                [
+                    'class' => 'icon-resize-horizontal',
+                    'data-base-target' => '_main'
+                ]
 
             );
         }
@@ -141,7 +144,7 @@ class AdditionalTableActions
     {
         $options = $this->ul([
             $this->li([
-                Link::create('Columns', '#'),
+                Link::create('Columns', '#', null, ['class' => 'icon-th-list']),
                 $this->linkList($this->toggleColumnsOptions())
             ]),
             $this->li([
