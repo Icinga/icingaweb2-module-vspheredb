@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 
 class VmsGuestDiskUsageTable extends ObjectsTable
@@ -27,11 +28,11 @@ class VmsGuestDiskUsageTable extends ObjectsTable
             $this->createColumn('disk_path', $this->translate('Disk Path'), 'vdu.disk_path'),
             $this->createColumn('free_space', $this->translate('Free Space'), 'vdu.free_space')
                 ->setRenderer(function ($row) {
-                    return $this->formatBytes($row->free_space);
+                    return Format::bytes($row->free_space);
                 }),
             $this->createColumn('capacity', $this->translate('Capacity'), 'vdu.capacity')
                 ->setRenderer(function ($row) {
-                    return $this->formatBytes($row->capacity);
+                    return Format::bytes($row->capacity);
                 }),
             $this->createColumn('usage', $this->translate('Usage'), [
                 'free_space' => 'vdu.free_space',
