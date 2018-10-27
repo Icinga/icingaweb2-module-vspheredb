@@ -15,7 +15,8 @@ class PerformanceCounterTable extends ZfQueryBasedTable
         'summary',
         'stats_type',
         'rollup_type',
-        "group_name || '.' || name",
+        // TODO: disabled, Director breaks this right now for security reasons
+        // "(c.group_name || '.' || c.name)",
     ];
 
     protected $parentIds;
