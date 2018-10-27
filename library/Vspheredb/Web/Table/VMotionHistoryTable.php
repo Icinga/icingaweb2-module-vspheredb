@@ -148,6 +148,11 @@ class VMotionHistoryTable extends ZfQueryBasedTable
                     'class' => 'state stopping',
                 ]);
                 break;
+            case 'VmSuspendedEvent':
+                $tr->addAttributes([
+                    'class' => 'event suspended',
+                ]);
+                break;
             case 'VmReconfiguredEvent':
                 $tr->addAttributes([
                     'class' => 'event reconfigured',

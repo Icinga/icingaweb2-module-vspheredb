@@ -692,6 +692,12 @@ tr.state.poweredOff td:first-child::before {
   content: '\e862';
 }
 
+tr.event.suspended td:first-child::before {
+  color: @color-critical;
+  // icon-moon
+  content: '\e86e';
+}
+
 tr.event.reconfigured td:first-child::before {
   color: @color-warning;
   // icon-edit
