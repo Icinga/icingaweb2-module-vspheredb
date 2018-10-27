@@ -78,7 +78,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         if (array_key_exists($alias, $this->availableColumns)) {
             return $this->availableColumns[$alias];
         } else {
-            throw new InvalidArgumentException('No column named "%s" is available', $alias);
+            throw new InvalidArgumentException(sprintf('No column named "%s" is available', $alias));
         }
     }
 
