@@ -161,7 +161,17 @@ class EventManager
         $skipped = 0;
         foreach ($events as $key => $event) {
             // printf("%s <= %s\n", $event->key, $this->lastEventKey);
-            if ($this->lastEventKey && $event->key <= $this->lastEventKey) {
+            if ($this->lastEventKey
+                && $event->getTimestampMs() <= $this->lastEventTimestamp
+                && $event->key <= $this->lastEventKey
+            ) {
+                Logger::debug(sprintf(
+                    '%s <= %s, %s <= %s skipped',
+                    $event->getTimestampMs(),
+                    $this->lastEventTimestamp,
+                    $event->key,
+                    $this->lastEventKey
+                ));
                 $skipped++;
                 // echo "Skip\n";
                 continue;
