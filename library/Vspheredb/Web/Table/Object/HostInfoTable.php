@@ -11,7 +11,9 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
@@ -67,16 +69,28 @@ class HostInfoTable extends NameValueTable
             $this->getMonitoringInfo($host)
         );
         $this->addNameValuePairs([
-            $this->translate('Status')       => $overallStatusRenderer($host->object()->get('overall_status')),
-            $this->translate('Power')        => $powerStateRenderer($host->get('runtime_power_state')),
+            $this->translate('Status') => $overallStatusRenderer($host->object()->get('overall_status')),
+            $this->translate('Power')  => $powerStateRenderer($host->get('runtime_power_state')),
         ]);
 
         $this->addNameValuePairs([
             $this->translate('CPU / Memory') => [
-                Html::tag('div', ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
-                $this->showCpuUsage($host)),
-                Html::tag('div', ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
-                    $this->getFormattedMemory()),
+                Html::tag(
+                    'div',
+                    ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
+                    new CpuUsage(
+                        $host->quickStats()->get('overall_cpu_usage'),
+                        $host->get('hardware_cpu_cores') * $host->get('hardware_cpu_mhz')
+                    )
+                ),
+                Html::tag(
+                    'div',
+                    ['style' => 'width: 30%; display:inline-block; margin-right: 1em;'],
+                    new MemoryUsage(
+                        $host->quickStats()->get('overall_memory_usage_mb'),
+                        $host->get('hardware_memory_size_mb')
+                    )
+                ),
             ],
             $this->translate('UUID')         => $host->get('sysinfo_uuid'),
             $this->translate('API Version')  => $host->get('product_api_version'),
@@ -199,20 +213,6 @@ class HostInfoTable extends NameValueTable
             ],
             $serviceTag
         );
-    }
-
-    /**
-     * @param HostSystem $host
-     * @return array
-     * @throws \Icinga\Exception\IcingaException
-     */
-    protected function showCpuUsage(HostSystem $host)
-    {
-        $total = $host->get('hardware_cpu_cores') * $host->get('hardware_cpu_mhz');
-        $used = $host->quickStats()->get('overall_cpu_usage');
-        $title = sprintf('Used %s / %s MHz', $used, $total);
-
-        return [new SimpleUsageBar($used, $total, $title), ' ' . $title];
     }
 
     /**

@@ -13,8 +13,10 @@ use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 
 class VmInfoTable extends NameValueTable
@@ -68,8 +70,7 @@ class VmInfoTable extends NameValueTable
     }
 
     /**
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\ProgrammingError
+     * @throws \Icinga\Exception\NotFoundError
      */
     protected function assemble()
     {
@@ -102,6 +103,14 @@ class VmInfoTable extends NameValueTable
         } else {
             $guest = '-';
         }
+        $this->addNameValuePairs([
+            $this->translate('CPU Usage') => Format::mhz($vm->quickStats()->get('overall_cpu_usage')),
+            $this->translate('Memory Usage') => new MemoryUsage(
+                $vm->quickStats()->get('guest_memory_usage_mb'),
+                $vm->get('hardware_memorymb'),
+                $vm->quickStats()->get('host_memory_usage_mb')
+            ),
+        ]);
 
         $this->addNameValueRow(
             $this->translate('Monitoring'),
@@ -118,7 +127,7 @@ class VmInfoTable extends NameValueTable
         }
 
         $this->addNameValuePairs([
-            // $this->translate('UUID') => $vm->get('bios_uuid'),
+            $this->translate('UUID') => $vm->get('bios_uuid'),
             // $this->translate('Instance UUID') => $vm->get('instance_uuid'),
             $this->translate('CPUs')   => $vm->get('hardware_numcpu'),
             $this->translate('MO Ref') => $this->linkToVCenter($vm->object()->get('moref')),
@@ -146,7 +155,6 @@ class VmInfoTable extends NameValueTable
     /**
      * @param VirtualMachine $vm
      * @return array|null
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\NotFoundError
      */
     protected function getMonitoringInfo(VirtualMachine $vm)
