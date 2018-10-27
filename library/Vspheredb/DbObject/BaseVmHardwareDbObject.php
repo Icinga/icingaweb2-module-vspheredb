@@ -48,7 +48,12 @@ abstract class BaseVmHardwareDbObject extends BaseDbObject
 
         $result = [];
         foreach ($objects as $object) {
-            $result[$object->get('vm_uuid') . $object->get('hardware_key')] = $object;
+            $key = '';
+            foreach ($dummy->keyName as $part) {
+                // Usually vm_uuid . hardware_key
+                $key .= $object->get($part);
+            }
+            $result[$key] = $object;
         }
 
         return $result;
