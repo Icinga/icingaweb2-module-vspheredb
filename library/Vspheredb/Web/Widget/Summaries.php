@@ -34,6 +34,13 @@ class Summaries extends BaseHtmlElement
 
     protected $wantsPowerState = false;
 
+    /**
+     * Summaries constructor.
+     * @param ObjectsTable $table
+     * @param Db $db
+     * @param Url $baseUrl
+     * @throws \Zend_Db_Select_Exception
+     */
     public function __construct(ObjectsTable $table, Db $db, Url $baseUrl)
     {
         $this->baseUrl = $baseUrl;
@@ -70,11 +77,18 @@ class Summaries extends BaseHtmlElement
                 if ($key === 'poweredoff') {
                     $key = 'poweredOff';
                 }
-                $table->getQuery()->where($param[0] . ' = ?', $key);
+                $column = $table
+                    ->getAvailableColumn($param[0])
+                    ->getMainColumnExpression();
+                $table->getQuery()->where($column . ' = ?', $key);
             }
         }
     }
 
+    /**
+     * @param ObjectsTable $table
+     * @throws \Zend_Db_Select_Exception
+     */
     protected function setQueryFromTable(ObjectsTable $table)
     {
         $query = clone($table->getQuery());
@@ -93,6 +107,11 @@ class Summaries extends BaseHtmlElement
         $this->query = $query;
     }
 
+    /**
+     * @param $column
+     * @param $variants
+     * @throws \Zend_Db_Select_Exception
+     */
     protected function addColumn($column, $variants)
     {
         $columns = [];
