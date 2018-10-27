@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Exception\IcingaException;
 use Icinga\Module\Director\Data\Db\DbObject;
+use RuntimeException;
 
 class MappingHelper
 {
@@ -45,7 +45,6 @@ class MappingHelper
      * @param  object $row stdClass object providing property values
      * @param  string $var  Variable/property name
      * @return mixed
-     * @throws IcingaException
      */
     public static function getSpecificValue($row, $var)
     {
@@ -66,7 +65,7 @@ class MappingHelper
             }
 
             if (! is_object($row->$main)) {
-                throw new IcingaException('Data is not nested, cannot access %s: %s', $var, var_export($row, 1));
+                throw new RuntimeException('Data is not nested, cannot access %s: %s', $var, var_export($row, 1));
             }
 
             return static::getDeepValue($row->$main, $parts);
