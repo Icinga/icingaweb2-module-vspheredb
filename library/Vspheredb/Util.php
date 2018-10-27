@@ -3,8 +3,7 @@
 namespace Icinga\Module\Vspheredb;
 
 use DateTime;
-use Icinga\Exception\IcingaException;
-use Icinga\Exception\InvalidPropertyException;
+use InvalidArgumentException;
 use stdClass;
 
 class Util
@@ -62,7 +61,7 @@ class Util
         } elseif ($optional) {
             return null;
         } else {
-            throw new IcingaException('Got invalid id: %s', $textualId);
+            throw new InvalidArgumentException('Got invalid id: %s', $textualId);
         }
     }
 
@@ -77,6 +76,11 @@ class Util
         return $res;
     }
 
+    /**
+     * @param $object
+     * @param $keys
+     * @param $value
+     */
     protected static function setDeepValue($object, $keys, $value)
     {
         $key = array_shift($keys);
@@ -85,7 +89,7 @@ class Util
         } else {
             if (property_exists($object, $key)) {
                 if (! is_object($object->$key)) {
-                    throw new InvalidPropertyException(
+                    throw new InvalidArgumentException(
                         'A key can be either object or scalar: %s'
                     );
                 }

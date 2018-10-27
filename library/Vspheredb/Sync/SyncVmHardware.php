@@ -3,12 +3,12 @@
 namespace Icinga\Module\Vspheredb\Sync;
 
 use Icinga\Application\Logger;
-use Icinga\Exception\IcingaException;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmDisk;
 use Icinga\Module\Vspheredb\DbObject\VmHardware;
 use Icinga\Module\Vspheredb\DbObject\VmNetworkAdapter;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
+use InvalidArgumentException;
 
 class SyncVmHardware
 {
@@ -17,7 +17,7 @@ class SyncVmHardware
     protected function assertValidDeviceKey($device)
     {
         if (! is_int($device->key)) {
-            throw new IcingaException(
+            throw new InvalidArgumentException(
                 'Got invalid device key "%s", integer expected',
                 $device->key
             );
