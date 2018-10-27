@@ -16,9 +16,7 @@ use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
-use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
-use Icinga\Util\Format;
 
 class HostInfoTable extends NameValueTable
 {
@@ -213,23 +211,5 @@ class HostInfoTable extends NameValueTable
             ],
             $serviceTag
         );
-    }
-
-    /**
-     * @return array
-     * @throws \Icinga\Exception\IcingaException
-     */
-    protected function getFormattedMemory()
-    {
-        $size = $this->host->get('hardware_memory_size_mb') * 1024 * 1024;
-        $used = $this->host->quickStats()->get('overall_memory_usage_mb') * 1024 * 1024;
-        $title = sprintf(
-            'Used %s / %s',
-            Format::bytes($used),
-            Format::bytes($size)
-        );
-        $bar = new SimpleUsageBar($used, $size, $title);
-
-        return [$bar, ' ' . $title];
     }
 }
