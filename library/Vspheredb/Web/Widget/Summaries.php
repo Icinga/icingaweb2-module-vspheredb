@@ -9,7 +9,9 @@ use dipl\Translation\TranslationHelper;
 use dipl\Web\Url;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
+use RuntimeException;
 use Zend_Db_Select as ZfSelect;
+use Zend_Db_Select_Exception;
 
 class Summaries extends BaseHtmlElement
 {
@@ -39,12 +41,24 @@ class Summaries extends BaseHtmlElement
      * @param ObjectsTable $table
      * @param Db $db
      * @param Url $baseUrl
-     * @throws \Zend_Db_Select_Exception
      */
     public function __construct(ObjectsTable $table, Db $db, Url $baseUrl)
     {
         $this->baseUrl = $baseUrl;
         $this->db = $db->getDbAdapter();
+        try {
+            $this->setTable($table);
+        } catch (Zend_Db_Select_Exception $e) {
+            throw new RuntimeException($e->getMessage(), 0, $e);
+        }
+    }
+
+    /**
+     * @param ObjectsTable $table
+     * @throws \Zend_Db_Select_Exception
+     */
+    protected function setTable(ObjectsTable $table)
+    {
         $this->setQueryFromTable($table);
         $this->addColumn('o.overall_status', ['gray', 'green', 'yellow', 'red']);
         if ($table->hasColumn('runtime_power_state')) {
