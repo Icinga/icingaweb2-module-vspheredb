@@ -710,8 +710,47 @@ tr.event.being-created td:first-child::before {
   content: '\e869';
 }
 
-/** Disk Usage **/
+/** Resource Usage **/
+div.resource-usage {
+  > .usage-bar {
+    min-width: 8em;
+    border: none;
+    padding: 0;
+    background-color: @gray-lighter;
+    height: 1em;
+    border-radius: 0.3em;
+    -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
+    box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
+    overflow: hidden;
+    > .usage {
+      height: 100%;
+      display: block;
+      float: left;
+    }
+  }
+  > .usage-used {
+    float: left;
+  }
+  > .usage-capacity {
+    float: right;
+  }
+}
 
+#layout.twocols, #layout.minimal-layout {
+  div.resource-usage {
+    .usage-used {
+      display: block;
+      width: 100%;
+    }
+    .usage-capacity {
+      float: left;
+    }
+  }
+}
+/** END of Resource Usage **/
+
+/** Disk Usage **/
 div.disk-usage {
   width: 100%;
   min-width: 8em;
