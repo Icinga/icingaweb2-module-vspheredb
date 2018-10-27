@@ -51,7 +51,7 @@ class ObjectsController extends Controller
         }
     }
 
-    protected function eventuallyFilterByParent(ObjectsTable $table, $url, $defaultTitle)
+    protected function eventuallyFilterByParent(ObjectsTable $table, $url, $defaultTitle = null)
     {
         $parent = hex2bin($this->params->get('uuid'));
 
@@ -66,12 +66,12 @@ class ObjectsController extends Controller
                 $table->filterParentUuids([$parent]);
             }
             $this->addPathTo($parent, $url);
-        } else {
+        } elseif ($defaultTitle !== null) {
             $this->addTitle($defaultTitle);
         }
     }
 
-    protected function showTable(ObjectsTable $table, $url, $defaultTitle)
+    protected function showTable(ObjectsTable $table, $url, $defaultTitle = null)
     {
         $this->eventuallyFilterByParent($table, $url, $defaultTitle);
         $this->renderTableWithCount($table, $defaultTitle);
@@ -79,10 +79,13 @@ class ObjectsController extends Controller
         return $this;
     }
 
-    protected function renderTableWithCount(ObjectsTable $table, $title)
+    protected function renderTableWithCount(ObjectsTable $table, $title = null)
     {
         $total = count($table);
         $table->renderTo($this);
+        if ($title === null) {
+            return;
+        }
         $found = count($table);
         if ($total === $found) {
             $this->content()->prepend(sprintf('%d %s', $total, $title));
