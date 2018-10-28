@@ -125,7 +125,7 @@ class AdditionalTableActions
             }
         }
         if (! empty($disabled)) {
-            $links[] = Link::create(
+            array_unshift($links, Link::create(
                 $this->translate('All'),
                 $url->with('columns', implode(',', $all)),
                 null,
@@ -133,8 +133,7 @@ class AdditionalTableActions
                     'class' => 'icon-resize-horizontal',
                     'data-base-target' => '_main'
                 ]
-
-            );
+            ));
         }
 
         return $links;
