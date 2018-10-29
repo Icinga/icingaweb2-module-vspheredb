@@ -136,8 +136,6 @@ class HostsTable extends ObjectsTable
     public function getDefaultColumnNames()
     {
         return [
-            'overall_status',
-            'runtime_power_state',
             'object_name',
             'cpu_usage',
             'memory_usage',

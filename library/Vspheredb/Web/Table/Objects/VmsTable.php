@@ -77,9 +77,9 @@ class VmsTable extends ObjectsTable
     {
         $powerStateRenderer = new PowerStateRenderer();
         $this->addAvailableColumns([
-            $this->createOverallStatusColumn(),
             $this->createColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
+            $this->createOverallStatusColumn(),
             $this->createObjectNameColumn(),
             $this->createColumn('host_name', 'Host', 'h.host_name'),
             $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vc.guest_ip_address'),
@@ -151,8 +151,6 @@ class VmsTable extends ObjectsTable
     public function getDefaultColumnNames()
     {
         return [
-            'overall_status',
-            'runtime_power_state',
             'object_name',
             'cpu_usage',
             'memory_usage',

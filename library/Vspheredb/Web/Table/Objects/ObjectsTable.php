@@ -78,18 +78,27 @@ abstract class ObjectsTable extends BaseTable
     protected function createObjectNameColumn()
     {
         return $this->createColumn('object_name', $this->translate('Name'), [
-            'object_name' => 'o.object_name',
-            'uuid'        => 'o.uuid',
+            'object_name'    => 'o.object_name',
+            'overall_status' => 'o.overall_status',
+            'uuid'           => 'o.uuid',
         ])->setRenderer(function ($row) {
-            if ($this->baseUrl === null) {
-                return $row->object_name;
+            if (in_array('overall_status', $this->getChosenColumnNames())) {
+                $result = [];
             } else {
-                return Link::create(
+                $statusRenderer = $this->overallStatusRenderer();
+                $result = [$statusRenderer($row)];
+            }
+            if ($this->baseUrl === null) {
+                $result[] = $row->object_name;
+            } else {
+                $result[] = Link::create(
                     $row->object_name,
                     $this->baseUrl,
                     ['uuid' => bin2hex($row->uuid)]
                 );
             }
+
+            return $result;
         });
     }
 }
