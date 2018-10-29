@@ -863,3 +863,33 @@ ul.tree li.collapsed > .handle {
   padding-left: 1em;
 }
 /* End of tree */
+
+.usage-used {
+  float: left;
+}
+.usage-capacity {
+  float: right;
+}
+
+#layout.twocols, #layout.minimal-layout {
+  .usage-used {
+    display: block;
+    width: 100%;
+  }
+  .usage-capacity {
+    float: left;
+  }
+}
+
+/* TODO: This duplicates logic, reorganize classes */
+#layout.twocols, #layout.minimal-layout {
+  .vm-info {
+    .usage-used {
+      display: inline;
+      width: auto;
+    }
+    .usage-capacity {
+      float: right;
+    }
+  }
+}
