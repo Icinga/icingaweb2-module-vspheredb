@@ -37,6 +37,14 @@ class ManagedObject extends DirectorDbObject
     public function setParent(ManagedObject $object)
     {
         $this->parent = $object;
+        // Hint: parent change hasn't been detected otherwise.
+        // TODO: check whether change detection is still fine
+        if ($object->hasBeenLoadedFromDb()) {
+            $this->set('parent_uuid', $object->get('uuid'));
+        } else {
+            $this->set('parent_uuid', 'NOT YET, SETTING A TOO LONG STRING');
+        }
+
         return $this;
     }
 
