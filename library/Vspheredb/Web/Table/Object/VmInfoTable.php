@@ -13,6 +13,7 @@ use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
@@ -115,6 +116,22 @@ class VmInfoTable extends NameValueTable
         $this->addNameValueRow(
             $this->translate('Monitoring'),
             $this->getMonitoringInfo($vm)
+        );
+
+        $migrations = new VmRecentMigrationHistory($vm);
+        $cntMigrations = $migrations->countWeeklyMigrationAttempts();
+
+        $this->addNameValueRow(
+            $this->translate('Migrations'),
+            Html::sprintf(
+                $this->translate('%s %s took place during the last 7 days'),
+                $cntMigrations,
+                Link::create(
+                    $this->translate('VMotion attempt(s)'),
+                    'vspheredb/vm/vmotions',
+                    ['uuid' => bin2hex($uuid)]
+                )
+            )
         );
 
         $powerStateRenderer = new PowerStateRenderer();
