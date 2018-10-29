@@ -6,8 +6,8 @@ $section = $this->menuSection(N_('Virtualization (VMware)'))
     ->setIcon('cloud')
     ->setUrl('vspheredb/vcenter')
     ->setPriority(70);
-$section->add(N_('Virtual Machines'))
-    ->setUrl('vspheredb/vms')
+$section->add(N_('VCenters'))
+    ->setUrl('vspheredb/resources/vcenters')
     ->setPriority(10);
 $section->add(N_('Hosts'))
     ->setUrl('vspheredb/hosts')
@@ -15,6 +15,9 @@ $section->add(N_('Hosts'))
 $section->add(N_('Datastores'))
     ->setUrl('vspheredb/datastores')
     ->setPriority(30);
+$section->add(N_('Virtual Machines'))
+    ->setUrl('vspheredb/vms')
+    ->setPriority(40);
 $section->add(N_('Anomalies'))
     ->setUrl('vspheredb/anomalies')
     ->setPriority(45);
