@@ -15,8 +15,12 @@ class MemoryUsage extends UsageBar
         'host' => 'rgba(160, 200, 211, 0.75)',
     ];
 
-    protected $formatter = [Format::class, 'mBytes'];
-
+    // TODO: change once enforcing PHP 5.6
+    // protected $formatter = [Format::class, 'mBytes'];
+    protected $formatter = [
+        'Icinga\\Module\\Vspheredb\\Format',
+        'mBytes'
+    ];
     public function __construct($usedMb, $capacityMb, $usedHostMb = null)
     {
         parent::__construct($usedMb, $capacityMb);
