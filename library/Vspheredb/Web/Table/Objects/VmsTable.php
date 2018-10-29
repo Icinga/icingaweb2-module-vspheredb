@@ -83,7 +83,7 @@ class VmsTable extends ObjectsTable
             $this->createObjectNameColumn(),
             $this->createColumn('host_name', 'Host', 'h.host_name'),
             $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vc.guest_ip_address'),
-            $this->createColumn('hardware_numcpu', 'CPUs', 'vc.hardware_numcpu')
+            $this->createColumn('hardware_numcpu', 'vCPUs', 'vc.hardware_numcpu')
                 ->setDefaultSortDirection('DESC'),
             /**
             $this->createColumn('ballooned_memory_mb', 'Balloon', 'vqs.ballooned_memory_mb')
