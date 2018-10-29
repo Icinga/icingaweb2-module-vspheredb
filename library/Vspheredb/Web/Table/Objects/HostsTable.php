@@ -9,13 +9,12 @@ use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\ServiceTagRenderer;
-use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
 use Icinga\Module\Vspheredb\Format;
 
 class HostsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/host';
+    protected $baseUrl = 'vspheredb/host/vms';
 
     protected function initialize()
     {
