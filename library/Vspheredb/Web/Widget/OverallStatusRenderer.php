@@ -16,7 +16,7 @@ class OverallStatusRenderer extends Html
             $state = $state->overall_status;
         }
 
-        return Icon::create('ok', [
+        return Icon::create($state === 'green' ? 'ok' : 'warning-empty', [
             'title' => $this->getStatusDescription($state),
             'class' => [ 'state', $state ]
         ]);
