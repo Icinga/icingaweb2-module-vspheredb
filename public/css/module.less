@@ -78,8 +78,6 @@ a.ManagedObject.gray::before {
 }
 
 i.state::before {
-  color: white;
-  border-radius: 50%;
   width: 2em;
   height: 2em;
   text-align: center;
@@ -88,31 +86,31 @@ i.state::before {
 }
 
 i.poweredOn::before, i.green::before, i.UP::before {
-  background-color: @color-ok;
+  color: @color-ok;
 }
 
 i.poweredOff::before, i.suspended::before, i.red::before, i.DOWN::before {
-  background-color: @color-critical;
+  color: @color-critical;
 }
 
 i.standby::before, i.yellow::before {
-  background-color: @color-warning;
+  color: @color-warning;
 }
 
 i.UNREACHABLE::before {
-  background-color: @color-unreachable;
+  color: @color-unreachable;
 }
 
 i.PENDING::before {
-  background-color: @color-pending;
+  color: @color-pending;
 }
 
 i.unknown::before {
-  background-color: @color-unknown;
+  color: @color-unknown;
 }
 
 i.gray::before {
-  background-color: @gray;
+  color: @gray;
 }
 
 thead th {
