@@ -25,10 +25,6 @@ class VCenterSyncInfo extends BaseHtmlElement
         $this->vCenter = $vCenter;
     }
 
-    /**
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\ProgrammingError
-     */
     protected function assemble()
     {
         $sync = new VcenterSyncState($this->vCenter);

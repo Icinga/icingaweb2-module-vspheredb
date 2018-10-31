@@ -132,7 +132,16 @@ class SyncManagedObjectReferences
             $object->store();
         }
         $dba->commit();
-        Logger::debug('Committed %d objects', count($objects));
+        if (count($new) + count($mod) + count($del) === 0) {
+            Logger::debug('Managed Objects have not been changed');
+        } else {
+            Logger::debug(
+                'Created %d Managed Objects, %d modified, %d deleted',
+                count($new),
+                count($mod),
+                count($del)
+            );
+        }
 
         return $this;
     }
