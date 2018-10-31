@@ -167,7 +167,7 @@ class HostsTable extends ObjectsTable
         $columns = $this->getRequiredDbColumns();
         $wantsVms = false;
         foreach ($columns as $column) {
-            if (substr($column, 0, 4) === 'vms.') {
+            if (preg_match('/^\(?vms\./', $column)) {
                 $wantsVms = true;
                 break;
             }
