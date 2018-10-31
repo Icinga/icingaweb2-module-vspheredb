@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb;
 
-use Icinga\Exception\ConfigurationError;
+use RuntimeException;
 
 class SafeCacheDir
 {
@@ -10,7 +10,6 @@ class SafeCacheDir
 
     /**
      * @return string
-     * @throws ConfigurationError
      */
     public static function getDirectory()
     {
@@ -29,7 +28,6 @@ class SafeCacheDir
     /**
      * @param $directory
      * @return string
-     * @throws ConfigurationError
      */
     public static function getSubDirectory($directory)
     {
@@ -41,13 +39,12 @@ class SafeCacheDir
 
     /**
      * @param $directory
-     * @throws ConfigurationError
      */
     protected static function claimDirectory($directory)
     {
         if (file_exists($directory)) {
             if (static::uidToName(fileowner($directory)) !== static::getCurrentUsername()) {
-                throw new ConfigurationError(
+                throw new RuntimeException(
                     '%s exists, but does not belong to %s',
                     $directory,
                     static::getCurrentUsername()
@@ -55,7 +52,7 @@ class SafeCacheDir
             }
         } else {
             if (! mkdir($directory, 0700)) {
-                throw new ConfigurationError(
+                throw new RuntimeException(
                     'Could not create %s',
                     $directory
                 );
@@ -65,7 +62,6 @@ class SafeCacheDir
 
     /**
      * @return mixed
-     * @throws ConfigurationError
      */
     protected static function getCurrentUsername()
     {
@@ -73,7 +69,7 @@ class SafeCacheDir
             if (function_exists('posix_geteuid')) {
                 static::$currentUser = static::uidToName(posix_geteuid());
             } else {
-                throw new ConfigurationError(
+                throw new RuntimeException(
                     'POSIX methods not available, is php-posix installed and enabled?'
                 );
             }

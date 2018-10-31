@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb;
 use Evenement\EventEmitter;
 use Exception;
 use Icinga\Exception\AuthenticationException;
+use RuntimeException;
 
 /**
  * Class CurlLoader
@@ -49,10 +50,10 @@ class CurlLoader extends EventEmitter
     private $proxyPass;
 
     /** @var array */
-    private $proxyTypes = array(
+    private $proxyTypes = [
         'HTTP'   => CURLPROXY_HTTP,
         'SOCKS5' => CURLPROXY_SOCKS5,
-    );
+    ];
 
     /** @var bool */
     private $persistCookies = false;
@@ -180,6 +181,7 @@ class CurlLoader extends EventEmitter
      * @param $url
      * @param null $body
      * @return mixed
+     * @throws AuthenticationException
      */
     public function get($url, $body = null)
     {
@@ -191,6 +193,7 @@ class CurlLoader extends EventEmitter
      * @param null $body
      * @param array $headers
      * @return mixed
+     * @throws AuthenticationException
      */
     public function post($url, $body = null, $headers = array())
     {
@@ -203,7 +206,7 @@ class CurlLoader extends EventEmitter
      * @param null $body
      * @param array $headers
      * @return mixed
-     * @throws Exception
+     * @throws AuthenticationException
      */
     protected function request($method, $url, $body = null, $headers = array())
     {
@@ -255,7 +258,7 @@ class CurlLoader extends EventEmitter
         $res = curl_exec($curl);
 
         if ($res === false) {
-            throw new Exception('CURL ERROR: ' . curl_error($curl));
+            throw new RuntimeException('CURL ERROR: ' . curl_error($curl));
         }
         $this->lastResponse = $res;
 
@@ -263,7 +266,7 @@ class CurlLoader extends EventEmitter
         $this->debugResponse($res, $statusCode);
 
         if ($statusCode === 401) {
-            throw new Exception(
+            throw new AuthenticationException(
                 'Unable to authenticate, please check your API credentials'
             );
         }
@@ -277,7 +280,7 @@ class CurlLoader extends EventEmitter
                 return $res;
             }
             // TODO: This should be transformed in a Soap error and deal with such
-            throw new Exception(
+            throw new RuntimeException(
                 "Got $statusCode: " . var_export($res, 1)
             );
         }

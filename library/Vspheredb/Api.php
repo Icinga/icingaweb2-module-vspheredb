@@ -6,8 +6,6 @@ use DateTime;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\IcingaException;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
@@ -84,7 +82,6 @@ class Api
     /**
      * @param VCenterServer $server
      * @return static
-     * @throws IcingaException
      */
     public static function forServer(VCenterServer $server)
     {
@@ -122,7 +119,6 @@ class Api
     /**
      * @return DateTime
      * @throws AuthenticationException
-     * @throws ConfigurationError
      */
     public function getCurrentTime()
     {
@@ -136,7 +132,6 @@ class Api
 
     /**
      * @return CurlLoader
-     * @throws ConfigurationError
      */
     public function curl()
     {
@@ -161,7 +156,6 @@ class Api
      * @param $method
      * @return mixed
      * @throws AuthenticationException
-     * @throws ConfigurationError
      */
     public function soapCall($method)
     {
@@ -200,7 +194,6 @@ class Api
      * Lazy-instantiation of our SoapClient
      *
      * @return SoapClient
-     * @throws ConfigurationError
      */
     protected function soapClient()
     {
@@ -235,7 +228,6 @@ class Api
 
     /**
      * Make sure all our WSDL files are in place, fetch missing ones
-     * @throws ConfigurationError
      */
     protected function prepareWsdl()
     {
@@ -250,9 +242,6 @@ class Api
         }
     }
 
-    /**
-     * @throws ConfigurationError
-     */
     protected function flushWsdlCache()
     {
         $dir = $this->cacheDir();
@@ -271,7 +260,6 @@ class Api
      *
      * @return mixed
      * @throws AuthenticationException
-     * @throws ConfigurationError
      */
     protected function fetchServiceInstance()
     {
@@ -297,7 +285,6 @@ class Api
      *
      * This will retrieve a session cookie and pass it with subsequent requests
      * @throws AuthenticationException
-     * @throws ConfigurationError
      */
     public function login()
     {
@@ -320,9 +307,6 @@ class Api
 
     /**
      * Logout, destroy our session
-     *
-     * @throws AuthenticationException
-     * @throws ConfigurationError
      */
     public function logout()
     {
@@ -372,7 +356,6 @@ class Api
 
     /**
      * @return string
-     * @throws ConfigurationError
      */
     protected function cacheDir()
     {
