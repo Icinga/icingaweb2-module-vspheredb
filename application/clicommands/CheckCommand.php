@@ -20,6 +20,9 @@ class CheckCommand extends CommandBase
 {
     use CheckPluginHelper;
 
+    /** @var Db */
+    protected $db;
+
     /**
      * Check Host Health
      *
@@ -30,15 +33,22 @@ class CheckCommand extends CommandBase
     public function hostAction()
     {
         $this->run(function () {
-            $db = Db::newConfiguredInstance();
+            $db = $this->db();
             $host = HostSystem::findOneBy([
                 'host_name' => $this->params->getRequired('name')
             ], $db);
             $quickStats = HostQuickStats::load($host->get('uuid'), $db);
-            $this->checkOverallHealth($host->object())
+            $this
+                ->checkOverallHealth($host->object())
                 ->checkRuntimePowerState($host)
-                ->checkUptime($quickStats);
+                ->checkUptime($quickStats, $host)
+            ;
         });
+    }
+
+    protected function requireObject()
+    {
+        return ManagedObject::load($this->params->getRequired('name'), $this->db());
     }
 
     /**
@@ -72,7 +82,7 @@ class CheckCommand extends CommandBase
             $quickStats = VmQuickStats::load($vm->get('uuid'), $db);
             $this->checkOverallHealth($vm->object())
                 ->checkRuntimePowerState($vm)
-                ->checkUptime($quickStats);
+                ->checkUptime($quickStats, $vm);
         });
     }
 
@@ -234,18 +244,32 @@ class CheckCommand extends CommandBase
     }
 
     /**
+     * @param BaseDbObject $stats
      * @param BaseDbObject $object
      * @return $this
      */
-    protected function checkUptime(BaseDbObject $object)
+    protected function checkUptime(BaseDbObject $stats, BaseDbObject $object)
     {
-        if ($object->get('uptime') < 900) {
+        if ($object->get('runtime_power_state') !== 'poweredOn') {
+            // No need to check uptime
+            return $this;
+        }
+        if ($stats->get('uptime') < 900) {
             $this->addProblem('WARNING', sprintf(
                 'System booted %s ago',
-                DateFormatter::formatDuration($object->get('uptime'))
+                DateFormatter::formatDuration($stats->get('uptime'))
             ));
         }
 
         return $this;
+    }
+
+    protected function db()
+    {
+        if ($this->db === null) {
+            $this->db = Db::newConfiguredInstance();
+        }
+
+        return $this->db;
     }
 }
