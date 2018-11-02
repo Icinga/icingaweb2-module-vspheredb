@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Icinga\Application\Cli;
 use Icinga\Cli\Command;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -20,11 +21,30 @@ class CommandBase extends Command
     {
         if ($this->vCenter === null) {
             $this->vCenter = VCenter::loadWithAutoIncId(
-                $this->params->getRequired('vCenter'),
+                $this->requiredParam('vCenter'),
                 Db::newConfiguredInstance()
             );
         }
 
         return $this->vCenter;
+    }
+
+    public function fail($msg)
+    {
+        echo $this->screen->colorize("$msg\n", 'red');
+        exit(1);
+    }
+
+    protected function requiredParam($name)
+    {
+        $value = $this->params->get($name);
+        if ($value === null) {
+            /** @var Cli $app */
+            $app = $this->app;
+            $this->showUsage($app->cliLoader()->getActionName());
+            $this->fail("'$name' parameter is required");
+        }
+
+        return $value;
     }
 }
