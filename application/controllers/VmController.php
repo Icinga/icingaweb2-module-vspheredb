@@ -34,7 +34,7 @@ class VmController extends Controller
             'class' => 'vm-info'
         ]);
         $this->content()->add(
-            new VmInfoTable($vm, $this->vCenter(), $this->pathLookup())
+            new VmInfoTable($vm, $this->pathLookup())
         );
         $this->addSubTitle($this->translate('Network'), 'sitemap');
         $this->content()->add(

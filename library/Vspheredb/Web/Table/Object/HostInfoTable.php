@@ -31,11 +31,11 @@ class HostInfoTable extends NameValueTable
     /** @var VCenter */
     protected $vCenter;
 
-    public function __construct(HostSystem $host, VCenter $vCenter, PathLookup $loopup)
+    public function __construct(HostSystem $host, PathLookup $loopup)
     {
         $this->host = $host;
         $this->pathLookup = $loopup;
-        $this->vCenter = $vCenter;
+        $this->vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
     }
 
     protected function getDb()

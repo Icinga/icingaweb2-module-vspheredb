@@ -33,11 +33,11 @@ class VmInfoTable extends NameValueTable
     /** @var VCenter */
     protected $vCenter;
 
-    public function __construct(VirtualMachine $vm, VCenter $vCenter, PathLookup $lookup)
+    public function __construct(VirtualMachine $vm, PathLookup $lookup)
     {
         $this->vm = $vm;
         $this->pathLookup = $lookup;
-        $this->vCenter = $vCenter;
+        $this->vCenter = VCenter::load($vm->get('vcenter_uuid'), $vm->getConnection());
     }
 
     protected function getDb()
