@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\IcingaException;
+use RuntimeException;
 
 /**
  * Class Api
@@ -110,11 +111,9 @@ trait LazyApiHelpers
         );
     }
 
-
     /**
      * @return string
      * @throws AuthenticationException
-     * @throws IcingaException
      */
     public function getBinaryUuid()
     {
@@ -127,7 +126,7 @@ trait LazyApiHelpers
                 /// NONO, TODO: bios uuid?!
                 $this->binaryUuid = Util::uuidToBin(md5($this->host));
             } else {
-                throw new IcingaException(
+                throw new RuntimeException(
                     'Unsupported API type "%s"',
                     $about->apiType
                 );
@@ -140,7 +139,7 @@ trait LazyApiHelpers
     /**
      * @param $moRefId
      * @return string
-     * @throws IcingaException
+     * @throws AuthenticationException
      */
     public function makeGlobalUuid($moRefId)
     {
