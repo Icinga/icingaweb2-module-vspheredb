@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
@@ -68,6 +69,10 @@ class VCenter extends BaseDbObject
         return $this->get('instance_uuid');
     }
 
+    /**
+     * @return Api
+     * @throws \Icinga\Exception\NotFoundError
+     */
     public function getApi()
     {
         if ($this->api === null) {
@@ -77,12 +82,20 @@ class VCenter extends BaseDbObject
         return $this->api;
     }
 
+    /**
+     * @return Api
+     * @throws \Icinga\Exception\NotFoundError
+     */
     public function createNewApiConnection()
     {
 
         return Api::forServer($this->getFirstServer());
     }
 
+    /**
+     * @return VCenterServer
+     * @throws \Icinga\Exception\NotFoundError
+     */
     public function getFirstServer()
     {
         $db = $this->getConnection()->getDbAdapter();
@@ -129,32 +142,42 @@ class VCenter extends BaseDbObject
         return $this->connection;
     }
 
-    // Hint: this also updates the vCenter.
+    /**
+     * Hint: this also updates the vCenter.
+     *
+     * @param Api $api
+     * @param Db $db
+     * @return VCenter
+     * @throws \Icinga\Exception\AuthenticationException
+     * @throws \Icinga\Exception\NotFoundError
+     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
+     */
     public static function fromApi(Api $api, Db $db)
     {
         $about = $api->getAbout();
         $uuid = $api->getBinaryUuid();
         if (VCenter::exists($uuid, $db)) {
-            $vcenter = VCenter::load($uuid, $db);
+            $vCenter = VCenter::load($uuid, $db);
         } else {
-            $vcenter = VCenter::create([], $db);
+            $vCenter = VCenter::create([], $db);
         }
 
         // Workaround for ESXi, about has no instanceUuid
         $about->instanceUuid = $uuid;
-        $vcenter->setMapped($about, $vcenter);
+        $vCenter->setMapped($about, $vCenter);
 
-        if ($vcenter->hasBeenModified()) {
-            if ($vcenter->hasBeenLoadedFromDb()) {
-                $msg = 'vCenter has been modified';
+        if ($vCenter->hasBeenModified()) {
+            if ($vCenter->hasBeenLoadedFromDb()) {
+                Logger::info('vCenter has been modified');
             } else {
-                $msg = 'vCenter has been created';
+                Logger::info('vCenter has been created');
             }
 
-            $vcenter->store();
-            // echo "$msg\n";
+            $vCenter->store();
+        } else {
+            Logger::info("vCenter hasn't been changed");
         }
 
-        return $vcenter;
+        return $vCenter;
     }
 }
