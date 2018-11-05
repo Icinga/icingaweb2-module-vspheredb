@@ -13,7 +13,7 @@ use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 
-class VMotionHistoryTable extends ZfQueryBasedTable
+class EventHistoryTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table',
@@ -73,7 +73,7 @@ class VMotionHistoryTable extends ZfQueryBasedTable
             $content[] = 'VM: ';
             $content[] = Link::create(
                 $this->deferredObjectName($row->vm_uuid),
-                'vspheredb/vm/vmotions',
+                'vspheredb/vm/events',
                 ['uuid' => bin2hex($row->vm_uuid)]
             );
             $content[] = Html::tag('br');

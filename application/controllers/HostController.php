@@ -9,7 +9,7 @@ use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
 use Icinga\Module\Vspheredb\Web\Table\HostSensorsTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
-use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
+use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 use dipl\Html\Link;
@@ -60,9 +60,9 @@ class HostController extends Controller
         $table->filterHost($this->addHost())->renderTo($this);
     }
 
-    public function vmotionsAction()
+    public function eventsAction()
     {
-        $table = new VMotionHistoryTable($this->db());
+        $table = new EventHistoryTable($this->db());
         $table->filterHost($this->addHost())->renderTo($this);
     }
 
@@ -99,9 +99,9 @@ class HostController extends Controller
             'label' => $this->translate('PCI Devices'),
             'url' => 'vspheredb/host/pcidevices',
             'urlParams' => ['uuid' => $hexId]
-        ])->add('vmotions', [
+        ])->add('events', [
             'label' => $this->translate('Events'),
-            'url' => 'vspheredb/host/vmotions',
+            'url' => 'vspheredb/host/events',
             'urlParams' => ['uuid' => $hexId]
         ])->activate($this->getRequest()->getActionName());
     }

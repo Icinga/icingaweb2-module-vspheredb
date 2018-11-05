@@ -7,7 +7,7 @@ use dipl\Html\Link;
 use dipl\Web\Url;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Form\FilterHostParentForm;
-use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
+use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Widget\CalendarMonthSummary;
 use Icinga\Module\Vspheredb\Web\Widget\VMotionHeatmap;
@@ -36,7 +36,7 @@ class EventsController extends Controller
         $form = $this->addFilterForm();
         $day = $this->params->shift('day');
 
-        $table = new VMotionHistoryTable($this->db());
+        $table = new EventHistoryTable($this->db());
         $table
             ->filterEventType($form->getValue('type'))
             ->filterParent($form->getValue('parent'));

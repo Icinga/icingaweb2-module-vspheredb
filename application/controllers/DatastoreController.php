@@ -5,7 +5,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Table\VMotionHistoryTable;
+use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmsOnDatastoreTable;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
@@ -60,10 +60,10 @@ class DatastoreController extends Controller
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function vmotionsAction()
+    public function eventsAction()
     {
         $ds = $this->addDatastore();
-        $table = new VMotionHistoryTable($this->db());
+        $table = new EventHistoryTable($this->db());
         $table->filterDatastore($ds)
             ->renderTo($this);
     }
@@ -89,9 +89,9 @@ class DatastoreController extends Controller
             'label'     => $this->translate('Datastore'),
             'url'       => 'vspheredb/datastore',
             'urlParams' => $params
-        ])->add('vmotions', [
-            'label'     => $this->translate('VMotions'),
-            'url'       => 'vspheredb/datastore/vmotions',
+        ])->add('events', [
+            'label'     => $this->translate('Events'),
+            'url'       => 'vspheredb/datastore/events',
             'urlParams' => $params
         ])->activate($this->getRequest()->getActionName());
     }
