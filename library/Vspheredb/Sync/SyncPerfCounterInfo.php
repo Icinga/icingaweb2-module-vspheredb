@@ -36,6 +36,7 @@ class SyncPerfCounterInfo
      * TODO: really sync
      *
      * @param $info
+     * @throws \Zend_Db_Exception
      */
     protected function processCounterInfo($info)
     {
@@ -52,6 +53,7 @@ class SyncPerfCounterInfo
 
             if (! array_key_exists($group, $groups)) {
                 $groups[$group] = [
+                    'vcenter_uuid' => $uuid,
                     'name'    => $group,
                     'label'   => $c->groupInfo->label,
                     'summary' => $c->groupInfo->summary,
@@ -59,6 +61,7 @@ class SyncPerfCounterInfo
             }
             if (! array_key_exists($unit, $units)) {
                 $units[$unit] = [
+                    'vcenter_uuid' => $uuid,
                     'name'    => $unit,
                     'label'   => $c->unitInfo->label,
                     'summary' => $c->unitInfo->summary,
@@ -74,8 +77,8 @@ class SyncPerfCounterInfo
                 'summary'          => $c->nameInfo->summary,
                 'rollup_type'      => (string) $c->rollupType,
                 'stats_type'       => (string) $c->statsType,
-                'level'            => $c->level,
-                'per_device_level' => $c->perDeviceLevel,
+                'level'            => isset($c->level) ? $c->level : 0, // ESXi? Check docs!
+                'per_device_level' => isset($c->perDeviceLevel) ? $c->perDeviceLevel : 0,
             ];
             $data[] = $current;
 
@@ -87,16 +90,26 @@ class SyncPerfCounterInfo
 
         Logger::debug('Ready to store Counters to DB');
         $db->beginTransaction();
-        foreach ($groups as $group) {
-            // $db->insert('performance_group', $group);
+        try {
+            foreach ($groups as $group) {
+                $db->insert('performance_group', $group);
+            }
+            foreach ($units as $unit) {
+                $db->insert('performance_unit', $unit);
+            }
+            foreach ($data as $c) {
+                $db->insert('performance_counter', $c);
+            }
+            $db->commit();
+        } catch (\Zend_Db_Exception $error) {
+            try {
+                $db->rollBack();
+            } catch (\Exception $rollBackError) {
+                // There is nothing we can do.
+            }
+
+            throw $error;
         }
-        foreach ($units as $unit) {
-            // $db->insert('performance_unit', $unit);
-        }
-        foreach ($data as $c) {
-            $db->insert('performance_counter', $c);
-        }
-        $db->commit();
         Logger::debug('Counters stored to DB');
     }
 
