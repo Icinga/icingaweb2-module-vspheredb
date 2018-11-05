@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Sync;
 
 use Icinga\Application\Logger;
+use Icinga\Module\Director\Exception\DuplicateKeyException;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\SelectSet\FullSelectSet;
@@ -23,6 +24,8 @@ class SyncManagedObjectReferences
 
     /**
      * @return $this
+     * @throws DuplicateKeyException
+     * @throws \Zend_Db_Exception
      */
     public function sync()
     {
@@ -81,57 +84,76 @@ class SyncManagedObjectReferences
         Logger::debug('Storing object tree to DB');
         $dba = $this->vCenter->getDb();
         $dba->beginTransaction();
-        $new = $same = $del = $mod = [];
-        foreach ($objects as $uuid => $object) {
-            $name = $object->get('object_name');
-            if ($object->hasBeenLoadedFromDb()) {
-                if ($object->hasBeenModified()) {
-                    $mod[$uuid] = $name;
-                } elseif (array_key_exists($uuid, $fetched)) {
-                    $same[$uuid] = $name;
+        try {
+            $new = $same = $del = $mod = [];
+            foreach ($objects as $uuid => $object) {
+                $name = $object->get('object_name');
+                if ($object->hasBeenLoadedFromDb()) {
+                    if ($object->hasBeenModified()) {
+                        $mod[$uuid] = $name;
+                    } elseif (array_key_exists($uuid, $fetched)) {
+                        $same[$uuid] = $name;
+                    } else {
+                        $del[$uuid] = $name;
+                    }
                 } else {
-                    $del[$uuid] = $name;
+                    $new[$uuid] = $name;
                 }
-            } else {
-                $new[$uuid] = $name;
             }
-        }
 
-        /*
-        // Debug only:
-        printf("%d new: %s\n", count($new), implode(', ', $new));
-        printf("%d mod: %s\n", count($mod), implode(', ', $mod));
-        foreach ($mod as $id => $name) {
-            printf("%s has been modified:\n", $name);
-            foreach ($objects[$id]->getModifiedProperties() as $prop => $newVal) {
-                printf(
-                    "%s changed from %s to %s\n",
-                    $prop,
-                    $objects[$id]->getOriginalProperty($prop),
-                    $newVal
+            /*
+            // Debug only:
+            printf("%d new: %s\n", count($new), implode(', ', $new));
+            printf("%d mod: %s\n", count($mod), implode(', ', $mod));
+            foreach ($mod as $id => $name) {
+                printf("%s has been modified:\n", $name);
+                foreach ($objects[$id]->getModifiedProperties() as $prop => $newVal) {
+                    printf(
+                        "%s changed from %s to %s\n",
+                        $prop,
+                        $objects[$id]->getOriginalProperty($prop),
+                        $newVal
+                    );
+                }
+            }
+            printf("%d del: %s\n", count($del), implode(', ', $del));
+            printf("%d unmodified\n", count($same));
+            */
+
+            if (! empty($del)) {
+                $dba->update(
+                    'object',
+                    ['parent_uuid' => null],
+                    $dba->quoteInto('parent_uuid IN (?)', array_keys($del))
+                );
+                $dba->delete(
+                    'object',
+                    $dba->quoteInto('uuid IN (?)', array_keys($del))
                 );
             }
-        }
-        printf("%d del: %s\n", count($del), implode(', ', $del));
-        printf("%d unmodified\n", count($same));
-        */
 
-        if (! empty($del)) {
-            $dba->update(
-                'object',
-                ['parent_uuid' => null],
-                $dba->quoteInto('parent_uuid IN (?)', array_keys($del))
-            );
-            $dba->delete(
-                'object',
-                $dba->quoteInto('uuid IN (?)', array_keys($del))
-            );
+            foreach ($objects as $object) {
+                $object->store();
+            }
+            $dba->commit();
+        } catch (\Zend_Db_Exception $error) {
+            try {
+                $dba->rollBack();
+            } catch (\Exception $e) {
+                // There is nothing we can do.
+            }
+
+            throw $error;
+        } catch (DuplicateKeyException $error) {
+            try {
+                $dba->rollBack();
+            } catch (\Exception $e) {
+                // There is nothing we can do.
+            }
+
+            throw $error;
         }
 
-        foreach ($objects as $object) {
-            $object->store();
-        }
-        $dba->commit();
         if (count($new) + count($mod) + count($del) === 0) {
             Logger::debug('Managed Objects have not been changed');
         } else {
