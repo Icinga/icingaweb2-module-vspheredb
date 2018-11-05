@@ -238,6 +238,7 @@ abstract class BaseDbObject extends DirectorDbObject
      * @param BaseDbObject[] $dbObjects
      * @param \stdClass[] $newObjects
      * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
+     * @throws \Zend_Db_Exception
      */
     protected static function storeSync(VCenter $vCenter, & $dbObjects, & $newObjects)
     {
@@ -247,48 +248,59 @@ abstract class BaseDbObject extends DirectorDbObject
         $dba = $vCenter->getDb();
         Logger::debug("Ready to store $type");
         $dba->beginTransaction();
-        $modified = 0;
-        $created = 0;
-        $dummy = static::dummyObject();
-        $newUuids = [];
-        foreach ($newObjects as $object) {
-            $uuid = $vCenter->makeBinaryGlobalUuid($object->id);
+        try {
+            $modified = 0;
+            $created = 0;
+            $dummy = static::dummyObject();
+            $newUuids = [];
+            foreach ($newObjects as $object) {
+                $uuid = $vCenter->makeBinaryGlobalUuid($object->id);
 
-            $newUuids[$uuid] = $uuid;
-            if (array_key_exists($uuid, $dbObjects)) {
-                $dbObject = $dbObjects[$uuid];
-            } else {
-                $dbObjects[$uuid] = $dbObject = static::create([
-                    'uuid' => $uuid,
-                    'vcenter_uuid' => $vCenterUuid
-                ], $db);
-            }
-            $dbObject->setMapped($object, $vCenter);
-            if ($dbObject->hasBeenLoadedFromDb()) {
-                if ($dbObject->hasBeenModified()) {
-                    $dbObject->store();
-                    $modified++;
+                $newUuids[$uuid] = $uuid;
+                if (array_key_exists($uuid, $dbObjects)) {
+                    $dbObject = $dbObjects[$uuid];
+                } else {
+                    $dbObjects[$uuid] = $dbObject = static::create([
+                        'uuid' => $uuid,
+                        'vcenter_uuid' => $vCenterUuid
+                    ], $db);
                 }
-            } else {
-                $dbObject->store();
-                $created++;
+                $dbObject->setMapped($object, $vCenter);
+                if ($dbObject->hasBeenLoadedFromDb()) {
+                    if ($dbObject->hasBeenModified()) {
+                        $dbObject->store();
+                        $modified++;
+                    }
+                } else {
+                    $dbObject->store();
+                    $created++;
+                }
             }
-        }
 
-        $del = [];
-        foreach ($dbObjects as $existing) {
-            $uuid = $existing->get('uuid');
-            if (! array_key_exists($uuid, $newUuids)) {
-                $del[] = $uuid;
+            $del = [];
+            foreach ($dbObjects as $existing) {
+                $uuid = $existing->get('uuid');
+                if (!array_key_exists($uuid, $newUuids)) {
+                    $del[] = $uuid;
+                }
             }
+            if (!empty($del)) {
+                $dba->delete(
+                    $dummy->getTableName(),
+                    $dba->quoteInto('uuid IN (?)', $del)
+                );
+            }
+            $dba->commit();
+        } catch (\Zend_Db_Exception $error) {
+            try {
+                $dba->rollBack();
+                /** @var $dba \Zend_Db_Adapter_Pdo_Abstract */
+            } catch (\Exception $e) {
+                // There is nothing we can do.
+            }
+
+            throw $error;
         }
-        if (! empty($del)) {
-            $dba->delete(
-                $dummy->getTableName(),
-                $dba->quoteInto('uuid IN (?)', $del)
-            );
-        }
-        $dba->commit();
         Logger::debug(
             "$type: %d new, %d modified, %d deleted (got %d from API)",
             $created,
@@ -322,7 +334,9 @@ abstract class BaseDbObject extends DirectorDbObject
 
     /**
      * @param VCenter $vCenter
+     * @throws NotFoundError
      * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
+     * @throws \Zend_Db_Exception
      */
     public static function syncFromApi(VCenter $vCenter)
     {
