@@ -2,14 +2,13 @@
 
 namespace Icinga\Module\Vspheredb;
 
-use Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\BaseMigrationEvent;
 use Icinga\Module\Vspheredb\MappedClass\KnownEvent;
 use Icinga\Module\Vspheredb\MappedClass\SessionEvent;
-use Zend_Db_Adapter_Abstract as ZfDbAdapter;
+use RuntimeException;
 use Zend_Db_Select as ZfSelect;
 
 class EventManager
@@ -33,7 +32,6 @@ class EventManager
     /**
      * EventManager constructor.
      * @param Api $api
-     * @throws AuthenticationException
      */
     public function __construct(Api $api)
     {
@@ -61,7 +59,6 @@ class EventManager
      *
      * @return BaseMigrationEvent[]
      * @throws AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      */
     public function queryEvents()
     {
@@ -76,7 +73,6 @@ class EventManager
     /**
      * @return \stdClass
      * @throws AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      */
     protected function collector()
     {
@@ -98,10 +94,14 @@ class EventManager
         $uuid = $this->vCenter->getUuid();
 
         $union = $db->select()->union([
-            'vmeh' => $db->select()->from('vm_event_history', ['ts_event_ms' => 'MAX(ts_event_ms)'])
-                ->where('vcenter_uuid = ?', $uuid),
-            'ah' => $db->select()->from('alarm_history', ['ts_event_ms' => 'MAX(ts_event_ms)'])
-                ->where('vcenter_uuid = ?', $uuid),
+            'vmeh' => $db->select()->from(
+                'vm_event_history',
+                ['ts_event_ms' => 'MAX(ts_event_ms)']
+            )->where('vcenter_uuid = ?', $uuid),
+            'ah' => $db->select()->from(
+                'alarm_history',
+                ['ts_event_ms' => 'MAX(ts_event_ms)']
+            )->where('vcenter_uuid = ?', $uuid),
         ], ZfSelect::SQL_UNION_ALL);
 
         return (int) $db->fetchOne(
@@ -119,10 +119,14 @@ class EventManager
         $uuid = $this->vCenter->getUuid();
 
         $union = $db->select()->union([
-            'vmeh' => $db->select()->from('vm_event_history', ['event_key' => 'MAX(event_key)'])
-                ->where('vcenter_uuid = ?', $uuid),
-            'ah' => $db->select()->from('alarm_history', ['event_key' => 'MAX(event_key)'])
-                ->where('vcenter_uuid = ?', $uuid),
+            'vmeh' => $db->select()->from(
+                'vm_event_history',
+                ['event_key' => 'MAX(event_key)']
+            )->where('vcenter_uuid = ?', $uuid),
+            'ah' => $db->select()->from(
+                'alarm_history',
+                ['event_key' => 'MAX(event_key)']
+            )->where('vcenter_uuid = ?', $uuid),
         ], ZfSelect::SQL_UNION_ALL);
 
         return (int) $db->fetchOne(
@@ -132,7 +136,6 @@ class EventManager
 
     /**
      * @throws AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      */
     public function rewindCollector()
     {
@@ -146,7 +149,6 @@ class EventManager
     /**
      * @return int
      * @throws AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      * @throws \Zend_Db_Exception
      */
     public function streamToDb()
@@ -159,45 +161,47 @@ class EventManager
         $db = $this->vCenter->getDb();
         $db->beginTransaction();
         $skipped = 0;
-        foreach ($events as $key => $event) {
-            // printf("%s <= %s\n", $event->key, $this->lastEventKey);
-            if ($this->lastEventKey
-                && $event->getTimestampMs() <= $this->lastEventTimestamp
-                && $event->key <= $this->lastEventKey
-            ) {
-                Logger::debug(sprintf(
-                    '%s <= %s, %s <= %s skipped',
-                    $event->getTimestampMs(),
-                    $this->lastEventTimestamp,
-                    $event->key,
-                    $this->lastEventKey
-                ));
-                $skipped++;
-                // echo "Skip\n";
-                continue;
+        try {
+            foreach ($events as $key => $event) {
+                // printf("%s <= %s\n", $event->key, $this->lastEventKey);
+                if ($this->lastEventKey
+                    && $event->getTimestampMs() <= $this->lastEventTimestamp
+                    && $event->key <= $this->lastEventKey
+                ) {
+                    Logger::debug(sprintf(
+                        '%s <= %s & %s <= %s skipped',
+                        $event->getTimestampMs(),
+                        $this->lastEventTimestamp,
+                        $event->key,
+                        $this->lastEventKey
+                    ));
+                    $skipped++;
+                    continue;
+                }
+
+                if ($event instanceof SessionEvent) {
+                    // not yet
+                } elseif ($event instanceof KnownEvent) {
+                    $event->store($db, $this->vCenter);
+                }/* else {
+                    $dom = simplexml_load_string($vCenter->getApi()->curl()->getLastResponse());
+                    $dom->formatOutput = true;
+                    echo $dom->saveXML();
+
+                    print_r($event);
+                    exit;
+                }*/
+            }
+            $db->commit();
+        } catch (\Zend_Db_Exception $error) {
+            try {
+                $db->rollBack();
+            } catch (\Exception $e) {
+                // There is nothing we can do.
             }
 
-            if ($event instanceof SessionEvent) {
-                // not yet
-            } elseif ($event instanceof KnownEvent) {
-                try {
-                    $event->store($db, $this->vCenter);
-                } catch (\Zend_Db_Exception $e) {
-                    // TODO: Improve error handling. Where to store the details?
-                    print_r($event);
-                    print_r($event->getDbData($this->vCenter));
-                    throw($e);
-                }
-            }/* else {
-                $dom = simplexml_load_string($vCenter->getApi()->curl()->getLastResponse());
-                $dom->formatOutput = true;
-                echo $dom->saveXML();
-
-                print_r($event);
-                exit;
-            }*/
+            throw $error;
         }
-        $db->commit();
 
         if ($skipped > 0) {
             Logger::debug('Fetched %d events to skip', $skipped);
@@ -210,7 +214,6 @@ class EventManager
      * @param $callable
      * @return mixed
      * @throws AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      */
     protected function runFailSafeWithCollector($callable)
     {
@@ -228,7 +231,6 @@ class EventManager
     /**
      * @return BaseMigrationEvent[]
      * @throws AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      */
     public function collectFromCollector()
     {
@@ -240,13 +242,12 @@ class EventManager
         try {
             $result = $this->api->soapCall('ReadNextEvents', $specSet);
         } catch (\SoapFault $e) {
-            echo $this->api->curl()->getLastResponse();
+            Logger::error($this->api->curl()->getLastResponse());
             if (property_exists($e, 'faultactor')) {
-                var_dump($e->faultactor);
+                throw new RuntimeException($e->faultactor);
             } else {
-                var_dump($e);
+                throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
             }
-            exit;
         }
 
         if (property_exists($result, 'returnval')) {
@@ -328,7 +329,6 @@ class EventManager
     /**
      * @return array
      * @throws AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      */
     public function createEventCollector()
     {
