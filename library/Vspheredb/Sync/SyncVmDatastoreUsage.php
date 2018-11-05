@@ -17,6 +17,10 @@ class SyncVmDatastoreUsage
         $this->vCenter = $vCenter;
     }
 
+    /**
+     * @throws \Icinga\Exception\NotFoundError
+     * @throws \Zend_Db_Exception
+     */
     public function run()
     {
         $vCenter = $this->vCenter;
@@ -41,47 +45,57 @@ class SyncVmDatastoreUsage
         $update = 0;
         $delete = 0;
 
-        foreach ($result as $map) {
-            $moRef = $map->id;
-            $vmUuid = $vCenter->makeBinaryGlobalUuid($moRef);
-            foreach ($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'} as $usage) {
-                $dsMoid = $usage->datastore->_;
-                $dsUuid = $vCenter->makeBinaryGlobalUuid($dsMoid);
-                $key = "$vmUuid$dsUuid";
-                $usage = [
-                    'committed'   => $usage->committed,
-                    'uncommitted' => $usage->uncommitted,
-                    'unshared'    => $usage->unshared,
-                ];
-                $seen[$key] = $key;
-                if (array_key_exists($key, $existing)) {
-                    $res = $db->update(
-                        $table,
-                        $usage,
-                        $this->makeWhere($db, $vmUuid, $dsUuid)
-                    );
-                    if ($res) {
-                        $update++;
+        try {
+            foreach ($result as $map) {
+                $moRef = $map->id;
+                $vmUuid = $vCenter->makeBinaryGlobalUuid($moRef);
+                foreach ($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'} as $usage) {
+                    $dsMoid = $usage->datastore->_;
+                    $dsUuid = $vCenter->makeBinaryGlobalUuid($dsMoid);
+                    $key = "$vmUuid$dsUuid";
+                    $usage = [
+                        'committed' => $usage->committed,
+                        'uncommitted' => $usage->uncommitted,
+                        'unshared' => $usage->unshared,
+                    ];
+                    $seen[$key] = $key;
+                    if (array_key_exists($key, $existing)) {
+                        $res = $db->update(
+                            $table,
+                            $usage,
+                            $this->makeWhere($db, $vmUuid, $dsUuid)
+                        );
+                        if ($res) {
+                            $update++;
+                        }
+                    } else {
+                        $usage['vcenter_uuid'] = $vCenterUuid;
+                        $usage['vm_uuid'] = $vmUuid;
+                        $usage['datastore_uuid'] = $dsUuid;
+                        $db->insert($table, $usage);
+                        $insert++;
                     }
-                } else {
-                    $usage['vcenter_uuid'] = $vCenterUuid;
-                    $usage['vm_uuid'] = $vmUuid;
-                    $usage['datastore_uuid'] = $dsUuid;
-                    $db->insert($table, $usage);
-                    $insert++;
                 }
             }
-        }
 
-        foreach (array_diff($existing, $seen) as $key) {
-            $vmUuid = substr($key, 0, 20);
-            $dsUuid = substr($key, 20);
-            $db->delete($table, $this->makeWhere($db, $vmUuid, $dsUuid));
-            $delete++;
-        }
+            foreach (array_diff($existing, $seen) as $key) {
+                $vmUuid = substr($key, 0, 20);
+                $dsUuid = substr($key, 20);
+                $db->delete($table, $this->makeWhere($db, $vmUuid, $dsUuid));
+                $delete++;
+            }
 
-        $db->commit();
-        Logger::debug("$insert created, $update changed, $delete deleted");
+            $db->commit();
+            Logger::debug("$insert created, $update changed, $delete deleted");
+        } catch (\Zend_Db_Exception $error) {
+            try {
+                $db->rollBack();
+            } catch (\Exception $e) {
+                // There is nothing we can do.
+            }
+
+            throw $error;
+        }
     }
 
     protected function makeWhere(\Zend_Db_Adapter_Abstract $db, $vmUuid, $dsUuid)
