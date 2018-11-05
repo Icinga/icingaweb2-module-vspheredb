@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Module\Vspheredb\Api;
+
 class VCenterServer extends BaseDbObject
 {
     protected $table = 'vcenter_server';
@@ -22,4 +24,11 @@ class VCenterServer extends BaseDbObject
         'ssl_verify_peer' => null,
         'ssl_verify_host' => null,
     ];
+
+    public function initialize()
+    {
+        $vCenter = VCenter::fromApi(Api::forServer($this), $this->connection);
+        $this->set('vcenter_id', $vCenter->get('id'));
+        $this->store();
+    }
 }
