@@ -96,7 +96,7 @@ class EventsController extends Controller
         $this->addTitle($this->translate('Event HeatMap'));
 
         $form = $this->addFilterForm();
-        $heatMap = new VMotionHeatmap($this->vCenter(), 'vspheredb/events');
+        $heatMap = new VMotionHeatmap($this->db(), 'vspheredb/events');
         $heatMap->filterEventType($form->getValue('type'));
         if ($parent = $form->getValue('parent')) {
             $heatMap->filterParent(hex2bin($parent));

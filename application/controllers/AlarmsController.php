@@ -38,7 +38,7 @@ class AlarmsController extends Controller
     public function heatmapAction()
     {
         $this->addTitle('Alarm Heatmap');
-        $this->content()->add(new AlarmHeatmap($this->vCenter(), 'vspheredb/alarms'));
+        $this->content()->add(new AlarmHeatmap($this->db(), 'vspheredb/alarms'));
     }
 
     protected function handleTabs()

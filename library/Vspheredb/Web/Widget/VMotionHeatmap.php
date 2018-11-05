@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\Db;
 
 class VMotionHeatmap extends EventHeatmapCalendars
 {
@@ -12,10 +12,10 @@ class VMotionHeatmap extends EventHeatmapCalendars
 
     protected $eventType;
 
-    public function __construct(VCenter $vCenter, $baseUrl)
+    public function __construct(Db $connection, $baseUrl)
     {
         $this->setBaseUrl($baseUrl);
-        $this->db = $vCenter->getDb();
+        $this->db = $connection->getDbAdapter();
     }
 
     public function getQuery()
