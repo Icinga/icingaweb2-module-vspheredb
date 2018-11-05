@@ -19,6 +19,7 @@ trait SyncHelper
      * @param \Zend_Db_Adapter_Abstract $db
      * @param \Icinga\Module\Vspheredb\DbObject\BaseDbObject[] $objects
      * @param $seen
+     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
      */
     protected function storeObjects(\Zend_Db_Adapter_Abstract $db, array $objects, array $seen)
     {
@@ -44,6 +45,6 @@ trait SyncHelper
         }
 
         $db->commit();
-        Logger::debug("$insert created, $update changed, $delete deleted out of $cntTotal objects (seen: $cntSeen)");
+        Logger::debug("$insert created, $update changed, $delete deleted out of $cntTotal objects (API: $cntSeen)");
     }
 }
