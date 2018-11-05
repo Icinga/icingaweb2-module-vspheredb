@@ -94,6 +94,14 @@ class SyncVmHardware
             }
         }
 
+        // Hint: this will result in an incorrect "(API: xxx)" log entry
+        // Got 3578 VirtualMachines with config.hardware
+        // Got 45004 vm_hardware objects from DB
+        // Got 5050 vm_disk objects from DB
+        // Got 3670 vm_network_adapter objects from DB
+        // 0 created, 0 changed, 0 deleted out of 45004 objects (API: 45004)
+        // 0 created, 1 changed, 0 deleted out of 5050 objects (API: 45004)
+        // 0 created, 0 changed, 0 deleted out of 3670 objects (API: 45004)
         $this->storeObjects($vCenter->getDb(), $hardware, $seen);
         $this->storeObjects($vCenter->getDb(), $disks, $seen);
         $this->storeObjects($vCenter->getDb(), $nics, $seen);
