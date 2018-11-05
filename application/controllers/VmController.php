@@ -33,9 +33,7 @@ class VmController extends Controller
         $this->content()->addAttributes([
             'class' => 'vm-info'
         ]);
-        $this->content()->add(
-            new VmInfoTable($vm, $this->pathLookup())
-        );
+        $this->content()->add(new VmInfoTable($vm));
         $this->addSubTitle($this->translate('Network'), 'sitemap');
         $this->content()->add(
             new VmNetworkAdapterTable($vm)

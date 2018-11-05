@@ -11,18 +11,6 @@ class Controller extends CompatController
     /** @var Db */
     private $db;
 
-    /** @var PathLookup */
-    protected $pathLookup;
-
-    protected function pathLookup()
-    {
-        if ($this->pathLookup === null) {
-            $this->pathLookup = new PathLookup($this->db());
-        }
-
-        return $this->pathLookup;
-    }
-
     protected function db()
     {
         if ($this->db === null) {

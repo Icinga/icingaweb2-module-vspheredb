@@ -30,8 +30,7 @@ class HostController extends Controller
 
     public function indexAction()
     {
-        $table = new HostInfoTable($this->host, $this->pathLookup());
-        $this->content()->add($table);
+        $this->content()->add(new HostInfoTable($this->host));
     }
 
     public function vmsAction()

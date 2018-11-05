@@ -27,16 +27,12 @@ class VmInfoTable extends NameValueTable
     /** @var VirtualMachine */
     protected $vm;
 
-    /** @var PathLookup */
-    protected $pathLookup;
-
     /** @var VCenter */
     protected $vCenter;
 
-    public function __construct(VirtualMachine $vm, PathLookup $lookup)
+    public function __construct(VirtualMachine $vm)
     {
         $this->vm = $vm;
-        $this->pathLookup = $lookup;
         $this->vCenter = VCenter::load($vm->get('vcenter_uuid'), $vm->getConnection());
     }
 
@@ -84,7 +80,9 @@ class VmInfoTable extends NameValueTable
             );
         }
 
-        $lookup = $this->pathLookup;
+        /** @var \Icinga\Module\Vspheredb\Db $connection */
+        $connection = $vm->getConnection();
+        $lookup =  new PathLookup($connection);
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
         foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
             $path->add(Link::create(

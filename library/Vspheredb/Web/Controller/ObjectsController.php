@@ -4,12 +4,16 @@ namespace Icinga\Module\Vspheredb\Web\Controller;
 
 use dipl\Html\Html;
 use dipl\Html\Link;
+use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 
 class ObjectsController extends Controller
 {
     protected $otherTabActions = [];
+
+    /** @var PathLookup */
+    protected $pathLookup;
 
     protected function linkBackToOverview($type)
     {
@@ -132,5 +136,14 @@ class ObjectsController extends Controller
             'label'     => $this->translate('Switches'),
             'url'       => 'vspheredb/switches',
         ])->activate($action);
+    }
+
+    protected function pathLookup()
+    {
+        if ($this->pathLookup === null) {
+            $this->pathLookup = new PathLookup($this->db());
+        }
+
+        return $this->pathLookup;
     }
 }

@@ -25,16 +25,12 @@ class HostInfoTable extends NameValueTable
     /** @var HostSystem */
     protected $host;
 
-    /** @var PathLookup */
-    protected $pathLookup;
-
     /** @var VCenter */
     protected $vCenter;
 
-    public function __construct(HostSystem $host, PathLookup $loopup)
+    public function __construct(HostSystem $host)
     {
         $this->host = $host;
-        $this->pathLookup = $loopup;
         $this->vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
     }
 
@@ -50,7 +46,9 @@ class HostInfoTable extends NameValueTable
     {
         $host = $this->host;
         $uuid = $host->get('uuid');
-        $lookup = $this->pathLookup;
+        /** @var \Icinga\Module\Vspheredb\Db $connection */
+        $connection = $host->getConnection();
+        $lookup =  new PathLookup($connection);
         $powerStateRenderer = new PowerStateRenderer();
         $overallStatusRenderer = new OverallStatusRenderer();
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
