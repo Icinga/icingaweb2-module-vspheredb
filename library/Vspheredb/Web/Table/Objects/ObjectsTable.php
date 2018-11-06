@@ -56,6 +56,7 @@ abstract class ObjectsTable extends BaseTable
 
     protected function linkToVCenter($moRef)
     {
+        //TODO: will not work
         return Html::tag('a', [
             'href' => sprintf(
                 'https://%s/mob/?moid=%s',
