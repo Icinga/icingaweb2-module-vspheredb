@@ -132,10 +132,12 @@ class ObjectsController extends Controller
         ])->add('datastores', [
             'label'     => $this->translate('Datastores'),
             'url'       => 'vspheredb/datastores',
-        ])->add('switches', [
-            'label'     => $this->translate('Switches'),
-            'url'       => 'vspheredb/switches',
-        ])->activate($action);
+        ])
+        // ->add('switches', [
+        //     'label'     => $this->translate('Switches'),
+        //     'url'       => 'vspheredb/switches',
+        // ])
+        ->activate($action);
     }
 
     protected function pathLookup()

@@ -9,14 +9,14 @@ $section = $this->menuSection(N_('Virtualization (VMware)'))
 // $section->add(N_('VCenters'))
 //     ->setUrl('vspheredb/vcenters')
 //     ->setPriority(10);
-$section->add(N_('Hosts'))
-    ->setUrl('vspheredb/hosts')
-    ->setPriority(20);
-$section->add(N_('Datastores'))
-    ->setUrl('vspheredb/datastores')
-    ->setPriority(30);
 $section->add(N_('Virtual Machines'))
     ->setUrl('vspheredb/vms')
+    ->setPriority(20);
+$section->add(N_('Hosts'))
+    ->setUrl('vspheredb/hosts')
+    ->setPriority(30);
+$section->add(N_('Datastores'))
+    ->setUrl('vspheredb/datastores')
     ->setPriority(40);
 // $section->add(N_('Anomalies'))
 //     ->setUrl('vspheredb/anomalies')
