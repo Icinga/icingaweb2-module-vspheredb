@@ -25,12 +25,14 @@ class ResourcesController extends ObjectsController
         if ($vCenterUuid = $this->params->get('vcenter')) {
             $table->filterVCenter(VCenter::load(hex2bin($vCenterUuid), $this->db()));
         }
+        /*
         $this->actions()->add(Link::create(
             $this->translate('Chart'),
             '#',
             null,
             ['class' => 'icon-chart-pie']
         ));
+        */
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $this->addTitle($this->translate('Compute Cluster') . ' (%d)', count($table));

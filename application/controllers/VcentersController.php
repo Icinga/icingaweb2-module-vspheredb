@@ -14,17 +14,20 @@ class VcentersController extends ObjectsController
 {
     public function indexAction()
     {
+        $this->setAutorefreshInterval(15);
         $this->addSingleTab($this->translate('VCenters'));
         $this->handleTabs();
 
         $this->setAutorefreshInterval(15);
         $table = new VCenterSummaryTable($this->db());
+        /*
         $this->actions()->add(Link::create(
             $this->translate('Chart'),
             '#',
             null,
             ['class' => 'icon-chart-pie']
         ));
+        */
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $this->addTitle($this->translate('VCenters') . ' (%d)', count($table));
