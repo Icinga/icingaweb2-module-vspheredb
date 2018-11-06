@@ -5,12 +5,16 @@ Requirements
 ------------
 
 * Icinga Web 2 (&gt;= 2.5)
-* Icinga Web 2 module [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.3)
-* Icinga Director (&gt;= v1.5 or current master)
 * PHP (&gt;= 5.6, preferably 7.x)
 * php-soap
 * php-posix
 * MySQL (&gt;= 5.6) or MariaDB (&gt;= 5.5.3)
+* Icinga Web 2 modules:
+  * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.4) (Icinga Web 2 module)
+  * [Icinga PHP Library (ipl)](https://github.com/Icinga/icingaweb2-module-ipl) (>= 0.1) (Icinga Web 2 module)
+  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>= 0.1) (Icinga Web 2 module)
+  * [Icinga Director](https://github.com/Icinga/icingaweb2-module-director) (&gt;= v1.6 or current master)
+
 
 > **Hint**: this module will hook into Icinga Director, but shouldn't depend on it
 > at all. Currently it is based on some libraries provided by the Director, that's
@@ -26,7 +30,7 @@ restart your web server service afterwards.
 Installation from .tar.gz
 -------------------------
 
-Download the ~~latest version~~ (not yet) and extract it to a folder named
+Download the latest version and extract it to a folder named
 `vspheredb` in one of your Icinga Web 2 module path directories.
 
 You might want to use a script as follows for this task:
@@ -118,26 +122,10 @@ icingacli module enable vspheredb
 
 ![Enable the vSphere module](screenshot/01_installation/001_enable-module.png)
 
-
-Connect to your vCenter
------------------------
-
-The GUI should lead you to a table allowing you to configure connections for
-multiple vCenters. Once done, please initialize your connection on the CLI:
-
-    icingacli vspheredb vcenter initialize --serverId 1
-
-Hint: CLI commands expect IDs for now, you can figure them out by having a
-look at the links in the frontend. Working with IDs is no fun, so this will
-change in the final version.
-
-Once that worked out, your vSphereDB Dashboard should finally show an empty
-summary. Now  let's try to sync our vCenter, we're doing so at debug level in
-the foreground to get an idea of what happens:
-
-    icingacli vspheredb daemon run --vCenterId 1 --debug --trace
-
-If what you see looks good to you, it's time to enable the background daemon.
+Now please:
+* Eventually SHIFT-Reload your browser window to get a fresh CSS/JS bundle
+* Got to `Virtualization (VMware)` choose your DB resource and create the schema
+* Enable the background daemon (see below)
 
 Enabling and running the background daemon
 ------------------------------------------
