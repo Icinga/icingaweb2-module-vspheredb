@@ -116,7 +116,7 @@ class VmInfoTable extends NameValueTable
                 $cntMigrations,
                 Link::create(
                     $this->translate('VMotion attempt(s)'),
-                    'vspheredb/vm/vmotions',
+                    'vspheredb/vm/events',
                     ['uuid' => bin2hex($uuid)]
                 )
             )
