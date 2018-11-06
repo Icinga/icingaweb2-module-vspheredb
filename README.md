@@ -1,9 +1,6 @@
 Icinga Module for VMware vSphere®
 =================================
 
-> Please to **NOT** upgrade right now in case you're still using this module,
-> your installation will break because of missing dependencies.
-
 The easiest way to monitor a vSphere environment. Configure a connection to
 your *VMware vCenter®* or *VMware ESXi™* host and you're ready to go. This
 module provides a lot of context, deep insight and great oversight. Fast
