@@ -21,17 +21,15 @@ class EventsController extends Controller
 
     public function indexAction()
     {
-        $this->actions()->add(
-            Link::create(
-                $this->translate('Calendar'),
-                'vspheredb/events/heatmap',
-                $this->url()->getParams()->toArray(false),
-                [
-                    'class' => 'icon-calendar',
-                    'data-base-target' => '_main',
-                ]
-            )
-        );
+        $this->actions()->add(Link::create(
+            $this->translate('Calendar'),
+            'vspheredb/events/heatmap',
+            $this->url()->getParams()->toArray(false),
+            [
+                'class' => 'icon-calendar',
+                'data-base-target' => '_main',
+            ]
+        ));
 
         $form = $this->addFilterForm();
         $day = $this->params->shift('day');
@@ -81,17 +79,15 @@ class EventsController extends Controller
 
     public function heatmapAction()
     {
-        $this->actions()->add(
-            Link::create(
-                $this->translate('Table'),
-                'vspheredb/events',
-                $this->url()->getParams()->toArray(false),
-                [
-                    'class' => 'icon-th-list',
-                    'data-base-target' => '_main',
-                ]
-            )
-        );
+        $this->actions()->add(Link::create(
+            $this->translate('Table'),
+            'vspheredb/events',
+            $this->url()->getParams()->toArray(false),
+            [
+                'class' => 'icon-th-list',
+                'data-base-target' => '_main',
+            ]
+        ));
 
         $this->addTitle($this->translate('Event HeatMap'));
 
@@ -160,6 +156,22 @@ class EventsController extends Controller
 
     protected function handleTabs()
     {
-        $this->addSingleTab($this->translate('Events'));
+        $params = [];
+        if ($day = $this->params->get('day')) {
+            $params['day'] = $day;
+            $alarmsUrl = 'vspheredb/alarms';
+        } else {
+            $alarmsUrl = 'vspheredb/alarms/heatmap';
+        }
+        $tabs = $this->tabs()->add('events', [
+            'label' => $this->translate('Events'),
+            'url'   => $this->url(),
+        ])->add('alarms', [
+            'label' => $this->translate('Alarms'),
+            'url'   => $alarmsUrl,
+            'urlParams' => $params
+        ]);
+
+        $tabs->activate($this->getRequest()->getControllerName());
     }
 }

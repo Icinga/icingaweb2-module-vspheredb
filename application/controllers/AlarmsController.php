@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use dipl\Html\Link;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -16,6 +17,15 @@ class AlarmsController extends Controller
 
     public function indexAction()
     {
+        $this->actions()->add(Link::create(
+            $this->translate('Calendar'),
+            'vspheredb/alarms/heatmap',
+            $this->url()->getParams()->toArray(false),
+            [
+                'class' => 'icon-calendar',
+                'data-base-target' => '_main',
+            ]
+        ));
         $day = $this->params->shift('day');
 
         $table = new AlarmHistoryTable($this->db());
@@ -37,24 +47,37 @@ class AlarmsController extends Controller
 
     public function heatmapAction()
     {
+        $this->actions()->add(Link::create(
+            $this->translate('Table'),
+            'vspheredb/alarms',
+            $this->url()->getParams()->toArray(false),
+            [
+                'class' => 'icon-th-list',
+                'data-base-target' => '_main',
+            ]
+        ));
         $this->addTitle('Alarm Heatmap');
         $this->content()->add(new AlarmHeatmap($this->db(), 'vspheredb/alarms'));
     }
 
     protected function handleTabs()
     {
-        $tabs = $this->tabs()->add('index', [
-            'label' => $this->translate('Alarm History'),
-            'url' => 'vspheredb/alarms'
+        $params = [];
+        if ($day = $this->params->get('day')) {
+            $params['day'] = $day;
+            $eventsUrl = 'vspheredb/events';
+        } else {
+            $eventsUrl = 'vspheredb/events/heatmap';
+        }
+        $tabs = $this->tabs()->add('events', [
+            'label' => $this->translate('Events'),
+            'url'   => $eventsUrl,
+            'urlParams' => $params
+        ])->add('alarms', [
+            'label' => $this->translate('Alarms'),
+            'url'   => $this->url()
         ]);
 
-        if (! $this->params->get('day')) {
-            $tabs->add('heatmap', [
-                'label' => $this->translate('Heatmap'),
-                'url' => 'vspheredb/alarms/heatmap'
-            ]);
-        }
-
-        $tabs->activate($this->getRequest()->getActionName());
+        $tabs->activate($this->getRequest()->getControllerName());
     }
 }
