@@ -213,7 +213,7 @@ CREATE TABLE host_pci_device (
   vcenter_uuid VARBINARY(16) NOT NULL,
   bus BINARY(1) NOT NULL, -- byte
   slot BINARY(1) NOT NULL, -- byte
-  function BINARY(1) NOT NULL, -- byte
+  `function` BINARY(1) NOT NULL, -- byte
   class_id SMALLINT NOT NULL, -- short
   device_id SMALLINT NOT NULL, -- short
   device_name VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
