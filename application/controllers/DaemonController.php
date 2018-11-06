@@ -39,6 +39,9 @@ class DaemonController extends Controller
         }
 
         if ($daemon) {
+            $this->content()->add(
+                $this->timeAgo($daemon->ts_last_refresh / 1000)
+            );
             $processes = json_decode($daemon->process_info);
             $table = new Table();
             foreach ($processes as $pid => $process) {
@@ -57,6 +60,14 @@ class DaemonController extends Controller
             $info = Html::tag('p', ['class' => 'error'], 'Daemon is not running');
         }
         $this->content()->add([$info, $logWindow]);
+    }
+
+    protected function timeAgo($time)
+    {
+        return Html::tag('span', [
+            'class' => 'time-ago',
+            'title' => DateFormatter::formatDateTime($time)
+        ], DateFormatter::timeAgo($time));
     }
 
     protected function handleTabs()
