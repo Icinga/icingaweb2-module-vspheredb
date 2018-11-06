@@ -63,7 +63,7 @@ Database
 
 HINT: You should replace `some-password` with a secure custom password.
 
-    mysql -e "CREATE DATABASE vspheredb CHARACTER SET 'utf8mb4';
+    mysql -e "CREATE DATABASE vspheredb CHARACTER SET 'utf8mb4' COLLATE utf8mb4_bin;
        GRANT ALL ON vspheredb.* TO vspheredb@localhost IDENTIFIED BY 'some-password';"
 
 ### Create the vSphereDB module schema
@@ -149,10 +149,10 @@ Once you played around with this modules and everything works fine when running
 on commandline, time has come to enable a background daemon synchronizing your
 vCenter to our vSphereDb.
 
-    cp contrib/systemd/icinga-vspheredb@.service  /etc/systemd/system/
+    cp contrib/systemd/icinga-vspheredb.service  /etc/systemd/system/
     systemctl daemon-reload
-    systemctl enable icinga-vspheredb@1
-    systemctl start icinga-vspheredb@1
+    systemctl enable icinga-vspheredb
+    systemctl start icinga-vspheredb
 
 That's it, your daemon should now be running. Feel free to configure as many
 vCenter Servers as you want, each of them with a distinct systemd service
