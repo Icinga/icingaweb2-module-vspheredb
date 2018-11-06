@@ -166,6 +166,7 @@ class OverviewTree extends BaseHtmlElement
             'ResourcePool'           => 'chart-pie',
             'StoragePod'             => 'cloud',
             'HostSystem'             => 'host',
+            'VirtualApp'             => 'th-thumb-empty',
             'VirtualMachine'         => 'service',
         ];
         return 'icon-' . $typeClasses[$type];
