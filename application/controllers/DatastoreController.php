@@ -36,7 +36,12 @@ class DatastoreController extends Controller
             ));
         }
 
+        gc_collect_cycles();
+        gc_disable();
         $usage = (new DatastoreUsage($ds))->loadAllVmDisks()->addFreeDatastoreSpace();
+        gc_collect_cycles();
+        gc_enable();
+
         $table = new NameValueTable();
         $statusRenderer = new OverallStatusRenderer();
         $table->addNameValuePairs([
@@ -56,7 +61,6 @@ class DatastoreController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
