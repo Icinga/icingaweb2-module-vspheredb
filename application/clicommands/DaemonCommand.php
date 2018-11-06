@@ -2,25 +2,27 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
-use Icinga\Module\Vspheredb\MainRunner;
+use Icinga\Module\Vspheredb\Daemon\Daemon;
 
-/**
- * Sync a vCenter or ESXi host
- */
 class DaemonCommand extends CommandBase
 {
     /**
-     * Sync all objects
-     *
-     * Still a prototype
+     * vSphereDB background daemon
      *
      * USAGE
      *
-     * icingacli vsphere daemon run --vCenter <id>
+     * icingacli vsphere daemon run [--verbose|--debug]
      */
     public function runAction()
     {
-        $runner = new MainRunner($this->params->getRequired('vCenterId'));
-        $runner->run();
+        if ($this->params->get('vCenterId')) {
+            $this->fail(
+                'The parameter --vCenterId has been deprecated with v1.0.0,'
+                . ' please check our documentation'
+            );
+        }
+
+        $daemon = new Daemon();
+        $daemon->run();
     }
 }
