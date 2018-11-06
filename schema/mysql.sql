@@ -580,15 +580,18 @@ CREATE TABLE vm_event_history (
 
 CREATE TABLE monitoring_connection (
   vcenter_uuid VARBINARY(16) NOT NULL,
+  priority SMALLINT(5) UNSIGNED NOT NULL,
   source_type ENUM (
-      'ido'
+      'ido',
+      'icinga2-api',
+      'icingadb'
   ) NOT NULL,
   source_resource_name VARCHAR(64) DEFAULT NULL, -- null means default resource
   host_property VARCHAR(128) DEFAULT NULL,
   monitoring_host_property VARCHAR(128) DEFAULT NULL,
   vm_property VARCHAR(128) DEFAULT NULL,
   monitoring_vm_host_property VARCHAR(128) DEFAULT NULL,
-  PRIMARY KEY (vcenter_uuid),
+  PRIMARY KEY (vcenter_uuid, priority),
   CONSTRAINT monitoring_vcenter
     FOREIGN KEY monitoring_vcenter_uuid (vcenter_uuid)
     REFERENCES vcenter (instance_uuid)
@@ -729,4 +732,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
     (schema_version, migration_time)
-VALUES (2, NOW());
+VALUES (3, NOW());
