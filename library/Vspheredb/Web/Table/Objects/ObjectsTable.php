@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use dipl\Html\Html;
-use dipl\Html\Icon;
 use dipl\Html\Link;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
