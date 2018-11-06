@@ -288,6 +288,7 @@ CREATE TABLE virtual_machine (
     'guestToolsExecutingScripts' -- VMware Tools is starting.
   ) NOT NULL,
   guest_id VARCHAR(64) DEFAULT NULL,        -- rhel7_64Guest
+  -- Linux 3.10.0-693.17.1.el7.x86_64 CentOS Linux release 7.4.1708 (Core)
   guest_full_name VARCHAR(128) DEFAULT NULL, -- Red Hat Enterprise Linux 7 (64-bit)
   guest_host_name VARCHAR(255) DEFAULT NULL,
   guest_ip_address VARCHAR(50) DEFAULT NULL,
@@ -439,7 +440,7 @@ CREATE TABLE vm_network_adapter (
   vm_uuid VARBINARY(20) NOT NULL,
   hardware_key INT(10) UNSIGNED NOT NULL,
   portgroup_uuid VARBINARY(20) DEFAULT NULL, -- port->portgroupKey (moid, dvportgroup-1288720)
-  port_key INT(10) UNSIGNED DEFAULT NULL, -- port->portKey
+  port_key VARCHAR(64) DEFAULT NULL, -- port->portKey Can be 'c-31'
   mac_address VARCHAR(17) DEFAULT NULL, -- binary(6)? new xxeuid?
   address_type ENUM(
     'manual',    -- Statically assigned MAC address
@@ -732,4 +733,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
     (schema_version, migration_time)
-VALUES (3, NOW());
+VALUES (4, NOW());
