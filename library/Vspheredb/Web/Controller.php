@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web;
 
-use Icinga\Module\Vspheredb\Db;
 use dipl\Web\CompatController;
-use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Db;
+use Exception;
 
 class Controller extends CompatController
 {
@@ -14,9 +14,24 @@ class Controller extends CompatController
     protected function db()
     {
         if ($this->db === null) {
-            $this->db = Db::newConfiguredInstance();
+            try {
+                $this->db = Db::newConfiguredInstance();
+                $migrations = new Db\Migrations($this->db);
+                if (! $migrations->hasSchema()) {
+                    $this->redirectToConfiguration();
+                }
+            } catch (Exception $e) {
+                $this->redirectToConfiguration();
+            }
         }
 
         return $this->db;
+    }
+
+    protected function redirectToConfiguration()
+    {
+        if ($this->getRequest()->getControllerName() !== 'configuration') {
+            $this->redirectNow('vspheredb/configuration');
+        }
     }
 }
