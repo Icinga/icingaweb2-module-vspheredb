@@ -17,7 +17,7 @@ but there is more. This module:
 * replicates the most interesting parts of your **Event- and Alarm History**
 
 We currently support all VMware versions from 5.5 to 6.7, and did I mention that
-all this is 100% free Open Source Software? Finally convinced? Then let's [get started](doc/01-Getting_Started.md)!
+all this is 100% free Open Source Software? Finally convinced? Then let's [get started](doc/01-Installation.md)!
 
 Motivation
 ----------

@@ -70,10 +70,6 @@ HINT: You should replace `some-password` with a secure custom password.
     mysql -e "CREATE DATABASE vspheredb CHARACTER SET 'utf8mb4' COLLATE utf8mb4_bin;
        GRANT ALL ON vspheredb.* TO vspheredb@localhost IDENTIFIED BY 'some-password';"
 
-### Create the vSphereDB module schema
-
-    mysql vspheredb < schema/mysql.sql
-
 ### Create a related Icinga Web 2 Database resource
 
 In your web frontend please go to `Configuration / Application / Resources`
