@@ -1,0 +1,20 @@
+[Unit]
+Description=Icinga vSphereDB Daemon
+Documentation=https://icinga.com/docs/icinga-vsphere/latest/
+Wants=network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/icingacli vspheredb daemon run
+; For debugging purposes:
+; ExecStart=/usr/bin/icingacli vspheredb daemon run --trace --debug
+User=icingaweb2
+
+NotifyAccess=main
+WatchdogSec=10
+
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
