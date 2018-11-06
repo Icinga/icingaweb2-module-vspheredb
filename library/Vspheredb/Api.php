@@ -145,7 +145,22 @@ class Api
 
     public function gotCookie($cookie)
     {
+        // vmware_soap_session="d4a9b281fb7e587ef73a5097fe591bfbaa420ccd"; Path=/; HttpOnly; Secure;
         Logger::info('Got new session cookie from VCenter');
+        return;
+        $parts = explode(';', $cookie);
+        list($name, $sid) = preg_split('/=/', $parts[0], 2);
+        $sid = trim($sid, '"');
+
+        $db->insert('vcenter_session', [
+            'vcenter_uuid' => $this->getBinaryUuid(),
+            'session_id' => hex2bin(sha1($cookie)),
+            'session_cookie_string' => $cookie,
+            'session_cookie_name' => $name,
+            'scope' => 'Main Sync',
+            'ts_created' => Util::currentTimestamp(),
+            'ts_last_check' => Util::currentTimestamp(),
+        ]);
     }
 
     /**
