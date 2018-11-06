@@ -76,52 +76,57 @@ class VmsTable extends ObjectsTable
     protected function initialize()
     {
         $powerStateRenderer = new PowerStateRenderer();
+        $memoryRenderer = function ($row) {
+            return new MemoryUsage(
+                $row->guest_memory_usage_mb,
+                $row->hardware_memorymb,
+                $row->host_memory_usage_mb
+            );
+        };
+        $memoryColumns = [
+            'guest_memory_usage_mb' => 'vqs.guest_memory_usage_mb',
+            'host_memory_usage_mb'  => 'vqs.host_memory_usage_mb',
+            'hardware_memorymb'     => 'vc.hardware_memorymb',
+        ];
         $this->addAvailableColumns([
             $this->createColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
             $this->createOverallStatusColumn(),
             $this->createObjectNameColumn(),
-            $this->createColumn('host_name', 'Host', 'h.host_name'),
+            $this->createColumn('host_name', $this->translate('Host'), 'h.host_name'),
             $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vc.guest_ip_address'),
             $this->createColumn('hardware_numcpu', 'vCPUs', 'vc.hardware_numcpu')
                 ->setDefaultSortDirection('DESC'),
-            /**
+            $this->createColumn('cpu_usage', $this->translate('CPU Usage'), 'vqs.overall_cpu_usage')
+                ->setRenderer(function ($row) {
+                    return Format::mhz($row->cpu_usage);
+                })->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('hardware_memorymb', $this->translate('Memory'), 'vc.hardware_memorymb')
+                ->setRenderer(function ($row) {
+                    return Format::mBytes($row->hardware_memorymb);
+                })->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('guest_memory_usage_mb', $this->translate('Active Memory'), 'vqs.guest_memory_usage_mb')
+                ->setRenderer(function ($row) {
+                    return Format::mBytes($row->guest_memory_usage_mb);
+                })->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('host_memory_usage_mb', $this->translate('Host Memory'), 'vqs.host_memory_usage_mb')
+                ->setRenderer(function ($row) {
+                    return Format::mBytes($row->host_memory_usage_mb);
+                })->setSortExpression('vqs.host_memory_usage_mb')
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('ballooned_memory_mb', 'Balloon', 'vqs.ballooned_memory_mb')
                 ->setRenderer(function ($row) {
                     return Format::mBytes($row->ballooned_memory_mb);
                 })->setDefaultSortDirection('DESC'),
-            */
-            $this->createColumn('cpu_usage', 'CPU Usage', 'vqs.overall_cpu_usage')
-                ->setRenderer(function ($row) {
-                    return Format::mhz($row->cpu_usage);
-                })->setDefaultSortDirection('DESC'),
-            $this->createColumn('hardware_memorymb', 'Memory', 'vc.hardware_memorymb')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->hardware_memorymb);
-                })->setDefaultSortDirection('DESC'),
-            $this->createColumn('memory_usage', 'Memory Usage', [
-                'guest_memory_usage_mb' => 'vqs.guest_memory_usage_mb',
-                'host_memory_usage_mb' => 'vqs.host_memory_usage_mb',
-                'hardware_memorymb'     => 'vc.hardware_memorymb',
-            ])->setRenderer(function ($row) {
-                return new MemoryUsage(
-                    $row->guest_memory_usage_mb,
-                    $row->hardware_memorymb,
-                    $row->host_memory_usage_mb
-                );
-            })->setSortExpression(
-                '(vqs.guest_memory_usage_mb / vc.hardware_memorymb)'
-            )->setDefaultSortDirection('DESC'),
 
-            $this->createColumn('host_memory', 'Host Memory Usage', [
-                'host_memory_usage_mb' => 'vqs.host_memory_usage_mb',
-                'hardware_memorymb'     => 'vc.hardware_memorymb',
-            ])->setRenderer(function ($row) {
-                return new MemoryUsage($row->host_memory_usage_mb, $row->hardware_memorymb);
-            })->setSortExpression(
-                '(vqs.host_memory_usage_mb / vc.hardware_memorymb)'
-            )->setDefaultSortDirection('DESC'),
-
+            $this->createColumn('memory_usage', 'Memory Usage', $memoryColumns)
+                ->setRenderer($memoryRenderer)
+                ->setSortExpression('(vqs.guest_memory_usage_mb / vc.hardware_memorymb)')
+                ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('uptime', $this->translate('Uptime'), [
                 'uptime' => 'vqs.uptime',
