@@ -96,6 +96,31 @@ class PerfManager
 
     public function queryPerf($names, $type, $interval = 20, $count = 60)
     {
+        /*
+        ->select()->from('performance_counter', ['counter_key', 'name'])
+        ->where('vcenter_uuid = ?', $checksum)
+        ->where('name IN (?)', [
+        // Host and VM:
+            'bytesRx', // Data amount received per second (average)
+            'bytesTx',
+            'packetsRx', // Number of packets (summation)
+            'packetsTx',
+            'broadcastRx', // Number of packets (summation)
+            'broadcastTx',
+            'multicastRx', // Number of packets (summation)
+            'multicastTx',
+            'droppedRx', // Number of packets (summation)
+            'droppedTx',
+            'errorsRx', // Number of packets (summation)
+            'errorsTx',
+
+
+            'numberReadAveraged',
+            'numberWriteAveraged',
+            'readLatencyUS',
+            'writeLatencyUS',
+        ]
+        */
         $metrics = [
             (object) ['counterId' => 526, 'instance' => '*'],
             (object) ['counterId' => 527, 'instance' => '*'],
