@@ -15,6 +15,7 @@ class DaemonController extends Controller
     public function indexAction()
     {
         $this->setAutorefreshInterval(1);
+        $this->addTitle($this->translate('vSphereDB Daemon Status'));
         $this->handleTabs();
         $db = $this->db()->getDbAdapter();
         $daemon = $db->fetchRow($db->select()->from('vspheredb_daemon')
@@ -39,23 +40,29 @@ class DaemonController extends Controller
         }
 
         if ($daemon) {
-            $this->content()->add(
-                $this->timeAgo($daemon->ts_last_refresh / 1000)
-            );
-            $processes = json_decode($daemon->process_info);
-            $table = new Table();
-            foreach ($processes as $pid => $process) {
-                $table->add($table::row([
-                    [
-                        Icon::create($process->running ? 'ok' : 'warning-empty'),
-                        ' ',
-                        $pid
-                    ],
-                    $process->command,
-                    Format::bytes($process->memory->rss)
-                ]));
+            if ($daemon->ts_last_refresh / 1000 < time() - 10) {
+                $info = Html::tag('p', [
+                    'class' => 'error'
+                ], Html::sprintf(
+                    "Daemon keep-alive is outdated, last refresh was %s",
+                    $this->timeAgo($daemon->ts_last_refresh / 1000)
+                ));
+            } else {
+                $processes = json_decode($daemon->process_info);
+                $table = new Table();
+                foreach ($processes as $pid => $process) {
+                    $table->add($table::row([
+                        [
+                            Icon::create($process->running ? 'ok' : 'warning-empty'),
+                            ' ',
+                            $pid
+                        ],
+                        $process->command,
+                        Format::bytes($process->memory->rss)
+                    ]));
+                }
+                $info = $table;
             }
-            $info = $table;
         } else {
             $info = Html::tag('p', ['class' => 'error'], 'Daemon is not running');
         }
