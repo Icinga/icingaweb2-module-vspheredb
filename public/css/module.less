@@ -901,6 +901,55 @@ ul.tree li.collapsed > .handle {
 }
 /* End of tree */
 
+/** From Director pre.logfile, modified */
+div.logWindow {
+  height: 31.25em;
+  // height: 4.5em;
+  // //font-size: 0.875em;
+  line-height: 1.25em;
+  border: 1px solid @gray-lighter;
+  color: #ddd;
+  overflow-y: scroll;
+  padding: 0;
+}
+
+pre.logOutput {
+  position : relative;
+  background-color: transparent;
+  bottom: 0;
+  padding: 0.5em 1em;
+  margin: 0;
+  white-space: pre-wrap;
+
+  a {
+    color: #fff;
+  }
+
+  .loglevel, .application {
+    font-weight: bold;
+  }
+
+  .error {
+    color: @color-critical;
+  }
+
+  .warning {
+    color: @color-warning;
+  }
+
+  .info {
+    color: @color-ok;
+  }
+
+  .notice {
+    // color: @color-ok;
+  }
+
+  .debug {
+    color: @color-pending;
+  }
+}
+
 /** End logfile */
 .cpu {
   border: 0.75em solid @text-color;
