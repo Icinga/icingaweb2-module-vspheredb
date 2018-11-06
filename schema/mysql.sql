@@ -46,6 +46,7 @@ CREATE TABLE vcenter_server (
   proxy_pass VARCHAR(64) DEFAULT NULL,
   ssl_verify_peer ENUM ('y', 'n') NOT NULL,
   ssl_verify_host ENUM ('y', 'n') NOT NULL,
+  enabled ENUM ('y', 'n') NOT NULL,
   PRIMARY KEY (id),
   CONSTRAINT server_vcenter
     FOREIGN KEY server_vcenter_uuid (vcenter_id)
