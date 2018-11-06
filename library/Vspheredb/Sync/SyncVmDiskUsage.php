@@ -7,6 +7,7 @@ use Icinga\Exception\IcingaException;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmDiskUsage;
+use Icinga\Module\Vspheredb\PerformanceData\InfluxDbWriter;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 
 class SyncVmDiskUsage
@@ -51,6 +52,7 @@ class SyncVmDiskUsage
         foreach ($result as $vm) {
             $uuid = $vCenter->makeBinaryGlobalUuid($vm->id);
             if (! property_exists($vm->{'guest.disk'}, 'GuestDiskInfo')) {
+                // Should we preserve them? Flag outdated?
                 continue;
             }
             $root = null;
@@ -97,6 +99,9 @@ class SyncVmDiskUsage
             }
         }
 
+        // Logger::debug('Ready to prepare for InfluxDB');
+        // $writer = new InfluxDbWriter($this->vCenter);
+        // $writer->sendVmDiskUsage($usage);
         $this->storeObjects($vCenter->getDb(), $usage, $seen);
     }
 }
