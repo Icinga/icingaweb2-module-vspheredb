@@ -22,7 +22,7 @@ $section->add(N_('Datastores'))
 //     ->setUrl('vspheredb/anomalies')
 //     ->setPriority(45);
 $section->add(N_('Event History'))
-    ->setUrl('vspheredb/events')
+    ->setUrl('vspheredb/events/heatmap')
     ->setPriority(49);
 $section->add(N_('Alarm History'))
     ->setUrl('vspheredb/alarms')
