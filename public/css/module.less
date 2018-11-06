@@ -742,7 +742,7 @@ div.resource-usage {
 }
 
 #layout.twocols, #layout.minimal-layout {
-  div.resource-usage {
+  div.content div.resource-usage {
     .usage-used {
       display: block;
       width: 100%;
@@ -752,7 +752,33 @@ div.resource-usage {
     }
   }
 }
-/** END of Resource Usage **/
+
+div.controls div.resource-usage {
+  padding-left: 7em;
+  .usage-used {
+    font-size: 0.9em;
+    display: inline;
+    width: auto;
+  }
+  > .usage-capacity {
+    font-size: 0.9em;
+    float: right;
+  }
+}
+
+#layout.twocols, #layout.minimal-layout {
+  div.controls div.resource-usage {
+    .usage-used {
+      display: inline;
+      width: auto;
+    }
+    > .usage-capacity {
+      float: right;
+    }
+  }
+}
+
+  /** END of Resource Usage **/
 
 /** Disk Usage **/
 div.disk-usage {
