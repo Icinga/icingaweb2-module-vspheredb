@@ -65,11 +65,41 @@ class DatastoreUsage extends BaseHtmlElement
                 'o.uuid = vdu.vm_uuid',
                 []
             )->where('vdu.datastore_uuid = ?', $this->datastore->get('uuid'))
-            ->order('o.object_name');
+            // ->order('o.object_name');
+            ->order('vdu.committed DESC');
 
-        foreach ($this->db->fetchAll($query) as $row) {
-            $this->addDiskFromDbRow($row);
+        $result = $this->db->fetchAll($query);
+        $cnt = 0;
+        $shown = 0;
+        $others = 0;
+        $limit = 10000; // Impossible limit for now.
+        foreach ($result as $row) {
+            $cnt++;
+            if ($cnt < $limit) {
+                $shown += $row->committed + $row->uncommitted;
+            } else {
+                $others += $row->committed + $row->uncommitted;
+            }
         }
+
+        $cnt = 0;
+        foreach ($result as $row) {
+            $cnt++;
+            $this->addDiskFromDbRow($row);
+            if ($cnt === $limit) {
+                break;
+            }
+        }
+        // TODO:
+        // if ($shown > 0) {
+        //    $this->addDiskFromDbRow((object) [
+        //        'o.uuid' => null,
+        //        'o.object_name' => 'X other VMs',
+        //        'vdu.committed' => $diff
+        //        'vdu.uncommitted' => 0
+        //    ]);
+        // }
+        gc_collect_cycles();
 
         return $this;
     }
