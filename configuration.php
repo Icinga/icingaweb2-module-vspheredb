@@ -4,11 +4,11 @@
 
 $section = $this->menuSection(N_('Virtualization (VMware)'))
     ->setIcon('cloud')
-    ->setUrl('vspheredb/vcenter')
+    ->setUrl('vspheredb/vcenters')
     ->setPriority(70);
-$section->add(N_('VCenters'))
-    ->setUrl('vspheredb/resources/vcenters')
-    ->setPriority(10);
+// $section->add(N_('VCenters'))
+//     ->setUrl('vspheredb/vcenters')
+//     ->setPriority(10);
 $section->add(N_('Hosts'))
     ->setUrl('vspheredb/hosts')
     ->setPriority(20);

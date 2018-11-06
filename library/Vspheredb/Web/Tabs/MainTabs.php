@@ -38,9 +38,9 @@ class MainTabs extends Tabs
             $migrations = new Migrations($connection);
 
             if ($migrations->hasSchema()) {
-                $this->add('index', [
-                    'label'     => $this->translate('Overview'),
-                    'url'       => 'vspheredb/vcenter',
+                $this->add('vcenters', [
+                    'label'     => $this->translate('vCenters'),
+                    'url'       => 'vspheredb/vcenters',
                 ])->add('servers', [
                     'label'     => $this->translate('Servers'),
                     'url'       => 'vspheredb/vcenter/servers',

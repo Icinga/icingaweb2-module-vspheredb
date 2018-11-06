@@ -8,30 +8,11 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ComputeClusterHostSummaryTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\GroupedvmsTable;
-use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
+use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 
 class ResourcesController extends ObjectsController
 {
-    public function vcentersAction()
-    {
-        $this->addSingleTab($this->translate('VCenters'));
-
-        $this->setAutorefreshInterval(15);
-        $table = new VCenterSummaryTable($this->db());
-        $this->actions()->add(Link::create(
-            $this->translate('Chart'),
-            '#',
-            null,
-            ['class' => 'icon-chart-pie']
-        ));
-        (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
-            ->appendTo($this->actions());
-        $this->addTitle($this->translate('VCenters') . ' (%d)', count($table));
-        $this->showTable($table, 'vspheredb/groupedvms');
-        $table->handleSortUrl($this->url());
-    }
-
     /**
      * @throws \Icinga\Exception\NotFoundError
      */

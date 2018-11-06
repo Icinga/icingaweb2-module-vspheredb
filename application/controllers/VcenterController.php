@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
+use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSyncInfo;
 
@@ -16,8 +17,8 @@ class VcenterController extends Controller
 {
     public function indexAction()
     {
+        $this->addSingleTab('Overview - outdated');
         $this->setAutorefreshInterval(10);
-        $this->handleTabs();
         $vCenters = VCenter::loadAll($this->db());
         if (empty($vCenters)) {
             $this->redirectNow('vspheredb/vcenter/servers');
@@ -69,12 +70,12 @@ class VcenterController extends Controller
 
     protected function handleTabs()
     {
-        $this->tabs()->add('index', [
-            'label'     => $this->translate('vCenter Overview'),
-            'url'       => 'vspheredb/vcenter',
-        ])->add('servers', [
-            'label'     => $this->translate('Servers'),
-            'url'       => 'vspheredb/vcenter/servers',
-        ])->activate($this->getRequest()->getActionName());
+        $action = $this->getRequest()->getActionName();
+        $tabs = $this->tabs(new MainTabs($this->db()));
+        if ($tabs->has($action)) {
+            $tabs->activate($action);
+        } else {
+            $this->redirectNow('vspheredb/configuration');
+        }
     }
 }
