@@ -9,6 +9,12 @@ SET sql_mode = 'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTIT
 --   trust_store_id
 -- );
 
+CREATE TABLE vspheredb_schema_migration (
+  schema_version SMALLINT UNSIGNED NOT NULL,
+  migration_time DATETIME NOT NULL,
+  PRIMARY KEY(schema_version)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE vcenter (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
   instance_uuid VARBINARY(16) NOT NULL,
@@ -691,3 +697,8 @@ CREATE TABLE counter_300x5 (
 -- CREATE TABLE vm_alarm_history (
 --   vm_id BIGINT(20) UNSIGNED AUTO_INCREMENT NOT NULL,
 -- );
+
+
+INSERT INTO vspheredb_schema_migration
+    (schema_version, migration_time)
+VALUES (1, NOW());
