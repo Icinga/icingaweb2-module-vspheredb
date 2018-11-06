@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
+use Icinga\Module\Vspheredb\Web\Widget\CpuAbsoluteUsage;
 
 class VcentersController extends ObjectsController
 {
@@ -29,6 +30,25 @@ class VcentersController extends ObjectsController
         $this->addTitle($this->translate('VCenters') . ' (%d)', count($table));
         $this->showTable($table, 'vspheredb/groupedvms');
         $table->handleSortUrl($this->url());
+        $this->controls()->prepend($this->cpuSummary($table));
+    }
+
+    protected function cpuSummary(VCenterSummaryTable $table)
+    {
+        $query = clone($table->getQuery());
+        $query->reset('columns')->reset('limitcount')->reset('limitoffset')->reset('group');
+        $query->columns([
+            'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
+            'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
+            'used_mb'   => 'SUM(hqs.overall_memory_usage_mb)',
+            'total_mb'  => 'SUM(h.hardware_memory_size_mb)',
+        ]);
+
+        $total = $this->db()->getDbAdapter()->fetchRow($query);
+
+        return new CpuAbsoluteUsage(
+            $total->used_mhz
+        );
     }
 
     protected function handleTabs()
