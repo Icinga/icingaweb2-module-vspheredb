@@ -130,6 +130,7 @@ class VCenterServerForm extends DirectorObjectForm
     public function getValues($suppressArrayNotation = false)
     {
         $values = parent::getValues($suppressArrayNotation);
+        $values['enabled'] = 'y';
         if (! $this->isNew() && strlen($values['password']) === 0) {
             unset($values['password']);
         }
