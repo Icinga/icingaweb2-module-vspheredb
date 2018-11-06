@@ -19,9 +19,8 @@ use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
 use Icinga\Module\Vspheredb\Web\Table\VmNetworkAdapterTable;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
-use Icinga\Module\Vspheredb\Web\Widget\CpuAbsoluteUsage;
-use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
+use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
 
 class VmController extends Controller
 {
@@ -35,18 +34,6 @@ class VmController extends Controller
         $this->content()->addAttributes([
             'class' => 'vm-info'
         ]);
-        $cpu = new CpuAbsoluteUsage(
-            $vm->quickStats()->get('overall_cpu_usage'),
-            $vm->get('hardware_numcpu')
-        );
-        $mem = new MemoryUsage(
-            $vm->quickStats()->get('guest_memory_usage_mb'),
-            $vm->get('hardware_memorymb'),
-            $vm->quickStats()->get('host_memory_usage_mb')
-        );
-        $this->controls()->prepend($cpu);
-        $this->controls()->add($mem);
-        $this->content()->add(new VmInfoTable($vm));
         $this->addSubTitle($this->translate('Network'), 'sitemap');
         $this->content()->add(
             new VmNetworkAdapterTable($vm)
@@ -88,6 +75,9 @@ class VmController extends Controller
         if (count($disks)) {
             $this->content()->add($disks);
         }
+
+        $this->addSubTitle($this->translate('Additional Information'), 'info-circled');
+        $this->content()->add(new VmInfoTable($vm));
     }
 
     /**
@@ -124,6 +114,7 @@ class VmController extends Controller
      */
     public function hardwareAction()
     {
+        $this->addSubTitle($this->translate('Hardware'), 'print');
         $vm = $this->addVm();
         $this->content()->add(new VmHardwareTree($vm));
     }
@@ -174,7 +165,8 @@ class VmController extends Controller
     {
         /** @var VirtualMachine $vm */
         $vm = VirtualMachine::load(hex2bin($this->params->getRequired('uuid')), $this->db());
-        $this->addTitle($vm->object()->get('object_name'));
+        $this->controls()->add(new VmHeader($vm));
+        $this->setTitle($vm->object()->get('object_name'));
         $this->handleTabs();
 
         return $vm;
