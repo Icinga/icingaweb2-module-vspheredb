@@ -108,6 +108,7 @@ class SyncRunner
 
     /**
      * @param LoopInterface $loop
+     * @return \React\Promise\Promise
      */
     public function run(LoopInterface $loop)
     {
@@ -115,7 +116,6 @@ class SyncRunner
         $this->loop = $loop;
         $initialSync = [
             'moRefs',
-            'perfCounterInfo',
             'hostSystems',
             'virtualMachines',
             'quickStats',
@@ -126,6 +126,7 @@ class SyncRunner
             'vmHardware',
             'hostHardware',
             'hostSensors',
+            // 'perfCounterInfo',
         ];
 
         $schedule = [
@@ -221,7 +222,6 @@ class SyncRunner
 
     /**
      * @throws \Icinga\Exception\AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      * @throws \Icinga\Exception\NotFoundError
      * @throws \Zend_Db_Exception
      * @throws \Zend_Db_Select_Exception
