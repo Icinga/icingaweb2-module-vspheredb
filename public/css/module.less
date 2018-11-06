@@ -863,3 +863,43 @@ ul.tree li.collapsed > .handle {
   padding-left: 1em;
 }
 /* End of tree */
+
+/** End logfile */
+.cpu {
+  border: 0.75em solid @text-color;
+  height: 6em;
+  box-sizing: border-box;
+  width: 6em;
+  border-radius: 1em;
+  text-align: center;
+  display: inline-block;
+  padding: 0.5em 0;
+  background-color: @color-ok;
+  color: white;
+  margin-right: 1em;
+  &.warning {
+    background-color: @color-warning-handled;
+  }
+  &.critical {
+    background-color: @color-critical-handled;
+  }
+  span {
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+  }
+  .cpu-count {
+    font-size: 0.6em;
+    line-height: 1em;
+  }
+  .cpu-consumption {
+    font-size: 2em;
+    display: block;
+  }
+  .cpu-unit {
+    font-size: 1em;
+  }
+}
+div.controls .cpu {
+  float: left;
+}
