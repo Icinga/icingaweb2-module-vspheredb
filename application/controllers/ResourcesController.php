@@ -8,7 +8,6 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ComputeClusterHostSummaryTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\GroupedvmsTable;
-use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 
 class ResourcesController extends ObjectsController
