@@ -68,23 +68,18 @@ class SyncRunner
         $this->vCenter = $vCenter;
         $this->availableTasks = [
             'moRefs' => function () {
-                $this->emit('beginTask', ['Managed Object References']);
                 (new SyncManagedObjectReferences($this->vCenter))->sync();
             },
             'quickStats' => function () {
-                $this->emit('beginTask', ['Quick Stats']);
                 (new SyncQuickStats($this->vCenter))->run();
             },
             'hostSystems' => function () {
-                $this->emit('beginTask', ['Host Systems']);
                 HostSystem::syncFromApi($this->vCenter);
             },
             'virtualMachines' => function () {
-                $this->emit('beginTask', ['Virtual Machines']);
                 VirtualMachine::syncFromApi($this->vCenter);
             },
             'dataStores' => function () {
-                $this->emit('beginTask', ['Data Stores']);
                 Datastore::syncFromApi($this->vCenter);
             },
             'hostHardware' => function () {
@@ -189,7 +184,7 @@ class SyncRunner
                 gc_collect_cycles();
                 gc_enable();
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error($e->getMessage());
                 $this->loop->addTimer(0.5, function () {
                     $this->deferred->reject();
                 });
