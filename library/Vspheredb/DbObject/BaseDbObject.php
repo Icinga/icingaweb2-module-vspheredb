@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Director\Data\Db\DbObject as DirectorDbObject;
@@ -291,7 +292,7 @@ abstract class BaseDbObject extends DirectorDbObject
                 );
             }
             $dba->commit();
-        } catch (\Zend_Db_Exception $error) {
+        } catch (Exception $error) {
             try {
                 $dba->rollBack();
                 /** @var $dba \Zend_Db_Adapter_Pdo_Abstract */
