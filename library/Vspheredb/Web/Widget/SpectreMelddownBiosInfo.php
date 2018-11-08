@@ -99,8 +99,12 @@ class SpectreMelddownBiosInfo extends BaseHtmlElement
         $version = $host->get('bios_version');
         $date = date('Y-m-d', strtotime($host->get('bios_release_date')));
         $vendor = $host->get('sysinfo_vendor');
+        $model = $host->get('sysinfo_model');
+        if (strpos($model, ' ' === false)) {
+            return;
+        }
         $result = null;
-        list($series, $model) = preg_split('/\s/', $host->get('sysinfo_model'), 2);
+        list($series, $model) = preg_split('/\s/', $model, 2);
         if ($vendor === 'Dell Inc.') {
             $result = $this->showDell($series, $model, $version, $date);
         } elseif ($vendor === 'HP') {
