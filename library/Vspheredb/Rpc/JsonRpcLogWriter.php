@@ -26,6 +26,7 @@ class JsonRpcLogWriter extends LogWriter
 
     public function log($severity, $message)
     {
+        $message = \iconv('UTF-8', 'UTF-8//IGNORE', $message);
         $this->connection->sendNotification(
             Notification::create('logger.log', [
                 static::$severityMap[$severity],
