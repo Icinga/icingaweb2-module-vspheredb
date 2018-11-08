@@ -2,15 +2,17 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Exception;
 use gipfl\Protocol\JsonRpc\Connection;
 use gipfl\Protocol\NetString\StreamWrapper;
+use Icinga\Module\Vspheredb\CliUtil;
 use Icinga\Module\Vspheredb\Daemon\SyncRunner;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\Rpc\JsonRpcLogWriter;
 use Icinga\Module\Vspheredb\Rpc\Logger;
-use React\EventLoop\Factory;
+use React\EventLoop\Factory as Loop;
 use React\EventLoop\LoopInterface;
 use React\Stream\ReadableResourceStream;
 use React\Stream\WritableResourceStream;
@@ -26,10 +28,35 @@ class TaskCommand extends CommandBase
     public function init()
     {
         parent::init();
-        $this->loop = Factory::create();
+        $this->loop = Loop::create();
         if ($this->params->get('rpc')) {
             $this->enableRpc();
         }
+    }
+
+    /**
+     * Connect to a vCenter, create/update it's base definition
+     *
+     * USAGE
+     *
+     * icingacli vsphere task initialize --serverId <id> [--rpc]
+     */
+    public function initializeAction()
+    {
+        $this->loop->futureTick(function () {
+            $hostname = null;
+            try {
+                CliUtil::setTitle('vSphereDB::initialize');
+                $vCenter = $this->requireVCenterServer();
+                $hostname = $vCenter->get('host');
+                CliUtil::setTitle(sprintf('vSphereDB::initialize (%s)', $hostname));
+                $vCenter->initialize();
+                $this->loop->stop();
+            } catch (Exception $e) {
+                $this->failFriendly('initialize', $e, $hostname);
+            }
+        });
+        $this->loop->run();
     }
 
     /**
@@ -39,47 +66,28 @@ class TaskCommand extends CommandBase
      *
      * USAGE
      *
-     * icingacli vsphere task sync [--vCenterId <id>] [--rpc]
+     * icingacli vsphere task sync --vCenterId <id> [--rpc]
      */
     public function syncAction()
     {
         $this->loop->futureTick(function () {
+            $hostname = null;
             try {
-                (new SyncRunner($this->requireVCenter()))
+                CliUtil::setTitle('vSphereDB::sync');
+                $vCenter = $this->requireVCenter();
+                $hostname = $vCenter->getFirstServer()->get('host');
+                CliUtil::setTitle(sprintf('vSphereDB::sync (%s)', $hostname));
+                (new SyncRunner($vCenter))
                     ->run($this->loop)
-                    ->otherwise(function () {
-                        exit(1);
+                    ->then(function () use ($hostname) {
+                        $this->failFriendly('sync', 'Sync stopped. Should not happen', $hostname);
+                    })->otherwise(function ($reason = null) use ($hostname) {
+                        $this->failFriendly('sync', $reason, $hostname);
                     });
-            } catch (\Exception $e) {
-                Logger::error($e->getMessage());
-                // echo $e->getTraceAsString();
-                $this->loop->stop();
-            } catch (\Error $e) {
-                Logger::error($e->getMessage());
-                // echo $e->getTraceAsString();
-                $this->loop->stop();
+            } catch (Exception $e) {
+                $this->failFriendly('sync', $e, $hostname);
             }
         });
-        try {
-            $this->loop->run();
-        } catch (\Exception $e) {
-            Logger::error($e);
-        }
-    }
-
-    public function initializeAction()
-    {
-        $this->loop->futureTick(function () {
-            try {
-                $this->requireVCenterServer()->initialize();
-            } catch (\Exception $e) {
-                Logger::error($e->getMessage());
-            } catch (\Error $e) {
-                Logger::error($e->getMessage());
-            }
-            $this->loop->stop();
-        });
-
         $this->loop->run();
     }
 
@@ -114,5 +122,36 @@ class TaskCommand extends CommandBase
         $jsonRpc->handle($netString);
 
         Logger::replaceRunningInstance(new JsonRpcLogWriter($jsonRpc));
+    }
+
+    protected function shorten($message, $length)
+    {
+        if (strlen($message) > $length) {
+            return substr($message, 0, $length - 2) . '...';
+        } else {
+            return $message;
+        }
+    }
+
+    public function failFriendly($task, $error = 'unknown error', $subject = null)
+    {
+        // Just in case the loop will hang, show our error state
+        if ($error instanceof Exception) {
+            $message = $error->getMessage();
+        } else {
+            $message = $error;
+        }
+
+        CliUtil::setTitle(sprintf(
+            'vSphereDB::%s: (%sfailed: %s)',
+            $task,
+            $subject ? "$subject: " : '',
+            $this->shorten($error->getMessage(), 60)
+        ));
+        Logger::error($message);
+        $this->loop->addTimer(0.1, function () {
+            $this->loop->stop();
+            exit(1);
+        });
     }
 }

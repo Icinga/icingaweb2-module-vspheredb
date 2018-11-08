@@ -170,7 +170,11 @@ class SyncRunner
         if ($task) {
             $func = $this->availableTasks[$task];
             try {
+                gc_collect_cycles();
+                gc_disable();
                 $func();
+                gc_collect_cycles();
+                gc_enable();
             } catch (\Exception $e) {
                 Logger::error($e);
                 $this->loop->addTimer(0.5, function () {

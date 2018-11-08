@@ -7,7 +7,9 @@ use gipfl\SystemD\NotifySystemD;
 use Icinga\Application\Logger;
 use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
+use Icinga\Module\Vspheredb\CliUtil;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\LinuxUtils;
@@ -47,6 +49,8 @@ class Daemon
     /** @var NotifySystemD|boolean */
     protected $systemd;
 
+    protected $lastCliTitle;
+
     public function __construct()
     {
         $this->detectProcessInfo();
@@ -65,6 +69,7 @@ class Daemon
 
     public function run(LoopInterface $loop = null)
     {
+        CliUtil::setTitle('vSphereDb::main');
         $ownLoop = $loop === null;
         if ($ownLoop) {
             $loop = Loop::create();
@@ -76,6 +81,7 @@ class Daemon
         $this->makeReady();
         $refresh = function () {
             $this->refreshConfiguredServers();
+            $this->refreshCliTitle();
         };
         $loop->addPeriodicTimer(3, $refresh);
         $loop->futureTick($refresh);
@@ -85,36 +91,69 @@ class Daemon
         }
     }
 
+    protected function refreshCliTitle()
+    {
+        $title = sprintf(
+            'vSphereDb::main: %d active runner%s',
+            count($this->running),
+            count($this->running) === 1 ? '' : 's'
+        );
+
+        if ($title !== $this->lastCliTitle) {
+            CliUtil::setTitle($title);
+            $this->lastCliTitle = $title;
+        }
+
+    }
+
     protected function onConnected()
     {
-        Logger::info('Database connection has been established');
-        if ($this->systemd) {
-            $this->systemd->setReady('Database connection has been established');
-        }
-        $reconnect = function (Exception $e) {
+        $this->setDaemonStatus('Connected to the database', 'info');
+
+        $fail = function (Exception $e) {
             Logger::error($e->getMessage());
             $this->setState('failed');
         };
         $refresh = function () {
             $this->refreshMyState();
         };
+        try {
+            if (! $this->hasSchema()) {
+                $this->setDaemonStatus('DB has no schema', 'error');
+                $fail(new Exception('DB has no schema'));
+            }
+        } catch (Exception $e) {
+            $fail($e);
+        }
+
         RetryUnless::failing($refresh)
             ->setInterval(5)
             ->run($this->loop)
-            ->then($reconnect);
+            ->then($fail);
     }
 
-    protected function setDaemonStatus($status)
+    protected function hasSchema()
     {
-        Logger::info($status);
+        return (new Migrations($this->connection))->hasSchema();
+    }
+
+    protected function setDaemonStatus($status, $logLevel = null, $sendReady = false)
+    {
+        if ($logLevel !== null) {
+            Logger::$logLevel($status);
+        }
         if ($this->systemd) {
-            $this->systemd->setStatus($status);
+            if ($sendReady) {
+                $this->systemd->setReady($status);
+            } else {
+                $this->systemd->setStatus($status);
+            }
         }
     }
 
     protected function onDisconnected()
     {
-        $this->setDaemonStatus('Database connection has been closed');
+        $this->setDaemonStatus('Database connection has been closed', 'error');
         // state cannot be shutdown
         if ($this->getState() !== 'shutdown') {
             $this->reconnectToDb();
@@ -137,9 +176,7 @@ class Daemon
             $this->shutdown();
         })->onTransition(['connected', 'started'], 'failed', function () {
             Logger::error('Failed. Will try to reconnect to the Database');
-            if ($this->systemd) {
-                $this->systemd->setStatus('Failed. Will try to reconnect to the Database');
-            }
+            $this->setDaemonStatus('Failed. Will try to reconnect to the Database');
             $this->eventuallyDisconnectFromDb();
         })->onTransition(['started', 'connected', 'disconnected'], 'failed', function () {
             $this->onFailed();
@@ -147,11 +184,13 @@ class Daemon
 
         // External events:
         $this->runConfigWatch();
+        $this->setDaemonStatus('Ready to run', 'info', true);
         $this->initializeStateMachine('started');
     }
 
     protected function stopRunners()
     {
+        // There is some redundancy here to really make sure they're gone
         if (! empty($this->running)) {
             Logger::info('Stopping remaining child processes');
         }
@@ -178,9 +217,7 @@ class Daemon
 
     protected function reconnectToDb()
     {
-        if ($this->systemd) {
-            $this->systemd->setReloading('Reconnecting to DB');
-        }
+        $this->setDaemonStatus('Reconnecting to DB', 'info');
         $this->eventuallyDisconnectFromDb();
         RetryUnless::succeeding(function () {
             if ($this->dbConfig === null) {
@@ -207,6 +244,7 @@ class Daemon
         if ($this->connection !== null) {
             try {
                 $this->connection->getDbAdapter()->closeConnection();
+                $this->setState('disconnected');
             } catch (Exception $e) {
                 Logger::error(
                     'Ignored an error while closing the DB connection: '
@@ -223,15 +261,17 @@ class Daemon
         $config->on('dbConfig', function ($config) {
             if ($config === null) {
                 if ($this->dbConfig === null) {
-                    Logger::error('Got no valid DB configuration');
+                    $this->setDaemonStatus('Got no valid DB configuration', 'error');
                 } else {
-                    Logger::error('There is no longer a valid DB configuration');
+                    $this->setDaemonStatus('There is no longer a valid DB configuration', 'error');
                     $this->dbConfig = $config;
+                    $this->stopRunners();
                     $this->reconnectToDb();
                 }
             } else {
-                $this->setDaemonStatus('DB configuration loaded');
+                $this->setDaemonStatus('DB configuration loaded', 'info');
                 $this->dbConfig = $config;
+                $this->stopRunners();
                 $this->reconnectToDb();
             }
         });
@@ -256,7 +296,7 @@ class Daemon
     protected function shutdown()
     {
         try {
-            $this->setDaemonStatus('Shutting down');
+            $this->setDaemonStatus('Shutting down', 'info');
             $this->eventuallyDisconnectFromDb();
         } catch (Exception $e) {
             if ($this->systemd) {
@@ -376,6 +416,7 @@ class Daemon
                 unset($this->running[$id]);
             }
         }
+        $this->refreshCliTitle();
         gc_collect_cycles();
     }
 
@@ -394,28 +435,37 @@ class Daemon
         $logProxy = new LogProxy($connection, $this->processInfo->instance_uuid);
         $runner->forwardLog($logProxy);
         $runner->run($this->loop);
-        $runner->on('processStopped', function ($pid) use ($vCenterId) {
-            // Logger::info("Pid $pid stopped");
+        $runner->on('processStopped', function ($pid) use ($vCenterId, $serverId) {
+            Logger::debug("Pid $pid stopped");
+            $this->refreshMyState();
             try {
                 $this->refreshMyState();
             } catch (Exception $e) {
+                Logger::error($e->getMessage());
                 $this->eventuallyDisconnectFromDb();
             }
         });
         $runner->on('failed', function ($pid) use ($vCenterId, $serverId) {
-            if (isset($this->running[$vCenterId])) {
-                Logger::error("Server for vCenterID=$vCenterId failed (PID $pid), will try again in 30 seconds");
-                $this->running[$vCenterId]->stop();
-                unset($this->running[$vCenterId]);
-                gc_collect_cycles();
-                $this->blackListed[$serverId] = true;
-                $this->loop->addTimer(30, function () use ($serverId) {
-                    unset($this->blackListed[$serverId]);
-                });
-            }
+            $this->pauseFailedRunner($vCenterId, $serverId, $pid);
         });
 
         return $runner;
+    }
+
+    protected function pauseFailedRunner($vCenterId, $serverId, $pid)
+    {
+        if (! isset($this->running[$serverId])) {
+            Logger::error("Server for vCenterID=$vCenterId failed, there is no related runner");
+            return;
+        }
+        Logger::error("Server for vCenterID=$vCenterId failed (PID $pid), will try again in 30 seconds");
+        $this->running[$serverId]->stop();
+        unset($this->running[$vCenterId]);
+        gc_collect_cycles();
+        $this->blackListed[$serverId] = true;
+        $this->loop->addTimer(30, function () use ($serverId) {
+            unset($this->blackListed[$serverId]);
+        });
     }
 
     protected function refreshConfiguredServers()
@@ -429,9 +479,7 @@ class Daemon
                 $this->stopRunners();
             }
         } catch (Exception $e) {
-            Logger::error($e->getMessage());
-            $this->setState('failed');
-        } catch (\Error $e) {
+            $this->setDaemonStatus('Failed to refresh server list');
             Logger::error($e->getMessage());
             $this->setState('failed');
         }

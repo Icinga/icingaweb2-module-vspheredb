@@ -194,8 +194,11 @@ class ServerRunner
     protected function stopRunningServers()
     {
         foreach ($this->running as $pid => $process) {
-            Logger::error("Process $pid is still running, sending SIGKILL");
-            $process->terminate(SIGKILL);
+            $process->terminate(SIGTERM);
+            $this->loop->addTimer(5, function () use ($process, $pid) {
+                Logger::error("Process $pid is still running, sending SIGKILL");
+                $process->terminate(SIGKILL);
+            });
         }
     }
 
