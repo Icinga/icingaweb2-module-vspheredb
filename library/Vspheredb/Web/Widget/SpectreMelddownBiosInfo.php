@@ -100,7 +100,7 @@ class SpectreMelddownBiosInfo extends BaseHtmlElement
         $date = date('Y-m-d', strtotime($host->get('bios_release_date')));
         $vendor = $host->get('sysinfo_vendor');
         $model = $host->get('sysinfo_model');
-        if (strpos($model, ' ' === false)) {
+        if (strpos($model, ' ') === false) {
             return;
         }
         $result = null;
