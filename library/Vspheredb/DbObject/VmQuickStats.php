@@ -61,6 +61,24 @@ class VmQuickStats extends BaseDbObject
         return VirtualMachine::getType();
     }
 
+    /**
+     * Valid are values from 0 to max allowed memory, but I've met -1 on an
+     * ESXi host in the wild (6.7)
+     *
+     * @codingStandardsIgnoreStart
+     */
+    public function setHost_memory_usage_mb($value)
+    {
+        // @codingStandardsIgnoreEnd
+        if ((int) $value === -1) {
+            $value = null;
+        }
+
+        parent::reallySet('host_memory_usage_mb', $value);
+
+        return $this;
+    }
+
     protected function setUptime($value)
     {
         if ($value === 0) {
