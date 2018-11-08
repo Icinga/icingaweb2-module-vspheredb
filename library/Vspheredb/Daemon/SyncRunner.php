@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
+use Evenement\EventEmitterTrait;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -23,6 +24,8 @@ use React\Promise\Deferred;
 
 class SyncRunner
 {
+    use EventEmitterTrait;
+
     /** @var VCenter */
     protected $vCenter;
 
@@ -39,6 +42,23 @@ class SyncRunner
     /** @var Deferred */
     protected $deferred;
 
+    protected $taskNames = [
+        'moRefs'           => 'Managed Object References',
+        'quickStats'       => 'Quick Stats',
+        'hostSystems'      => 'Host Systems',
+        'virtualMachines'  => 'Virtual Machines',
+        'dataStores'       => 'Data Stores',
+        'hostHardware'     => 'Host Hardware',
+        'hostSensors'      => 'Host Sensors',
+        'vmHardware'       => 'VM Hardware',
+        'vmDiskUsage'      => 'VM Disk Usage',
+        'vmDatastoreUsage' => 'VM DataStore Usage',
+        'vmSnapshots'      => 'VM Snapshots',
+        'eventStream'      => 'Event Stream',
+        'perfCounters'     => 'Performance Counters',
+        'perfCounterInfo'  => 'Performance Counter Information',
+    ];
+
     /**
      * SyncRunner constructor.
      * @param VCenter $vCenter
@@ -48,59 +68,50 @@ class SyncRunner
         $this->vCenter = $vCenter;
         $this->availableTasks = [
             'moRefs' => function () {
-                Logger::info('Task: moRefs');
+                $this->emit('beginTask', ['Managed Object References']);
                 (new SyncManagedObjectReferences($this->vCenter))->sync();
             },
             'quickStats' => function () {
-                Logger::info('Task: quickStats');
+                $this->emit('beginTask', ['Quick Stats']);
                 (new SyncQuickStats($this->vCenter))->run();
             },
             'hostSystems' => function () {
-                Logger::info('Task: hostSystems');
+                $this->emit('beginTask', ['Host Systems']);
                 HostSystem::syncFromApi($this->vCenter);
             },
             'virtualMachines' => function () {
-                Logger::info('Task: virtualMachines');
+                $this->emit('beginTask', ['Virtual Machines']);
                 VirtualMachine::syncFromApi($this->vCenter);
             },
             'dataStores' => function () {
-                Logger::info('Task: dataStores');
+                $this->emit('beginTask', ['Data Stores']);
                 Datastore::syncFromApi($this->vCenter);
             },
             'hostHardware' => function () {
-                Logger::info('Task: hostHardware');
                 (new SyncHostHardware($this->vCenter))->run();
             },
             'hostSensors' => function () {
-                Logger::info('Task: hostSensors');
                 (new SyncHostSensors($this->vCenter))->run();
             },
             'vmHardware' => function () {
-                Logger::info('Task: vmHardware');
                 (new SyncVmHardware($this->vCenter))->run();
             },
             'vmDiskUsage' => function () {
-                Logger::info('Task: vmDiskUsage');
                 (new SyncVmDiskUsage($this->vCenter))->run();
             },
             'vmDatastoreUsage' => function () {
-                Logger::info('Task: vmDatastoreUsage');
                 (new SyncVmDatastoreUsage($this->vCenter))->run();
             },
             'vmSnapshots' => function () {
-                Logger::info('Task: vmSnapshots');
                 (new SyncVmSnapshots($this->vCenter))->run();
             },
             'eventStream' => function () {
-                Logger::info('Task: eventStream');
                 $this->streamEvents();
             },
             'perfCounters' => function () {
-                Logger::info('Task: perfCounters');
                 (new SyncPerfCounters($this->vCenter))->run();
             },
             'perfCounterInfo' => function () {
-                Logger::info('Task: perfCounterInfo');
                 (new SyncPerfCounterInfo($this->vCenter))->run();
             },
         ];
@@ -172,7 +183,9 @@ class SyncRunner
             try {
                 gc_collect_cycles();
                 gc_disable();
+                $this->emit('beginTask', [$this->taskNames[$task]]);
                 $func();
+                $this->emit('endTask', [$this->taskNames[$task]]);
                 gc_collect_cycles();
                 gc_enable();
             } catch (\Exception $e) {
@@ -234,7 +247,9 @@ class SyncRunner
     {
         $cnt = $this->eventManager()->streamToDb();
         if ($cnt < 1000) {
-            Logger::debug('Got %d events', $cnt);
+            if ($cnt > 0) {
+                Logger::debug('Got %d events', $cnt);
+            }
         } else {
             Logger::debug('Got %d event(s), there might be more', $cnt);
         }

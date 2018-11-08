@@ -46,10 +46,10 @@ class TaskCommand extends CommandBase
         $this->loop->futureTick(function () {
             $hostname = null;
             try {
-                CliUtil::setTitle('vSphereDB::initialize');
+                CliUtil::setTitle('Icinga::vSphereDB::initialize');
                 $vCenter = $this->requireVCenterServer();
                 $hostname = $vCenter->get('host');
-                CliUtil::setTitle(sprintf('vSphereDB::initialize (%s)', $hostname));
+                CliUtil::setTitle(sprintf('Icinga::vSphereDB::initialize (%s)', $hostname));
                 $vCenter->initialize();
                 $this->loop->stop();
             } catch (Exception $e) {
@@ -73,11 +73,26 @@ class TaskCommand extends CommandBase
         $this->loop->futureTick(function () {
             $hostname = null;
             try {
-                CliUtil::setTitle('vSphereDB::sync');
+                CliUtil::setTitle('Icinga::vSphereDB::sync');
                 $vCenter = $this->requireVCenter();
                 $hostname = $vCenter->getFirstServer()->get('host');
-                CliUtil::setTitle(sprintf('vSphereDB::sync (%s)', $hostname));
+                CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s)', $hostname));
+                $time = microtime(true);
                 (new SyncRunner($vCenter))
+                    ->on('beginTask', function ($taskName) use ($hostname, & $time) {
+                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s: %s)', $hostname, $taskName));
+                        $time = microtime(true);
+                    })
+                    ->on('endTask', function ($taskName) use ($hostname, & $time) {
+                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s)', $hostname));
+                        $duration = microtime(true) - $time;
+                        Logger::debug(sprintf(
+                            'Task "%s" took %.2Fms on %s',
+                            $taskName,
+                            ($duration * 1000),
+                            $hostname
+                        ));
+                    })
                     ->run($this->loop)
                     ->then(function () use ($hostname) {
                         $this->failFriendly('sync', 'Sync stopped. Should not happen', $hostname);
@@ -143,7 +158,7 @@ class TaskCommand extends CommandBase
         }
 
         CliUtil::setTitle(sprintf(
-            'vSphereDB::%s: (%sfailed: %s)',
+            'Icinga::vSphereDB::%s: (%sfailed: %s)',
             $task,
             $subject ? "$subject: " : '',
             $this->shorten($error->getMessage(), 60)

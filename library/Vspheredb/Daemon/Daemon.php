@@ -69,7 +69,7 @@ class Daemon
 
     public function run(LoopInterface $loop = null)
     {
-        CliUtil::setTitle('vSphereDb::main');
+        CliUtil::setTitle('Icinga::vSphereDB::main');
         $ownLoop = $loop === null;
         if ($ownLoop) {
             $loop = Loop::create();
@@ -94,7 +94,7 @@ class Daemon
     protected function refreshCliTitle()
     {
         $title = sprintf(
-            'vSphereDb::main: %d active runner%s',
+            'Icinga::vSphereDB::main: %d active runner%s',
             count($this->running),
             count($this->running) === 1 ? '' : 's'
         );
@@ -103,7 +103,6 @@ class Daemon
             CliUtil::setTitle($title);
             $this->lastCliTitle = $title;
         }
-
     }
 
     protected function onConnected()
