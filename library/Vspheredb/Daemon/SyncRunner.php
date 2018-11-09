@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
+use Exception;
 use Evenement\EventEmitterTrait;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
@@ -183,7 +184,7 @@ class SyncRunner
                 $this->emit('endTask', [$this->taskNames[$task]]);
                 gc_collect_cycles();
                 gc_enable();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error($e->getMessage());
                 $this->loop->addTimer(0.5, function () {
                     $this->deferred->reject();

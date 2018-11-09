@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
@@ -19,7 +20,7 @@ class SyncVmDatastoreUsage
 
     /**
      * @throws \Icinga\Exception\NotFoundError
-     * @throws \Zend_Db_Exception
+     * @throws Exception
      */
     public function run()
     {
@@ -87,10 +88,10 @@ class SyncVmDatastoreUsage
 
             $db->commit();
             Logger::debug("$insert created, $update changed, $delete deleted");
-        } catch (\Zend_Db_Exception $error) {
+        } catch (Exception $error) {
             try {
                 $db->rollBack();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // There is nothing we can do.
             }
 
