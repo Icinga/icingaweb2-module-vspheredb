@@ -37,14 +37,6 @@ abstract class ObjectsTable extends BaseTable
         return $this;
     }
 
-    protected function createMorefColumn()
-    {
-        return $this->createColumn('moref', 'MO Ref')
-            ->setRenderer(function ($row) {
-                return $this->linkToVCenter($row->moref);
-            });
-    }
-
     protected function overallStatusRenderer()
     {
         if ($this->overallStatusRenderer === null) {
@@ -52,20 +44,6 @@ abstract class ObjectsTable extends BaseTable
         }
 
         return $this->overallStatusRenderer;
-    }
-
-    protected function linkToVCenter($moRef)
-    {
-        //TODO: will not work
-        return Html::tag('a', [
-            'href' => sprintf(
-                'https://%s/mob/?moid=%s',
-                $this->vCenter->getFirstServer()->get('host'),
-                rawurlencode($moRef)
-            ),
-            'target' => '_blank',
-            'title' => $this->translate('Jump to the Managed Object browser')
-        ], $moRef);
     }
 
     protected function createOverallStatusColumn()

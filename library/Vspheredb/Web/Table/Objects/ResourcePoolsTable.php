@@ -11,7 +11,6 @@ class ResourcePoolsTable extends ObjectsTable
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
             $this->createObjectNameColumn(),
-            $this->createMorefColumn(),
             $this->createColumn('cnt_vms', $this->translate('VMs'), 'COUNT(*)')
                 ->setDefaultSortDirection('DESC'),
         ]);

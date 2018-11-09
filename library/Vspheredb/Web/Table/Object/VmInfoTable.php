@@ -3,9 +3,11 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use dipl\Html\Html;
+use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
@@ -197,10 +199,21 @@ class VmInfoTable extends NameValueTable
 
     protected function linkToVCenter($moRef)
     {
+        try {
+            $server = $this->vCenter->getFirstServer();
+        } catch (NotFoundError $e) {
+            return [
+                Icon::create('warning-empty', [
+                    'class' => 'red'
+                ]),
+                ' ',
+                $this->translate('No related vServer has been configured')
+            ];
+        }
         return Html::tag('a', [
             'href' => sprintf(
                 'https://%s/mob/?moid=%s',
-                $this->vCenter->getFirstServer()->get('host'),
+                $server->get('host'),
                 rawurlencode($moRef)
             ),
             'target' => '_blank',
