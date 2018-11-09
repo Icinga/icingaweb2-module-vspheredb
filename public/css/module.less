@@ -77,40 +77,42 @@ a.ManagedObject.gray::before {
   overflow: hidden;
 }
 
-i.state::before {
-  width: 2em;
-  height: 2em;
-  text-align: center;
-  vertical-align: middle;
-  line-height: 2em;
-}
+i.icon {
+  &.state::before {
+    width: 2em;
+    height: 2em;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2em;
+  }
 
-i.poweredOn::before, i.green::before, i.UP::before {
-  color: @color-ok;
-}
+  &.poweredOn::before, &.green::before, &.UP::before {
+    color: @color-ok;
+  }
 
-i.poweredOff::before, i.suspended::before, i.red::before, i.DOWN::before {
-  color: @color-critical;
-}
+  &.poweredOff::before, &.suspended::before, &.red::before, &.DOWN::before {
+    color: @color-critical;
+  }
 
-i.standby::before, i.yellow::before {
-  color: @color-warning;
-}
+  &.standby::before, &.yellow::before {
+    color: @color-warning;
+  }
 
-i.UNREACHABLE::before {
-  color: @color-unreachable;
-}
+  &.UNREACHABLE::before {
+    color: @color-unreachable;
+  }
 
-i.PENDING::before {
-  color: @color-pending;
-}
+  &.PENDING::before {
+    color: @color-pending;
+  }
 
-i.unknown::before {
-  color: @color-unknown;
-}
+  &.unknown::before {
+    color: @color-unknown;
+  }
 
-i.gray::before {
-  color: @gray;
+  &.gray::before {
+    color: @gray;
+  }
 }
 
 thead th {
@@ -781,7 +783,7 @@ div.controls div.resource-usage {
   }
 }
 
-  /** END of Resource Usage **/
+/** END of Resource Usage **/
 
 /** Disk Usage **/
 div.disk-usage {
