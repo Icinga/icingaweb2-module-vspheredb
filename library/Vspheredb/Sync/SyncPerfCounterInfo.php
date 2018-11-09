@@ -16,6 +16,10 @@ class SyncPerfCounterInfo
         $this->vCenter = $vCenter;
     }
 
+    /**
+     * @throws \Icinga\Exception\NotFoundError
+     * @throws Exception
+     */
     public function run()
     {
         foreach ($this->vCenter->getApi()->perfManager()->getPerformanceCounterInfo() as $prop) {
@@ -37,7 +41,7 @@ class SyncPerfCounterInfo
      * TODO: really sync
      *
      * @param $info
-     * @throws \Zend_Db_Exception
+     * @throws Exception
      */
     protected function processCounterInfo($info)
     {
