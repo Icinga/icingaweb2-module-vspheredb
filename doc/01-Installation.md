@@ -7,6 +7,7 @@ Requirements
 * Icinga Web 2 (&gt;= 2.5)
 * PHP (&gt;= 5.6, preferably 7.x)
 * php-soap
+* php-pcntl (might already be built into your PHP binary)
 * php-posix
 * MySQL (&gt;= 5.6) or MariaDB (&gt;= 5.5.3)
 * Icinga Web 2 modules:
