@@ -194,7 +194,6 @@ class RetryUnless
     {
         $this->removeEventualTimer();
         if ($this->deferred === null) {
-            var_dump('RetryUnless tries to resolve twice');
             Logger::warning('RetryUnless tries to resolve twice');
 
             return;
