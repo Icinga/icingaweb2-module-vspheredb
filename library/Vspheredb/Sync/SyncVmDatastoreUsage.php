@@ -50,6 +50,9 @@ class SyncVmDatastoreUsage
             foreach ($result as $map) {
                 $moRef = $map->id;
                 $vmUuid = $vCenter->makeBinaryGlobalUuid($moRef);
+                if (! isset($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'})) {
+                    continue;
+                }
                 foreach ($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'} as $usage) {
                     $dsMoid = $usage->datastore->_;
                     $dsUuid = $vCenter->makeBinaryGlobalUuid($dsMoid);
