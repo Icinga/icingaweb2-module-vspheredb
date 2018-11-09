@@ -12,20 +12,26 @@ use Icinga\Module\Vspheredb\Web\Table\PerformanceCounterTable;
 
 class ConfigurationController extends Controller
 {
-    /**
-     * @throws \Icinga\Security\SecurityException
-     */
     public function indexAction()
     {
-        $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Main Configuration'));
+
+        if (! $this->hasPermission('vspheredb/admin')) {
+            $this->addSingleTab($this->translate('Configuration'));
+            $this->content()->add(Html::tag('p', [
+                'class' => 'error',
+            ], $this->translate('"vspheredb/admin" permissions are required to continue')));
+
+            return;
+        }
         $this->content()->add(
             ChooseDbResourceForm::load()->handleRequest()
         );
 
         if ($this->Config()->get('db', 'resource')) {
             $db = $this->db();
-            $this->tabs(new MainTabs($db))->activate('configuration');
+            $this->tabs(new MainTabs($this->Auth(), $db))
+                ->activate('configuration');
             $migrations = new Migrations($db);
 
             if ($migrations->hasSchema()) {
@@ -65,7 +71,7 @@ class ConfigurationController extends Controller
                 );
             }
         } else {
-            $this->tabs(new MainTabs())->activate('configuration');
+            $this->tabs(new MainTabs($this->Auth()))->activate('configuration');
         }
     }
 

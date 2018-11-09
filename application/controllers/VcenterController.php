@@ -29,8 +29,12 @@ class VcenterController extends Controller
         $this->content()->add(new VCenterSummaries($vCenter));
     }
 
+    /**
+     * @throws \Icinga\Security\SecurityException
+     */
     public function serversAction()
     {
+        $this->assertPermission('vspheredb/admin');
         $this->setAutorefreshInterval(10);
         $this->handleTabs();
         $this->addTitle($this->translate('vCenter Servers'));
@@ -50,8 +54,12 @@ class VcenterController extends Controller
         $table->renderTo($this);
     }
 
+    /**
+     * @throws \Icinga\Security\SecurityException
+     */
     public function serverAction()
     {
+        $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('vCenter Server'));
 
         $form = new VCenterServerForm();
@@ -71,7 +79,7 @@ class VcenterController extends Controller
     protected function handleTabs()
     {
         $action = $this->getRequest()->getActionName();
-        $tabs = $this->tabs(new MainTabs($this->db()));
+        $tabs = $this->tabs(new MainTabs($this->Auth(), $this->db()));
         if ($tabs->has($action)) {
             $tabs->activate($action);
         } else {

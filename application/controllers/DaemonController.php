@@ -80,7 +80,7 @@ class DaemonController extends Controller
     protected function handleTabs()
     {
         $action = $this->getRequest()->getControllerName();
-        $tabs = $this->tabs(new MainTabs($this->db()));
+        $tabs = $this->tabs(new MainTabs($this->Auth(), $this->db()));
         if ($tabs->has($action)) {
             $tabs->activate($action);
         } else {

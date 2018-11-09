@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Tabs;
 use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\Tabs;
 use Exception;
+use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\Migrations;
 
@@ -15,9 +16,13 @@ class MainTabs extends Tabs
     /** @var Db|null  */
     protected $connection;
 
-    public function __construct(Db $connection = null)
+    /** @var Auth */
+    protected $auth;
+
+    public function __construct(Auth $auth, Db $connection = null)
     {
         $this->connection = $connection;
+        $this->auth = $auth;
         // We are not a BaseElement, not yet
         $this->assemble();
     }
@@ -41,17 +46,23 @@ class MainTabs extends Tabs
                 $this->add('vcenters', [
                     'label'     => $this->translate('vCenters'),
                     'url'       => 'vspheredb/vcenters',
-                ])->add('servers', [
-                    'label'     => $this->translate('Servers'),
-                    'url'       => 'vspheredb/vcenter/servers',
                 ]);
+
+                if ($this->auth->hasPermission('vspheredb/admin')) {
+                    $this->add('servers', [
+                        'label' => $this->translate('Servers'),
+                        'url' => 'vspheredb/vcenter/servers',
+                    ]);
+                }
             }
         }
 
-        $this->add('configuration', [
-            'label' => $this->translate('Configuration'),
-            'url'   => 'vspheredb/configuration',
-        ]);
+        if ($this->auth->hasPermission('vspheredb/admin')) {
+            $this->add('configuration', [
+                'label' => $this->translate('Configuration'),
+                'url'   => 'vspheredb/configuration',
+            ]);
+        }
         if ($migrations->hasSchema()) {
             $this->add('daemon', [
                 'label' => $this->translate('Daemon'),

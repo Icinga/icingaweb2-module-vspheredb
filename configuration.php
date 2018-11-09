@@ -2,6 +2,11 @@
 
 /** @var \Icinga\Application\Modules\Module $this */
 
+$this->providePermission(
+    'vspheredb/admin',
+    $this->translate('Allow to configure vCenter connections')
+);
+
 $section = $this->menuSection(N_('Virtualization (VMware)'))
     ->setIcon('cloud')
     ->setUrl('vspheredb/vcenters')
