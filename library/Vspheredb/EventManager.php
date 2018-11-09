@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb;
 
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -149,7 +150,7 @@ class EventManager
     /**
      * @return int
      * @throws AuthenticationException
-     * @throws \Zend_Db_Exception
+     * @throws Exception
      */
     public function streamToDb()
     {
@@ -193,10 +194,10 @@ class EventManager
                 }*/
             }
             $db->commit();
-        } catch (\Zend_Db_Exception $error) {
+        } catch (Exception $error) {
             try {
                 $db->rollBack();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // There is nothing we can do.
             }
 

@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Module\Director\Exception\DuplicateKeyException;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
@@ -136,22 +137,12 @@ class SyncManagedObjectReferences
                 $object->store();
             }
             $dba->commit();
-        } catch (\Zend_Db_Exception $error) {
+        } catch (Exception $error) {
             try {
                 $dba->rollBack();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // There is nothing we can do.
             }
-
-            throw $error;
-        } catch (DuplicateKeyException $error) {
-            try {
-                $dba->rollBack();
-            } catch (\Exception $e) {
-                // There is nothing we can do.
-            }
-
-            throw $error;
         }
 
         if (count($new) + count($mod) + count($del) === 0) {

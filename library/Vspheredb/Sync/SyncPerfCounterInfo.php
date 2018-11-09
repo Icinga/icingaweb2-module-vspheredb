@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Sync;
 
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 
@@ -101,10 +102,10 @@ class SyncPerfCounterInfo
                 $db->insert('performance_counter', $c);
             }
             $db->commit();
-        } catch (\Zend_Db_Exception $error) {
+        } catch (Exception $error) {
             try {
                 $db->rollBack();
-            } catch (\Exception $rollBackError) {
+            } catch (Exception $rollBackError) {
                 // There is nothing we can do.
             }
 
