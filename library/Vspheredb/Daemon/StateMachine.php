@@ -81,8 +81,8 @@ trait StateMachine
     {
         $fromState = $this->getState();
         if ($this->canTransit($fromState, $state)) {
-            $this->runStateTransition($fromState, $state);
             $this->currentState = $state;
+            $this->runStateTransition($fromState, $state);
         } else {
             throw new RuntimeException(sprintf(
                 'A transition from %s to %s is not allowed',

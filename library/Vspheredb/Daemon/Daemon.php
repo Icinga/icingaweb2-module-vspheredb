@@ -164,7 +164,7 @@ class Daemon
         // Hint: currently disconnected isn't triggered.
         $this->onTransition(['started', 'failed', 'disconnected'], 'connected', function () {
             $this->onConnected();
-        })->onState('disconnected', function () {
+        })->onTransition('connected', 'disconnected', function () {
             $this->onDisconnected();
         })->onTransition([
             'started',
@@ -243,7 +243,9 @@ class Daemon
         if ($this->connection !== null) {
             try {
                 $this->connection->getDbAdapter()->closeConnection();
-                $this->setState('disconnected');
+                if ($this->getState() !== 'shutdown') {
+                    $this->setState('disconnected');
+                }
             } catch (Exception $e) {
                 Logger::error(
                     'Ignored an error while closing the DB connection: '
