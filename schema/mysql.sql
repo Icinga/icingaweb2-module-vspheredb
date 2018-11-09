@@ -200,7 +200,7 @@ CREATE TABLE host_system (
   runtime_power_state ENUM (
     'poweredOff',
     'poweredOn',
-    'standby',
+    'standBy',
     'unknown'
   ) NOT NULL,
   PRIMARY KEY(uuid),
@@ -733,4 +733,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
     (schema_version, migration_time)
-VALUES (4, NOW());
+VALUES (5, NOW());
