@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use dipl\Html\Icon;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
@@ -91,12 +92,53 @@ class VmsTable extends ObjectsTable
         $this->addAvailableColumns([
             $this->createColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
+
             $this->createOverallStatusColumn(),
+
             $this->createObjectNameColumn(),
+
+            $this->createColumn(
+                'guest_tools_status',
+                $this->translate('Guest Tools'),
+                'vc.guest_tools_status'
+            )->setRenderer(function ($row) {
+                switch ($row->guest_tools_status) {
+                    case 'toolsNotInstalled':
+                        return Icon::create('block', [
+                            'class' => 'red',
+                            'title' => $this->translate('Guest Tools are NOT installed'),
+                        ]);
+                    case 'toolsNotRunning':
+                        return Icon::create('warning-empty', [
+                            'class' => 'red',
+                            'title' => $this->translate('Guest Tools are NOT running'),
+                        ]);
+                    case 'toolsOld':
+                        return Icon::create('thumbs-down', [
+                            'class' => 'yellow',
+                            'title' => $this->translate('Guest Tools are outdated'),
+                        ]);
+                    case 'toolsOk':
+                        return Icon::create('ok', [
+                            'class' => 'green',
+                            'title' => $this->translate('Guest Tools are up to date and running'),
+                        ]);
+                    case null:
+                    default:
+                        return Icon::create('help', [
+                            'class' => 'gray',
+                            'title' => $this->translate('Guest Tools status is now known'),
+                        ]);
+                }
+            })->setSortExpression('vc.guest_tools_status'),
+
             $this->createColumn('host_name', $this->translate('Host'), 'h.host_name'),
+
             $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vc.guest_ip_address'),
-            $this->createColumn('hardware_numcpu', 'vCPUs', 'vc.hardware_numcpu')
+
+            $this->createColumn('hardware_numcpu', $this->translate('vCPUs'), 'vc.hardware_numcpu')
                 ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('cpu_usage', $this->translate('CPU Usage'), 'vqs.overall_cpu_usage')
                 ->setRenderer(function ($row) {
                     return Format::mhz($row->cpu_usage);
@@ -118,12 +160,12 @@ class VmsTable extends ObjectsTable
                 })->setSortExpression('vqs.host_memory_usage_mb')
                 ->setDefaultSortDirection('DESC'),
 
-            $this->createColumn('ballooned_memory_mb', 'Balloon', 'vqs.ballooned_memory_mb')
+            $this->createColumn('ballooned_memory_mb', $this->translate('Balloon'), 'vqs.ballooned_memory_mb')
                 ->setRenderer(function ($row) {
                     return Format::mBytes($row->ballooned_memory_mb);
                 })->setDefaultSortDirection('DESC'),
 
-            $this->createColumn('memory_usage', 'Memory Usage', $memoryColumns)
+            $this->createColumn('memory_usage', $this->translate('Memory Usage'), $memoryColumns)
                 ->setRenderer($memoryRenderer)
                 ->setSortExpression('(vqs.guest_memory_usage_mb / vc.hardware_memorymb)')
                 ->setDefaultSortDirection('DESC'),
