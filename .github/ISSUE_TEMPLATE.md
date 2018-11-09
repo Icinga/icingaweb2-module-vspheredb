@@ -16,7 +16,7 @@
 
 ## Your Environment
 <!--- Include as many relevant details about the environment you experienced the problem in -->
-* VMware cCenter/ESXi-Version
+* VMware vCenter®/ESXi™-Version:
 * Version/GIT-Hash of this module:
 * Icinga Web 2 version:
 * Operating System and version:
