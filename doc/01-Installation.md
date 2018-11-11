@@ -127,18 +127,24 @@ Now please:
 Enabling and running the background daemon
 ------------------------------------------
 
-For now, you need to run one daemon per vCenter. This will change in the final
-version.
-
-Once you played around with this modules and everything works fine when running
-on commandline, time has come to enable a background daemon synchronizing your
-vCenter to our vSphereDb.
+The preferred method of running the Background Daemon is via SystemD. We ship
+a sample Unit File, so if you have an `icingaweb2` User on your system all you
+need to do is:
 
     cp contrib/systemd/icinga-vspheredb.service  /etc/systemd/system/
     systemctl daemon-reload
     systemctl enable icinga-vspheredb
     systemctl start icinga-vspheredb
 
+Otherwise please use a member of the `icingaweb2` group like `apache` or
+`www-data`. You might also want to create a new dedicated User with read
+permissions for `/etc/icingaweb2`.
+
 That's it, your daemon should now be running. Feel free to configure as many
-vCenter Servers as you want, each of them with a distinct systemd service
-instance.
+vCenter Servers as you want.
+
+### Without SystemD
+
+When not running SystemD you're on your own, the command you're looking for is:
+
+    /usr/bin/icingacli vspheredb daemon run
