@@ -183,7 +183,7 @@ CREATE TABLE host_system (
   vcenter_uuid VARBINARY(16) NOT NULL,
   product_api_version VARCHAR(32) NOT NULL, -- 6.0
   product_full_name VARCHAR(64) NOT NULL,   -- VMware ESXi 6.0.0 build-5572656
-  bios_version VARCHAR(32) DEFAULT NULL, -- P89
+  bios_version VARCHAR(64) DEFAULT NULL, -- P89, SE5C610.86B.01.01.0020.122820161512
   bios_release_date DATETIME DEFAULT NULL, -- 2017-02-17T00:00:00Z
   sysinfo_vendor VARCHAR(64) NOT NULL, -- HP
   sysinfo_model VARCHAR(64) NOT NULL,  -- ProLiant DL380 Gen9
@@ -733,4 +733,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
     (schema_version, migration_time)
-VALUES (5, NOW());
+VALUES (6, NOW());
