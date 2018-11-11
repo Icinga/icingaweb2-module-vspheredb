@@ -13,10 +13,10 @@ one more optional column showing Guest Tools State:
 ### Upgrading
 
 This release brings a Schema migration, which can be applied with a single click
-in the Frontend. Please go to go to *Virtualization (VMware)* - *Configuration*
-and **Apply** the pending schema migration. Restarting the *Background Daemon*
-is not required for the migration, but strongly suggested - it's error handling
-has been improved.
+in the Frontend. Please go to *Virtualization (VMware)* - *Configuration* and
+**Apply** the pending schema migration. Restarting the *Background Daemon* is not
+required for the migration, but strongly suggested - it's error handling has been
+improved.
 
 ### UI
 * FIX: Do not fail when left with vCenters without vCenter Server (#26)
