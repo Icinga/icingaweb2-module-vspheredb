@@ -1,6 +1,48 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+master (will be v1.0.2)
+-----------------------
+
+This is a minor bugfix release. Improves documentation and error handling, deals
+with standBy Hosts and extra long BIOS versions. Virtual Machine table now has
+one more optional column showing Guest Tools State:
+
+![systemctl status](screenshot/84_changelog/0803_guest-tools-column.png)
+
+### Upgrading
+
+This release brings a Schema migration, which can be applied with a single click
+in the Frontend. Please go to go to *Virtualization (VMware)* - *Configuration*
+and **Apply** the pending schema migration. Restarting the *Background Daemon*
+is not required for the migration, but strongly suggested - it's error handling
+has been improved.
+
+### UI
+* FIX: Do not fail when left with vCenters without vCenter Server (#26)
+* FIX: Show less options instead of errors to non-admin users (#30)
+* FIX: Redirect after deleting a vCenter Server showed an error (#36)
+* FEATURE: Provide a column showing Guest Tools Status (#17, #25)
+
+### CLI
+* FIX: `CTRL-C` should not show an error before shutting down the daemon (#34)
+
+### Background Daemon
+* FIX: Allow to store Hosts being in `standBy` (#19)
+* FIX: Do not fail when a VM reports no attached DataStore (#23)
+* FIX: Safely roll back transactions after *any* kind of Exception (#24)
+
+### Schema
+* FIX: Support BIOS versions longer than 32 characters (#35)
+
+### Documentation
+* FIX: Mention `php-pcntl` dependency (#21)
+* FIX: Explain required Username/Permissions (#23)
+
+### All Issues and Feature Requests
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/2?closed=1)
+
 v1.0.1
 ------
 
