@@ -9,6 +9,8 @@ class VCenterServerForm extends DirectorObjectForm
 {
     protected $className = 'Icinga\\Module\\Vspheredb\\DbObject\\VCenterServer';
 
+    protected $listUrl = 'vspheredb/vcenter/servers';
+
     public function setup()
     {
         if (! class_exists('SoapClient')) {
