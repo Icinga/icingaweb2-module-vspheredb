@@ -97,7 +97,7 @@ charset = "utf8mb4"
 Tell vSphereDB about it's database
 ----------------------------------
 
-In the module's config.ini (usually `/etc/icingaweb2/module/vspheredb/config.ini`)
+In the module's config.ini (usually `/etc/icingaweb2/modules/vspheredb/config.ini`)
 you need to reference above DB connection:
 
 ```ini
