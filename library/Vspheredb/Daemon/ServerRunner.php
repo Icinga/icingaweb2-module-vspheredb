@@ -196,8 +196,10 @@ class ServerRunner
         foreach ($this->running as $pid => $process) {
             $process->terminate(SIGTERM);
             $this->loop->addTimer(5, function () use ($process, $pid) {
-                Logger::error("Process $pid is still running, sending SIGKILL");
-                $process->terminate(SIGKILL);
+                if ($process->isRunning()) {
+                    Logger::error("Process $pid is still running, sending SIGKILL");
+                    $process->terminate(SIGKILL);
+                }
             });
         }
     }
