@@ -2,15 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
-use Evenement\EventEmitterTrait;
 use gipfl\Protocol\JsonRpc\Connection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use React\ChildProcess\Process;
 
 class IcingaCliRpc extends IcingaCli
 {
-    use EventEmitterTrait;
-
     /** @var IcingaCliRunner */
     protected $runner;
 
