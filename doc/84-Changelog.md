@@ -1,8 +1,15 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-master (will be v1.0.2)
+master (will be v1.0.3)
 -----------------------
+
+### UI
+* FIX: Memory Usage shows Host Memory usage when exceeding available memory
+* FEATURE: VM Guest Disk Usage now shows usage bar per default
+
+v1.0.2
+------
 
 This is a minor bugfix release. Improves documentation and error handling, deals
 with standBy Hosts and extra long BIOS versions. Virtual Machine table now has
