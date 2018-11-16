@@ -47,6 +47,9 @@ class MemoryUsage extends UsageBar
         parent::assembleBar($bar);
         if ($this->usedHost !== null) {
             $diffHostPercent = ($this->usedHost - $this->used) / $this->capacity;
+            $availablePercent = ($this->capacity - $this->used) / $this->capacity;
+            $diffHostPercent = min($diffHostPercent, $availablePercent);
+
             $title = sprintf(
                 $this->translate('Host Memory: used %s of %s'),
                 $this->format($this->usedHost),
