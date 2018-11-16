@@ -76,8 +76,8 @@ class VmsGuestDiskUsageTable extends ObjectsTable
         return [
             'object_name',
             'disk_path',
-            'free_space',
             'capacity',
+            'usage',
         ];
     }
 }
