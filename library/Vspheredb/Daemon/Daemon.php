@@ -435,7 +435,9 @@ class Daemon
         $connection = $server->getConnection();
         $logProxy = new LogProxy($connection, $this->processInfo->instance_uuid);
         $runner->forwardLog($logProxy);
-        $runner->run($this->loop);
+        $runner->run($this->loop)->otherwise(function () use ($vCenterId, $serverId) {
+            $this->pauseFailedRunner($vCenterId, $serverId);
+        });
         $runner->on('processStopped', function ($pid) use ($vCenterId, $serverId) {
             Logger::debug("Pid $pid stopped");
             $this->refreshMyState();
@@ -453,13 +455,18 @@ class Daemon
         return $runner;
     }
 
-    protected function pauseFailedRunner($vCenterId, $serverId, $pid)
+    protected function pauseFailedRunner($vCenterId, $serverId, $pid = null)
     {
         if (! isset($this->running[$serverId])) {
             Logger::error("Server for vCenterID=$vCenterId failed, there is no related runner");
             return;
         }
-        Logger::error("Server for vCenterID=$vCenterId failed (PID $pid), will try again in 30 seconds");
+        if ($pid === null) {
+            $pidInfo = '';
+        } else {
+            $pidInfo = " (PID $pid)";
+        }
+        Logger::error("Server for vCenterID=$vCenterId failed$pidInfo, will try again in 30 seconds");
         $this->running[$serverId]->stop();
         unset($this->running[$vCenterId]);
         gc_collect_cycles();
