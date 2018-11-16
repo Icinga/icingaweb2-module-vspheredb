@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Link;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
@@ -12,6 +11,9 @@ use Icinga\Module\Vspheredb\Web\Widget\CpuAbsoluteUsage;
 
 class VcentersController extends ObjectsController
 {
+    /**
+     * @throws \Zend_Db_Select_Exception
+     */
     public function indexAction()
     {
         $this->setAutorefreshInterval(15);
@@ -36,6 +38,11 @@ class VcentersController extends ObjectsController
         $this->controls()->prepend($this->cpuSummary($table));
     }
 
+    /**
+     * @param VCenterSummaryTable $table
+     * @return CpuAbsoluteUsage
+     * @throws \Zend_Db_Select_Exception
+     */
     protected function cpuSummary(VCenterSummaryTable $table)
     {
         $query = clone($table->getQuery());

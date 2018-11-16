@@ -55,9 +55,6 @@ class VmsController extends ObjectsController
         $this->content()->prepend($summaries);
     }
 
-    /**
-     * @throws \Icinga\Exception\IcingaException
-     */
     public function diskusageAction()
     {
         $this->handleTabs();
