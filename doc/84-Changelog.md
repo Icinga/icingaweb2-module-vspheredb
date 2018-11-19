@@ -16,10 +16,12 @@ Please restart the *Background Daemon* - it's error handling has been improved.
 
 ### UI
 * FIX: Memory Usage shows Host Memory usage when exceeding available memory (#18)
-* FIX: Keep retrying on initialization errors (#44)
-* FIX: Avoid useless attempt to kill dead children (#45)
 * FEATURE: VM Guest Disk Usage now shows usage bar per default (#46)
 * FEATURE: Host Information has been re-organized (#47)
+
+### Background Daemon
+* FIX: Keep retrying on initialization errors (#44)
+* FIX: Avoid useless attempt to kill dead children (#45)
 
 ### All Issues and Feature Requests
 * You can find issues and feature requests related to this release on our
