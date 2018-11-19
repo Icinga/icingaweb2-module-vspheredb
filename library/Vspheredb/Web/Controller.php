@@ -2,9 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web;
 
+use dipl\Html\Html;
 use dipl\Web\CompatController;
-use Icinga\Module\Vspheredb\Db;
 use Exception;
+use Icinga\Module\Vspheredb\Db;
 
 class Controller extends CompatController
 {
@@ -26,6 +27,21 @@ class Controller extends CompatController
         }
 
         return $this->db;
+    }
+
+    /**
+     * @param $title
+     * @param null $icon
+     */
+    protected function addSubTitle($title, $icon = null)
+    {
+        $title = Html::tag('h2', null, $title);
+
+        if ($icon !== null) {
+            $title->addAttributes(['class' => "icon-$icon"]);
+        }
+
+        $this->content()->add($title);
     }
 
     protected function redirectToConfiguration()

@@ -115,6 +115,16 @@ i.icon {
   }
 }
 
+h1 i.icon {
+  &:first-of-type {
+    margin-left: 1em;
+  }
+  &.state::before {
+    font-size: 0.75em;
+    width: 1.5em;
+  }
+}
+
 thead th {
   white-space: nowrap;
 
@@ -153,11 +163,15 @@ th.table-header-day {
   text-align: right;
 }
 
-.vm-info h2 {
+.host-info h2, .vm-info h2 {
   margin-top: 1.5em;
   &:first-of-type {
     margin-top: 0.5em;
   }
+}
+
+form.quicksearch input.search {
+  float: right;
 }
 
 div.event-heatmap-calendars > table.calendar {
@@ -970,6 +984,7 @@ pre.logOutput {
   margin-right: 1em;
   &.warning {
     background-color: @color-warning-handled;
+    color: @text-color;
   }
   &.critical {
     background-color: @color-critical-handled;

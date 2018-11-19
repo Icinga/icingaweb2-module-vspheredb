@@ -94,21 +94,6 @@ class VmController extends Controller
     }
 
     /**
-     * @param $title
-     * @param null $icon
-     */
-    protected function addSubTitle($title, $icon = null)
-    {
-        $title = Html::tag('h2', null, $title);
-
-        if ($icon !== null) {
-            $title->addAttributes(['class' => "icon-$icon"]);
-        }
-
-        $this->content()->add($title);
-    }
-
-    /**
      * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
      */

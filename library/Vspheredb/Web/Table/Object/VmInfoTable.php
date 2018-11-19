@@ -7,6 +7,7 @@ use dipl\Html\Icon;
 use dipl\Html\Link;
 use dipl\Translation\TranslationHelper;
 use dipl\Web\Widget\NameValueTable;
+use Exception;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
@@ -161,14 +162,13 @@ class VmInfoTable extends NameValueTable
     /**
      * @param VirtualMachine $vm
      * @return array|null
-     * @throws \Icinga\Exception\NotFoundError
      */
     protected function getMonitoringInfo(VirtualMachine $vm)
     {
         $name = $vm->get('guest_host_name');
         $statusRenderer = new IcingaHostStatusRenderer();
-        $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
         try {
+            $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
             if ($monitoring && $monitoring->hasHost($name)) {
                 $monitoringState = $monitoring->getHostState($name);
                 return [
@@ -187,7 +187,7 @@ class VmInfoTable extends NameValueTable
             } else {
                 return null;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 Html::tag('p', ['class' => 'error'], sprintf(
                     $this->translate('Unable to check monitoring state: %s'),
