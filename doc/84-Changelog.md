@@ -1,12 +1,29 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-master (will be v1.0.3)
------------------------
+v1.0.3
+------
+
+This is a minor bugfix release. It improves error handling, shows Guest Disk
+usage bar column per default and highlights Active Host Memory even when higher
+than available VM Memory. Host System details view has been re-organized:
+
+![Host System details](screenshot/84_changelog/0804_hostinfo-reorganized.png)
+
+### Upgrading
+
+Please restart the *Background Daemon* - it's error handling has been improved.
 
 ### UI
-* FIX: Memory Usage shows Host Memory usage when exceeding available memory
-* FEATURE: VM Guest Disk Usage now shows usage bar per default
+* FIX: Memory Usage shows Host Memory usage when exceeding available memory (#18)
+* FIX: Keep retrying on initialization errors (#44)
+* FIX: Avoid useless attempt to kill dead children (#45)
+* FEATURE: VM Guest Disk Usage now shows usage bar per default (#46)
+* FEATURE: Host Information has been re-organized (#47)
+
+### All Issues and Feature Requests
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/3?closed=1)
 
 v1.0.2
 ------
