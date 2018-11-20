@@ -64,6 +64,7 @@ class ApiClassMap
             'VmStoppingEvent'      => "$base\\VmStoppingEvent",
             // Not seen yet:
             'VmBeingDeployedEvent' => "$base\\VmBeingDeployedEvent",
+            'InvalidProperty'      => "$base\\InvalidProperty",
         ];
 
         $base = __NAMESPACE__ . "\\VmwareDataType";
