@@ -185,7 +185,7 @@ class SyncRunner
                 gc_collect_cycles();
                 gc_enable();
             } catch (Exception $e) {
-                Logger::error($e->getMessage());
+                Logger::error("Task $task failed: " . $e->getMessage());
                 $this->loop->addTimer(0.5, function () {
                     $this->deferred->reject();
                 });
