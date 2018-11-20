@@ -31,12 +31,15 @@ class DaemonController extends Controller
         $log = Html::tag('pre', ['class' => 'logOutput']);
         $logWindow = Html::tag('div', ['class' => 'logWindow'], $log);
         foreach ($logLines as $line) {
+            $ts = $line->ts_create / 1000;
+            if ($ts + 3600 * 16 < time()) {
+                $tsFormatted = DateFormatter::formatDateTime($ts);
+            } else {
+                $tsFormatted = DateFormatter::formatTime($ts);
+            }
             $log->add(Html::tag('div', [
                 'class' => $line->level
-            ], DateFormatter::formatDateTime($line->ts_create / 1000)
-                . ': '
-                . $line->message
-            ));
+            ], "$tsFormatted: " . $line->message));
         }
 
         if ($daemon) {
