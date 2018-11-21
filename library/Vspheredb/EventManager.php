@@ -165,6 +165,9 @@ class EventManager
         try {
             foreach ($events as $key => $event) {
                 // printf("%s <= %s\n", $event->key, $this->lastEventKey);
+                if (! method_exists($event, 'getTimestampMs')) {
+                    throw new RuntimeException('This is not a know event: ' . var_export($event, 1));
+                }
                 if ($this->lastEventKey
                     && $event->getTimestampMs() <= $this->lastEventTimestamp
                     && $event->key <= $this->lastEventKey
