@@ -95,8 +95,6 @@ class EventHistoryTable extends ZfQueryBasedTable
         ]);
 
         // TODO:
-        // 'VmSuspendedEvent',
-        // 'VmBeingDeployedEvent',
         // 'VmBeingClonedEvent',
         // 'VmBeingClonedNoFolderEvent',
         // 'VmClonedEvent',

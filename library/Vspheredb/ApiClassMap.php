@@ -65,6 +65,11 @@ class ApiClassMap
             // Not seen yet:
             'VmBeingDeployedEvent' => "$base\\VmBeingDeployedEvent",
             'InvalidProperty'      => "$base\\InvalidProperty",
+
+            'VmBeingClonedEvent'         => "$base\\VmBeingClonedEvent",
+            'VmBeingClonedNoFolderEvent' => "$base\\VmBeingClonedNoFolderEvent",
+            'VmClonedEvent'              => "$base\\VmClonedEvent",
+            'VmCloneFailedEvent'         => "$base\\VmCloneFailedEvent",
         ];
 
         $base = __NAMESPACE__ . "\\VmwareDataType";
