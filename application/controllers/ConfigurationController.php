@@ -24,14 +24,19 @@ class ConfigurationController extends Controller
 
             return;
         }
-        $this->content()->add(
-            ChooseDbResourceForm::load()->handleRequest()
-        );
+        $this->content()->add(Html::tag('div', [
+            'class' => 'icinga-module module-director'
+        ], ChooseDbResourceForm::load()->handleRequest()));
 
         if ($this->Config()->get('db', 'resource')) {
             $db = $this->db();
             $this->tabs(new MainTabs($this->Auth(), $db))
                 ->activate('configuration');
+
+            if ($db === null) {
+                return;
+            }
+
             $migrations = new Migrations($db);
 
             if ($migrations->hasSchema()) {

@@ -25,7 +25,6 @@ class ChooseDbResourceForm extends BaseForm
      */
     public function setup()
     {
-        $this->addAttribs(['class' => 'icinga-module module-director']);
         $this->storeConfigLabel = $this->translate('Store configuration');
 
         $this->addResourceConfigElements();
@@ -37,7 +36,7 @@ class ChooseDbResourceForm extends BaseForm
     }
 
     /**
-     * @throws \Icinga\Exception\ConfigurationError
+     * @throws \Zend_Form_Exception
      */
     protected function onSetup()
     {
@@ -46,16 +45,23 @@ class ChooseDbResourceForm extends BaseForm
             return;
         }
         if ($resourceName = $this->getResourceName()) {
-            $resourceConfig = ResourceFactory::getResourceConfig($resourceName);
-            if (! isset($resourceConfig->charset)
-                || $resourceConfig->charset !== 'utf8mb4'
-            ) {
-                $this->getElement('resource')
-                    ->addError('Please change the encoding for the database to utf8mb4');
-            }
+            try {
+                $resourceConfig = ResourceFactory::getResourceConfig($resourceName);
+                if (! isset($resourceConfig->charset)
+                    || $resourceConfig->charset !== 'utf8mb4'
+                ) {
+                    $this->getElement('resource')
+                        ->addError('Please change the encoding for the database to utf8mb4');
+                }
 
-            $resource = $this->getResource();
-            $db = $resource->getDbAdapter();
+                $resource = $this->getResource();
+                $db = $resource->getDbAdapter();
+            } catch (Exception $e) {
+                $this->getElement('resource')
+                    ->addError('Resource failed: ' . $e->getMessage());
+
+                return;
+            }
 
             try {
                 $db->fetchOne('SELECT 1');

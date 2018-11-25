@@ -55,6 +55,8 @@ class MainTabs extends Tabs
                     ]);
                 }
             }
+        } else {
+            $migrations = null;
         }
 
         if ($this->auth->hasPermission('vspheredb/admin')) {
@@ -63,7 +65,7 @@ class MainTabs extends Tabs
                 'url'   => 'vspheredb/configuration',
             ]);
         }
-        if ($migrations->hasSchema()) {
+        if ($migrations && $migrations->hasSchema()) {
             $this->add('daemon', [
                 'label' => $this->translate('Daemon'),
                 'url' => 'vspheredb/daemon',
