@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
+use dipl\Html\Icon;
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
@@ -80,6 +82,19 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
             $this::td($usage, ['style' => 'width: 25%;']),
             $this::td($dsUsage, ['style' => 'width: 25%;'])
         ]);
+        if (time() - 3600 > ($row->ts_updated / 1000)) {
+            $caption->add([
+                ' ',
+                Icon::create('spinner', [
+                    'title' => sprintf(
+                        $this->translate('Information is outdated, last update took place %s'),
+                        DateFormatter::timeAgo($row->ts_updated / 1000)
+                    )
+                ])
+            ]);
+            $tr->getAttributes()->add('class', 'disabled');
+        }
+
 
         return $tr;
     }
@@ -93,6 +108,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
                 'object_name' => 'o.object_name',
                 'committed'   => 'vdu.committed',
                 'uncommitted' => 'vdu.uncommitted',
+                'ts_updated'  => 'vdu.ts_updated',
             ]
         )->join(
             ['vdu' => 'vm_datastore_usage'],

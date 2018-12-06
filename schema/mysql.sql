@@ -385,6 +385,7 @@ CREATE TABLE vm_datastore_usage (
   committed BIGINT(20) UNSIGNED DEFAULT NULL,
   uncommitted BIGINT(20) UNSIGNED DEFAULT NULL,
   unshared BIGINT(20) UNSIGNED DEFAULT NULL,
+  ts_updated BIGINT(20) UNSIGNED DEFAULT NULL,
   PRIMARY KEY(vm_uuid, datastore_uuid),
   INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -732,5 +733,5 @@ CREATE TABLE counter_300x5 (
 
 
 INSERT INTO vspheredb_schema_migration
-    (schema_version, migration_time)
-VALUES (6, NOW());
+  (schema_version, migration_time)
+VALUES (7, NOW());

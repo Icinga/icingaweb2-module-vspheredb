@@ -7,6 +7,7 @@ use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
+use Icinga\Module\Vspheredb\Util;
 
 class SyncVmDatastoreUsage
 {
@@ -27,7 +28,7 @@ class SyncVmDatastoreUsage
         $vCenter = $this->vCenter;
         $db = $vCenter->getDb();
         $result = $vCenter->getApi()->propertyCollector()->collectObjectProperties(
-            new PropertySet('VirtualMachine', ['storage.perDatastoreUsage']),
+            new PropertySet('VirtualMachine', ['storage.perDatastoreUsage', 'storage.timestamp']),
             VirtualMachine::getSelectSet()
         );
         Logger::debug('Got VirtualMachine perDatastoreUsage');
@@ -53,14 +54,20 @@ class SyncVmDatastoreUsage
                 if (! isset($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'})) {
                     continue;
                 }
+                if (isset($map->{'storage.timestamp'})) {
+                    $timestamp = Util::timeStringToUnixMs($map->{'storage.timestamp'});
+                } else {
+                    $timestamp = null;
+                }
                 foreach ($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'} as $usage) {
                     $dsMoid = $usage->datastore->_;
                     $dsUuid = $vCenter->makeBinaryGlobalUuid($dsMoid);
                     $key = "$vmUuid$dsUuid";
                     $usage = [
-                        'committed' => $usage->committed,
+                        'committed'   => $usage->committed,
                         'uncommitted' => $usage->uncommitted,
-                        'unshared' => $usage->unshared,
+                        'unshared'    => $usage->unshared,
+                        'ts_updated'  => $timestamp,
                     ];
                     $seen[$key] = $key;
                     if (array_key_exists($key, $existing)) {
