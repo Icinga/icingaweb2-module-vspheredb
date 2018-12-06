@@ -27,6 +27,9 @@ class SyncVmDatastoreUsage
     {
         $vCenter = $this->vCenter;
         $db = $vCenter->getDb();
+
+        $this->refreshOutdatedDatastores();
+
         $result = $vCenter->getApi()->propertyCollector()->collectObjectProperties(
             new PropertySet('VirtualMachine', ['storage.perDatastoreUsage', 'storage.timestamp']),
             VirtualMachine::getSelectSet()
@@ -106,6 +109,109 @@ class SyncVmDatastoreUsage
             }
 
             throw $error;
+        }
+
+        $this->refreshOutdatedVms();
+    }
+
+    protected function refreshOutdatedDatastores()
+    {
+        $vCenter = $this->vCenter;
+        $db = $vCenter->getDb();
+        $vCenterUuid = $vCenter->get('uuid');
+
+        // Updated 1800s ago? Outdated.
+        $tsExpiredMs = (time() - 1800) * 1000;
+        $subQuery = $db->select()->from(['du' => 'vm_datastore_usage'], [
+            'ts_updated'     => 'MIN(ts_updated)',
+            'datastore_uuid' => 'datastore_uuid',
+        ])->join(
+            ['vm' => 'virtual_machine'],
+            "vm.uuid = du.vm_uuid AND vm.runtime_power_state = 'poweredOn'"
+        )->group('datastore_uuid');
+        $query = $db->select()->from(['o' => 'object'], [
+            'moref'       => 'o.moref',
+            'object_name' => 'o.object_name',
+        ])->join(
+            ['ds' => 'datastore'],
+            'ds.uuid = o.uuid',
+            []
+        )->join(
+            ['vdu' => $subQuery],
+            'vdu.datastore_uuid = o.uuid',
+            []
+        )->where(
+            'o.vcenter_uuid = ?',
+            $vCenterUuid
+        )->where(
+            'vdu.ts_updated < ?',
+            $tsExpiredMs
+        )->where(
+            '(ds.ts_last_forced_refresh IS NULL OR ds.ts_last_forced_refresh < ?)',
+            $tsExpiredMs
+        );
+        $dataStores = $db->fetchPairs($query);
+
+        if (empty($dataStores)) {
+            return;
+        }
+
+        Logger::info(sprintf(
+            'Calling RefreshDatastoreStorageInfo on %d outdated Datastore(s)',
+            count($dataStores)
+        ));
+
+        $api = $vCenter->getApi();
+        foreach (array_keys($dataStores) as $moref) {
+            $api->soapCall('RefreshDatastoreStorageInfo', [
+                '_this'   => $moref,
+            ]);
+        }
+    }
+
+    protected function refreshOutdatedVms()
+    {
+        $vCenter = $this->vCenter;
+        $db = $vCenter->getDb();
+        $vCenterUuid = $vCenter->get('uuid');
+
+        // Updated 1800s ago? Outdated.
+        $tsExpiredMs = (time() - 1800) * 1000;
+
+        $query = $db->select()->from(['o' => 'object'], [
+            'moref'       => 'o.moref',
+            'object_name' => 'o.object_name',
+        ])->join(
+            ['vm' => 'virtual_machine'],
+            "vm.uuid = o.uuid AND vm.template = 'n'",
+            []
+        )->join(
+            ['vdu' => 'vm_datastore_usage'],
+            'vm.uuid = vdu.vm_uuid',
+            []
+        )->where(
+            'o.vcenter_uuid = ?',
+            $vCenterUuid
+        )->where(
+            'vdu.ts_updated < ?',
+            $tsExpiredMs
+        )->group('o.uuid');
+        $vms = $db->fetchPairs($query);
+
+        if (empty($vms)) {
+            return;
+        }
+
+        Logger::info(sprintf(
+            'Calling RefreshStorageInfo on %d outdated VirtualMachine(s)',
+            count($vms)
+        ));
+
+        $api = $vCenter->getApi();
+        foreach (array_keys($vms) as $moref) {
+            $api->soapCall('RefreshStorageInfo', [
+                '_this'   => $moref,
+            ]);
         }
     }
 
