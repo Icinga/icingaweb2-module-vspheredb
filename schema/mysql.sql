@@ -546,6 +546,7 @@ CREATE TABLE vm_event_history (
     'VmStartingEvent',
     'VmPoweredOnEvent',
     'VmPoweredOffEvent',
+    'VmResettingEvent',
     'VmSuspendedEvent',
     'VmStoppingEvent',
     'VmBeingDeployedEvent',
@@ -735,4 +736,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (8, NOW());
+VALUES (9, NOW());

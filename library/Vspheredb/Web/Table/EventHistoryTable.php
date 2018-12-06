@@ -36,6 +36,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         'VmPoweredOnEvent',
         'VmStoppingEvent',
         'VmPoweredOffEvent',
+        'VmResettingEvent',
         'VmBeingCreatedEvent',
         'VmCreatedEvent',
         'VmReconfiguredEvent',
@@ -124,6 +125,11 @@ class EventHistoryTable extends ZfQueryBasedTable
             case 'VmEmigratingEvent':
                 $tr->addAttributes([
                     'class' => 'state emigrating',
+                ]);
+                break;
+            case 'VmResettingEvent':
+                $tr->addAttributes([
+                    'class' => 'state poweredOff',
                 ]);
                 break;
             case 'VmPoweredOffEvent':

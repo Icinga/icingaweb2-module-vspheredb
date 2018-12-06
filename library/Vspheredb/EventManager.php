@@ -299,6 +299,7 @@ class EventManager
             'VmStartingEvent',
             'VmPoweredOnEvent',
             'VmPoweredOffEvent',
+            'VmResettingEvent',
             'VmSuspendedEvent',
 
             'VmStoppingEvent',

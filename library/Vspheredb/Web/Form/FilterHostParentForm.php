@@ -34,6 +34,7 @@ class FilterHostParentForm extends Form
             'VmPoweredOnEvent',
             'VmStoppingEvent',
             'VmPoweredOffEvent',
+            'VmResettingEvent',
             'VmBeingCreatedEvent',
             'VmCreatedEvent',
             'VmReconfiguredEvent',
@@ -64,6 +65,7 @@ class FilterHostParentForm extends Form
     {
         $colors = [
             'VmPoweredOffEvent' => [255, 0, 0],
+            'VmResettingEvent' => [164, 0, 0],
             'VmBeingHotMigratedEvent' => [255, 164, 0],
             'VmReconfiguredEvent' => [164, 0, 128],
             'VmPoweredOnEvent' => [0, 164, 0],

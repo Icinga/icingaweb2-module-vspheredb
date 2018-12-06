@@ -9,7 +9,7 @@ class ApiClassMap
         $base = __NAMESPACE__ . "\\MappedClass";
 
         $map = [
-            //'ManagedObjectNotFoundFault' => "$base\\ManagedObjectNotFoundFault",
+            // 'ManagedObjectNotFoundFault' => "$base\\ManagedObjectNotFoundFault",
             // 'AlarmEvent'              => "$base\\AlarmEvent",
             'AlarmAcknowledgedEvent'  => "$base\\AlarmAcknowledgedEvent",
             'AlarmClearedEvent'       => "$base\\AlarmClearedEvent",
@@ -36,7 +36,6 @@ class ApiClassMap
 
             // VmMessageEvent
             // TaskEvent
-            // VmResettingEvent
             // EventEx
             // AlarmStatusChangedEvent
             // UserLoginSessionEvent
@@ -45,7 +44,6 @@ class ApiClassMap
             // NonVIWorkloadDetectedOnDatastoreEvent
             // VmAcquiredTicketEvent
             // CustomFieldValueChangedEvent
-            //
 
             'VmFailedMigrateEvent'    => "$base\\VmFailedMigrateEvent",
             'MigrationEvent'          => "$base\\MigrationEvent",
@@ -58,6 +56,7 @@ class ApiClassMap
             'VmCreatedEvent'       => "$base\\VmCreatedEvent",
             'VmPoweredOnEvent'     => "$base\\VmPoweredOnEvent",
             'VmPoweredOffEvent'    => "$base\\VmPoweredOffEvent",
+            'VmResettingEvent'     => "$base\\VmResettingEvent",
             'VmSuspendedEvent'     => "$base\\VmSuspendedEvent",
             'VmReconfiguredEvent'  => "$base\\VmReconfiguredEvent",
             'VmStartingEvent'      => "$base\\VmStartingEvent",
