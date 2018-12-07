@@ -3,6 +3,8 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use dipl\Html\Html;
+use Exception;
+use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
@@ -37,38 +39,24 @@ class ConfigurationController extends Controller
                 return;
             }
 
-            $migrations = new Migrations($db);
+            try {
+                $this->showMigrations($db);
+            } catch (Exception $e) {
+                $this->content()->add(Html::tag('p', [
+                    'class' => 'error',
+                ], $e->getMessage()));
+            }
+        } else {
+            $this->tabs(new MainTabs($this->Auth()))->activate('configuration');
+        }
+    }
 
-            if ($migrations->hasSchema()) {
-                if ($migrations->hasPendingMigrations()) {
-                    $this->content()->add(
-                        ApplyMigrationsForm::load()
-                            ->setMigrations($migrations)
-                            ->handleRequest()
-                    );
-                }
-            } else {
-                if ($migrations->hasModuleRelatedTable()) {
-                    $this->content()->add(Html::tag('p', [
-                        'class' => 'error'
-                    ], $this->translate(
-                        'The chosen Database resource contains related tables,'
-                        . ' but the schema is not complete. In case you tried'
-                        . ' a pre-release version of this module please drop'
-                        . ' this database and start with a fresh new one.'
-                    )));
+    protected function showMigrations(Db $db)
+    {
+        $migrations = new Migrations($db);
 
-                    return;
-                } elseif ($migrations->hasAnyTable()) {
-                    $this->content()->add(Html::tag('p', [
-                        'class' => 'warning'
-                    ], $this->translate(
-                        'The chosen Database resource already contains tables. You'
-                        . ' might want to continue with this DB resource, but we'
-                        . ' strongly suggest to use an empty dedicated DB for this'
-                        . ' module.'
-                    )));
-                }
+        if ($migrations->hasSchema()) {
+            if ($migrations->hasPendingMigrations()) {
                 $this->content()->add(
                     ApplyMigrationsForm::load()
                         ->setMigrations($migrations)
@@ -76,7 +64,32 @@ class ConfigurationController extends Controller
                 );
             }
         } else {
-            $this->tabs(new MainTabs($this->Auth()))->activate('configuration');
+            if ($migrations->hasModuleRelatedTable()) {
+                $this->content()->add(Html::tag('p', [
+                    'class' => 'error'
+                ], $this->translate(
+                    'The chosen Database resource contains related tables,'
+                    . ' but the schema is not complete. In case you tried'
+                    . ' a pre-release version of this module please drop'
+                    . ' this database and start with a fresh new one.'
+                )));
+
+                return;
+            } elseif ($migrations->hasAnyTable()) {
+                $this->content()->add(Html::tag('p', [
+                    'class' => 'warning'
+                ], $this->translate(
+                    'The chosen Database resource already contains tables. You'
+                    . ' might want to continue with this DB resource, but we'
+                    . ' strongly suggest to use an empty dedicated DB for this'
+                    . ' module.'
+                )));
+            }
+            $this->content()->add(
+                ApplyMigrationsForm::load()
+                    ->setMigrations($migrations)
+                    ->handleRequest()
+            );
         }
     }
 
