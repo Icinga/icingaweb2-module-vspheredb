@@ -51,7 +51,7 @@ class SafeCacheDir
                 );
             }
         } else {
-            if (! mkdir($directory, 0700)) {
+            if (! @mkdir($directory, 0700)) {
                 throw new RuntimeException(
                     'Could not create %s',
                     $directory
