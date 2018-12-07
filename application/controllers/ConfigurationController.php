@@ -26,9 +26,15 @@ class ConfigurationController extends Controller
 
             return;
         }
+        $form = ChooseDbResourceForm::load()->handleRequest();
         $this->content()->add(Html::tag('div', [
             'class' => 'icinga-module module-director'
-        ], ChooseDbResourceForm::load()->handleRequest()));
+        ], $form));
+        if ($form->hasErrors()) {
+            $this->addSingleTab($this->translate('Configuration'));
+
+            return;
+        }
 
         if ($this->Config()->get('db', 'resource')) {
             $db = $this->db();
@@ -42,6 +48,8 @@ class ConfigurationController extends Controller
             try {
                 $this->showMigrations($db);
             } catch (Exception $e) {
+                $this->addSingleTab($this->translate('Configuration'));
+
                 $this->content()->add(Html::tag('p', [
                     'class' => 'error',
                 ], $e->getMessage()));
