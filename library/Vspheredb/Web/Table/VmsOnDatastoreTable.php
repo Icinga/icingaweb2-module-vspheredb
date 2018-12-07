@@ -95,7 +95,6 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
             $tr->getAttributes()->add('class', 'disabled');
         }
 
-
         return $tr;
     }
 

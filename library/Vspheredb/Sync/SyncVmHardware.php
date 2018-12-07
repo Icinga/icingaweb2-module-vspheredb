@@ -57,6 +57,9 @@ class SyncVmHardware
         $seen = [];
         foreach ($result as $vm) {
             $uuid = $vCenter->makeBinaryGlobalUuid($vm->id);
+            if (! isset($vm->{'config.hardware'})) {
+                continue;
+            }
             foreach ($vm->{'config.hardware'}->device as $device) {
                 $this->assertValidDeviceKey($device);
                 $key = $device->key;
