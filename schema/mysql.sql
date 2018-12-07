@@ -188,7 +188,7 @@ CREATE TABLE host_system (
   sysinfo_vendor VARCHAR(64) NOT NULL, -- HP
   sysinfo_model VARCHAR(64) NOT NULL,  -- ProLiant DL380 Gen9
   sysinfo_uuid VARCHAR(64) NOT NULL,   -- 30133937-3365-54a3-3544-30374a334d53
-  service_tag VARCHAR(64) DEFAULT NULL, -- DQ6EXJ3
+  service_tag VARCHAR(64) DEFAULT NULL, -- VMware DE 1A BE DO 4J AL TG 5S R5 X3 A8 KS 42 20 EA 1C
   hardware_cpu_model VARCHAR(64) NOT NULL, -- Intel(R) Xeon(R) CPU E5-2699A v4 @ 2.40GHz
   hardware_cpu_mhz INT UNSIGNED NOT NULL,
   hardware_cpu_packages SMALLINT UNSIGNED NOT NULL,
