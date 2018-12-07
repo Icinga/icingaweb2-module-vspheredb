@@ -243,7 +243,7 @@ class Daemon
         if ($this->connection !== null) {
             try {
                 $this->connection->getDbAdapter()->closeConnection();
-                if ($this->getState() !== 'shutdown') {
+                if (! in_array($this->getState(), ['disconnected', 'shutdown'])) {
                     $this->setState('disconnected');
                 }
             } catch (Exception $e) {
