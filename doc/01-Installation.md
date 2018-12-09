@@ -8,7 +8,7 @@ Requirements
 * PHP (&gt;= 5.6, preferably 7.x)
 * php-soap
 * php-pcntl (might already be built into your PHP binary)
-* php-posix
+* php-posix (on RHEL/CentOS this is php-process, or rh-php7x-php-process)
 * MySQL (&gt;= 5.6) or MariaDB (&gt;= 5.5.3)
 * Icinga Web 2 modules:
   * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.4) (Icinga Web 2 module)
