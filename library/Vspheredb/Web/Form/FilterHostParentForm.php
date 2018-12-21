@@ -78,7 +78,7 @@ class FilterHostParentForm extends Form
         if (isset($colors[$type])) {
             return $colors[$type];
         } else {
-            return $colors['VmPoweredOffEvent'];
+            return $colors['VmReconfiguredEvent'];
         }
     }
 
