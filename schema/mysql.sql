@@ -254,8 +254,8 @@ CREATE TABLE virtual_machine (
   hardware_numcpu TINYINT UNSIGNED NOT NULL,
   hardware_numcorespersocket TINYINT UNSIGNED DEFAULT 1 NOT NULL,
   template ENUM('y', 'n') NOT NULL, -- TODO: drop and skip templates? Or separate table?
-  instance_uuid VARCHAR(64) NOT NULL,   -- 5004890e-8edd-fe5f-d116-d5704b2043e4
-  bios_uuid VARCHAR(64) NOT NULL,       -- 42042ce7-1c4f-b339-2293-40357f1d6860
+  instance_uuid VARCHAR(64) DEFAULT NULL,   -- 5004890e-8edd-fe5f-d116-d5704b2043e4
+  bios_uuid VARCHAR(64) DEFAULT NULL,       -- 42042ce7-1c4f-b339-2293-40357f1d6860
   version VARCHAR(32) NOT NULL,         -- vmx-11
   online_standby ENUM('y', 'n') NOT NULL,
   paused ENUM('y', 'n') DEFAULT NULL,
@@ -736,4 +736,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (10, NOW());
+VALUES (11, NOW());
