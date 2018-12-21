@@ -75,7 +75,7 @@ class OverviewTree extends BaseHtmlElement
             . " FROM object WHERE object_type = 'VirtualMachine'"
             . " GROUP BY parent_uuid";
         $dsCnt = "SELECT COUNT(*) as cnt, parent_uuid"
-            . " FROM object WHERE object_type = 'DataStore'"
+            . " FROM object WHERE object_type = 'Datastore'"
             . " GROUP BY parent_uuid";
         $networkCnt = "SELECT COUNT(*) as cnt, parent_uuid"
             . " FROM object WHERE object_type = 'DistributedVirtualSwitch'"
@@ -162,7 +162,7 @@ class OverviewTree extends BaseHtmlElement
             'Datastore'              => 'database',
             // 'DatastoreHostMount',
             'Folder'                 => 'folder-empty',
-            'Network'                 => 'arrows-cw',
+            'Network'                => 'arrows-cw',
             'ResourcePool'           => 'chart-pie',
             'StoragePod'             => 'cloud',
             'HostSystem'             => 'host',
