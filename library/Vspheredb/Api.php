@@ -26,6 +26,9 @@ class Api
     /** @var string */
     private $host;
 
+    /** @var int */
+    private $port;
+
     /** @var string */
     private $user;
 
@@ -71,12 +74,14 @@ class Api
      * @param string $host
      * @param string $user
      * @param string $pass
+     * @param int|null $port
      */
-    public function __construct($host, $user, $pass)
+    public function __construct($host, $user, $pass, $port = null)
     {
         $this->host = $host;
         $this->user = $user;
         $this->pass = $pass;
+        $this->port = $port;
     }
 
     /**
@@ -85,15 +90,28 @@ class Api
      */
     public static function forServer(VCenterServer $server)
     {
+        $host = $server->get('host');
+        if (preg_match('/^(.+?):(\d{1,5})$/', $host, $match)) {
+            $host = $match[1];
+            $port = (int) $match[2];
+        } else {
+            $port = null;
+        }
+
         $api = new static(
-            $server->get('host'),
+            $host,
             $server->get('username'),
-            $server->get('password')
+            $server->get('password'),
+            $port
         );
 
         $api->vCenterServer = $server;
 
         $curl = $api->curl();
+
+        if ($port !== null) {
+            $curl->setPort($port);
+        }
 
         if ($type = $server->get('proxy_type')) {
             $curl->setProxy($server->get('proxy_address'), $type);

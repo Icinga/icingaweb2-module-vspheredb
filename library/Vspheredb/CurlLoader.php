@@ -100,6 +100,19 @@ class CurlLoader extends EventEmitter
     }
 
     /**
+     * Set a specific port number
+     *
+     * @param int $port
+     * @return $this
+     */
+    public function setPort($port)
+    {
+        $this->port = (int) $port;
+
+        return $this;
+    }
+
+    /**
      * Use a proxy
      *
      * @param $url
