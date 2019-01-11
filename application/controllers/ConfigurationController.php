@@ -3,9 +3,12 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use Exception;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
+use Icinga\Module\Vspheredb\Web\Form\MonitoringConnectionForm;
+use Icinga\Module\Vspheredb\Web\Table\MonitoredObjectMappingTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Form\ApplyMigrationsForm;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -104,5 +107,50 @@ class ConfigurationController extends Controller
                     ->handleRequest()
             );
         }
+    }
+
+    public function monitoringAction()
+    {
+        $this->tabs(new MainTabs($this->Auth()))->activate('monitoring');
+        $this->actions()->add(Link::create(
+            $this->translate('Add'),
+            'vspheredb/configuration/addmonitoring',
+            null,
+            [
+                'class'            => 'icon-plus',
+                'data-base-target' => '_next',
+            ]
+        ));
+        $this->addTitle($this->translate('Monitoring Integration'));
+        $table = new MonitoredObjectMappingTable($this->db());
+        $table->handleSortPriorityActions($this->getRequest(), $this->getResponse());
+        if (count($table)) {
+            $wrapper = Html::tag('div', ['class' => 'icinga-module module-director']);
+            $wrapper->wrap($table);
+            $this->content()->add($wrapper);
+            $table->renderTo($this);
+        } else {
+            $this->content()->add(Html::tag('p', ['class' => 'warning'], $this->translate(
+                'No integration has been configured'
+            )));
+        }
+    }
+
+    public function addmonitoringAction()
+    {
+        $this->addSingleTab($this->translate('Create'));
+        $this->addTitle($this->translate('New Monitoring Integration'));
+        $form = new MonitoringConnectionForm($this->db());
+        $form->handleRequest($this->getServerRequest());
+        $this->content()->add($form);
+    }
+
+    public function monitoringconfigAction()
+    {
+        $this->addSingleTab($this->translate('Create'));
+        $this->addTitle($this->translate('Monitoring Integration'));
+        $form = new MonitoringConnectionForm($this->db());
+       $form->handleRequest($this->getServerRequest());
+        $this->content()->add($form);
     }
 }

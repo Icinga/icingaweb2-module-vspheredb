@@ -63,6 +63,9 @@ class MainTabs extends Tabs
             $this->add('configuration', [
                 'label' => $this->translate('Configuration'),
                 'url'   => 'vspheredb/configuration',
+            ])->add('monitoring', [
+                'label' => $this->translate('Monitoring'),
+                'url'   => 'vspheredb/configuration/monitoring',
             ]);
         }
         if ($migrations && $migrations->hasSchema()) {
