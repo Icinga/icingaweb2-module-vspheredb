@@ -65,6 +65,12 @@ class ConfigurationController extends Controller
 
         if ($migrations->hasSchema()) {
             if ($migrations->hasPendingMigrations()) {
+                $this->content()->add(Html::tag('p', [
+                    'class' => 'warning'
+                ], $this->translate(
+                    'There are pending Database Schema Migrations. Please apply'
+                    . ' them now!'
+                )));
                 $this->content()->add(
                     ApplyMigrationsForm::load()
                         ->setMigrations($migrations)
