@@ -1008,3 +1008,27 @@ pre.logOutput {
 div.controls .cpu {
   float: left;
 }
+
+.inline-perf-small {
+  border-left: 1px solid rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  height: 1.5em;
+  width: 5em;
+}
+
+.inline-perf-container {
+
+  &.hovered {
+    .inline-perf-small {
+      width: auto;
+      height: auto;
+      margin: 0.5em 1em;
+    }
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 100;
+    position: absolute;
+    top: -2em;
+    left: -620px;
+  }
+}
