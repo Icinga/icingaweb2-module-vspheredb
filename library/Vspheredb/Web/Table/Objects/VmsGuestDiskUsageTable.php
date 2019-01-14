@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use dipl\Html\Html;
 use dipl\Html\Img;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
@@ -15,7 +16,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
         'disk_path',
     ];
 
-    protected $withHistory = false;
+    protected $withHistory = true;
 
     public function filterHost($uuid)
     {
@@ -65,18 +66,26 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                     $ci = $ciName . ':' . $path;
                     $now = time();
                     $end = floor($now / 60) * 60;
-                    $start = $end - 3600 * 4;
-                    $start = $end - 3600 * 24 * 14;
-                    $end = $start + 3600 * 24 * 4;
-                    return Img::create('rrd/graph/img', [
+                    $offset = 3600 * 24 * 96;
+                    $duration = 3600 * 12 * 4;
+                    $start = $end - $offset;
+                    $end = $start + $duration;
+
+                    return Html::tag('div', [
+                        'style' => 'position: relative'
+                    ], Html::tag('div', [
+                        'class' => 'inline-perf-container'
+                    ], Img::create('rrd/graph/img', [
                         'file'     => $ci . '.rrd',
                         'rnd'      => time(),
-                        'height'   => 20,
-                        'width'    => 60,
+                        'height'   => 24 * 6,
+                        'width'    => 80 * 6,
                         'start'    => $start,
                         'end'      => $end,
                         'template' => 'vm_disk',
-                    ]);
+                    ], [
+                        'class' => 'inline-perf-small'
+                    ])));
                 })
             );
         }
