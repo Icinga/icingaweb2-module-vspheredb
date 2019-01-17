@@ -69,6 +69,12 @@ class ApiClassMap
             'VmBeingClonedNoFolderEvent' => "$base\\VmBeingClonedNoFolderEvent",
             'VmClonedEvent'              => "$base\\VmClonedEvent",
             'VmCloneFailedEvent'         => "$base\\VmCloneFailedEvent",
+
+            'ElementDescription'     => "$base\\ElementDescription",
+            'PerfCounterInfo'        => "$base\\PerfCounterInfo",
+            'PerfInterval'           => "$base\\PerfInterval",
+            'PerformanceDescription' => "$base\\PerformanceDescription",
+            'PerformanceManager'     => "$base\\PerformanceManager",
         ];
 
         $base = __NAMESPACE__ . "\\VmwareDataType";
