@@ -53,7 +53,6 @@ class PerfManager
      * @param $type
      * @return mixed
      * @throws \Icinga\Exception\AuthenticationException
-     * @throws \Icinga\Exception\ConfigurationError
      */
     public function queryPerfProviderSummary($name, $type)
     {
@@ -170,7 +169,7 @@ class PerfManager
         return $clone;
     }
 
-    protected function fetchMetrics($metrics, $names, $type, $interval, $count)
+    public function fetchMetrics($metrics, $names, $type, $interval, $count)
     {
         $api = $this->api;
         $duration = $interval * ($count);
