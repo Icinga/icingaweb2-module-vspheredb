@@ -107,7 +107,10 @@ class DatastoreUsage extends BaseHtmlElement
     public function addDiskFromDbRow($row)
     {
         $info = $this->makeDisk($row);
-        $this->addVmDisk($info->title, $info->datastore_percent, $info->vm_uuid);
+        if ($info !== null) {
+            $this->addVmDisk($info->title, $info->datastore_percent, $info->vm_uuid);
+        }
+
         return $this;
     }
 
@@ -188,6 +191,10 @@ class DatastoreUsage extends BaseHtmlElement
     protected function makeDisk($dbRow)
     {
         $size = $dbRow->committed + $dbRow->uncommitted;
+        if ($size === null) {
+            return null;
+        }
+
         $share = (object) [
             'vm_uuid' => $dbRow->uuid,
             'name'  => $dbRow->object_name,
