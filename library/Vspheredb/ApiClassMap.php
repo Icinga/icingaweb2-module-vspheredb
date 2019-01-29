@@ -73,6 +73,7 @@ class ApiClassMap
             'ElementDescription'     => "$base\\ElementDescription",
             'PerfCounterInfo'        => "$base\\PerfCounterInfo",
             'PerfInterval'           => "$base\\PerfInterval",
+            'PerfEntityMetricCSV'    => "$base\\PerfEntityMetricCSV",
             'PerformanceDescription' => "$base\\PerformanceDescription",
             'PerformanceManager'     => "$base\\PerformanceManager",
         ];
