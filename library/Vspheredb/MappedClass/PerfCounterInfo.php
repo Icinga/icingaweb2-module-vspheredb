@@ -13,13 +13,38 @@ class PerfCounterInfo
     /** @var int */
     public $key;
 
-    /** @var int */
+    /**
+     * Minimum level at which metrics of this type will be collected by
+     * VirtualCenter Server. The value for this property for any performance
+     * counter is a number from 1 to 4. The higher the setting, the more data
+     * is collected by VirtualCenter Server.
+     *
+     * The default setting for VirtualCenter Server is 1, which collects the
+     * minimal amount of performance data that is typically useful to
+     * administrators and developers alike. The specific level of each counter
+     * is documented in the respective counter-documentation pages, by group.
+     *
+     * See PerformanceManager for links to the counter group pages.
+     *
+     * @var int
+     */
     public $level;
 
     /** @var ElementDescription */
     public $nameInfo;
 
-    /** @var int */
+    /**
+     * Minimum level at which the per device metrics of this type will be
+     * collected by vCenter Server. The value for this property for any
+     * performance counter is a number from 1 to 4. By default all per device
+     * metrics are calculated at level 3 or more.
+     *
+     * If a certain per device counter is collected at a certain level, the
+     * aggregate metric is also calculated at that level, i.e., perDeviceLevel
+     * is greater than or equal to level.
+     *
+     * @var int
+     */
     public $perDeviceLevel;
 
     /**
