@@ -4,6 +4,8 @@ namespace Icinga\Module\Vspheredb;
 
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\IcingaException;
+use Icinga\Module\Vspheredb\MappedClass\ObjectContent;
+use Icinga\Module\Vspheredb\MappedClass\RetrieveResult;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 
@@ -40,6 +42,12 @@ class PropertyCollector
         }
     }
 
+    /**
+     * @param $specSet
+     * @param null $options
+     * @return RetrieveResult
+     * @throws AuthenticationException
+     */
     public function collectPropertiesEx($specSet, $options = null)
     {
         $specSet = array(
@@ -48,7 +56,7 @@ class PropertyCollector
             'options' => $options
         );
 
-        return $this->api->soapCall('RetrievePropertiesEx', $specSet);
+        return $this->api->soapCall('RetrievePropertiesEx', $specSet)->returnval;
     }
 
     public function collectObjectProperties(PropertySet $propSet, SelectSet $selectSet)
@@ -86,30 +94,49 @@ class PropertyCollector
         }
 
         $nice = [];
+        /** @var ObjectContent $row */
         foreach ($result->returnval as $row) {
+            // var_dump($row); exit;
             $data = [
                 'id'   => $row->obj->_,
                 'type' => $row->obj->type
             ];
 
-            if (! property_exists($row, 'propSet')) {
-                if (property_exists($row, 'missingSet')) {
-                    if ($row->missingSet[0]->fault->fault->privilegeId === 'System.View') {
-                        throw new AuthenticationException('System.View is required');
-                    }
+            if ($row->propSet) {
+                foreach ($row->propSet as $prop) {
+                    $data[$prop->name] = $prop->val;
                 }
 
-                // This can happen for disconnected/unknown objects. No data? Fine.
-                // TODO: check out whether this happens with an invalid/no session
                 $nice[$data['id']] = (object) $data;
-
+            } elseif (empty($row->missingSet)) {
                 continue;
-            }
-            foreach ($row->propSet as $prop) {
-                $data[$prop->name] = $prop->val;
-            }
+            } else {
+                $paths = [];
+                $permissions = [];
+                foreach ($row->missingSet as $missing) {
+                    if ($missing->isNotAuthenticated()) {
+                        throw new AuthenticationException('Not authenticated');
+                    }
+                    if ($missing->isNoPermission()) {
+                        $paths[$missing->path] = true;
+                        /** @var \Icinga\Module\Vspheredb\MappedClass\NoPermission $fault */
+                        $fault = $missing->fault->fault;
+                        $permissions[$fault->privilegeId] = true;
+                    }
+                }
+                if (! empty($permissions)) {
+                    throw new \RuntimeException(sprintf(
+                        'Missing permissions (%s), missing properties: %s',
+                        implode(', ', $permissions),
+                        implode(', ', $paths)
+                    ));
+                }
 
-            $nice[$data['id']] = (object) $data;
+                throw new \RuntimeException(sprintf(
+                    'Missing properties: %s',
+                    implode(', ', $paths)
+                ));
+            }
         }
 
         return $nice;
