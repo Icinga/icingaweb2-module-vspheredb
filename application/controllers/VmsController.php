@@ -100,6 +100,6 @@ class VmsController extends ObjectsController
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $table->handleSortUrl($this->url());
-        $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machine Snapshots'));
+        $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machines with Snapshots'));
     }
 }
