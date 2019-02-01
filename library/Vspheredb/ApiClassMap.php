@@ -2,13 +2,58 @@
 
 namespace Icinga\Module\Vspheredb;
 
+use Icinga\Module\Vspheredb\MappedClass\ObjectContent;
+
 class ApiClassMap
 {
+    protected static $map;
+
+    public static function createInstanceForObjectContent(ObjectContent $content)
+    {
+        $map = static::getMap();
+        $type = $content->obj->type;
+        if (isset($map[$type])) {
+            $class = $map[$type];
+            $obj = new $class;
+            foreach ($content->propSet as $dynamicProperty) {
+                $obj->{$dynamicProperty->name} = $dynamicProperty->val;
+            }
+
+            return $obj;
+        } else {
+            throw new \RuntimeException(sprintf(
+                'Type "%s" has no class mapping',
+                $type
+            ));
+        }
+    }
+
     public static function getMap()
+    {
+        if (self::$map === null) {
+            self::$map = static::prepareMap();
+        }
+
+        return self::$map;
+    }
+
+    public static function prepareMap()
     {
         $base = __NAMESPACE__ . "\\MappedClass";
 
+        // Hint: put more specific classes on top, otherwise a more generic one might match
         $map = [
+            'RetrieveResult'       => "$base\\RetrieveResult",
+            'DynamicProperty'      => "$base\\DynamicProperty",
+            'ObjectContent'        => "$base\\ObjectContent",
+            'MissingProperty'      => "$base\\MissingProperty",
+            'InvalidProperty'      => "$base\\InvalidProperty",
+            'SystemError'          => "$base\\SystemError",
+            'NotAuthenticated'     => "$base\\NotAuthenticated",
+            'NoPermission'         => "$base\\NoPermission",
+            'SecurityError'        => "$base\\SecurityError",
+            'LocalizedMethodFault' => "$base\\LocalizedMethodFault",
+
             // 'ManagedObjectNotFoundFault' => "$base\\ManagedObjectNotFoundFault",
             // 'AlarmEvent'              => "$base\\AlarmEvent",
             'AlarmAcknowledgedEvent'  => "$base\\AlarmAcknowledgedEvent",
@@ -63,7 +108,6 @@ class ApiClassMap
             'VmStoppingEvent'      => "$base\\VmStoppingEvent",
             // Not seen yet:
             'VmBeingDeployedEvent' => "$base\\VmBeingDeployedEvent",
-            'InvalidProperty'      => "$base\\InvalidProperty",
 
             'VmBeingClonedEvent'         => "$base\\VmBeingClonedEvent",
             'VmBeingClonedNoFolderEvent' => "$base\\VmBeingClonedNoFolderEvent",
@@ -74,8 +118,11 @@ class ApiClassMap
             'PerfCounterInfo'        => "$base\\PerfCounterInfo",
             'PerfInterval'           => "$base\\PerfInterval",
             'PerfEntityMetricCSV'    => "$base\\PerfEntityMetricCSV",
+            'PerfMetricId'           => "$base\\PerfMetricId",
+            'PerfMetricSeriesCSV'    => "$base\\PerfMetricSeriesCSV",
             'PerformanceDescription' => "$base\\PerformanceDescription",
             'PerformanceManager'     => "$base\\PerformanceManager",
+            'PerfQuerySpec'          => "$base\\PerfQuerySpec",
         ];
 
         $base = __NAMESPACE__ . "\\VmwareDataType";
