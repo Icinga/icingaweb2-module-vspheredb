@@ -2,8 +2,14 @@
 
 namespace Icinga\Module\Vspheredb;
 
+use Icinga\Exception\AuthenticationException;
+use Icinga\Module\Vspheredb\MappedClass\PerfEntityMetricCSV;
+use Icinga\Module\Vspheredb\MappedClass\PerfMetricId;
+use Icinga\Module\Vspheredb\MappedClass\PerformanceManager;
+use Icinga\Module\Vspheredb\MappedClass\PerfQuerySpec;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
+use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 class PerfManager
 {
@@ -85,67 +91,43 @@ class PerfManager
         return $this->api->soapCall('QueryAvailablePerfMetric', $specSet);
     }
 
-    public function queryBulkPerfByName($what, $type, $names)
+    /**
+     * @return PerformanceManager
+     * @throws \Icinga\Exception\AuthenticationException
+     */
+    public function getPerformanceManager()
     {
-        // $metrics =
-        // virtualDisk.numberReadAveraged.average => '',
-        // virtualDisk.numberWriteAveraged.average => ''
-        // net.bytesRx.average
-    }
-
-    public function queryPerf($names, $type, $interval = 20, $count = 60)
-    {
-        /*
-        ->select()->from('performance_counter', ['counter_key', 'name'])
-        ->where('vcenter_uuid = ?', $checksum)
-        ->where('name IN (?)', [
-        // Host and VM:
-            'bytesRx', // Data amount received per second (average)
-            'bytesTx',
-            'packetsRx', // Number of packets (summation)
-            'packetsTx',
-            'broadcastRx', // Number of packets (summation)
-            'broadcastTx',
-            'multicastRx', // Number of packets (summation)
-            'multicastTx',
-            'droppedRx', // Number of packets (summation)
-            'droppedTx',
-            'errorsRx', // Number of packets (summation)
-            'errorsTx',
-
-
-            'numberReadAveraged',
-            'numberWriteAveraged',
-            'readLatencyUS',
-            'writeLatencyUS',
-        ]
-        */
-        $metrics = [
-            (object) ['counterId' => 526, 'instance' => '*'],
-            (object) ['counterId' => 527, 'instance' => '*'],
-            (object) ['counterId' => 171, 'instance' => '*'],
-            (object) ['counterId' => 172, 'instance' => '*'],
-            (object) ['counterId' => 543, 'instance' => '*'],
-            (object) ['counterId' => 544, 'instance' => '*'],
-        ];
-
-        return $this->fetchMetrics($metrics, $names, $type, $interval, $count);
-    }
-
-    public function getPerformanceCounterInfo()
-    {
-        $objects = $this->api->propertyCollector()->collectPropertiesEx([
+        $result = $this->api->propertyCollector()->collectPropertiesEx([
             'propSet' => [
                 'type' => 'PerformanceManager',
                 'all'  => true
             ],
             'objectSet' => [
-                'obj' => $this->obj,
+                'obj'  => $this->obj,
                 'skip' => false
             ]
         ]);
 
-        return $objects->returnval->objects[0]->propSet;
+        if (count($result->objects) !== 1) {
+            throw new \RuntimeException(sprintf(
+                'Exactly one PerformanceManager object expected, got %d',
+                count($result->objects)
+            ));
+
+        }
+
+        $object = $result->objects[0];
+
+        if ($object->hasMissingProperties()) {
+            if ($object->reportsNotAuthenticated()) {
+                throw new AuthenticationException('Not authenticated');
+            } else {
+                // TODO: no permission, throw error message!
+                throw new \RuntimeException('Got no result');
+            }
+        } else {
+            return $object->toNewObject();
+        }
     }
 
     protected function makeDateTime($timestamp)
@@ -154,61 +136,82 @@ class PerfManager
     }
 
     /**
-     * WTF?! PHP 7 creates href/refX links when adding the same array multiple times
-     *
      * @param $metrics
-     * @return array
+     * @param $names
+     * @param $type
+     * @param $interval
+     * @param $count
+     * @return PerfEntityMetricCSV[]
+     * @throws \Icinga\Exception\AuthenticationException
      */
-    protected function cloneMetrics($metrics)
+    public function XXfetchMetrics($metrics, $names, $type, $interval, $count)
     {
-        $clone = [];
-        foreach ($metrics as $m) {
-            $clone[] = clone($m);
-        }
-
-        return $clone;
-    }
-
-    public function fetchMetrics($metrics, $names, $type, $interval, $count)
-    {
-        $api = $this->api;
         $duration = $interval * ($count);
         $now = floor(time() / $interval) * $interval;
 
         $start = $this->makeDateTime($now - $duration);
         $end = $this->makeDateTime($now);
 
+        $counters = $metrics;
         if (is_array($names)) {
-            $spec = [];
-            foreach ($names as $name) {
-                $spec[] = [
-                    'entity'     => $this->makeEntity($name, $type),
-                    'startTime'  => $start,
-                    'endTime'    => $end, //'2017-12-13T18:10:00Z',
-                    // 'maxSample' => $count,
-                    'metricId'   => $this->cloneMetrics($metrics),
-                    'intervalId' => $interval,
-                    'format'     => 'csv'
-                ];
+            $specs = [];
+            foreach ($names as $name => $instance) {
+                $spec = new PerfQuerySpec();
+                $spec->entity = new ManagedObjectReference($type, $name);
+                $spec->startTime  = $start;
+                $spec->endTime    = $end; //'2017-12-13T18:10:00Z'
+                // $spec->maxSample = $count;
+                $spec->intervalId = $interval;
+                $spec->format     = 'csv';
+                if (is_int($name)) {
+                    $spec->metricId = $this->cloneMetrics($metrics);
+                } else {
+                    $instances = preg_split('/,/', $instance);
+                    $metrics = [];
+                    foreach ($counters as $k => $n) {
+                        foreach ($instances as $instance) {
+                            $metrics[] = new PerfMetricId($k, $instance);
+                        }
+                    }
+                    $spec->metricId = $metrics;
+                }
+                $specs[] = $spec;
             }
         } else {
-            $spec = [
-                'entity'     => $this->makeEntity($names, $type),
-                'startTime'  => $start,
-                'endTime'    => $end, //'2017-12-13T18:10:00Z',
-                // 'maxSample' => $count,
-                'metricId'   => $this->cloneMetrics($metrics),
-                'intervalId' => $interval,
-                'format'     => 'csv'
-            ];
+            $spec = new PerfQuerySpec();
+            $spec->entity = new ManagedObjectReference($type, $names);
+            $spec->startTime  = $start;
+            $spec->endTime    = $end; //'2017-12-13T18:10:00Z'
+            // $spec->maxSample = $count;
+            $spec->metricId   = $this->cloneMetrics($metrics);
+            $spec->intervalId = $interval;
+            $spec->format     = 'csv';
+            $specs = [$spec];
         }
 
+        return $this->queryPerf($specs);
+    }
+
+    /**
+     * @param PerfQuerySpec[] $spec
+     * @return PerfEntityMetricCSV[]|PerfEntityMetric[]
+     * @throws AuthenticationException
+     */
+    public function queryPerf($spec)
+    {
+        $api = $this->api;
+
         $specSet = [
-            '_this'  => $api->getServiceInstance()->perfManager,
+            '_this'     => $api->getServiceInstance()->perfManager,
             'querySpec' => $spec
         ];
 
-        return $api->soapCall('QueryPerf', $specSet);
+        $result = $api->soapCall('QueryPerf', $specSet);
+        if (isset($result->returnval)) {
+            return $result->returnval;
+        } else {
+            return [];
+        }
     }
 
     public function makeEntity($name, $type)
