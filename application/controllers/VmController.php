@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\Api;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -15,6 +16,7 @@ use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
+use Icinga\Module\Vspheredb\Web\Table\VmDisksTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
 use Icinga\Module\Vspheredb\Web\Table\VmNetworkAdapterTable;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
@@ -34,10 +36,13 @@ class VmController extends Controller
         $this->content()->addAttributes([
             'class' => 'vm-info'
         ]);
-        $this->addSubTitle($this->translate('Network'), 'sitemap');
         $this->content()->add(
             new VmNetworkAdapterTable($vm)
         );
+        $this->content()->add(
+            VmDisksTable::create($vm)
+        );
+
         $this->addSubTitle($this->translate('DataStore Usage'), 'database');
         $this->content()->add(
             VmDatastoresTable::create($vm)
