@@ -116,6 +116,9 @@ class DatastoreUsage extends BaseHtmlElement
 
     public function addFreeDatastoreSpace()
     {
+        if ($this->capacity === 0) {
+            return $this;
+        }
         $title = sprintf('Free space');
         $free = $this->datastore->get('free_space');
         if ($this->uncommitted < $free) {
