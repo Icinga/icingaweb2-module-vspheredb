@@ -191,7 +191,7 @@ class DatastoreUsage extends BaseHtmlElement
     protected function makeDisk($dbRow)
     {
         $size = $dbRow->committed + $dbRow->uncommitted;
-        if ($size === null) {
+        if ($size === 0) {
             return null;
         }
 
