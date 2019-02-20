@@ -126,6 +126,7 @@ class SyncRunner
             'hostSystems',
             'virtualMachines',
             'quickStats',
+            'perfCounterInfo',
             'dataStores',
             'vmDatastoreUsage',
             'vmDiskUsage',
@@ -133,7 +134,6 @@ class SyncRunner
             'vmHardware',
             'hostHardware',
             'hostSensors',
-            // 'perfCounterInfo',
         ];
 
         $schedule = [

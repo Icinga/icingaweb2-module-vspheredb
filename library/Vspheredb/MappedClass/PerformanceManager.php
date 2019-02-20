@@ -11,5 +11,23 @@ class PerformanceManager
     public $historicalInterval;
 
     /** @var PerfCounterInfo[] */
-    public $perfCounter;
+    protected $perfCounter;
+
+    public function getPerfCounter()
+    {
+        return $this->perfCounter;
+    }
+
+    public function __set($key, $value)
+    {
+        if ($key === 'perfCounter') {
+            if (is_object($value) && isset($value->PerfCounterInfo)) {
+                $this->perfCounter = $value->PerfCounterInfo;
+            } else {
+                $this->perfCounter = $value;
+            }
+        } else {
+            $this->$key = $value;
+        }
+    }
 }

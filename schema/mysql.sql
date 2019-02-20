@@ -646,7 +646,7 @@ CREATE TABLE performance_unit (
   name VARCHAR(32) NOT NULL,
   label VARCHAR(16) NOT NULL,
   summary VARCHAR(64) NOT NULL,
-  PRIMARY KEY (name)
+  PRIMARY KEY (vcenter_uuid, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_group (
@@ -654,7 +654,7 @@ CREATE TABLE performance_group (
   name VARCHAR(32) NOT NULL,
   label VARCHAR(48) NOT NULL,
   summary VARCHAR(64) NOT NULL,
-  PRIMARY KEY (name)
+  PRIMARY KEY (vcenter_uuid, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_collection_interval (
@@ -662,7 +662,7 @@ CREATE TABLE performance_collection_interval (
   name VARCHAR(32) NOT NULL,
   label VARCHAR(48) NOT NULL,
   summary VARCHAR(64) NOT NULL,
-  PRIMARY KEY (name)
+  PRIMARY KEY (vcenter_uuid, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_counter (
@@ -697,13 +697,13 @@ CREATE TABLE performance_counter (
       ON DELETE RESTRICT
       ON UPDATE RESTRICT,
   CONSTRAINT performance_counter_group
-    FOREIGN KEY performance_group (group_name)
-    REFERENCES performance_group (name)
+    FOREIGN KEY performance_group (vcenter_uuid, group_name)
+    REFERENCES performance_group (vcenter_uuid, name)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT,
   CONSTRAINT performance_counter_unit
-    FOREIGN KEY performance_unit (unit_name)
-    REFERENCES performance_unit (name)
+    FOREIGN KEY performance_unit (vcenter_uuid, unit_name)
+    REFERENCES performance_unit (vcenter_uuid, name)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -733,7 +733,6 @@ CREATE TABLE counter_300x5 (
 --   vm_id BIGINT(20) UNSIGNED AUTO_INCREMENT NOT NULL,
 -- );
 
-
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (11, NOW());
+VALUES (12, NOW());
