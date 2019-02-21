@@ -94,7 +94,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $this->body()->add($tr);
 
             $tr = static::tr(static::td(
-                Img::create('rrd/graph/img', [
+                Img::create('rrd/img', [
                     'file'     => $ci . '.rrd',
                     'rnd'      => time(),
                     'height'   => 120,

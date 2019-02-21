@@ -63,7 +63,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
             // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
         ];
 
-        return Img::create('rrd/graph/img', $params + [
+        return Img::create('rrd/img', $params + [
                 'template' => $template,
             ], $attrs);
     }

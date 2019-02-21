@@ -75,7 +75,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                         'style' => 'position: relative'
                     ], Html::tag('div', [
                         'class' => 'inline-perf-container'
-                    ], Img::create('rrd/graph/img', [
+                    ], Img::create('rrd/img', [
                         'file'     => $ci . '.rrd',
                         'rnd'      => time(),
                         'height'   => 24 * 6,
