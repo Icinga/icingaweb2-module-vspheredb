@@ -60,10 +60,12 @@ class VmDisksTable extends ZfQueryBasedTable
 
     protected function prepareImg($device, $template)
     {
-        $width = 340;
-        $height = 180;
-        $start = strtotime('2019-02-02 16:00:00');
-        $end = strtotime('2019-02-02 20:00:00');
+        $width = 300;
+        $height = 140;
+        $height = 60;
+        $end = floor(time() / 300) * 300;
+        $start = $end - 86400;
+        $start = $end - 14400;
         $params = [
             'file'     => sprintf('%s/disk%s.rrd', $this->moref, $device),
             'height'   => $height,
@@ -72,6 +74,7 @@ class VmDisksTable extends ZfQueryBasedTable
             'format'   => 'png',
             'start'    => $start,
             'end'      => $end,
+            'onlyGraph' => 1,
         ];
         $attrs = [
             'height' => $height,

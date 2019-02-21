@@ -42,10 +42,11 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
 
     protected function prepareImg($device, $template)
     {
-        $width = 340 + 170;
+        $width = 340;
         $height = 180;
-        $start = strtotime('2019-01-31 08:50:00');
-        $end = strtotime('2019-01-31 16:00:00');
+        $end = floor(time() / 300) * 300;
+        $start = $end - 86400;
+        $start = $end - 14400;
         $params = [
             'file'     => sprintf('%s/iface%s.rrd', $this->moref, $device),
             'height'   => $height,
@@ -58,7 +59,6 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         $attrs = [
             'height' => $height,
             'width'  => $width,
-            //'align'  => 'right',
             'style' => 'float: right;'
             // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
         ];
