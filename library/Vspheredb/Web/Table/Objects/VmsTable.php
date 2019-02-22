@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use dipl\Html\Icon;
+use dipl\Html\Img;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
@@ -179,9 +180,42 @@ class VmsTable extends ObjectsTable
 
                 return DateFormatter::formatDuration($row->uptime);
             }),
+            $this->createColumn('ifTraffic', $this->translate('NIC Usage'), [
+                'moref' => 'o.moref',
+            ])->setRenderer(function ($row) {
+                return $this->renderInterface($row->moref, 4000);
+            }),
         ]);
 
         // $this->addPerfColumns();
+    }
+
+    protected function renderInterface($moref ,$hardwareKey)
+    {
+        $width = 160;
+        $height = 30;
+        $rand = rand(0, 3600);
+        $end = floor((time() - $rand) / 300) * 300;
+        $start = $end - $rand;
+        $params = [
+            'file'     => sprintf('%s/iface%s.rrd', $moref, $hardwareKey),
+            'height'   => $height,
+            'width'    => $width,
+            'rnd'      => floor(time() / 20),
+            'format'   => 'png',
+            'start'    => $start,
+            'end'      => $end,
+        ];
+        $attrs = [
+            'height' => $height,
+            'width'  => $width,
+            //'align'  => 'right',
+            // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
+        ];
+
+        return Img::create('rrd/img', $params + [
+            'template' => 'vSphereDB-vmIfTraffic',
+        ], $attrs);
     }
 
     protected function addPerfColumns()
