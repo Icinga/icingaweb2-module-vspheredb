@@ -51,7 +51,7 @@ class PerfMetricMapper
                 }
 
                 // $lines .= " ${ts}000\n";
-                $lines .= printf(" %d\n", (int) round($ts / 1000));
+                $lines .= sprintf(" %d\n", (int) round($ts / 1000));
             }
         }
 
