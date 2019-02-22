@@ -50,7 +50,8 @@ class PerfMetricMapper
                     $lines .= " $metric=$value";
                 }
 
-                $lines .= " ${ts}000\n";
+                // $lines .= " ${ts}000\n";
+                $lines .= printf(" %d\n", (int) round($ts / 1000));
             }
         }
 
