@@ -41,10 +41,7 @@ class AdditionalTableActions
         if ($this->hasPermission('vspheredb/showsql')) {
             $links[] = $this->createShowSqlToggle();
         }
-
-        if (! empty($links)) {
-            $parent->add($this->moreOptions($links));
-        }
+        $parent->add($this->moreOptions($links));
 
         return $this;
     }
