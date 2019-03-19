@@ -45,7 +45,7 @@ class MemoryUsage extends UsageBar
     protected function assembleBar(BaseHtmlElement $bar)
     {
         parent::assembleBar($bar);
-        if ($this->usedHost !== null) {
+        if ($this->usedHost !== null && $this->capacity !== null) {
             $diffHostPercent = ($this->usedHost - $this->used) / $this->capacity;
             $availablePercent = ($this->capacity - $this->used) / $this->capacity;
             $diffHostPercent = min($diffHostPercent, $availablePercent);

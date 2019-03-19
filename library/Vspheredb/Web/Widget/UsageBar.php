@@ -89,7 +89,9 @@ class UsageBar extends BaseHtmlElement
 
     protected function assembleBar(BaseHtmlElement $bar)
     {
-        $bar->add($this->makeSegment($this->used / $this->capacity, $this->getTitleUsed()));
+        if ($this->capacity !== null) {
+            $bar->add($this->makeSegment($this->used / $this->capacity, $this->getTitleUsed()));
+        }
     }
 
     protected function assemble()

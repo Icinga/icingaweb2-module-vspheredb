@@ -148,6 +148,9 @@ class VirtualMachine extends BaseDbObject
      */
     protected function setBootOptions($value)
     {
+        if ($value === null) {
+            return;
+        }
         if (property_exists($value, 'networkBootProtocol')) {
             $this->set('boot_network_protocol', $value->networkBootProtocol);
         } else {
