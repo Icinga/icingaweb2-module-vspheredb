@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\PerformanceData;
 
 use Icinga\Module\Vspheredb\MappedClass\PerfEntityMetricCSV;
 use Icinga\Module\Vspheredb\MappedClass\PerfMetricId;
+use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\DataPoint;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
@@ -40,22 +41,25 @@ class PerfMetricMapper
         return $result;
     }
 
-    public function makeInfluxLineFormat(PerfEntityMetricCSV $metric)
+    /**
+     * @param PerfEntityMetricCSV $metric
+     * @return DataPoint[]
+     */
+    public function makeInfluxDataPoints(PerfEntityMetricCSV $metric)
     {
-        $lines = '';
+        $points = [];
         foreach ($this->process($metric) as $ts => $values) {
             foreach ($values as $file => $metrics) {
-                $lines .= $file;
-                foreach ($metrics as $metric => $value) {
-                    $lines .= " $metric=$value";
-                }
-
-                // $lines .= " ${ts}000\n";
-                $lines .= sprintf(" %d\n", (int) round($ts / 1000));
+                $points[] = new DataPoint(
+                    $file,
+                    [],
+                    $metrics,
+                    $ts * 1000000
+                );
             }
         }
 
-        return $lines;
+        return $points;
     }
 
     protected function makeKey(ManagedObjectReference $ref, PerfMetricId $id)
