@@ -247,6 +247,22 @@ CREATE TABLE host_sensor (
   PRIMARY KEY(host_uuid, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE host_list (
+  list_checksum VARBINARY(20) NOT NULL,
+  PRIMARY KEY (list_checksum)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE host_list_member (
+  list_checksum VARBINARY(20) NOT NULL, -- sha1(uuid[uuid..])
+  uuid VARBINARY(20) NOT NULL,
+  PRIMARY KEY (uuid, list_checksum),
+  CONSTRAINT host_list_member_list
+    FOREIGN KEY host_list (list_checksum)
+    REFERENCES host_list (list_checksum)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE virtual_machine (
   uuid  VARBINARY(20) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
@@ -305,6 +321,22 @@ CREATE TABLE virtual_machine (
   boot_order VARCHAR(128) DEFAULT NULL,
   annotation TEXT DEFAULT NULL,
   PRIMARY KEY(uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vm_list (
+  list_checksum VARBINARY(20) NOT NULL,
+  PRIMARY KEY (list_checksum)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vm_list_member (
+  list_checksum VARBINARY(20) NOT NULL, -- sha1(uuid[uuid..])
+  uuid VARBINARY(20) NOT NULL,
+  PRIMARY KEY (uuid, list_checksum),
+  CONSTRAINT vm_list_member_list
+    FOREIGN KEY vm_list (list_checksum)
+    REFERENCES vm_list (list_checksum)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE storage_pod (
@@ -745,4 +777,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (14, NOW());
+VALUES (15, NOW());
