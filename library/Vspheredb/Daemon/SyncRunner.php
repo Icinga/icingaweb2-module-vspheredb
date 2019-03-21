@@ -7,6 +7,7 @@ use Evenement\EventEmitterTrait;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\DbObject\StoragePod;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\EventManager;
@@ -48,6 +49,7 @@ class SyncRunner
         'quickStats'       => 'Quick Stats',
         'hostSystems'      => 'Host Systems',
         'virtualMachines'  => 'Virtual Machines',
+        'storagePods'      => 'Storage Pods',
         'dataStores'       => 'Data Stores',
         'hostHardware'     => 'Host Hardware',
         'hostSensors'      => 'Host Sensors',
@@ -79,6 +81,9 @@ class SyncRunner
             },
             'virtualMachines' => function () {
                 VirtualMachine::syncFromApi($this->vCenter);
+            },
+            'storagePods' => function () {
+                StoragePod::syncFromApi($this->vCenter);
             },
             'dataStores' => function () {
                 Datastore::syncFromApi($this->vCenter);
@@ -127,6 +132,7 @@ class SyncRunner
             'virtualMachines',
             'quickStats',
             'perfCounterInfo',
+            'storagePods',
             'dataStores',
             'vmDatastoreUsage',
             'vmDiskUsage',
@@ -156,6 +162,7 @@ class SyncRunner
                 'vmDiskUsage',
             ]],
             [90, [
+                'storagePods',
                 'quickStats',
             ]],
         ];

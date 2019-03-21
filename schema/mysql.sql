@@ -307,6 +307,16 @@ CREATE TABLE virtual_machine (
   PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE storage_pod (
+  uuid VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  pod_name VARCHAR(255) DEFAULT NULL,
+  free_space BIGINT UNSIGNED NOT NULL,
+  capacity BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY(uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE distributed_virtual_switch (
   uuid VARBINARY(20) NOT NULL,
   num_hosts INT(10) NOT NULL,
@@ -735,4 +745,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (13, NOW());
+VALUES (14, NOW());
