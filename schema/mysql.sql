@@ -250,24 +250,24 @@ CREATE TABLE host_sensor (
 CREATE TABLE virtual_machine (
   uuid  VARBINARY(20) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
-  hardware_memorymb INT UNSIGNED NOT NULL,
-  hardware_numcpu TINYINT UNSIGNED NOT NULL,
-  hardware_numcorespersocket TINYINT UNSIGNED DEFAULT 1 NOT NULL,
-  template ENUM('y', 'n') NOT NULL, -- TODO: drop and skip templates? Or separate table?
+  hardware_memorymb INT UNSIGNED NULL DEFAULT NULL,
+  hardware_numcpu TINYINT UNSIGNED NULL DEFAULT NULL,
+  hardware_numcorespersocket TINYINT UNSIGNED NULL DEFAULT 1,
+  template ENUM('y', 'n') NULL DEFAULT NULL, -- TODO: drop and skip templates? Or separate table?
   instance_uuid VARCHAR(64) DEFAULT NULL,   -- 5004890e-8edd-fe5f-d116-d5704b2043e4
   bios_uuid VARCHAR(64) DEFAULT NULL,       -- 42042ce7-1c4f-b339-2293-40357f1d6860
-  version VARCHAR(32) NOT NULL,         -- vmx-11
-  online_standby ENUM('y', 'n') NOT NULL,
-  paused ENUM('y', 'n') DEFAULT NULL,
-  cpu_hot_add_enabled ENUM('y', 'n') NOT NULL,
-  memory_hot_add_enabled ENUM('y', 'n') NOT NULL,
+  version VARCHAR(32) NULL DEFAULT NULL,         -- vmx-11
+  online_standby ENUM('y', 'n') NULL DEFAULT NULL,
+  paused ENUM('y', 'n') NULL DEFAULT NULL,
+  cpu_hot_add_enabled ENUM('y', 'n') NULL DEFAULT NULL,
+  memory_hot_add_enabled ENUM('y', 'n') NULL DEFAULT NULL,
   connection_state ENUM (
     'connected',    -- server has access to the vm
     'disconnected', -- disconnected from the virtual machine, since its host is disconnected
     'inaccessible', -- vm config unaccessible
     'invalid',      -- vm config is invalid
     'orphaned'      -- vm no longer exists on host (but in vCenter)
-  ) NOT NULL,
+  ) NULL DEFAULT NULL,
   guest_state ENUM (
     'notRunning',
     'resetting',
@@ -275,7 +275,7 @@ CREATE TABLE virtual_machine (
     'shuttingDown',
     'standby',
     'unknown'
-  ) NOT NULL,
+  ) NULL DEFAULT NULL,
   guest_tools_status ENUM (
     'toolsNotInstalled',
     'toolsNotRunning',
@@ -735,4 +735,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (12, NOW());
+VALUES (13, NOW());
