@@ -29,6 +29,7 @@ class DataPoint
 
         if (! empty($tags)) {
             $this->tags = (array) $tags;
+            ksort($this->tags);
         }
 
         if (\is_array($fields) || \is_object($fields)) {

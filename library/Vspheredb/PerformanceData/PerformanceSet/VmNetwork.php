@@ -21,20 +21,66 @@ class VmNetwork extends PerformanceSet
 
     protected $objectType = 'VirtualMachine';
 
+    public function getMeasurementName()
+    {
+        return 'VirtualNetworkAdapter';
+    }
+
+    /*
+        // Host and VM:
+        cpu.usage
+        cpu.ready > 20% ist kacke
+        cpu.swapwait
+
+        memory -> swapin, swapout
+        memory -> active, usage, consumed,
+    */
+
+    // instance = '*' -> all instances, instance = '' -> aggregated
     public function getMetrics()
     {
         $db = $this->getDb();
         return $db->fetchPairs(
-            $db->select()->from(['o' => 'object'], [
+            $this->prepareBaseQuery()->columns([
                 'o.moref',
                 'hardware_key' => "GROUP_CONCAT(vna.hardware_key SEPARATOR ',')",
             ])
-            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
-            ->join(['vna' => 'vm_network_adapter'], 'vna.vm_uuid = vm.uuid', [])
-            ->where('o.vcenter_uuid = ?', $this->vCenter->getUuid())
             ->group('vm.uuid')
             ->order('vm.runtime_host_uuid')
             ->order('vna.hardware_key')
         );
+    }
+
+    public function fetchObjectTags()
+    {
+        $result = [];
+        $query = $this->prepareBaseQuery()->columns([
+            'moref'           => 'o.moref',
+            'hardware_key'    => 'vna.hardware_key',
+            'name'            => 'o.object_name',
+            // 'parent_name'     => 'po.object_name',
+            'guest_host_name' => 'vm.guest_host_name',
+            'interface_label' => 'vh.label',
+            // 'portgroup_name'  => 'pgo.object_name',
+        ])
+        // ->join(['po' => 'object'], 'po.uuid = o.parent_uuid', [])
+        ->join(
+            ['vh' => 'vm_hardware'],
+            'vh.vm_uuid = vna.vm_uuid AND vh.hardware_key = vna.hardware_key',
+            []
+        );
+        foreach ($this->getDb()->fetchAll($query) as $row) {
+            $result[$row->moref . '/' . $row->hardware_key] = (array) $row;
+        }
+
+        return $result;
+    }
+
+    protected function prepareBaseQuery()
+    {
+        return $this->getDb()->select()->from(['o' => 'object'], [])
+            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
+            ->join(['vna' => 'vm_network_adapter'], 'vna.vm_uuid = vm.uuid', [])
+            ->where('o.vcenter_uuid = ?', $this->vCenter->getUuid());
     }
 }

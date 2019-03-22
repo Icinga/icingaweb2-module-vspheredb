@@ -79,6 +79,10 @@ abstract class PerformanceSet
 
     abstract  public function getMetrics();
 
+    abstract public function fetchObjectTags();
+
+    abstract public function getMeasurementName();
+
     /**
      * @return PerfQuerySpec[]
      */

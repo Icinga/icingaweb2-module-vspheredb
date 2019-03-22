@@ -11,29 +11,40 @@ class AsyncInfluxDbWriter
     protected $loop;
 
     /** @var string */
-    protected $writeUrl;
+    protected $baseUrl;
 
     /** @var Browser */
     protected $browser;
 
     /**
      * AsyncInfluxDbWriter constructor.
-     * @param $writeUrl string InfluxDB write url, including /write?db=dbname
+     * @param $baseUrl string InfluxDB base URL
      * @param LoopInterface $loop
      */
-    public function __construct($writeUrl, LoopInterface $loop)
+    public function __construct($baseUrl, LoopInterface $loop)
     {
-        $this->writeUrl = $writeUrl;
+        $this->baseUrl = $baseUrl;
         $this->browser = new Browser($loop);
     }
 
+    protected function url($path, $params = [])
+    {
+        $url = $this->baseUrl . "/$path";
+        if (! empty($params)) {
+            $url .= \http_build_query($params);
+        }
+
+        return $url;
+    }
+
     /**
+     * @param string $dbName
      * @param DataPoint[] $dataPoints
      */
-    public function send(array $dataPoints)
+    public function send($dbName, array $dataPoints)
     {
-        $this->browser->post($this->writeUrl, [
-            // no headers for now
+        $this->browser->post($this->url('write', ['db' => $dbName]), [
+            'User-Agent' => 'Icinga-vSphereDB/1.0'
         ], implode($dataPoints));
     }
 }

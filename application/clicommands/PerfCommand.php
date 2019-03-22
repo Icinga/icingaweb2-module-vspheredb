@@ -9,7 +9,6 @@ use Icinga\Module\Vspheredb\PerformanceData\PerfMetricMapper;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\PerformanceSet;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\VmDisks;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\VmNetwork;
-use Icinga\Module\Vspheredb\Rpc\Logger;
 use React\EventLoop\Factory;
 
 class PerfCommand extends CommandBase
@@ -35,10 +34,11 @@ class PerfCommand extends CommandBase
         }
     }
 
-    public function testAction()
+    public function influxdbAction()
     {
-        $destination = $this->params->getRequired('destination');
+        $destination = $this->params->getRequired('baseUrl');
         $set = $this->params->getRequired('set');
+        $dbName = $this->params->getRequired('db');
         $loop = Factory::create();
         $influx = new AsyncInfluxDbWriter($destination, $loop);
 
@@ -46,21 +46,21 @@ class PerfCommand extends CommandBase
             'VmNetwork' => VmNetwork::class,
             'VmDisks'   => VmDisks::class,
         ];
-        $prefixes = [
-            'VmNetwork' => 'iface',
-            'VmDisks'   => 'disk',
-        ];
         $class = $sets[$set];
-        $prefix = $prefixes[$set];
 
         /** @var PerformanceSet $performanceSet */
         $performanceSet = new $class($this->getVCenter());
         $counters = $performanceSet->getCounters();
-        $mapper = new PerfMetricMapper($counters, $prefix);
+        $mapper = new PerfMetricMapper($counters);
         /** @var PerfEntityMetricCSV $metric */
+        $tags = $performanceSet->fetchObjectTags();
+
         foreach ($performanceSet->fetch() as $metric) {
-            $influx->send($mapper->makeInfluxDataPoints($metric));
-            Logger::debug(sprintf('Sent %s metrics', count($metric)));
+            $influx->send($dbName, $mapper->makeInfluxDataPoints(
+                $metric,
+                $performanceSet->getMeasurementName(),
+                $tags
+            ));
         }
         $loop->run();
     }

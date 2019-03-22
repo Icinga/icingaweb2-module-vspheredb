@@ -16,10 +16,9 @@ class PerfMetricMapper
 
     protected $prefix;
 
-    public function __construct($counters, $prefix)
+    public function __construct($counters)
     {
         $this->counters = $counters;
-        $this->prefix = $prefix;
     }
 
     public function process(PerfEntityMetricCSV $metric)
@@ -45,14 +44,14 @@ class PerfMetricMapper
      * @param PerfEntityMetricCSV $metric
      * @return DataPoint[]
      */
-    public function makeInfluxDataPoints(PerfEntityMetricCSV $metric)
+    public function makeInfluxDataPoints(PerfEntityMetricCSV $metric, $measurement, $tags)
     {
         $points = [];
         foreach ($this->process($metric) as $ts => $values) {
             foreach ($values as $file => $metrics) {
                 $points[] = new DataPoint(
-                    $file,
-                    [],
+                    $measurement,
+                    $tags[$file],
                     $metrics,
                     $ts * 1000000
                 );
@@ -65,9 +64,11 @@ class PerfMetricMapper
     protected function makeKey(ManagedObjectReference $ref, PerfMetricId $id)
     {
         $ref = $ref->_;
-
-        return $ref . '/'
-            . (strlen($id->instance) ? $this->prefix . $id->instance : $this->prefix);
+        if (strlen($id->instance)) {
+            return "$ref/" . $id->instance;
+        } else {
+            return $ref;
+        }
     }
 
     protected function getCounterIdName($id)
