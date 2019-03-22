@@ -66,7 +66,7 @@ class DataPoint
             } elseif (\is_bool($value)) {
                 $fields .= $value ? self::TRUE : self::FALSE;
             } elseif (\is_null($value)) {
-                $fields .= $value ? self::TRUE : self::FALSE;
+                $fields .= self::NULL;
             } else {
                 $fields .= '"' . \addcslashes($value, '"') . '"'; // TODO: escapeFieldValue
             }
