@@ -31,7 +31,7 @@ class AsyncInfluxDbWriter
     {
         $url = $this->baseUrl . "/$path";
         if (! empty($params)) {
-            $url .= \http_build_query($params);
+            $url .= '?' . \http_build_query($params);
         }
 
         return $url;

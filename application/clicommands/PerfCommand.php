@@ -36,32 +36,34 @@ class PerfCommand extends CommandBase
 
     public function influxdbAction()
     {
-        $destination = $this->params->getRequired('baseUrl');
-        $set = $this->params->getRequired('set');
-        $dbName = $this->params->getRequired('db');
         $loop = Factory::create();
-        $influx = new AsyncInfluxDbWriter($destination, $loop);
+        $loop->futureTick(function () {
+            $destination = $this->params->getRequired('baseUrl');
+            $set = $this->params->getRequired('set');
+            $dbName = $this->params->getRequired('db');
+            $influx = new AsyncInfluxDbWriter($destination, $loop);
 
-        $sets = [
-            'VmNetwork' => VmNetwork::class,
-            'VmDisks'   => VmDisks::class,
-        ];
-        $class = $sets[$set];
+            $sets = [
+                'VmNetwork' => VmNetwork::class,
+                'VmDisks'   => VmDisks::class,
+            ];
+            $class = $sets[$set];
 
-        /** @var PerformanceSet $performanceSet */
-        $performanceSet = new $class($this->getVCenter());
-        $counters = $performanceSet->getCounters();
-        $mapper = new PerfMetricMapper($counters);
-        /** @var PerfEntityMetricCSV $metric */
-        $tags = $performanceSet->fetchObjectTags();
+            /** @var PerformanceSet $performanceSet */
+            $performanceSet = new $class($this->getVCenter());
+            $counters = $performanceSet->getCounters();
+            $mapper = new PerfMetricMapper($counters);
+            /** @var PerfEntityMetricCSV $metric */
+            $tags = $performanceSet->fetchObjectTags();
+            foreach ($performanceSet->fetch() as $metric) {
+                $influx->send($dbName, $mapper->makeInfluxDataPoints(
+                    $metric,
+                    $performanceSet->getMeasurementName(),
+                    $tags
+                ));
+            }
+        });
 
-        foreach ($performanceSet->fetch() as $metric) {
-            $influx->send($dbName, $mapper->makeInfluxDataPoints(
-                $metric,
-                $performanceSet->getMeasurementName(),
-                $tags
-            ));
-        }
         $loop->run();
     }
 }
