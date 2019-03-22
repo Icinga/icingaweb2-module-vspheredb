@@ -43,7 +43,8 @@ class ApiClassMap
 
         // Hint: put more specific classes on top, otherwise a more generic one might match
         $map = [
-            'RetrieveResult'       => "$base\\RetrieveResult",
+            'RetrieveResult'             => "$base\\RetrieveResult",
+            'RetrievePropertiesResponse' => "$base\\RetrievePropertiesResponse",
             'DynamicProperty'      => "$base\\DynamicProperty",
             'ObjectContent'        => "$base\\ObjectContent",
             'MissingProperty'      => "$base\\MissingProperty",

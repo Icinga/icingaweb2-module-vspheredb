@@ -89,10 +89,6 @@ class PropertyCollector
      */
     protected function makeNiceResult($result)
     {
-        if (! property_exists($result, 'returnval')) {
-            throw new IcingaException('Got no returnval');
-        }
-
         $nice = [];
         /** @var ObjectContent $row */
         foreach ($result->returnval as $row) {
