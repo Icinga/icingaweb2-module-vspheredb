@@ -3,8 +3,8 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use dipl\Html\Html;
-use dipl\Html\Img;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Util\Format;
 use dipl\Web\Table\ZfQueryBasedTable;
@@ -28,6 +28,8 @@ class VmDisksTable extends ZfQueryBasedTable
 
     /** @var OverallStatusRenderer */
     protected $renderStatus;
+
+    protected $withPerfImages = false;
 
     public static function create(VirtualMachine $vm)
     {
@@ -58,57 +60,6 @@ class VmDisksTable extends ZfQueryBasedTable
         ];
     }
 
-    protected function prepareImg($device, $template)
-    {
-        $width = 300;
-        $height = 140;
-        $height = 60;
-        $end = floor(time() / 300) * 300;
-        $start = $end - 86400;
-        $start = $end - 14400;
-        $params = [
-            'file'     => sprintf('%s/disk%s.rrd', $this->moref, $device),
-            'height'   => $height,
-            'width'    => $width,
-            'rnd'      => floor(time() / 20),
-            'format'   => 'png',
-            'start'    => $start,
-            'end'      => $end,
-            'onlyGraph' => 1,
-        ];
-        $attrs = [
-            'height' => $height,
-            'width'  => $width,
-            //'align'  => 'right',
-            'style' => 'float: right;'
-            // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
-        ];
-
-        return Img::create('rrd/img', $params + [
-            'template' => $template,
-        ], $attrs);
-    }
-
-    protected function wrapImage($title, $device, $template)
-    {
-        return Html::tag('div', [
-            'style' => 'display: inline-block; margin-left: 1em;'
-        ], [
-            Html::tag('strong', [
-                'style' => 'display: block; padding-left: 3em'
-            ], $title),
-            $this->prepareImg($device, $template),
-        ]);
-    }
-
-    protected function colorLegend($color)
-    {
-        return Html::tag('div', [
-            'style' => "    border: 1px solid rgba(0, 0, 0, 0.3); background-color: $color;"
-                . ' width: 0.8em; height: 0.8em; margin: 0.1em; display: inline-block; vertical-align: middle;'
-        ]);
-    }
-
     public function renderRow($row)
     {
         $device = sprintf(
@@ -117,33 +68,46 @@ class VmDisksTable extends ZfQueryBasedTable
             $row->hardware_bus_number,
             $row->hardware_unit_nmber
         );
-        return $this::tr([
-            $this::td([
-                Html::tag('strong', $row->hardware_label),
-                Html::tag('br'),
-                $device,
-                Html::tag('br'),
-                Format::bytes($row->capacity),
-            ], ['style' => 'vertical-align: top; min-width: 15em;']),
-            $this::td([
-                $this->wrapImage(Html::sprintf(
-                    $this->translate('Disk Seeks: %s small / %s medium / %s large'),
-                    $this->colorLegend('#57985B'),
-                    $this->colorLegend('#FFED58'),
-                    $this->colorLegend('#FFBF58')
-                ), $device, 'vSphereDB-vmDiskSeeks'),
-                $this->wrapImage(Html::sprintf(
-                    $this->translate('Average Number %s Reads / %s Writes'),
-                    $this->colorLegend('#57985B'),
-                    $this->colorLegend('#0095BF')
-                ), $device, 'vSphereDB-vmDiskReadWrites'),
-                $this->wrapImage(Html::sprintf(
-                    $this->translate('Latency %s Read / %s Write'),
-                    $this->colorLegend('#57985B'),
-                    $this->colorLegend('#0095BF')
-                ), $device, 'vSphereDB-vmDiskTotalLatency'),
-            ])
-        ]);
+
+        if ($this->withPerfImages) {
+            return $this::tr([
+                $this::td([
+                    Html::tag('strong', $row->hardware_label),
+                    Html::tag('br'),
+                    $device,
+                    Html::tag('br'),
+                    Format::bytes($row->capacity),
+                ], ['style' => 'vertical-align: top; min-width: 15em;']),
+                $this->prepareImgColumn($device)
+            ]);
+        } else {
+            return $this->row([
+                $this->formatSimple($row, $device)
+            ]);
+        }
+    }
+
+    protected function formatSimple($row, $device)
+    {
+        return Html::sprintf(
+            '%s (%s): %s',
+            Html::tag('strong', $row->hardware_label),
+            $device,
+            Format::bytes($row->capacity)
+        );
+    }
+
+    protected function prepareImgColumn($device)
+    {
+        if ($this->withPerfImages) {
+            return $this::td([
+                RrdImg::vmDiskSeeks($this->moref, $device),
+                RrdImg::vmDiskReadWrites($this->moref, $device),
+                RrdImg::vmDiskTotalLatency($this->moref, $device),
+            ]);
+        } else {
+            return null;
+        }
     }
 
     public function prepareQuery()

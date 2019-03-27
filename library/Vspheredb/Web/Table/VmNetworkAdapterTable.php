@@ -7,6 +7,7 @@ use dipl\Html\Img;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use dipl\Html\Link;
 use dipl\Web\Table\ZfQueryBasedTable;
+use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
 
 class VmNetworkAdapterTable extends ZfQueryBasedTable
 {
@@ -20,6 +21,8 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
 
     /** @var string */
     protected $moref;
+
+    protected $withPerfImages = false;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -40,92 +43,63 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         ];
     }
 
-    protected function prepareImg($device, $template)
-    {
-        $width = 340;
-        $height = 180;
-        $end = floor(time() / 300) * 300;
-        $start = $end - 86400;
-        $start = $end - 14400;
-        $params = [
-            'file'     => sprintf('%s/iface%s.rrd', $this->moref, $device),
-            'height'   => $height,
-            'width'    => $width,
-            'rnd'      => floor(time() / 20),
-            'format'   => 'png',
-            'start'    => $start,
-            'end'      => $end,
-        ];
-        $attrs = [
-            'height' => $height,
-            'width'  => $width,
-            'style' => 'float: right;'
-            // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
-        ];
-
-        return Img::create('rrd/img', $params + [
-                'template' => $template,
-            ], $attrs);
-    }
-
-    protected function wrapImage($title, $device, $template)
-    {
-        return Html::tag('div', [
-                'style' => 'display: inline-block; margin-left: 2em;'
-        ], [
-            Html::tag('strong', [
-                'style' => 'display: block; padding-left: 3em'
-            ], $title),
-            $this->prepareImg($device, $template),
-        ]);
-    }
-
-    protected function colorLegend($color)
-    {
-        return Html::tag('div', [
-            'style' => "    border: 1px solid rgba(0, 0, 0, 0.3); background-color: $color;"
-                . ' width: 0.8em; height: 0.8em; margin: 0.1em; display: inline-block; vertical-align: middle;'
-        ]);
-    }
-
     public function renderRow($row)
     {
-        if ($row->portgroup_uuid === null) {
-            $portGroup = '-';
+        if ($this->withPerfImages) {
+            return $this::row([
+                $this->formatMultiLine($row),
+                $this->prepareRowImages($row),
+            ]);
         } else {
-            $portGroup = [Link::create(
-                $row->portgroup_name,
-                'vspheredb/portgroup',
-                ['uuid' => bin2hex($row->portgroup_uuid)],
-                ['data-base-target' => '_next']
-            ), ': ' . $row->port_key];
+            return $this::row([$this->formatSimple($row)]);
         }
+    }
 
-        return $this::row([
-            [
-                Html::tag('strong', $row->label),
-                Html::tag('br'),
-                $this->translate('MAC Address') . ': ' . $row->mac_address,
-                Html::tag('br'),
-                $this->translate('Port'),
-                ': ',
-                $portGroup
-            ], [
-                $this->wrapImage(Html::sprintf(
-                    $this->translate('Throughput (bits/s, %s RX / %s TX)'),
-                    $this->colorLegend('#57985B'),
-                    $this->colorLegend('#0095BF')
-                ), $row->hardware_key, 'vSphereDB-vmIfTraffic'),
-                $this->wrapImage(Html::sprintf(
-                    $this->translate('Packets (%s / %s Unicast, %s BCast, %s MCast, %s Dropped)'),
-                    $this->colorLegend('#57985B'),
-                    $this->colorLegend('#0095BF'),
-                    $this->colorLegend('#EE55FF'),
-                    $this->colorLegend('#FF9933'),
-                    $this->colorLegend('#FF5555')
-                ), $row->hardware_key, 'vSphereDB-vmIfPackets'),
-            ]
-        ]);
+    protected function linkToPortGroup($row)
+    {
+        if ($row->portgroup_uuid === null) {
+            return \sprintf($this->translate('Port %s', $row->port_key));
+        } else {
+            return Html::sprintf(
+                'Port %s on %s',
+                $row->port_key,
+                Link::create(
+                    $row->portgroup_name,
+                    'vspheredb/portgroup',
+                    ['uuid' => \bin2hex($row->portgroup_uuid)],
+                    ['data-base-target' => '_next']
+                )
+            );
+        }
+    }
+
+    protected function formatSimple($row)
+    {
+        return Html::sprintf(
+            '%s (%s), %s',
+            Html::tag('strong', $row->label),
+            $row->mac_address,
+            $this->linkToPortGroup($row)
+        );
+    }
+
+    protected function formatMultiLine($row)
+    {
+        return [
+            Html::tag('strong', $row->label),
+            Html::tag('br'),
+            $this->translate('MAC Address') . ': ' . $row->mac_address,
+            Html::tag('br'),
+            $this->linkToPortGroup($row)
+        ];
+    }
+
+    protected function prepareRowImages($row)
+    {
+        return [
+            RrdImg::vmIfTraffic($this->moref, $row->hardware_key),
+            RrdImg::vmIfPackets($this->moref, $row->hardware_key),
+        ];
     }
 
     public function prepareQuery()
