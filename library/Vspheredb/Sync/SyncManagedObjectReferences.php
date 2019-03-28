@@ -48,6 +48,7 @@ class SyncManagedObjectReferences
             $uuid = $vCenter->makeBinaryGlobalUuid($moRef);
             $fetched[$uuid] = $name;
             $nameUuids[$moRef] = $uuid;
+            $obj->overallStatus = isset($obj->overallStatus) ? $obj->overallStatus : 'gray';  //** Handle cases where Vcenter gives us a blank overallStatus.**/
             if (array_key_exists($uuid, $objects)) {
                 $object = $objects[$uuid];
                 $object->set('moref', $moRef);
