@@ -106,11 +106,4 @@ class ConfigurationController extends Controller
             );
         }
     }
-
-    public function countersAction()
-    {
-        $this->addSingleTab('Counters');
-        $this->addTitle('Performance Counters');
-        (new PerformanceCounterTable($this->db()))->renderTo($this);
-    }
 }
