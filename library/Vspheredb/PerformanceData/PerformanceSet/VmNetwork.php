@@ -37,7 +37,7 @@ class VmNetwork extends PerformanceSet
     */
 
     // instance = '*' -> all instances, instance = '' -> aggregated
-    public function getMetrics()
+    public function getRequiredMetrics()
     {
         $db = $this->getDb();
         return $db->fetchPairs(

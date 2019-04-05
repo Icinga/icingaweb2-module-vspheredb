@@ -43,7 +43,7 @@ class VmDisks extends PerformanceSet
     // select FROM virtual_machine vm JOIN vm_disk vmd on vmd.vm_uuid = vm.uuid
     // JOIN vm_hardware vmhw ON vmd.hardware_key = vmhw.hardware_key AND vmhw.vm_uuid = vm.uuid
     // JOIN vm_hardware vmhc ON vmhc.vm_uuid= vm.uuid AND vmhc.hardware_key = vmhw.controller_key\G
-    public function getMetrics()
+    public function getRequiredMetrics()
     {
         $db = $this->getDb();
         return $db->fetchPairs(

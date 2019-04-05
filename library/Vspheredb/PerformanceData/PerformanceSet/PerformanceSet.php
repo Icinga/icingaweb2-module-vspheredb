@@ -28,6 +28,12 @@ abstract class PerformanceSet
         $this->db = $vCenter->getDb();
     }
 
+    abstract public function getMeasurementName();
+
+    abstract  public function getRequiredMetrics();
+
+    abstract public function fetchObjectTags();
+
     protected function fetchCounters()
     {
         $db = $this->vCenter->getDb();
@@ -65,7 +71,7 @@ abstract class PerformanceSet
     public function fetch()
     {
         $perf = $this->vCenter->getApi()->perfManager();
-        $vms = $this->getMetrics();
+        $vms = $this->getRequiredMetrics();
         foreach (array_chunk($vms, 100, true) as $set) {
             $res = $perf->queryPerf($this->prepareQuerySpec($set));
             if (empty($res)) {
@@ -76,12 +82,6 @@ abstract class PerformanceSet
             }
         }
     }
-
-    abstract  public function getMetrics();
-
-    abstract public function fetchObjectTags();
-
-    abstract public function getMeasurementName();
 
     /**
      * @return PerfQuerySpec[]
