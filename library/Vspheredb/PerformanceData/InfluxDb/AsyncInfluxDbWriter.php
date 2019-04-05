@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\PerformanceData\InfluxDb;
 
 use Clue\React\Buzz\Browser;
 use React\EventLoop\LoopInterface;
+use React\Promise\Promise;
 
 class AsyncInfluxDbWriter
 {
@@ -40,11 +41,15 @@ class AsyncInfluxDbWriter
     /**
      * @param string $dbName
      * @param DataPoint[] $dataPoints
+     * @return \React\Promise\Promise
      */
     public function send($dbName, array $dataPoints)
     {
-        $this->browser->post($this->url('write', ['db' => $dbName]), [
+        /** @var Promise $promise */
+        $promise = $this->browser->post($this->url('write', ['db' => $dbName]), [
             'User-Agent' => 'Icinga-vSphereDB/1.0'
         ], implode($dataPoints));
+
+        return $promise;
     }
 }
