@@ -6,6 +6,7 @@ use dipl\Html\Html;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\FilterVCenterForm;
 use Icinga\Module\Vspheredb\Web\Table\PerformanceCounterTable;
+use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 
 class PerfdataController extends Controller
 {
@@ -30,10 +31,13 @@ class PerfdataController extends Controller
         $this->addTitle($this->translate('Available Performance Counters'));
         $form = new FilterVCenterForm($this->db());
         $form->handleRequest($this->getRequest());
-        $this->content()->add($form);
-        (new PerformanceCounterTable($this->db()))
-            ->filterVCenter($form->getValue('uuid'))
-            ->renderTo($this);
+        $this->content()->add(Html::tag('div', ['class' => 'icinga-module module-director'], $form));
+        $table = (new PerformanceCounterTable($this->db()))
+            ->filterVCenterUuid($form->getHexUuid());
+        (new AdditionalTableActions($table, $this->Auth(), $this->url()))
+            ->appendTo($this->actions());
+        $table->handleSortUrl($this->url());
+        $table->renderTo($this);
     }
 
     protected function handleTabs()
