@@ -88,6 +88,7 @@ class DataPoint
 
     public function render()
     {
+        // TODO: escape measurement: addcslashes($this->measurement, ', ')
         return $this->measurement
             . $this->renderTags()
             . $this->renderFields()
