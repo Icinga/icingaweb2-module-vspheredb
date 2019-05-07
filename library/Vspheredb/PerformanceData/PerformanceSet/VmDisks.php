@@ -75,7 +75,7 @@ class VmDisks extends PerformanceSet
         $result = [];
         $query = $this->prepareBaseQuery()->columns([
             'moref'          => 'o.moref',
-            'hardware_key'   => 'vmhw.hardware_key',
+            'hardware_key'   => "(CASE WHEN vmhw.label LIKE 'IDE %' THEN 'ide' ELSE 'scsi' END || vmhc.bus_number || ':' || vmhw.unit_number)",
             'name'           => 'o.object_name',
             'host_name'      => 'vm.guest_host_name',
             'hardware_label' => 'vmhw.label',
