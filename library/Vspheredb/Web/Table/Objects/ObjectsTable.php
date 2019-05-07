@@ -2,8 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;

@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\Translation\TranslationHelper;
+use ipl\Html\Html;
 
 class OverallStatusRenderer extends Html
 {

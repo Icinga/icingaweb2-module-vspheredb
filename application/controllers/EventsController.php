@@ -2,15 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
-use dipl\Web\Url;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Url;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Form\FilterHostParentForm;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Widget\CalendarMonthSummary;
 use Icinga\Module\Vspheredb\Web\Widget\VMotionHeatmap;
+use ipl\Html\Html;
 
 class EventsController extends Controller
 {

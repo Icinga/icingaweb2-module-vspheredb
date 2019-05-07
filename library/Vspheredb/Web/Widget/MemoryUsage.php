@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
 use Icinga\Module\Vspheredb\Format;
+use ipl\Html\BaseHtmlElement;
 
 class MemoryUsage extends UsageBar
 {

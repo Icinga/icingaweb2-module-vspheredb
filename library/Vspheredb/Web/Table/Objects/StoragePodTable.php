@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Html;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Util\Format;
-use dipl\Html\Link;
+use ipl\Html\Html;
 
 class StoragePodTable extends ObjectsTable
 {

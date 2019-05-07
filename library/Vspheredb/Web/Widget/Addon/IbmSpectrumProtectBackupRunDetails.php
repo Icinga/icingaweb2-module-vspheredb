@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget\Addon;
 
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\NameValueTable;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Util\Format;

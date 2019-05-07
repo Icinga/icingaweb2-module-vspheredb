@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use dipl\Html\Form;
-use dipl\Translation\TranslationHelper;
+use gipfl\Translation\TranslationHelper;
+use ipl\Html\Form;
 use Icinga\Module\Vspheredb\Db;
 
 class FilterHostParentForm extends Form

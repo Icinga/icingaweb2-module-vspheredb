@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\Html;
-use dipl\Html\HtmlDocument;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Url;
+use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Url;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 

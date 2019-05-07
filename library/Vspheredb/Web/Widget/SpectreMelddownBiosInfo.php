@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Html\Html;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 
 class SpectreMelddownBiosInfo extends BaseHtmlElement
 {

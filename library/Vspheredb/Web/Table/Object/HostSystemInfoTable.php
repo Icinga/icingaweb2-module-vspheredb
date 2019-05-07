@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use dipl\Html\Html;
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\NameValueTable;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
+use ipl\Html\Html;
 
 class HostSystemInfoTable extends NameValueTable
 {
@@ -40,7 +40,7 @@ class HostSystemInfoTable extends NameValueTable
 
     /**
      * @param HostSystem $host
-     * @return \dipl\Html\HtmlElement|mixed
+     * @return \ipl\Html\HtmlElement|mixed
      */
     protected function getFormattedServiceTag(HostSystem $host)
     {

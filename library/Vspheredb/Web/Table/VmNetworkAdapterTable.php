@@ -2,12 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Html;
-use dipl\Html\Img;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
-use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
+use ipl\Html\Html;
 
 class VmNetworkAdapterTable extends ZfQueryBasedTable
 {

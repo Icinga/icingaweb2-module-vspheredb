@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Html;
 use Icinga\Module\Director\Core\Json;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualSwitch;
+use ipl\Html\Html;
 
 class PortGroupsTable extends ObjectsTable
 {

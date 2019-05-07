@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
-use dipl\Html\Link;
 
 class DatastoreTable extends ObjectsTable
 {

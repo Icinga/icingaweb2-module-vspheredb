@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\NameValueTable;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
 

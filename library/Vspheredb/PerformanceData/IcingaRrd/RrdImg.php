@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\PerformanceData\IcingaRrd;
 
-use dipl\Html\Html;
-use dipl\Html\Img;
+use ipl\Html\Html;
+use gipfl\IcingaWeb2\Img;
 
 class RrdImg
 {

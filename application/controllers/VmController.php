@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
@@ -23,6 +22,7 @@ use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
+use ipl\Html\Html;
 
 class VmController extends Controller
 {

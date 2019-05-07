@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Icon;
-use dipl\Html\Img;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Img;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;

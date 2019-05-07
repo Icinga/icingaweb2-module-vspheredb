@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Html;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Util\Format;
-use dipl\Web\Table\ZfQueryBasedTable;
+use ipl\Html\Html;
 
 class VmDisksTable extends ZfQueryBasedTable
 {

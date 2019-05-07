@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
 use Exception;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\Migrations;
@@ -10,7 +9,7 @@ use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Form\ApplyMigrationsForm;
 use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Table\PerformanceCounterTable;
+use ipl\Html\Html;
 
 class ConfigurationController extends Controller
 {

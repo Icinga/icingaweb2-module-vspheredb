@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\DeferredText;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
+use ipl\Html\DeferredText;
 
 trait UuidLinkHelper
 {

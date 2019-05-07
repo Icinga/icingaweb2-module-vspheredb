@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\FilterVCenterForm;
 use Icinga\Module\Vspheredb\Web\Table\PerformanceCounterTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
+use ipl\Html\Html;
 
 class PerfdataController extends Controller
 {

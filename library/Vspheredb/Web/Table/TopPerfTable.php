@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
-use dipl\Html\Table;
+use gipfl\IcingaWeb2\Link;
+use ipl\Html\Html;
+use ipl\Html\Table;
 
 class TopPerfTable extends Table
 {

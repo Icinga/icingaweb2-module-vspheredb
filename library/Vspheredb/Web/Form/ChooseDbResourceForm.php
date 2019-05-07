@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
 use Exception;
+use gipfl\IcingaWeb2\Link;
+use ipl\Html\Html;
 use Icinga\Application\Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;

@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\Html;
-use dipl\Html\HtmlDocument;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
 
 class VmHeader extends HtmlDocument
 {

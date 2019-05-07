@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Controller;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
+use ipl\Html\Html;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;

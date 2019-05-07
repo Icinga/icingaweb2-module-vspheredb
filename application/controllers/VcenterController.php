@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -12,6 +12,7 @@ use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSyncInfo;
+use ipl\Html\Html;
 
 class VcenterController extends Controller
 {

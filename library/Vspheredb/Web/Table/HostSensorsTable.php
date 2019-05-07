@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use ipl\Html\Html;
 
 class HostSensorsTable extends ZfQueryBasedTable
 {

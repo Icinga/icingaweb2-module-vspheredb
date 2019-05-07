@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Html;
-use dipl\Html\Img;
+use gipfl\IcingaWeb2\Img;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Util\Format;
-use dipl\Web\Table\ZfQueryBasedTable;
+use ipl\Html\Html;
 
 class VmDiskUsageTable extends ZfQueryBasedTable
 {
@@ -56,7 +56,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
     /**
      * @param $row
-     * @return \dipl\Html\HtmlElement
+     * @return \ipl\Html\HtmlElement
      * @throws \Icinga\Exception\NotFoundError
      */
     public function renderRow($row)

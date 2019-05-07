@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\OverviewTree;

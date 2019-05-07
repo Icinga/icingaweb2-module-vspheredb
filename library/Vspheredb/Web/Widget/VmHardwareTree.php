@@ -2,15 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Html\Html;
-use dipl\Html\Link;
-use dipl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 
 class VmHardwareTree extends BaseHtmlElement
 {

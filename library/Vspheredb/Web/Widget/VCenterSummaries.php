@@ -2,10 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Html\Html;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 
 class VCenterSummaries extends BaseHtmlElement
 {

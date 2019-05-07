@@ -2,10 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Html;
-use dipl\Html\Img;
+use gipfl\IcingaWeb2\Img;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
+use ipl\Html\Html;
 
 class VmsGuestDiskUsageTable extends ObjectsTable
 {

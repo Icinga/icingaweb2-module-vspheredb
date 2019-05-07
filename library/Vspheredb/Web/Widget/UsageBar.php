@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Translation\TranslationHelper;
-use dipl\Html\Html;
+use gipfl\Translation\TranslationHelper;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 
 class UsageBar extends BaseHtmlElement
 {

@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Web\Table\ZfQueryBasedTable;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 
 class HostPciDevicesTable extends ZfQueryBasedTable

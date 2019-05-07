@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Html\Html;
-use dipl\Html\HtmlElement;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
-use dipl\Web\Url;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\IcingaWeb2\Url;
 use InvalidArgumentException;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 abstract class BaseTable extends ZfQueryBasedTable
 {

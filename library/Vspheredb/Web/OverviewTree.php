@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web;
 
-use dipl\Html\BaseHtmlElement;
+use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
-use dipl\Html\Html;
-use dipl\Html\Link;
-use dipl\Translation\TranslationHelper;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 
 class OverviewTree extends BaseHtmlElement
 {

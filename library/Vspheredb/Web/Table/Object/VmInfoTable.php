@@ -2,11 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\NameValueTable;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Exception;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
@@ -20,6 +19,7 @@ use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
+use ipl\Html\Html;
 
 class VmInfoTable extends NameValueTable
 {
@@ -44,7 +44,7 @@ class VmInfoTable extends NameValueTable
 
     /**
      * @param $annotation
-     * @return string|\dipl\Html\HtmlElement
+     * @return string|\ipl\Html\HtmlElement
      */
     protected function formatAnnotation($annotation)
     {

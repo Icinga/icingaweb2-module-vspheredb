@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\Tabs;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
