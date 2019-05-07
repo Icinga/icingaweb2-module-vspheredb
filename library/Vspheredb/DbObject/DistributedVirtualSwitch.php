@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+
 /**
  * Hint: a VmwareDistributedVirtualSwitch is also a DistributedVirtualSwitch,
  * but with more capabilities
@@ -25,14 +27,14 @@ class DistributedVirtualSwitch extends BaseDbObject
     ];
 
     protected $propertyMap = [
-        // 'portgroup'          => 'portGroups',
-        'config.description' => 'description',
+        // 'portgroup'           => 'portGroups',
+        'config.description'     => 'description',
         // config.uuid?
-        'summary.hostMember' => 'hostMembers',
-        // 'summary.vm'         => 'vms',
-        'summary.numHosts'   => 'num_hosts',
-        'config.numPorts'    => 'num_ports',
-        'config.maxPorts'    => 'max_ports',
+        'summary.hostMember'     => 'hostMembers',
+        // 'summary.vm'          => 'vms',
+        'summary.numHosts'       => 'num_hosts',
+        'config.numPorts'        => 'num_ports',
+        'config.maxPorts'        => 'max_ports',
         'config.uplinkPortgroup' => 'uplinkPortGroups',
     ];
 
@@ -52,6 +54,9 @@ class DistributedVirtualSwitch extends BaseDbObject
         }
     }
 
+    /**
+     * @param ManagedObjectReference[] $hostMembers
+     */
     public function setHostMembers($hostMembers)
     {
         var_dump('HOSTMEMBERS');
