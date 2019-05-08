@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 class VCenterSummaryTable extends HostSummaryTable
 {
-    protected $baseUrl = 'vspheredb/resources/clusters';
+    protected $baseUrl = 'vspheredb/vcenter';
 
     protected $groupBy = 'o.vcenter_uuid';
 
