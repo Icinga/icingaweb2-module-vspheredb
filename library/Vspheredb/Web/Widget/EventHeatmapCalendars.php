@@ -29,7 +29,7 @@ abstract class EventHeatmapCalendars extends BaseHtmlElement
         $table = new Table();
         $table->addAttributes(['data-base-target' => '_next', 'class' => 'calendar']);
 
-        $body = $table->body();
+        $body = $table->getBody();
         $body->add($table::tr($table::th(
             $month,
             [
@@ -91,7 +91,7 @@ abstract class EventHeatmapCalendars extends BaseHtmlElement
 
             if ($month !== $lastMonth) {
                 $table = $this->newTable($month);
-                $body = $table->body();
+                $body = $table->getBody();
 
                 if ($row !== null) {
                     $this->closeWeek($row, $weekday);

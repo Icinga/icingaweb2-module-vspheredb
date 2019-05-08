@@ -36,8 +36,8 @@ class EventsController extends Controller
 
         $table = new EventHistoryTable($this->db());
         $table
-            ->filterEventType($form->getValue('type'))
-            ->filterParent($form->getValue('parent'));
+            ->filterEventType($form->getElement('type')->getValue())
+            ->filterParent($form->getElement('parent')->getValue());
         $dayStamp = strtotime($day);
         if ($day) {
             $this->addTitle('Event History on %s', DateFormatter::formatDate($dayStamp));
@@ -62,7 +62,7 @@ class EventsController extends Controller
     protected function addFilterForm()
     {
         $form = new FilterHostParentForm($this->db());
-        $form->handleRequest($this->getRequest());
+        $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
 
         return $form;
@@ -93,8 +93,8 @@ class EventsController extends Controller
 
         $form = $this->addFilterForm();
         $heatMap = new VMotionHeatmap($this->db(), 'vspheredb/events');
-        $heatMap->filterEventType($form->getValue('type'));
-        if ($parent = $form->getValue('parent')) {
+        $heatMap->filterEventType($form->getElement('type')->getValue());
+        if ($parent = $form->getElement('parent')->getValue()) {
             $heatMap->filterParent(hex2bin($parent));
         }
         $events = $heatMap->getEvents();

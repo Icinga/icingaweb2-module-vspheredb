@@ -140,14 +140,14 @@ class CalendarMonthSummary extends Table
     protected function assemble()
     {
         $this->setCaption($this->getTitle());
-        $this->header()->add($this->createWeekdayHeader());
+        $this->getHeader()->add($this->createWeekdayHeader());
         $calendar = new Calendar();
         foreach ($calendar->getWeeksForMonth($this->getMonthAsTimestamp()) as $cw => $week) {
             $weekRow = $this->weekRow($cw);
             foreach ($week as $day) {
                 $weekRow->add($this->createDay($day));
             }
-            $this->body()->add($weekRow);
+            $this->getBody()->add($weekRow);
         }
     }
 

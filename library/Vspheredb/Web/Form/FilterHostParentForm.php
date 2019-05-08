@@ -46,19 +46,24 @@ class FilterHostParentForm extends Form
             'VmCloneFailedEvent'
         ];
 
-        $this->addElement('type', 'select', [
+        $this->addElement('select', 'type', [
             'options' => [
                 null => $this->translate('- filter -')
             ] + array_combine($vMotionEvents, $vMotionEvents)
                 + array_combine($otherKnownEvents, $otherKnownEvents),
             'class' => 'autosubmit',
         ]);
-        $this->addElement('parent', 'select', [
+        $this->addElement('select', 'parent', [
             'options' => [
                     null => $this->translate('- filter -')
                 ] + $this->enumHostParents(),
             'class' => 'autosubmit',
         ]);
+    }
+
+    public function onSuccess()
+    {
+        // Overriding ipl method, would otherwise render a "success" paragraph
     }
 
     public function getColors()
@@ -74,7 +79,7 @@ class FilterHostParentForm extends Form
             'VmBeingCreatedEvent' => [119, 170, 255],
         ];
 
-        $type = $this->getValue('type');
+        $type = $this->getElement('type')->getValue();
         if (isset($colors[$type])) {
             return $colors[$type];
         } else {
@@ -103,22 +108,5 @@ class FilterHostParentForm extends Form
         }
 
         return $enum;
-    }
-
-    /**
-     * Hint: this is required unless we're using a Director release
-     * including 095de49
-     *
-     * @param \Icinga\Web\Request $request
-     * @return $this
-     */
-    public function setRequest($request)
-    {
-        if ($this->getAction() === null) {
-            $this->setAction($request->getUrl()->getAbsoluteUrl('&'));
-        }
-        parent::setRequest($request);
-
-        return $this;
     }
 }
