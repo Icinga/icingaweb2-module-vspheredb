@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Img;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\GuestToolsStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Format;
@@ -78,6 +79,7 @@ class VmsTable extends ObjectsTable
     protected function initialize()
     {
         $powerStateRenderer = new PowerStateRenderer();
+        $guestToolsStatusRenderer = new GuestToolsStatusRenderer();
         $memoryRenderer = function ($row) {
             return new MemoryUsage(
                 $row->guest_memory_usage_mb,
@@ -102,36 +104,7 @@ class VmsTable extends ObjectsTable
                 'guest_tools_status',
                 $this->translate('Guest Tools'),
                 'vc.guest_tools_status'
-            )->setRenderer(function ($row) {
-                switch ($row->guest_tools_status) {
-                    case 'toolsNotInstalled':
-                        return Icon::create('block', [
-                            'class' => 'red',
-                            'title' => $this->translate('Guest Tools are NOT installed'),
-                        ]);
-                    case 'toolsNotRunning':
-                        return Icon::create('warning-empty', [
-                            'class' => 'red',
-                            'title' => $this->translate('Guest Tools are NOT running'),
-                        ]);
-                    case 'toolsOld':
-                        return Icon::create('thumbs-down', [
-                            'class' => 'yellow',
-                            'title' => $this->translate('Guest Tools are outdated'),
-                        ]);
-                    case 'toolsOk':
-                        return Icon::create('ok', [
-                            'class' => 'green',
-                            'title' => $this->translate('Guest Tools are up to date and running'),
-                        ]);
-                    case null:
-                    default:
-                        return Icon::create('help', [
-                            'class' => 'gray',
-                            'title' => $this->translate('Guest Tools status is now known'),
-                        ]);
-                }
-            })->setSortExpression('vc.guest_tools_status'),
+            )->setRenderer($guestToolsStatusRenderer)->setSortExpression('vc.guest_tools_status'),
 
             $this->createColumn('host_name', $this->translate('Host'), 'h.host_name'),
 
