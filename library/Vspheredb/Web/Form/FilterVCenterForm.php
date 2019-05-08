@@ -20,13 +20,17 @@ class FilterVCenterForm extends Form
 
     public function getHexUuid()
     {
-        return $this->getValue('uuid');
+        return $this->getElement('uuid')->getValue();
+    }
+
+    public function onSuccess()
+    {
     }
 
     protected function assemble()
     {
         $enum = $this->enumVCenters();
-        $this->addElement('uuid', 'select', [
+        $this->addElement('select', 'uuid', [
             'options' => $enum,
             'class'   => 'autosubmit',
             'value'   => key($enum),

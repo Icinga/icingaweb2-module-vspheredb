@@ -30,7 +30,7 @@ class PerfdataController extends Controller
         $this->handleTabs();
         $this->addTitle($this->translate('Available Performance Counters'));
         $form = new FilterVCenterForm($this->db());
-        $form->handleRequest($this->getRequest());
+        $form->handleRequest($this->getServerRequest());
         $this->content()->add(Html::tag('div', ['class' => 'icinga-module module-director'], $form));
         $table = (new PerformanceCounterTable($this->db()))
             ->filterVCenterUuid($form->getHexUuid());
