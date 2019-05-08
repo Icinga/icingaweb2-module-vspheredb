@@ -91,7 +91,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $start = $end - 3600 * 4;
             $start = $end - 3600 * 24 * 14;
             $end = $start + 3600 * 24 * 4;
-            $this->body()->add($tr);
+            $this->getBody()->add($tr);
 
             $tr = static::tr(static::td(
                 Img::create('rrd/img', [
@@ -119,7 +119,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
         $free = Format::bytes($this->totalFree, Format::STANDARD_IEC)
             . sprintf(' (%0.3f%%)', ($this->totalFree / $this->totalSize) * 100);
-        $this->footer()->add($this::tr([
+        $this->getFooter()->add($this::tr([
             $this::th(Html::tag('strong', null, $this->translate('Total'))),
             $this::th(Format::bytes($this->totalSize, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
             $this::th($free, ['style' => 'width: 25%;']),
