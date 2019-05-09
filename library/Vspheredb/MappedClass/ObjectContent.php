@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
-use Icinga\Module\Vspheredb\ApiClassMap;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 // https://www.vmware.com/support/developer/converter-sdk/conv61_apireference/vmodl.query.PropertyCollector.ObjectContent.html

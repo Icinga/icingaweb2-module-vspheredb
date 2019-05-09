@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
+use Icinga\Module\Vspheredb\MappedClass\ApiClassMap;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use SoapVar;
