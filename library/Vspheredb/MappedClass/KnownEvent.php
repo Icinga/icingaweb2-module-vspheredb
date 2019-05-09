@@ -4,15 +4,46 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 use DateTime;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Zend_Db_Adapter_Abstract as ZfDbAdapter;
 
+/**
+ * KnownEvent
+ *
+ * We use this as a base class for all vim.event.Event implementations
+ * handled by us
+ */
 abstract class KnownEvent
 {
+    /** @var int The parent or group ID */
     public $chainId;
 
+    /** @var int The event ID */
     public $key;
 
+    /** @var string NOT a real string, xsd:dateTime. The time the event was created */
     public $createdTime;
+
+    /** @var string The user who caused the event */
+    public $userName;
+
+    /** @var string|null A formatted text message describing the event. The message may be localized.*/
+    public $fullFormattedMessage;
+
+    /** @var ComputeResourceEventArgument|null */
+    public $computeResource;
+
+    /** @var DatacenterEventArgument|null */
+    public $datacenter;
+
+    /** @var DatastoreEventArgument */
+    public $ds;
+
+    /** @var HostEventArgument|null */
+    public $host;
+
+    /** @var VmEventArgument|null */
+    public $vm;
 
     protected $table;
 
