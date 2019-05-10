@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
+use Exception;
 use Evenement\EventEmitterTrait;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -181,6 +182,11 @@ class ServerRunner
         }
 
         $command = new IcingaCliRpc($this->icingaCli);
+
+        $command->on('error', function (Exception $e) {
+            Logger::error(rtrim($e->getMessage()));
+            $this->stop();
+        });
         if ($arguments) {
             $command->setArguments($arguments);
         }

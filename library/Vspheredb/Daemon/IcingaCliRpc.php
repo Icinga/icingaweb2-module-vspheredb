@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
+use Exception;
 use gipfl\Protocol\JsonRpc\Connection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use React\ChildProcess\Process;
@@ -23,6 +24,9 @@ class IcingaCliRpc extends IcingaCli
                 $process->stdout,
                 $process->stdin
             );
+            $netString->on('error', function (Exception $e) {
+                $this->emit('error', [$e]);
+            });
             $this->rpc()->handle($netString);
         });
     }
