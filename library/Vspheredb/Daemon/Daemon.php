@@ -179,6 +179,8 @@ class Daemon
             $this->eventuallyDisconnectFromDb();
         })->onTransition(['started', 'connected', 'disconnected'], 'failed', function () {
             $this->onFailed();
+        })->onTransition('failed', 'disconnected', function () {
+
         });
 
         // External events:
