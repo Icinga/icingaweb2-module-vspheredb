@@ -117,7 +117,9 @@ class Daemon
             $this->refreshMyState();
         };
         try {
-            if (! $this->hasSchema()) {
+            if ($this->hasSchema()) {
+                $this->runDbCleanup();
+            } else {
                 $this->setDaemonStatus('DB has no schema', 'error');
                 $fail(new Exception('DB has no schema'));
             }
@@ -134,6 +136,46 @@ class Daemon
     protected function hasSchema()
     {
         return (new Migrations($this->connection))->hasSchema();
+    }
+
+    protected function runDbCleanup()
+    {
+        $this->setDaemonStatus('Running DB cleanup (this could take some time)', 'info');
+        $db = $this->connection->getDbAdapter();
+        // Delete all damon entries older than the two most recently running daemons
+        $where = <<<WHERE
+        ts_last_refresh < (
+          SELECT ts_last_refresh FROM (
+            SELECT ts_last_refresh
+              FROM vspheredb_daemon
+             ORDER BY ts_last_refresh DESC
+              LIMIT 2
+          ) toptwo ORDER BY ts_last_refresh ASC LIMIT 1
+        )
+WHERE;
+        $result = $db->delete('vspheredb_daemon', $where);
+        if ($result > 0) {
+            $this->setDaemonStatus(
+                "Removed information related to $result formerly running daemon instance(s)",
+                'info'
+            );
+        }
+        $db->query('OPTIMIZE TABLE vspheredb_daemon')->execute();
+        $where = <<<QUERY
+        NOT EXISTS (
+          SELECT 1 FROM vspheredb_daemon d
+           WHERE d.instance_uuid = vspheredb_daemonlog.instance_uuid
+        )
+QUERY;
+        $result = $db->delete('vspheredb_daemonlog', $where);
+        if ($result > 0) {
+            $this->setDaemonStatus(
+                "Removed $result outdated daemon log lines, optimizing table",
+                'info'
+            );
+        }
+        $db->query('OPTIMIZE TABLE vspheredb_daemonlog')->execute();
+        $this->setDaemonStatus('DB has been cleaned up', 'info');
     }
 
     protected function setDaemonStatus($status, $logLevel = null, $sendReady = false)
