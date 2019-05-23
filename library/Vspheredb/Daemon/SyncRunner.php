@@ -44,6 +44,9 @@ class SyncRunner
     /** @var Deferred */
     protected $deferred;
 
+    /** @var bool */
+    protected $showTrace = false;
+
     protected $taskNames = [
         'moRefs'           => 'Managed Object References',
         'quickStats'       => 'Quick Stats',
@@ -193,6 +196,9 @@ class SyncRunner
                 gc_enable();
             } catch (Exception $e) {
                 Logger::error("Task $task failed: " . $e->getMessage());
+                if ($this->showTrace) {
+                    Logger::error($e->getTraceAsString());
+                }
                 $this->loop->addTimer(0.5, function () {
                     $this->deferred->reject();
                 });
@@ -208,6 +214,17 @@ class SyncRunner
                 $this->runNextImmediateTask();
             });
         }
+    }
+
+    /**
+     * @param bool $show
+     * @return $this
+     */
+    public function showTrace($show = true)
+    {
+        $this->showTrace = (bool) $show;
+
+        return $this;
     }
 
     protected function callRunTasks($tasks)

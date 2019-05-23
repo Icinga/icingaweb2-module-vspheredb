@@ -79,6 +79,7 @@ class TaskCommand extends CommandBase
                 CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s)', $hostname));
                 $time = microtime(true);
                 (new SyncRunner($vCenter))
+                    ->showTrace($this->showTrace())
                     ->on('beginTask', function ($taskName) use ($hostname, & $time) {
                         CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s: %s)', $hostname, $taskName));
                         $time = microtime(true);
