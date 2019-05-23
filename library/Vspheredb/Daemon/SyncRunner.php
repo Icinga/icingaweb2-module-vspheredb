@@ -109,7 +109,7 @@ class SyncRunner
             'eventStream' => function () {
                 $this->streamEvents();
             },
-            'perfCounters' => function () {
+            'perfCounters' => function () { // Currently unused.
                 (new SyncPerfCounters($this->vCenter))->run();
             },
             'perfCounterInfo' => function () {
