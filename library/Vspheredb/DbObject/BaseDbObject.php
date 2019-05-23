@@ -5,7 +5,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Director\Data\Db\DbObject as DirectorDbObject;
+use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
@@ -14,7 +14,7 @@ use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use InvalidArgumentException;
 
-abstract class BaseDbObject extends DirectorDbObject
+abstract class BaseDbObject extends VspheredbDbObject
 {
     /** @var Db $connection Exists in parent, but IDEs need a berrer hint */
     protected $connection;
@@ -238,7 +238,7 @@ abstract class BaseDbObject extends DirectorDbObject
      * @param VCenter $vCenter
      * @param BaseDbObject[] $dbObjects
      * @param \stdClass[] $newObjects
-     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
+     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
      * @throws \Zend_Db_Exception
      */
     protected static function storeSync(VCenter $vCenter, & $dbObjects, & $newObjects)
@@ -342,7 +342,7 @@ abstract class BaseDbObject extends DirectorDbObject
     /**
      * @param VCenter $vCenter
      * @throws NotFoundError
-     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
+     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
      * @throws \Zend_Db_Exception
      */
     public static function syncFromApi(VCenter $vCenter)

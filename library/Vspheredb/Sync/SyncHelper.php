@@ -19,7 +19,7 @@ trait SyncHelper
      * @param \Zend_Db_Adapter_Abstract $db
      * @param \Icinga\Module\Vspheredb\DbObject\BaseDbObject[] $objects
      * @param $seen
-     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
+     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
      */
     protected function storeObjects(\Zend_Db_Adapter_Abstract $db, array $objects, array $seen)
     {

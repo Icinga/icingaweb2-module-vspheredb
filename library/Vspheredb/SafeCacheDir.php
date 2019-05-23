@@ -44,18 +44,18 @@ class SafeCacheDir
     {
         if (file_exists($directory)) {
             if (static::uidToName(fileowner($directory)) !== static::getCurrentUsername()) {
-                throw new RuntimeException(
+                throw new RuntimeException(sprintf(
                     '%s exists, but does not belong to %s',
                     $directory,
                     static::getCurrentUsername()
-                );
+                ));
             }
         } else {
             if (! @mkdir($directory, 0700)) {
-                throw new RuntimeException(
+                throw new RuntimeException(sprintf(
                     'Could not create %s',
                     $directory
-                );
+                ));
             }
         }
     }

@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use Icinga\Module\Director\Core\Json;
+use Icinga\Module\Vspheredb\Json;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualSwitch;
 use ipl\Html\Html;
 

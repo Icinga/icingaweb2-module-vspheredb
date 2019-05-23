@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Module\Director\Data\Db\DbObject as DirectorDbObject;
+use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 
-class ManagedObject extends DirectorDbObject
+class ManagedObject extends VspheredbDbObject
 {
     protected $keyName = 'uuid';
 
@@ -24,6 +24,9 @@ class ManagedObject extends DirectorDbObject
     /** @var ManagedObject */
     private $parent;
 
+    /**
+     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
+     */
     protected function beforeStore()
     {
         if (null !== $this->parent) {
