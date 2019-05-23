@@ -254,6 +254,8 @@ abstract class BaseDbObject extends DirectorDbObject
             $created = 0;
             $dummy = static::dummyObject();
             $newUuids = [];
+
+            $new = [];
             foreach ($newObjects as $object) {
                 $uuid = $vCenter->makeBinaryGlobalUuid($object->id);
 
@@ -273,8 +275,7 @@ abstract class BaseDbObject extends DirectorDbObject
                         $modified++;
                     }
                 } else {
-                    $dbObject->store();
-                    $created++;
+                    $new[] = $dbObject;
                 }
             }
 
@@ -285,11 +286,16 @@ abstract class BaseDbObject extends DirectorDbObject
                     $del[] = $uuid;
                 }
             }
+
             if (!empty($del)) {
                 $dba->delete(
                     $dummy->getTableName(),
                     $dba->quoteInto('uuid IN (?)', $del)
                 );
+            }
+            foreach ($new as $dbObject) {
+                $dbObject->store();
+                $created++;
             }
             $dba->commit();
         } catch (Exception $error) {
