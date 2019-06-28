@@ -148,3 +148,16 @@ vCenter Servers as you want.
 When not running SystemD you're on your own, the command you're looking for is:
 
     /usr/bin/icingacli vspheredb daemon run
+
+High availability
+-----------------
+
+If you want to have this service highly available you should make sure you have
+seperate solutions for the database and the daemon.
+
+The database can be easily made highly available with MariaDB master-master
+replication. You could have this already for your Icinga 2 IDO. Make sure
+to use only one virtual-IP to connect to the database.
+
+You could use tools like corosync and pacemaker to make the daemon highly
+available. Please do **not** run multiple daemons writing into the same database.
