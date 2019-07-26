@@ -96,15 +96,22 @@ abstract class BaseTable extends ZfQueryBasedTable
         ]);
     }
 
-    protected function addHeaderColumnsTo(HtmlElement $parent)
+    protected function renderTitleColumns()
     {
-        if ($this->sortUrl) {
-            $this->addSortHeadersTo($parent);
+        $columns = $this->getColumnsToBeRendered();
+        if (isset($columns) && count($columns)) {
+            if ($this->sortUrl) {
+                $tr = $this::tr()->setAttributes([
+                    'data-base-target' => '_self'
+                ]);
+                $this->addSortHeadersTo($tr);
+            } else {
+                $tr = $this::row($columns, null, 'th');
+            }
+            return $tr;
         } else {
-            parent::addHeaderColumnsTo($parent);
+            return null;
         }
-
-        return $parent;
     }
 
     protected function initialize()
@@ -163,7 +170,11 @@ abstract class BaseTable extends ZfQueryBasedTable
     {
         $tr = $this::tr();
         foreach ($this->getChosenColumns() as $column) {
-            $tr->add($this::td($column->renderRow($row)));
+            $td = $column->renderRow($row);
+            if (! $td instanceof BaseHtmlElement || $td->getTag() !== 'td') {
+                $td = $this::td($td);
+            }
+            $tr->add($td);
         }
 
         return $tr;
@@ -217,6 +228,7 @@ abstract class BaseTable extends ZfQueryBasedTable
      */
     public function sortBy($columns)
     {
+        $this->assertInitialized();
         if (! is_array($columns)) {
             $columns = [$columns];
         }
