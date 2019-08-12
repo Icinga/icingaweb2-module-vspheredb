@@ -3,9 +3,10 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use dipl\Html\Html;
+use dipl\Html\ValidHtml;
 use Icinga\Module\Director\Web\Form\DirectorForm;
 
-class BaseForm extends DirectorForm
+class BaseForm extends DirectorForm implements ValidHtml
 {
     private $hintCount = 0;
 
