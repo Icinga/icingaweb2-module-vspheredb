@@ -1,6 +1,42 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.0.4
+------
+
+This is a minor bugfix release. Also, it makes sure that this module will work
+smoothly with the upcoming Icinga Director v1.7.0 release. It supports/tolerates
+more data anomalies like unexpected NULL values. Talking to custom API ports is
+now supported.
+
+### Upgrading
+
+Please restart the *Background Daemon* - it's error handling has been improved.
+
+### UI
+* FIX: Do not fail  with Director v1.7.0 (#118)
+* FIX: Non-admin users should be allowd to customize columns (#92)
+* FIX: Do not offer migration wizard in case of connection issues (#62)
+
+### Background Daemon
+* FIX: Keep retrying on initialization errors (#44)
+* FIX: Do not fail for VMs with "no hardware" (#59)
+* FIX: Do not warn when disconnecting in disconnected state (#59)
+* FIX: Fail nicely on permission issues (#59)
+* FIX: Support zero-sized DataStores (#75)
+* FIX: Improve error handling for unknown classes (#48)
+* FIX: Eventually force refresh for storage.perDatastoreUsage (#57)
+* FIX:  ChooseDbResourceForm: fail friendly even when misconfigured (#51)
+
+### Schema
+* FIX: Support Service Tags longer than 32 characters (#60)
+* FIX: Support the VmResetting Event (#58)
+
+### All Issues and Feature Requests
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/5?closed=1)
+
+
 v1.0.3
 ------
 
