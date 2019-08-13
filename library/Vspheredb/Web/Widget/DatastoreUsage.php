@@ -36,6 +36,8 @@ class DatastoreUsage extends BaseHtmlElement
 
     protected $gotPercent = 0;
 
+    protected $baseUrl = 'vspheredb/vm';
+
     /** @var Link[] Array key is the VirtualMachine id */
     protected $diskLinks;
 
@@ -51,6 +53,13 @@ class DatastoreUsage extends BaseHtmlElement
     public function setCapacity($capacity)
     {
         $this->capacity = $capacity;
+        return $this;
+    }
+
+    public function setBaseUrl($url)
+    {
+        $this->baseUrl = $url;
+
         return $this;
     }
 
@@ -154,7 +163,7 @@ class DatastoreUsage extends BaseHtmlElement
     public function addVmDisk($title, $percent, $vmUuid = null, $attributes = [])
     {
         if ($vmUuid) {
-            $url = 'vspheredb/vm';
+            $url = $this->baseUrl;
             $urlParams = ['uuid' => bin2hex($vmUuid)];
         } else {
             $url = '#';
