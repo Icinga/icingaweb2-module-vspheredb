@@ -1,5 +1,5 @@
 Name: vSphereDB
-Version: 1.0.4
+Version: master
 Depends: director>=1.6.0, ipl>=0.1.0, incubator>=0.1.0, reactbundle>=0.4.0
 Description: VMware vSphere DB
  This module replicates yout most important vCencer configuration items. It
