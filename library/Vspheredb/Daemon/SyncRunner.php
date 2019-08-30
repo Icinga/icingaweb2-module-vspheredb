@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Daemon;
 
 use Exception;
-use Evenement\EventEmitterTrait;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -21,12 +20,13 @@ use Icinga\Module\Vspheredb\Sync\SyncVmDatastoreUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmDiskUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmHardware;
 use Icinga\Module\Vspheredb\Sync\SyncVmSnapshots;
+use ipl\Stdlib\EventEmitter;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 
 class SyncRunner
 {
-    use EventEmitterTrait;
+    use EventEmitter;
 
     /** @var VCenter */
     protected $vCenter;
