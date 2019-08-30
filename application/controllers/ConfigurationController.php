@@ -28,11 +28,12 @@ class ConfigurationController extends Controller
 
             return;
         }
-        $form = ChooseDbResourceForm::load()->handleRequest();
+        $form = new ChooseDbResourceForm();
+        $form->handleRequest($this->getServerRequest());
         $this->content()->add(Html::tag('div', [
             'class' => 'icinga-module module-director'
         ], $form));
-        if ($form->hasErrors()) {
+        if ($form->hasMessages()) {
             $this->addSingleTab($this->translate('Configuration'));
 
             return;
@@ -147,10 +148,27 @@ class ConfigurationController extends Controller
 
     public function monitoringconfigAction()
     {
-        $this->addSingleTab($this->translate('Create'));
+        $id = $this->params->get('id');
+        if ($id) {
+            $this->addSingleTab($this->translate('Modify'));
+
+            $db = $this->db()->getDbAdapter();
+            $res = $db->fetchRow(
+                $db->select()->from('monitoring_connection')->where('id = ?', $id)
+            );
+        } else {
+            $this->addSingleTab($this->translate('Create'));
+            $res = null;
+        }
+
+
         $this->addTitle($this->translate('Monitoring Integration'));
         $form = new MonitoringConnectionForm($this->db());
-       $form->handleRequest($this->getServerRequest());
+        if ($res) {
+            $res->vcenter = \bin2hex($res->vcenter_uuid);
+            $form->populate((array) $res);
+        }
+        $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
     }
 }
