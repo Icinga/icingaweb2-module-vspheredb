@@ -13,6 +13,11 @@ class MonitoredObjectMappingTable extends BaseTable
 
     protected $priorityColumn = 'priority';
 
+    protected $defaultAttributes = [
+        'class' => ['common-table', 'table-row-selectable'],
+        'data-base-target' => '_next',
+    ];
+
     protected function initialize()
     {
         $this->addAvailableColumns([
@@ -27,7 +32,9 @@ class MonitoredObjectMappingTable extends BaseTable
                     $row->source_type,
                     $row->source_resource_name
                 ), 'vspheredb/configuration/monitoringconfig', [
-                    'priority' => $row->priority
+                    'id' => $row->id
+                ], [
+                    'data-base-target' => '_next'
                 ]);
             }),
             (new SimpleColumn('host_mapping', $this->translate('Host Mapping'), [
@@ -60,6 +67,7 @@ class MonitoredObjectMappingTable extends BaseTable
             }),
         ]);
     }
+
     public function renderRow($row)
     {
         return $this->addSortPriorityButtons(
@@ -78,6 +86,6 @@ class MonitoredObjectMappingTable extends BaseTable
         return $this->db()->select()->from(
             ['mc' => 'monitoring_connection'],
             $this->getRequiredDbColumns()
-        );
+        )->order('priority');
     }
 }
