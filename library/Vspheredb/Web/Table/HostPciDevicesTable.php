@@ -8,7 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 class HostPciDevicesTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
-        'class' => 'common-table preformatted',
+        'class' => 'common-table',
         'data-base-target' => '_next',
     ];
 
