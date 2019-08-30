@@ -14,6 +14,9 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
  * - update existing counters
  * - insert missing counters
  * - eventually fetch former values for missing counters in case [..]
+ *
+ *
+ * Hint: this is currently UNUSED, see SyncRunner.
  */
 class SyncPerfCounters
 {
@@ -49,7 +52,7 @@ class SyncPerfCounters
 
         $vCenter = $this->vCenter;
         $api = $vCenter->getApi();
-        $uuid = $vCenter->get('uuid');
+        $uuid = $vCenter->getUuid();
         $vms = $this->listVirtualMachines();
         $db = $this->dba;
         $chunkSize = 100;
@@ -58,10 +61,10 @@ class SyncPerfCounters
             $currentTs = floor(time() / 300) * 300 * 1000;
             // $keys = ['value_last'];
             $keys = ['value_minus4', 'value_minus3', 'value_minus2', 'value_minus1', 'value_last'];
-            $perf = $api->perfManager()->queryPerf($objects, $type, 300, count($keys));
+            $perf = $api->perfManager()->oldTestQueryPerf($objects, $type, 300, count($keys));
             $db->beginTransaction();
             $count = 0;
-            foreach ($perf->returnval as $p) {
+            foreach ($perf as $p) {
                 $entity = $p->entity->_;
                 foreach ($p->value as $val) {
                     $count++;
