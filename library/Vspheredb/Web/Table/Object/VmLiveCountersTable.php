@@ -150,7 +150,7 @@ class VmLiveCountersTable extends NameValueTable
 
     protected function fetchSomePerfdata($interval)
     {
-        $raw = $this->api->perfManager()->queryPerf(
+        $raw = $this->api->perfManager()->oldTestQueryPerf(
             $this->vm->object()->get('moref'),
             'VirtualMachine',
             $interval,
