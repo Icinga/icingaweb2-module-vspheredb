@@ -139,10 +139,10 @@ class AdditionalTableActions
     protected function moreOptions($links)
     {
         $options = $this->ul([
-            $this->li([
+            /*$this->li([
                 Link::create('Columns', '#', null, ['class' => 'icon-th-list']),
                 $this->linkList($this->toggleColumnsOptions())
-            ]),
+            ]),*/
             $this->li([
                 Link::create(Icon::create('down-open'), '#'),
                 $this->linkList($links)

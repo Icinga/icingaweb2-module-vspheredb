@@ -10,6 +10,9 @@ use ipl\Html\Html;
 
 class PerfdataController extends Controller
 {
+    /**
+     * @throws \Icinga\Security\SecurityException
+     */
     public function init()
     {
         $this->assertPermission('vspheredb/admin');
@@ -32,11 +35,10 @@ class PerfdataController extends Controller
         $form = new FilterVCenterForm($this->db());
         $form->handleRequest($this->getServerRequest());
         $this->content()->add(Html::tag('div', ['class' => 'icinga-module module-director'], $form));
-        $table = (new PerformanceCounterTable($this->db()))
+        $table = (new PerformanceCounterTable($this->db(), $this->url()))
             ->filterVCenterUuid($form->getHexUuid());
         (new AdditionalTableActions($table, $this->Auth(), $this->url()))
             ->appendTo($this->actions());
-        $table->handleSortUrl($this->url());
         $table->renderTo($this);
     }
 

@@ -23,11 +23,10 @@ class DatastoresController extends ObjectsController
         }
 
         $this->setAutorefreshInterval(15);
-        $table = new DatastoreTable($this->db());
+        $table = new DatastoreTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $this->showTable($table, 'vspheredb/datastores', $this->translate('Datastores'));
-        $table->handleSortUrl($this->url());
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
     }

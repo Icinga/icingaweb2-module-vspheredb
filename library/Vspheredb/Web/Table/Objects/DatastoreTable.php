@@ -73,7 +73,7 @@ class DatastoreTable extends ObjectsTable
                     return Format::bytes($row->capacity, Format::STANDARD_IEC);
                 }),
             $this->createColumn('usage', $this->translate('Usage'), [
-                'uuid' => 'uuid'
+                'uuid' => 'o.uuid'
             ])->setRenderer(function ($row) {
                 /** @var Db $connection */
                 $connection = $this->connection();

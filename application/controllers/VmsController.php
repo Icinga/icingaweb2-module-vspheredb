@@ -46,11 +46,10 @@ class VmsController extends ObjectsController
         ]);
 
         $this->setAutorefreshInterval(15);
-        $table = new VmsTable($this->db());
+        $table = new VmsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machines'));
-        $table->handleSortUrl($this->url());
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
     }
@@ -72,10 +71,9 @@ class VmsController extends ObjectsController
                 ['class' => 'icon-database']
             ),
         ]);
-        $table = new VmsGuestDiskUsageTable($this->db());
+        $table = new VmsGuestDiskUsageTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
-        $table->handleSortUrl($this->url());
         $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machine Guest Disks'));
     }
 
@@ -96,10 +94,9 @@ class VmsController extends ObjectsController
                 ['class' => 'icon-left-small']
             ),
         ]);
-        $table = new VmsSnapshotsTable($this->db());
+        $table = new VmsSnapshotsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
-        $table->handleSortUrl($this->url());
         $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machines with Snapshots'));
     }
 }

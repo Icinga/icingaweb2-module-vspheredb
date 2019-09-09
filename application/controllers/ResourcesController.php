@@ -20,7 +20,7 @@ class ResourcesController extends ObjectsController
         $this->addSingleTab('Compute Resources');
 
         $this->setAutorefreshInterval(15);
-        $table = new ComputeClusterHostSummaryTable($this->db());
+        $table = new ComputeClusterHostSummaryTable($this->db(), $this->url());
         if ($vCenterUuid = $this->params->get('vcenter')) {
             $table->filterVCenter(VCenter::load(hex2bin($vCenterUuid), $this->db()));
         }
@@ -36,7 +36,6 @@ class ResourcesController extends ObjectsController
             ->appendTo($this->actions());
         $this->addTitle($this->translate('Compute Cluster') . ' (%d)', count($table));
         $this->showTable($table, 'vspheredb/groupedvms');
-        $table->handleSortUrl($this->url());
     }
 
     /**
@@ -47,7 +46,7 @@ class ResourcesController extends ObjectsController
         $this->addSingleTab('Compute Resources');
 
         $this->setAutorefreshInterval(15);
-        $table = new ComputeClusterHostSummaryTable($this->db());
+        $table = new ComputeClusterHostSummaryTable($this->db(), $this->url());
         if ($vCenterUuid = $this->params->get('vcenter')) {
             $table->filterVCenter(VCenter::load(hex2bin($vCenterUuid), $this->db()));
         }
@@ -64,20 +63,18 @@ class ResourcesController extends ObjectsController
             ->appendTo($this->actions());
         $this->addTitle($this->translate('Compute Cluster') . ' (%d)', count($table));
         $this->showTable($table, 'vspheredb/groupedvms');
-        $table->handleSortUrl($this->url());
     }
 
     public function projectsAction()
     {
         $this->addSingleTab('Project Summary');
         $this->setAutorefreshInterval(15);
-        $table = new GroupedvmsTable($this->db());
+        $table = new GroupedvmsTable($this->db(), $this->url());
         if ($uuid = $this->params->get('uuid')) {
             $table->filterParentUuids([$uuid]);
         }
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $this->showTable($table, 'vspheredb/groupedvms', $this->translate('Projects on this Compute Resource'));
-        $table->handleSortUrl($this->url());
     }
 }

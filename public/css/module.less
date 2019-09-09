@@ -383,6 +383,84 @@ div.action-bar > ul > li:hover {
 }
 /** END of dropdown in action bar **/
 
+/** BEGIN of dropdown in table header **/
+table.common-table th {
+  position: relative;
+  ul {
+    font-weight: normal;
+    padding: 0;
+    margin: 0;
+
+    li {
+      list-style-type: none;
+      a { display: block; }
+    }
+  }
+
+  > ul {
+    display: inline-block;
+    margin-left: 1em;
+    right: 0;
+    position: absolute;
+    > li {
+      display: inline-block;
+    }
+
+    .modified {
+      color: @color-critical;
+    }
+  }
+
+  > ul ul {
+    padding: 0.5em 1em 1em 0em;
+    min-width: 16em;
+    position: absolute;
+    right: 0;
+    display: none;
+    color: @text-color-inverted;
+    background-color: @text-color;
+    border-radius: 0.1em;
+    border-top-left-radius: 0;
+    box-shadow: 1em 1em 1em 0 rgba(0, 0, 0, 0.2);
+
+    a {
+      display: block;
+      padding: 0.3em 0.5em 0.3em 1em;
+      margin: 0;
+      outline: none;
+      color: @text-color-inverted;
+
+      &:hover {
+        text-decoration: underline;
+        &:before {
+          text-decoration: none;
+        }
+      }
+    }
+
+    li.active a {
+      font-weight: bold;
+    }
+  }
+
+  > ul > li:hover ul {
+    display: block;
+  }
+  > ul > li > a {
+    padding: 0.2em 0.5em;
+  }
+  > ul > li:hover {
+    background-color: @text-color;
+    border-top-left-radius: 0.1em;
+    border-top-right-radius: 0.1em;
+    & > a {
+      color: @text-color-inverted;
+      text-decoration: none;
+    }
+  }
+}
+/** END of dropdown in table header **/
+
 /** Tree **/
 .tree li a {
   display: inline-block;

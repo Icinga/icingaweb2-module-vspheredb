@@ -14,10 +14,9 @@ class SwitchesController extends ObjectsController
     {
         $this->handleTabs();
         $this->setAutorefreshInterval(15);
-        $table = new SwitchesTable($this->db());
+        $table = new SwitchesTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
-        $table->handleSortUrl($this->url());
         $this->showTable($table, 'vspheredb/switches', $this->translate('(Distributed) Virtual Switches'));
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);

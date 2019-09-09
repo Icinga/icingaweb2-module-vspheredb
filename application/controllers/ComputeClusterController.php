@@ -29,12 +29,11 @@ class ComputeClusterController extends Controller
     public function hostsAction()
     {
         $computeCluster = $this->addComputeCluster();
-        $table = new HostsTable($this->db());
+        $table = new HostsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
 
-        $table->handleSortUrl($this->url())
-            ->filterParentUuids([$computeCluster->get('uuid')])
+        $table->filterParentUuids([$computeCluster->get('uuid')])
             ->renderTo($this);
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);

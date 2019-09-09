@@ -14,11 +14,10 @@ class StoragepodsController extends ObjectsController
     {
         $this->addSingleTab($this->translate('Storage Pods'));
         $this->setAutorefreshInterval(15);
-        $table = new StoragePodTable($this->db());
+        $table = new StoragePodTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $this->showTable($table, 'vspheredb/storagepods', $this->translate('Storage Pods'));
-        $table->handleSortUrl($this->url());
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
     }
