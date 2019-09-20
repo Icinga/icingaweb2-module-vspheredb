@@ -2,14 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\MappedClass\PerfEntityMetricCSV;
-use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\AsyncInfluxDbWriter;
-use Icinga\Module\Vspheredb\PerformanceData\PerfMetricMapper;
-use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\PerformanceSet;
-use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\VmDisks;
-use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\VmNetwork;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\PerformanceData\InfluxDbStreamer;
 use React\EventLoop\Factory;
+use React\EventLoop\LoopInterface;
 
 class PerfCommand extends CommandBase
 {
@@ -34,36 +32,39 @@ class PerfCommand extends CommandBase
         }
     }
 
+    protected function fetchAndSend()
+    {
+        if ($this->shouldSend()) {
+            // $this->
+        }
+    }
+
     public function influxdbAction()
     {
+        $vCenter = $this->getVCenter();
+        // TODO: fetch baseUrl and dbName from vCenter settings
+        $baseUrl = $this->params->getRequired('baseUrl');
+        $dbName = $this->params->getRequired('db');
         $loop = Factory::create();
-        $loop->futureTick(function () {
-            $destination = $this->params->getRequired('baseUrl');
-            $set = $this->params->getRequired('set');
-            $dbName = $this->params->getRequired('db');
-            $influx = new AsyncInfluxDbWriter($destination, $loop);
-
-            $sets = [
-                'VmNetwork' => VmNetwork::class,
-                'VmDisks'   => VmDisks::class,
-            ];
-            $class = $sets[$set];
-
-            /** @var PerformanceSet $performanceSet */
-            $performanceSet = new $class($this->getVCenter());
-            $counters = $performanceSet->getCounters();
-            $mapper = new PerfMetricMapper($counters);
-            /** @var PerfEntityMetricCSV $metric */
-            $tags = $performanceSet->fetchObjectTags();
-            foreach ($performanceSet->fetch() as $metric) {
-                $influx->send($dbName, $mapper->makeInfluxDataPoints(
-                    $metric,
-                    $performanceSet->getMeasurementName(),
-                    $tags
-                ));
+        $streamer = new InfluxDbStreamer($vCenter, $loop);
+        $loop->addPeriodicTimer(900, function () use ($streamer, $baseUrl, $dbName) {
+            if ($streamer->isIdle()) {
+                $streamer->streamTo($baseUrl, $dbName);
+            } else {
+                Logger::error('Skipping PerfdataStream, Streamer is still idle');
             }
         });
+        $streamer->streamTo($baseUrl, $dbName);
 
         $loop->run();
+    }
+
+    protected function streamToInflux(LoopInterface $loop, VCenter $vCenter, $baseUrl, $dbName)
+    {
+    }
+
+    protected function flushMetrics(& $queue)
+    {
+
     }
 }
