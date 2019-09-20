@@ -134,6 +134,10 @@ class ApiClassMap
             'VmEventArgument'              => VmEventArgument::class,
             'ManagedObjectReference' => ManagedObjectReference::class,
             'NumericRange'           => NumericRange::class,
+            'CustomFieldsManager'    => CustomFieldsManager::class,
+            'CustomFieldDef'         => CustomFieldDef::class,
+            'CustomFieldValue'       => CustomFieldValue::class,
+            'PrivilegePolicyDef'     => PrivilegePolicyDef::class,
         ];
 
         return $map;

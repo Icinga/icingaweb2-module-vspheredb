@@ -48,6 +48,7 @@ class SyncRunner
     protected $showTrace = false;
 
     protected $taskNames = [
+        'customFields'     => 'Custom Fields Inventory',
         'moRefs'           => 'Managed Object References',
         'quickStats'       => 'Quick Stats',
         'hostSystems'      => 'Host Systems',
@@ -73,6 +74,9 @@ class SyncRunner
     {
         $this->vCenter = $vCenter;
         $this->availableTasks = [
+            'customFields' => function () {
+                var_dump($this->vCenter->getApi()->customFieldsManager()->object());
+            },
             'moRefs' => function () {
                 (new SyncManagedObjectReferences($this->vCenter))->sync();
             },
@@ -130,6 +134,7 @@ class SyncRunner
         $this->deferred = new Deferred();
         $this->loop = $loop;
         $initialSync = [
+            'customFields',
             'moRefs',
             'hostSystems',
             'virtualMachines',
