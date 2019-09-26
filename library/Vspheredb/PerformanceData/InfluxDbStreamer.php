@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\PerformanceData;
 
+use Clue\React\Buzz\Message\ResponseException;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\PerfEntityMetricCSV;
 use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\AsyncInfluxDbWriter;
@@ -54,6 +55,7 @@ class InfluxDbStreamer
      */
     public function streamTo($baseUrl, $dbName)
     {
+        Logger::info("Streaming to $baseUrl");
         if ($this->influx !== null) {
             throw new \RuntimeException('Cannot start to stream while streaming');
         }
@@ -62,11 +64,13 @@ class InfluxDbStreamer
 
         $sets = [
             'VmNetwork' => VmNetwork::class,
-            'VmDisks'   => VmDisks::class,
+            // 'VmDisks'   => VmDisks::class,
         ];
 
         foreach ($sets as $set) {
-            $this->streamSet(new $set($this->vCenter), $dbName);
+            $this->loop->futureTick(function () use ($set, $dbName) {
+                $this->streamSet(new $set($this->vCenter), $dbName);
+            });
         }
     }
 
@@ -78,6 +82,9 @@ class InfluxDbStreamer
      */
     public function streamSet(PerformanceSet $performanceSet, $dbName)
     {
+        $this->loop->addPeriodicTimer(3, function () use ($dbName) {
+            $this->sendNextBatch($dbName);
+        });
         $counters = $performanceSet->getCounters();
         $mapper = new PerfMetricMapper($counters);
         /** @var PerfEntityMetricCSV $metric */
@@ -91,11 +98,49 @@ class InfluxDbStreamer
                 $performanceSet->getMeasurementName(),
                 $tags
             );
-            $this->flushQueue($dbName);
+            // Logger::info('Flushing queue');
+            // $this->flushQueue($dbName);
             $metrics->next();
         }
 
-        $this->flushQueue($dbName, true);
+        // $this->flushQueue($dbName, true);
+    }
+
+    protected function sendNextBatch($dbName)
+    {
+        Logger::info('send has been triggered');
+        if (empty($this->queue)) {
+            Logger::info('queue is empty');
+            return;
+        }
+
+        $batch = array_shift($this->queue);
+        $lines = [];
+        $lines = array_merge($lines, $batch);
+
+        $linesWaitingForInflux = count($batch);
+        $this->influx->send($dbName, $batch)->then(function () use (& $linesWaitingForInflux, $dbName) {
+            Logger::info(sprintf(
+                'Sent %d lines to InfluxDB',
+                $linesWaitingForInflux
+            ));
+            $this->loop->futureTick(function () use ($dbName) {
+                $this->sendNextBatch($dbName);
+            });
+        })->otherwise(function (\Exception $e) use (& $linesWaitingForInflux) {
+            Logger::error(sprintf(
+                'Failed to send %d lines to InfluxDB: %s',
+                $linesWaitingForInflux,
+                $e->getMessage()
+            ));
+            if ($e instanceof ResponseException) {
+                Logger::error($e->getResponse()->getBody());
+            }
+        })->always(function () use (& $linesWaitingForInflux) {
+            $linesWaitingForInflux = 0;
+        });
+        // $this->linesWaitingForInflux = $this->pendingLines;
+        // $this->pendingLines = 0;
     }
 
     protected function flushQueue($dbName, $force = false)
@@ -103,7 +148,6 @@ class InfluxDbStreamer
         if (empty($this->queue)) {
             return;
         }
-
         if ($force || $this->pendingLines >= $this->maxPendingLines) {
             $batch = [];
             foreach ($this->queue as $p1) {
