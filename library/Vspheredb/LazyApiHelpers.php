@@ -77,6 +77,12 @@ trait LazyApiHelpers
         return $this->customFieldsManager;
     }
 
+    public function hasCustomFieldsManager()
+    {
+        return $this->customFieldsManager !== null
+            || isset($this->getServiceInstance()->customFieldsManager);
+    }
+
     /**
      * @return PropertyCollector
      */
