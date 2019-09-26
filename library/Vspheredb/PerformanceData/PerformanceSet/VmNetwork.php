@@ -59,7 +59,7 @@ class VmNetwork extends PerformanceSet
             'hardware_key'    => 'vna.hardware_key',
             'name'            => 'o.object_name',
             // 'parent_name'     => 'po.object_name',
-            'guest_host_name' => 'vm.guest_host_name',
+            'guest_host_name' => "COALESCE(vm.guest_host_name, '(null)')",
             'interface_label' => 'vh.label',
             // 'portgroup_name'  => 'pgo.object_name',
         ])
