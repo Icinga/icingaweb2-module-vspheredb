@@ -18,7 +18,6 @@ class VirtualMachine extends BaseDbObject
         'vcenter_uuid'      => null,
         'annotation'        => null,
         'custom_values'     => null,
-        'customfields'      => null,
         'hardware_memorymb' => null,
         'hardware_numcpu'   => null,
         'hardware_numcorespersocket' => null,
@@ -162,7 +161,11 @@ class VirtualMachine extends BaseDbObject
             }
         }
 
-        $this->set('custom_value', Json::encode($customValues));
+        if ($value === null) {
+            $this->set('custom_values', null);
+        } else {
+            $this->set('custom_values', Json::encode($customValues));
+        }
     }
 
     /**
