@@ -75,6 +75,9 @@ abstract class PerformanceSet
         foreach (array_chunk($vms, 100, true) as $set) {
             $res = $perf->queryPerf($this->prepareQuerySpec($set));
             if (empty($res)) {
+                // TODO: This happens. Why?
+                print_r($set);
+                continue;
                 die('Got no result');
             }
             foreach ($res as $r) {
