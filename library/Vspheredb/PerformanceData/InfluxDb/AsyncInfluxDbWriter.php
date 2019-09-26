@@ -48,7 +48,7 @@ class AsyncInfluxDbWriter
         /** @var Promise $promise */
         $promise = $this->browser->post($this->url('write', ['db' => $dbName]), [
             'User-Agent' => 'Icinga-vSphereDB/1.0'
-        ], implode($dataPoints));
+        ], \implode($dataPoints));
 
         return $promise;
     }
