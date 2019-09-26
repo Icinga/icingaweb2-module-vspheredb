@@ -18,7 +18,8 @@ class VmsTable extends ObjectsTable
     protected $searchColumns = [
         'object_name',
         'guest_host_name',
-        'guest_ip_address'
+        'guest_ip_address',
+        'moref'
     ];
 
     public function filterHost($uuid)
