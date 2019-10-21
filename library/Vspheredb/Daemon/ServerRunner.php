@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Daemon;
 
 use Exception;
 use Evenement\EventEmitterTrait;
+use gipfl\IcingaCliDaemon\RetryUnless;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;

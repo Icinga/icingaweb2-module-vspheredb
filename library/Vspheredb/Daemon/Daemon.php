@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Daemon;
 
 use Exception;
 use gipfl\SystemD\NotifySystemD;
+use gipfl\IcingaCliDaemon\RetryUnless;
 use Icinga\Application\Logger;
 use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
