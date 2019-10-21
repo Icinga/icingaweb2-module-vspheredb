@@ -14,7 +14,7 @@ use Icinga\Module\Vspheredb\Format;
 
 class HostsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/host/vms';
+    protected $baseUrl = 'vspheredb/host';
 
     protected function initialize()
     {
