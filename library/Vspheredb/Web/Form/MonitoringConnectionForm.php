@@ -3,14 +3,19 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use Icinga\Data\Db\DbConnection;
+use Icinga\Module\Vspheredb\Web\QueryParams;
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\Form;
 use ipl\Html\FormDecorator\DdDtDecorator;
+use ipl\Html\FormDecorator\DecoratorInterface;
+use ipl\Html\FormElement\SubmitElement;
 use ipl\Html\Html;
 use gipfl\Translation\TranslationHelper;
 use Icinga\Application\Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;
 use InvalidArgumentException;
+use ipl\Html\HtmlDocument;
 
 class MonitoringConnectionForm extends Form
 {
@@ -20,6 +25,7 @@ class MonitoringConnectionForm extends Form
 
     public function __construct(Db $connection)
     {
+        $this->addElementLoader(__NAMESPACE__ . '\\Element');
         $this->db = $connection->getDbAdapter();
         Html::tag('div', ['class' => ['icinga-module', 'module-director']])->wrap($this);
         $this->setDefaultElementDecorator(new DdDtDecorator());
@@ -133,29 +139,60 @@ class MonitoringConnectionForm extends Form
             'options'     => $idoOptions,
         ]);
 
-        $this->addElement('submit', 'submit', [
+        $submit = $this->createElement('submit', 'submit', [
             'label' => $this->translate('Store')
         ]);
+        $buttons = new HtmlDocument();
+        $buttons->add($submit)->setSeparator(' ');
+        $this->registerElement($submit);
+
+        if ($id = $this->getId()) {
+            $delete = new SubmitElement('delete', [
+                'label' => $this->translate('Delete')
+            ]);
+
+            $buttons->add($delete);
+            $this->registerElement($delete);
+            if ($delete->hasBeenPressed()) {
+                $this->db->delete(
+                    'monitoring_connection',
+                    $this->db->quoteInto('id = ?', $id)
+                );
+            }
+        }
+
+        $this->addElement('html', 'buttons', [
+            'content' => $buttons,
+            'ignore'  => true,
+        ]);
+    }
+
+    protected function getId()
+    {
+        return QueryParams::fromRequest($this->getRequest())->get('id');
     }
 
     public function onSuccess()
     {
         $values = $this->getValues();
         $db = $this->db;
-        $priority = (int) $db->fetchOne(
-            $db->select()->from('monitoring_connection', 'MAX(priority)')
-        ) + 1;
-        $this->db->insert('monitoring_connection', $values + [
-            'vcenter_uuid' => hex2bin($this->getValue('vcenter')),
-            'priority'     => $priority,
-        ]);
-    }
-
-    protected function enumCustomVars()
-    {
-        return [
-            'vars.bios_uuid' => 'vars.bios_uuid'
-        ];
+        $id = $this->getId();
+        $vCenterUuid = \hex2bin($this->getValue('vcenter'));
+        if ($id) {
+            $db->update(
+                'monitoring_connection',
+                $values,
+                $db->quoteInto('id = ?', $id)
+            );
+        } else {
+            $priority = (int) $db->fetchOne(
+                $db->select()->from('monitoring_connection', 'MAX(priority)')
+            ) + 1;
+            $db->insert('monitoring_connection', $values + [
+                'vcenter_uuid' => $vCenterUuid,
+                'priority'     => $priority,
+            ]);
+        }
     }
 
     protected function enumIdoCustomVars(DbConnection $db)
