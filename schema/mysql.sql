@@ -639,7 +639,6 @@ CREATE TABLE monitoring_connection (
   vm_property VARCHAR(128) DEFAULT NULL,
   monitoring_vm_host_property VARCHAR(128) DEFAULT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY (priority),
   CONSTRAINT monitoring_vcenter
     FOREIGN KEY monitoring_vcenter_uuid (vcenter_uuid)
     REFERENCES vcenter (instance_uuid)
@@ -803,4 +802,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (15, NOW());
+VALUES (16, NOW());
