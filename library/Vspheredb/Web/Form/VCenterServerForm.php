@@ -142,7 +142,7 @@ class VCenterServerForm extends Form
         ]);
         if (! $this->isNew()) {
             $buttons[] = new SubmitElement('btn_delete', [
-                'label' => $this->translate('Delte')
+                'label' => $this->translate('Delete')
             ]);
         }
         foreach ($buttons as $button) {
