@@ -172,7 +172,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         ])->order('sensor_type')->order('name')->limit(1000);
 
         $query->where('base_units IS NOT NULL');
-        $query->where('health_state != ?', 'unknown');
+        // $query->where('health_state != ?', 'unknown');
 
         if ($this->host) {
             $query->where('host_uuid = ?', $this->host->get('uuid'));
