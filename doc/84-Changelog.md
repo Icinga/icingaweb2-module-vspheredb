@@ -5,8 +5,8 @@ v1.1.0
 ------
 ### Breaking Changes
 * This module no longer depends on the Icinga Director
-* New dependencies have been introduced, [Upgrading](05-Upgrading.md) and
-  [Installation](02-Installation.md) documentations contain related details
+* New dependencies have been introduced, our [Installation](01-Installation.md)
+  documentations contain related details
 
 ### Upgrading
 
