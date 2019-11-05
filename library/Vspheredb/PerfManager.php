@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\MappedClass\PerfMetricId;
 use Icinga\Module\Vspheredb\MappedClass\PerformanceManager;
 use Icinga\Module\Vspheredb\MappedClass\PerfQuerySpec;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
+use Icinga\Module\Vspheredb\Rpc\Logger;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
@@ -210,6 +211,7 @@ class PerfManager
         if (isset($result->returnval)) {
             return $result->returnval;
         } else {
+            Logger::error('no returnval');
             return [];
         }
     }
