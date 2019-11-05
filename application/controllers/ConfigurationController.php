@@ -30,9 +30,7 @@ class ConfigurationController extends Controller
         }
         $form = new ChooseDbResourceForm();
         $form->handleRequest($this->getServerRequest());
-        $this->content()->add(Html::tag('div', [
-            'class' => 'icinga-module module-director'
-        ], $form));
+        $this->content()->add($form);
         if ($form->hasMessages()) {
             $this->addSingleTab($this->translate('Configuration'));
 
@@ -75,9 +73,11 @@ class ConfigurationController extends Controller
                     . ' them now!'
                 )));
                 $this->content()->add(
-                    ApplyMigrationsForm::load()
-                        ->setMigrations($migrations)
-                        ->handleRequest()
+                    (new ApplyMigrationsForm($migrations))
+                        ->on(ApplyMigrationsForm::ON_SUCCESS, function () {
+                            $this->redirectNow($this->url());
+                        })
+                        ->handleRequest($this->getServerRequest())
                 );
             }
         } else {
@@ -103,9 +103,11 @@ class ConfigurationController extends Controller
                 )));
             }
             $this->content()->add(
-                ApplyMigrationsForm::load()
-                    ->setMigrations($migrations)
-                    ->handleRequest()
+                (new ApplyMigrationsForm($migrations))
+                    ->on(ApplyMigrationsForm::ON_SUCCESS, function () {
+                        $this->redirectNow($this->url());
+                    })
+                    ->handleRequest($this->getServerRequest())
             );
         }
     }

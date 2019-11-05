@@ -4,49 +4,52 @@ namespace Icinga\Module\Vspheredb\Web\Form;
 
 use Exception;
 use Icinga\Module\Vspheredb\Db\Migrations;
+use Icinga\Web\Notification;
+use ipl\Html\Html;
 
-class ApplyMigrationsForm extends BaseForm
+class ApplyMigrationsForm extends Form
 {
     /** @var  Migrations */
     protected $migrations;
 
-    public function setup()
+    public function __construct(Migrations $migrations)
     {
+        $this->migrations = $migrations;
+    }
+
+    public function assemble()
+    {
+        $this->prepareWebForm();
         if ($this->migrations->hasSchema()) {
             $count = $this->migrations->countPendingMigrations();
             if ($count === 1) {
-                $this->setSubmitLabel(
-                    $this->translate('Apply a pending schema migration')
-                );
+                $label = $this->translate('Apply a pending schema migration');
             } else {
-                $this->setSubmitLabel(sprintf(
+                $label = sprintf(
                     $this->translate('Apply %d pending schema migrations'),
                     $count
-                ));
+                );
             }
         } else {
-            $this->setSubmitLabel($this->translate('Create schema'));
+            $this->add(Html::tag('p', [
+                'class' => 'state-hint warning'
+            ], $this->translate('There is no vSphereDB schema in this database')));
+            $label = $this->translate('Create schema');
         }
+        $this->addElement('submit', 'submit', [
+            'label' => $label
+        ]);
     }
 
     public function onSuccess()
     {
         try {
-            $this->setSuccessMessage($this->translate(
+            $this->migrations->applyPendingMigrations();
+            Notification::success($this->translate(
                 'Pending database schema migrations have successfully been applied'
             ));
-
-            $this->migrations->applyPendingMigrations();
-            parent::onSuccess();
         } catch (Exception $e) {
-            $this->addError($e->getMessage());
+            $this->addMessage($e->getMessage());
         }
-    }
-
-    public function setMigrations(Migrations $migrations)
-    {
-        $this->migrations = $migrations;
-
-        return $this;
     }
 }

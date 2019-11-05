@@ -3,20 +3,27 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
-use ipl\Html\FormDecorator\DdDtDecorator;
 use ipl\Html\FormElement\SubmitElement;
 
 class VCenterServerForm extends Form
 {
-    protected $listUrl = 'vspheredb/vcenter/servers';
+    protected $objectClassName = VCenterServer::class;
 
     /** @var VCenterServer */
     protected $object;
 
+    protected $db;
+
+    public function __construct(Db $db)
+    {
+        $this->db = $db;
+    }
+
     public function assemble()
     {
-        $this->setDefaultElementDecorator(new DdDtDecorator());
+        $this->prepareWebForm();
         if (! class_exists('SoapClient')) {
             $this->addMessage($this->translate(
                 'The PHP SOAP extension (php-soap) is not installed/enabled'
@@ -52,7 +59,7 @@ class VCenterServerForm extends Form
             'required' => true,
         ]);
 
-        $ssl = $this->getValue('scheme', 'https') === 'http';
+        $ssl = $this->getValue('scheme', 'https') === 'https';
 
         if ($ssl) {
             $this->addElement('boolean', 'ssl_verify_peer', [
@@ -175,19 +182,22 @@ class VCenterServerForm extends Form
         return $this;
     }
 
+    /**
+     * @return BaseDbObject
+     */
     public function getObject()
     {
+        if ($this->object === null) {
+            /** @var BaseDbObject $class */
+            $class = $this->objectClassName;
+            $this->object = $class::create([], $this->db);
+        }
+
         return $this->object;
     }
 
-    public function setVsphereDb(Db $db)
+    public function onSuccess()
     {
-        if ($this->object !== null) {
-            $this->object->setConnection($db);
-        }
-
-        $this->db = $db;
-
-        return $this;
+        $this->getObject()->setProperties($this->getValues());
     }
 }

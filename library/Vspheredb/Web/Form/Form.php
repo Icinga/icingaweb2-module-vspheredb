@@ -47,7 +47,8 @@ class Form extends iplForm
     protected function addFormNameElement()
     {
         $this->addElement('hidden', $this->formNameElementName, [
-            'value' => $this->getUniqueFormName()
+            'value'  => $this->getUniqueFormName(),
+            'ignore' => true,
         ]);
     }
 
@@ -64,7 +65,9 @@ class Form extends iplForm
 
     protected function addCsrfElement()
     {
-        $element = new HiddenElement('__CSRF__');
+        $element = new HiddenElement('__CSRF__', [
+            'ignore' => true,
+        ]);
         $element->setValidators([
             new PhpSessionBasedCsrfTokenValidator()
         ]);
