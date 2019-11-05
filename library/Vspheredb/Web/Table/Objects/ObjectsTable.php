@@ -13,9 +13,10 @@ abstract class ObjectsTable extends BaseTable
         'object_name',
     ];
 
-    /** @var VCenter */
+    /** @deprecated  */
     protected $filterVCenter;
 
+    /** @deprecated  */
     protected $parentUuids;
 
     protected $baseUrl;
@@ -24,14 +25,14 @@ abstract class ObjectsTable extends BaseTable
 
     public function filterParentUuids(array $uuids)
     {
-        $this->parentUuids = $uuids;
+        $this->getQuery()->where('o.parent_uuid IN (?)', $uuids);
 
         return $this;
     }
 
     public function filterVCenter(VCenter $vCenter)
     {
-        $this->filterVCenter = $vCenter;
+        $this->getQuery()->where('o.vcenter_uuid = ?', $vCenter->getUuid());
 
         return $this;
     }
