@@ -13,13 +13,26 @@ class OverallStatusRenderer extends Html
     public function __invoke($state)
     {
         if (is_object($state)) {
+            if (isset($state->runtime_power_state)) {
+                $powerState = $state->runtime_power_state;
+            } else {
+                $powerState = null;
+            }
             $state = $state->overall_status;
+        } else {
+            $powerState = null;
         }
 
-        return Icon::create($state === 'green' ? 'ok' : 'warning-empty', [
-            'title' => $this->getStatusDescription($state),
-            'class' => [ 'state', $state ]
-        ]);
+        if ($powerState === null || $powerState === 'poweredOn') {
+            return Icon::create($state === 'green' ? 'ok' : 'warning-empty', [
+                'title' => $this->getStatusDescription($state),
+                'class' => [ 'state', $state ]
+            ]);
+        } else {
+            $powerInfo = new PowerStateRenderer();
+
+            return $powerInfo($powerState);
+        }
     }
 
     protected function getStatusDescription($status)

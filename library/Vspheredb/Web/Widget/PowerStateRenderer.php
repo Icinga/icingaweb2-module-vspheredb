@@ -21,7 +21,7 @@ class PowerStateRenderer extends Html
         ]);
     }
 
-    protected function getPowerStateDescription($state)
+    public function getPowerStateDescription($state)
     {
         $descriptions = [
             'poweredOn'  => $this->translate('Powered on'),
