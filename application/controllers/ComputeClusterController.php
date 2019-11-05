@@ -20,15 +20,6 @@ class ComputeClusterController extends Controller
     {
         $computeCluster = $this->addComputeCluster();
         $this->content()->addAttributes(['class' => 'host-info']);
-    }
-
-    /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
-     */
-    public function hostsAction()
-    {
-        $computeCluster = $this->addComputeCluster();
         $table = new HostsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
@@ -65,13 +56,13 @@ class ComputeClusterController extends Controller
             'label' => $this->translate('Compute Cluster'),
             'url' => 'vspheredb/compute-cluster',
             'urlParams' => ['uuid' => $hexId]
-        ])->add('hosts', [
+        ])/*->add('hosts', [
             'label' => sprintf(
                 $this->translate('Host Systems (%d)'),
                 $computeCluster->countHosts()
             ),
             'url' => 'vspheredb/compute-cluster/hosts',
             'urlParams' => ['uuid' => $hexId]
-        ])->activate($this->getRequest()->getActionName());
+        ])*/->activate($this->getRequest()->getActionName());
     }
 }
