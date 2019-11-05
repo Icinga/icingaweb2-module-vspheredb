@@ -16,7 +16,7 @@ class GroupedvmsTable extends ObjectsTable
 
     public function filter($uuid)
     {
-        $this->getQuery()->where('vc.runtime_host_uuid = ?', $uuid);
+        $this->getQuery()->where('vm.runtime_host_uuid = ?', $uuid);
 
         return $this;
     }
@@ -27,14 +27,14 @@ class GroupedvmsTable extends ObjectsTable
             ['o' => 'object'],
             $this->getRequiredDbColumns()
         )->join(
-            ['vc' => 'virtual_machine'],
-            'o.uuid = vc.uuid',
+            ['vm' => 'virtual_machine'],
+            'o.uuid = vm.uuid',
             []
         )->group($this->groupByAlias);
 
         $query->join(
             ['h' => 'host_system'],
-            'vc.runtime_host_uuid = h.uuid',
+            'vm.runtime_host_uuid = h.uuid',
             []
         )->join(
             ['ho' => 'object'],
@@ -43,7 +43,7 @@ class GroupedvmsTable extends ObjectsTable
         );
         $query->join(
             ['vqs' => 'vm_quick_stats'],
-            'vqs.uuid = vc.uuid',
+            'vqs.uuid = vm.uuid',
             []
         );
 
@@ -89,7 +89,7 @@ class GroupedvmsTable extends ObjectsTable
                 'SUM(hqs.overall_cpu_usage) / SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
             )->setDefaultSortDirection('DESC'),
             */
-            $this->createColumn('hardware_numcpu', $this->translate('vCPU Count'), 'SUM(vc.hardware_numcpu)')
+            $this->createColumn('hardware_numcpu', $this->translate('vCPU Count'), 'SUM(vm.hardware_numcpu)')
                 ->setDefaultSortDirection('DESC'),
             $this->createColumn('cpu_usage', 'CPU', 'SUM(vqs.overall_cpu_usage)')
                 ->setRenderer(function ($row) {
@@ -97,27 +97,27 @@ class GroupedvmsTable extends ObjectsTable
                 })->setDefaultSortDirection('DESC'),
             $this->createColumn('memory', $this->translate('Memory'), [
                 'used_mb'      => 'SUM(vqs.guest_memory_usage_mb)',
-                'total_mb'     => 'SUM(vc.hardware_memorymb)',
+                'total_mb'     => 'SUM(vm.hardware_memorymb)',
                 'host_used_mb' => 'SUM(vqs.host_memory_usage_mb)',
             ])->setRenderer(function ($row) {
                 return new MemoryUsage($row->used_mb, $row->total_mb, $row->host_used_mb);
             })->setSortExpression(
-                'SUM(vqs.guest_memory_usage_mb) / SUM(vc.hardware_memorymb)'
+                'SUM(vqs.guest_memory_usage_mb) / SUM(vm.hardware_memorymb)'
             )->setDefaultSortDirection('DESC'),
 
             $this->createColumn('host_memory', $this->translate('Host Memory'), [
                 'host_used_mb'  => 'SUM(vqs.host_memory_usage_mb)',
-                'total_mb' => 'SUM(vc.hardware_memorymb)',
+                'total_mb' => 'SUM(vm.hardware_memorymb)',
             ])->setRenderer(function ($row) {
                 return new MemoryUsage($row->host_used_mb, $row->total_mb);
             })->setSortExpression(
-                'AVG(vqs.host_memory_usage_mb / vc.hardware_memorymb)'
+                'AVG(vqs.host_memory_usage_mb / vm.hardware_memorymb)'
             )->setDefaultSortDirection('DESC'),
 
             /*
             $this->createColumn('memory', 'Host Memory', [
                 'used_mb'  => 'SUM(vqs.host_memory_usage_mb)',
-                'total_mb' => 'SUM(vc.hardware_memorymb)',
+                'total_mb' => 'SUM(vm.hardware_memorymb)',
             ])->setRenderer(function ($row) {
                 $used = $row->used_mb * 1024 * 1024;
                 $total = $row->total_mb * 1024 * 1024;
@@ -139,7 +139,7 @@ class GroupedvmsTable extends ObjectsTable
 
             $this->createColumn('vms', 'VMs', 'COUNT(*)')
                 ->setDefaultSortDirection('DESC'),
-            $this->createColumn('hardware_memorymb', 'Memory Capacity', 'SUM(vc.hardware_memorymb)')
+            $this->createColumn('hardware_memorymb', 'Memory Capacity', 'SUM(vm.hardware_memorymb)')
                 ->setRenderer(function ($row) {
                     return Format::mBytes($row->hardware_memorymb);
                 })->setDefaultSortDirection('DESC'),
