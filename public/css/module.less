@@ -383,6 +383,19 @@ div.action-bar > ul > li:hover {
 }
 /** END of dropdown in action bar **/
 
+table.common-table th {
+  vertical-align: middle;
+  white-space: nowrap;
+  > ul > li {
+    line-height: normal;
+  }
+
+  // Column selection dropdown
+  &.with-column-selector {
+    padding-right: 2.5em;
+  }
+}
+
 /** BEGIN of dropdown in table header **/
 table.common-table th {
   position: relative;
