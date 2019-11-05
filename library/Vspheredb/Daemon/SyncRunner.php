@@ -142,7 +142,7 @@ class SyncRunner
         $this->deferred = new Deferred();
         $this->loop = $loop;
         $initialSync = [
-            'customFields',
+            // 'customFields',
             'moRefs',
             'hostSystems',
             'virtualMachines',
