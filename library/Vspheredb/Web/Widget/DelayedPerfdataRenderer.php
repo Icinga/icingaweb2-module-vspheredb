@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\DeferredText;
+use ipl\Html\DeferredText;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Table\TableColumn;
 

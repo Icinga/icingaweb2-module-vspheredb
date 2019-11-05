@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Sync;
 
 use Exception;
 use Icinga\Application\Logger;
-use Icinga\Module\Director\Exception\DuplicateKeyException;
+use Icinga\Module\Vspheredb\Exception\DuplicateKeyException;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\SelectSet\FullSelectSet;

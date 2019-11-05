@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use dipl\Html\Html;
 use dipl\Html\ValidHtml;
+use ipl\Html\Html;
 use Icinga\Module\Director\Web\Form\DirectorForm;
 
 class BaseForm extends DirectorForm implements ValidHtml

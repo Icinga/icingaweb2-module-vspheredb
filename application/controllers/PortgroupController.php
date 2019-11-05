@@ -18,7 +18,7 @@ class PortgroupController extends ObjectsController
     public function indexAction()
     {
         $this->setAutorefreshInterval(15);
-        $table = new NetworkAdaptersTable($this->db());
+        $table = new NetworkAdaptersTable($this->db(), $this->url());
         $portGroup = DistributedVirtualPortgroup::load(hex2bin(
             $this->params->getRequired('uuid')
         ), $this->db());
@@ -26,7 +26,6 @@ class PortgroupController extends ObjectsController
         $this->addSingleTab($this->translate('Port Group'));
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
-        $table->handleSortUrl($this->url());
         $this->showTable($table, $this->url(), $this->translate('Virtual Machine Network Adapters'));
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);

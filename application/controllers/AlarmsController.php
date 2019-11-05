@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;

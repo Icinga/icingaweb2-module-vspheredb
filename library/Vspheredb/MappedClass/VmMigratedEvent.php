@@ -6,21 +6,30 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 class VmMigratedEvent extends BaseMigrationEvent
 {
+    /** @var HostEventArgument */
+    protected $sourceHost;
+
+    /** @var DatastoreEventArgument */
+    protected $sourceDatastore;
+
+    /** @var DatacenterEventArgument */
+    protected $sourceDatacenter;
+
     protected function getMigrationDetails(VCenter $vCenter)
     {
         $data = [];
 
-        if (isset($this->host->host->_) && strlen($this->host->host->_)) {
-            $data['destination_host_uuid'] = $vCenter->makeBinaryGlobalUuid($this->host->host->_);
+        if ($this->host) {
+            $data['destination_host_uuid'] = $vCenter->makeBinaryGlobalUuid($this->host->host);
         }
-        if (isset($this->ds->datastore->_) && strlen($this->ds->datastore->_)) {
-            $data['destination_datastore_uuid'] = $vCenter->makeBinaryGlobalUuid($this->ds->datastore->_);
+        if ($this->ds) {
+            $data['destination_datastore_uuid'] = $vCenter->makeBinaryGlobalUuid($this->ds->datastore);
         }
-        if (isset($this->sourceHost->host->_) && strlen($this->sourceHost->host->_)) {
-            $data['host_uuid'] = $vCenter->makeBinaryGlobalUuid($this->sourceHost->host->_);
+        if ($this->sourceHost) {
+            $data['host_uuid'] = $vCenter->makeBinaryGlobalUuid($this->sourceHost->host);
         }
-        if (isset($this->sourceDatastore->datastore->_) && strlen($this->sourceDatastore->datastore->_)) {
-            $data['datastore_uuid'] = $vCenter->makeBinaryGlobalUuid($this->sourceDatastore->datastore->_);
+        if ($this->sourceDatastore) {
+            $data['datastore_uuid'] = $vCenter->makeBinaryGlobalUuid($this->sourceDatastore->datastore);
         }
 
         return $data;

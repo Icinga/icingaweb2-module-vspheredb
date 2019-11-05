@@ -12,15 +12,9 @@ Requirements
 * MySQL (&gt;= 5.6) or MariaDB (&gt;= 5.5.3)
 * Icinga Web 2 modules:
   * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.4) (Icinga Web 2 module)
-  * [Icinga PHP Library (ipl)](https://github.com/Icinga/icingaweb2-module-ipl) (>= 0.1) (Icinga Web 2 module)
-  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>= 0.1) (Icinga Web 2 module)
-  * [Icinga Director](https://github.com/Icinga/icingaweb2-module-director) (&gt;= v1.6 or current master)
-
-
-> **Hint**: this module will hook into Icinga Director, but shouldn't depend on it
-> at all. Currently it is based on some libraries provided by the Director, that's
-> why you need to have a very recent version installed. We will ship those libraries
-> separately in the near future to get rid of this dependency.
+  * [Icinga PHP Library (ipl)](https://github.com/Icinga/icingaweb2-module-ipl) (>= 0.2) (Icinga Web 2 module)
+  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>= 0.2) (Icinga Web 2 module)
+  * Suggested: [Icinga Director](https://github.com/Icinga/icingaweb2-module-director) (&gt;= v1.7)
 
 Once you got Icinga Web 2 up and running, all required dependencies should
 already be there. All, but `php-soap` and `php-posix`. They are available on

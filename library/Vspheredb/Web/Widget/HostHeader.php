@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\Html;
-use dipl\Html\HtmlDocument;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
 
 class HostHeader extends HtmlDocument
 {

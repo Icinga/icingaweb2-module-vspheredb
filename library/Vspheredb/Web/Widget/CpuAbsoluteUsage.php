@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Html\Html;
-use dipl\Translation\TranslationHelper;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
+use gipfl\Translation\TranslationHelper;
 
 class CpuAbsoluteUsage extends BaseHtmlElement
 {

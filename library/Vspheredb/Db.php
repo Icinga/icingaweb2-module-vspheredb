@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb;
 
 use Icinga\Application\Config;
-use Icinga\Module\Director\Data\Db\DbConnection;
+use Icinga\Module\Vspheredb\Db\DbConnection;
 
 class Db extends DbConnection
 {

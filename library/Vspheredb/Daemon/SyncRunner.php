@@ -3,10 +3,10 @@
 namespace Icinga\Module\Vspheredb\Daemon;
 
 use Exception;
-use Evenement\EventEmitterTrait;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\DbObject\StoragePod;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\EventManager;
@@ -20,12 +20,13 @@ use Icinga\Module\Vspheredb\Sync\SyncVmDatastoreUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmDiskUsage;
 use Icinga\Module\Vspheredb\Sync\SyncVmHardware;
 use Icinga\Module\Vspheredb\Sync\SyncVmSnapshots;
+use ipl\Stdlib\EventEmitter;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 
 class SyncRunner
 {
-    use EventEmitterTrait;
+    use EventEmitter;
 
     /** @var VCenter */
     protected $vCenter;
@@ -43,11 +44,16 @@ class SyncRunner
     /** @var Deferred */
     protected $deferred;
 
+    /** @var bool */
+    protected $showTrace = false;
+
     protected $taskNames = [
+        'customFields'     => 'Custom Fields Inventory',
         'moRefs'           => 'Managed Object References',
         'quickStats'       => 'Quick Stats',
         'hostSystems'      => 'Host Systems',
         'virtualMachines'  => 'Virtual Machines',
+        'storagePods'      => 'Storage Pods',
         'dataStores'       => 'Data Stores',
         'hostHardware'     => 'Host Hardware',
         'hostSensors'      => 'Host Sensors',
@@ -68,6 +74,17 @@ class SyncRunner
     {
         $this->vCenter = $vCenter;
         $this->availableTasks = [
+            'customFields' => function () {
+                if ($this->vCenter->getApi()->hasCustomFieldsManager()) {
+                    Logger::info('There is a CustomFieldsManager');
+                    Logger::info(print_r($this->vCenter->getApi()->customFieldsManager()->object(), 1));
+                } else {
+                    Logger::info('There is no CustomFieldsManager');
+                }
+                // alle speichern
+                // -> nur wenn managedObjectType = 'HostSystem' oder 'VirtualMachine'
+                // todo -> customValue auch am Host holen
+            },
             'moRefs' => function () {
                 (new SyncManagedObjectReferences($this->vCenter))->sync();
             },
@@ -79,6 +96,9 @@ class SyncRunner
             },
             'virtualMachines' => function () {
                 VirtualMachine::syncFromApi($this->vCenter);
+            },
+            'storagePods' => function () {
+                StoragePod::syncFromApi($this->vCenter);
             },
             'dataStores' => function () {
                 Datastore::syncFromApi($this->vCenter);
@@ -104,7 +124,7 @@ class SyncRunner
             'eventStream' => function () {
                 $this->streamEvents();
             },
-            'perfCounters' => function () {
+            'perfCounters' => function () { // Currently unused.
                 (new SyncPerfCounters($this->vCenter))->run();
             },
             'perfCounterInfo' => function () {
@@ -122,10 +142,13 @@ class SyncRunner
         $this->deferred = new Deferred();
         $this->loop = $loop;
         $initialSync = [
+            'customFields',
             'moRefs',
             'hostSystems',
             'virtualMachines',
             'quickStats',
+            'perfCounterInfo',
+            'storagePods',
             'dataStores',
             'vmDatastoreUsage',
             'vmDiskUsage',
@@ -133,7 +156,6 @@ class SyncRunner
             'vmHardware',
             'hostHardware',
             'hostSensors',
-            // 'perfCounterInfo',
         ];
 
         $schedule = [
@@ -156,6 +178,7 @@ class SyncRunner
                 'vmDiskUsage',
             ]],
             [90, [
+                'storagePods',
                 'quickStats',
             ]],
         ];
@@ -186,6 +209,9 @@ class SyncRunner
                 gc_enable();
             } catch (Exception $e) {
                 Logger::error("Task $task failed: " . $e->getMessage());
+                if ($this->showTrace) {
+                    Logger::error($e->getTraceAsString());
+                }
                 $this->loop->addTimer(0.5, function () {
                     $this->deferred->reject();
                 });
@@ -201,6 +227,17 @@ class SyncRunner
                 $this->runNextImmediateTask();
             });
         }
+    }
+
+    /**
+     * @param bool $show
+     * @return $this
+     */
+    public function showTrace($show = true)
+    {
+        $this->showTrace = (bool) $show;
+
+        return $this;
     }
 
     protected function callRunTasks($tasks)

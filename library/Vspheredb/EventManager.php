@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\BaseMigrationEvent;
 use Icinga\Module\Vspheredb\MappedClass\KnownEvent;
 use Icinga\Module\Vspheredb\MappedClass\SessionEvent;
+use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use RuntimeException;
 use Zend_Db_Select as ZfSelect;
 
@@ -17,9 +18,10 @@ class EventManager
     /** @var Api */
     protected $api;
 
+    /** @var ManagedObjectReference */
     protected $obj;
 
-    /** @var \stdClass */
+    /** @var ManagedObjectReference */
     protected $collector;
 
     protected $lastEventTimestamp;
@@ -56,95 +58,52 @@ class EventManager
     }
 
     /**
-     * Just for tests, not used at runtime
-     *
+     * @return ManagedObjectReference
+     * @throws AuthenticationException
+     * @throws \SoapFault
+     */
+    private function createEventCollector()
+    {
+        $result = $this->api->soapCall('CreateCollectorForEvents', [
+            '_this' => $this->obj
+        ] + $this->createSpecSet());
+        if (property_exists($result, 'returnval')) {
+            // This moref looks like this:
+            // returnval => {
+            //     _ => "session[52dd54f1-28a1-4b84-6bd4-fc45fd9f3b78]52fc6d14-1c07-ffcd-107c-7132b2d263b0",
+            //     type => "EventHistoryCollector"
+
+            return $result->returnval;
+        } else {
+            throw new AuthenticationException('Unable to create event collector, please check session');
+        }
+    }
+
+    /**
+     * @throws AuthenticationException
+     * @throws \SoapFault
+     */
+    public function rewindCollector()
+    {
+        $this->call('RewindCollector');
+    }
+
+    /**
      * @return BaseMigrationEvent[]
      * @throws AuthenticationException
+     * @throws \SoapFault
      */
-    public function queryEvents()
+    public function collectFromCollector()
     {
-        $result = $this->api->soapCall('QueryEvents', $this->createSpecSet());
+        $result = $this->call('ReadNextEvents', [
+            'maxCount' => 1000,
+        ]);
+
         if (property_exists($result, 'returnval')) {
             return $result->returnval;
         } else {
             return [];
         }
-    }
-
-    /**
-     * @return \stdClass
-     * @throws AuthenticationException
-     */
-    protected function collector()
-    {
-        if ($this->collector === null) {
-            $this->collector = $this->createEventCollector();
-            $this->rewindCollector();
-        }
-
-        return $this->collector;
-    }
-
-    /**
-     * @return int
-     * @throws \Zend_Db_Select_Exception
-     */
-    protected function getLastEventTimeStamp()
-    {
-        $db = $this->vCenter->getDb();
-        $uuid = $this->vCenter->getUuid();
-
-        $union = $db->select()->union([
-            'vmeh' => $db->select()->from(
-                'vm_event_history',
-                ['ts_event_ms' => 'MAX(ts_event_ms)']
-            )->where('vcenter_uuid = ?', $uuid),
-            'ah' => $db->select()->from(
-                'alarm_history',
-                ['ts_event_ms' => 'MAX(ts_event_ms)']
-            )->where('vcenter_uuid = ?', $uuid),
-        ], ZfSelect::SQL_UNION_ALL);
-
-        return (int) $db->fetchOne(
-            $db->select()->from(['u' => $union], 'MAX(ts_event_ms)')
-        );
-    }
-
-    /**
-     * @return int
-     * @throws \Zend_Db_Select_Exception
-     */
-    protected function getLastEventKey()
-    {
-        $db = $this->vCenter->getDb();
-        $uuid = $this->vCenter->getUuid();
-
-        $union = $db->select()->union([
-            'vmeh' => $db->select()->from(
-                'vm_event_history',
-                ['event_key' => 'MAX(event_key)']
-            )->where('vcenter_uuid = ?', $uuid),
-            'ah' => $db->select()->from(
-                'alarm_history',
-                ['event_key' => 'MAX(event_key)']
-            )->where('vcenter_uuid = ?', $uuid),
-        ], ZfSelect::SQL_UNION_ALL);
-
-        return (int) $db->fetchOne(
-            $db->select()->from(['u' => $union], 'MAX(event_key)')
-        );
-    }
-
-    /**
-     * @throws AuthenticationException
-     */
-    public function rewindCollector()
-    {
-        $this->runFailSafeWithCollector(function () {
-            $result = $this->api->soapCall('RewindCollector', [
-                '_this'   => $this->collector(),
-            ]);
-        });
     }
 
     /**
@@ -215,66 +174,87 @@ class EventManager
     }
 
     /**
-     * @param $callable
+     * @return int
+     * @throws \Zend_Db_Select_Exception
+     */
+    protected function getLastEventTimeStamp()
+    {
+        $db = $this->vCenter->getDb();
+        $uuid = $this->vCenter->getUuid();
+
+        $union = $db->select()->union([
+            'vmeh' => $db->select()->from(
+                'vm_event_history',
+                ['ts_event_ms' => 'MAX(ts_event_ms)']
+            )->where('vcenter_uuid = ?', $uuid),
+            'ah' => $db->select()->from(
+                'alarm_history',
+                ['ts_event_ms' => 'MAX(ts_event_ms)']
+            )->where('vcenter_uuid = ?', $uuid),
+        ], ZfSelect::SQL_UNION_ALL);
+
+        return (int) $db->fetchOne(
+            $db->select()->from(['u' => $union], 'MAX(ts_event_ms)')
+        );
+    }
+
+    /**
+     * @return int
+     * @throws \Zend_Db_Select_Exception
+     */
+    protected function getLastEventKey()
+    {
+        $db = $this->vCenter->getDb();
+        $uuid = $this->vCenter->getUuid();
+
+        $union = $db->select()->union([
+            'vmeh' => $db->select()->from(
+                'vm_event_history',
+                ['event_key' => 'MAX(event_key)']
+            )->where('vcenter_uuid = ?', $uuid),
+            'ah' => $db->select()->from(
+                'alarm_history',
+                ['event_key' => 'MAX(event_key)']
+            )->where('vcenter_uuid = ?', $uuid),
+        ], ZfSelect::SQL_UNION_ALL);
+
+        return (int) $db->fetchOne(
+            $db->select()->from(['u' => $union], 'MAX(event_key)')
+        );
+    }
+
+    /**
+     * @param string $method
+     * @param array $params
      * @return mixed
      * @throws AuthenticationException
+     * @throws \SoapFault
      */
-    protected function runFailSafeWithCollector($callable)
+    protected function call($method, $params = [])
     {
         try {
-            return $callable();
+            return $this->api->soapCall($method, [
+                    '_this'   => $this->collector(),
+                ] + $params);
         } catch (\SoapFault $e) {
-            if (current($e->detail)->enc_stype === 'ManagedObjectNotFound') {
-                $this->collector = $this->createEventCollector();
-            }
-
-            return $callable();
+            $this->checkForFailedEventCollector($e);
+            throw $e;
         }
     }
 
     /**
-     * @return BaseMigrationEvent[]
-     * @throws AuthenticationException
+     * In case we failed with ManagedObjectNotFound, forget about failing EventCollector
+     *
+     * TODO: We might eventually check that the error really refers our collector object.
+     *
+     * @param \SoapFault $fault
      */
-    public function collectFromCollector()
+    protected function checkForFailedEventCollector(\SoapFault $fault)
     {
-        $specSet = [
-            '_this'   => $this->collector(),
-            'maxCount' => 1000,
-        ];
-
-        try {
-            $result = $this->api->soapCall('ReadNextEvents', $specSet);
-        } catch (\SoapFault $e) {
-            Logger::error($this->api->curl()->getLastResponse());
-            if (property_exists($e, 'faultactor')) {
-                throw new RuntimeException($e->faultactor);
-            } else {
-                throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
-            }
+        if (isset($fault->detail) && current($fault->detail)->enc_stype === 'ManagedObjectNotFound') {
+            $this->collector = null;
+            Logger::warning('Dropping formerly known EventCollector: ' . $fault->getMessage());
         }
-
-        if (property_exists($result, 'returnval')) {
-            return $result->returnval;
-        } else {
-            return [];
-        }
-    }
-
-    protected function createSpecSet()
-    {
-        $filters = ['type' => $this->getEventTypes()];
-
-        if ($this->lastEventTimestamp) {
-            $filters['time'] = [
-                'beginTime' => $this->makeDateTime((int) floor($this->lastEventTimestamp / 1000))
-            ];
-        }
-
-        return [
-            '_this'  => $this->obj,
-            'filter' => $filters,
-        ];
     }
 
     protected function getEventTypes()
@@ -314,6 +294,46 @@ class EventManager
         ];
     }
 
+    /**
+     * Just for tests, not used at runtime
+     *
+     * @return BaseMigrationEvent[]
+     * @throws AuthenticationException
+     */
+    public function queryEvents()
+    {
+        $result = $this->api->soapCall('QueryEvents', $this->createSpecSet());
+        if (property_exists($result, 'returnval')) {
+            return $result->returnval;
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function createSpecSet()
+    {
+        $filters = ['type' => $this->getEventTypes()];
+
+        if ($this->lastEventTimestamp) {
+            $filters['time'] = [
+                'beginTime' => $this->makeDateTime((int) floor($this->lastEventTimestamp / 1000))
+            ];
+        }
+
+        return [
+            'filter' => $filters,
+        ];
+    }
+
+    /**
+     * UNUSED
+     *
+     * @param $vmRef
+     * @return array
+     */
     protected function createSpecSetForVm($vmRef)
     {
         // Cloned -> sourceVm
@@ -331,33 +351,25 @@ class EventManager
         ];
     }
 
-    /**
-     * @return array
-     * @throws AuthenticationException
-     */
-    public function createEventCollector()
-    {
-        $specSet = $this->createSpecSet();
-        $result = $this->api->soapCall('CreateCollectorForEvents', $specSet);
-        if (property_exists($result, 'returnval')) {
-            /* { returnval => {
-                    _ => "session[52dd54f1-28a1-4b84-6bd4-fc45fd9f3b78]52fc6d14-1c07-ffcd-107c-7132b2d263b0",
-                    type => "EventHistoryCollector"
-            } } */
-
-            return $result->returnval;
-        } else {
-            throw new AuthenticationException('Unable to create event collector, please check session');
-        }
-    }
-
     protected function makeDateTime($timestamp)
     {
         return gmdate('Y-m-d\TH:i:s\Z', $timestamp);
     }
 
-    public function makeEntity($name, $type)
+    /**
+     * Lazy access to eventCollector
+     *
+     * @return ManagedObjectReference
+     * @throws AuthenticationException
+     * @throws \SoapFault
+     */
+    protected function collector()
     {
-        return ['_' => $name, 'type' => $type];
+        if ($this->collector === null) {
+            $this->collector = $this->createEventCollector();
+            $this->rewindCollector();
+        }
+
+        return $this->collector;
     }
 }

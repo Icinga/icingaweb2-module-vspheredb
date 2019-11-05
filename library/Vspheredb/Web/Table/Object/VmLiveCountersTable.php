@@ -3,14 +3,14 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use DateTime;
-use dipl\Html\Html;
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\NameValueTable;
 use Exception;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Application\Benchmark;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\CompactInOutSparkline;
+use ipl\Html\Html;
 
 class VmLiveCountersTable extends NameValueTable
 {
@@ -150,7 +150,7 @@ class VmLiveCountersTable extends NameValueTable
 
     protected function fetchSomePerfdata($interval)
     {
-        $raw = $this->api->perfManager()->queryPerf(
+        $raw = $this->api->perfManager()->oldTestQueryPerf(
             $this->vm->object()->get('moref'),
             'VirtualMachine',
             $interval,

@@ -2,15 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\NameValueTable;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
+use ipl\Html\Html;
 
 class HostVirtualizationInfoTable extends NameValueTable
 {
@@ -63,7 +63,7 @@ class HostVirtualizationInfoTable extends NameValueTable
 
     /**
      * @param $moRef
-     * @return \dipl\Html\HtmlElement|array
+     * @return \ipl\Html\HtmlElement|array
      */
     protected function linkToVCenter($moRef)
     {

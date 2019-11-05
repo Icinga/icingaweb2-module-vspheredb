@@ -17,11 +17,16 @@ class Util
         return $objects;
     }
 
+    /**
+     * Current Unix Timestamp as milliseconds since epoch
+     *
+     * @return int
+     */
     public static function currentTimestamp()
     {
         $time = explode(' ', microtime());
 
-        return round(1000 * ((int) $time[1] + (float) $time[0]));
+        return (int) round(1000 * ((int) $time[1] + (float) $time[0]));
     }
 
     public static function timeStringToUnixMs($string)

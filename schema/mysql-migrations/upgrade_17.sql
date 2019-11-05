@@ -1,0 +1,5 @@
+
+ALTER TABLE host_system
+  MODIFY sysinfo_vendor VARCHAR(64) NULL DEFAULT NULL,
+  MODIFY sysinfo_model VARCHAR(64) NULL DEFAULT NULL;
+

@@ -2,51 +2,105 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\DbObject\Datastore;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
-use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
-use Icinga\Util\Format;
-use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
+use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
+use ipl\Html\Html;
 
 class VmNetworkAdapterTable extends ZfQueryBasedTable
 {
+    protected $defaultAttributes = [
+        'class' => 'common-table',
+        'data-base-target' => '_next',
+    ];
+
     /** @var VirtualMachine */
     protected $vm;
+
+    /** @var string */
+    protected $moref;
+
+    protected $withPerfImages = false;
 
     public function __construct(VirtualMachine $vm)
     {
         $this->vm = $vm;
+        $this->moref = $this->vm->object()->get('moref');
         parent::__construct($vm->getConnection());
     }
 
     public function getColumnsToBeRendered()
     {
         return [
-            $this->translate('Interface'),
-            $this->translate('MAC Address'),
-            $this->translate('Port'),
+            // TODO: no padding in th on our left!
+            Html::tag('h2', [
+                'class' => 'icon-sitemap',
+                'style' => 'margin: 0;'
+            ], $this->translate('Network')),
+            ''
         ];
     }
 
     public function renderRow($row)
     {
-        if ($row->portgroup_uuid === null) {
-            $portGroup = '-';
+        if ($this->withPerfImages) {
+            return $this::row([
+                $this->formatMultiLine($row),
+                $this->prepareRowImages($row),
+            ]);
         } else {
-            $portGroup = [Link::create(
-                $row->portgroup_name,
-                'vspheredb/portgroup',
-                ['uuid' => bin2hex($row->portgroup_uuid)],
-                ['data-base-target' => '_next']
-            ), ': ' . $row->port_key];
+            return $this::row([$this->formatSimple($row)]);
         }
-        return $this::row([
-            $row->label,
+    }
+
+    protected function linkToPortGroup($row)
+    {
+        if ($row->port_key === null) {
+            return '-'; // TODO: explain
+        } elseif ($row->portgroup_uuid === null) {
+            return \sprintf($this->translate('Port %s'), $row->port_key);
+        } else {
+            return Html::sprintf(
+                'Port %s on %s',
+                $row->port_key,
+                Link::create(
+                    $row->portgroup_name,
+                    'vspheredb/portgroup',
+                    ['uuid' => \bin2hex($row->portgroup_uuid)],
+                    ['data-base-target' => '_next']
+                )
+            );
+        }
+    }
+
+    protected function formatSimple($row)
+    {
+        return Html::sprintf(
+            '%s (%s), %s',
+            Html::tag('strong', $row->label),
             $row->mac_address,
-            $portGroup,
-        ]);
+            $this->linkToPortGroup($row)
+        );
+    }
+
+    protected function formatMultiLine($row)
+    {
+        return [
+            Html::tag('strong', $row->label),
+            Html::tag('br'),
+            $this->translate('MAC Address') . ': ' . $row->mac_address,
+            Html::tag('br'),
+            $this->linkToPortGroup($row)
+        ];
+    }
+
+    protected function prepareRowImages($row)
+    {
+        return [
+            RrdImg::vmIfTraffic($this->moref, $row->hardware_key),
+            RrdImg::vmIfPackets($this->moref, $row->hardware_key),
+        ];
     }
 
     public function prepareQuery()

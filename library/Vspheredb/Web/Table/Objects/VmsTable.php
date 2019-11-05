@@ -2,9 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Icon;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Img;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\GuestToolsStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Format;
@@ -16,12 +19,13 @@ class VmsTable extends ObjectsTable
     protected $searchColumns = [
         'object_name',
         'guest_host_name',
-        'guest_ip_address'
+        'guest_ip_address',
+        'moref'
     ];
 
     public function filterHost($uuid)
     {
-        $this->getQuery()->where('vc.runtime_host_uuid = ?', $uuid);
+        $this->getQuery()->where('vm.runtime_host_uuid = ?', $uuid);
 
         return $this;
     }
@@ -44,15 +48,15 @@ class VmsTable extends ObjectsTable
             ['o' => 'object'],
             $columns
         )->join(
-            ['vc' => 'virtual_machine'],
-            'o.uuid = vc.uuid',
+            ['vm' => 'virtual_machine'],
+            'o.uuid = vm.uuid',
             []
         );
 
         if ($wantsStats) {
             $query->join(
                 ['vqs' => 'vm_quick_stats'],
-                'vqs.uuid = vc.uuid',
+                'vqs.uuid = vm.uuid',
                 []
             );
         }
@@ -60,7 +64,7 @@ class VmsTable extends ObjectsTable
         if ($wantsHosts) {
             $query->joinLeft(
                 ['h' => 'host_system'],
-                'vc.runtime_host_uuid = h.uuid',
+                'vm.runtime_host_uuid = h.uuid',
                 []
             );
         }
@@ -77,6 +81,7 @@ class VmsTable extends ObjectsTable
     protected function initialize()
     {
         $powerStateRenderer = new PowerStateRenderer();
+        $guestToolsStatusRenderer = new GuestToolsStatusRenderer();
         $memoryRenderer = function ($row) {
             return new MemoryUsage(
                 $row->guest_memory_usage_mb,
@@ -87,10 +92,10 @@ class VmsTable extends ObjectsTable
         $memoryColumns = [
             'guest_memory_usage_mb' => 'vqs.guest_memory_usage_mb',
             'host_memory_usage_mb'  => 'vqs.host_memory_usage_mb',
-            'hardware_memorymb'     => 'vc.hardware_memorymb',
+            'hardware_memorymb'     => 'vm.hardware_memorymb',
         ];
         $this->addAvailableColumns([
-            $this->createColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state')
+            $this->createColumn('runtime_power_state', $this->translate('Power'), 'vm.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
 
             $this->createOverallStatusColumn(),
@@ -100,43 +105,14 @@ class VmsTable extends ObjectsTable
             $this->createColumn(
                 'guest_tools_status',
                 $this->translate('Guest Tools'),
-                'vc.guest_tools_status'
-            )->setRenderer(function ($row) {
-                switch ($row->guest_tools_status) {
-                    case 'toolsNotInstalled':
-                        return Icon::create('block', [
-                            'class' => 'red',
-                            'title' => $this->translate('Guest Tools are NOT installed'),
-                        ]);
-                    case 'toolsNotRunning':
-                        return Icon::create('warning-empty', [
-                            'class' => 'red',
-                            'title' => $this->translate('Guest Tools are NOT running'),
-                        ]);
-                    case 'toolsOld':
-                        return Icon::create('thumbs-down', [
-                            'class' => 'yellow',
-                            'title' => $this->translate('Guest Tools are outdated'),
-                        ]);
-                    case 'toolsOk':
-                        return Icon::create('ok', [
-                            'class' => 'green',
-                            'title' => $this->translate('Guest Tools are up to date and running'),
-                        ]);
-                    case null:
-                    default:
-                        return Icon::create('help', [
-                            'class' => 'gray',
-                            'title' => $this->translate('Guest Tools status is now known'),
-                        ]);
-                }
-            })->setSortExpression('vc.guest_tools_status'),
+                'vm.guest_tools_status'
+            )->setRenderer($guestToolsStatusRenderer)->setSortExpression('vm.guest_tools_status'),
 
             $this->createColumn('host_name', $this->translate('Host'), 'h.host_name'),
 
-            $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vc.guest_ip_address'),
+            $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vm.guest_ip_address'),
 
-            $this->createColumn('hardware_numcpu', $this->translate('vCPUs'), 'vc.hardware_numcpu')
+            $this->createColumn('hardware_numcpu', $this->translate('vCPUs'), 'vm.hardware_numcpu')
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('cpu_usage', $this->translate('CPU Usage'), 'vqs.overall_cpu_usage')
@@ -144,7 +120,7 @@ class VmsTable extends ObjectsTable
                     return Format::mhz($row->cpu_usage);
                 })->setDefaultSortDirection('DESC'),
 
-            $this->createColumn('hardware_memorymb', $this->translate('Memory'), 'vc.hardware_memorymb')
+            $this->createColumn('hardware_memorymb', $this->translate('Memory'), 'vm.hardware_memorymb')
                 ->setRenderer(function ($row) {
                     return Format::mBytes($row->hardware_memorymb);
                 })->setDefaultSortDirection('DESC'),
@@ -167,7 +143,7 @@ class VmsTable extends ObjectsTable
 
             $this->createColumn('memory_usage', $this->translate('Memory Usage'), $memoryColumns)
                 ->setRenderer($memoryRenderer)
-                ->setSortExpression('(vqs.guest_memory_usage_mb / vc.hardware_memorymb)')
+                ->setSortExpression('(vqs.guest_memory_usage_mb / vm.hardware_memorymb)')
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('uptime', $this->translate('Uptime'), [
@@ -179,9 +155,42 @@ class VmsTable extends ObjectsTable
 
                 return DateFormatter::formatDuration($row->uptime);
             }),
+            $this->createColumn('ifTraffic', $this->translate('NIC Usage'), [
+                'moref' => 'o.moref',
+            ])->setRenderer(function ($row) {
+                return $this->renderInterface($row->moref, 4000);
+            }),
         ]);
 
         // $this->addPerfColumns();
+    }
+
+    protected function renderInterface($moref ,$hardwareKey)
+    {
+        $width = 160;
+        $height = 30;
+        $rand = rand(0, 3600);
+        $end = floor((time() - $rand) / 300) * 300;
+        $start = $end - $rand;
+        $params = [
+            'file'     => sprintf('%s/iface%s.rrd', $moref, $hardwareKey),
+            'height'   => $height,
+            'width'    => $width,
+            'rnd'      => floor(time() / 20),
+            'format'   => 'png',
+            'start'    => $start,
+            'end'      => $end,
+        ];
+        $attrs = [
+            'height' => $height,
+            'width'  => $width,
+            //'align'  => 'right',
+            // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
+        ];
+
+        return Img::create('rrd/img', $params + [
+            'template' => 'vSphereDB-vmIfTraffic',
+        ], $attrs);
     }
 
     protected function addPerfColumns()
@@ -202,5 +211,33 @@ class VmsTable extends ObjectsTable
             'cpu_usage',
             'memory_usage',
         ];
+    }
+
+    protected function createObjectNameColumn()
+    {
+        return $this->createColumn('object_name', $this->translate('Name'), [
+            'object_name'         => 'o.object_name',
+            'overall_status'      => 'o.overall_status',
+            'runtime_power_state' => 'vm.runtime_power_state',
+            'uuid'                => 'o.uuid',
+        ])->setRenderer(function ($row) {
+            if (in_array('overall_status', $this->getChosenColumnNames())) {
+                $result = [];
+            } else {
+                $statusRenderer = $this->overallStatusRenderer();
+                $result = [$statusRenderer($row)];
+            }
+            if ($this->baseUrl === null) {
+                $result[] = $row->object_name;
+            } else {
+                $result[] = Link::create(
+                    $row->object_name,
+                    $this->baseUrl,
+                    ['uuid' => bin2hex($row->uuid)]
+                );
+            }
+
+            return $result;
+        });
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Addon;
 
-use dipl\Html\HtmlDocument;
+use ipl\Html\HtmlDocument;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 
 /**

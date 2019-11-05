@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
-use gipfl\Protocol\JsonRpc\Connection;
 use React\ChildProcess\Process;
 
 class IcingaCliRunner
@@ -15,9 +14,6 @@ class IcingaCliRunner
 
     /** @var array|null */
     protected $env;
-
-    /** @var Connection|null */
-    protected $rpc;
 
     public function __construct($binary)
     {

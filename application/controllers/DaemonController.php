@@ -2,13 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Html\Table;
+use gipfl\IcingaWeb2\Icon;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
+use ipl\Html\Html;
+use ipl\Html\Table;
 
 class DaemonController extends Controller
 {

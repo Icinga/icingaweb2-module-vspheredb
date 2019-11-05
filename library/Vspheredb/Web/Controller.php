@@ -2,10 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web;
 
-use dipl\Html\Html;
-use dipl\Web\CompatController;
 use Exception;
+use gipfl\IcingaWeb2\CompatController;
 use Icinga\Module\Vspheredb\Db;
+use ipl\Html\Html;
 
 class Controller extends CompatController
 {

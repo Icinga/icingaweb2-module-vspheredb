@@ -22,6 +22,9 @@ trait LazyApiHelpers
     /** @var PerfManager */
     private $perfManager;
 
+    /** @var CustomFieldsManager */
+    private $customFieldsManager;
+
     /** @var PropertyCollector */
     private $propertyCollector;
 
@@ -60,6 +63,24 @@ trait LazyApiHelpers
         }
 
         return $this->perfManager;
+    }
+
+    /**
+     * @return CustomFieldsManager
+     */
+    public function customFieldsManager()
+    {
+        if ($this->customFieldsManager === null) {
+            $this->customFieldsManager = new CustomFieldsManager($this);
+        }
+
+        return $this->customFieldsManager;
+    }
+
+    public function hasCustomFieldsManager()
+    {
+        return $this->customFieldsManager !== null
+            || isset($this->getServiceInstance()->customFieldsManager);
     }
 
     /**

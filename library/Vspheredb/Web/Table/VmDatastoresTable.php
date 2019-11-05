@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Util\Format;
-use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
 
 class VmDatastoresTable extends ZfQueryBasedTable
 {

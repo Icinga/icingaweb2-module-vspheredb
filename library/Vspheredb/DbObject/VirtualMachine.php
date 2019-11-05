@@ -3,6 +3,8 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Api;
+use Icinga\Module\Vspheredb\Json;
+use Icinga\Module\Vspheredb\MappedClass\CustomFieldValue;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 
 class VirtualMachine extends BaseDbObject
@@ -15,6 +17,7 @@ class VirtualMachine extends BaseDbObject
         'uuid'              => null,
         'vcenter_uuid'      => null,
         'annotation'        => null,
+        'custom_values'     => null,
         'hardware_memorymb' => null,
         'hardware_numcpu'   => null,
         'hardware_numcorespersocket' => null,
@@ -77,6 +80,7 @@ class VirtualMachine extends BaseDbObject
         'guest.guestState'           => 'guest_state',
         'guest.toolsRunningStatus'   => 'guest_tools_running_status',
         'summary.guest.toolsStatus'  => 'guest_tools_status',
+        'summary.customValue'        => 'customValues',
         'guest.guestId'              => 'guest_id',
         'guest.guestFullName'        => 'guest_full_name',
         'guest.hostName'             => 'guest_host_name',
@@ -141,6 +145,27 @@ class VirtualMachine extends BaseDbObject
         }
 
         return $this->reallySet('paused', $value);
+    }
+
+    /**
+     * @param $value
+     * @throws \Icinga\Module\Vspheredb\Exception\JsonException
+     */
+    protected function setCustomValues($value)
+    {
+        $customValues = (object) [];
+        if (isset($value->CustomFieldValue)) {
+            /** @var CustomFieldValue $cv */
+            foreach ($value->CustomFieldValue as $cv) {
+                $customValues->{$cv->key} = $cv->value;
+            }
+        }
+
+        if ($value === null) {
+            $this->set('custom_values', null);
+        } else {
+            $this->set('custom_values', Json::encode($customValues));
+        }
     }
 
     /**

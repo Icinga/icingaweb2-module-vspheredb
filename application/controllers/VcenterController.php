@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -12,20 +12,25 @@ use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSyncInfo;
+use ipl\Html\Html;
 
 class VcenterController extends Controller
 {
     public function indexAction()
     {
-        $this->addSingleTab('Overview - outdated');
+        $hexUuid = $this->params->getRequired('vcenter');
+        $vCenter = VCenter::load(hex2bin($hexUuid), $this->db());
+        $this->tabs()->add('vcenter', [
+            'label' => $this->translate('vCenter'),
+            'url'   => 'vspheredb/vcenter',
+            'urlParams' => ['uuid' => $hexUuid]
+        ])->add('perfcounters', [
+            'label' => $this->translate('Counters'),
+            'url'   => 'vspheredb/perfdata/counters',
+            'urlParams' => ['uuid' => $hexUuid]
+        ])->activate('vcenter');
         $this->setAutorefreshInterval(10);
-        $vCenters = VCenter::loadAll($this->db());
-        if (empty($vCenters)) {
-            $this->redirectNow('vspheredb/vcenter/servers');
-        }
-        foreach ($vCenters as $vCenter) {
-            $this->content()->add(new VCenterSyncInfo($vCenter));
-        }
+        // $this->content()->add(new VCenterSyncInfo($vCenter));
         $this->content()->add(new VCenterSummaries($vCenter));
     }
 
@@ -61,7 +66,6 @@ class VcenterController extends Controller
     {
         $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('vCenter Server'));
-
         $form = new VCenterServerForm();
         $form->setVsphereDb(Db::newConfiguredInstance());
         if ($id = $this->params->get('id')) {

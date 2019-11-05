@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
-use dipl\Web\Table\ZfQueryBasedTable;
 
 class VmSnapshotTable extends ZfQueryBasedTable
 {

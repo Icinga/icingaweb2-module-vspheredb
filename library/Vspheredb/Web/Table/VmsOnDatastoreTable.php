@@ -2,13 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Icon;
+use gipfl\IcingaWeb2\Icon;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
-use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 
 class VmsOnDatastoreTable extends ZfQueryBasedTable
 {

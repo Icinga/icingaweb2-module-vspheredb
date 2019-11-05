@@ -2,16 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\DeferredText;
-use dipl\Html\Html;
-use dipl\Html\HtmlDocument;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use ipl\Html\DeferredText;
+use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
 
 class EventHistoryTable extends ZfQueryBasedTable
 {
@@ -387,7 +387,7 @@ class EventHistoryTable extends ZfQueryBasedTable
 
     /**
      * @param $row
-     * @return \dipl\Html\FormattedString
+     * @return \ipl\Html\FormattedString
      */
     protected function showHostToHostMigration($row)
     {
@@ -421,7 +421,7 @@ class EventHistoryTable extends ZfQueryBasedTable
 
     /**
      * @param $row
-     * @return \dipl\Html\FormattedString
+     * @return \ipl\Html\FormattedString
      */
     protected function showDatastoreToDatastoreMigration($row)
     {
@@ -443,7 +443,7 @@ class EventHistoryTable extends ZfQueryBasedTable
 
     /**
      * @param $row
-     * @return \dipl\Html\FormattedString
+     * @return \ipl\Html\FormattedString
      */
     protected function showToDatastoreMigration($row)
     {
@@ -460,7 +460,7 @@ class EventHistoryTable extends ZfQueryBasedTable
 
     /**
      * @param $row
-     * @return \dipl\Html\FormattedString
+     * @return \ipl\Html\FormattedString
      */
     protected function showFromDatastoreMigration($row)
     {
@@ -477,7 +477,7 @@ class EventHistoryTable extends ZfQueryBasedTable
 
     /**
      * @param $row
-     * @return \dipl\Html\FormattedString
+     * @return \ipl\Html\FormattedString
      */
     protected function showToHostMigration($row)
     {
@@ -494,7 +494,7 @@ class EventHistoryTable extends ZfQueryBasedTable
 
     /**
      * @param $row
-     * @return \dipl\Html\FormattedString
+     * @return \ipl\Html\FormattedString
      */
     protected function showFromHostMigration($row)
     {

@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VmsWithDuplicateProperty;
+use ipl\Html\Html;
 
 class AnomaliesController extends Controller
 {

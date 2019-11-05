@@ -21,7 +21,7 @@ class VcentersController extends ObjectsController
         $this->handleTabs();
 
         $this->setAutorefreshInterval(15);
-        $table = new VCenterSummaryTable($this->db());
+        $table = new VCenterSummaryTable($this->db(), $this->url());
         /*
         $this->actions()->add(Link::create(
             $this->translate('Chart'),
@@ -34,7 +34,6 @@ class VcentersController extends ObjectsController
             ->appendTo($this->actions());
         $this->addTitle($this->translate('VCenters') . ' (%d)', count($table));
         $this->showTable($table, 'vspheredb/groupedvms');
-        $table->handleSortUrl($this->url());
         $this->controls()->prepend($this->cpuSummary($table));
     }
 

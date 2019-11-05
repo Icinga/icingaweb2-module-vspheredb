@@ -60,7 +60,8 @@ class SoapClient extends PhpSoapClient
         $result = $this->curl->post($location, $request, $headers);
         $duration = microtime(true) - $start;
         Logger::debug(
-            'SOAPClient: got %s response in %0.2fms',
+            'SOAPClient: sent %s, got %s response in %0.2fms',
+            Format::bytes(strlen($request)),
             Format::bytes(strlen($result)),
             $duration * 1000
         );

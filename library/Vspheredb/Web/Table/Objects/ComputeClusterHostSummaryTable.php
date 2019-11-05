@@ -4,7 +4,9 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 class ComputeClusterHostSummaryTable extends HostSummaryTable
 {
-    protected $baseUrl = 'vspheredb/hosts';
+    protected $baseUrl = 'vspheredb/compute-cluster';
+
+    protected $baseUrlHosts = 'vspheredb/compute-cluster/hosts';
 
     protected $groupBy = 'o.uuid';
 

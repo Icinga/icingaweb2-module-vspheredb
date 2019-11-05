@@ -238,9 +238,9 @@ p.critical {
 .vcenter-summaries {
   > a {
     width: 20em;
+    height: 20em;
     background-color: gray;
     color: white;
-    height: 20em;
     display: inline-block;
     text-decoration: none;
     margin: 0.2em;
@@ -383,6 +383,97 @@ div.action-bar > ul > li:hover {
 }
 /** END of dropdown in action bar **/
 
+table.common-table th {
+  vertical-align: middle;
+  white-space: nowrap;
+  > ul > li {
+    line-height: normal;
+  }
+
+  // Column selection dropdown
+  &.with-column-selector {
+    padding-right: 2.5em;
+  }
+}
+
+/** BEGIN of dropdown in table header **/
+table.common-table th {
+  position: relative;
+  ul {
+    font-weight: normal;
+    padding: 0;
+    margin: 0;
+
+    li {
+      list-style-type: none;
+      a { display: block; }
+    }
+  }
+
+  > ul {
+    display: inline-block;
+    margin-left: 1em;
+    right: 0;
+    position: absolute;
+    > li {
+      display: inline-block;
+    }
+
+    .modified {
+      color: @color-critical;
+    }
+  }
+
+  > ul ul {
+    padding: 0.5em 1em 1em 0em;
+    min-width: 16em;
+    position: absolute;
+    right: 0;
+    display: none;
+    color: @text-color-inverted;
+    background-color: @text-color;
+    border-radius: 0.1em;
+    border-top-left-radius: 0;
+    box-shadow: 1em 1em 1em 0 rgba(0, 0, 0, 0.2);
+
+    a {
+      display: block;
+      padding: 0.3em 0.5em 0.3em 1em;
+      margin: 0;
+      outline: none;
+      color: @text-color-inverted;
+
+      &:hover {
+        text-decoration: underline;
+        &:before {
+          text-decoration: none;
+        }
+      }
+    }
+
+    li.active a {
+      font-weight: bold;
+    }
+  }
+
+  > ul > li:hover ul {
+    display: block;
+  }
+  > ul > li > a {
+    padding: 0.2em 0.5em;
+  }
+  > ul > li:hover {
+    background-color: @text-color;
+    border-top-left-radius: 0.1em;
+    border-top-right-radius: 0.1em;
+    & > a {
+      color: @text-color-inverted;
+      text-decoration: none;
+    }
+  }
+}
+/** END of dropdown in table header **/
+
 /** Tree **/
 .tree li a {
   display: inline-block;
@@ -506,7 +597,7 @@ table {
 div.object-summaries {
   background-color: @text-color;
   border-radius: 0.5em;
-  color: white;
+  color: @text-color-inverted;
   padding: 0.25em 0.25em 0.25em 0.25em;
   vertical-align: middle;
 
@@ -542,18 +633,22 @@ div.object-summaries {
   }
 
   a.red, a.poweredoff, a.suspended {
+    color: white;
     background-color: @color-critical;
   }
 
   a.yellow, a.standby {
+    color: white;
     background-color: @color-warning;
   }
 
   a.green, a.poweredon {
+    color: white;
     background-color: @color-ok;
   }
 
   a.unknown {
+    color: white;
     background-color: @color-unknown;
   }
 
@@ -628,6 +723,12 @@ div.health {
 
 table.name-value-table a {
   color: @icinga-blue;
+}
+
+table.name-value-table pre {
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
 }
 
 tr.state td:first-child, tr.event td:first-child {
@@ -759,7 +860,7 @@ div.resource-usage {
   }
 }
 
-#layout.twocols, #layout.minimal-layout {
+#layout.twocols :not(&#col2), #layout.minimal-layout {
   div.content div.resource-usage {
     .usage-used {
       display: block;
@@ -988,6 +1089,17 @@ pre.logOutput {
   &.critical {
     background-color: @color-critical-handled;
   }
+  &.off {
+    background-color: @gray;
+    color: @text-color;
+    padding: 0.2em 0;
+    i.state {
+      &:before {
+        color: @text-color;
+      }
+      font-size: 2.2em;
+    }
+  }
   span {
     margin: 0;
     padding: 0;
@@ -1007,4 +1119,28 @@ pre.logOutput {
 }
 div.controls .cpu {
   float: left;
+}
+
+.inline-perf-small {
+  border-left: 1px solid rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  height: 1.5em;
+  width: 5em;
+}
+
+.inline-perf-container {
+
+  &.hovered {
+    .inline-perf-small {
+      width: auto;
+      height: auto;
+      margin: 0.5em 1em;
+    }
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 100;
+    position: absolute;
+    top: -2em;
+    left: -620px;
+  }
 }

@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
-use dipl\Html\Link;
 
 class DatastoreTable extends ObjectsTable
 {
@@ -73,7 +73,7 @@ class DatastoreTable extends ObjectsTable
                     return Format::bytes($row->capacity, Format::STANDARD_IEC);
                 }),
             $this->createColumn('usage', $this->translate('Usage'), [
-                'uuid' => 'uuid'
+                'uuid' => 'o.uuid'
             ])->setRenderer(function ($row) {
                 /** @var Db $connection */
                 $connection = $this->connection();

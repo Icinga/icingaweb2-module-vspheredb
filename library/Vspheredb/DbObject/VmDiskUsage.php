@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Module\Director\Data\Db\DbObject;
+use Icinga\Module\Vspheredb\Db\DbObject;
 
 class VmDiskUsage extends DbObject
 {

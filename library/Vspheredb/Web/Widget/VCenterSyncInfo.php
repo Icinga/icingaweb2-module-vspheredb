@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Html\Html;
-use dipl\Translation\TranslationHelper;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Sync\VcenterSyncState;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 
 class VCenterSyncInfo extends BaseHtmlElement
 {
