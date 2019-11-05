@@ -67,7 +67,8 @@ class HostMonitoringInfo extends HtmlDocument
         $statusRenderer = new IcingaHostStatusRenderer();
 
         try {
-            $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
+            // $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
+            $monitoring = null;
             if ($monitoring && $monitoring->hasHost($name)) {
                 $monitoringState = $monitoring->getHostState($name);
                 return [

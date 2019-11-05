@@ -94,10 +94,12 @@ class VmEssentialInfoTable extends NameValueTable
             $guest = '-';
         }
 
+        /*
         $this->addNameValueRow(
             $this->translate('Monitoring'),
             $this->getMonitoringInfo($vm)
         );
+        */
 
         if ($vm->get('guest_id')) {
             $this->addNameValuePairs([
