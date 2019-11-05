@@ -6,10 +6,12 @@ use Exception;
 use gipfl\Protocol\JsonRpc\Connection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use Icinga\Module\Vspheredb\CliUtil;
+use Icinga\Module\Vspheredb\Daemon\PerfDataRunner;
 use Icinga\Module\Vspheredb\Daemon\SyncRunner;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
+use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\DiskTagHelper;
 use Icinga\Module\Vspheredb\Rpc\JsonRpcLogWriter;
 use Icinga\Module\Vspheredb\Rpc\Logger;
 use React\EventLoop\Factory as Loop;
@@ -105,6 +107,60 @@ class TaskCommand extends CommandBase
             }
         });
         $this->loop->run();
+    }
+
+    /**
+     * Sync all objects
+     *
+     * Still a prototype
+     *
+     * USAGE
+     *
+     * icingacli vsphere task perfdata --vCenterId <id> [--rpc]
+     */
+    public function perfdataActionx()
+    {
+        $this->loop->futureTick(function () {
+            $hostname = null;
+            try {
+                CliUtil::setTitle('Icinga::vSphereDB::perfdata');
+                $vCenter = $this->requireVCenter();
+                $hostname = $vCenter->getFirstServer()->get('host');
+                CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdata (%s)', $hostname));
+                $time = microtime(true);
+                (new PerfDataRunner($vCenter))
+                    ->on('beginTask', function ($taskName) use ($hostname, & $time) {
+                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdat (%s: %s)', $hostname, $taskName));
+                        $time = microtime(true);
+                    })
+                    ->on('endTask', function ($taskName) use ($hostname, & $time) {
+                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdat (%s)', $hostname));
+                        $duration = microtime(true) - $time;
+                        Logger::debug(sprintf(
+                            'Task "%s" took %.2Fms on %s',
+                            $taskName,
+                            ($duration * 1000),
+                            $hostname
+                        ));
+                    })
+                    ->run($this->loop)
+                    ->then(function () use ($hostname) {
+                        $this->failFriendly('perfdata', 'Runner stopped. Should not happen', $hostname);
+                    })->otherwise(function ($reason = null) use ($hostname) {
+                        $this->failFriendly('perfdata', $reason, $hostname);
+                    });
+            } catch (Exception $e) {
+                $this->failFriendly('perfdata', $e, $hostname);
+            }
+        });
+        $this->loop->run();
+    }
+
+    public function demoActionx()
+    {
+        $vCenter = $this->requireVCenter();
+        $helper = new DiskTagHelper($vCenter);
+        print_r($helper->fetchVmTags());
     }
 
     protected function requireVCenter()
