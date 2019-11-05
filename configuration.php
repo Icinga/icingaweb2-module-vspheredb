@@ -38,3 +38,6 @@ $section->add(N_('Alarm History'))
 // $section->add(N_('Top VMs'))
 //     ->setUrl('vspheredb/top/vms')
 //     ->setPriority(70);
+// $section->add(N_('Configuration'))
+//     ->setUrl('vspheredb/configuration')
+//     ->setPriority(87);
