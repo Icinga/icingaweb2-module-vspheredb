@@ -6,10 +6,13 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
+use Icinga\Module\Vspheredb\Web\Table\Objects\HostsTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
+use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSyncInfo;
 use ipl\Html\Html;
@@ -69,10 +72,12 @@ class VcenterController extends Controller
         $form = new VCenterServerForm();
         $form->setVsphereDb(Db::newConfiguredInstance());
         if ($id = $this->params->get('id')) {
-            $form->loadObject($id);
+            $form->setObject(VCenterServer::loadWithAutoIncId($id, $this->db()));
             $this->addTitle($form->getObject()->get('host'));
+        } else {
+            $this->addTitle($this->translate('Create a new vCenter/ESXi-Connection'));
         }
-        $form->handleRequest();
+        $form->handleRequest($this->getServerRequest());
         $this->content()->add(Html::tag(
             'div',
             ['class' => 'icinga-module module-director'],

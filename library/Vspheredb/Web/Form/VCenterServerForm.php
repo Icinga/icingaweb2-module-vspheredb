@@ -2,26 +2,30 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use Icinga\Module\Director\Web\Form\DirectorObjectForm;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\DbObject\VCenterServer;
+use ipl\Html\FormDecorator\DdDtDecorator;
+use ipl\Html\FormElement\SubmitElement;
 
-class VCenterServerForm extends DirectorObjectForm
+class VCenterServerForm extends Form
 {
-    protected $className = 'Icinga\\Module\\Vspheredb\\DbObject\\VCenterServer';
-
     protected $listUrl = 'vspheredb/vcenter/servers';
 
-    public function setup()
+    /** @var VCenterServer */
+    protected $object;
+
+    public function assemble()
     {
+        $this->setDefaultElementDecorator(new DdDtDecorator());
         if (! class_exists('SoapClient')) {
-            $this->addError($this->translate(
+            $this->addMessage($this->translate(
                 'The PHP SOAP extension (php-soap) is not installed/enabled'
             ));
 
             return;
         }
 
-        $this->addElement('text', 'host', array(
+        $this->addElement('text', 'host', [
             'label' => $this->translate('vCenter (or ESX) host'),
             'description' => $this->translate(
                 'It is strongly suggested to access the API through your vCenter.'
@@ -30,116 +34,150 @@ class VCenterServerForm extends DirectorObjectForm
                 . ' Please use <host>:<port> in case you\'re not using default'
                 . ' HTTP(s) ports'
             ),
+            'class' => 'autofocus',
             'required' => true,
-        ));
+        ]);
 
-        $this->addElement('select', 'scheme', array(
+        $this->addElement('select', 'scheme', [
             'label' => $this->translate('Protocol'),
             'description' => $this->translate(
                 'Whether to use encryption when talking to your vCenter'
             ),
-            'multiOptions' => array(
+            'multiOptions' => [
                 'https' => $this->translate('HTTPS (strongly recommended)'),
                 'http'  => $this->translate('HTTP (this is plaintext!)'),
-            ),
+            ],
             'class' => 'autosubmit',
-            'value' => 'HTTPS',
+            'value' => 'https',
             'required' => true,
-        ));
+        ]);
 
-        // TODO: sent or object Value
-        $ssl = ! ($this->getSentOrObjectValue('scheme', 'HTTPS') === 'HTTP');
+        $ssl = $this->getValue('scheme', 'https') === 'http';
 
         if ($ssl) {
-            $this->addBoolean('ssl_verify_peer', array(
+            $this->addElement('boolean', 'ssl_verify_peer', [
                 'label'       => $this->translate('Verify Peer'),
                 'description' => $this->translate(
                     'Whether we should check that our peer\'s certificate has'
                     . ' been signed by a trusted CA. This is strongly recommended.'
-                )
-            ), 'y');
-            $this->addBoolean('ssl_verify_host', array(
+                ),
+                'required'    => true,
+                'value'       => 'y',
+            ]);
+            $this->addElement('boolean', 'ssl_verify_host', [
                 'label'       => $this->translate('Verify Host'),
                 'description' => $this->translate(
                     'Whether we should check that the certificate matches the'
                     . 'configured host'
-                )
-            ), 'y');
+                ),
+                'value'       => 'y',
+                'required'    => true,
+            ]);
         }
 
-        $this->addElement('text', 'username', array(
-            'label' => $this->translate('Username'),
+        $this->addElement('text', 'username', [
+            'label'       => $this->translate('Username'),
             'description' => $this->translate(
                 'Will be used for SOAP authentication against your vCenter'
             ),
-            'required' => true,
-        ));
+            'required'    => true,
+        ]);
 
         if ($this->isNew()) {
-            $this->addElement('password', 'password', array(
+            $this->addElement('password', 'password', [
                 'label' => $this->translate('Password'),
                 'required' => true,
-            ));
+            ]);
         } else {
-            $this->addElement('password', 'password', array(
+            $this->addElement('password', 'password', [
                 'label' => $this->translate('Password'),
                 'placeholder' => $this->translate('(keep as stored)'),
-            ));
+            ]);
         }
 
-        $this->addElement('select', 'proxy_type', array(
+        $this->addElement('select', 'proxy_type', [
             'label' => $this->translate('Proxy'),
             'description' => $this->translate(
                 'In case your vCenter is only reachable through a proxy, please'
                 . ' choose it\'s protocol right here'
             ),
-            'multiOptions' => $this->optionalEnum(array(
+            'multiOptions' => $this->optionalEnum([
                 'HTTP'   => $this->translate('HTTP proxy'),
                 'SOCKS5' => $this->translate('SOCKS5 proxy'),
-            )),
+            ]),
             'class' => 'autosubmit'
-        ));
+        ]);
 
-        $proxyType = $this->getSentOrObjectValue('proxy_type');
+        $proxyType = $this->getValue('proxy_type');
 
         if ($proxyType) {
-            $this->addElement('text', 'proxy_address', array(
+            $this->addElement('text', 'proxy_address', [
                 'label' => $this->translate('Proxy Address'),
                 'description' => $this->translate(
                     'Hostname, IP or <host>:<port>'
                 ),
                 'required' => true,
-            ));
+            ]);
             if ($proxyType === 'HTTP') {
-                $this->addElement('text', 'proxy_user', array(
+                $this->addElement('text', 'proxy_user', [
                     'label' => $this->translate('Proxy Username'),
                     'description' => $this->translate(
                         'In case your proxy requires authentication, please'
                         . ' configure this here'
                     ),
-                ));
+                ]);
 
-                $passRequired = strlen($this->getSentOrObjectValue('proxy_user')) > 0;
+                $passRequired = \strlen($this->getValue('proxy_user')) > 0;
 
-                $this->addElement('password', 'proxy_pass', array(
+                $this->addElement('password', 'proxy_pass', [
                     'label' => $this->translate('Proxy Password'),
                     'required' => $passRequired
-                ));
+                ]);
             }
         }
 
-        $this->addDeleteButton();
+        $buttons = [];
+        $buttons[] = new SubmitElement('submit', [
+            'label' => $this->isNew() ? $this->translate('Create') : $this->translate('Store')
+        ]);
+        if (! $this->isNew()) {
+            $buttons[] = new SubmitElement('btn_delete', [
+                'label' => $this->translate('Delte')
+            ]);
+        }
+        foreach ($buttons as $button) {
+            $this->registerElement($button);
+        }
+        $this->add($buttons);
     }
 
-    public function getValues($suppressArrayNotation = false)
+    public function isNew()
     {
-        $values = parent::getValues($suppressArrayNotation);
+        return $this->object === null || ! $this->object->hasBeenLoadedFromDb();
+    }
+
+    public function getValues()
+    {
+        $values = parent::getValues();
         $values['enabled'] = 'y';
         if (! $this->isNew() && strlen($values['password']) === 0) {
             unset($values['password']);
         }
 
         return $values;
+    }
+
+    public function setObject(VCenterServer $object)
+    {
+        $this->object = $object;
+        $this->populate($object->getProperties());
+
+        return $this;
+    }
+
+    public function getObject()
+    {
+        return $this->object;
     }
 
     public function setVsphereDb(Db $db)
