@@ -6,19 +6,10 @@ use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
-use Exception;
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Vspheredb\Addon\BackupTool;
-use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
-use Icinga\Module\Vspheredb\Addon\VeeamBackup;
-use Icinga\Module\Vspheredb\Addon\VRangerBackup;
-use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
-use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
 use Icinga\Module\Vspheredb\PathLookup;
-use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
-use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use ipl\Html\Html;
 
 class VmExtraInfoTable extends NameValueTable
@@ -43,44 +34,12 @@ class VmExtraInfoTable extends NameValueTable
     }
 
     /**
-     * @param $annotation
-     * @return string|\ipl\Html\HtmlElement
-     */
-    protected function formatAnnotation($annotation)
-    {
-        $tools = [
-            new IbmSpectrumProtect(),
-            new VeeamBackup(),
-            new VRangerBackup(),
-        ];
-        /** @var BackupTool $tool */
-        foreach ($tools as $tool) {
-            $tool->stripAnnotation($annotation);
-        }
-
-        $annotation = trim($annotation);
-
-        if (strpos($annotation, "\n") === false) {
-            return $annotation;
-        } else {
-            return Html::tag('pre', null, $annotation);
-        }
-    }
-
-    /**
      * @throws \Icinga\Exception\NotFoundError
      */
     protected function assemble()
     {
         $vm = $this->vm;
         $uuid = $vm->get('uuid');
-        if ($annotation = $vm->get('annotation')) {
-            $this->addNameValueRow(
-                $this->translate('Annotation'),
-                $this->formatAnnotation($annotation)
-            );
-        }
-
         /** @var \Icinga\Module\Vspheredb\Db $connection */
         $connection = $vm->getConnection();
         $lookup =  new PathLookup($connection);
@@ -95,17 +54,14 @@ class VmExtraInfoTable extends NameValueTable
         }
 
         $this->addNameValuePairs([
-            $this->translate('UUID') => $vm->get('bios_uuid'),
-            $this->translate('Instance UUID') => $vm->get('instance_uuid'),
+            $this->translate('UUID') => Html::tag('pre', $vm->get('bios_uuid')),
+            $this->translate('Instance UUID') => Html::tag('pre', $vm->get('instance_uuid')),
             $this->translate('CPUs')   => $vm->get('hardware_numcpu'),
             $this->translate('MO Ref') => $this->linkToVCenter($vm->object()->get('moref')),
             $this->translate('Is Template') => $vm->get('template') === 'y'
                 ? $this->translate('true')
                 : $this->translate('false'),
             $this->translate('Path') => $path,
-            $this->translate('Connection State') => $this->getConnectionStateDetails($vm->get('connection_state')),
-            $this->translate('Resource Pool')    => $lookup->linkToObject($vm->get('resource_pool_uuid')),
-            $this->translate('Host')             => $lookup->linkToObject($vm->get('runtime_host_uuid')),
             $this->translate('Version')          => $vm->get('version'),
 
         ]);

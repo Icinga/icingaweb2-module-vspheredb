@@ -712,6 +712,12 @@ table.name-value-table a {
   color: @icinga-blue;
 }
 
+table.name-value-table pre {
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+}
+
 tr.state td:first-child, tr.event td:first-child {
   padding-left: 2em;
   &::before {
@@ -1069,6 +1075,17 @@ pre.logOutput {
   }
   &.critical {
     background-color: @color-critical-handled;
+  }
+  &.off {
+    background-color: @gray;
+    color: @text-color;
+    padding: 0.2em 0;
+    i.state {
+      &:before {
+        color: @text-color;
+      }
+      font-size: 2.2em;
+    }
   }
   span {
     margin: 0;
