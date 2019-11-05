@@ -39,7 +39,6 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     /**
      * @param $type
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function renderTypeIfNew($type)
     {
@@ -68,13 +67,12 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     protected function makeHealthStateBadge($state, $count)
     {
-        return Link::create($count, '/', null, ['class' => ['state', $state]]);
+        return Link::create($count, '#', null, ['class' => ['state', $state]]);
     }
 
     /**
      * @param $type
      * @return mixed
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function getSummaryByType($type)
     {
@@ -127,7 +125,6 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     /**
      * @return array
-     * @throws \Icinga\Exception\IcingaException
      */
     public function fetchSummaries()
     {
@@ -167,7 +164,6 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     /**
      * @return \Zend_Db_Select
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function prepareQuery()
     {
