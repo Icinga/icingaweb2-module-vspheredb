@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Img;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\GuestToolsStatusRenderer;
@@ -210,5 +211,33 @@ class VmsTable extends ObjectsTable
             'cpu_usage',
             'memory_usage',
         ];
+    }
+
+    protected function createObjectNameColumn()
+    {
+        return $this->createColumn('object_name', $this->translate('Name'), [
+            'object_name'         => 'o.object_name',
+            'overall_status'      => 'o.overall_status',
+            'runtime_power_state' => 'vm.runtime_power_state',
+            'uuid'                => 'o.uuid',
+        ])->setRenderer(function ($row) {
+            if (in_array('overall_status', $this->getChosenColumnNames())) {
+                $result = [];
+            } else {
+                $statusRenderer = $this->overallStatusRenderer();
+                $result = [$statusRenderer($row)];
+            }
+            if ($this->baseUrl === null) {
+                $result[] = $row->object_name;
+            } else {
+                $result[] = Link::create(
+                    $row->object_name,
+                    $this->baseUrl,
+                    ['uuid' => bin2hex($row->uuid)]
+                );
+            }
+
+            return $result;
+        });
     }
 }
