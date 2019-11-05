@@ -24,7 +24,7 @@ class VmsTable extends ObjectsTable
 
     public function filterHost($uuid)
     {
-        $this->getQuery()->where('vc.runtime_host_uuid = ?', $uuid);
+        $this->getQuery()->where('vm.runtime_host_uuid = ?', $uuid);
 
         return $this;
     }
@@ -47,15 +47,15 @@ class VmsTable extends ObjectsTable
             ['o' => 'object'],
             $columns
         )->join(
-            ['vc' => 'virtual_machine'],
-            'o.uuid = vc.uuid',
+            ['vm' => 'virtual_machine'],
+            'o.uuid = vm.uuid',
             []
         );
 
         if ($wantsStats) {
             $query->join(
                 ['vqs' => 'vm_quick_stats'],
-                'vqs.uuid = vc.uuid',
+                'vqs.uuid = vm.uuid',
                 []
             );
         }
@@ -63,7 +63,7 @@ class VmsTable extends ObjectsTable
         if ($wantsHosts) {
             $query->joinLeft(
                 ['h' => 'host_system'],
-                'vc.runtime_host_uuid = h.uuid',
+                'vm.runtime_host_uuid = h.uuid',
                 []
             );
         }
@@ -91,10 +91,10 @@ class VmsTable extends ObjectsTable
         $memoryColumns = [
             'guest_memory_usage_mb' => 'vqs.guest_memory_usage_mb',
             'host_memory_usage_mb'  => 'vqs.host_memory_usage_mb',
-            'hardware_memorymb'     => 'vc.hardware_memorymb',
+            'hardware_memorymb'     => 'vm.hardware_memorymb',
         ];
         $this->addAvailableColumns([
-            $this->createColumn('runtime_power_state', $this->translate('Power'), 'vc.runtime_power_state')
+            $this->createColumn('runtime_power_state', $this->translate('Power'), 'vm.runtime_power_state')
                 ->setRenderer($powerStateRenderer),
 
             $this->createOverallStatusColumn(),
@@ -104,14 +104,14 @@ class VmsTable extends ObjectsTable
             $this->createColumn(
                 'guest_tools_status',
                 $this->translate('Guest Tools'),
-                'vc.guest_tools_status'
-            )->setRenderer($guestToolsStatusRenderer)->setSortExpression('vc.guest_tools_status'),
+                'vm.guest_tools_status'
+            )->setRenderer($guestToolsStatusRenderer)->setSortExpression('vm.guest_tools_status'),
 
             $this->createColumn('host_name', $this->translate('Host'), 'h.host_name'),
 
-            $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vc.guest_ip_address'),
+            $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vm.guest_ip_address'),
 
-            $this->createColumn('hardware_numcpu', $this->translate('vCPUs'), 'vc.hardware_numcpu')
+            $this->createColumn('hardware_numcpu', $this->translate('vCPUs'), 'vm.hardware_numcpu')
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('cpu_usage', $this->translate('CPU Usage'), 'vqs.overall_cpu_usage')
@@ -119,7 +119,7 @@ class VmsTable extends ObjectsTable
                     return Format::mhz($row->cpu_usage);
                 })->setDefaultSortDirection('DESC'),
 
-            $this->createColumn('hardware_memorymb', $this->translate('Memory'), 'vc.hardware_memorymb')
+            $this->createColumn('hardware_memorymb', $this->translate('Memory'), 'vm.hardware_memorymb')
                 ->setRenderer(function ($row) {
                     return Format::mBytes($row->hardware_memorymb);
                 })->setDefaultSortDirection('DESC'),
@@ -142,7 +142,7 @@ class VmsTable extends ObjectsTable
 
             $this->createColumn('memory_usage', $this->translate('Memory Usage'), $memoryColumns)
                 ->setRenderer($memoryRenderer)
-                ->setSortExpression('(vqs.guest_memory_usage_mb / vc.hardware_memorymb)')
+                ->setSortExpression('(vqs.guest_memory_usage_mb / vm.hardware_memorymb)')
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('uptime', $this->translate('Uptime'), [
