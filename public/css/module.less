@@ -974,17 +974,6 @@ div.disk-usage {
   white-space: nowrap;
 }
 
-/* Director Forms */
-
-form {
-  #_FAKE_SUBMIT {
-    position: absolute;
-    left: -100%;
-  }
-}
-
-/* END of Director Forms */
-
 /* Tree, stolen from Director */
 
 .tree li a {
@@ -1142,5 +1131,53 @@ div.controls .cpu {
     position: absolute;
     top: -2em;
     left: -620px;
+  }
+}
+
+.form-compat26 {
+
+  .form-element-description {
+    max-width: 36em;
+    padding: 0;
+    width: auto;
+  }
+  .control-label-group {
+    width: 15em;
+  }
+
+  select {
+    max-width: 36em;
+    min-width: 20em;
+    line-height: 2em;
+    height: 2.4em;
+    padding-left: 0.5em;
+    border-style: solid;
+    border-color: transparent;
+    border-bottom-color: @gray-light;
+    border-width: 1px 1px 1px 3px;
+    background-color: white;
+  }
+
+  select option {
+    height: 2em;
+    padding-top: 0.3em;
+  }
+
+  select[multiple] {
+    height: auto;
+  }
+
+  select[multiple=multiple] {
+    height: auto;
+  }
+
+  input[type=text], input[type=password], textarea, select {
+    max-width: 36em;
+    min-width: 20em;
+    width: 100%;
+  }
+
+  select:focus, textarea:focus {
+    border-color: @icinga-blue;
   }
 }
