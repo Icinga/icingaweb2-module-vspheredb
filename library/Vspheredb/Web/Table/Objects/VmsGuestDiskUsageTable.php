@@ -2,8 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use gipfl\IcingaWeb2\Img;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
+use ipl\Html\Html;
 
 class VmsGuestDiskUsageTable extends ObjectsTable
 {
@@ -13,6 +15,8 @@ class VmsGuestDiskUsageTable extends ObjectsTable
         'object_name',
         'disk_path',
     ];
+
+    protected $withHistory = true;
 
     public function filterHost($uuid)
     {
@@ -50,6 +54,41 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                 '1 - (vdu.free_space / vdu.capacity)'
             )->setDefaultSortDirection('DESC'),
         ]);
+
+        if ($this->withHistory) {
+            $this->addAvailableColumn(
+                $this->createColumn('history', $this->translate('History'), [
+                    'object_name' => 'o.object_name',
+                ])->setRenderer(function ($row) {
+                    $ciName = str_replace(' ', '_', $row->object_name);
+                    $path = str_replace('/', '_', $row->disk_path);
+                    $path = str_replace(' ', '_', $path);
+                    $ci = $ciName . ':' . $path;
+                    $now = time();
+                    $end = floor($now / 60) * 60;
+                    $offset = 3600 * 24 * 96;
+                    $duration = 3600 * 12 * 4;
+                    $start = $end - $offset;
+                    $end = $start + $duration;
+
+                    return Html::tag('div', [
+                        'style' => 'position: relative'
+                    ], Html::tag('div', [
+                        'class' => 'inline-perf-container'
+                    ], Img::create('rrd/img', [
+                        'file'     => $ci . '.rrd',
+                        'rnd'      => time(),
+                        'height'   => 24 * 6,
+                        'width'    => 80 * 6,
+                        'start'    => $start,
+                        'end'      => $end,
+                        'template' => 'vm_disk',
+                    ], [
+                        'class' => 'inline-perf-small'
+                    ])));
+                })
+            );
+        }
     }
 
     public function prepareQuery()

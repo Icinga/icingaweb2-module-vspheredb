@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Html;
+use ipl\Html\Html;
 
 abstract class TableColumn
 {

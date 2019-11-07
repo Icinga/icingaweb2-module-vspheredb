@@ -2,13 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Url;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
+use ipl\Html\BaseHtmlElement;
 use RuntimeException;
 use Zend_Db_Select as ZfSelect;
 use Zend_Db_Select_Exception;

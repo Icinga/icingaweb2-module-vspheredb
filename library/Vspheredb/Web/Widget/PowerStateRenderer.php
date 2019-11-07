@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\Translation\TranslationHelper;
+use ipl\Html\Html;
 
 class PowerStateRenderer extends Html
 {
@@ -21,7 +21,7 @@ class PowerStateRenderer extends Html
         ]);
     }
 
-    protected function getPowerStateDescription($state)
+    public function getPowerStateDescription($state)
     {
         $descriptions = [
             'poweredOn'  => $this->translate('Powered on'),

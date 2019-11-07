@@ -150,7 +150,7 @@ class VCenter extends BaseDbObject
      * @return VCenter
      * @throws \Icinga\Exception\AuthenticationException
      * @throws \Icinga\Exception\NotFoundError
-     * @throws \Icinga\Module\Director\Exception\DuplicateKeyException
+     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
      */
     public static function fromApi(Api $api, Db $db)
     {

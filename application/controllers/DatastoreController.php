@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -10,9 +12,7 @@ use Icinga\Module\Vspheredb\Web\Table\VmsOnDatastoreTable;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Util\Format;
-use dipl\Html\Html;
-use dipl\Html\Link;
-use dipl\Web\Widget\NameValueTable;
+use ipl\Html\Html;
 
 class DatastoreController extends Controller
 {

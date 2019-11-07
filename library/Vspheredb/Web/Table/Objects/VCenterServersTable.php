@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 

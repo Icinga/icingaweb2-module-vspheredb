@@ -2,25 +2,25 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
-use Icinga\Module\Vspheredb\Api;
-use Icinga\Module\Vspheredb\DbObject\VCenterServer;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
+use Icinga\Module\Vspheredb\Web\Table\Object\VmEssentialInfoTable;
+use Icinga\Module\Vspheredb\Web\Table\Object\VmExtraInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
-use Icinga\Module\Vspheredb\Web\Table\Object\VmInfoTable;
-use Icinga\Module\Vspheredb\Web\Table\Object\VmLiveCountersTable;
+use Icinga\Module\Vspheredb\Web\Table\VmDisksTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
 use Icinga\Module\Vspheredb\Web\Table\VmNetworkAdapterTable;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
+use ipl\Html\Html;
 
 class VmController extends Controller
 {
@@ -31,13 +31,20 @@ class VmController extends Controller
     public function indexAction()
     {
         $vm = $this->addVm();
+        $this->addSubTitle($this->translate('Information'), 'info-circled');
+        $this->content()->add(
+            new VmEssentialInfoTable($vm)
+        );
         $this->content()->addAttributes([
             'class' => 'vm-info'
         ]);
-        $this->addSubTitle($this->translate('Network'), 'sitemap');
         $this->content()->add(
             new VmNetworkAdapterTable($vm)
         );
+        $this->content()->add(
+            VmDisksTable::create($vm)
+        );
+
         $this->addSubTitle($this->translate('DataStore Usage'), 'database');
         $this->content()->add(
             VmDatastoresTable::create($vm)
@@ -77,7 +84,7 @@ class VmController extends Controller
         }
 
         $this->addSubTitle($this->translate('Additional Information'), 'info-circled');
-        $this->content()->add(new VmInfoTable($vm));
+        $this->content()->add(new VmExtraInfoTable($vm));
     }
 
     /**
@@ -126,19 +133,26 @@ class VmController extends Controller
 
     /**
      * @throws \Icinga\Exception\AuthenticationException
-     * @throws \Icinga\Exception\IcingaException
      * @throws \Icinga\Exception\MissingParameterException
+     * @throws \Icinga\Exception\NotFoundError
+     * @deprecated
      */
-    public function countersAction()
+    public function countersActionObsolete()
     {
         $vm = $this->addVm();
-        // TODO: remove hardcoded id=1
-        /** @var VCenterServer $vCenterServer */
-        $vCenterServer = VCenterServer::loadWithAutoIncId(1, $this->db());
-        $api = Api::forServer($vCenterServer)->login();
 
-        $this->setAutorefreshInterval(10);
-        $this->content()->add(new VmLiveCountersTable($vm, $api));
+        $vCenter = VCenter::load($vm->get('vcenter_uuid'), $this->db());
+        $api = $vCenter->getApi();
+        $moRef = $vm->object()->get('moref');
+        $interval = 20;
+        $raw = $api->perfManager()->oldTestQueryPerf(
+            $moRef,
+            'VirtualMachine',
+            $interval,
+            600
+        );
+
+        // $this->content()->add(new VmLiveCountersTable($vm, $api));
     }
 
     /**
@@ -177,14 +191,13 @@ class VmController extends Controller
             'url'       => 'vspheredb/vm/alarms',
             'urlParams' => $params
         ])
-        /*
-        // Disabled for now
+        /** // Disabled for now
         ->add('counters', [
             'label'     => $this->translate('Live Counters'),
             'url'       => 'vspheredb/vm/counters',
             'urlParams' => $params
         ])
-        */
+        **/
         ->activate($this->getRequest()->getActionName());
     }
 }

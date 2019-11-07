@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Translation\TranslationHelper;
+use ipl\Html\BaseHtmlElement;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Util\Format;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
 
 class DatastoreUsage extends BaseHtmlElement
 {

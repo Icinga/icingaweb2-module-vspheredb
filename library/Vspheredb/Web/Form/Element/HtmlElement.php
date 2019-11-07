@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form\Element;
 
-use dipl\Html\ValidHtml;
+use ipl\Html\ValidHtml;
 use Zend_Form_Element_Xhtml;
 
 class HtmlElement extends Zend_Form_Element_Xhtml

@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Web\Table\ZfQueryBasedTable;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use ipl\Html\Html;
 
 class HostSensorsTable extends ZfQueryBasedTable
 {
@@ -39,7 +39,6 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     /**
      * @param $type
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function renderTypeIfNew($type)
     {
@@ -68,13 +67,12 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     protected function makeHealthStateBadge($state, $count)
     {
-        return Link::create($count, '/', null, ['class' => ['state', $state]]);
+        return Link::create($count, '#', null, ['class' => ['state', $state]]);
     }
 
     /**
      * @param $type
      * @return mixed
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function getSummaryByType($type)
     {
@@ -127,7 +125,6 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     /**
      * @return array
-     * @throws \Icinga\Exception\IcingaException
      */
     public function fetchSummaries()
     {
@@ -167,7 +164,6 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     /**
      * @return \Zend_Db_Select
-     * @throws \Icinga\Exception\IcingaException
      */
     protected function prepareQuery()
     {
@@ -176,7 +172,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         ])->order('sensor_type')->order('name')->limit(1000);
 
         $query->where('base_units IS NOT NULL');
-        $query->where('health_state != ?', 'unknown');
+        // $query->where('health_state != ?', 'unknown');
 
         if ($this->host) {
             $query->where('host_uuid = ?', $this->host->get('uuid'));

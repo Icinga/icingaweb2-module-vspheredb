@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\BaseHtmlElement;
-use dipl\Html\Html;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 
 class CompactInOutSparkline extends BaseHtmlElement
 {

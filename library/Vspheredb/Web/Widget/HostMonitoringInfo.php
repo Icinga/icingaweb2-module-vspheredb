@@ -2,15 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use dipl\Html\Html;
-use dipl\Html\HtmlDocument;
-use dipl\Html\Link;
-use dipl\Translation\TranslationHelper;
 use Exception;
+use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
 
 class HostMonitoringInfo extends HtmlDocument
 {
@@ -67,7 +67,8 @@ class HostMonitoringInfo extends HtmlDocument
         $statusRenderer = new IcingaHostStatusRenderer();
 
         try {
-            $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
+            // $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
+            $monitoring = null;
             if ($monitoring && $monitoring->hasHost($name)) {
                 $monitoringState = $monitoring->getHostState($name);
                 return [

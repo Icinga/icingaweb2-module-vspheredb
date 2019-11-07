@@ -2,11 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Html\Link;
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\NameValueTable;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Exception;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
@@ -19,9 +18,9 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
-use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
+use ipl\Html\Html;
 
-class VmInfoTable extends NameValueTable
+class VmEssentialInfoTable extends NameValueTable
 {
     use TranslationHelper;
 
@@ -44,7 +43,7 @@ class VmInfoTable extends NameValueTable
 
     /**
      * @param $annotation
-     * @return string|\dipl\Html\HtmlElement
+     * @return string|\ipl\Html\HtmlElement
      */
     protected function formatAnnotation($annotation)
     {
@@ -84,15 +83,6 @@ class VmInfoTable extends NameValueTable
         /** @var \Icinga\Module\Vspheredb\Db $connection */
         $connection = $vm->getConnection();
         $lookup =  new PathLookup($connection);
-        $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
-        foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
-            $path->add(Link::create(
-                $name,
-                'vspheredb/vms',
-                ['uuid' => bin2hex($parentUuid)],
-                ['data-base-target' => '_main']
-            ));
-        }
 
         if ($guestName = $vm->get('guest_full_name')) {
             $guest = sprintf(
@@ -104,14 +94,46 @@ class VmInfoTable extends NameValueTable
             $guest = '-';
         }
 
+        /*
         $this->addNameValueRow(
             $this->translate('Monitoring'),
             $this->getMonitoringInfo($vm)
         );
+        */
 
+        if ($vm->get('guest_id')) {
+            $this->addNameValuePairs([
+                $this->translate('Guest OS') => $guest,
+                $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
+                $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
+                $this->translate('Guest Utilities') => [
+                    sprintf(
+                        '%s (Guest %s)',
+                        $vm->get('guest_tools_running_status'),
+                        $vm->get('guest_state')
+                    ),
+                ],
+            ]);
+        }  else {
+            $this->addNameValuePairs([
+                $this->translate('Guest Utilities') => sprintf(
+                        '%s (Guest %s)',
+                        $vm->get('guest_tools_running_status'),
+                        $vm->get('guest_state')
+                ),
+            ]);
+        }
+
+        $this->addNameValuePairs([
+            $this->translate('Host') => Html::sprintf(
+                '%s (%s)',
+                $lookup->linkToObject($vm->get('runtime_host_uuid')),
+                $this->getConnectionStateDetails($vm->get('connection_state'))
+            ),
+            $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
+        ]);
         $migrations = new VmRecentMigrationHistory($vm);
         $cntMigrations = $migrations->countWeeklyMigrationAttempts();
-
         $this->addNameValueRow(
             $this->translate('Migrations'),
             Html::sprintf(
@@ -124,39 +146,6 @@ class VmInfoTable extends NameValueTable
                 )
             )
         );
-
-        $powerStateRenderer = new PowerStateRenderer();
-        if ($vm->get('guest_id')) {
-            $this->addNameValuePairs([
-                $this->translate('Guest OS') => $guest,
-                $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
-                $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
-            ]);
-        }
-
-        $this->addNameValuePairs([
-            $this->translate('UUID') => $vm->get('bios_uuid'),
-            $this->translate('Instance UUID') => $vm->get('instance_uuid'),
-            $this->translate('CPUs')   => $vm->get('hardware_numcpu'),
-            $this->translate('MO Ref') => $this->linkToVCenter($vm->object()->get('moref')),
-            $this->translate('Is Template') => $vm->get('template') === 'y'
-                ? $this->translate('true')
-                : $this->translate('false'),
-            $this->translate('Path') => $path,
-            $this->translate('Power') => [
-                $powerStateRenderer($vm->get('runtime_power_state')),
-                sprintf(
-                    '%s (Guest %s)',
-                    $vm->get('guest_tools_running_status'),
-                    $vm->get('guest_state')
-                ),
-            ],
-            $this->translate('Connection State') => $this->getConnectionStateDetails($vm->get('connection_state')),
-            $this->translate('Resource Pool')    => $lookup->linkToObject($vm->get('resource_pool_uuid')),
-            $this->translate('Host')             => $lookup->linkToObject($vm->get('runtime_host_uuid')),
-            $this->translate('Version')          => $vm->get('version'),
-
-        ]);
     }
 
     /**
@@ -185,7 +174,9 @@ class VmInfoTable extends NameValueTable
                     )
                 ];
             } else {
-                return null;
+                return [Html::sprintf(
+                    "There is no monitored Host mapped to this VM"
+                )];
             }
         } catch (Exception $e) {
             return [

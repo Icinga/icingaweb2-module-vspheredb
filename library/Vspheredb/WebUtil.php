@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb;
 
-use dipl\Html\Error as HtmlError;
-use dipl\Html\HtmlDocument;
+use ipl\Html\Error as HtmlError;
+use ipl\Html\HtmlDocument;
 use Error;
 use Exception;
 

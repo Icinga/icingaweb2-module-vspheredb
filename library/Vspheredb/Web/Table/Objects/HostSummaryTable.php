@@ -2,16 +2,18 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Html;
-use dipl\Html\Icon;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Format;
+use ipl\Html\Html;
 
 abstract class HostSummaryTable extends ObjectsTable
 {
     protected $baseUrl = 'vspheredb/computeresource';
+
+    protected $baseUrlHosts = 'vspheredb/hosts';
 
     protected $searchColumns = [
         'name',
@@ -122,7 +124,7 @@ abstract class HostSummaryTable extends ObjectsTable
                 foreach (['red', 'yellow', 'gray', 'green'] as $state) {
                     $column = "hosts_cnt_overall_$state";
                     if ($row->$column > 0) {
-                        $result[] = Link::create($row->$column, 'vspheredb/hosts', [
+                        $result[] = Link::create($row->$column, $this->baseUrlHosts, [
                             'uuid'           => bin2hex($row->uuid),
                             'overall_status' => $state
                         ], ['class' => ['state', $state]]);

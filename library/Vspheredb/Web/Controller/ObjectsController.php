@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Controller;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
+use ipl\Html\Html;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
@@ -63,7 +63,11 @@ class ObjectsController extends Controller
             $lookup = $this->pathLookup();
             $name = $lookup->getObjectName($parent);
             $uuids = $lookup->listFoldersBelongingTo($parent);
-            $this->addTitle($name);
+            if ($name) {
+                $this->addTitle($name);
+            } else {
+                $this->addTitle($defaultTitle);
+            }
             if ($this->params->get('showDescendants')) {
                 $table->filterParentUuids($uuids);
             } else {

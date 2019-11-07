@@ -185,8 +185,8 @@ CREATE TABLE host_system (
   product_full_name VARCHAR(64) NOT NULL,   -- VMware ESXi 6.0.0 build-5572656
   bios_version VARCHAR(64) DEFAULT NULL, -- P89, SE5C610.86B.01.01.0020.122820161512
   bios_release_date DATETIME DEFAULT NULL, -- 2017-02-17T00:00:00Z
-  sysinfo_vendor VARCHAR(64) NOT NULL, -- HP
-  sysinfo_model VARCHAR(64) NOT NULL,  -- ProLiant DL380 Gen9
+  sysinfo_vendor VARCHAR(64) DEFAULT NULL, -- HP
+  sysinfo_model VARCHAR(64) DEFAULT NULL,  -- ProLiant DL380 Gen9
   sysinfo_uuid VARCHAR(64) NOT NULL,   -- 30133937-3365-54a3-3544-30374a334d53
   service_tag VARCHAR(64) DEFAULT NULL, -- DQ7EXJ1 or VMware-42 12 34 56 78 9a bc de-fd cb a9 87 65 43 21 00
   hardware_cpu_model VARCHAR(64) NOT NULL, -- Intel(R) Xeon(R) CPU E5-2699A v4 @ 2.40GHz
@@ -247,27 +247,43 @@ CREATE TABLE host_sensor (
   PRIMARY KEY(host_uuid, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE host_list (
+  list_checksum VARBINARY(20) NOT NULL,
+  PRIMARY KEY (list_checksum)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE host_list_member (
+  list_checksum VARBINARY(20) NOT NULL, -- sha1(uuid[uuid..])
+  uuid VARBINARY(20) NOT NULL,
+  PRIMARY KEY (uuid, list_checksum),
+  CONSTRAINT host_list_member_list
+    FOREIGN KEY host_list (list_checksum)
+    REFERENCES host_list (list_checksum)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE virtual_machine (
   uuid  VARBINARY(20) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
-  hardware_memorymb INT UNSIGNED NOT NULL,
-  hardware_numcpu TINYINT UNSIGNED NOT NULL,
-  hardware_numcorespersocket TINYINT UNSIGNED DEFAULT 1 NOT NULL,
-  template ENUM('y', 'n') NOT NULL, -- TODO: drop and skip templates? Or separate table?
+  hardware_memorymb INT UNSIGNED NULL DEFAULT NULL,
+  hardware_numcpu TINYINT UNSIGNED NULL DEFAULT NULL,
+  hardware_numcorespersocket TINYINT UNSIGNED NULL DEFAULT 1,
+  template ENUM('y', 'n') NULL DEFAULT NULL, -- TODO: drop and skip templates? Or separate table?
   instance_uuid VARCHAR(64) DEFAULT NULL,   -- 5004890e-8edd-fe5f-d116-d5704b2043e4
   bios_uuid VARCHAR(64) DEFAULT NULL,       -- 42042ce7-1c4f-b339-2293-40357f1d6860
-  version VARCHAR(32) NOT NULL,         -- vmx-11
-  online_standby ENUM('y', 'n') NOT NULL,
-  paused ENUM('y', 'n') DEFAULT NULL,
-  cpu_hot_add_enabled ENUM('y', 'n') NOT NULL,
-  memory_hot_add_enabled ENUM('y', 'n') NOT NULL,
+  version VARCHAR(32) NULL DEFAULT NULL,         -- vmx-11
+  online_standby ENUM('y', 'n') NULL DEFAULT NULL,
+  paused ENUM('y', 'n') NULL DEFAULT NULL,
+  cpu_hot_add_enabled ENUM('y', 'n') NULL DEFAULT NULL,
+  memory_hot_add_enabled ENUM('y', 'n') NULL DEFAULT NULL,
   connection_state ENUM (
     'connected',    -- server has access to the vm
     'disconnected', -- disconnected from the virtual machine, since its host is disconnected
     'inaccessible', -- vm config unaccessible
     'invalid',      -- vm config is invalid
     'orphaned'      -- vm no longer exists on host (but in vCenter)
-  ) NOT NULL,
+  ) NULL DEFAULT NULL,
   guest_state ENUM (
     'notRunning',
     'resetting',
@@ -275,7 +291,7 @@ CREATE TABLE virtual_machine (
     'shuttingDown',
     'standby',
     'unknown'
-  ) NOT NULL,
+  ) NULL DEFAULT NULL,
   guest_tools_status ENUM (
     'toolsNotInstalled',
     'toolsNotRunning',
@@ -305,6 +321,32 @@ CREATE TABLE virtual_machine (
   boot_order VARCHAR(128) DEFAULT NULL,
   annotation TEXT DEFAULT NULL,
   PRIMARY KEY(uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vm_list (
+  list_checksum VARBINARY(20) NOT NULL,
+  PRIMARY KEY (list_checksum)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE vm_list_member (
+  list_checksum VARBINARY(20) NOT NULL, -- sha1(uuid[uuid..])
+  uuid VARBINARY(20) NOT NULL,
+  PRIMARY KEY (uuid, list_checksum),
+  CONSTRAINT vm_list_member_list
+    FOREIGN KEY vm_list (list_checksum)
+    REFERENCES vm_list (list_checksum)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE storage_pod (
+  uuid VARBINARY(20) NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
+  pod_name VARCHAR(255) DEFAULT NULL,
+  free_space BIGINT UNSIGNED NOT NULL,
+  capacity BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY(uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE distributed_virtual_switch (
@@ -583,8 +625,9 @@ CREATE TABLE vm_event_history (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE monitoring_connection (
-  vcenter_uuid VARBINARY(16) NOT NULL,
+  id INT(10) UNSIGNED AUTO_INCREMENT NOT NULL,
   priority SMALLINT(5) UNSIGNED NOT NULL,
+  vcenter_uuid VARBINARY(16) NOT NULL,
   source_type ENUM (
       'ido',
       'icinga2-api',
@@ -595,7 +638,7 @@ CREATE TABLE monitoring_connection (
   monitoring_host_property VARCHAR(128) DEFAULT NULL,
   vm_property VARCHAR(128) DEFAULT NULL,
   monitoring_vm_host_property VARCHAR(128) DEFAULT NULL,
-  PRIMARY KEY (vcenter_uuid, priority),
+  PRIMARY KEY (id),
   CONSTRAINT monitoring_vcenter
     FOREIGN KEY monitoring_vcenter_uuid (vcenter_uuid)
     REFERENCES vcenter (instance_uuid)
@@ -622,6 +665,18 @@ CREATE TABLE host_monitoring_hoststate (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE host_monitoring_property (
+  host_uuid VARBINARY(20) NOT NULL,
+  property_name VARCHAR(64) NOT NULL,
+  property_value VARCHAR(255) NOT NULL,
+  PRIMARY KEY (host_uuid, property_name),
+  CONSTRAINT host_monitoring_property_host
+    FOREIGN KEY host_uuid (host_uuid)
+    REFERENCES host_system (uuid)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE vm_monitoring_hoststate (
   vm_uuid VARBINARY(20) NOT NULL,
   ido_connection_id INT(10) UNSIGNED NOT NULL,
@@ -641,12 +696,24 @@ CREATE TABLE vm_monitoring_hoststate (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
+CREATE TABLE vm_monitoring_property (
+  vm_uuid VARBINARY(20) NOT NULL,
+  property_name VARCHAR(64) NOT NULL,
+  property_value VARCHAR(255) NOT NULL,
+  PRIMARY KEY (vm_uuid, property_name),
+  CONSTRAINT vm_monitoring_property_vm
+    FOREIGN KEY vm_uuid (vm_uuid)
+    REFERENCES virtual_machine (uuid)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
 CREATE TABLE performance_unit (
   vcenter_uuid VARBINARY(16) NOT NULL,
   name VARCHAR(32) NOT NULL,
   label VARCHAR(16) NOT NULL,
   summary VARCHAR(64) NOT NULL,
-  PRIMARY KEY (name)
+  PRIMARY KEY (vcenter_uuid, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_group (
@@ -654,7 +721,7 @@ CREATE TABLE performance_group (
   name VARCHAR(32) NOT NULL,
   label VARCHAR(48) NOT NULL,
   summary VARCHAR(64) NOT NULL,
-  PRIMARY KEY (name)
+  PRIMARY KEY (vcenter_uuid, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_collection_interval (
@@ -662,7 +729,7 @@ CREATE TABLE performance_collection_interval (
   name VARCHAR(32) NOT NULL,
   label VARCHAR(48) NOT NULL,
   summary VARCHAR(64) NOT NULL,
-  PRIMARY KEY (name)
+  PRIMARY KEY (vcenter_uuid, name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE performance_counter (
@@ -697,13 +764,13 @@ CREATE TABLE performance_counter (
       ON DELETE RESTRICT
       ON UPDATE RESTRICT,
   CONSTRAINT performance_counter_group
-    FOREIGN KEY performance_group (group_name)
-    REFERENCES performance_group (name)
+    FOREIGN KEY performance_group (vcenter_uuid, group_name)
+    REFERENCES performance_group (vcenter_uuid, name)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT,
   CONSTRAINT performance_counter_unit
-    FOREIGN KEY performance_unit (unit_name)
-    REFERENCES performance_unit (name)
+    FOREIGN KEY performance_unit (vcenter_uuid, unit_name)
+    REFERENCES performance_unit (vcenter_uuid, name)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -733,7 +800,6 @@ CREATE TABLE counter_300x5 (
 --   vm_id BIGINT(20) UNSIGNED AUTO_INCREMENT NOT NULL,
 -- );
 
-
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (11, NOW());
+VALUES (17, NOW());

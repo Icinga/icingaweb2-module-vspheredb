@@ -9,11 +9,12 @@ use RuntimeException;
 
 class MonitoringConnection extends BaseDbObject
 {
-    protected $keyName = 'vcenter_uuid';
+    protected $keyName = 'id';
 
     protected $table = 'monitoring_connection';
 
     protected $defaultProperties = [
+        'id'                          => null,
         'vcenter_uuid'                => null,
         'priority'                    => null,
         'source_type'                 => null,

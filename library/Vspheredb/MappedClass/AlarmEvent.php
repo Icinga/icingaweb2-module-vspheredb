@@ -7,6 +7,8 @@ use Zend_Db_Adapter_Abstract as ZfDbAdapter;
 
 abstract class AlarmEvent extends KnownEvent
 {
+    public $alarm;
+
     protected $table = 'alarm_history';
 
     public function getDbData(VCenter $vCenter)

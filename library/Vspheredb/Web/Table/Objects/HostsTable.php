@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use dipl\Html\Link;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
@@ -14,7 +14,7 @@ use Icinga\Module\Vspheredb\Format;
 
 class HostsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/host/vms';
+    protected $baseUrl = 'vspheredb/host';
 
     protected function initialize()
     {
@@ -192,12 +192,6 @@ class HostsTable extends ObjectsTable
                 'vms.runtime_host_uuid = h.uuid',
                 []
             );
-        }
-        if ($this->parentUuids) {
-            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
-        }
-        if ($this->filterVCenter) {
-            $query->where('o.vcenter_uuid = ?', $this->filterVCenter->getUuid());
         }
 
         return $query;

@@ -28,6 +28,7 @@ class SyncVmDatastoreUsage
         $vCenter = $this->vCenter;
         $db = $vCenter->getDb();
 
+        // Hint/TODO: well... this will always trigger on the very first run
         $this->refreshOutdatedDatastores();
 
         $result = $vCenter->getApi()->propertyCollector()->collectObjectProperties(

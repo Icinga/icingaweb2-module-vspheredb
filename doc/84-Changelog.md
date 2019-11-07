@@ -1,6 +1,24 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.1.0
+------
+### Breaking Changes
+* This module no longer depends on the Icinga Director
+* New dependencies have been introduced, our [Installation](01-Installation.md)
+  documentations contain related details
+
+### Upgrading
+
+This release brings Schema migrations, which can be applied with a single click
+in the Frontend. Please go to *Virtualization (VMware)* - *Configuration* and
+**Apply** the pending schema migration. Afterwards please restart the *Background
+Daemon*.
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/4?closed=1)
+
 v1.0.4
 ------
 

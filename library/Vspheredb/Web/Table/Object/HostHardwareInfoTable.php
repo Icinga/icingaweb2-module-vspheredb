@@ -2,9 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use dipl\Html\Html;
-use dipl\Translation\TranslationHelper;
-use dipl\Web\Widget\NameValueTable;
+use gipfl\Translation\TranslationHelper;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;

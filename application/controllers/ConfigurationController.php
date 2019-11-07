@@ -2,15 +2,17 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use dipl\Html\Html;
 use Exception;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
+use Icinga\Module\Vspheredb\Web\Form\MonitoringConnectionForm;
+use Icinga\Module\Vspheredb\Web\Table\MonitoredObjectMappingTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Form\ApplyMigrationsForm;
 use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Table\PerformanceCounterTable;
+use ipl\Html\Html;
 
 class ConfigurationController extends Controller
 {
@@ -26,11 +28,10 @@ class ConfigurationController extends Controller
 
             return;
         }
-        $form = ChooseDbResourceForm::load()->handleRequest();
-        $this->content()->add(Html::tag('div', [
-            'class' => 'icinga-module module-director'
-        ], $form));
-        if ($form->hasErrors()) {
+        $form = new ChooseDbResourceForm();
+        $form->handleRequest($this->getServerRequest());
+        $this->content()->add($form);
+        if ($form->hasMessages()) {
             $this->addSingleTab($this->translate('Configuration'));
 
             return;
@@ -72,9 +73,11 @@ class ConfigurationController extends Controller
                     . ' them now!'
                 )));
                 $this->content()->add(
-                    ApplyMigrationsForm::load()
-                        ->setMigrations($migrations)
-                        ->handleRequest()
+                    (new ApplyMigrationsForm($migrations))
+                        ->on(ApplyMigrationsForm::ON_SUCCESS, function () {
+                            $this->redirectNow($this->url());
+                        })
+                        ->handleRequest($this->getServerRequest())
                 );
             }
         } else {
@@ -100,17 +103,74 @@ class ConfigurationController extends Controller
                 )));
             }
             $this->content()->add(
-                ApplyMigrationsForm::load()
-                    ->setMigrations($migrations)
-                    ->handleRequest()
+                (new ApplyMigrationsForm($migrations))
+                    ->on(ApplyMigrationsForm::ON_SUCCESS, function () {
+                        $this->redirectNow($this->url());
+                    })
+                    ->handleRequest($this->getServerRequest())
             );
         }
     }
 
-    public function countersAction()
+    public function monitoringAction()
     {
-        $this->addSingleTab('Counters');
-        $this->addTitle('Performance Counters');
-        (new PerformanceCounterTable($this->db()))->renderTo($this);
+        $this->tabs(new MainTabs($this->Auth()))->activate('monitoring');
+        $this->actions()->add(Link::create(
+            $this->translate('Add'),
+            'vspheredb/configuration/addmonitoring',
+            null,
+            [
+                'class'            => 'icon-plus',
+                'data-base-target' => '_next',
+            ]
+        ));
+        $this->addTitle($this->translate('Monitoring Integration'));
+        $table = new MonitoredObjectMappingTable($this->db());
+        $table->handleSortPriorityActions($this->getRequest(), $this->getResponse());
+        if (count($table)) {
+            $wrapper = Html::tag('div', ['class' => 'icinga-module module-director']);
+            $wrapper->wrap($table);
+            $this->content()->add($wrapper);
+            $table->renderTo($this);
+        } else {
+            $this->content()->add(Html::tag('p', ['class' => 'warning'], $this->translate(
+                'No integration has been configured'
+            )));
+        }
+    }
+
+    public function addmonitoringAction()
+    {
+        $this->addSingleTab($this->translate('Create'));
+        $this->addTitle($this->translate('New Monitoring Integration'));
+        $form = new MonitoringConnectionForm($this->db());
+        $form->handleRequest($this->getServerRequest());
+        $this->content()->add($form);
+    }
+
+    public function monitoringconfigAction()
+    {
+        $id = $this->params->get('id');
+        if ($id) {
+            $this->addSingleTab($this->translate('Modify'));
+
+            $db = $this->db()->getDbAdapter();
+            $res = $db->fetchRow(
+                $db->select()->from('monitoring_connection')->where('id = ?', $id)
+            );
+        } else {
+            $this->addSingleTab($this->translate('Create'));
+            $res = null;
+        }
+
+
+        $this->addTitle($this->translate('Monitoring Integration'));
+        $form = new MonitoringConnectionForm($this->db());
+        if ($res) {
+            $res->vcenter = \bin2hex($res->vcenter_uuid);
+            $form->populate((array) $res);
+        }
+        $form->handleRequest($this->getServerRequest());
+        $this->content()->add($form);
     }
 }

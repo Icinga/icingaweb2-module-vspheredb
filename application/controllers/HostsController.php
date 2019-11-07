@@ -23,14 +23,15 @@ class HostsController extends ObjectsController
         }
 
         $this->setAutorefreshInterval(15);
-        $table = new HostsTable($this->db());
+        $table = new HostsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $this->showTable($table, 'vspheredb/hosts', $this->translate('Hosts'));
         // Hint: handleSortUrl MUST be done AFTER showTable, otherwise
         //       eventuallyFilter and similar will not be applied
-        // TODO: This is error-prone and should be solved differently
-        $table->handleSortUrl($this->url());
+        // TODO: This is error-prone and should be solved differently. And right now
+        //       (with the url in the constructor) it will no longer be possible.
+        //       CHECK THIS!
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
     }

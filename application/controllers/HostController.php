@@ -50,13 +50,11 @@ class HostController extends Controller
     public function vmsAction()
     {
         $host = $this->addHost();
-        $table = new VmsTable($this->db());
+        $table = new VmsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
 
-        $table->handleSortUrl($this->url())
-            ->filterHost($host->get('uuid'))
-            ->renderTo($this);
+        $table->filterHost($host->get('uuid'))->renderTo($this);
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
     }

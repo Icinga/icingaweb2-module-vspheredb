@@ -2,15 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use dipl\Html\Html;
-use dipl\Html\Link;
 use Exception;
+use gipfl\IcingaWeb2\Link;
 use Icinga\Application\Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\Migrations;
+use Icinga\Web\Notification;
+use ipl\Html\Html;
 
-class ChooseDbResourceForm extends BaseForm
+class ChooseDbResourceForm extends Form
 {
     private $config;
 
@@ -20,11 +21,9 @@ class ChooseDbResourceForm extends BaseForm
 
     private $migrateDbLabel;
 
-    /**
-     * @throws \Zend_Form_Exception
-     */
-    public function setup()
+    protected function assemble()
     {
+        $this->prepareWebForm();
         $this->storeConfigLabel = $this->translate('Store configuration');
 
         $this->addResourceConfigElements();
@@ -33,13 +32,7 @@ class ChooseDbResourceForm extends BaseForm
             || ($this->config()->get('db', 'resource') !== $this->getResourceName())) {
             return;
         }
-    }
 
-    /**
-     * @throws \Zend_Form_Exception
-     */
-    protected function onSetup()
-    {
         if ($this->hasBeenSubmitted()) {
             // Do not hinder the form from being stored
             return;
@@ -51,14 +44,14 @@ class ChooseDbResourceForm extends BaseForm
                     || $resourceConfig->charset !== 'utf8mb4'
                 ) {
                     $this->getElement('resource')
-                        ->addError('Please change the encoding for the database to utf8mb4');
+                        ->addMessage('Please change the encoding for the database to utf8mb4');
                 }
 
                 $resource = $this->getResource();
                 $db = $resource->getDbAdapter();
             } catch (Exception $e) {
                 $this->getElement('resource')
-                    ->addError('Resource failed: ' . $e->getMessage());
+                    ->addMessage('Resource failed: ' . $e->getMessage());
 
                 return;
             }
@@ -67,7 +60,7 @@ class ChooseDbResourceForm extends BaseForm
                 $db->fetchOne('SELECT 1');
             } catch (Exception $e) {
                 $this->getElement('resource')
-                    ->addError('Could not connect to database: ' . $e->getMessage());
+                    ->addMessage('Could not connect to database: ' . $e->getMessage());
 
                 $this->addHint($this->translate(
                     'Please make sure that your database exists and your user has'
@@ -77,20 +70,10 @@ class ChooseDbResourceForm extends BaseForm
         }
     }
 
-    /**
-     * @throws \Zend_Form_Exception
-     */
     protected function addResourceConfigElements()
     {
         $config = $this->config();
         $resources = $this->enumResources();
-
-        if (!$this->getResourceName()) {
-            $this->addHint($this->translate(
-                'No database resource has been configured yet. Please choose a'
-                . ' resource to complete your config'
-            ), array('name' => 'HINT_no_resource'));
-        }
 
         $this->addElement('select', 'resource', array(
             'required'      => true,
@@ -99,6 +82,13 @@ class ChooseDbResourceForm extends BaseForm
             'class'         => 'autosubmit',
             'value'         => $config->get('db', 'resource')
         ));
+
+        if (!$this->getResourceName()) {
+            $this->addHint($this->translate(
+                'No database resource has been configured yet. Please choose a'
+                . ' resource to complete your config'
+            ));
+        }
 
         if (empty($resources)) {
             $this->addHint(Html::sprintf(
@@ -112,12 +102,13 @@ class ChooseDbResourceForm extends BaseForm
             ));
         }
 
-        $this->setSubmitLabel($this->storeConfigLabel);
+        $this->addElement('submit', 'submit', [
+            'label' => $this->storeConfigLabel
+        ]);
     }
 
     /**
      * @return bool
-     * @throws \Zend_Form_Exception
      */
     protected function storeResourceConfig()
     {
@@ -128,11 +119,12 @@ class ChooseDbResourceForm extends BaseForm
 
         try {
             $config->saveIni();
-            $this->setSuccessMessage($this->translate('Configuration has been stored'));
+            // $this->setSuccessMessage
+            Notification::success($this->translate('Configuration has been stored'));
 
             return true;
         } catch (Exception $e) {
-            $this->getElement('resource')->addError(
+            $this->getElement('resource')->addMessage(
                 sprintf(
                     $this->translate(
                         'Unable to store the configuration to "%s". Please check'
@@ -141,23 +133,22 @@ class ChooseDbResourceForm extends BaseForm
                     $config->getConfigFile()
                 )
             );
-            $this->addHtml(
-                Html::tag('pre', null, $config),
-                ['name' => 'HINT_config_store']
-            );
-
-            $this->getDisplayGroup('config')->addElements([
-                $this->getElement('HINT_config_store')
+            $submit = $this->getSubmitButton();
+            $this->remove($submit);
+            $this->addElement('html', 'hint', [
+                'label'   => $this->translate('File content'),
+                'content' => Html::tag('pre', null, (string) $config)
             ]);
-            $this->removeElement('HINT_ready');
+            // Hint: re-adding the element shows two of them, and if
+            // you clone it first it seems to be wrapped twice.
+            $this->addElement('submit', 'submit', [
+                'label' => $submit->getButtonLabel()
+            ]);
 
             return false;
         }
     }
 
-    /**
-     * @throws \Zend_Form_Exception
-     */
     public function onSuccess()
     {
         if ($this->getSubmitLabel() === $this->storeConfigLabel) {
@@ -171,16 +162,18 @@ class ChooseDbResourceForm extends BaseForm
         if ($this->getSubmitLabel() === $this->createDbLabel
             || $this->getSubmitLabel() === $this->migrateDbLabel) {
             $this->migrations()->applyPendingMigrations();
-            parent::onSuccess();
         }
+    }
 
-        parent::onSuccess();
+    protected function getSubmitLabel()
+    {
+        return $this->getSubmitButton()->getButtonLabel();
     }
 
     protected function getResourceName()
     {
         if ($this->hasBeenSent()) {
-            $resource = $this->getSentValue('resource');
+            $resource = $this->getValue('resource');
             $resources = $this->enumResources();
             if (in_array($resource, $resources)) {
                 return $resource;

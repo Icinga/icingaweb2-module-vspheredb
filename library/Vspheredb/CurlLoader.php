@@ -249,6 +249,10 @@ class CurlLoader extends EventEmitter
             $opts[CURLOPT_USERPWD] = sprintf('%s:%s', $this->user, $this->pass);
         }
 
+        if ($this->port !== null) {
+            $opts[CURLOPT_PORT] = $this->port;
+        }
+
         if ($this->proxy) {
             $opts[CURLOPT_PROXY] = $this->proxy;
             $opts[CURLOPT_PROXYTYPE] = $this->proxyType;
