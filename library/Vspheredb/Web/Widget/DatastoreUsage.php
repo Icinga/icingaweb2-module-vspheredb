@@ -45,8 +45,8 @@ class DatastoreUsage extends BaseHtmlElement
     {
         $this->datastore   = $datastore;
         $this->uuid        = $datastore->get('uuid');
-        $this->capacity    = $datastore->get('capacity');
-        $this->uncommitted = $datastore->get('uncommitted');
+        $this->capacity    = (int) $datastore->get('capacity');
+        $this->uncommitted = (int) $datastore->get('uncommitted');
         $this->db = $datastore->getDb();
     }
 
