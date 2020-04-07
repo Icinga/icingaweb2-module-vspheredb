@@ -101,6 +101,7 @@ class SpectreMelddownBiosInfo extends BaseHtmlElement
         $vendor = $host->get('sysinfo_vendor');
         $model = $host->get('sysinfo_model');
         if (strpos($model, ' ') === false) {
+            $this->add($version);
             return;
         }
         $result = null;
