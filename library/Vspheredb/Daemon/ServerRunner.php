@@ -92,15 +92,10 @@ class ServerRunner
         $hostName = $server->get('host');
         Logger::info('Initializing vCenter for %s', $hostName);
 
-        $command = $this->prepareCliCommand([
-            'vspheredb',
-            'task',
-            'initialize',
-            '--rpc',
-            '--debug',
+        $command = $this->prepareCliCommand($this->prepareCliTaskParams('initialize', [
             '--serverId',
             $server->get('id')
-        ]);
+        ]));
         $command->on('start', function (Process $process) {
             $this->onProcessStarted($process);
         });
@@ -124,20 +119,33 @@ class ServerRunner
         $id = $vCenter->get('id');
         // TODO: log Host?
         Logger::info('Running vCenter Sync for ID=%s', $id);
-        $command = $this->prepareCliCommand([
-            'vspheredb',
-            'task',
-            'sync',
-            '--rpc',
-            '--debug',
+        $command = $this->prepareCliCommand($this->prepareCliTaskParams('sync', [
             '--vCenterId',
             $id
-        ]);
+        ]));
         $command->on('start', function (Process $process) {
             $this->onProcessStarted($process, true);
         });
 
         return $command->run($this->loop);
+    }
+
+    protected function prepareCliTaskParams($task, $params)
+    {
+        $result = [
+            'vspheredb',
+            'task',
+            $task,
+            '--rpc',
+        ];
+        $level = Logger::getInstance()->getLevel();
+        if ($level === Logger::DEBUG) {
+            $result[] = '--debug';
+        } elseif ($level === Logger::INFO) {
+            $result[] = '--verbose';
+        }
+
+        return \array_merge($result, $params);
     }
 
     protected function onProcessStarted(Process $process, $mustRun = false)
