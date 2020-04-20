@@ -1,6 +1,6 @@
 [Unit]
 Description=Icinga vSphereDB Daemon
-Documentation=https://icinga.com/docs/icinga-vsphere/latest/
+Documentation=https://icinga.com/docs/vsphere/latest/
 Wants=network.target
 
 [Service]
