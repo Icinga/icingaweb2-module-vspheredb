@@ -36,15 +36,16 @@ class DiskTagHelper
     {
         $result = [];
         $query = $this->prepareVmDisksQuery()->columns([
-            'moref'          => 'o.moref',
-            'hardware_key'   => "(CASE WHEN vmhw.label LIKE 'IDE %' THEN 'ide' ELSE 'scsi' END || vmhc.bus_number || ':' || vmhw.unit_number)",
-            'name'           => 'o.object_name',
-            'host_name'      => 'vm.guest_host_name',
-            'hardware_label' => 'vmhw.label',
+            'vm_uuid'             => 'LOWER(HEX(o.uuid))',
+            'vm_name'             => 'o.object_name',
+            'vm_guest_host_name'  => 'vm.guest_host_name',
+            'vm_moref'            => 'o.moref',
+            'disk_hardware_key'   => "(CASE WHEN vmhw.label LIKE 'IDE %' THEN 'ide' ELSE 'scsi' END || vmhc.bus_number || ':' || vmhw.unit_number)",
+            'disk_hardware_label' => 'vmhw.label',
         ]);
 
         foreach ($this->db->fetchAll($query) as $row) {
-            $result[$row->moref . '/' . $row->hardware_key] = (array) $row;
+            $result[$row->vm_moref . '/' . $row->disk_hardware_key] = (array) $row;
         }
 
         return $result;
