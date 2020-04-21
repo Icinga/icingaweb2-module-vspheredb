@@ -57,6 +57,19 @@ class VmDisks extends PerformanceSet
         );
     }
 
+    protected function prepareBaseQuery()
+    {
+        return $this->db->select()->from(['o' => 'object'], [])
+            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
+            ->join(['vmd' => 'vm_disk'], 'vm.uuid = vmd.vm_uuid', [])
+            ->join(['vmhw' => 'vm_hardware'], 'vmd.vm_uuid = vmhw.vm_uuid AND vmd.hardware_key = vmhw.hardware_key', [])
+            ->join(['vmhc' => 'vm_hardware'], 'vmhw.vm_uuid = vmhc.vm_uuid AND vmhw.controller_key = vmhc.hardware_key', [])
+            ->where('o.vcenter_uuid = ?', $this->vCenter->getUuid())
+            ->where("vmhc.label LIKE 'SCSI controller %' OR vmhc.label LIKE 'IDE %'")
+            ->order('vm.runtime_host_uuid')
+            ->order('vmd.hardware_key');
+    }
+
     public function fetchObjectTags()
     {
         return (new DiskTagHelper($this->vCenter))->fetchVmTags();
