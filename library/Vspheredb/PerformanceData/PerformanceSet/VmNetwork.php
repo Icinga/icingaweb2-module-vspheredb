@@ -55,12 +55,12 @@ class VmNetwork extends PerformanceSet
     {
         $result = [];
         $query = $this->prepareBaseQuery()->columns([
-            'moref'           => 'o.moref',
-            'hardware_key'    => 'vna.hardware_key',
-            'name'            => 'o.object_name',
+            'vm_moref'               => 'o.moref',
+            'vm_name'                => 'o.object_name',
+            'vm_guest_host_name'     => "COALESCE(vm.guest_host_name, '(null)')",
+            'interface_hardware_key' => 'vna.hardware_key',
             // 'parent_name'     => 'po.object_name',
-            'guest_host_name' => "COALESCE(vm.guest_host_name, '(null)')",
-            'interface_label' => 'vh.label',
+            'interface_label'        => 'vh.label',
             // 'portgroup_name'  => 'pgo.object_name',
         ])
         // ->join(['po' => 'object'], 'po.uuid = o.parent_uuid', [])
@@ -70,7 +70,7 @@ class VmNetwork extends PerformanceSet
             []
         );
         foreach ($this->getDb()->fetchAll($query) as $row) {
-            $result[$row->moref . '/' . $row->hardware_key] = (array) $row;
+            $result[$row->vm_moref . '/' . $row->interface_hardware_key] = (array) $row;
         }
 
         return $result;
