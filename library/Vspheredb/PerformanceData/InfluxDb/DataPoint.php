@@ -47,6 +47,9 @@ class DataPoint
     {
         $tags = '';
         foreach ($this->tags as $key => $value) {
+            if (\strlen($value) === 0) {
+                continue;
+            }
             $tags .= ','
                 . \addcslashes($key, self::ESCAPE_TAG_CHARACTERS)
                 . '='
@@ -62,7 +65,8 @@ class DataPoint
         foreach ($this->fields as $key => $value) {
             $fields .= ",$key="; // TODO: escape key
 
-            if (\is_int($value) || \ctype_digit($value)) {
+            // Faster checks first
+            if (\is_int($value) || \ctype_digit($value) || \preg_match('/^-\d+$/', $value)) {
                 $fields .= "${value}i";
             } elseif (\is_bool($value)) {
                 $fields .= $value ? self::TRUE : self::FALSE;
