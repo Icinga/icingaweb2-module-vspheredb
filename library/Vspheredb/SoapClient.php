@@ -49,21 +49,22 @@ class SoapClient extends PhpSoapClient
      */
     public function doCurlRequest($request, $location, $action, $version, $one_way = 0)
     {
-        $headers = array(
+        $headers = [
             'User-Agent'   => 'Icinga vSphere Client/1.1',
             'Content-Type' => 'text/xml; charset=utf-8',
             'Connection'   => 'Keep-Alive',
             'Keep-Alive'   => '300',
             'SOAPAction'   => $action,
-        );
-        $start = microtime(true);
+        ];
         $result = $this->curl->post($location, $request, $headers);
-        $duration = microtime(true) - $start;
         Logger::debug(
-            'SOAPClient: sent %s, got %s response in %0.2fms',
+            'SOAPClient: sent %s in %.02fms, waited %.02fms, got %s response in %0.2fms. Total duration: %.02fms',
             Format::bytes(strlen($request)),
+            $this->curl->getLastRequestDuration() * 1000,
+            $this->curl->getTimeWaitingForFirstHeader() * 1000,
             Format::bytes(strlen($result)),
-            $duration * 1000
+            $this->curl->getLastResponseDuration() * 1000,
+            $this->curl->getTotalDuration() * 1000
         );
 
         if ($this->dumpRawData) {

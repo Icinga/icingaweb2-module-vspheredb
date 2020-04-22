@@ -69,6 +69,18 @@ class CurlLoader extends EventEmitter
 
     private $lastResponse;
 
+    private $tsRequestReadyToSend;
+
+    private $tsRequestSent;
+
+    private $tsRecvFirstResponseHeaderLine;
+
+    private $tsRecvFullResponse;
+
+    private $bytesSent;
+
+    private $bytesReceived;
+
     /**
      * CurlLoader constructor.
      *
@@ -224,7 +236,7 @@ class CurlLoader extends EventEmitter
     protected function request($method, $url, $body = null, $headers = array())
     {
         $method = strtoupper($method);
-        $sendHeaders = array('Host: ' . $this->host);
+        $sendHeaders = ['Host: ' . $this->host];
         foreach ($this->cookies as $cookie) {
             $sendHeaders[] = 'Cookie: ' . $cookie;
         }
@@ -234,7 +246,7 @@ class CurlLoader extends EventEmitter
 
         $this->debugRequest($method, $url, $sendHeaders, $body);
         $curl = $this->curl();
-        $opts = array(
+        $opts = [
             CURLOPT_URL            => $url,
             CURLOPT_HTTPHEADER     => $sendHeaders,
             CURLOPT_CUSTOMREQUEST  => $method,
@@ -242,8 +254,14 @@ class CurlLoader extends EventEmitter
             CURLOPT_CONNECTTIMEOUT => 5,
             CURLOPT_SSL_VERIFYPEER => $this->verifySslPeer,
             CURLOPT_SSL_VERIFYHOST => $this->verifySslHost ? 2 : 0,
-            CURLOPT_HEADERFUNCTION => array($this, 'processHeaderLine'),
-        );
+            CURLOPT_HEADERFUNCTION => [$this, 'processHeaderLine'],
+            CURLOPT_PROGRESSFUNCTION => [$this, 'progress'],
+            CURLOPT_ENCODING       => 'gzip',
+            CURLOPT_TCP_NODELAY    => true,
+            CURLOPT_NOPROGRESS     => false,
+            CURLINFO_HEADER_OUT    => true,
+            CURLOPT_CERTINFO       => true,
+        ];
 
         if ($this->user !== null) {
             $opts[CURLOPT_USERPWD] = sprintf('%s:%s', $this->user, $this->pass);
@@ -272,14 +290,20 @@ class CurlLoader extends EventEmitter
 
         curl_setopt_array($curl, $opts);
 
+        $this->tsRequestReadyToSend = \microtime(true);
+        $this->tsRecvFirstResponseHeaderLine = null;
+        $this->tsRecvFullResponse = null;
+        $this->tsRequestSent = null;
+        $this->bytesSent = 0;
+        $this->bytesReceived = 0;
         $res = curl_exec($curl);
 
         if ($res === false) {
             throw new RuntimeException('CURL ERROR: ' . curl_error($curl));
         }
         $this->lastResponse = $res;
-
         $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $this->tsRecvFullResponse = \microtime(true);
         $this->debugResponse($res, $statusCode);
 
         if ($statusCode === 401) {
@@ -354,6 +378,9 @@ class CurlLoader extends EventEmitter
      */
     public function processHeaderLine($curl, $header)
     {
+        if ($this->tsRecvFirstResponseHeaderLine === null) {
+            $this->tsRecvFirstResponseHeaderLine = \microtime(true);
+        }
         // echo "H: $header";
         $len = strlen($header);
         $header = explode(':', $header, 2);
@@ -371,6 +398,54 @@ class CurlLoader extends EventEmitter
         }
 
         return $len;
+    }
+
+    public function progress(
+        $curl,
+        $bytesToReceive,
+        $bytesReceived,
+        $bytesToSend,
+        $bytesSent
+    ) {
+        if ($bytesSent !== $this->bytesSent) {
+            // printf(
+            //     "%s/%s Bytes sent\n",
+            //     $bytesSent,
+            //     $bytesToSend
+            // );
+            $this->bytesSent = $bytesSent;
+        }
+        if ($this->tsRequestSent === null && $bytesSent === $bytesToSend) {
+            $this->tsRequestSent = \microtime(true);
+        }
+        if ($bytesReceived !== $this->bytesReceived) {
+            // printf(
+            //     "%s/%s Bytes received\n",
+            //     $bytesReceived,
+            //     $bytesToReceive
+            // );
+            $this->bytesReceived = $bytesReceived;
+        }
+    }
+
+    public function getLastRequestDuration()
+    {
+        return $this->tsRequestSent - $this->tsRequestReadyToSend;
+    }
+
+    public function getTimeWaitingForFirstHeader()
+    {
+        return $this->tsRecvFirstResponseHeaderLine - $this->tsRequestSent;
+    }
+
+    public function getLastResponseDuration()
+    {
+        return $this->tsRecvFullResponse - $this->tsRecvFirstResponseHeaderLine;
+    }
+
+    public function getTotalDuration()
+    {
+        return $this->tsRecvFullResponse - $this->tsRequestReadyToSend;
     }
 
     /**
