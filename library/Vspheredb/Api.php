@@ -242,7 +242,8 @@ class Api
                 'connection_timeout' => 10,
                 'classmap'           => ApiClassMap::getMap(),
                 'features'           => $features,
-                'cache_wsdl'         => WSDL_CACHE_NONE
+                'cache_wsdl'         => WSDL_CACHE_NONE,
+                'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
             ];
 
             try {
