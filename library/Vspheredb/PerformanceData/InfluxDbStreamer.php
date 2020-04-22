@@ -57,14 +57,14 @@ class InfluxDbStreamer
     {
         Logger::info("Streaming to $baseUrl");
         if ($this->influx !== null) {
-            throw new \RuntimeException('Cannot start to stream while streaming');
+            // throw new \RuntimeException('Cannot start to stream while streaming');
         }
         $this->influx = new AsyncInfluxDbWriter($baseUrl, $this->loop);
         $this->idle = false;
 
         $sets = [
             'VmNetwork' => VmNetwork::class,
-            // 'VmDisks'   => VmDisks::class,
+            'VmDisks'   => VmDisks::class,
         ];
 
         foreach ($sets as $set) {
@@ -108,17 +108,15 @@ class InfluxDbStreamer
 
     protected function sendNextBatch($dbName)
     {
-        Logger::info('send has been triggered');
         if (empty($this->queue)) {
-            Logger::info('queue is empty');
             return;
         }
 
-        $batch = array_shift($this->queue);
-        $lines = [];
-        $lines = array_merge($lines, $batch);
+        $batch = \array_shift($this->queue);
+        // $lines = [];
+        // $lines = array_merge($lines, $batch);
 
-        $linesWaitingForInflux = count($batch);
+        $linesWaitingForInflux = \count($batch);
         $this->influx->send($dbName, $batch)->then(function () use (& $linesWaitingForInflux, $dbName) {
             Logger::info(sprintf(
                 'Sent %d lines to InfluxDB',
@@ -138,6 +136,7 @@ class InfluxDbStreamer
             }
         })->always(function () use (& $linesWaitingForInflux) {
             $linesWaitingForInflux = 0;
+            $this->idle = true;
         });
         // $this->linesWaitingForInflux = $this->pendingLines;
         // $this->pendingLines = 0;
@@ -162,7 +161,7 @@ class InfluxDbStreamer
                     $this->linesWaitingForInflux
                 ));
             })->otherwise(function (\Exception $e) {
-                Logger::debug(sprintf(
+                Logger::error(sprintf(
                     'Failed to send %d lines to InfluxDB: %s',
                     $this->linesWaitingForInflux,
                     $e->getMessage()
