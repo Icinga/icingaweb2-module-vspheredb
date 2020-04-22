@@ -47,7 +47,8 @@ class PerfCommand extends CommandBase
         $dbName = $this->params->getRequired('db');
         $loop = Factory::create();
         $streamer = new InfluxDbStreamer($vCenter, $loop);
-        $loop->addPeriodicTimer(900, function () use ($streamer, $baseUrl, $dbName) {
+        $interval = $this->params->get('interval', 60);
+        $loop->addPeriodicTimer($interval, function () use ($streamer, $baseUrl, $dbName) {
             if ($streamer->isIdle()) {
                 $streamer->streamTo($baseUrl, $dbName);
             } else {
