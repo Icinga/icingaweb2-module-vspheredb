@@ -34,6 +34,9 @@ class ImportSource extends ImportSourceHook
         'guest_ip_address'  => 'vm.guest_ip_address',
         'hardware_numcpu'   => 'vm.hardware_numcpu',
         'hardware_memorymb' => 'vm.hardware_memorymb',
+        'guest_id'          => 'vm.guest_id',
+        'guest_full_name'   => 'vm.guest_full_name',
+        'guest_host_name'   => 'vm.guest_host_name',
     ];
 
     public function getName()
