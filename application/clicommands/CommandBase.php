@@ -15,6 +15,20 @@ class CommandBase extends Command
     public function init()
     {
         $this->app->getModuleManager()->loadEnabledModules();
+        $this->clearProxySettings();
+    }
+
+    protected function clearProxySettings()
+    {
+        $settings = [
+            'http_proxy',
+            'https_proxy',
+            'HTTPS_PROXY',
+            'ALL_PROXY',
+        ];
+        foreach ($settings as $setting) {
+            putenv("$setting=");
+        }
     }
 
     protected function getVCenter()

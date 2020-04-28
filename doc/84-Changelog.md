@@ -1,6 +1,17 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+next (will be 1.2.0)
+--------------------
+
+### Background Daemon
+* FIX: do not allow ENV proxy settings to override server config (#159)
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/6?closed=1)
+
+
 v1.1.0
 ------
 ### Breaking Changes
