@@ -9,6 +9,7 @@ next (will be 1.2.0)
 
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)
+* FIX: sync no longer fails on objects with no overallState (#98)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
