@@ -45,6 +45,9 @@ class SyncManagedObjectReferences
         foreach ($all as $obj) {
             $moRef = $obj->id;
             $name = $obj->name;
+            if (! isset($obj->overallStatus)) {
+                $obj->overallStatus = 'gray';
+            }
             $uuid = $vCenter->makeBinaryGlobalUuid($moRef);
             $fetched[$uuid] = $name;
             $nameUuids[$moRef] = $uuid;
