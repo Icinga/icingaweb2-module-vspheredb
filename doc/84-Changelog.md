@@ -4,6 +4,9 @@
 next (will be 1.2.0)
 --------------------
 
+### UI
+* FIX: hide column for experimental feature (#153)
+
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)
 

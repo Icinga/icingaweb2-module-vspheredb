@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Img;
 use gipfl\IcingaWeb2\Link;
 use Icinga\Date\DateFormatter;
@@ -155,11 +154,14 @@ class VmsTable extends ObjectsTable
 
                 return DateFormatter::formatDuration($row->uptime);
             }),
+            /*
+            TODO: Not yet
             $this->createColumn('ifTraffic', $this->translate('NIC Usage'), [
                 'moref' => 'o.moref',
             ])->setRenderer(function ($row) {
                 return $this->renderInterface($row->moref, 4000);
             }),
+            */
         ]);
 
         // $this->addPerfColumns();
