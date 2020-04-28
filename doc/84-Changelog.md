@@ -17,6 +17,12 @@ next (will be 1.2.0)
 
 v1.1.0
 ------
+
+This release brings bug fixes, stability and some new features. Biggest change
+is that we're now telling your vCenter to refresh outdated Datastores. We
+discovered that depending on your configuration your vCenter might ship VERY old
+information. With this release we're smoothly kicking it when necessary.
+
 ### Breaking Changes
 * This module no longer depends on the Icinga Director
 * New dependencies have been introduced, our [Installation](01-Installation.md)
@@ -29,9 +35,31 @@ in the Frontend. Please go to *Virtualization (VMware)* - *Configuration* and
 **Apply** the pending schema migration. Afterwards please restart the *Background
 Daemon*.
 
-### Fixed issues
+### UI
+* FIX: catch more configuration errors in a friendly way (#62)
+* FIX: DataStores did not appear in their Tree View in most setups
+* FEATURE: show time without date for today's events
+* FEATURE: support VmResettingEvent (#58)
+* FEATURE: Allow to configure connections to non-default ports
+* FEATURE: Event Overview uses a neutral color when not filtering per type
+
+### Schema
+* FIX: Service Tags can now be longer than 32 characters (#60)
+* FIX: Allow VMs to have no Instance- and no BIOS-UUID
+
+### Background Daemon
+* FIX: allow failures when not yet initialized (#59)
+* FIX: catch errors related to temp dir creation (#59)
+* FIX: accept VMs with no hardware (#59)
+* FIX: support Clone-Events, they have been fetched but failed (#48)
+* FEATURE: support VmResettingEvent (#58)
+* FEATURE: force refresh on outdated Datastores (#57)
+* FEATURE: log related task name on errors
+
+### All Issues and Feature Requests
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/4?closed=1)
+
 
 v1.0.4
 ------
