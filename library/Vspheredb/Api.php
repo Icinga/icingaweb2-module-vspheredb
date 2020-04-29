@@ -234,7 +234,7 @@ class Api
         if ($this->soapClient === null) {
             $this->prepareWsdl();
             $wsdlFile = $this->cacheDir() . '/' . $this->wsdlFiles[0];
-            $features = SOAP_SINGLE_ELEMENT_ARRAYS + SOAP_USE_XSI_ARRAY_TYPE;
+            $features = SOAP_SINGLE_ELEMENT_ARRAYS | SOAP_USE_XSI_ARRAY_TYPE;
             $options = [
                 'trace'              => true,
                 'location'           => $this->makeLocation(),
