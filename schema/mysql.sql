@@ -203,6 +203,7 @@ CREATE TABLE host_system (
     'standBy',
     'unknown'
   ) NOT NULL,
+  custom_values TEXT DEFAULT NULL,
   PRIMARY KEY(uuid),
   UNIQUE INDEX sysinfo_uuid (sysinfo_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -319,6 +320,7 @@ CREATE TABLE virtual_machine (
   ) NOT NULL,
   boot_network_protocol ENUM('ipv4', 'ipv6') DEFAULT NULL,
   boot_order VARCHAR(128) DEFAULT NULL,
+  custom_values TEXT DEFAULT NULL,
   annotation TEXT DEFAULT NULL,
   PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -802,4 +804,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (17, NOW());
+VALUES (18, NOW());

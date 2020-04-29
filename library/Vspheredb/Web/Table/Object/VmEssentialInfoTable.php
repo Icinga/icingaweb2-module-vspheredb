@@ -16,6 +16,7 @@ use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
+use Icinga\Module\Vspheredb\Json;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use ipl\Html\Html;
@@ -78,6 +79,11 @@ class VmEssentialInfoTable extends NameValueTable
                 $this->translate('Annotation'),
                 $this->formatAnnotation($annotation)
             );
+        }
+        if ($customVars = $vm->get('custom_values')) {
+            foreach (Json::decode($customVars) as $name => $value) {
+                $this->addNameValueRow($name, $value);
+            }
         }
 
         /** @var \Icinga\Module\Vspheredb\Db $connection */

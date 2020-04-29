@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
-class CustomFieldDef
+class CustomFieldDef extends DynamicData
 {
     /** @var PrivilegePolicyDef */
     public $fieldDefPrivileges;

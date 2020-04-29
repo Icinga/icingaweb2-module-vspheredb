@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb;
 
 use Icinga\Exception\AuthenticationException;
+use Icinga\Module\Vspheredb\MappedClass\CustomFieldValue;
 
 class CustomFieldsManager
 {
@@ -11,10 +12,52 @@ class CustomFieldsManager
 
     protected $obj;
 
+    protected $map;
+
     public function __construct(Api $api)
     {
         $this->api = $api;
         $this->obj = $api->getServiceInstance()->customFieldsManager;
+    }
+
+    public function mapFields($values)
+    {
+        if (isset($values->CustomFieldValue)) {
+            // Array is not mapped correctly :-/
+            $values = $values->CustomFieldValue;
+        }
+        if (empty((array) $values)) {
+            return null;
+        }
+        if ($this->map === null) {
+            $this->prepareMap();
+        }
+
+        $result = [];
+        /** @var CustomFieldValue $value */
+        foreach ($values as $value) {
+            $key = $value->key;
+            if (isset($this->map[$key])) {
+                $result[$this->map[$key]] = $value->value;
+            } else {
+                $result[$key] = $value->value;
+            }
+        }
+
+        return (object) $result;
+    }
+
+    protected function prepareMap()
+    {
+        $object = $this->object();
+        $fields = $object->field;
+        if (isset($fields->CustomFieldDef)) { // Mapping goes wrong for arrays of X
+            $fields = $fields->CustomFieldDef;
+        }
+        $this->map = [];
+        foreach ($fields as $field) {
+            $this->map[$field->key] = $field->name;
+        }
     }
 
     /**

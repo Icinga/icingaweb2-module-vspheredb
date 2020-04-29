@@ -45,6 +45,7 @@ class ApiClassMap
         $map = [
             'RetrieveResult'             => RetrieveResult::class,
             'RetrievePropertiesResponse' => RetrievePropertiesResponse::class,
+            'DynamicData'          => DynamicData::class,
             'DynamicProperty'      => DynamicProperty::class,
             'ObjectContent'        => ObjectContent::class,
             'MissingProperty'      => MissingProperty::class,

@@ -163,6 +163,13 @@ abstract class BaseDbObject extends VspheredbDbObject
                 } elseif ($this->isDateTimeProperty($property)) {
                     $value = Util::timeStringToUnixMs($value);
                 }
+                if ($property === 'customValues') {
+                    if ($vCenter->getApi()->hasCustomFieldsManager()) {
+                        $value = $vCenter->getApi()->customFieldsManager()->mapFields($value);
+                    } else {
+                        return $this;
+                    }
+                }
 
                 $this->set($property, $value);
             } else {

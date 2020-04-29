@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use DateTime;
+use Icinga\Module\Vspheredb\Json;
 
 class HostSystem extends BaseDbObject
 {
@@ -31,6 +32,7 @@ class HostSystem extends BaseDbObject
         'hardware_num_hba'        => null,
         'hardware_num_nic'        => null,
         'runtime_power_state'     => null,
+        'custom_values'           => null,
     ];
 
     protected $propertyMap = [
@@ -46,6 +48,7 @@ class HostSystem extends BaseDbObject
         'hardware.systemInfo.uuid'          => 'sysinfo_uuid',
         'hardware.systemInfo.vendor'        => 'sysinfo_vendor',
         'runtime.powerState'                => 'runtime_power_state',
+        'summary.customValue'               => 'customValues',
         'summary.hardware.cpuMhz'           => 'hardware_cpu_mhz',
         'summary.hardware.cpuModel'         => 'hardware_cpu_model',
         'summary.hardware.numHBAs'          => 'hardware_num_hba',
@@ -105,6 +108,19 @@ class HostSystem extends BaseDbObject
         );
 
         return parent::setMapped($properties, $vCenter);
+    }
+
+    /**
+     * @param $value
+     * @throws \Icinga\Module\Vspheredb\Exception\JsonException
+     */
+    protected function setCustomValues($value)
+    {
+        if ($value === null) {
+            $this->set('custom_values', null);
+        } else {
+            $this->set('custom_values', Json::encode($value));
+        }
     }
 
     protected function setOtherIdentifyingInfo($infos)

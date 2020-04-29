@@ -6,6 +6,7 @@ use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Json;
 use Zend_Db_Adapter_Abstract as ZfDb;
 
 /**
@@ -27,6 +28,7 @@ class ImportSource extends ImportSourceHook
         'service_tag'             => 'h.service_tag',
         'hardware_cpu_cores'      => 'h.hardware_cpu_cores',
         'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
+        'custom_values'           => 'h.custom_values',
     ];
 
     protected $vmColumns = [
@@ -37,6 +39,7 @@ class ImportSource extends ImportSourceHook
         'guest_id'          => 'vm.guest_id',
         'guest_full_name'   => 'vm.guest_full_name',
         'guest_host_name'   => 'vm.guest_host_name',
+        'custom_values'     => 'vm.custom_values',
     ];
 
     public function getName()
@@ -62,12 +65,26 @@ class ImportSource extends ImportSourceHook
         $db = $connection->getDbAdapter();
         switch ($this->getSetting('object_type')) {
             case 'host_system':
-                return $db->fetchAll($this->prepareHostsQuery($db));
+                $result = $db->fetchAll($this->prepareHostsQuery($db));
+                break;
             case 'virtual_machine':
-                return $db->fetchAll($this->prepareVmQuery($db));
+                $result = $db->fetchAll($this->prepareVmQuery($db));
+                break;
             default:
                 return [];
         }
+
+        if (empty($result)) {
+            return [];
+        }
+
+        foreach ($result as &$row) {
+            if ($row->custom_values !== null) {
+                $row->custom_values = Json::decode($row->custom_values);
+            }
+        }
+
+        return $result;
     }
 
     protected function prepareVmQuery(ZfDb $db)

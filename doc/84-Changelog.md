@@ -6,10 +6,16 @@ next (will be 1.2.0)
 
 ### UI
 * FIX: hide column for experimental feature (#153)
+* FEATURE: show Virtual Machine Custom Values (#88)
 
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)
 * FIX: sync no longer fails on objects with no overallState (#98)
+* FEATURE: synchronize Custom Values (#88)
+
+### Integrations
+* FEATURE: ship more VM properties with our Director Import Source
+* FEATURE: ship Custom Values for the Icinga Director (#88)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our

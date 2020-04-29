@@ -74,17 +74,6 @@ class SyncRunner
     {
         $this->vCenter = $vCenter;
         $this->availableTasks = [
-            'customFields' => function () {
-                if ($this->vCenter->getApi()->hasCustomFieldsManager()) {
-                    Logger::info('There is a CustomFieldsManager');
-                    Logger::info(print_r($this->vCenter->getApi()->customFieldsManager()->object(), 1));
-                } else {
-                    Logger::info('There is no CustomFieldsManager');
-                }
-                // alle speichern
-                // -> nur wenn managedObjectType = 'HostSystem' oder 'VirtualMachine'
-                // todo -> customValue auch am Host holen
-            },
             'moRefs' => function () {
                 (new SyncManagedObjectReferences($this->vCenter))->sync();
             },
@@ -142,7 +131,6 @@ class SyncRunner
         $this->deferred = new Deferred();
         $this->loop = $loop;
         $initialSync = [
-            // 'customFields',
             'moRefs',
             'hostSystems',
             'virtualMachines',
