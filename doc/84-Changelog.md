@@ -12,6 +12,7 @@ next (will be 1.2.0)
 * FIX: do not allow ENV proxy settings to override server config (#159)
 * FIX: sync no longer fails on objects with no overallState (#98)
 * FIX: sub-tasks will now terminate early on DB errors (#151)
+* FIX: correct log-level is now passed to child-processes (#138)
 * FEATURE: synchronize Custom Values (#88)
 
 ### Integrations
@@ -20,6 +21,7 @@ next (will be 1.2.0)
 
 ### DB Schema
 * FIX: dropped a unique constraint on BIOS UUID because of VMware bugs (#83, #99)
+* FIX: large-grown daemon log table has been truncated (#138)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
