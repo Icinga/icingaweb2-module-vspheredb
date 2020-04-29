@@ -23,6 +23,7 @@ use Icinga\Module\Vspheredb\Sync\SyncVmSnapshots;
 use ipl\Stdlib\EventEmitter;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
+use Zend_Db_Exception as ZfDbException;
 
 class SyncRunner
 {
@@ -199,6 +200,10 @@ class SyncRunner
                 Logger::error("Task $task failed: " . $e->getMessage());
                 if ($this->showTrace) {
                     Logger::error($e->getTraceAsString());
+                }
+                if ($e instanceof ZfDbException) {
+                    $this->emit('dbError', [$e]);
+                    return;
                 }
                 $this->loop->addTimer(0.5, function () {
                     $this->deferred->reject();

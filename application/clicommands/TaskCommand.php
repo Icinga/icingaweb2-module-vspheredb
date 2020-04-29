@@ -96,6 +96,10 @@ class TaskCommand extends CommandBase
                             $hostname
                         ));
                     })
+                    ->on('dbError', function (\Zend_Db_Exception $e) use ($hostname) {
+                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s: FAILED)', $hostname));
+                        $this->failFriendly('sync', $e, $hostname);
+                    })
                     ->run($this->loop)
                     ->then(function () use ($hostname) {
                         $this->failFriendly('sync', 'Sync stopped. Should not happen', $hostname);
@@ -130,11 +134,11 @@ class TaskCommand extends CommandBase
                 $time = microtime(true);
                 (new PerfDataRunner($vCenter))
                     ->on('beginTask', function ($taskName) use ($hostname, & $time) {
-                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdat (%s: %s)', $hostname, $taskName));
+                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdata (%s: %s)', $hostname, $taskName));
                         $time = microtime(true);
                     })
                     ->on('endTask', function ($taskName) use ($hostname, & $time) {
-                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdat (%s)', $hostname));
+                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdata (%s)', $hostname));
                         $duration = microtime(true) - $time;
                         Logger::debug(sprintf(
                             'Task "%s" took %.2Fms on %s',
@@ -142,6 +146,10 @@ class TaskCommand extends CommandBase
                             ($duration * 1000),
                             $hostname
                         ));
+                    })
+                    ->on('dbError', function (\Zend_Db_Exception $e) use ($hostname) {
+                        CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdata (%s: FAILED)', $hostname));
+                        $this->failFriendly('perfdata', $e, $hostname);
                     })
                     ->run($this->loop)
                     ->then(function () use ($hostname) {
