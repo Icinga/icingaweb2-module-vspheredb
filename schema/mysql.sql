@@ -204,8 +204,7 @@ CREATE TABLE host_system (
     'unknown'
   ) NOT NULL,
   custom_values TEXT DEFAULT NULL,
-  PRIMARY KEY(uuid),
-  UNIQUE INDEX sysinfo_uuid (sysinfo_uuid)
+  PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_pci_device (
@@ -804,4 +803,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (18, NOW());
+VALUES (19, NOW());

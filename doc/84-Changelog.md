@@ -18,6 +18,9 @@ next (will be 1.2.0)
 * FEATURE: ship more VM properties with our Director Import Source
 * FEATURE: ship Custom Values for the Icinga Director (#88)
 
+### DB Schema
+* FIX: dropped a unique constraint on BIOS UUID because of VMware bugs (#83, #99)
+
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/6?closed=1)
