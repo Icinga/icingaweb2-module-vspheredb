@@ -22,6 +22,7 @@ next (will be 1.2.0)
 ### DB Schema
 * FIX: dropped a unique constraint on BIOS UUID because of VMware bugs (#83, #99)
 * FIX: large-grown daemon log table has been truncated (#138)
+* FIX: allow event/alert messages longer than 64kB (#133)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our

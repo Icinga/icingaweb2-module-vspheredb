@@ -566,7 +566,7 @@ CREATE TABLE alarm_history (
     'yellow',
     'red'
   ) DEFAULT NULL,
-  full_message TEXT DEFAULT NULL,
+  full_message MEDIUMTEXT DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX time_idx (ts_event_ms),
   INDEX search_type_idx (event_type, ts_event_ms),
@@ -611,7 +611,7 @@ CREATE TABLE vm_event_history (
   destination_host_uuid VARBINARY(20) DEFAULT NULL,
   destination_datacenter_uuid VARBINARY(20) DEFAULT NULL,
   destination_datastore_uuid VARBINARY(20) DEFAULT NULL,
-  full_message TEXT DEFAULT NULL,
+  full_message MEDIUMTEXT DEFAULT NULL,
   user_name VARCHAR(128) DEFAULT NULL,
   fault_message TEXT DEFAULT NULL,
   fault_reason TEXT DEFAULT NULL,
@@ -803,4 +803,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (20, NOW());
+VALUES (21, NOW());
