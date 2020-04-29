@@ -25,10 +25,11 @@ next (will be 1.2.0)
 v1.1.0
 ------
 
-This release brings bug fixes, stability and some new features. Biggest change
-is that we're now telling your vCenter to refresh outdated Datastores. We
-discovered that depending on your configuration your vCenter might ship VERY old
-information. With this release we're smoothly kicking it when necessary.
+This release brings bug fixes, stability and some new features. We're now telling
+your vCenter to refresh outdated Datastores. We discovered that depending on your
+configuration your vCenter might ship VERY old information. With this release we're
+smoothly kicking it when necessary. Also, right now this module ships an Import
+Source for the Icinga Director.
 
 ### Breaking Changes
 * This module no longer depends on the Icinga Director
