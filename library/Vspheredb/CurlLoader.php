@@ -260,7 +260,8 @@ class CurlLoader extends EventEmitter
             CURLOPT_TCP_NODELAY    => true,
             CURLOPT_NOPROGRESS     => false,
             CURLINFO_HEADER_OUT    => true,
-            CURLOPT_CERTINFO       => true,
+	    // disabled, see #161
+            // CURLOPT_CERTINFO       => true,
         ];
 
         if ($this->user !== null) {
