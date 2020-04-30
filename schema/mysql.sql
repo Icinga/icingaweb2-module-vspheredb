@@ -133,7 +133,7 @@ CREATE TABLE object (
   vcenter_uuid VARBINARY(16) NOT NULL,
   -- Hint: 64 Bytes might seem overkill for MoRefs, but there is
   --       52d4e949-55c225c2923-a7ba-009689221ad9-datastorebrowser on ESXi
-  -- Update: Maybe 180 bytes is enough? Found "HaOpaqueNetwork-nsx.LogicalSwitch-9d2b805b-10d2-4bfe-8196-fcb2215b6865" from NSX-T (70 bytes) and "DVPG-6e 0f 0c 50 75 de 07 43-9e 0c 3a e7 df f6 0c 4f-dvportgroup-1296" from DVS (69 bytes).
+  -- Update: Maybe 180 bytes is enough? Found "HaOpaqueNetwork-nsx.LogicalSwitch-9d2b805b-10d2-4bfe-8196-fcb2215b6865" from NSX-T (70 bytes) and "DVPG-6e 0f 0c 50 75 de 07 43-9e 0c 3a e7 df f6 0c 4f-dvportgroup-1296" from DVS (69 bytes), if adding ESXi directly (not via vCenter).
   moref VARCHAR(180) NOT NULL, -- textual id
   object_name VARCHAR(255) NOT NULL,
   object_type ENUM(
