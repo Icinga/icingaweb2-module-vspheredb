@@ -147,6 +147,7 @@ CREATE TABLE object (
     'HostMountInfo',
     'HostSystem',
     'Network',
+    'OpaqueNetwork',
     'ResourcePool',
     'StoragePod',
     'VirtualApp',
