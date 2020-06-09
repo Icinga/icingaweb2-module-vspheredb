@@ -11,6 +11,7 @@ class VirtualMachineSelectSet extends SelectSet
         return [
             static::traverseFolder(),
             static::traverseDatacenter(),
+            static::traverseVApp(),
         ];
     }
 
@@ -22,7 +23,20 @@ class VirtualMachineSelectSet extends SelectSet
             'path' => 'childEntity',
             'skip' => false,
             static::makeSelectionSet('TraverseFolder'),
+            static::makeSelectionSet('TraverseVirtualApp'),
             static::makeSelectionSet('TraverseDatacenter')
+        );
+
+        return new SoapVar($folderTraversalSpec, SOAP_ENC_OBJECT, 'TraversalSpec');
+    }
+
+    public static function traverseVApp()
+    {
+        $folderTraversalSpec = array(
+            'name' => 'TraverseVirtualApp',
+            'type' => 'VirtualApp',
+            'path' => 'vm',
+            'skip' => false,
         );
 
         return new SoapVar($folderTraversalSpec, SOAP_ENC_OBJECT, 'TraversalSpec');

@@ -14,6 +14,7 @@ next (will be 1.2.0)
 * FIX: sub-tasks will now terminate early on DB errors (#151)
 * FIX: correct log-level is now passed to child-processes (#138)
 * FEATURE: synchronize Custom Values (#88)
+* FEATURE: synchronize VirtualMachines belonging to vApps (#31)
 
 ### Integrations
 * FEATURE: ship more VM properties with our Director Import Source
