@@ -389,7 +389,7 @@ class CurlLoader extends EventEmitter
             return $len;
         }
 
-        if ($header[0] === 'Set-Cookie') {
+        if (\strtolower($header[0]) === 'set-cookie') {
             $cookie = trim($header[1]);
             $this->emit('cookie', [$cookie]);
             if ($this->persistCookies) {
