@@ -139,6 +139,25 @@ class ApiClassMap
             'CustomFieldDef'         => CustomFieldDef::class,
             'CustomFieldValue'       => CustomFieldValue::class,
             'PrivilegePolicyDef'     => PrivilegePolicyDef::class,
+
+            'DistributedVirtualSwitchPortConnection' => DistributedVirtualSwitchPortConnection::class,
+            'HostDnsConfig'           => HostDnsConfig::class,
+            'HostIpConfig'            => HostIpConfig::class,
+            'HostIpConfigIpV6Address' => HostIpConfigIpV6Address::class,
+            'HostIpConfigIpV6AddressConfiguration' => HostIpConfigIpV6AddressConfiguration::class,
+            'HostIpRouteConfig'       => HostIpRouteConfig::class,
+            'HostNetStackInstance'    => HostNetStackInstance::class,
+            'HostNetworkInfo'         => HostNetworkInfo::class,
+            'HostOpaqueNetworkInfo'   => HostOpaqueNetworkInfo::class,
+            'HostOpaqueSwitch'        => HostOpaqueSwitch::class,
+            'HostPortGroup'           => HostPortGroup::class,
+            'HostPortGroupPort'       => HostPortGroupPort::class,
+            'HostPortGroupSpec'       => HostPortGroupSpec::class,
+            'HostVirtualNic'          => HostVirtualNic::class,
+            'HostVirtualNicSpec'      => HostVirtualNicSpec::class,
+            'PhysicalNicLinkInfo'     => PhysicalNic::class,
+            'PhysicalNic'             => PhysicalNicLinkInfo::class,
+            'PhysicalNicSpec'         => PhysicalNicSpec::class,
         ];
 
         return $map;
