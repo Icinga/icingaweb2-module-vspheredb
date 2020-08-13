@@ -165,8 +165,8 @@ class ApiClassMap
             'HostVirtualSwitchBridge' => HostVirtualSwitchBridge::class,
             'HostVirtualSwitchSpec'   => HostVirtualSwitchSpec::class,
 
-            'PhysicalNicLinkInfo'     => PhysicalNic::class,
-            'PhysicalNic'             => PhysicalNicLinkInfo::class,
+            'PhysicalNic'             => PhysicalNic::class,
+            'PhysicalNicLinkInfo'     => PhysicalNicLinkInfo::class,
             'PhysicalNicSpec'         => PhysicalNicSpec::class,
         ];
 
