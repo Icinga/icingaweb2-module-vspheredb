@@ -9,6 +9,7 @@ class PerformanceSets
         return [
             VmDisks::class   => mt('Virtual Disks (I/O, Seeks, Latency)'),
             VmNetwork::class => mt('Virtual Network Adapters (Octets, Packets)'),
+            HostNetwork::class => mt('Host Physical Network Adapters (Octets, Packets)'),
         ];
     }
 }
