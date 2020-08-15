@@ -6,6 +6,7 @@ use Clue\React\Buzz\Message\ResponseException;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\PerfEntityMetricCSV;
 use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\AsyncInfluxDbWriter;
+use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\HostNetwork;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\PerformanceSet;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\VmDisks;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\VmNetwork;
@@ -63,8 +64,9 @@ class InfluxDbStreamer
         $this->idle = false;
 
         $sets = [
-            'VmNetwork' => VmNetwork::class,
-            'VmDisks'   => VmDisks::class,
+            'HostNetwork' => HostNetwork::class,
+            'VmNetwork'   => VmNetwork::class,
+            'VmDisks'     => VmDisks::class,
         ];
 
         foreach ($sets as $set) {
