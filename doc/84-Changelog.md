@@ -6,6 +6,7 @@ next (will be 1.2.0)
 
 ### UI
 * FIX: hide column for experimental feature (#153)
+* FIX: avoid PHP warnings on 7.4 when showing Host details/special cols (#169)
 * FEATURE: show Virtual Machine Custom Values (#88)
 
 ### Background Daemon
