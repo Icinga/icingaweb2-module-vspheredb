@@ -18,6 +18,7 @@ use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
 use Icinga\Module\Vspheredb\Web\Table\VmNetworkAdapterTable;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
+use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
 use ipl\Html\Html;
@@ -32,9 +33,10 @@ class VmController extends Controller
     {
         $vm = $this->addVm();
         $this->addSubTitle($this->translate('Information'), 'info-circled');
-        $this->content()->add(
-            new VmEssentialInfoTable($vm)
-        );
+        $this->content()->add([
+            new VmEssentialInfoTable($vm),
+            new CustomValueDetails($vm)
+        ]);
         $this->content()->addAttributes([
             'class' => 'vm-info'
         ]);

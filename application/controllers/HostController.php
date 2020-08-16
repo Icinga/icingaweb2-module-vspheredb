@@ -14,6 +14,7 @@ use Icinga\Module\Vspheredb\Web\Table\Object\HostVmsInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
+use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
 use Icinga\Module\Vspheredb\Web\Widget\HostHeader;
 use Icinga\Module\Vspheredb\Web\Widget\HostMonitoringInfo;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
@@ -35,6 +36,7 @@ class HostController extends Controller
         }
         $this->addSubTitle($this->translate('Virtual Machines'), 'cubes');
         $this->content()->add(new HostVmsInfoTable($host));
+        $this->content()->add(new CustomValueDetails($host));
         $this->addSubTitle($this->translate('Hardware Information'), 'help');
         $this->content()->add(new HostHardwareInfoTable($host));
         $this->addSubTitle($this->translate('System Information'), 'host');
