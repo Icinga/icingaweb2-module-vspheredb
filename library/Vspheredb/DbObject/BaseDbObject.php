@@ -167,7 +167,7 @@ abstract class BaseDbObject extends VspheredbDbObject
                     if ($vCenter->getApi()->hasCustomFieldsManager()) {
                         $value = $vCenter->getApi()->customFieldsManager()->mapFields($value);
                     } else {
-                        return $this;
+                        continue;
                     }
                 }
 
