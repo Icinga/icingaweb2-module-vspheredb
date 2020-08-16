@@ -44,7 +44,7 @@ class SpectreMelddownBiosInfo extends BaseHtmlElement
     {
         $strVersion = sprintf('%s (%s)', $version, $releaseDate);
 
-        if ($series === 'PowerEdge' && array_key_exists($model, $this->dellSpectre)) {
+        if ($series === 'PowerEdge' && \property_exists($this->dellSpectre, $model)) {
             $info = $this->dellSpectre->$model;
             if ($info->bios_version) {
                 if (version_compare($info->bios_version, $version, '>')) {
@@ -70,7 +70,7 @@ class SpectreMelddownBiosInfo extends BaseHtmlElement
     protected function showHp($series, $model, $version, $releaseDate)
     {
         $strVersion = sprintf('%s (%s)', $version, $releaseDate);
-        if (array_key_exists($model, $this->hpSpectre)) {
+        if (\property_exists($this->hpSpectre, $model)) {
             $info = $this->hpSpectre->$model;
             if ($info->bios_version) {
                 if (version_compare($info->bios_version, $version, '>')) {
