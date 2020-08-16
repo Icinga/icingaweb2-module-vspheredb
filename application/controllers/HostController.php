@@ -29,20 +29,18 @@ class HostController extends Controller
     {
         $host = $this->addHost();
         $this->content()->addAttributes(['class' => 'host-info']);
-        $monitoring = new HostMonitoringInfo($host);
-        if ($monitoring->hasInfo()) {
-            $this->addSubTitle($this->translate('Monitoring'), 'binoculars');
-            $this->content()->add($monitoring);
-        }
-        $this->addSubTitle($this->translate('Virtual Machines'), 'cubes');
-        $this->content()->add(new HostVmsInfoTable($host));
-        $this->content()->add(new CustomValueDetails($host));
-        $this->addSubTitle($this->translate('Hardware Information'), 'help');
-        $this->content()->add(new HostHardwareInfoTable($host));
-        $this->addSubTitle($this->translate('System Information'), 'host');
-        $this->content()->add(new HostSystemInfoTable($host));
-        $this->addSubTitle($this->translate('Virtualization Information'), 'cloud');
-        $this->content()->add(new HostVirtualizationInfoTable($host));
+        $this->content()->add([
+            new HostMonitoringInfo($host),
+            $this->subTitle($this->translate('Virtual Machines'), 'cubes'),
+            new HostVmsInfoTable($host),
+            new CustomValueDetails($host),
+            $this->subTitle($this->translate('Hardware Information'), 'help'),
+            new HostHardwareInfoTable($host),
+            $this->subTitle($this->translate('System Information'), 'host'),
+            new HostSystemInfoTable($host),
+            $this->subTitle($this->translate('Virtualization Information'), 'cloud'),
+            new HostVirtualizationInfoTable($host),
+        ]);
     }
 
     /**

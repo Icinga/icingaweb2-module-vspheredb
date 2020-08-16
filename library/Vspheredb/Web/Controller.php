@@ -35,13 +35,18 @@ class Controller extends CompatController
      */
     protected function addSubTitle($title, $icon = null)
     {
+        $this->content()->add($this->subTitle($title, $icon));
+    }
+
+    protected function subTitle($title, $icon = null)
+    {
         $title = Html::tag('h2', null, $title);
 
         if ($icon !== null) {
             $title->addAttributes(['class' => "icon-$icon"]);
         }
 
-        $this->content()->add($title);
+        return $title;
     }
 
     protected function redirectToConfiguration()
