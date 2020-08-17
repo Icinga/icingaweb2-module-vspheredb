@@ -4,7 +4,6 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Json;
-use Icinga\Module\Vspheredb\MappedClass\CustomFieldValue;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 
 class VirtualMachine extends BaseDbObject
