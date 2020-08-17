@@ -25,6 +25,9 @@ class MappingHelper
      */
     public static function getDeepValue($val, array $keys)
     {
+        if ($val === null) {
+            return null;
+        }
         $key = array_shift($keys);
         if (! property_exists($val, $key)) {
             return null;
