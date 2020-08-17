@@ -16,6 +16,8 @@ class VCenterServerForm extends Form
 
     protected $db;
 
+    protected $deleted = false;
+
     public function __construct(Db $db)
     {
         $this->db = $db;
@@ -148,14 +150,20 @@ class VCenterServerForm extends Form
             'label' => $this->isNew() ? $this->translate('Create') : $this->translate('Store')
         ]);
         if (! $this->isNew()) {
-            $buttons[] = new SubmitElement('btn_delete', [
+            $buttons[] = $deleteButton = new SubmitElement('btn_delete', [
                 'label' => $this->translate('Delete')
             ]);
+        } else {
+            $deleteButton = null;
         }
         foreach ($buttons as $button) {
             $this->registerElement($button);
         }
         $this->add($buttons);
+        if ($deleteButton->hasBeenPressed()) {
+            $this->getObject()->delete();
+            $this->deleted = true;
+        }
     }
 
     public function isNew()
@@ -194,6 +202,12 @@ class VCenterServerForm extends Form
         }
 
         return $this->object;
+    }
+
+
+    public function hasBeenDeleted()
+    {
+        return $this->deleted;
     }
 
     public function onSuccess()

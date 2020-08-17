@@ -90,6 +90,10 @@ class VcenterController extends Controller
         });
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
+        if ($form->hasBeenDeleted()) {
+            Notification::success($this->translate('The connection has been deleted'));
+            $this->redirectNow('vspheredb/vcenter/servers');
+        }
     }
 
     protected function handleTabs()
