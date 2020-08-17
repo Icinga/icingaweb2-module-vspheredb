@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;

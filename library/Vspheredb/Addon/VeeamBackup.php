@@ -104,7 +104,7 @@ class VeeamBackup implements BackupTool
         $this->lastAttributes = $attributes;
     }
 
-    public function stripAnnotation(& $annotation)
+    public function stripAnnotation(&$annotation)
     {
         $begin = strpos($annotation, static::PREFIX);
         if ($begin === false) {

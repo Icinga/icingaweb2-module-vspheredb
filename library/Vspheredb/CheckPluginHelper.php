@@ -47,7 +47,6 @@ trait CheckPluginHelper
                 $callable();
             } catch (Exception $e) {
                 $this->addProblem('UNKNOWN', $e->getMessage());
-
             } catch (Error $e) {
                 $this->addProblem('UNKNOWN', $e->getMessage());
             }

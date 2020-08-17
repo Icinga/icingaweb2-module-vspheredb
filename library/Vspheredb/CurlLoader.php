@@ -260,7 +260,7 @@ class CurlLoader extends EventEmitter
             CURLOPT_TCP_NODELAY    => true,
             CURLOPT_NOPROGRESS     => false,
             CURLINFO_HEADER_OUT    => true,
-	    // disabled, see #161
+            // disabled, see #161
             // CURLOPT_CERTINFO       => true,
         ];
 

@@ -114,7 +114,6 @@ class PerfManager
                 'Exactly one PerformanceManager object expected, got %d',
                 count($result->objects)
             ));
-
         }
 
         $object = $result->objects[0];

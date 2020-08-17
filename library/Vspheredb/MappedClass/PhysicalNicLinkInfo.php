@@ -19,4 +19,3 @@ class PhysicalNicLinkInfo
      */
     public $speedMb;
 }
-

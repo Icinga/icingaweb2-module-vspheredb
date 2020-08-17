@@ -70,7 +70,8 @@ class VCenterSummaries extends BaseHtmlElement
                 $db->select()->from(['o' => 'object'], $columns)
                     ->join(['vm' => 'virtual_machine'], 'vm.uuid = o.uuid', [])
                     ->where('vm.template = ?', 'n')
-                    ->where('vm.vcenter_uuid = ?', $vCenterUuid)),
+                    ->where('vm.vcenter_uuid = ?', $vCenterUuid)
+            ),
             'Virtual Machines',
             'vspheredb/vms'
         );

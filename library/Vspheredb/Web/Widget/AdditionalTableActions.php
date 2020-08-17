@@ -117,7 +117,6 @@ class AdditionalTableActions
                     ]))),
                     null,
                     ['class' => 'icon-plus']
-
                 );
             }
         }

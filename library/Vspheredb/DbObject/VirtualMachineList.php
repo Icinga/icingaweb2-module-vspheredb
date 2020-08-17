@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-class HostSystemList extends  MoRefList
+class VirtualMachineList extends MoRefList
 {
     const LIST_TABLE_NAME = 'vm_list';
 

@@ -100,7 +100,6 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     public function renderSummaries()
     {
-
     }
 
     protected function renderCurrentMeasurement($row)

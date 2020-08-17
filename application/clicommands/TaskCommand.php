@@ -82,11 +82,11 @@ class TaskCommand extends CommandBase
                 $time = microtime(true);
                 (new SyncRunner($vCenter))
                     ->showTrace($this->showTrace())
-                    ->on('beginTask', function ($taskName) use ($hostname, & $time) {
+                    ->on('beginTask', function ($taskName) use ($hostname, &$time) {
                         CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s: %s)', $hostname, $taskName));
                         $time = microtime(true);
                     })
-                    ->on('endTask', function ($taskName) use ($hostname, & $time) {
+                    ->on('endTask', function ($taskName) use ($hostname, &$time) {
                         CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s)', $hostname));
                         $duration = microtime(true) - $time;
                         Logger::debug(sprintf(
@@ -133,11 +133,11 @@ class TaskCommand extends CommandBase
                 CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdata (%s)', $hostname));
                 $time = microtime(true);
                 (new PerfDataRunner($vCenter))
-                    ->on('beginTask', function ($taskName) use ($hostname, & $time) {
+                    ->on('beginTask', function ($taskName) use ($hostname, &$time) {
                         CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdata (%s: %s)', $hostname, $taskName));
                         $time = microtime(true);
                     })
-                    ->on('endTask', function ($taskName) use ($hostname, & $time) {
+                    ->on('endTask', function ($taskName) use ($hostname, &$time) {
                         CliUtil::setTitle(sprintf('Icinga::vSphereDB::perfdata (%s)', $hostname));
                         $duration = microtime(true) - $time;
                         Logger::debug(sprintf(

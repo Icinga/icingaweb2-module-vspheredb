@@ -204,7 +204,6 @@ class VCenterServerForm extends Form
         return $this->object;
     }
 
-
     public function hasBeenDeleted()
     {
         return $this->deleted;

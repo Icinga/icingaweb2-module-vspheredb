@@ -102,12 +102,12 @@ class VmDiskUsageTable extends ZfQueryBasedTable
                     'start'    => $start,
                     'end'      => $end,
                     'template' => 'vm_disk',
-                ]), [
+                ]),
+                [
                     'colspan' => 4,
                     'style' => 'height: auto'
                 ]
             ));
-
         }
 
         return $tr;

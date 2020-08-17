@@ -9,7 +9,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 class HostProxySwitchSpec
 {
     /**
-     * 	Type 	Description
+     * Type Description
      *
      * @var DistributedVirtualSwitchHostMemberBacking
      */

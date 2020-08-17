@@ -92,7 +92,9 @@ class HostsTable extends ObjectsTable
             ])->setDefaultSortDirection('DESC'),
             $this->createColumn('vms_cnt_cpu', $this->translate('VM CPUs'), 'vms.cnt_cpu')
                 ->setDefaultSortDirection('DESC'),
-            $this->createColumn('pcpu_vcpu_ration', $this->translate('vCPU/pCPU'),
+            $this->createColumn(
+                'pcpu_vcpu_ration',
+                $this->translate('vCPU/pCPU'),
                 '(vms.cnt_cpu / h.hardware_cpu_cores)'
             )->setRenderer(function ($row) {
                 return sprintf('%.3g:1', $row->pcpu_vcpu_ration);

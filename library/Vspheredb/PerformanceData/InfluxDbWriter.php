@@ -88,7 +88,7 @@ class InfluxDbWriter
         curl_setopt($ch, CURLOPT_PROXY, 'localhost:8080');
         curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
 
-        $result = curl_exec ($ch);
+        $result = curl_exec($ch);
         if (false === $result) {
             throw new IcingaException(
                 'Failed to post to InfluxDB: %s',

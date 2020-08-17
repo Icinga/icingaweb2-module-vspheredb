@@ -43,7 +43,9 @@ class Worker
         $this->createStdInReader();
 
         $this->log(sprintf(
-            'My process group: %d, my pid: %d', posix_getpgid($this->pid), $this->pid
+            'My process group: %d, my pid: %d',
+            \posix_getpgid($this->pid),
+            $this->pid
         ));
     }
 
@@ -167,13 +169,13 @@ class Worker
         $cleared = 0;
         $failed = 0;
         foreach ($promises as $promise) {
-            $promise->then(function () use (& $cleared, $failed, $total) {
+            $promise->then(function () use (&$cleared, $failed, $total) {
                 $cleared++;
 
                 if ($cleared + $failed === $total) {
                     $this->reallyExit($failed);
                 }
-            })->otherwise(function () use ($cleared, & $failed, $total) {
+            })->otherwise(function () use ($cleared, &$failed, $total) {
                 $failed++;
 
                 if ($cleared + $failed === $total) {

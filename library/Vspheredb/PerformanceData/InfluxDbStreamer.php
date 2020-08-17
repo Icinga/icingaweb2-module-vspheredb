@@ -119,7 +119,7 @@ class InfluxDbStreamer
         // $lines = array_merge($lines, $batch);
 
         $linesWaitingForInflux = \count($batch);
-        $this->influx->send($dbName, $batch)->then(function () use (& $linesWaitingForInflux, $dbName) {
+        $this->influx->send($dbName, $batch)->then(function () use (&$linesWaitingForInflux, $dbName) {
             Logger::info(sprintf(
                 'Sent %d lines to InfluxDB',
                 $linesWaitingForInflux
@@ -127,7 +127,7 @@ class InfluxDbStreamer
             $this->loop->futureTick(function () use ($dbName) {
                 $this->sendNextBatch($dbName);
             });
-        })->otherwise(function (\Exception $e) use (& $linesWaitingForInflux) {
+        })->otherwise(function (\Exception $e) use (&$linesWaitingForInflux) {
             Logger::error(sprintf(
                 'Failed to send %d lines to InfluxDB: %s',
                 $linesWaitingForInflux,
@@ -136,7 +136,7 @@ class InfluxDbStreamer
             if ($e instanceof ResponseException) {
                 Logger::error($e->getResponse()->getBody());
             }
-        })->always(function () use (& $linesWaitingForInflux) {
+        })->always(function () use (&$linesWaitingForInflux) {
             $linesWaitingForInflux = 0;
             $this->idle = true;
         });

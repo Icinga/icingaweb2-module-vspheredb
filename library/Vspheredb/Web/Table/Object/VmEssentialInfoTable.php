@@ -124,12 +124,12 @@ class VmEssentialInfoTable extends NameValueTable
                     ),
                 ],
             ]);
-        }  else {
+        } else {
             $this->addNameValuePairs([
                 $this->translate('Guest Utilities') => sprintf(
-                        '%s (Guest %s)',
-                        $vm->get('guest_tools_running_status'),
-                        $vm->get('guest_state')
+                    '%s (Guest %s)',
+                    $vm->get('guest_tools_running_status'),
+                    $vm->get('guest_state')
                 ),
             ]);
         }
