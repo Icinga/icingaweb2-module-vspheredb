@@ -36,6 +36,9 @@ class HostsTable extends ObjectsTable
                 'service_tag'    => 'h.service_tag',
                 'sysinfo_vendor' => 'h.sysinfo_vendor',
             ])->setRenderer($serviceTagRenderer),
+            $this->createColumn('product_api_version', $this->translate('API Version'), [
+                'product_api_version' => 'h.product_api_version',
+            ]),
             $this->createColumn('cpu_usage', $this->translate('CPU Usage'), [
                 'cpu_usage' => 'hqs.overall_cpu_usage',
                 'cpu_total' => '(hardware_cpu_cores * hardware_cpu_mhz)',

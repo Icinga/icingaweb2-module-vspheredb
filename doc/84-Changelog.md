@@ -8,6 +8,7 @@ next (will be 1.2.0)
 * FIX: hide column for experimental feature (#153)
 * FIX: avoid PHP warnings on 7.4 when showing Host details/special cols (#169)
 * FEATURE: show Virtual Machine Custom Values (#88)
+* FEATURE: Hosts Table now provides ESXi version column
 
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)
