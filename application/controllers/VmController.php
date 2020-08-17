@@ -19,6 +19,7 @@ use Icinga\Module\Vspheredb\Web\Table\VmNetworkAdapterTable;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
 use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
 use ipl\Html\Html;
@@ -32,27 +33,20 @@ class VmController extends Controller
     public function indexAction()
     {
         $vm = $this->addVm();
-        $this->addSubTitle($this->translate('Information'), 'info-circled');
-        $this->content()->add([
-            new VmEssentialInfoTable($vm),
-            new CustomValueDetails($vm)
-        ]);
         $this->content()->addAttributes([
             'class' => 'vm-info'
         ]);
-        $this->content()->add(
-            new VmNetworkAdapterTable($vm)
-        );
-        $this->content()->add(
-            VmDisksTable::create($vm)
-        );
+        $this->content()->add([
+            new SubTitle($this->translate('Information'), 'info-circled'),
+            new VmEssentialInfoTable($vm),
+            new CustomValueDetails($vm),
+            new VmNetworkAdapterTable($vm),
+            VmDisksTable::create($vm),
+            new SubTitle($this->translate('DataStore Usage'), 'database'),
+            VmDatastoresTable::create($vm),
+            new SubTitle($this->translate('Snapshots'), 'history'),
+        ]);
 
-        $this->addSubTitle($this->translate('DataStore Usage'), 'database');
-        $this->content()->add(
-            VmDatastoresTable::create($vm)
-        );
-
-        $this->addSubTitle($this->translate('Snapshots'), 'history');
         $snapshots = VmSnapshotTable::create($vm);
         if (count($snapshots)) {
             $this->content()->add($snapshots);
@@ -60,7 +54,7 @@ class VmController extends Controller
             $this->content()->add(Html::tag('p', null, $this->translate('No snapshots have been created for this VM')));
         }
 
-        $this->addSubTitle($this->translate('Backup-Tools'), 'download');
+        $this->content()->add(new SubTitle($this->translate('Backup-Tools'), 'download'));
         $tools = $this->getBackupTools();
         $seenBackupTools = 0;
         foreach ($tools as $tool) {
@@ -79,14 +73,16 @@ class VmController extends Controller
             ));
         }
 
-        $this->addSubTitle($this->translate('Guest Disk Usage'), 'chart-pie');
+        $this->content()->add(new SubTitle($this->translate('Guest Disk Usage'), 'chart-pie'));
         $disks = VmDiskUsageTable::create($vm);
         if (count($disks)) {
             $this->content()->add($disks);
         }
 
-        $this->addSubTitle($this->translate('Additional Information'), 'info-circled');
-        $this->content()->add(new VmExtraInfoTable($vm));
+        $this->content()->add([
+            new SubTitle($this->translate('Additional Information'), 'info-circled'),
+            new VmExtraInfoTable($vm),
+        ]);
     }
 
     /**
@@ -108,9 +104,11 @@ class VmController extends Controller
      */
     public function hardwareAction()
     {
-        $this->addSubTitle($this->translate('Hardware'), 'print');
         $vm = $this->addVm();
-        $this->content()->add(new VmHardwareTree($vm));
+        $this->content()->add([
+            new SubTitle($this->translate('Hardware'), 'print'),
+            new VmHardwareTree($vm),
+        ]);
     }
 
     /**

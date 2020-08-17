@@ -8,7 +8,6 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use InvalidArgumentException;
-use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 
 class CustomValueDetails extends HtmlDocument
@@ -32,10 +31,7 @@ class CustomValueDetails extends HtmlDocument
     {
         $object = $this->object;
         if ($values = $object->get('custom_values')) {
-            $title = Html::tag('h2', [
-                'class' => 'icon-tags'
-            ], $this->translate('Custom Values'));
-
+            $title = new SubTitle($this->translate('Custom Values'), 'tags');
             $customValues = new NameValueTable();
             $customValues->addNameValuePairs(\json_decode($values));
             $this->add([$title, $customValues]);

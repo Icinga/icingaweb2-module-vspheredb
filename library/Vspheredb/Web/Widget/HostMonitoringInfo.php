@@ -38,10 +38,10 @@ class HostMonitoringInfo extends HtmlDocument
     protected function assemble()
     {
         if ($info = $this->getInfo()) {
-            $title = Html::tag('h2', [
-                'class' => 'icon-binoculars'
-            ], $this->translate('Monitoring'));
-            $this->add([$title, $info]);
+            $this->add([
+                new SubTitle($this->translate('Monitoring'), 'binoculars'),
+                $info
+            ]);
         }
     }
 

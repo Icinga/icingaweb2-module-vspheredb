@@ -29,26 +29,6 @@ class Controller extends CompatController
         return $this->db;
     }
 
-    /**
-     * @param $title
-     * @param null $icon
-     */
-    protected function addSubTitle($title, $icon = null)
-    {
-        $this->content()->add($this->subTitle($title, $icon));
-    }
-
-    protected function subTitle($title, $icon = null)
-    {
-        $title = Html::tag('h2', null, $title);
-
-        if ($icon !== null) {
-            $title->addAttributes(['class' => "icon-$icon"]);
-        }
-
-        return $title;
-    }
-
     protected function redirectToConfiguration()
     {
         if ($this->getRequest()->getControllerName() !== 'configuration') {
