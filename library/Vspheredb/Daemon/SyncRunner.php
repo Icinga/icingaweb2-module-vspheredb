@@ -143,6 +143,7 @@ class SyncRunner
             'virtualMachines',
             'quickStats',
             'perfCounterInfo',
+            'hostNetwork',
             'storagePods',
             'dataStores',
             'vmDatastoreUsage',
@@ -163,6 +164,9 @@ class SyncRunner
             [1800, [
                 'vmSnapshots',
                 'vmHardware',
+            ]],
+            [1800, [
+                'hostNetwork',
             ]],
             [7200, [
                 'hostHardware',
