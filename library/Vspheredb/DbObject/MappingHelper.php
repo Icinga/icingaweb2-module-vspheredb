@@ -68,7 +68,9 @@ class MappingHelper
             }
 
             if (! is_object($row->$main)) {
-                throw new RuntimeException('Data is not nested, cannot access %s: %s', $var, var_export($row, 1));
+                return null;
+                // Hint: we used to throw exceptions
+                // throw new RuntimeException('Data is not nested, cannot access %s: %s', $var, var_export($row, 1));
             }
 
             return static::getDeepValue($row->$main, $parts);
