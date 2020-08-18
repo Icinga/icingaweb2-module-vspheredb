@@ -6,6 +6,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
+use Icinga\Module\Vspheredb\Web\Table\HostPhysicalNicTable;
 use Icinga\Module\Vspheredb\Web\Table\HostSensorsTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostHardwareInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostSystemInfoTable;
@@ -37,6 +38,7 @@ class HostController extends Controller
             new CustomValueDetails($host),
             new SubTitle($this->translate('Hardware Information'), 'help'),
             new HostHardwareInfoTable($host),
+            new HostPhysicalNicTable($host),
             new SubTitle($this->translate('System Information'), 'host'),
             new HostSystemInfoTable($host),
             new SubTitle($this->translate('Virtualization Information'), 'cloud'),
