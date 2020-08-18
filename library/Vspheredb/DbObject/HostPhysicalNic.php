@@ -27,7 +27,7 @@ class HostPhysicalNic extends BaseVmHardwareDbObject
         'pci'                    => 'pci',
         'linkSpeed.speedMb'      => 'link_speed_mb',
         'linkSpeed.duplex'       => 'link_duplex',
-        'macAddress'             => 'mac_address',
+        'mac'                    => 'mac_address',
         'autoNegotiateSupported' => 'auto_negotiate_supported',
     ];
 

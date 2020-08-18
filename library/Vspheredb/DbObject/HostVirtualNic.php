@@ -51,7 +51,7 @@ class HostVirtualNic extends BaseVmHardwareDbObject
         'spec.distributedVirtualPort.ip.ipV6Config.dadState'     => 'ipv6_dad_state',
         'spec.distributedVirtualPort.ip.ipV6Config.origin'     => 'ipv6_origin',
         */
-        'spec.distributedVirtualPort.mac'        => 'mac_address',
+        'spec.mac'        => 'mac_address',
         'spec.distributedVirtualPort.tsoEnabled' => 'tso_enabled',
     ];
 }
