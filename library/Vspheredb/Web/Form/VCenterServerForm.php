@@ -160,7 +160,7 @@ class VCenterServerForm extends Form
             $this->registerElement($button);
         }
         $this->add($buttons);
-        if ($deleteButton->hasBeenPressed()) {
+        if ($deleteButton && $deleteButton->hasBeenPressed()) {
             $this->getObject()->delete();
             $this->deleted = true;
         }
