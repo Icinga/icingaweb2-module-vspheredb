@@ -41,7 +41,11 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
 
     public function renderRow($row)
     {
-        return $this::row([$this->formatSimple($row)]);
+        $attributes = [];
+        if ($row->link_speed_mb === null) {
+            $attributes['class'] = 'disabled';
+        }
+        return $this::row([$this->formatSimple($row)], $attributes);
     }
 
     protected function formatSimple($row)
