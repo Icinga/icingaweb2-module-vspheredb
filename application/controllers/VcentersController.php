@@ -7,6 +7,7 @@ use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
+use Icinga\Module\Vspheredb\Web\Widget\Config\ProposeMigrations;
 use Icinga\Module\Vspheredb\Web\Widget\CpuAbsoluteUsage;
 
 class VcentersController extends ObjectsController
@@ -16,6 +17,11 @@ class VcentersController extends ObjectsController
      */
     public function indexAction()
     {
+        $migrations = new ProposeMigrations($this->db(), $this->Auth(), $this->getServerRequest());
+        if ($migrations->hasAppliedMigrations()) {
+            $this->redirectNow($this->url());
+        }
+        $this->content()->add($migrations);
         $this->setAutorefreshInterval(15);
         $this->addSingleTab($this->translate('VCenters'));
         $this->handleTabs();
