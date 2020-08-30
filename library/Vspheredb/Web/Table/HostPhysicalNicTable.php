@@ -62,11 +62,11 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
             );
         }
         return Html::sprintf(
-            '%s (%s: %s), %s, %s',
+            '%s (%s: %s), %s%s',
             Html::tag('strong', $row->device),
             $this->translate('driver'),
             $row->driver,
-            $row->mac_address,
+            isset($row->mac_address) ? $row->mac_address . ', ' : '',
             $speedInfo
         );
     }
