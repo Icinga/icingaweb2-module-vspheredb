@@ -44,9 +44,15 @@ class VmController extends Controller
             VmDisksTable::create($vm),
             new SubTitle($this->translate('DataStore Usage'), 'database'),
             VmDatastoresTable::create($vm),
-            new SubTitle($this->translate('Snapshots'), 'history'),
         ]);
 
+        $this->content()->add(new SubTitle($this->translate('Guest Disk Usage'), 'chart-pie'));
+        $disks = VmDiskUsageTable::create($vm);
+        if (count($disks)) {
+            $this->content()->add($disks);
+        }
+
+        $this->content()->add(new SubTitle($this->translate('Snapshots'), 'history'));
         $snapshots = VmSnapshotTable::create($vm);
         if (count($snapshots)) {
             $this->content()->add($snapshots);
@@ -71,12 +77,6 @@ class VmController extends Controller
                 null,
                 $this->translate('No known backup tool has been used for this VM')
             ));
-        }
-
-        $this->content()->add(new SubTitle($this->translate('Guest Disk Usage'), 'chart-pie'));
-        $disks = VmDiskUsageTable::create($vm);
-        if (count($disks)) {
-            $this->content()->add($disks);
         }
 
         $this->content()->add([
