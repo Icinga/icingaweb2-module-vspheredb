@@ -8,7 +8,6 @@ use ipl\Html\Html;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
-use Ramsey\Uuid\Uuid;
 
 class ObjectsController extends Controller
 {
@@ -117,14 +116,10 @@ class ObjectsController extends Controller
         $lookup = $this->pathLookup();
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
         foreach ($lookup->getObjectNames($lookup->listPathTo($parent)) as $uuid => $name) {
-            $path->add(Link::create(
-                $name,
-                $url,
-                [
-                    'uuid'            => bin2hex($uuid),
-                    'showDescendants' => true,
-                ]
-            ));
+            $path->add(Link::create($name, $url, [
+                'uuid'            => bin2hex($uuid),
+                'showDescendants' => true,
+            ]));
         }
 
         $this->content()->add($path);
