@@ -9,6 +9,7 @@ next (will be 1.2.0)
 * FIX: avoid PHP warnings on 7.4 when showing Host details/special cols (#169)
 * FIX: deleting Server connections has been fixed (#155)
 * FIX: Server Form presents masked dummy value, not masked password
+* FIX: sorting hosts by state summary
 * FEATURE: show Virtual Machine Custom Values (#88)
 * FEATURE: Hosts Table now provides ESXi version column
 

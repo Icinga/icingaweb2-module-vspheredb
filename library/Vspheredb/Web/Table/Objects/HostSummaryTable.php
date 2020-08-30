@@ -138,10 +138,10 @@ abstract class HostSummaryTable extends ObjectsTable
                     return $result;
                 }
             })->setSortExpression([
-                'hosts_cnt_overall_red',
-                'hosts_cnt_overall_yellow',
-                'hosts_cnt_overall_gray',
-                'hosts_cnt_overall_green',
+                "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
+                "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
+                "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
+                "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
             ])->setDefaultSortDirection('DESC'),
 
             $this->createColumn('hardware_cpu_mhz', 'CPU Capacity', 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)')
