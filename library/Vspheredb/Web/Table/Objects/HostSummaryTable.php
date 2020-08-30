@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Format;
 use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 
 abstract class HostSummaryTable extends ObjectsTable
 {
@@ -121,11 +121,12 @@ abstract class HostSummaryTable extends ObjectsTable
                 $this->getHostCountColumns()
             )->setRenderer(function ($row) {
                 $result = [];
-                foreach (['red', 'yellow', 'gray', 'green'] as $state) {
+                $uuid = Uuid::fromBytes($row->uuid)->toString();
+                foreach (['green', 'gray', 'yellow', 'red'] as $state) {
                     $column = "hosts_cnt_overall_$state";
                     if ($row->$column > 0) {
                         $result[] = Link::create($row->$column, $this->baseUrlHosts, [
-                            'uuid'           => bin2hex($row->uuid),
+                            'vcenter'        => $uuid,
                             'overall_status' => $state
                         ], ['class' => ['state', $state]]);
                     }
