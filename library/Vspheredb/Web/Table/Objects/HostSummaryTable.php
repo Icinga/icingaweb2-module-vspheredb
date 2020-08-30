@@ -163,6 +163,8 @@ abstract class HostSummaryTable extends ObjectsTable
                     return Format::mBytes($row->overall_memory_usage);
                 })->setDefaultSortDirection('DESC'),
 
+            /*
+             // Not yet, this was an early prototype based no monitoring vars
             $this->createColumn('projects', 'Projects', '(null)')
                 ->setRenderer(function ($row) {
                     return Link::create(
@@ -172,6 +174,7 @@ abstract class HostSummaryTable extends ObjectsTable
                         ['data-base-target' => '_next']
                     );
                 }),
+             */
         ]);
     }
 
