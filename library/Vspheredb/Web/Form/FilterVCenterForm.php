@@ -3,8 +3,9 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use gipfl\Translation\TranslationHelper;
-use ipl\Html\Form;
 use Icinga\Module\Vspheredb\Db;
+use ipl\Html\Form;
+use Ramsey\Uuid\Uuid;
 
 class FilterVCenterForm extends Form
 {
@@ -20,7 +21,7 @@ class FilterVCenterForm extends Form
 
     public function getHexUuid()
     {
-        return $this->getElement('uuid')->getValue();
+        return $this->getElement('vcenter')->getValue();
     }
 
     public function onSuccess()
@@ -30,8 +31,10 @@ class FilterVCenterForm extends Form
     protected function assemble()
     {
         $enum = $this->enumVCenters();
-        $this->addElement('select', 'uuid', [
-            'options' => $enum,
+        $this->addElement('select', 'vcenter', [
+            'options' => [
+                null => $this->translate('- please choose -'),
+            ] + $enum,
             'class'   => 'autosubmit',
             'value'   => key($enum),
         ]);
@@ -39,18 +42,24 @@ class FilterVCenterForm extends Form
 
     protected function enumVCenters()
     {
-        return $this->db->fetchPairs(
+        $pairs = $this->db->fetchPairs(
             $this->db->select()->from(
                 ['vc' => 'vcenter'],
                 [
                     'uuid' => 'LOWER(HEX(vc.instance_uuid))',
-                    'host' => 'vcs.host',
+                    'host' => "vcs.host || ' (' || REPLACE(vc.name, 'VMware ', '') || ')'",
                 ]
             )->join(
                 ['vcs' => 'vcenter_server'],
                 'vcs.vcenter_id = vc.id',
                 []
-            )
+            )->order('vcs.host')
         );
+        $enum = [];
+        foreach ($pairs as $uuid => $label) {
+            $enum[Uuid::fromString($uuid)->toString()] = $label;
+        }
+
+        return $enum;
     }
 }
