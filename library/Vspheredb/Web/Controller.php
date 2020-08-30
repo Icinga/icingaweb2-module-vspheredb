@@ -5,7 +5,7 @@ namespace Icinga\Module\Vspheredb\Web;
 use Exception;
 use gipfl\IcingaWeb2\CompatController;
 use Icinga\Module\Vspheredb\Db;
-use ipl\Html\Html;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 class Controller extends CompatController
 {
@@ -27,6 +27,12 @@ class Controller extends CompatController
         }
 
         return $this->db;
+    }
+
+    protected function requireVCenter($paramName = 'vcenter')
+    {
+        $hexUuid = $this->params->getRequired($paramName);
+        return VCenter::loadWithHexUuid($hexUuid, $this->db());
     }
 
     protected function redirectToConfiguration()
