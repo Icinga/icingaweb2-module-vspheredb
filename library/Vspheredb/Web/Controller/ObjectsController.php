@@ -3,10 +3,12 @@
 namespace Icinga\Module\Vspheredb\Web\Controller;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use ipl\Html\Html;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
+use Ramsey\Uuid\Uuid;
 
 class ObjectsController extends Controller
 {
@@ -79,9 +81,17 @@ class ObjectsController extends Controller
         }
     }
 
+    protected function eventuallyFilterByVCenter(ObjectsTable $table)
+    {
+        if ($hex = $this->params->get('vcenter')) {
+            $table->filterVCenter(VCenter::loadWithHexUuid($hex, $this->db()));
+        }
+    }
+
     protected function showTable(ObjectsTable $table, $url, $defaultTitle = null)
     {
         $this->eventuallyFilterByParent($table, $url, $defaultTitle);
+        $this->eventuallyFilterByVCenter($table);
         $this->renderTableWithCount($table, $defaultTitle);
 
         return $this;
