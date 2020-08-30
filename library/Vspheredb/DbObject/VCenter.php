@@ -69,6 +69,11 @@ class VCenter extends BaseDbObject
         return $this->get('instance_uuid');
     }
 
+    public static function loadWithHexUuid($uuid, Db $db)
+    {
+        return static::load(\hex2bin(\str_replace('-', '', $uuid)), $db);
+    }
+
     /**
      * @return Api
      * @throws \Icinga\Exception\NotFoundError
