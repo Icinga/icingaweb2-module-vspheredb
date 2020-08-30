@@ -9,6 +9,8 @@ use ipl\Html\FormElement\SubmitElement;
 
 class VCenterServerForm extends Form
 {
+    const UNCHANGED_PASSWORD = '__UNCHANGED__';
+
     protected $objectClassName = VCenterServer::class;
 
     /** @var VCenterServer */
@@ -175,8 +177,13 @@ class VCenterServerForm extends Form
     {
         $values = parent::getValues();
         $values['enabled'] = 'y';
-        if (! $this->isNew() && strlen($values['password']) === 0) {
-            unset($values['password']);
+        if (! $this->isNew()) {
+            if ($values['password'] === self::UNCHANGED_PASSWORD) {
+                unset($values['password']);
+            }
+            if (isset($values['proxy_pass']) && $values['proxy_pass'] === self::UNCHANGED_PASSWORD) {
+                unset($values['proxy_pass']);
+            }
         }
 
         return $values;
@@ -185,7 +192,14 @@ class VCenterServerForm extends Form
     public function setObject(VCenterServer $object)
     {
         $this->object = $object;
-        $this->populate($object->getProperties());
+        $properties = $object->getProperties();
+        if (\strlen($properties['password'])) {
+            $properties['password'] = self::UNCHANGED_PASSWORD;
+        }
+        if (\strlen($properties['proxy_pass'])) {
+            $properties['proxy_pass'] = self::UNCHANGED_PASSWORD;
+        }
+        $this->populate($properties);
 
         return $this;
     }
