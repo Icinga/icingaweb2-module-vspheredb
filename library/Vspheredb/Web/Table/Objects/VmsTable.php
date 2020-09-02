@@ -19,7 +19,7 @@ class VmsTable extends ObjectsTable
         'object_name',
         'guest_host_name',
         'guest_ip_address',
-        'moref'
+        'moref',
     ];
 
     public function filterHost($uuid)
@@ -167,7 +167,7 @@ class VmsTable extends ObjectsTable
         // $this->addPerfColumns();
     }
 
-    protected function renderInterface($moref ,$hardwareKey)
+    protected function renderInterface($moref, $hardwareKey)
     {
         $width = 160;
         $height = 30;

@@ -4,7 +4,12 @@ namespace Icinga\Module\Vspheredb\VmwareDataType;
 
 class ManagedObjectReference
 {
+    /**
+     * @codingStandardsIgnoreStart
+     */
     public $_;
+    // codingStandardsIgnoreEnd
+
     public $type;
 
     public function __construct($type, $moref)

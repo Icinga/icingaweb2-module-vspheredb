@@ -6,6 +6,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
+use Icinga\Module\Vspheredb\Web\Table\HostPhysicalNicTable;
 use Icinga\Module\Vspheredb\Web\Table\HostSensorsTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostHardwareInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostSystemInfoTable;
@@ -14,8 +15,10 @@ use Icinga\Module\Vspheredb\Web\Table\Object\HostVmsInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
+use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
 use Icinga\Module\Vspheredb\Web\Widget\HostHeader;
 use Icinga\Module\Vspheredb\Web\Widget\HostMonitoringInfo;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class HostController extends Controller
@@ -28,19 +31,19 @@ class HostController extends Controller
     {
         $host = $this->addHost();
         $this->content()->addAttributes(['class' => 'host-info']);
-        $monitoring = new HostMonitoringInfo($host);
-        if ($monitoring->hasInfo()) {
-            $this->addSubTitle($this->translate('Monitoring'), 'binoculars');
-            $this->content()->add($monitoring);
-        }
-        $this->addSubTitle($this->translate('Virtual Machines'), 'cubes');
-        $this->content()->add(new HostVmsInfoTable($host));
-        $this->addSubTitle($this->translate('Hardware Information'), 'help');
-        $this->content()->add(new HostHardwareInfoTable($host));
-        $this->addSubTitle($this->translate('System Information'), 'host');
-        $this->content()->add(new HostSystemInfoTable($host));
-        $this->addSubTitle($this->translate('Virtualization Information'), 'cloud');
-        $this->content()->add(new HostVirtualizationInfoTable($host));
+        $this->content()->add([
+            new HostMonitoringInfo($host),
+            new SubTitle($this->translate('Virtual Machines'), 'cubes'),
+            new HostVmsInfoTable($host),
+            new CustomValueDetails($host),
+            new SubTitle($this->translate('Hardware Information'), 'help'),
+            new HostHardwareInfoTable($host),
+            new HostPhysicalNicTable($host),
+            new SubTitle($this->translate('System Information'), 'host'),
+            new HostSystemInfoTable($host),
+            new SubTitle($this->translate('Virtualization Information'), 'cloud'),
+            new HostVirtualizationInfoTable($host),
+        ]);
     }
 
     /**

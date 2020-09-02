@@ -23,7 +23,7 @@ class PerformanceCounterTable extends BaseTable
     protected function initialize()
     {
         $this->addAvailableColumns([
-            $this->createColumn('key',$this->translate('Key'),  [
+            $this->createColumn('key', $this->translate('Key'), [
                 'group_name',
                 'name'
             ])->setRenderer(function ($row) {

@@ -6,6 +6,7 @@ use Clue\React\Buzz\Message\ResponseException;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\PerfEntityMetricCSV;
 use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\AsyncInfluxDbWriter;
+use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\HostNetwork;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\PerformanceSet;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\VmDisks;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\VmNetwork;
@@ -63,8 +64,9 @@ class InfluxDbStreamer
         $this->idle = false;
 
         $sets = [
-            'VmNetwork' => VmNetwork::class,
-            'VmDisks'   => VmDisks::class,
+            'HostNetwork' => HostNetwork::class,
+            'VmNetwork'   => VmNetwork::class,
+            'VmDisks'     => VmDisks::class,
         ];
 
         foreach ($sets as $set) {
@@ -117,7 +119,7 @@ class InfluxDbStreamer
         // $lines = array_merge($lines, $batch);
 
         $linesWaitingForInflux = \count($batch);
-        $this->influx->send($dbName, $batch)->then(function () use (& $linesWaitingForInflux, $dbName) {
+        $this->influx->send($dbName, $batch)->then(function () use (&$linesWaitingForInflux, $dbName) {
             Logger::info(sprintf(
                 'Sent %d lines to InfluxDB',
                 $linesWaitingForInflux
@@ -125,7 +127,7 @@ class InfluxDbStreamer
             $this->loop->futureTick(function () use ($dbName) {
                 $this->sendNextBatch($dbName);
             });
-        })->otherwise(function (\Exception $e) use (& $linesWaitingForInflux) {
+        })->otherwise(function (\Exception $e) use (&$linesWaitingForInflux) {
             Logger::error(sprintf(
                 'Failed to send %d lines to InfluxDB: %s',
                 $linesWaitingForInflux,
@@ -134,7 +136,7 @@ class InfluxDbStreamer
             if ($e instanceof ResponseException) {
                 Logger::error($e->getResponse()->getBody());
             }
-        })->always(function () use (& $linesWaitingForInflux) {
+        })->always(function () use (&$linesWaitingForInflux) {
             $linesWaitingForInflux = 0;
             $this->idle = true;
         });

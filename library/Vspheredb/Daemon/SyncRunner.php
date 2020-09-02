@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\EventManager;
 use Icinga\Module\Vspheredb\Sync\SyncHostHardware;
+use Icinga\Module\Vspheredb\Sync\SyncHostNetwork;
 use Icinga\Module\Vspheredb\Sync\SyncHostSensors;
 use Icinga\Module\Vspheredb\Sync\SyncManagedObjectReferences;
 use Icinga\Module\Vspheredb\Sync\SyncPerfCounterInfo;
@@ -58,6 +59,7 @@ class SyncRunner
         'dataStores'       => 'Data Stores',
         'hostHardware'     => 'Host Hardware',
         'hostSensors'      => 'Host Sensors',
+        'hostNetwork'      => 'Host Network',
         'vmHardware'       => 'VM Hardware',
         'vmDiskUsage'      => 'VM Disk Usage',
         'vmDatastoreUsage' => 'VM DataStore Usage',
@@ -99,6 +101,9 @@ class SyncRunner
             'hostSensors' => function () {
                 (new SyncHostSensors($this->vCenter))->run();
             },
+            'hostNetwork' => function () {
+                (new SyncHostNetwork($this->vCenter))->run();
+            },
             'vmHardware' => function () {
                 (new SyncVmHardware($this->vCenter))->run();
             },
@@ -114,7 +119,8 @@ class SyncRunner
             'eventStream' => function () {
                 $this->streamEvents();
             },
-            'perfCounters' => function () { // Currently unused.
+            'perfCounters' => function () {
+                // Currently unused.
                 (new SyncPerfCounters($this->vCenter))->run();
             },
             'perfCounterInfo' => function () {
@@ -137,6 +143,7 @@ class SyncRunner
             'virtualMachines',
             'quickStats',
             'perfCounterInfo',
+            'hostNetwork',
             'storagePods',
             'dataStores',
             'vmDatastoreUsage',
@@ -157,6 +164,9 @@ class SyncRunner
             [1800, [
                 'vmSnapshots',
                 'vmHardware',
+            ]],
+            [1800, [
+                'hostNetwork',
             ]],
             [7200, [
                 'hostHardware',

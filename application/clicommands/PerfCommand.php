@@ -64,8 +64,7 @@ class PerfCommand extends CommandBase
     {
     }
 
-    protected function flushMetrics(& $queue)
+    protected function flushMetrics(&$queue)
     {
-
     }
 }

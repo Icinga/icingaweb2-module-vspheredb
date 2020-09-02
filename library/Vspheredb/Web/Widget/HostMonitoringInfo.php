@@ -7,7 +7,6 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
-use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
@@ -39,7 +38,10 @@ class HostMonitoringInfo extends HtmlDocument
     protected function assemble()
     {
         if ($info = $this->getInfo()) {
-            $this->add($info);
+            $this->add([
+                new SubTitle($this->translate('Monitoring'), 'binoculars'),
+                $info
+            ]);
         }
     }
 

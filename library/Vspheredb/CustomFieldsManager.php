@@ -82,7 +82,6 @@ class CustomFieldsManager
                 'Exactly one CustomFieldsManager object expected, got %d',
                 count($result->objects)
             ));
-
         }
 
         $object = $result->objects[0];

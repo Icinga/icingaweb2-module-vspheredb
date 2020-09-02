@@ -36,6 +36,9 @@ class HostsTable extends ObjectsTable
                 'service_tag'    => 'h.service_tag',
                 'sysinfo_vendor' => 'h.sysinfo_vendor',
             ])->setRenderer($serviceTagRenderer),
+            $this->createColumn('product_api_version', $this->translate('API Version'), [
+                'product_api_version' => 'h.product_api_version',
+            ]),
             $this->createColumn('cpu_usage', $this->translate('CPU Usage'), [
                 'cpu_usage' => 'hqs.overall_cpu_usage',
                 'cpu_total' => '(hardware_cpu_cores * hardware_cpu_mhz)',
@@ -89,7 +92,9 @@ class HostsTable extends ObjectsTable
             ])->setDefaultSortDirection('DESC'),
             $this->createColumn('vms_cnt_cpu', $this->translate('VM CPUs'), 'vms.cnt_cpu')
                 ->setDefaultSortDirection('DESC'),
-            $this->createColumn('pcpu_vcpu_ration', $this->translate('vCPU/pCPU'),
+            $this->createColumn(
+                'pcpu_vcpu_ration',
+                $this->translate('vCPU/pCPU'),
                 '(vms.cnt_cpu / h.hardware_cpu_cores)'
             )->setRenderer(function ($row) {
                 return sprintf('%.3g:1', $row->pcpu_vcpu_ration);

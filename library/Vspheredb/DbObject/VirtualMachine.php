@@ -4,7 +4,6 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Json;
-use Icinga\Module\Vspheredb\MappedClass\CustomFieldValue;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 
 class VirtualMachine extends BaseDbObject
@@ -68,7 +67,7 @@ class VirtualMachine extends BaseDbObject
         'config.template'            => 'template',
         'config.uuid'                => 'bios_uuid',
         'config.instanceUuid'        => 'instance_uuid',
-        // config.locationId	(uuid) ??
+        // config.locationId (uuid) ??
         // config.vmxConfigChecksum -> base64 -> bin(20)
         'config.version'             => 'version',
         'resourcePool'               => 'resource_pool_uuid',

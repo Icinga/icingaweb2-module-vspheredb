@@ -167,7 +167,7 @@ abstract class BaseDbObject extends VspheredbDbObject
                     if ($vCenter->getApi()->hasCustomFieldsManager()) {
                         $value = $vCenter->getApi()->customFieldsManager()->mapFields($value);
                     } else {
-                        return $this;
+                        continue;
                     }
                 }
 
@@ -248,7 +248,7 @@ abstract class BaseDbObject extends VspheredbDbObject
      * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
      * @throws \Zend_Db_Exception
      */
-    protected static function storeSync(VCenter $vCenter, & $dbObjects, & $newObjects)
+    protected static function storeSync(VCenter $vCenter, &$dbObjects, &$newObjects)
     {
         $type = static::getType();
         $vCenterUuid = $vCenter->getUuid();

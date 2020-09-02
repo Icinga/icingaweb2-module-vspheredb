@@ -35,8 +35,8 @@ abstract class EventHeatmapCalendars extends BaseHtmlElement
             [
                 'colspan' => 7,
                 'style' => 'text-align: center'
-            ])
-        ));
+            ]
+        )));
         $body->add($this->createWeekdayHeader());
 
         $this->add($table);

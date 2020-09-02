@@ -122,7 +122,7 @@ class IbmSpectrumProtect implements BackupTool
         $this->lastAttributes = $attributes;
     }
 
-    public function stripAnnotation(& $annotation)
+    public function stripAnnotation(&$annotation)
     {
         $beginPos = strpos($annotation, static::OPEN_TAG);
         if ($beginPos === false) {

@@ -36,7 +36,8 @@ class VmDisk extends BaseVmHardwareDbObject
         // 'backing.contentId' => 'content_id', // to binary, b82d1a823ecedaeece267061396dac9f
         'backing.uuid'        => 'disk_uuid', // to binary, 6000C299-5ba6-c2cf-1706-3ba11a5d1df0
         'backing.datastore._' => 'datastore_uuid', // make binary unique
-        'backing.fileName'    => 'file_name', // transform, remove DS name? [LX_ESX_V7000_RZ1_15] tst-kjm-01.lxsbx.ka.de.dm-drogeriemarkt.com/tst-kjm-01.lxsbx.ka.de.dm-drogeriemarkt.com.vmdk
+        'backing.fileName'    => 'file_name', // transform, remove DS name? Might look like this:
+        // [LX_ESX_V7000_RZ1_11] tst-tom-01.lxsbx.co.de.some-example.com/tst-tom-01.lxsbx.co.de.some-example.com.vmdk
         'capacityInBytes'     => 'capacity',
         'backing.diskMode'    => 'disk_mode',
         'split'               => 'split',
@@ -44,8 +45,14 @@ class VmDisk extends BaseVmHardwareDbObject
         'thinProvisioned'     => 'thin_provisioned'
     ];
 
+    /**
+     * @param $value
+     * @return VmDisk
+     * @codingStandardsIgnoreStart
+     */
     public function setDisk_uuid($value)
     {
+        // @codingStandardsIgnoreEnd
         if (strlen($value) > 16) {
             $value = Util::uuidToBin($value);
         }

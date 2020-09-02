@@ -18,8 +18,11 @@ class DaemonController extends Controller
         $this->addTitle($this->translate('vSphereDB Daemon Status'));
         $this->handleTabs();
         $db = $this->db()->getDbAdapter();
-        $daemon = $db->fetchRow($db->select()->from('vspheredb_daemon')
-            ->order('ts_last_refresh DESC')->limit(1)
+        $daemon = $db->fetchRow(
+            $db->select()
+                ->from('vspheredb_daemon')
+                ->order('ts_last_refresh DESC')
+                ->limit(1)
         );
         $lineCount = 2000;
         $logLines = $db->fetchAll($db->select()->from([
