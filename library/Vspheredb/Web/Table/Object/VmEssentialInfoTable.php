@@ -19,6 +19,7 @@ use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
 use Icinga\Module\Vspheredb\Json;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\Link\VmrcLink;
 use ipl\Html\Html;
 
 class VmEssentialInfoTable extends NameValueTable
@@ -109,10 +110,7 @@ class VmEssentialInfoTable extends NameValueTable
 
         if ($vm->get('guest_id')) {
             $this->addNameValuePairs([
-                $this->translate('Console') => $this->linkToVMRC(
-                    $vm->object()->get('object_name'),
-                    $vm->object()->get('moref')
-                ),
+                $this->translate('Console') => new VmrcLink($this->vCenter, $vm),
                 $this->translate('Guest OS') => $guest,
                 $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
                 $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
@@ -220,30 +218,6 @@ class VmEssentialInfoTable extends NameValueTable
             'target' => '_blank',
             'title' => $this->translate('Jump to the Managed Object browser')
         ], $moRef);
-    }
-
-    protected function linkToVMRC($name, $moRef)
-    {
-        try {
-            $server = $this->vCenter->getFirstServer();
-        } catch (NotFoundError $e) {
-            return [
-                Icon::create('warning-empty', [
-                    'class' => 'red'
-                ]),
-                ' ',
-                $this->translate('No related vServer has been configured')
-            ];
-        }
-        return Html::tag('a', [
-            'href' => sprintf(
-                'vmrc://%s/?moid=%s',
-                $server->get('host'),
-                rawurlencode($moRef)
-            ),
-            'target' => '_self',
-            'title' => $this->translate('Open console with VMRC')
-        ], $name);
     }
 
     protected function getConnectionStateDetails($state)
