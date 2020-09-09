@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Sync;
 use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\DbObject\HostSensor;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\MappedClass\HostNumericSensorInfo;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 
 class SyncHostSensors
@@ -40,6 +41,7 @@ class SyncHostSensors
                 // No sensor information for this host
                 continue;
             }
+            /** @var HostNumericSensorInfo $sensor */
             foreach ($host->$baseKey->HostNumericSensorInfo as $sensor) {
                 $key = $sensor->name;
                 $idx = "$uuid$key";

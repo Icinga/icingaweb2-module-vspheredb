@@ -168,6 +168,7 @@ class ApiClassMap
             'PhysicalNic'             => PhysicalNic::class,
             'PhysicalNicLinkInfo'     => PhysicalNicLinkInfo::class,
             'PhysicalNicSpec'         => PhysicalNicSpec::class,
+            'HostNumericSensorInfo'   => HostNumericSensorInfo::class,
         ];
 
         return $map;
