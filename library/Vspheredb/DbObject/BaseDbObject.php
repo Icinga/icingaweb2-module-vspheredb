@@ -8,6 +8,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\MappedClass\ElementDescription;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\Util;
@@ -162,6 +163,9 @@ abstract class BaseDbObject extends VspheredbDbObject
                     $value = $this->makeBooleanValue($value);
                 } elseif ($this->isDateTimeProperty($property)) {
                     $value = Util::timeStringToUnixMs($value);
+                } elseif ($value instanceof ElementDescription) {
+                    // Like HostNumericSensorInfo.healthState
+                    $value = $value->key;
                 }
                 if ($property === 'customValues') {
                     if ($vCenter->getApi()->hasCustomFieldsManager()) {
