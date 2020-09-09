@@ -12,14 +12,20 @@ next (will be 1.2.0)
 * FIX: sorting hosts by state summary
 * FEATURE: show Virtual Machine Custom Values (#88)
 * FEATURE: Hosts Table now provides ESXi version column
+* FEATURE: show Host NIC information (#177)
+* FEATURE: a console link (via VMRC) is now available (#141)
+* FEATURE: reorganized VM detail sections (#182)
+* FEATURE: propose DB migrations in a more prominent place (#20)
 
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)
 * FIX: sync no longer fails on objects with no overallState (#98)
 * FIX: sub-tasks will now terminate early on DB errors (#151)
 * FIX: correct log-level is now passed to child-processes (#138)
+* FIX: there was one more issue with zero-sized DataStores (#149)
 * FEATURE: synchronize Custom Values (#88)
 * FEATURE: synchronize VirtualMachines belonging to vApps (#31)
+* FEATURE: synchronize many Host Network related objects (#177)
 
 ### Integrations
 * FEATURE: ship more VM properties with our Director Import Source
@@ -29,6 +35,10 @@ next (will be 1.2.0)
 * FIX: dropped a unique constraint on BIOS UUID because of VMware bugs (#83, #99)
 * FIX: large-grown daemon log table has been truncated (#138)
 * FIX: allow event/alert messages longer than 64kB (#133)
+
+### vSphere API
+* FIX: login to vSphere 7.0 failed (#175)
+* FIX: tweak invalid sensor status names in 7.0 (#179)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
