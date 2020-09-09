@@ -165,7 +165,9 @@ abstract class BaseDbObject extends VspheredbDbObject
                     $value = Util::timeStringToUnixMs($value);
                 } elseif ($value instanceof ElementDescription) {
                     // Like HostNumericSensorInfo.healthState
-                    $value = $value->key;
+                    // Hint: lcfirst -> issue #179, vSphere 7 ships 'Green' instead of 'green',
+                    //       at least on that specific system
+                    $value = \lcfirst($value->key);
                 }
                 if ($property === 'customValues') {
                     if ($vCenter->getApi()->hasCustomFieldsManager()) {
