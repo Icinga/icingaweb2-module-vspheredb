@@ -34,7 +34,7 @@ class HostSystemInfoTable extends NameValueTable
             ),
             $this->translate('BIOS Version') => new SpectreMelddownBiosInfo($host),
             $this->translate('Uptime')       => DateFormatter::formatDuration($host->quickStats()->get('uptime')),
-            $this->translate('System UUID')  => $host->get('sysinfo_uuid'),
+            $this->translate('System UUID')  => Html::tag('pre', $host->get('sysinfo_uuid')),
         ]);
     }
 
