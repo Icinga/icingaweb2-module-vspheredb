@@ -2,12 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Exception;
-use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
@@ -195,29 +193,5 @@ class VmEssentialInfoTable extends NameValueTable
                 ))
             ];
         }
-    }
-
-    protected function linkToVCenter($moRef)
-    {
-        try {
-            $server = $this->vCenter->getFirstServer();
-        } catch (NotFoundError $e) {
-            return [
-                Icon::create('warning-empty', [
-                    'class' => 'red'
-                ]),
-                ' ',
-                $this->translate('No related vServer has been configured')
-            ];
-        }
-        return Html::tag('a', [
-            'href' => sprintf(
-                'https://%s/mob/?moid=%s',
-                $server->get('host'),
-                rawurlencode($moRef)
-            ),
-            'target' => '_blank',
-            'title' => $this->translate('Jump to the Managed Object browser')
-        ], $moRef);
     }
 }

@@ -2,14 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
-use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use ipl\Html\Html;
 
 class VmExtraInfoTable extends NameValueTable
@@ -57,37 +56,12 @@ class VmExtraInfoTable extends NameValueTable
             $this->translate('UUID') => Html::tag('pre', $vm->get('bios_uuid')),
             $this->translate('Instance UUID') => Html::tag('pre', $vm->get('instance_uuid')),
             $this->translate('CPUs')   => $vm->get('hardware_numcpu'),
-            $this->translate('MO Ref') => $this->linkToVCenter($vm->object()->get('moref')),
+            $this->translate('MO Ref') => new MobLink($this->vCenter, $vm),
             $this->translate('Is Template') => $vm->get('template') === 'y'
                 ? $this->translate('true')
                 : $this->translate('false'),
             $this->translate('Path') => $path,
-            $this->translate('Version')          => $vm->get('version'),
-
+            $this->translate('Version') => $vm->get('version'),
         ]);
-    }
-
-    protected function linkToVCenter($moRef)
-    {
-        try {
-            $server = $this->vCenter->getFirstServer();
-        } catch (NotFoundError $e) {
-            return [
-                Icon::create('warning-empty', [
-                    'class' => 'red'
-                ]),
-                ' ',
-                $this->translate('No related vServer has been configured')
-            ];
-        }
-        return Html::tag('a', [
-            'href' => sprintf(
-                'https://%s/mob/?moid=%s',
-                $server->get('host'),
-                rawurlencode($moRef)
-            ),
-            'target' => '_blank',
-            'title' => $this->translate('Jump to the Managed Object browser')
-        ], $moRef);
     }
 }

@@ -10,6 +10,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use ipl\Html\Html;
 
 class HostVirtualizationInfoTable extends NameValueTable
@@ -56,37 +57,8 @@ class HostVirtualizationInfoTable extends NameValueTable
         $this->addNameValuePairs([
             $this->translate('API Version')  => $host->get('product_api_version'),
             $this->translate('Hypervisor')   => $host->get('product_full_name'),
-            $this->translate('MO Ref')       => $this->linkToVCenter($host->object()->get('moref')),
+            $this->translate('MO Ref')       => new MobLink($this->vCenter, $host),
             $this->translate('Path')         => $path,
         ]);
-    }
-
-    /**
-     * @param $moRef
-     * @return \ipl\Html\HtmlElement|array
-     */
-    protected function linkToVCenter($moRef)
-    {
-        try {
-            $server = $this->vCenter->getFirstServer();
-        } catch (NotFoundError $e) {
-            return [
-                Icon::create('warning-empty', [
-                    'class' => 'red'
-                ]),
-                ' ',
-                $this->translate('No related vServer has been configured')
-            ];
-        }
-
-        return Html::tag('a', [
-            'href' => sprintf(
-                'https://%s/mob/?moid=%s',
-                $server->get('host'),
-                rawurlencode($moRef)
-            ),
-            'target' => '_blank',
-            'title' => $this->translate('Jump to the Managed Object browser')
-        ], $moRef);
     }
 }
