@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Format;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
 class HostPhysicalNicTable extends ZfQueryBasedTable
@@ -25,18 +26,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         $this->host = $host;
         $this->moref = $this->host->object()->get('moref');
         parent::__construct($host->getConnection());
-    }
-
-    public function getColumnsToBeRendered()
-    {
-        return [
-            // TODO: no padding in th on our left!
-            Html::tag('h2', [
-                'class' => 'icon-sitemap',
-                'style' => 'margin: 0;'
-            ], $this->translate('Network')),
-            ''
-        ];
+        $this->prepend(new SubTitle($this->translate('Network'), 'sitemap'));
     }
 
     public function renderRow($row)
