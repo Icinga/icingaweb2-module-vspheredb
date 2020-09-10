@@ -19,9 +19,10 @@ CREATE TABLE vcenter (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
   instance_uuid VARBINARY(16) NOT NULL,
   trust_store_id INT UNSIGNED DEFAULT NULL, -- TODO: not null?
-  name VARCHAR(64) NOT NULL, -- name	"VMware vCenter Server"
+  name VARCHAR(64) NOT NULL,    -- configured name
   version VARCHAR(10) NOT NULL, -- version	"6.0.0"
   os_type VARCHAR(32) NOT NULL, -- osType	"linux-x64"
+  api_name VARCHAR(64) NOT NULL, -- name	"VMware vCenter Server"
   api_type VARCHAR(64) NOT NULL, -- apiType	"VirtualCenter"
   api_version VARCHAR(10) NOT NULL, -- apiVersion	"6.0"
   build VARCHAR(32) DEFAULT NULL, -- build "5318203"
@@ -858,4 +859,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (22, NOW());
+VALUES (23, NOW());
