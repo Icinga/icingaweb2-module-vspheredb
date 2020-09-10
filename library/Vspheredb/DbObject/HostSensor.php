@@ -32,6 +32,7 @@ class HostSensor extends BaseDbObject
         'sensorType'     => 'sensor_type',
     ];
 
+    // TODO: HostNumericSensorInfo has 'id' since v6.5
     protected $keyName = ['host_uuid', 'name'];
 
     public function setName($value)
