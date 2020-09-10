@@ -28,7 +28,11 @@ class VCenterServer extends BaseDbObject
 
     public function initialize()
     {
-        $vCenter = VCenter::fromApi(Api::forServer($this), $this->connection);
+        $vCenter = VCenter::fromApi(
+            Api::forServer($this),
+            $this->connection,
+            $this->get('host')
+        );
         $this->set('vcenter_id', $vCenter->get('id'));
         $this->store();
     }

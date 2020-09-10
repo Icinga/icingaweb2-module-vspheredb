@@ -94,7 +94,6 @@ class VCenter extends BaseDbObject
      */
     public function createNewApiConnection()
     {
-
         return Api::forServer($this->getFirstServer());
     }
 
@@ -158,7 +157,7 @@ class VCenter extends BaseDbObject
      * @throws \Icinga\Exception\NotFoundError
      * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
      */
-    public static function fromApi(Api $api, Db $db)
+    public static function fromApi(Api $api, Db $db, $name)
     {
         $about = $api->getAbout();
         $uuid = $api->getBinaryUuid();
@@ -171,6 +170,7 @@ class VCenter extends BaseDbObject
         // Workaround for ESXi, about has no instanceUuid
         $about->instanceUuid = $uuid;
         $vCenter->setMapped($about, $vCenter);
+        $vCenter->set('name', $name);
 
         if ($vCenter->hasBeenModified()) {
             if ($vCenter->hasBeenLoadedFromDb()) {
