@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
 
 class VmDatastoresTable extends ZfQueryBasedTable
@@ -28,11 +29,13 @@ class VmDatastoresTable extends ZfQueryBasedTable
     /** @var OverallStatusRenderer */
     protected $renderStatus;
 
-    public static function create(VirtualMachine $vm)
+    public function __construct(VirtualMachine $vm)
     {
-        $tbl = new static($vm->getConnection());
-        $tbl->renderStatus = new OverallStatusRenderer();
-        return $tbl->setVm($vm);
+        $this->setVm($vm);
+        parent::__construct($vm->getConnection());
+        $title = new SubTitle($this->translate('DataStore Usage'), 'database');
+        $this->prepend($title);
+        $this->renderStatus = new OverallStatusRenderer();
     }
 
     protected function setVm(VirtualMachine $vm)

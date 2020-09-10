@@ -29,6 +29,33 @@ p.information {
   background-color: @colorOk;
 }
 
+div.section {
+  width: 49%;
+  margin-right: 1%;
+  float: left;
+  min-width: 42em;
+  > h2 {
+    border-bottom: 1px solid @gray-light;
+  }
+
+  table.common-table thead {
+    border-bottom: none;
+  }
+}
+
+table.day-time-table {
+  th {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  tbody {
+    margin-bottom: 0.5em;
+  }
+  tbody td:last-of-type {
+    text-align: right;
+  }
+}
+
 a.ManagedObject {
   padding-left: 0.5em;
 }

@@ -43,6 +43,7 @@ class VmrcLink extends HtmlDocument
                 'target' => '_self',
                 'title' => $this->translate('Open console with VMRC')
             ], $this->label));
+            $this->add(' (VMRC)');
         } catch (NotFoundError $e) {
             $this->add([
                 Icon::create('warning-empty', [

@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Img;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
 use ipl\Html\Html;
 
@@ -30,10 +31,10 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
     private $withHistory = false;
 
-    public static function create(VirtualMachine $vm)
+    public function __construct(VirtualMachine $vm)
     {
-        $tbl = new static($vm->getConnection());
-        return $tbl->setVm($vm);
+        parent::__construct($vm->getConnection());
+        $this->setVm($vm);
     }
 
     protected function setVm(VirtualMachine $vm)
@@ -46,6 +47,14 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
     public function getColumnsToBeRendered()
     {
+        if (count($this) === 0) {
+            $this->prepend($this->translate('No guest disk found. Please check guest utilities'));
+            $this->prepend(new SubTitle($this->translate('Guest Disk Usage'), 'chart-pie'));
+            return null;
+        }
+
+        $this->prepend(new SubTitle($this->translate('Guest Disk Usage'), 'chart-pie'));
+
         return [
             $this->translate('Disk'),
             $this->translate('Size'),
@@ -116,6 +125,9 @@ class VmDiskUsageTable extends ZfQueryBasedTable
     protected function fetchRows()
     {
         parent::fetchRows();
+        if (count($this) === 0) {
+            return;
+        }
 
         $free = Format::bytes($this->totalFree, Format::STANDARD_IEC)
             . sprintf(' (%0.3f%%)', ($this->totalFree / $this->totalSize) * 100);

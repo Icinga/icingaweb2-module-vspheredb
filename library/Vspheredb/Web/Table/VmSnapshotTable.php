@@ -5,21 +5,23 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\Html\Html;
 
 class VmSnapshotTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
-        'class' => ['common-table'],
+        'class' => ['common-table', 'day-time-table'],
         'data-base-target' => '_next',
     ];
 
     /** @var VirtualMachine */
     protected $vm;
 
-    public static function create(VirtualMachine $vm)
+    public function __construct(VirtualMachine $vm)
     {
-        $tbl = new static($vm->getConnection());
-        return $tbl->setVm($vm);
+        parent::__construct($vm->getConnection());
+        $this->setVm($vm);
     }
 
     protected function setVm(VirtualMachine $vm)
@@ -27,6 +29,17 @@ class VmSnapshotTable extends ZfQueryBasedTable
         $this->vm = $vm;
 
         return $this;
+    }
+
+    protected function assemble()
+    {
+        parent::assemble();
+        if (count($this) === 0) {
+            $this->prepend(
+                Html::tag('p', null, $this->translate('No snapshots have been created for this VM'))
+            );
+        }
+        $this->prepend(new SubTitle($this->translate('Snapshots'), 'history'));
     }
 
     public function renderRow($row)

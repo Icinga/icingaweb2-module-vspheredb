@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
 class VmNetworkAdapterTable extends ZfQueryBasedTable
@@ -27,19 +28,8 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
     {
         $this->vm = $vm;
         $this->moref = $this->vm->object()->get('moref');
+        $this->prepend(new SubTitle($this->translate('Network'), 'sitemap'));
         parent::__construct($vm->getConnection());
-    }
-
-    public function getColumnsToBeRendered()
-    {
-        return [
-            // TODO: no padding in th on our left!
-            Html::tag('h2', [
-                'class' => 'icon-sitemap',
-                'style' => 'margin: 0;'
-            ], $this->translate('Network')),
-            ''
-        ];
     }
 
     public function renderRow($row)

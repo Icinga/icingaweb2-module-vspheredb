@@ -16,6 +16,7 @@ next (will be 1.2.0)
 * FEATURE: a console link (via VMRC) is now available (#141)
 * FEATURE: reorganized VM detail sections (#182)
 * FEATURE: propose DB migrations in a more prominent place (#20)
+* FEATURE: detail view has been optimized for wider screens (#186)
 
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)

@@ -30,11 +30,13 @@ class CustomValueDetails extends HtmlDocument
     protected function assemble()
     {
         $object = $this->object;
+        $this->prepend(new SubTitle($this->translate('Custom Values'), 'tags'));
         if ($values = $object->get('custom_values')) {
-            $title = new SubTitle($this->translate('Custom Values'), 'tags');
             $customValues = new NameValueTable();
             $customValues->addNameValuePairs(\json_decode($values));
-            $this->add([$title, $customValues]);
+            $this->add($customValues);
+        } else {
+            $this->add($this->translate('No custom values have been defined'));
         }
     }
 }

@@ -14,11 +14,11 @@ use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
-use Icinga\Module\Vspheredb\Hint\ConnectionStateDetails;
 use Icinga\Module\Vspheredb\Json;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\Link\VmrcLink;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
 class VmEssentialInfoTable extends NameValueTable
@@ -34,6 +34,7 @@ class VmEssentialInfoTable extends NameValueTable
     public function __construct(VirtualMachine $vm)
     {
         $this->vm = $vm;
+        $this->prepend(new SubTitle($this->translate('Information'), 'info-circled'));
         $this->vCenter = VCenter::load($vm->get('vcenter_uuid'), $vm->getConnection());
     }
 
@@ -131,14 +132,6 @@ class VmEssentialInfoTable extends NameValueTable
             ]);
         }
 
-        $this->addNameValuePairs([
-            $this->translate('Host') => Html::sprintf(
-                '%s (%s)',
-                $lookup->linkToObject($vm->get('runtime_host_uuid')),
-                ConnectionStateDetails::getFor($vm->get('connection_state'))
-            ),
-            $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
-        ]);
         $migrations = new VmRecentMigrationHistory($vm);
         $cntMigrations = $migrations->countWeeklyMigrationAttempts();
         $this->addNameValueRow(

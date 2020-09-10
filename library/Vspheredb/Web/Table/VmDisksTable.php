@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
 use ipl\Html\Html;
 
@@ -31,12 +32,12 @@ class VmDisksTable extends ZfQueryBasedTable
 
     protected $withPerfImages = false;
 
-    public static function create(VirtualMachine $vm)
+    public function __construct(VirtualMachine $vm)
     {
-        $tbl = new static($vm->getConnection());
-        $tbl->renderStatus = new OverallStatusRenderer();
-
-        return $tbl->setVm($vm);
+        parent::__construct($vm->getConnection());
+        $this->prepend(new SubTitle($this->translate('Disks'), 'database'));
+        $this->renderStatus = new OverallStatusRenderer();
+        $this->setVm($vm);
     }
 
     protected function setVm(VirtualMachine $vm)
@@ -46,18 +47,6 @@ class VmDisksTable extends ZfQueryBasedTable
         $this->moref = $vm->object()->get('moref');
 
         return $this;
-    }
-
-    public function getColumnsToBeRendered()
-    {
-        return [
-            // TODO: no padding in th on our left!
-            Html::tag('h2', [
-                'class' => 'icon-database',
-                'style' => 'margin: 0;'
-            ], $this->translate('Disks')),
-            ''
-        ];
     }
 
     public function renderRow($row)
