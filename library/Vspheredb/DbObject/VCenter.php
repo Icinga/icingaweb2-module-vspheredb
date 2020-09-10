@@ -24,6 +24,7 @@ class VCenter extends BaseDbObject
         'instance_uuid'           => null,
         'trust_store_id'          => null,
         'name'                    => null,
+        'api_name'                => null,
         'version'                 => null,
         'os_type'                 => null,
         'api_type'                => null,
@@ -39,7 +40,7 @@ class VCenter extends BaseDbObject
 
     protected $propertyMap = [
         'instanceUuid'          => 'instance_uuid',
-        'name'                  => 'name',
+        'name'                  => 'api_name',
         'version'               => 'version',
         'osType'                => 'os_type',
         'apiType'               => 'api_type',
@@ -57,7 +58,7 @@ class VCenter extends BaseDbObject
     {
         return sprintf(
             '%s %s build-%s',
-            $this->get('api_type'),
+            \preg_replace('/^VMware /', '', $this->get('api_name')),
             $this->get('version'),
             $this->get('build')
         );
