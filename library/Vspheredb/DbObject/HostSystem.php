@@ -48,6 +48,10 @@ class HostSystem extends BaseDbObject
         'hardware.systemInfo.uuid'          => 'sysinfo_uuid',
         'hardware.systemInfo.vendor'        => 'sysinfo_vendor',
         'runtime.powerState'                => 'runtime_power_state',
+        // TODO: Introduce HostRuntimeInfo?
+        // https://<vcenter>/mob/?moid=ha%2dhost&doPath=runtime
+        // runtime.inMaintenanceMode	boolean	false
+        // runtime.inQuarantineMode	boolean	Unset
         'summary.customValue'               => 'customValues',
         'summary.hardware.cpuMhz'           => 'hardware_cpu_mhz',
         'summary.hardware.cpuModel'         => 'hardware_cpu_model',
