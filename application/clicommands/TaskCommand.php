@@ -226,7 +226,7 @@ class TaskCommand extends CommandBase
             'Icinga::vSphereDB::%s: (%sfailed: %s)',
             $task,
             $subject ? "$subject: " : '',
-            $this->shorten($error->getMessage(), 60)
+            $this->shorten($message, 60)
         ));
         Logger::error($message);
         $this->loop->addTimer(0.1, function () {
