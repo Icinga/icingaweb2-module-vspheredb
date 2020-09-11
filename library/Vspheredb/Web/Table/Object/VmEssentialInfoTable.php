@@ -83,11 +83,6 @@ class VmEssentialInfoTable extends NameValueTable
                 $this->formatAnnotation($annotation)
             );
         }
-        if ($customVars = $vm->get('custom_values')) {
-            foreach (Json::decode($customVars) as $name => $value) {
-                $this->addNameValueRow($name, $value);
-            }
-        }
 
         /** @var \Icinga\Module\Vspheredb\Db $connection */
         $connection = $vm->getConnection();
