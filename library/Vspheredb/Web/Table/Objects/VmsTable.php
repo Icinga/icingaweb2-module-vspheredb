@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\GuestToolsStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\Renderer\GuestToolsVersionRenderer;
 use Icinga\Module\Vspheredb\Format;
 
 class VmsTable extends ObjectsTable
@@ -81,6 +82,7 @@ class VmsTable extends ObjectsTable
     {
         $powerStateRenderer = new PowerStateRenderer();
         $guestToolsStatusRenderer = new GuestToolsStatusRenderer();
+        $guestToolsVersionRenderer = new GuestToolsVersionRenderer();
         $memoryRenderer = function ($row) {
             return new MemoryUsage(
                 $row->guest_memory_usage_mb,
@@ -106,6 +108,18 @@ class VmsTable extends ObjectsTable
                 $this->translate('Guest Tools'),
                 'vm.guest_tools_status'
             )->setRenderer($guestToolsStatusRenderer)->setSortExpression('vm.guest_tools_status'),
+
+            $this->createColumn(
+                    'guest_tools_version',
+                    $this->translate('Tools Version'),
+                    'vm.guest_tools_version'
+                )
+                ->setRenderer($guestToolsVersionRenderer)
+                ->setSortExpression(
+                    "CAST("
+                    . "CASE WHEN guest_tools_version = '2147483647' THEN '1' ELSE guest_tools_version END"
+                    . " AS SIGNED INTEGER)"
+                ),
 
             $this->createColumn('host_name', $this->translate('Host'), 'h.host_name'),
 

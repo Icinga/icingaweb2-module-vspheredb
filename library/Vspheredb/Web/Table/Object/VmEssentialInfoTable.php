@@ -17,7 +17,9 @@ use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
 use Icinga\Module\Vspheredb\Json;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\Link\KnowledgeBaseLink;
 use Icinga\Module\Vspheredb\Web\Widget\Link\VmrcLink;
+use Icinga\Module\Vspheredb\Web\Widget\Renderer\GuestToolsVersionRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
@@ -108,27 +110,23 @@ class VmEssentialInfoTable extends NameValueTable
         );
         */
 
+        $guestInfo = Html::sprintf(
+            '%s %s (Guest %s)',
+            $this->getGuestToolsVersionInfo($vm),
+            $vm->get('guest_tools_running_status'),
+            $vm->get('guest_state')
+        );
         if ($vm->get('guest_id')) {
             $this->addNameValuePairs([
                 $this->translate('Console') => new VmrcLink($this->vCenter, $vm),
                 $this->translate('Guest OS') => $guest,
                 $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
                 $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
-                $this->translate('Guest Utilities') => [
-                    sprintf(
-                        '%s (Guest %s)',
-                        $vm->get('guest_tools_running_status'),
-                        $vm->get('guest_state')
-                    ),
-                ],
+                $this->translate('Guest Utilities') => $guestInfo,
             ]);
         } else {
             $this->addNameValuePairs([
-                $this->translate('Guest Utilities') => sprintf(
-                    '%s (Guest %s)',
-                    $vm->get('guest_tools_running_status'),
-                    $vm->get('guest_state')
-                ),
+                $this->translate('Guest Utilities') => $guestInfo,
             ]);
         }
 
@@ -146,6 +144,31 @@ class VmEssentialInfoTable extends NameValueTable
                 )
             )
         );
+    }
+
+    protected function getGuestToolsVersionInfo($vm)
+    {
+        $info = $vm->get('guest_tools_version');
+        if ($info === null) {
+            return '-';
+        }
+
+        $info = (string) $info;
+
+        if ($info === '2147483647') {
+            $info = [$info, Html::sprintf(
+                ' (' . $this->translate('read %s for details') . ')',
+                new KnowledgeBaseLink(
+                    51988,
+                    'vSphere Client displays the VMTools version as 2147483647 for FreeBSD open-vm-tools'
+                )
+            )];
+        } else {
+            $renderer = new GuestToolsVersionRenderer();
+            $info = $renderer($info);
+        }
+
+        return $info;
     }
 
     /**
