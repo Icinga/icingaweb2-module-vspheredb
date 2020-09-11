@@ -99,6 +99,8 @@ class SyncRunner
                 (new SyncHostHardware($this->vCenter))->run();
             },
             'hostSensors' => function () {
+                // Disabled for now, see #80
+                return;
                 (new SyncHostSensors($this->vCenter))->run();
             },
             'hostNetwork' => function () {
