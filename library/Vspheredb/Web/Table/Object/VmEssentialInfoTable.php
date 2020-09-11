@@ -14,8 +14,6 @@ use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
-use Icinga\Module\Vspheredb\Json;
-use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\Link\KnowledgeBaseLink;
 use Icinga\Module\Vspheredb\Web\Widget\Link\VmrcLink;
@@ -83,10 +81,6 @@ class VmEssentialInfoTable extends NameValueTable
                 $this->formatAnnotation($annotation)
             );
         }
-
-        /** @var \Icinga\Module\Vspheredb\Db $connection */
-        $connection = $vm->getConnection();
-        $lookup =  new PathLookup($connection);
 
         if ($guestName = $vm->get('guest_full_name')) {
             $guest = sprintf(
