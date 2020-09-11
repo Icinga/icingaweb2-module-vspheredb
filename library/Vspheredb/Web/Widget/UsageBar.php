@@ -71,9 +71,10 @@ class UsageBar extends BaseHtmlElement
     protected function getTitleUsed()
     {
         return sprintf(
-            $this->translate('Used: %s of %s'),
+            $this->translate('Used: %s of %s (%.2F%%)'),
             $this->format($this->used),
-            $this->format($this->capacity)
+            $this->format($this->capacity),
+            $this->used / $this->capacity * 100
         );
     }
 

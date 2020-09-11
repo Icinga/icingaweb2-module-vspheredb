@@ -47,9 +47,10 @@ class MemoryUsage extends UsageBar
             $diffHostPercent = min($diffHostPercent, $availablePercent);
 
             $title = sprintf(
-                $this->translate('Host Memory: used %s of %s'),
+                $this->translate('Host Memory: used %s of %s (%.2F%%)'),
                 $this->format($this->usedHost),
-                $this->format($this->capacity)
+                $this->format($this->capacity),
+                $this->usedHost / $this->capacity * 100
             );
             $bar->add($this->makeSegment($diffHostPercent, $title, 'host'));
         }
