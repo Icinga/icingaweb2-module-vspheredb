@@ -110,6 +110,8 @@ class ProposeMigrations extends HtmlDocument
                     . ' module.'
                 ));
                 $this->addForm($migrations);
+            } else {
+                $this->addForm($migrations);
             }
         }
     }
