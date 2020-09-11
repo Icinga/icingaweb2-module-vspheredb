@@ -17,6 +17,7 @@ next (will be 1.2.0)
 * FEATURE: reorganized VM detail sections (#182)
 * FEATURE: propose DB migrations in a more prominent place (#20)
 * FEATURE: detail view has been optimized for wider screens (#186)
+* FEATURE: installed VMware tools version is now available (#71)
 
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)
@@ -40,6 +41,7 @@ next (will be 1.2.0)
 ### vSphere API
 * FIX: login to vSphere 7.0 failed (#175)
 * FIX: tweak invalid sensor status names in 7.0 (#179)
+* FEATURE: vSphere/ESXi v7.0 is now officially supported (#188)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
