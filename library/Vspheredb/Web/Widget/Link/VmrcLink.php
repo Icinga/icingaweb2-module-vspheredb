@@ -25,6 +25,8 @@ class VmrcLink extends HtmlDocument
         $this->vCenter = $vCenter;
         if ($label === null) {
             $this->label = $vm->object()->get('object_name');
+        } else {
+            $this->label = $label;
         }
 
         $this->moRef = $vm->object()->get('moref');
