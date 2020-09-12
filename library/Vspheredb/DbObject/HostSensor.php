@@ -38,7 +38,9 @@ class HostSensor extends BaseDbObject
     public function setName($value)
     {
         // name has the form "description --- state/identifier"
-        $value = \preg_replace('/\s---\s.+$/', '', $value);
+        // TODO: strip the identifier once we changed the key to 'id'
+        //       currently there would be duplicates
+        // $value = \preg_replace('/\s---\s.+$/', '', $value);
         if ($value === $this->get('name')) {
             return $this;
         } else {
