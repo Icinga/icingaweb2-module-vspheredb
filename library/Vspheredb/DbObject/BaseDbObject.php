@@ -154,6 +154,9 @@ abstract class BaseDbObject extends VspheredbDbObject
      */
     public function setMapped($properties, VCenter $vCenter)
     {
+        if ($this->hasProperty('vcenter_uuid')) {
+            $this->set('vcenter_uuid', $vCenter->getUuid());
+        }
         foreach ($this->propertyMap as $key => $property) {
             if (property_exists($properties, $key)) {
                 $value = $properties->$key;
