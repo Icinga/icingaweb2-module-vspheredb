@@ -48,7 +48,7 @@ class ResourcesController extends ObjectsController
         $this->setAutorefreshInterval(15);
         $table = new ComputeClusterHostSummaryTable($this->db(), $this->url());
         if ($vCenterUuid = $this->params->get('vcenter')) {
-            $table->filterVCenter(VCenter::load(hex2bin($vCenterUuid), $this->db()));
+            $table->filterVCenter(VCenter::loadWithHexUuid($vCenterUuid, $this->db()));
         }
         if ($uuid = $this->params->get('uuid')) {
             $table->filterParentUuids([hex2bin($uuid)]);
