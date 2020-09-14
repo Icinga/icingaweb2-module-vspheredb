@@ -12,6 +12,16 @@ class Controller extends CompatController
     /** @var Db */
     private $db;
 
+    public function init()
+    {
+        parent::init();
+        if ($this->view->compact) {
+            $this->controls()->addAttributes([
+                'class' => 'show-compact'
+            ]);
+        }
+    }
+
     protected function db()
     {
         if ($this->db === null) {

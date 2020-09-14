@@ -12,6 +12,7 @@ class AlarmsController extends Controller
 {
     public function init()
     {
+        parent::init();
         $this->handleTabs();
     }
 

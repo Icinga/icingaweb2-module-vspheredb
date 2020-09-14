@@ -19,6 +19,7 @@ next (will be 1.2.0)
 * FEATURE: detail view has been optimized for wider screens (#186)
 * FEATURE: installed VMware tools version is now available (#71)
 * FEATURE: overview tree no longer skips some levels (#181)
+* FEATURE: support 'compact' mode for dashboard use (#134)
 
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)

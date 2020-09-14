@@ -15,6 +15,7 @@ class PerfdataController extends Controller
      */
     public function init()
     {
+        parent::init();
         $this->assertPermission('vspheredb/admin');
     }
 
