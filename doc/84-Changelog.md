@@ -21,6 +21,7 @@ next (will be 1.2.0)
 * FEATURE: overview tree no longer skips some levels (#181)
 * FEATURE: support 'compact' mode for dashboard use (#134)
 * FEATURE: vCenter summary now shows Storage totals (#191)
+* FEATURE: optional VMware software column for the vCenter overview (#192)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)

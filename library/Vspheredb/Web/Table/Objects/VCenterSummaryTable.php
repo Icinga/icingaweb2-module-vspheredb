@@ -31,6 +31,17 @@ class VCenterSummaryTable extends HostSummaryTable
                     $row->ds_capacity / 1000000
                 );
             }),
+            $this->createColumn('vcenter_software', $this->translate('Software'), [
+                'software_name' => 'vc.api_name',
+                'software_version' => 'vc.version',
+            ])->setRenderer(function ($row) {
+                // VMware ESXi -> ESXi
+                return \sprintf(
+                    '%s (%s)',
+                    \preg_replace('/^VMware /', '', $row->software_name),
+                    $row->software_version
+                );
+            }),
         ]);
     }
 
