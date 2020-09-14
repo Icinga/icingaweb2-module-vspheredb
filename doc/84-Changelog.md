@@ -45,6 +45,7 @@ next (will be 1.2.0)
 * FIX: dropped a unique constraint on BIOS UUID because of VMware bugs (#83, #99)
 * FIX: large-grown daemon log table has been truncated (#138)
 * FIX: allow event/alert messages longer than 64kB (#133)
+* FIX: allow unusually large guestFullName values (#146)
 
 ### vSphere API
 * FIX: login to vSphere 7.0 failed (#175)
