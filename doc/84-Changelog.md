@@ -26,6 +26,7 @@ next (will be 1.2.0)
 * FEATURE: VM location details now provide a link to the vCenter (#148)
 * FEATURE: HTML5 UI link has been introduced (#194)
 * FEATURE: vCenter links point to new vCenter summary/detail page (#195)
+* FEATURE: improve sensor table styling (#196)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)

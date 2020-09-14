@@ -11,7 +11,7 @@ use ipl\Html\Html;
 class HostSensorsTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
-        'class' => 'common-table',
+        'class' => 'common-table sensors-table',
         'data-base-target' => '_next',
     ];
 
@@ -45,8 +45,8 @@ class HostSensorsTable extends ZfQueryBasedTable
         if ($this->lastType !== $type) {
             $summary = $this->getSummaryByType($type);
 
-            $div = Html::tag('div', ['class' => 'object-summaries']);
-            $title = [$div, ucfirst($type)];
+            $div = Html::tag('div', ['class' => 'sensor-summaries']);
+            $title = [ucfirst($type), $div];
             foreach ($summary as $state => $count) {
                 if ($count > 0) {
                     $div->add($this->makeHealthStateBadge($state, $count));
