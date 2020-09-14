@@ -97,6 +97,7 @@ abstract class BaseDbObject extends VspheredbDbObject
             ->from('object', ['uuid', 'overall_status', 'object_name'])
             ->where('object_type = ?', $type)
             ->where('overall_status != ?', 'green')
+            ->order("CASE overall_status WHEN 'gray' THEN 1 WHEN 'yellow' THEN 2 WHEN 'red' THEN 3 END DESC")
             ->order('object_name');
 
         $result = [];
