@@ -21,6 +21,9 @@ next (will be 1.2.0)
 * FEATURE: overview tree no longer skips some levels (#181)
 * FEATURE: support 'compact' mode for dashboard use (#134)
 
+### CLI
+* FIX: vm check now also looks for object name (#109)
+
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)
 * FIX: sync no longer fails on objects with no overallState (#98)

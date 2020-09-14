@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Icinga\Date\DateFormatter;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
@@ -76,9 +77,15 @@ class CheckCommand extends CommandBase
     {
         $this->run(function () {
             $db = Db::newConfiguredInstance();
-            $vm = VirtualMachine::findOneBy([
-                'guest_host_name' => $this->params->getRequired('name')
-            ], $db);
+            try {
+                $vm = VirtualMachine::findOneBy([
+                    'object_name' => $this->params->getRequired('name')
+                ], $db);
+            } catch (NotFoundError $e) {
+                $vm = VirtualMachine::findOneBy([
+                    'guest_host_name' => $this->params->getRequired('name')
+                ], $db);
+            }
             $quickStats = VmQuickStats::load($vm->get('uuid'), $db);
             $this->checkOverallHealth($vm->object())
                 ->checkRuntimePowerState($vm)
