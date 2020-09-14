@@ -6,8 +6,7 @@ use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 
 class VCenterSummaryTable extends HostSummaryTable
 {
-    // protected $baseUrl = 'vspheredb/vcenter';
-    protected $baseUrl = 'vspheredb/resources/clusters';
+    protected $baseUrl = 'vspheredb/vcenter';
 
     protected $groupBy = 'o.vcenter_uuid';
 

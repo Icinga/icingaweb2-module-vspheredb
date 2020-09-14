@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ComputeClusterHostSummaryTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\GroupedvmsTable;
+use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 
 class ResourcesController extends ObjectsController
@@ -17,12 +18,18 @@ class ResourcesController extends ObjectsController
      */
     public function clustersAction()
     {
-        $this->addSingleTab('Compute Resources');
+        if ($vCenterUuid = $this->params->get('vcenter')) {
+            $vCenter = VCenter::loadWithHexUuid($vCenterUuid, $this->db());
+            $this->tabs(new VCenterTabs($vCenter))->activate('clusters');
+        } else {
+            $this->addSingleTab('Compute Resources');
+            $vCenter = null;
+        }
 
         $this->setAutorefreshInterval(15);
         $table = new ComputeClusterHostSummaryTable($this->db(), $this->url());
-        if ($vCenterUuid = $this->params->get('vcenter')) {
-            $table->filterVCenter(VCenter::load(hex2bin($vCenterUuid), $this->db()));
+        if ($vCenter) {
+            $table->filterVCenter($vCenter);
         }
         /*
         $this->actions()->add(Link::create(

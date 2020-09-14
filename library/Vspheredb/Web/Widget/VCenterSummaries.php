@@ -5,15 +5,12 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
-use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
+use ipl\Html\Table;
 
-class VCenterSummaries extends BaseHtmlElement
+class VCenterSummaries extends Table
 {
-    protected $tag = 'div';
-
     protected $defaultAttributes = [
-        'class' => 'vcenter-summaries',
+        // 'class' => 'vcenter-summaries',
         'data-base-target' => '_next'
     ];
 
@@ -46,6 +43,16 @@ class VCenterSummaries extends BaseHtmlElement
             ),
             'Datacenters',
             'vspheredb/datacenters'
+        );
+        $this->addCountlet(
+            $db->fetchRow(
+                $db->select()->from(['o' => 'object'], $columns)
+                    ->where('object_type IN (?)', ['ClusterComputeResource', 'ComputeResource'])
+                    ->where('vcenter_uuid = ?', $vCenterUuid)
+            ),
+            'Compute Resources',
+            // 'vspheredb/compute-resources'
+            'vspheredb/resources/clusters'
         );
         $this->addCountlet(
             $db->fetchRow(
@@ -119,24 +126,6 @@ class VCenterSummaries extends BaseHtmlElement
         $this->addCountlet(
             $db->fetchRow(
                 $db->select()->from(['o' => 'object'], $columns)
-                    ->where('object_type = ?', 'ComputeResource')
-                    ->where('vcenter_uuid = ?', $vCenterUuid)
-            ),
-            'Compute Resources',
-            'vspheredb/resources/clusters'
-        );
-        $this->addCountlet(
-            $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
-                    ->where('object_type = ?', 'ClusterComputeResource')
-                    ->where('vcenter_uuid = ?', $vCenterUuid)
-            ),
-            'Cluster Compute Resources',
-            'vspheredb/compute-cluster'
-        );
-        $this->addCountlet(
-            $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
                     ->where('object_type = ?', 'StoragePod')
                     ->where('vcenter_uuid = ?', $vCenterUuid)
             ),
@@ -171,24 +160,25 @@ class VCenterSummaries extends BaseHtmlElement
         if ((int) $counters->total === 0) {
             return;
         }
-        $url = Url::fromPath($url)->with('uuid', bin2hex($this->vCenter->getUuid()));
+        $url = Url::fromPath($url)->with('vcenter', bin2hex($this->vCenter->getUuid()));
         $state = $this->getWorstState($counters);
-        $link = Link::create([
-            Html::tag('span', ['class' => 'number'], $counters->total),
-            Html::tag('span', ['class' => 'title'], $title),
-        ], $url, null, ['class' => $state]);
+        $title = $this::td([
+            Link::create($title, $url),
+            ' (' . $counters->total . ')'
+        ]);
+        $cell = $this::td();
 
-        foreach (['red', 'yellow', 'gray'] as $color) {
-            continue;
+        foreach (['red', 'yellow', 'gray', 'green'] as $color) {
+            // continue;
             if ($counters->$color > 0) {
-                $link->add(Link::create(
+                $cell->add(Link::create(
                     $counters->$color,
                     $url->with('overall_status', $color),
                     null,
-                    ['class' => $color]
+                    ['class' => ['state', $color]]
                 ));
             }
         }
-        $this->add($link);
+        $this->add($this::row([$title, $cell]));
     }
 }

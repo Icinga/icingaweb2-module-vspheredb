@@ -2,10 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
+use gipfl\IcingaWeb2\Url;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
+
 class PerformanceCounterTable extends BaseTable
 {
-    /** string */
-    protected $vCenterUuid;
+    /** @var VCenter */
+    protected $vCenter;
 
     protected $searchColumns = [
         'counter_key',
@@ -19,6 +22,12 @@ class PerformanceCounterTable extends BaseTable
         // TODO: disabled, Director breaks this right now for security reasons
         // "(c.group_name || '.' || c.name)",
     ];
+
+    public function __construct($db, Url $url = null, VCenter $vCenter = null)
+    {
+        $this->vCenter = $vCenter;
+        parent::__construct($db, $url);
+    }
 
     protected function initialize()
     {
@@ -50,13 +59,6 @@ class PerformanceCounterTable extends BaseTable
         ]);
     }
 
-    public function filterVCenterUuid($hexUuid)
-    {
-        $this->vCenterUuid = \hex2bin($hexUuid);
-
-        return $this;
-    }
-
     public function prepareQuery()
     {
         $query = $this->db()->select()->from(
@@ -64,8 +66,8 @@ class PerformanceCounterTable extends BaseTable
         );
         // ->order('group_name')->order('name')->order('unit_name');
 
-        if ($this->vCenterUuid !== null) {
-            $query->where('vcenter_uuid = ?', $this->vCenterUuid);
+        if ($this->vCenter !== null) {
+            $query->where('vcenter_uuid = ?', $this->vCenter->getUuid());
         }
 
         return $query;
