@@ -86,11 +86,10 @@ class VmEssentialInfoTable extends NameValueTable
         }
 
         if ($guestName = $vm->get('guest_full_name')) {
-            $guest = sprintf(
-                '%s (%s)',
-                $guestName,
-                $vm->get('guest_id')
-            );
+            $guest = $guestName;
+            if ($guestId = $vm->get('guest_id')) {
+                $guest .= " ($guestId)";
+            }
         } else {
             $guest = '-';
         }
@@ -108,19 +107,13 @@ class VmEssentialInfoTable extends NameValueTable
             $vm->get('guest_tools_running_status'),
             $vm->get('guest_state')
         );
-        if ($vm->get('guest_id')) {
-            $this->addNameValuePairs([
-                $this->translate('Tools') => $this->prepareTools($vm),
-                $this->translate('Guest OS') => $guest,
-                $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
-                $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
-                $this->translate('Guest Utilities') => $guestInfo,
-            ]);
-        } else {
-            $this->addNameValuePairs([
-                $this->translate('Guest Utilities') => $guestInfo,
-            ]);
-        }
+        $this->addNameValuePairs([
+            $this->translate('Tools') => $this->prepareTools($vm),
+            $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
+            $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
+            $this->translate('Guest OS') => $guest,
+            $this->translate('Guest Utilities') => $guestInfo,
+        ]);
 
         $migrations = new VmRecentMigrationHistory($vm);
         $cntMigrations = $migrations->countWeeklyMigrationAttempts();
