@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Addon;
 
+use Icinga\Module\Vspheredb\DbObject\CustomValues;
 use ipl\Html\HtmlDocument;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 

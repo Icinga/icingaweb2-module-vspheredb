@@ -2,36 +2,25 @@
 
 namespace Icinga\Module\Vspheredb\Addon;
 
-use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\DbObject\CustomValues;
 use Icinga\Module\Vspheredb\Web\Widget\Addon\VeeamBackupRunDetails;
-use RuntimeException;
 
-class VeeamBackup implements BackupTool
+class VeeamBackup extends SimpleBackupTool
 {
     const PREFIX = 'Veeam Backup: ';
 
-    protected $lastAttributes;
+    const CV_LAST_BACKUP = 'NB_LAST_BACKUP';
+
+    const CV_EXCLUDE = 'NB_EXCLUDE_FROM_BACKUP';
+
+    protected $customValues = [
+        self::CV_LAST_BACKUP,
+        self::CV_EXCLUDE
+    ];
 
     public function getName()
     {
         return 'Veeam Backup & Replication';
-    }
-
-    /**
-     * @param VirtualMachine $vm
-     * @return bool
-     */
-    public function wants(VirtualMachine $vm)
-    {
-        return $this->wantsAnnotation($vm->get('annotation'));
-    }
-
-    /**
-     * @param VirtualMachine $vm
-     */
-    public function handle(VirtualMachine $vm)
-    {
-        $this->parseAnnotation($vm->get('annotation'));
     }
 
     /**
@@ -42,81 +31,26 @@ class VeeamBackup implements BackupTool
         return new VeeamBackupRunDetails($this);
     }
 
-    /**
-     * @param $annotation
-     * @return bool
-     */
-    public function wantsAnnotation($annotation)
+    protected function parseCustomValues(CustomValues $values)
     {
-        return strpos($annotation, static::PREFIX) !== false;
+        if ($values->has(self::CV_LAST_BACKUP)) {
+            $this->parseLastBackup($values->get(self::CV_LAST_BACKUP));
+        }
+        if ($values->has(self::CV_EXCLUDE)) {
+            $this->lastAttributes['Excluded'] = $values->get(self::CV_EXCLUDE);
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function requireParsedAttributes()
+    protected function parseLastBackup($string)
     {
-        $attributes = $this->getAttributes();
-        if ($attributes === null) {
-            throw new RuntimeException('Got no Veeam Backup annotation info');
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getAttributes()
-    {
-        return $this->lastAttributes;
-    }
-
-    protected function parseAnnotation($annotation)
-    {
-        $this->lastAttributes = null;
-        $begin = strpos($annotation, static::PREFIX);
-        if ($begin === false) {
-            return;
-        }
-
-        $end = strpos($annotation, "\n", $begin);
-        if ($end === false) {
-            $end = strlen($annotation);
-        }
-
-        $realBegin = $begin + strlen(static::PREFIX);
-        $match = substr($annotation, $realBegin, $end - $realBegin);
-
-
-        $parts = preg_split('/\],\s/', rtrim($match, ']'));
+        // Sun Sep 13 00:27:42 2020 +0200,backuphost.name,jobname
+        $parts = \explode(',', $string);
         $attributes = [];
-        foreach ($parts as $part) {
-            if (strpos($part, ': [') === false) {
-                continue;
-            }
-            list($key, $value) = preg_split('/:\s\[/', $part, 2);
-            $attributes[trim($key)] = $value;
-        }
-        if (array_key_exists('Time', $attributes)) {
-            $attributes['Time'] = strtotime($attributes['Time']);
+        if (count($parts) === 3) {
+            $attributes['Time'] = strtotime($parts[0]);
+            $attributes['Backup host'] = $parts[1];
+            $attributes['Job name'] = $parts[2];
         }
         $this->lastAttributes = $attributes;
-    }
-
-    public function stripAnnotation(&$annotation)
-    {
-        $begin = strpos($annotation, static::PREFIX);
-        if ($begin === false) {
-            return;
-        }
-
-        $end = strpos($annotation, "\n", $begin);
-        if ($end === false) {
-            $end = strlen($annotation);
-        }
-
-        $annotation = substr($annotation, 0, $begin)
-        . substr($annotation, $end);
     }
 }

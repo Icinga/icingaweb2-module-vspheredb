@@ -6,8 +6,8 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Exception;
-use Icinga\Module\Vspheredb\Addon\BackupTool;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
+use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
@@ -54,9 +54,10 @@ class VmEssentialInfoTable extends NameValueTable
             new VeeamBackup(),
             new VRangerBackup(),
         ];
-        /** @var BackupTool $tool */
         foreach ($tools as $tool) {
-            $tool->stripAnnotation($annotation);
+            if ($tool instanceof SimpleBackupTool) {
+                $tool->stripAnnotation($annotation);
+            }
         }
 
         $annotation = trim($annotation);

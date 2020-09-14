@@ -2,11 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Addon;
 
-use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\Addon\VRangerBackupRunDetails;
-use RuntimeException;
 
-class VRangerBackup implements BackupTool
+class VRangerBackup extends SimpleBackupTool
 {
     const PREFIX = 'vRanger Backup & Replication:';
 
@@ -18,58 +16,11 @@ class VRangerBackup implements BackupTool
     }
 
     /**
-     * @param VirtualMachine $vm
-     * @return bool
-     */
-    public function wants(VirtualMachine $vm)
-    {
-        return $this->wantsAnnotation($vm->get('annotation'));
-    }
-
-    /**
-     * @param VirtualMachine $vm
-     */
-    public function handle(VirtualMachine $vm)
-    {
-        $this->parseAnnotation($vm->get('annotation'));
-    }
-
-    /**
      * @return VRangerBackupRunDetails
      */
     public function getInfoRenderer()
     {
         return new VRangerBackupRunDetails($this);
-    }
-
-    /**
-     * @param $annotation
-     * @return bool
-     */
-    protected function wantsAnnotation($annotation)
-    {
-        return strpos($annotation, static::PREFIX) !== false;
-    }
-
-    /**
-     * @return array
-     */
-    public function requireParsedAttributes()
-    {
-        $attributes = $this->getAttributes();
-        if ($attributes === null) {
-            throw new RuntimeException('Got no VRangerBackup annotation info');
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getAttributes()
-    {
-        return $this->lastAttributes;
     }
 
     protected function parseAnnotation($annotation)
@@ -88,7 +39,7 @@ class VRangerBackup implements BackupTool
         $realBegin = $begin + strlen(static::PREFIX);
         $match = substr($annotation, $realBegin, $end - $realBegin);
 
-        if (preg_match_all('/\s([a-zA-Z\s]+)\s\[([^\]]+)\]/', $match, $m)) {
+        if (preg_match_all('/\s([a-zA-Z\s]+)\s\[([^]]+)]/', $match, $m)) {
             $attributes = array_combine($m[1], $m[2]);
             if (array_key_exists('Time', $attributes)) {
                 $attributes['Time'] = strtotime($attributes['Time']);
@@ -96,21 +47,5 @@ class VRangerBackup implements BackupTool
 
             $this->lastAttributes = $attributes;
         }
-    }
-
-    public function stripAnnotation(&$annotation)
-    {
-        $begin = strpos($annotation, static::PREFIX);
-        if ($begin === false) {
-            return;
-        }
-
-        $end = strpos($annotation, "\n", $begin);
-        if ($end === false) {
-            $end = strlen($annotation);
-        }
-
-        $annotation = substr($annotation, 0, $begin)
-            . substr($annotation, $end);
     }
 }
