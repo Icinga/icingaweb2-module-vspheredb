@@ -214,7 +214,7 @@ CREATE TABLE host_pci_device (
   vcenter_uuid VARBINARY(16) NOT NULL,
   bus BINARY(1) NOT NULL, -- byte
   slot BINARY(1) NOT NULL, -- byte
-  `function` BINARY(1) NOT NULL, -- byte
+  device_function BINARY(1) NOT NULL, -- byte
   class_id SMALLINT NOT NULL, -- short
   device_id SMALLINT NOT NULL, -- short
   device_name VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -860,4 +860,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (24, NOW());
+VALUES (25, NOW());

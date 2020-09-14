@@ -7,20 +7,20 @@ class HostPciDevice extends BaseDbObject
     protected $table = 'host_pci_device';
 
     protected $defaultProperties = [
-        'id'            => null,
-        'host_uuid'     => null,
-        'bus'           => null,
-        'slot'          => null,
-        'function'      => null,
-        'class_id'      => null,
-        'device_id'     => null,
-        'device_name'   => null,
-        'sub_device_id' => null,
-        'vendor_id'     => null,
-        'vendor_name'   => null,
-        'sub_vendor_id' => null,
-        'parent_bridge' => null,
-        'vcenter_uuid'  => null,
+        'id'              => null,
+        'host_uuid'       => null,
+        'bus'             => null,
+        'slot'            => null,
+        'device_function' => null,
+        'class_id'        => null,
+        'device_id'       => null,
+        'device_name'     => null,
+        'sub_device_id'   => null,
+        'vendor_id'       => null,
+        'vendor_name'     => null,
+        'sub_vendor_id'   => null,
+        'parent_bridge'   => null,
+        'vcenter_uuid'    => null,
     ];
 
     protected $objectReferences = [
@@ -31,7 +31,7 @@ class HostPciDevice extends BaseDbObject
         'id'           => 'id',
         'bus'          => 'bus',
         'slot'         => 'slot',
-        'function'     => 'function',
+        'function'     => 'device_function',
         'classId'      => 'class_id',
         'deviceId'     => 'device_id',
         'deviceName'   => 'device_name',
@@ -50,7 +50,7 @@ class HostPciDevice extends BaseDbObject
 
         foreach ($this->propertyMap as $key => $property) {
             if (property_exists($properties, $key)) {
-                if (in_array($key, ['bus', 'slot', 'function'])) {
+                if (in_array($key, ['bus', 'slot', 'device_function'])) {
                     if (is_int($properties->$key) || ctype_digit($properties->$key)) {
                         $this->set($property, chr($properties->$key));
                     } else {
