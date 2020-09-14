@@ -3,13 +3,18 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
+use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
+use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
+use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use Icinga\Module\Vspheredb\Web\Widget\VCenterHeader;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
 use Icinga\Web\Notification;
 
@@ -17,20 +22,53 @@ class VcenterController extends Controller
 {
     public function indexAction()
     {
-        $hexUuid = $this->params->getRequired('vcenter');
-        $vCenter = VCenter::load(hex2bin($hexUuid), $this->db());
-        $this->tabs()->add('vcenter', [
-            'label' => $this->translate('vCenter'),
-            'url'   => 'vspheredb/vcenter',
-            'urlParams' => ['uuid' => $hexUuid]
-        ])->add('perfcounters', [
-            'label' => $this->translate('Counters'),
-            'url'   => 'vspheredb/perfdata/counters',
-            'urlParams' => ['uuid' => $hexUuid]
-        ])->activate('vcenter');
+        $vCenter = $this->requireVCenter();
+        $this->tabs(new VCenterTabs($vCenter))->activate('vcenter');
         $this->setAutorefreshInterval(10);
         // $this->content()->add(new VCenterSyncInfo($vCenter));
+        $this->content()->add(new VCenterHeader($vCenter));
+        $perf = $this->perf();
+        $this->content()->add((new NameValueTable())->addNameValuePairs([
+            'CPU'    => new CpuUsage($perf->used_mhz, $perf->total_mhz),
+            'Memory' => new MemoryUsage($perf->used_mb, $perf->total_mb),
+            'Disk'   => new MemoryUsage(
+                ($perf->ds_capacity - $perf->ds_free_space) / 1000000,
+                $perf->ds_capacity / 1000000
+            ),
+        ]));
+        $this->content()->add(new SubTitle($this->translate('Object Summaries')));
         $this->content()->add(new VCenterSummaries($vCenter));
+    }
+
+    protected function perf()
+    {
+        $vCenter = $this->requireVCenter();
+        $db = $vCenter->getConnection()->getDbAdapter();
+        $query = $db->select()->from(
+            ['h' => 'host_system'],
+            [
+                'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
+                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
+                'used_mb'   => 'SUM(hqs.overall_memory_usage_mb)',
+                'total_mb'  => 'SUM(h.hardware_memory_size_mb)',
+            ]
+        )->join(
+            ['hqs' => 'host_quick_stats'],
+            'h.uuid = hqs.uuid',
+            []
+        )->where('h.vcenter_uuid = ?', $vCenter->getUuid());
+        $compute = $db->fetchRow($query);
+            $query = $db->select()->from(
+                ['ds' => 'datastore'],
+                [
+                    'ds_capacity'             => 'SUM(ds.capacity)',
+                    'ds_free_space'           => 'SUM(ds.free_space)',
+                    'ds_uncommitted'          => 'SUM(ds.uncommitted)',
+                ]
+            )->where('ds.vcenter_uuid = ?', $vCenter->getUuid());
+        $storage = $db->fetchRow($query);
+
+        return (object) ((array) $compute + (array) $storage);
     }
 
     /**
