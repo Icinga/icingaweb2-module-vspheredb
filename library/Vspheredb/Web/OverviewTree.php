@@ -50,7 +50,7 @@ class OverviewTree extends BaseHtmlElement
         $all = [];
         foreach ($this->fetchTree() as $item) {
             if ($this->typeFilter
-                && (int) $item->level === 2
+                && (string) $item->parent_object_type === 'Datacenter'
                 && $item->object_name !== $this->typeFilter) {
                 continue;
             }
@@ -80,8 +80,9 @@ class OverviewTree extends BaseHtmlElement
         $networkCnt = "SELECT COUNT(*) as cnt, parent_uuid"
             . " FROM object WHERE object_type = 'DistributedVirtualSwitch'"
             . " GROUP BY parent_uuid";
-        $main = "SELECT * FROM object"
-            . " WHERE object_type NOT IN ('VirtualMachine', 'HostSystem', 'Datastore')";
+        $main = "SELECT o.*, po.object_type AS parent_object_type FROM object o"
+            . ' LEFT JOIN object po ON po.uuid = o.parent_uuid'
+            . " WHERE o.object_type NOT IN ('VirtualMachine', 'HostSystem', 'Datastore')";
 
         $sql = "SELECT f.*, hc.cnt AS cnt_host, vc.cnt AS cnt_vm, dc.cnt AS cnt_ds, nc.cnt AS cnt_network"
              . " FROM ($main) f"
