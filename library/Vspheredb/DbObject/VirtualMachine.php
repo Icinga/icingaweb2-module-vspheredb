@@ -3,11 +3,12 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Api;
-use Icinga\Module\Vspheredb\Json;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 
 class VirtualMachine extends BaseDbObject
 {
+    use CustomValueSupport;
+
     protected $keyName = 'uuid';
 
     protected $table = 'virtual_machine';
@@ -146,19 +147,6 @@ class VirtualMachine extends BaseDbObject
         }
 
         return $this->reallySet('paused', $value);
-    }
-
-    /**
-     * @param $value
-     * @throws \Icinga\Module\Vspheredb\Exception\JsonException
-     */
-    protected function setCustomValues($value)
-    {
-        if ($value === null) {
-            $this->set('custom_values', null);
-        } else {
-            $this->set('custom_values', Json::encode($value));
-        }
     }
 
     /**

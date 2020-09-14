@@ -3,10 +3,11 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use DateTime;
-use Icinga\Module\Vspheredb\Json;
 
 class HostSystem extends BaseDbObject
 {
+    use CustomValueSupport;
+
     protected $keyName = 'uuid';
 
     protected $table = 'host_system';
@@ -112,19 +113,6 @@ class HostSystem extends BaseDbObject
         );
 
         return parent::setMapped($properties, $vCenter);
-    }
-
-    /**
-     * @param $value
-     * @throws \Icinga\Module\Vspheredb\Exception\JsonException
-     */
-    protected function setCustomValues($value)
-    {
-        if ($value === null) {
-            $this->set('custom_values', null);
-        } else {
-            $this->set('custom_values', Json::encode($value));
-        }
     }
 
     protected function setOtherIdentifyingInfo($infos)
