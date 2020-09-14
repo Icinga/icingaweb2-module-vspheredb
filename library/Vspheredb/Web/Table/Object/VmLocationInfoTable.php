@@ -2,16 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Hint\ConnectionStateDetails;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Web\Widget\Link\VCenterLink;
+use Icinga\Module\Vspheredb\Web\Widget\Renderer\PathToObjectRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
-use Ramsey\Uuid\Uuid;
 
 class VmLocationInfoTable extends NameValueTable
 {
@@ -35,9 +35,6 @@ class VmLocationInfoTable extends NameValueTable
         return $this->vm->getConnection();
     }
 
-    /**
-     * @throws \Icinga\Exception\NotFoundError
-     */
     protected function assemble()
     {
         $vm = $this->vm;
@@ -52,37 +49,8 @@ class VmLocationInfoTable extends NameValueTable
                 ConnectionStateDetails::getFor($vm->get('connection_state'))
             ],
             $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
-            $this->translate('Path') => $this->renderPathToObject(),
-            $this->translate('vCenter') => Link::create(
-                $this->vCenter->get('name'),
-                'vspheredb/vcenter',
-                ['vcenter' => Uuid::fromBytes($this->vCenter->getUuid())->toString()]
-            )
+            $this->translate('Path') => PathToObjectRenderer::render($vm),
+            $this->translate('vCenter') => new VCenterLink($this->vCenter),
         ]);
-    }
-
-    protected function renderPathToObject()
-    {
-        $uuid = $this->vm->get('uuid');
-        /** @var \Icinga\Module\Vspheredb\Db $connection */
-        $connection = $this->vm->getConnection();
-        $lookup =  new PathLookup($connection);
-        $path = Html::tag('span', ['class' => 'dc-path']);
-        $parts = [];
-        foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
-            if (! empty($parts)) {
-                $parts[] = ' > ';
-            }
-            $parts[] = Link::create(
-                $name,
-                'vspheredb/vms',
-                // TODO: nice UUID
-                ['uuid' => bin2hex($parentUuid)],
-                ['data-base-target' => '_main']
-            );
-        }
-        $path->add($parts);
-
-        return $path;
     }
 }
