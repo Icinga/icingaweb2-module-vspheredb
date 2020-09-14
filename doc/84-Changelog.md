@@ -20,6 +20,7 @@ next (will be 1.2.0)
 * FEATURE: installed VMware tools version is now available (#71)
 * FEATURE: overview tree no longer skips some levels (#181)
 * FEATURE: support 'compact' mode for dashboard use (#134)
+* FEATURE: vCenter summary now shows Storage totals (#191)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)
