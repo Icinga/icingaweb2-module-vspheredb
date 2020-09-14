@@ -23,6 +23,7 @@ next (will be 1.2.0)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)
+* FIX: strip non-UTF8-characters from error messages (#124)
 
 ### Background Daemon
 * FIX: do not allow ENV proxy settings to override server config (#159)

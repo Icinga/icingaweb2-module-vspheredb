@@ -42,19 +42,28 @@ trait CheckPluginHelper
      */
     protected function run($callable)
     {
-        if (is_callable($callable)) {
+        if (\is_callable($callable)) {
             try {
                 $callable();
             } catch (Exception $e) {
-                $this->addProblem('UNKNOWN', $e->getMessage());
+                $this->addProblem('UNKNOWN', $this->stripNonUtf8Characters($e->getMessage()));
             } catch (Error $e) {
-                $this->addProblem('UNKNOWN', $e->getMessage());
+                $this->addProblem('UNKNOWN', $this->stripNonUtf8Characters($e->getMessage()));
             }
         } else {
             $this->addProblem('UNKNOWN', 'CheckPluginHelper requires a "callable"');
         }
 
         $this->shutdown();
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    protected function stripNonUtf8Characters($string)
+    {
+        return iconv('UTF-8', 'UTF-8//IGNORE', $string);
     }
 
     /**
