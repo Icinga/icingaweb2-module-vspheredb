@@ -206,6 +206,9 @@ class SyncRunner
                 $this->emit('endTask', [$this->taskNames[$task]]);
                 gc_collect_cycles();
                 gc_enable();
+                $this->loop->addTimer(0.1, function () {
+                    $this->runNextImmediateTask();
+                });
             } catch (Exception $e) {
                 Logger::error("Task $task failed: " . $e->getMessage());
                 if ($this->showTrace) {
@@ -222,9 +225,6 @@ class SyncRunner
                     $this->runNextImmediateTask();
                 });
             }
-            $this->loop->addTimer(0.1, function () {
-                $this->runNextImmediateTask();
-            });
         } else {
             $this->loop->addTimer(1, function () {
                 $this->runNextImmediateTask();

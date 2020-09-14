@@ -146,6 +146,7 @@ class SyncManagedObjectReferences
             } catch (Exception $e) {
                 // There is nothing we can do.
             }
+            throw $error;
         }
 
         if (count($new) + count($mod) + count($del) === 0) {
