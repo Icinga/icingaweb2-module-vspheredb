@@ -9,7 +9,6 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Hint\ConnectionStateDetails;
 use Icinga\Module\Vspheredb\PathLookup;
-use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
@@ -54,7 +53,6 @@ class VmLocationInfoTable extends NameValueTable
             ],
             $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
             $this->translate('Path') => $this->renderPathToObject(),
-            $this->translate('MO Ref') => new MobLink($this->vCenter, $vm),
             $this->translate('vCenter') => Link::create(
                 $this->vCenter->get('name'),
                 'vspheredb/vcenter',

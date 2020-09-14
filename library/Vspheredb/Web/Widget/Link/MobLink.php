@@ -42,7 +42,11 @@ class MobLink extends HtmlDocument
                     \rawurlencode($this->moRef)
                 ),
                 'target' => '_blank',
-                'title' => $this->translate('Jump to the Managed Object browser')
+                'title' => \sprintf(
+                    $this->translate('Show "%s" in the Managed Object Browser (MOB)'),
+                    $this->moRef
+                ),
+                'class' => 'icon-eye',
             ], $this->label));
         } catch (NotFoundError $e) {
             $this->add([

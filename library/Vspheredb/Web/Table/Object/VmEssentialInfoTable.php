@@ -15,7 +15,9 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
+use Icinga\Module\Vspheredb\Web\Widget\Link\Html5UiLink;
 use Icinga\Module\Vspheredb\Web\Widget\Link\KnowledgeBaseLink;
+use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use Icinga\Module\Vspheredb\Web\Widget\Link\VmrcLink;
 use Icinga\Module\Vspheredb\Web\Widget\Renderer\GuestToolsVersionRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
@@ -108,7 +110,7 @@ class VmEssentialInfoTable extends NameValueTable
         );
         if ($vm->get('guest_id')) {
             $this->addNameValuePairs([
-                $this->translate('Console') => new VmrcLink($this->vCenter, $vm),
+                $this->translate('Tools') => $this->prepareTools($vm),
                 $this->translate('Guest OS') => $guest,
                 $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
                 $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
@@ -134,6 +136,21 @@ class VmEssentialInfoTable extends NameValueTable
                 )
             )
         );
+    }
+
+    protected function prepareTools(VirtualMachine $vm)
+    {
+        $tools = [];
+
+        $tools[] = new VmrcLink($this->vCenter, $vm, 'VMRC');
+        $tools[] = ' ';
+        if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
+            $tools[] = new Html5UiLink($this->vCenter, $vm, 'HTML5 UI');
+            $tools[] = ' ';
+        }
+        $tools[] = new MobLink($this->vCenter, $vm, 'MOB');
+
+        return $tools;
     }
 
     protected function getGuestToolsVersionInfo($vm)

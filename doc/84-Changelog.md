@@ -24,6 +24,7 @@ next (will be 1.2.0)
 * FEATURE: optional VMware software column for the vCenter overview (#192)
 * FEATURE: Veeam backup tool info now also works with Custom Values (#193)
 * FEATURE: VM location details now provide a link to the vCenter (#148)
+* FEATURE: HTML5 UI link has been introduced (#194)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)

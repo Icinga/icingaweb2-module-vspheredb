@@ -43,9 +43,9 @@ class VmrcLink extends HtmlDocument
                     \rawurlencode($this->moRef)
                 ),
                 'target' => '_self',
-                'title' => $this->translate('Open console with VMRC')
+                'title' => $this->translate('Open VMware Remote Console (VMRC)'),
+                'class' => 'icon-host',
             ], $this->label));
-            $this->add(' (VMRC)');
         } catch (NotFoundError $e) {
             $this->add([
                 Icon::create('warning-empty', [
