@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Daemon;
 
 use Exception;
 use Icinga\Application\Logger;
+use Icinga\Module\Vspheredb\DbObject\ComputeResource;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\StoragePod;
@@ -53,6 +54,7 @@ class SyncRunner
         'customFields'     => 'Custom Fields Inventory',
         'moRefs'           => 'Managed Object References',
         'quickStats'       => 'Quick Stats',
+        'computeResources' => 'Compute Resources',
         'hostSystems'      => 'Host Systems',
         'virtualMachines'  => 'Virtual Machines',
         'storagePods'      => 'Storage Pods',
@@ -82,6 +84,9 @@ class SyncRunner
             },
             'quickStats' => function () {
                 (new SyncQuickStats($this->vCenter))->run();
+            },
+            'computeResources' => function () {
+                ComputeResource::syncFromApi($this->vCenter);
             },
             'hostSystems' => function () {
                 HostSystem::syncFromApi($this->vCenter);
@@ -139,6 +144,7 @@ class SyncRunner
         $this->loop = $loop;
         $initialSync = [
             'moRefs',
+            'computeResources',
             'hostSystems',
             'virtualMachines',
             'quickStats',
@@ -160,6 +166,7 @@ class SyncRunner
                 'moRefs',
                 'hostSystems',
                 'virtualMachines',
+                'computeResources',
             ]],
             [1800, [
                 'vmSnapshots',
