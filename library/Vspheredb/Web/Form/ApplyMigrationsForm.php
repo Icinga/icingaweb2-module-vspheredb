@@ -43,13 +43,9 @@ class ApplyMigrationsForm extends Form
 
     public function onSuccess()
     {
-        try {
-            $this->migrations->applyPendingMigrations();
-            Notification::success($this->translate(
-                'Pending database schema migrations have successfully been applied'
-            ));
-        } catch (Exception $e) {
-            $this->addMessage($e->getMessage());
-        }
+        $this->migrations->applyPendingMigrations();
+        Notification::success($this->translate(
+            'Pending database schema migrations have successfully been applied'
+        ));
     }
 }
