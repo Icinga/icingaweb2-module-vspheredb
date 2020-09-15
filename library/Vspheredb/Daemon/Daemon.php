@@ -36,9 +36,6 @@ class Daemon
     /** @var object */
     protected $processInfo;
 
-    /** @var bool */
-    protected $shuttingDown = false;
-
     /** @var ServerRunner[] */
     protected $running = [];
 
@@ -245,7 +242,9 @@ QUERY;
             unset($this->running[$id]);
         }
         $this->running = [];
-        gc_collect_cycles();
+        $this->loop->addTimer(1, function () {
+            gc_collect_cycles();
+        });
     }
 
     protected function onFailed()
@@ -513,7 +512,9 @@ QUERY;
         Logger::error("Server for vCenterID=$vCenterId failed$pidInfo, will try again in 30 seconds");
         $this->running[$serverId]->stop();
         unset($this->running[$vCenterId]);
-        gc_collect_cycles();
+        $this->loop->addTimer(2, function () {
+            gc_collect_cycles();
+        });
         $this->blackListed[$serverId] = true;
         $this->loop->addTimer(30, function () use ($serverId) {
             unset($this->blackListed[$serverId]);

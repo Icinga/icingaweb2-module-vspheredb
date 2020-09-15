@@ -208,6 +208,10 @@ class ServerRunner
 
     protected function stopRunningServers()
     {
+        if (! empty($this->running) && $this->loop === null) {
+            Logger::warning('Stopping while there is no more loop');
+            return;
+        }
         foreach ($this->running as $pid => $process) {
             $process->terminate(SIGTERM);
             $this->loop->addTimer(5, function () use ($process, $pid) {
