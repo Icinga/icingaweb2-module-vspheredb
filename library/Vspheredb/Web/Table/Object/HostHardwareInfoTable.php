@@ -7,6 +7,7 @@ use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 
 class HostHardwareInfoTable extends NameValueTable
 {
@@ -22,6 +23,7 @@ class HostHardwareInfoTable extends NameValueTable
 
     protected function assemble()
     {
+        $this->prepend(new SubTitle($this->translate('Hardware Information'), 'help'));
         $host = $this->host;
         $this->addNameValuePairs([
             $this->translate('CPU') => [

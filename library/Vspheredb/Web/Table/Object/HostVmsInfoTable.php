@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 
 class HostVmsInfoTable extends NameValueTable
 {
@@ -17,6 +18,7 @@ class HostVmsInfoTable extends NameValueTable
     public function __construct(HostSystem $host)
     {
         $this->host = $host;
+        $this->prepend(new SubTitle($this->translate('Virtual Machines'), 'cubes'));
     }
 
     protected function getDb()

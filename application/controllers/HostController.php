@@ -3,6 +3,8 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use Icinga\Authentication\Auth;
+use Icinga\Exception\MissingParameterException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
@@ -18,37 +20,33 @@ use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
 use Icinga\Module\Vspheredb\Web\Widget\HostHeader;
 use Icinga\Module\Vspheredb\Web\Widget\HostMonitoringInfo;
-use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class HostController extends Controller
 {
+    use DetailSections;
+
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException|NotFoundError
      */
     public function indexAction()
     {
         $host = $this->addHost();
         $this->content()->addAttributes(['class' => 'host-info']);
-        $this->content()->add([
-            new HostMonitoringInfo($host),
-            new SubTitle($this->translate('Virtual Machines'), 'cubes'),
-            new HostVmsInfoTable($host),
-            new CustomValueDetails($host),
-            new SubTitle($this->translate('Hardware Information'), 'help'),
-            new HostHardwareInfoTable($host),
-            new HostPhysicalNicTable($host),
-            new SubTitle($this->translate('System Information'), 'host'),
+        $this->addSections([
             new HostSystemInfoTable($host),
-            new SubTitle($this->translate('Virtualization Information'), 'cloud'),
+            new HostHardwareInfoTable($host),
+            new HostMonitoringInfo($host),
+            new CustomValueDetails($host),
+            new HostVmsInfoTable($host),
+            new HostPhysicalNicTable($host),
             new HostVirtualizationInfoTable($host),
         ]);
     }
 
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException|NotFoundError
+
      */
     public function vmsAction()
     {
@@ -63,8 +61,8 @@ class HostController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException|NotFoundError
+
      */
     public function sensorsAction()
     {
@@ -74,8 +72,8 @@ class HostController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException|NotFoundError
+
      */
     public function pcidevicesAction()
     {
@@ -84,8 +82,8 @@ class HostController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException|NotFoundError
+
      */
     public function eventsAction()
     {
@@ -95,8 +93,7 @@ class HostController extends Controller
 
     /**
      * @return HostSystem
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException|NotFoundError
      */
     protected function addHost()
     {
@@ -110,7 +107,7 @@ class HostController extends Controller
 
     /**
      * @param HostSystem $host
-     * @throws \Icinga\Exception\MissingParameterException
+     * @throws MissingParameterException
      */
     protected function handleTabs(HostSystem $host)
     {
@@ -138,6 +135,7 @@ class HostController extends Controller
             'label' => $this->translate('Events'),
             'url' => 'vspheredb/host/events',
             'urlParams' => ['uuid' => $hexId]
-        ])->activate($this->getRequest()->getActionName());
+        ])
+        ->activate($this->getRequest()->getActionName());
     }
 }

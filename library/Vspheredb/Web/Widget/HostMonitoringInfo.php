@@ -38,10 +38,8 @@ class HostMonitoringInfo extends HtmlDocument
     protected function assemble()
     {
         if ($info = $this->getInfo()) {
-            $this->add([
-                new SubTitle($this->translate('Monitoring'), 'binoculars'),
-                $info
-            ]);
+            $this->prepend(new SubTitle($this->translate('Monitoring'), 'binoculars'));
+            $this->add($info);
         }
     }
 

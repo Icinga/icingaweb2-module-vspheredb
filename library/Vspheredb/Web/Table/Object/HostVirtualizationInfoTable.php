@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
 class HostVirtualizationInfoTable extends NameValueTable
@@ -39,6 +40,7 @@ class HostVirtualizationInfoTable extends NameValueTable
      */
     protected function assemble()
     {
+        $this->prepend(new SubTitle($this->translate('Virtualization Information'), 'cloud'));
         $host = $this->host;
         $uuid = $host->get('uuid');
         /** @var \Icinga\Module\Vspheredb\Db $connection */

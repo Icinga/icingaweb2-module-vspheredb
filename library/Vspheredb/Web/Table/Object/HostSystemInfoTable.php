@@ -7,6 +7,7 @@ use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
+use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
 class HostSystemInfoTable extends NameValueTable
@@ -23,6 +24,7 @@ class HostSystemInfoTable extends NameValueTable
 
     protected function assemble()
     {
+        $this->prepend(new SubTitle($this->translate('System Information'), 'host'));
         $host = $this->host;
 
         $this->addNameValuePairs([
