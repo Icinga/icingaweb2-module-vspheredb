@@ -3,14 +3,20 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use ipl\Html\Html;
+use ipl\Html\HtmlString;
 
 trait DetailSections
 {
     protected function section($content)
     {
+        $content = Html::wantHtml($content)->render();
+        if (\strlen($content) === 0) {
+            return null;
+        }
+
         return Html::tag('div', [
             'class' => 'section',
-        ], $content);
+        ], new HtmlString($content));
     }
 
     protected function addSection($content)
