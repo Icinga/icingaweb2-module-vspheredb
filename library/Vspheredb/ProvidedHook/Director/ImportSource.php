@@ -44,6 +44,7 @@ class ImportSource extends ImportSourceHook
 
     protected $computeResourceColumns = [
         'object_name'              => 'o.object_name',
+        'object_type'              => 'o.object_type',
         'effective_cpu_mhz'        => 'cr.effective_cpu_mhz',
         'effective_memory_size_mb' => 'cr.effective_memory_size_mb',
         'cpu_cores'                => 'cr.cpu_cores',
