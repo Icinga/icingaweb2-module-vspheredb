@@ -47,13 +47,9 @@ class FilterVCenterForm extends Form
                 ['vc' => 'vcenter'],
                 [
                     'uuid' => 'LOWER(HEX(vc.instance_uuid))',
-                    'host' => "vcs.host || ' (' || REPLACE(vc.name, 'VMware ', '') || ')'",
+                    'name' => "vc.name || ' (' || REPLACE(vc.api_name, 'VMware ', '') || ')'",
                 ]
-            )->join(
-                ['vcs' => 'vcenter_server'],
-                'vcs.vcenter_id = vc.id',
-                []
-            )->order('vcs.host')
+            )->order('vc.name')
         );
         $enum = [];
         foreach ($pairs as $uuid => $label) {
