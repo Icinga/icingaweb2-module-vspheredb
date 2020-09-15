@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Icinga\Exception\MissingParameterException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -26,8 +28,8 @@ class VmController extends Controller
     use DetailSections;
 
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
     public function indexAction()
     {
@@ -51,8 +53,7 @@ class VmController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\MissingParameterException
+     * @throws MissingParameterException|NotFoundError
      */
     public function hardwareAction()
     {
@@ -64,8 +65,7 @@ class VmController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\MissingParameterException
+     * @throws MissingParameterException|NotFoundError
      */
     public function eventsAction()
     {
@@ -74,8 +74,7 @@ class VmController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\IcingaException
-     * @throws \Icinga\Exception\MissingParameterException
+     * @throws MissingParameterException|NotFoundError
      */
     public function alarmsAction()
     {
@@ -85,8 +84,8 @@ class VmController extends Controller
 
     /**
      * @return VirtualMachine
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
     protected function addVm()
     {
