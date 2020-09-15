@@ -84,30 +84,6 @@ class VmController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\AuthenticationException
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
-     * @deprecated
-     */
-    public function countersActionObsolete()
-    {
-        $vm = $this->addVm();
-
-        $vCenter = VCenter::load($vm->get('vcenter_uuid'), $this->db());
-        $api = $vCenter->getApi();
-        $moRef = $vm->object()->get('moref');
-        $interval = 20;
-        $raw = $api->perfManager()->oldTestQueryPerf(
-            $moRef,
-            'VirtualMachine',
-            $interval,
-            600
-        );
-
-        // $this->content()->add(new VmLiveCountersTable($vm, $api));
-    }
-
-    /**
      * @return VirtualMachine
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
@@ -143,13 +119,6 @@ class VmController extends Controller
             'url'       => 'vspheredb/vm/alarms',
             'urlParams' => $params
         ])
-        /** // Disabled for now
-        ->add('counters', [
-            'label'     => $this->translate('Live Counters'),
-            'url'       => 'vspheredb/vm/counters',
-            'urlParams' => $params
-        ])
-        **/
         ->activate($this->getRequest()->getActionName());
     }
 }
