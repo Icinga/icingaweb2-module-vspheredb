@@ -42,6 +42,18 @@ class ImportSource extends ImportSourceHook
         'custom_values'     => 'vm.custom_values',
     ];
 
+    protected $computeResourceColumns = [
+        'object_name'              => 'o.object_name',
+        'effective_cpu_mhz'        => 'cr.effective_cpu_mhz',
+        'effective_memory_size_mb' => 'cr.effective_memory_size_mb',
+        'cpu_cores'                => 'cr.cpu_cores',
+        'cpu_threads'              => 'cr.cpu_threads',
+        'effective_hosts'          => 'cr.effective_hosts',
+        'hosts'                    => 'cr.hosts',
+        'total_cpu_mhz'            => 'cr.total_cpu_mhz',
+        'total_memory_size_mb'     => 'cr.total_memory_size_mb',
+    ];
+
     public function getName()
     {
         return 'VMware vSphereDB';
@@ -52,8 +64,9 @@ class ImportSource extends ImportSourceHook
         $form->addElement('select', 'object_type', [
             'label' => $form->translate('Object Type'),
             'multiOptions' => $form->optionalEnum([
-                'host_system'     => $form->translate('Host Systems'),
-                'virtual_machine' => $form->translate('Virtual Machine'),
+                'host_system'      => $form->translate('Host Systems'),
+                'virtual_machine'  => $form->translate('Virtual Machine'),
+                'compute_resource' => $form->translate('Compute Resource'),
             ]),
             'required' => true
         ]);
@@ -63,12 +76,16 @@ class ImportSource extends ImportSourceHook
     {
         $connection = Db::newConfiguredInstance();
         $db = $connection->getDbAdapter();
-        switch ($this->getSetting('object_type')) {
+        $objectType = $this->getSetting('object_type');
+        switch ($objectType) {
             case 'host_system':
                 $result = $db->fetchAll($this->prepareHostsQuery($db));
                 break;
             case 'virtual_machine':
                 $result = $db->fetchAll($this->prepareVmQuery($db));
+                break;
+            case 'compute_resource':
+                $result = $db->fetchAll($this->prepareComputeResourceQuery($db));
                 break;
             default:
                 return [];
@@ -78,9 +95,11 @@ class ImportSource extends ImportSourceHook
             return [];
         }
 
-        foreach ($result as &$row) {
-            if ($row->custom_values !== null) {
-                $row->custom_values = Json::decode($row->custom_values);
+        if (\in_array($objectType, ['host_system', 'virtual_machine'])) {
+            foreach ($result as &$row) {
+                if ($row->custom_values !== null) {
+                    $row->custom_values = Json::decode($row->custom_values);
+                }
             }
         }
 
@@ -105,6 +124,15 @@ class ImportSource extends ImportSourceHook
         )->order('o.object_name')->order('o.uuid');
     }
 
+    protected function prepareComputeResourceQuery(ZfDb $db)
+    {
+        return $db->select()->from(['o' => 'object'], $this->computeResourceColumns)->join(
+            ['cr' => 'compute_resource'],
+            'o.uuid = cr.uuid',
+            []
+        )->order('o.object_name')->order('o.uuid');
+    }
+
     public function listColumns()
     {
         switch ($this->getSetting('object_type')) {
@@ -112,6 +140,8 @@ class ImportSource extends ImportSourceHook
                 return \array_keys($this->hostColumns);
             case 'virtual_machine':
                 return \array_keys($this->vmColumns);
+            case 'compute_resource':
+                return \array_keys($this->computeResourceColumns);
             default:
                 return [];
         }
