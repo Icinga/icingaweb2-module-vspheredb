@@ -56,6 +56,8 @@ class SoapClient extends PhpSoapClient
             'Keep-Alive'   => '300',
             'SOAPAction'   => $action,
         ];
+        // TODO: we might want to collect summaries for sent/received bytes
+        // Logger::debug('SOAPClient: ready to send %s', Format::bytes(strlen($request)));
         $result = $this->curl->post($location, $request, $headers);
         Logger::debug(
             'SOAPClient: sent %s in %.02fms, waited %.02fms, got %s response in %0.2fms. Total duration: %.02fms',
