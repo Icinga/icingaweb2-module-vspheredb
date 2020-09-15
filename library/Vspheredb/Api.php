@@ -77,7 +77,7 @@ class Api
      * @param string $pass
      * @param int|null $port
      */
-    public function __construct($host, $user, $pass, $port = null)
+    protected function __construct($host, $user, $pass, $port = null)
     {
         $this->host = $host;
         $this->user = $user;
@@ -221,7 +221,12 @@ class Api
      */
     protected function makeLocation()
     {
-        return 'https://' . $this->host . '/sdk';
+        $host = $this->host;
+        if ($this->port && $this->port !== 443) {
+            $host .= ':' . $this->port;
+        }
+
+        return "https://$host/sdk";
     }
 
     /**
