@@ -57,6 +57,9 @@ class SyncVmDiskUsage
             }
             $root = null;
             $var = null;
+            // $lastPath = '';
+            // $lastCapacity = null;
+            // $lastFree = null;
             foreach ($vm->{'guest.disk'}->GuestDiskInfo as $info) {
                 $path = $info->diskPath;
 
@@ -81,6 +84,22 @@ class SyncVmDiskUsage
                     }
                 }
                 // End of workaround
+
+                // Skip nested partitions with same capacity and free space
+                // Just an idea, not sure about this. e.g. /vsnap/vpoolX has many
+                // subpartitions like /vsnap/vpoolX/fs000, not all the same capacity,
+                // different free space
+                /*
+                if (\substr($path, 0, \strlen($lastPath)) === $lastPath
+                    && $lastFree === $info->freeSpace
+                    && $lastCapacity === $info->capacity
+                ) {
+                    continue;
+                }
+                $lastFree = $info->freeSpace;
+                $lastCapacity = $info->capacity;
+                $lastPath = $path;
+                */
 
                 $idx = "$uuid$path";
                 $seen[$idx] = $idx;
