@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use DateTime;
+use Icinga\Module\Vspheredb\MappedClass\ClusterDasFdmHostState;
 
 class HostSystem extends BaseDbObject
 {
@@ -33,6 +34,7 @@ class HostSystem extends BaseDbObject
         'hardware_num_hba'        => null,
         'hardware_num_nic'        => null,
         'runtime_power_state'     => null,
+        'das_host_state'          => null,
         'custom_values'           => null,
     ];
 
@@ -53,6 +55,7 @@ class HostSystem extends BaseDbObject
         // https://<vcenter>/mob/?moid=ha%2dhost&doPath=runtime
         // runtime.inMaintenanceMode	boolean	false
         // runtime.inQuarantineMode	boolean	Unset
+        'runtime.dasHostState'              => 'dasHostState',
         'summary.customValue'               => 'customValues',
         'summary.hardware.cpuMhz'           => 'hardware_cpu_mhz',
         'summary.hardware.cpuModel'         => 'hardware_cpu_model',
@@ -124,6 +127,15 @@ class HostSystem extends BaseDbObject
                     $info->identifierValue
                 );
             }
+        }
+    }
+
+    protected function setDasHostState(ClusterDasFdmHostState $state = null)
+    {
+        if ($state === null) {
+            $this->set('das_host_state', null);
+        } else {
+            $this->set('das_host_state', $state->state);
         }
     }
 

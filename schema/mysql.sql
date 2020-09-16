@@ -214,12 +214,24 @@ CREATE TABLE host_system (
   hardware_memory_size_mb INT(10) UNSIGNED NOT NULL,
   hardware_num_hba SMALLINT UNSIGNED NOT NULL,
   hardware_num_nic SMALLINT UNSIGNED NOT NULL,
-  runtime_power_state ENUM (
+  runtime_power_state ENUM(
     'poweredOff',
     'poweredOn',
     'standBy',
     'unknown'
   ) NOT NULL,
+  das_host_state ENUM(
+    'connectedToMaster',
+    'election',
+    'fdmUnreachable',
+    'hostDown',
+    'initializationError',
+    'master',
+    'networkIsolated',
+    'networkPartitionedFromMaster',
+    'uninitializationError',
+    'uninitialized'
+  ) DEFAULT NULL,
   custom_values TEXT DEFAULT NULL,
   PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -876,4 +888,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (28, NOW());
+VALUES (29, NOW());

@@ -59,6 +59,7 @@ class HostVirtualizationInfoTable extends NameValueTable
         $this->addNameValuePairs([
             $this->translate('API Version')  => $host->get('product_api_version'),
             $this->translate('Hypervisor')   => $host->get('product_full_name'),
+            $this->translate('HA State')    => $host->get('das_host_state'),
             $this->translate('MO Ref')       => new MobLink($this->vCenter, $host),
             $this->translate('Path')         => $path,
         ]);

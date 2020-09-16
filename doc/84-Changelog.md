@@ -57,6 +57,7 @@ next (will be 1.2.0)
 * FIX: allow event/alert messages longer than 64kB (#133)
 * FIX: allow unusually large guestFullName values (#146)
 * FEATURE: compute_cluster is now a dedicated table and object (#187)
+* FEATURE: introduce host_system DAS/HA-state
 
 ### vSphere API
 * FIX: login to vSphere 7.0 failed (#175)
