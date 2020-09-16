@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\PropertySet\PropertySet;
+use Icinga\Module\Vspheredb\SelectSet\VirtualMachineSelectSet;
 
 class VirtualMachine extends BaseDbObject
 {
@@ -177,5 +178,15 @@ class VirtualMachine extends BaseDbObject
         } else {
             $this->set('boot_order', null);
         }
+    }
+
+    /**
+     * Explicitly defined, parent class would ship the same
+     *
+     * @return VirtualMachineSelectSet
+     */
+    public static function getSelectSet()
+    {
+        return new VirtualMachineSelectSet();
     }
 }
