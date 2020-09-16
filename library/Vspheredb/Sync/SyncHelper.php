@@ -18,7 +18,7 @@ trait SyncHelper
 
     /**
      * @param \Zend_Db_Adapter_Abstract $db
-     * @param \Icinga\Module\Vspheredb\DbObject\BaseDbObject[] $objects
+     * @param \Icinga\Module\Vspheredb\Db\DbObject[] $objects
      * @param $seen
      * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
      */

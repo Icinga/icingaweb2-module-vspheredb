@@ -32,8 +32,8 @@ class VcenterController extends Controller
             'CPU'    => new CpuUsage($perf->used_mhz, $perf->total_mhz),
             'Memory' => new MemoryUsage($perf->used_mb, $perf->total_mb),
             'Disk'   => new MemoryUsage(
-                ($perf->ds_capacity - $perf->ds_free_space) / 1000000,
-                $perf->ds_capacity / 1000000
+                ($perf->ds_capacity - $perf->ds_free_space) / (1024 * 1024),
+                $perf->ds_capacity / (1024 * 1024)
             ),
         ]));
         $this->content()->add(new SubTitle($this->translate('Object Summaries')));

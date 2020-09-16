@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\Html\Html;
 
 class HostHardwareInfoTable extends NameValueTable
 {
@@ -27,13 +28,14 @@ class HostHardwareInfoTable extends NameValueTable
         $host = $this->host;
         $this->addNameValuePairs([
             $this->translate('CPU') => [
-                sprintf(
-                    $this->translate('%d Packages, %d Cores, %d Threads (%s)'),
+               \sprintf(
+                    $this->translate('%d Packages, %d Cores, %d Threads'),
                     $host->get('hardware_cpu_packages'),
                     $host->get('hardware_cpu_cores'),
-                    $host->get('hardware_cpu_threads'),
-                    $host->get('hardware_cpu_model')
+                    $host->get('hardware_cpu_threads')
                 ),
+                Html::tag('br'),
+                $host->get('hardware_cpu_model'),
                 new CpuUsage(
                     $host->quickStats()->get('overall_cpu_usage'),
                     $host->get('hardware_cpu_cores') * $host->get('hardware_cpu_mhz')
@@ -44,7 +46,6 @@ class HostHardwareInfoTable extends NameValueTable
                 $host->get('hardware_memory_size_mb')
             ),
             $this->translate('HBAs') => $host->get('hardware_num_hba'),
-            $this->translate('NICs') => $host->get('hardware_num_nic'),
         ]);
     }
 }

@@ -26,7 +26,13 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         $this->host = $host;
         $this->moref = $this->host->object()->get('moref');
         parent::__construct($host->getConnection());
-        $this->prepend(new SubTitle($this->translate('Network'), 'sitemap'));
+
+        $this->prepend(new SubTitle(\sprintf(
+            $this->translate('Network Interfaces (%s)'),
+            // Hint: we could also count given NICs, but this helps to spot
+            // eventual inconsistencies
+            $host->get('hardware_num_nic')
+        ), 'sitemap'));
     }
 
     public function renderRow($row)

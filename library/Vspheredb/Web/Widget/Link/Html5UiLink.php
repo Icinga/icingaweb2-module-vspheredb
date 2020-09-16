@@ -31,6 +31,12 @@ class Html5UiLink extends BaseHtmlElement
                 $server->get('host'),
                 \rawurlencode($managedObject->get('moref'))
             );
+        } elseif ($object instanceof HostSystem) {
+            $url = \sprintf(
+                'https://%s/ui/#/host/%s',
+                $server->get('host'),
+                \rawurlencode($managedObject->get('moref'))
+            );
         } else {
             throw new \InvalidArgumentException('No support');
         }

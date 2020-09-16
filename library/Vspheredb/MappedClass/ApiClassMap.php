@@ -136,6 +136,7 @@ class ApiClassMap
             'VmEventArgument'              => VmEventArgument::class,
             'ManagedObjectReference' => ManagedObjectReference::class,
             'NumericRange'           => NumericRange::class,
+            'ClusterDasFdmHostState' => ClusterDasFdmHostState::class,
             'CustomFieldsManager'    => CustomFieldsManager::class,
             'CustomFieldDef'         => CustomFieldDef::class,
             'CustomFieldValue'       => CustomFieldValue::class,

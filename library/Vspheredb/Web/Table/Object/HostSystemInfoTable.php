@@ -6,6 +6,9 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\Web\Widget\Link\Html5UiLink;
+use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use Icinga\Module\Vspheredb\Web\Widget\SpectreMelddownBiosInfo;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
@@ -17,9 +20,13 @@ class HostSystemInfoTable extends NameValueTable
     /** @var HostSystem */
     protected $host;
 
-    public function __construct(HostSystem $host)
+    /** @var VCenter */
+    protected $vCenter;
+
+    public function __construct(HostSystem $host, VCenter $vCenter)
     {
         $this->host = $host;
+        $this->vCenter = $vCenter;
     }
 
     protected function assemble()
@@ -28,12 +35,10 @@ class HostSystemInfoTable extends NameValueTable
         $host = $this->host;
 
         $this->addNameValuePairs([
-            $this->translate('Vendor / Model') => Html::sprintf(
-                '%s %s (%s)',
-                $host->get('sysinfo_vendor'),
-                $host->get('sysinfo_model'),
-                $this->getFormattedServiceTag($host)
-            ),
+            $this->translate('Tools') => $this->prepareTools($host),
+            $this->translate('Vendor') => $host->get('sysinfo_vendor'),
+            $this->translate('Model') =>  $host->get('sysinfo_model'),
+            $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
             $this->translate('BIOS Version') => new SpectreMelddownBiosInfo($host),
             $this->translate('Uptime')       => DateFormatter::formatDuration($host->quickStats()->get('uptime')),
             $this->translate('System UUID')  => Html::tag('pre', $host->get('sysinfo_uuid')),
@@ -51,6 +56,19 @@ class HostSystemInfoTable extends NameValueTable
         } else {
             return $host->get('service_tag');
         }
+    }
+
+    protected function prepareTools(HostSystem $host)
+    {
+        $tools = [];
+
+        if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
+            $tools[] = new Html5UiLink($this->vCenter, $host, 'HTML5 UI');
+            $tools[] = ' ';
+        }
+        $tools[] = new MobLink($this->vCenter, $host, 'MOB');
+
+        return $tools;
     }
 
     protected function linkToDellSupport($serviceTag)

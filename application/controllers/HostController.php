@@ -6,6 +6,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
 use Icinga\Module\Vspheredb\Web\Table\HostPhysicalNicTable;
@@ -33,14 +34,14 @@ class HostController extends Controller
     {
         $host = $this->addHost();
         $this->content()->addAttributes(['class' => 'host-info']);
+        $vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
         $this->addSections([
-            new HostSystemInfoTable($host),
+            new HostSystemInfoTable($host, $vCenter),
+            new HostVirtualizationInfoTable($host),
+            new CustomValueDetails($host),
             new HostHardwareInfoTable($host),
             new HostMonitoringInfo($host),
-            new CustomValueDetails($host),
-            new HostVmsInfoTable($host),
             new HostPhysicalNicTable($host),
-            new HostVirtualizationInfoTable($host),
         ]);
     }
 

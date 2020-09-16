@@ -170,6 +170,10 @@ class OverviewTree extends BaseHtmlElement
             'VirtualApp'             => 'th-thumb-empty',
             'VirtualMachine'         => 'service',
         ];
-        return 'icon-' . $typeClasses[$type];
+        if (isset($typeClasses[$type])) {
+            return 'icon-' . $typeClasses[$type];
+        } else {
+            return 'icon-attention-alt';
+        }
     }
 }
