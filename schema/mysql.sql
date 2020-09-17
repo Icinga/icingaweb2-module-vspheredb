@@ -386,7 +386,7 @@ CREATE TABLE virtual_machine (
     'guestToolsNotRunning',
     'guestToolsRunning',
     'guestToolsExecutingScripts' -- VMware Tools is starting.
-  ) NOT NULL,
+  ) NULL DEFAULT NULL,
   guest_tools_version VARCHAR(32) DEFAULT NULL, -- 10338
   guest_id VARCHAR(64) DEFAULT NULL,        -- rhel7_64Guest
   -- Linux 3.10.0-693.17.1.el7.x86_64 CentOS Linux release 7.4.1708 (Core)
@@ -888,4 +888,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (29, NOW());
+VALUES (30, NOW());

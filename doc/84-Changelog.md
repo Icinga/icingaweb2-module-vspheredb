@@ -56,6 +56,7 @@ next (will be 1.2.0)
 * FIX: large-grown daemon log table has been truncated (#138)
 * FIX: allow event/alert messages longer than 64kB (#133)
 * FIX: allow unusually large guestFullName values (#146)
+* FIX: allow most VM values to be NULL, VMs which never started (#197, others)
 * FEATURE: compute_cluster is now a dedicated table and object (#187)
 * FEATURE: introduce host_system DAS/HA-state
 
