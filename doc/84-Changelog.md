@@ -29,6 +29,7 @@ next (will be 1.2.0)
 * FEATURE: improve sensor table styling (#196)
 * FEATURE: restructure/style Host Detail view (#199)
 * FEATURE: VM details now show host resource usage (#120)
+* FEATURE: Provide suggestions in case there is no vCenter (#189)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)

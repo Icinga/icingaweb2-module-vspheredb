@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use gipfl\IcingaWeb2\Link;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
@@ -9,6 +10,7 @@ use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\Config\ProposeMigrations;
 use Icinga\Module\Vspheredb\Web\Widget\CpuAbsoluteUsage;
+use ipl\Html\Html;
 
 class VcentersController extends ObjectsController
 {
@@ -38,9 +40,31 @@ class VcentersController extends ObjectsController
         */
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
-        $this->addTitle($this->translate('VCenters') . ' (%d)', count($table));
+        $count = count($table);
+        $this->addTitle($this->translate('VCenters') . ' (%d)', $count);
+        if ($count === 0) {
+            $this->addNoVCenterHint();
+        }
         $this->showTable($table, 'vspheredb/groupedvms');
         $this->controls()->prepend($this->cpuSummary($table));
+    }
+
+    protected function addNoVCenterHint()
+    {
+        $this->addHint(
+            Html::sprintf(
+                'No vCenter available. You might want to check your %s or your %s',
+                Link::create(
+                    $this->translate('Server Connections'),
+                    'vspheredb/vcenter/servers'
+                ),
+                Link::create(
+                    $this->translate('Daemon Status'),
+                    'vspheredb/daemon'
+                )
+            ),
+            'warning'
+        );
     }
 
     /**

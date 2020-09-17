@@ -6,6 +6,7 @@ use Exception;
 use gipfl\IcingaWeb2\CompatController;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use ipl\Html\Html;
 
 class Controller extends CompatController
 {
@@ -20,6 +21,15 @@ class Controller extends CompatController
                 'class' => 'show-compact'
             ]);
         }
+    }
+
+    protected function addHint($message, $class = 'information')
+    {
+        $this->content()->add(Html::tag('p', [
+            'class' => $class
+        ], $message));
+
+        return $this;
     }
 
     protected function db()

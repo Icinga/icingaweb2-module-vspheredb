@@ -69,15 +69,6 @@ class EventsController extends Controller
         return $form;
     }
 
-    protected function addHint($message, $class = 'information')
-    {
-        $this->content()->add(Html::tag('p', [
-            'class' => $class
-        ], $message));
-
-        return $this;
-    }
-
     public function heatmapAction()
     {
         $this->actions()->add(Link::create(
