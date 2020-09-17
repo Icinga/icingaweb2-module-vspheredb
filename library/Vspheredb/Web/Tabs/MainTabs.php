@@ -65,12 +65,13 @@ class MainTabs extends Tabs
                 'url'   => 'vspheredb/configuration',
             ]);
 
-            if ($migrations && $migrations->hasSchema()) {
-                $this->add('monitoring', [
-                    'label' => $this->translate('Monitoring'),
-                    'url' => 'vspheredb/configuration/monitoring',
-                ]);
-            }
+            // Disable Tab unless #160 is ready
+            // if ($migrations && $migrations->hasSchema()) {
+            //     $this->add('monitoring', [
+            //         'label' => $this->translate('Monitoring'),
+            //         'url' => 'vspheredb/configuration/monitoring',
+            //     ]);
+            // }
         }
         if ($migrations && $migrations->hasSchema()) {
             $this->add('daemon', [
