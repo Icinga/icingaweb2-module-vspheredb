@@ -132,10 +132,11 @@ CREATE TABLE vcenter_event_history_collector (
 CREATE TABLE object (
   uuid VARBINARY(20) NOT NULL, -- sha1(vcenter_uuid + moref)
   vcenter_uuid VARBINARY(16) NOT NULL,
-  -- Hint: 64 Bytes might seem overkill for MoRefs, but there is
-  --       52d4e949-55c225c2923-a7ba-009689221ad9-datastorebrowser on ESXi
-  -- Update: Maybe 180 bytes is enough? Found "HaOpaqueNetwork-nsx.LogicalSwitch-9d2b805b-10d2-4bfe-8196-fcb2215b6865" from NSX-T (70 bytes) and "DVPG-6e 0f 0c 50 75 de 07 43-9e 0c 3a e7 df f6 0c 4f-dvportgroup-1296" from DVS (69 bytes), if adding ESXi directly (not via vCenter).
-  moref VARCHAR(180) NOT NULL, -- textual id
+  -- Hint: 180 Bytes might seem overkill for MoRefs, but there are:
+  --   52d4e949-55c225c2923-a7ba-009689221ad9-datastorebrowser (ESXi)
+  --   HaOpaqueNetwork-nsx.LogicalSwitch-9d2b175b-10d2-4bfe-1896-fca2215b6765 (NSX-T)
+  --   DVPG-6e 0f 0c 50 75 de 07 43-9e 0c 3a e7 df f6 0c 4f-dvportgroup-1296 (DVS)
+  moref VARCHAR(128) NOT NULL, -- textual id
   object_name VARCHAR(255) NOT NULL,
   object_type ENUM(
     'ComputeResource',
@@ -889,4 +890,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (30, NOW());
+VALUES (31, NOW());
