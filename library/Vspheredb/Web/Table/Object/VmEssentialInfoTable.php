@@ -104,8 +104,8 @@ class VmEssentialInfoTable extends NameValueTable
         $guestInfo = Html::sprintf(
             '%s %s (Guest %s)',
             $this->getGuestToolsVersionInfo($vm),
-            $vm->get('guest_tools_running_status'),
-            $vm->get('guest_state')
+            $vm->get('guest_tools_running_status') ?: '-',
+            $vm->get('guest_state') ?: 'unknown'
         );
         $this->addNameValuePairs([
             $this->translate('Tools') => $this->prepareTools($vm),
