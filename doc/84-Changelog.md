@@ -27,6 +27,7 @@ next (will be 1.2.0)
 * FEATURE: HTML5 UI link has been introduced (#194)
 * FEATURE: vCenter links point to new vCenter summary/detail page (#195)
 * FEATURE: improve sensor table styling (#196)
+* FEATURE: restructure/style Host Detail view (#199)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)
@@ -58,7 +59,7 @@ next (will be 1.2.0)
 * FIX: allow unusually large guestFullName values (#146)
 * FIX: allow most VM values to be NULL, VMs which never started (#197, others)
 * FEATURE: compute_cluster is now a dedicated table and object (#187)
-* FEATURE: introduce host_system DAS/HA-state
+* FEATURE: introduce host_system DAS/HA-state (#200)
 
 ### vSphere API
 * FIX: login to vSphere 7.0 failed (#175)
