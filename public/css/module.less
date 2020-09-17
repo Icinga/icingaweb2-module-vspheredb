@@ -949,6 +949,20 @@ div.controls div.resource-usage {
   }
 }
 
+div.resource-info-small div.resource-usage {
+  display: inline-block;
+  .usage-used, .usage-capacity {
+    display: none;
+  }
+  .usage-bar {
+    min-width: unset;
+    height: 1.5em;
+    width: 1.5em;
+    margin: 0 1em 0 0;
+    transform: rotate(-90deg);
+  }
+}
+
 /** END of Resource Usage **/
 
 /** Disk Usage **/

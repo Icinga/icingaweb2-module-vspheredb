@@ -28,6 +28,7 @@ next (will be 1.2.0)
 * FEATURE: vCenter links point to new vCenter summary/detail page (#195)
 * FEATURE: improve sensor table styling (#196)
 * FEATURE: restructure/style Host Detail view (#199)
+* FEATURE: VM details now show host resource usage (#120)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)
