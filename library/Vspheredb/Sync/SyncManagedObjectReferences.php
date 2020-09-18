@@ -42,6 +42,7 @@ class SyncManagedObjectReferences
         $nameUuids = [];
         $idToParent = [];
         $vCenterUuid = $vCenter->get('uuid');
+        $vmUuidsWithNoParent = [];
         foreach ($all as $obj) {
             $moRef = $obj->id;
             $name = $obj->name;
@@ -70,8 +71,18 @@ class SyncManagedObjectReferences
             }
             if (property_exists($obj, 'parent')) {
                 $idToParent[$uuid] = $obj->parent->_;
+            } elseif ($obj->type === 'VirtualMachine') {
+                $vmUuidsWithNoParent[] = $uuid;
             }
         }
+
+        if (! empty($vmUuidsWithNoParent)) {
+            Logger::debug(\sprintf(
+                'There are %d VMs without parent',
+                \count($vmUuidsWithNoParent)
+            ));
+        }
+
         foreach ($idToParent as $uuid => $parentName) {
             if (array_key_exists($parentName, $nameUuids)) {
                 $objects[$uuid]->setParent(
