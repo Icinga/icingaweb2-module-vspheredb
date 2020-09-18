@@ -7,6 +7,7 @@ use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Form\VCenterForm;
 use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
@@ -24,9 +25,15 @@ class VcenterController extends Controller
     {
         $vCenter = $this->requireVCenter();
         $this->tabs(new VCenterTabs($vCenter))->activate('vcenter');
+        $this->controls()->add(new VCenterHeader($vCenter));
+        $this->actions()->add(Link::create(
+            $this->translate('Edit'),
+            'vspheredb/vcenter/edit',
+            ['vcenter' => $this->params->get('vcenter')],
+            ['class' => 'icon-edit']
+        ));
         $this->setAutorefreshInterval(10);
         // $this->content()->add(new VCenterSyncInfo($vCenter));
-        $this->content()->add(new VCenterHeader($vCenter));
         $perf = $this->perf();
         $this->content()->add((new NameValueTable())->addNameValuePairs([
             'CPU'    => new CpuUsage($perf->used_mhz, $perf->total_mhz),
@@ -38,6 +45,36 @@ class VcenterController extends Controller
         ]));
         $this->content()->add(new SubTitle($this->translate('Object Summaries')));
         $this->content()->add(new VCenterSummaries($vCenter));
+    }
+
+    public function editAction()
+    {
+        $vCenter = $this->requireVCenter();
+        $this->tabs(new VCenterTabs($vCenter))->activate('vcenter');
+        $this->setAutorefreshInterval(10);
+        $this->controls()->add(new VCenterHeader($vCenter));
+        $this->actions()->add(Link::create(
+            $this->translate('Back'),
+            'vspheredb/vcenter',
+            ['vcenter' => $this->params->get('vcenter')],
+            ['class' => 'icon-left-big']
+        ));
+        $form = new VCenterForm($this->db());
+        $form->setObject($vCenter);
+        $form->on(VCenterForm::ON_SUCCESS, function (VCenterForm $form) {
+            $object = $form->getObject();
+            if ($object->hasBeenModified()) {
+                $msg = $this->translate('The vCenter has successfully been stored');
+                $object->store();
+            } else {
+                $msg = $this->translate('No action taken, vCenter has not been modified');
+            }
+            Notification::success($msg);
+            $this->redirectNow($this->getOriginalUrl());
+        });
+        $form->handleRequest($this->getServerRequest());
+
+        $this->content()->add($form);
     }
 
     protected function perf()

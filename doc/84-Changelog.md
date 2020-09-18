@@ -30,6 +30,7 @@ next (will be 1.2.0)
 * FEATURE: restructure/style Host Detail view (#199)
 * FEATURE: VM details now show host resource usage (#120)
 * FEATURE: Provide suggestions in case there is no vCenter (#189)
+* FEATURE: allow to define a custom vCenter display name (#121)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)
