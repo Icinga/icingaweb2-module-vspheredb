@@ -23,18 +23,6 @@ class ComputeCluster extends BaseDbObject
     protected $propertyMap = [
     ];
 
-    protected $quickStats;
-
-    public function quickStats()
-    {
-        if ($this->quickStats === null) {
-            // TODO: ClusterCompute VS ClusterComputeResource
-            $this->quickStats = ClusterComputeResourceQuickStats::load($this->get('uuid'), $this->connection);
-        }
-
-        return $this->quickStats;
-    }
-
     public function calculateStats()
     {
         $db = $this->getDb();
