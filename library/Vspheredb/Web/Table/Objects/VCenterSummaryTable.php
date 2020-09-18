@@ -10,7 +10,7 @@ class VCenterSummaryTable extends HostSummaryTable
 
     protected $groupBy = 'o.vcenter_uuid';
 
-    protected $nameColumn = 'vcs.host';
+    protected $nameColumn = 'vc.name';
 
     public function getDefaultColumnNames()
     {
@@ -46,18 +46,7 @@ class VCenterSummaryTable extends HostSummaryTable
 
     protected function prepareUnGroupedQuery()
     {
-        $db = $this->db();
-
-        $servers = $db->select()->from(
-            ['svs' => 'vcenter_server'],
-            ['srv_id' => 'MIN(svs.id)']
-        )->join(
-            ['sv' => 'vcenter'],
-            'sv.id = svs.vcenter_id',
-            []
-        )->group('svs.vcenter_id')->having('srv_id = vcs.id');
-
-        $ds = $db->select()->from(
+        $ds = $this->db()->select()->from(
             ['ds' => 'datastore'],
             [
                 'vcenter_uuid'            => 'ds.vcenter_uuid',
@@ -71,15 +60,11 @@ class VCenterSummaryTable extends HostSummaryTable
             ['vc' => 'vcenter'],
             'vc.instance_uuid = o.vcenter_uuid',
             []
-        )->join(
-            ['vcs' => 'vcenter_server'],
-            'vcs.vcenter_id = vc.id',
-            []
         )->joinLeft(
             ['ds' => $ds],
             'vc.instance_uuid = ds.vcenter_uuid',
             []
-        )->where('EXISTS ?', $servers);
+        );
     }
 
     protected function getGroupingTitle()
