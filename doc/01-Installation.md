@@ -11,7 +11,7 @@ Requirements
 * php-posix (on RHEL/CentOS this is php-process, or rh-php7x-php-process)
 * MySQL (&gt;= 5.6) or MariaDB (&gt;= 5.5.3)
 * The following Icinga modules must be installed and enabled:
-  * [ipl](https://github.com/Icinga/icingaweb2-module-ipl) (>=0.3.0)
+  * [ipl](https://github.com/Icinga/icingaweb2-module-ipl) (>=0.4.0)
   * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>=0.5.0)
   * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>=0.7.0)
 

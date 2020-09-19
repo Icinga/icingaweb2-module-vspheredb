@@ -4,6 +4,16 @@
 next (will be 1.2.0)
 --------------------
 
+### Breaking Changes
+* Dependencies have been raised, our [Installation](01-Installation.md)
+  documentations contain related details
+
+### Upgrading
+introduced
+This release brings Schema migrations, which can be applied with a single click
+in the Frontend. Please **Apply** the pending schema migration. Afterwards please
+restart the *Background Daemon*.
+
 ### UI
 * FIX: hide column for experimental feature (#153)
 * FIX: avoid PHP warnings on 7.4 when showing Host details/special cols (#169)
