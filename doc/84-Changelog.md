@@ -9,7 +9,6 @@ next (will be 1.2.0)
   documentations contain related details
 
 ### Upgrading
-introduced
 This release brings Schema migrations, which can be applied with a single click
 in the Frontend. Please **Apply** the pending schema migration. Afterwards please
 restart the *Background Daemon*.
