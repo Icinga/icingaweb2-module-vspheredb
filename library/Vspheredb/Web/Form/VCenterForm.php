@@ -27,7 +27,11 @@ class VCenterForm extends Form
     {
         $this->prepareWebForm();
         $this->addElement('text', 'name', [
-            'label' => $this->translate('Name'),
+            'label'       => $this->translate('Name'),
+            'description' => $this->translate(
+                'You might want to change the display name of your vCenter.'
+                . ' This defaults to the first related Server host name.'
+            ),
         ]);
         $this->addElement('submit', 'submit', [
             'label' => $this->isNew() ? $this->translate('Create') : $this->translate('Store')
