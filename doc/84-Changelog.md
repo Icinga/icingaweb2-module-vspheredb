@@ -49,6 +49,7 @@ next (will be 1.2.0)
 * FEATURE: synchronize Custom Values (#88)
 * FEATURE: synchronize VirtualMachines belonging to vApps (#31)
 * FEATURE: synchronize many Host Network related objects (#177)
+* FEATURE: log VMs with no parent to learn more about them (#202)
 
 ### Integrations
 * FEATURE: ship more VM properties with our Director Import Source
