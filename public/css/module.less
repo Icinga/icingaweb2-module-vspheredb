@@ -1129,6 +1129,27 @@ pre.logOutput {
 }
 
 /** End logfile */
+div.vm-template {
+  float: left;
+  border: 0.75em solid @text-color;
+  height: 6em;
+  box-sizing: border-box;
+  width: 6em;
+  border-radius: 1em;
+  text-align: center;
+  display: inline-block;
+  background-color: @gray;
+  margin-right: 1em;
+  color: @text-color;
+  padding: 0.2em 0;
+  i.state {
+    &:before {
+      color: @text-color;
+    }
+    font-size: 2.2em;
+  }
+}
+
 .cpu {
   border: 0.75em solid @text-color;
   height: 6em;
