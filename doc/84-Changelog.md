@@ -41,6 +41,7 @@ restart the *Background Daemon*.
 * FEATURE: VM details now show host resource usage (#120)
 * FEATURE: Provide suggestions in case there is no vCenter (#189)
 * FEATURE: allow to define a custom vCenter display name (#121)
+* FEATURE: show VM templates as such to make them distinguishable (#205)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)

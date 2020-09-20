@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use gipfl\IcingaWeb2\Icon;
 use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use ipl\Html\Html;
@@ -27,7 +28,16 @@ class VmHeader extends HtmlDocument
         $vm = $this->vm;
         $powerState = $vm->get('runtime_power_state');
         $renderer = new PowerStateRenderer();
-        if ($powerState !== 'poweredOn') {
+        if ($vm->get('template') === 'y') {
+            $cpu = Html::tag('div', [
+                'class' => 'vm-template'
+            ], Icon::create('upload', [
+                'title' => $this->translate('This is a template'),
+                'class' => [ 'state' ]
+            ]));
+
+            $mem = $this->translate('This is a template');
+        } elseif ($powerState !== 'poweredOn') {
             $cpu = Html::tag('div', [
                 'class' => 'cpu off',
                 // 'style' => 'font-size: 3em; width: 1em; height: 1em; display: inline-block;',

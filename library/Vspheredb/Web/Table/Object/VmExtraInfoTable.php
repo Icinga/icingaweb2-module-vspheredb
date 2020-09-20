@@ -45,9 +45,6 @@ class VmExtraInfoTable extends NameValueTable
             $this->translate('UUID') => Html::tag('pre', $vm->get('bios_uuid')),
             $this->translate('Instance UUID') => Html::tag('pre', $vm->get('instance_uuid')),
             $this->translate('CPUs')   => $vm->get('hardware_numcpu'),
-            $this->translate('Is Template') => $vm->get('template') === 'y'
-                ? $this->translate('true')
-                : $this->translate('false'),
             $this->translate('Version') => $vm->get('version'),
         ]);
     }
