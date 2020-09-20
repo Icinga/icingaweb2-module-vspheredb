@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
 use Icinga\Module\Vspheredb\Web\Form\MonitoringConnectionForm;
 use Icinga\Module\Vspheredb\Web\Table\MonitoredObjectMappingTable;
@@ -19,9 +20,9 @@ class ConfigurationController extends Controller
 
         if (! $this->hasPermission('vspheredb/admin')) {
             $this->addSingleTab($this->translate('Configuration'));
-            $this->content()->add(Html::tag('p', [
-                'class' => 'error',
-            ], $this->translate('"vspheredb/admin" permissions are required to continue')));
+            $this->content()->add(Hint::error(
+                $this->translate('"vspheredb/admin" permissions are required to continue')
+            ));
 
             return;
         }
@@ -74,7 +75,7 @@ class ConfigurationController extends Controller
             $this->content()->add($wrapper);
             $table->renderTo($this);
         } else {
-            $this->content()->add(Html::tag('p', ['class' => 'warning'], $this->translate(
+            $this->content()->add(Hint::warning($this->translate(
                 'No integration has been configured'
             )));
         }

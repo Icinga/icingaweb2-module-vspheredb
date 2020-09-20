@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget\Config;
 
 use Exception;
 use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\Migrations;
@@ -78,7 +79,7 @@ class ProposeMigrations extends HtmlDocument
                 $this->showMigrations($this->db);
             }
         } catch (Exception $e) {
-            $this->addHint('error', $e->getMessage());
+            $this->add(Hint::error($e->getMessage()));
         }
     }
 
@@ -88,7 +89,7 @@ class ProposeMigrations extends HtmlDocument
 
         if ($migrations->hasSchema()) {
             if ($migrations->hasPendingMigrations()) {
-                $this->addHint('warning', $this->translate(
+                Hint::warning($this->translate(
                     'There are pending Database Schema Migrations. Please apply'
                     . ' them now!'
                 ));
@@ -96,19 +97,19 @@ class ProposeMigrations extends HtmlDocument
             }
         } else {
             if ($migrations->hasModuleRelatedTable()) {
-                $this->addHint('error', $this->translate(
+                $this->add(Hint::error($this->translate(
                     'The chosen Database resource contains related tables,'
                     . ' but the schema is not complete. In case you tried'
                     . ' a pre-release version of this module please drop'
                     . ' this database and start with a fresh new one.'
-                ));
+                )));
             } elseif ($migrations->hasAnyTable()) {
-                $this->addHint('warning', $this->translate(
+                $this->add(Hint::warning($this->translate(
                     'The chosen Database resource already contains tables. You'
                     . ' might want to continue with this DB resource, but we'
                     . ' strongly suggest to use an empty dedicated DB for this'
                     . ' module.'
-                ));
+                )));
                 $this->addForm($migrations);
             } else {
                 $this->addForm($migrations);

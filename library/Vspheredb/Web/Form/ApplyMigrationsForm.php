@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use Exception;
+use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
@@ -31,9 +32,7 @@ class ApplyMigrationsForm extends Form
                 );
             }
         } else {
-            $this->add(Html::tag('p', [
-                'class' => 'state-hint warning'
-            ], $this->translate('There is no vSphereDB schema in this database')));
+            $this->add(Hint::warning($this->translate('There is no vSphereDB schema in this database')));
             $label = $this->translate('Create schema');
         }
         $this->addElement('submit', 'submit', [

@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Exception;
+use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
@@ -203,10 +204,10 @@ class VmEssentialInfoTable extends NameValueTable
             }
         } catch (Exception $e) {
             return [
-                Html::tag('p', ['class' => 'error'], sprintf(
+                Hint::error(
                     $this->translate('Unable to check monitoring state: %s'),
                     $e->getMessage()
-                ))
+                )
             ];
         }
     }

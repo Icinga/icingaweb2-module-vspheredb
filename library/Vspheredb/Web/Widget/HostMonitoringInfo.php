@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 use Exception;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Widget\Hint;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -89,10 +90,10 @@ class HostMonitoringInfo extends HtmlDocument
             }
         } catch (Exception $e) {
             return [
-                Html::tag('p', ['class' => 'error'], sprintf(
+                Hint::error(
                     $this->translate('Unable to check monitoring state: %s'),
                     $e->getMessage()
-                ))
+                )
             ];
         }
     }
