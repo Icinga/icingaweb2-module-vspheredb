@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Web\Table\NameValueTable;
 use Exception;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
