@@ -23,15 +23,6 @@ class Controller extends CompatController
         }
     }
 
-    protected function addHint($message, $class = 'information')
-    {
-        $this->content()->add(Html::tag('p', [
-            'class' => $class
-        ], $message));
-
-        return $this;
-    }
-
     protected function db()
     {
         if ($this->db === null) {

@@ -3,11 +3,11 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Widget\Hint;
 use Icinga\Application\Version;
 use Icinga\Module\Vspheredb\Validator\PhpSessionBasedCsrfTokenValidator;
 use ipl\Html\Form as iplForm;
 use ipl\Html\FormElement\HiddenElement;
-use ipl\Html\Html;
 use RuntimeException;
 
 class Form extends iplForm
@@ -61,6 +61,12 @@ class Form extends iplForm
             'class' => 'icinga-form icinga-controls'
         ]);
         $this->setDefaultElementDecorator(new LegacyDecorator());
+    }
+
+    protected function setupStyling()
+    {
+        $this->addAttributes(['class' => 'gipfl-form']);
+        $this->setDefaultElementDecorator(new DdDtDecorator());
     }
 
     protected function addCsrfElement()
@@ -134,18 +140,23 @@ class Form extends iplForm
             if ($message instanceof \Exception) {
                 $message = $message->getMessage();
             }
-            $this->prepend(Html::tag('p', ['class' => 'state-hint error'], $message));
+            $this->prepend(Hint::error($message));
         }
         foreach ($this->getElements() as $element) {
             foreach ($element->getMessages() as $message) {
-                $this->prepend(Html::tag('p', ['class' => 'state-hint error'], $message));
+                $this->prepend(Hint::error($message));
             }
         }
     }
 
-    public function addHint($hint)
+    public function addHint($hint, $class = 'ok')
     {
-        return $this->add(Html::tag('p', ['class' => 'information'], $hint));
+        return $this->add($this->createHint($hint, $class));
+    }
+
+    public function createHint($hint, $class = 'ok')
+    {
+        return new Hint($hint, $class);
     }
 
     public function optionalEnum($enum, $nullLabel = null)

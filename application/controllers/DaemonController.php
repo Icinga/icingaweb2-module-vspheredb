@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Icon;
+use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -47,9 +48,7 @@ class DaemonController extends Controller
 
         if ($daemon) {
             if ($daemon->ts_last_refresh / 1000 < time() - 10) {
-                $info = Html::tag('p', [
-                    'class' => 'error'
-                ], Html::sprintf(
+                $info = Hint::error(Html::sprintf(
                     "Daemon keep-alive is outdated, last refresh was %s",
                     $this->timeAgo($daemon->ts_last_refresh / 1000)
                 ));
@@ -70,7 +69,7 @@ class DaemonController extends Controller
                 $info = $table;
             }
         } else {
-            $info = Html::tag('p', ['class' => 'error'], 'Daemon is not running');
+            $info = Hint::error($this->translate('Daemon is not running'));
         }
         $this->content()->add([$info, $logWindow]);
     }

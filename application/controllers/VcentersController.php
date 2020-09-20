@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
@@ -51,20 +52,17 @@ class VcentersController extends ObjectsController
 
     protected function addNoVCenterHint()
     {
-        $this->addHint(
-            Html::sprintf(
-                'No vCenter available. You might want to check your %s or your %s',
-                Link::create(
-                    $this->translate('Server Connections'),
-                    'vspheredb/vcenter/servers'
-                ),
-                Link::create(
-                    $this->translate('Daemon Status'),
-                    'vspheredb/daemon'
-                )
+        $this->content()->add(Hint::warning(
+            $this->translate('No vCenter available. You might want to check your %s or your %s'),
+            Link::create(
+                $this->translate('Server Connections'),
+                'vspheredb/vcenter/servers'
             ),
-            'warning'
-        );
+            Link::create(
+                $this->translate('Daemon Status'),
+                'vspheredb/daemon'
+            )
+        ));
     }
 
     /**

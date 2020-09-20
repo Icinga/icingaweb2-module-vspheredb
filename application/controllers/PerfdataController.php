@@ -48,16 +48,4 @@ class PerfdataController extends Controller
             ->appendTo($this->actions());
         $table->renderTo($this);
     }
-
-    protected function handleTabs()
-    {
-        $action = $this->getRequest()->getActionName();
-        $this->tabs()->add('index', [
-            'label' => $this->translate('Performance Data'),
-            'url'   => 'vspheredb/perfdata',
-        ])->add('counters', [
-            'label' => $this->translate('Counters'),
-            'url'   => 'vspheredb/perfdata/counters',
-        ])->activate($action);
-    }
 }
