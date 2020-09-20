@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Web\Table\NameValueTable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -48,7 +48,8 @@ class VmLocationInfoTable extends NameValueTable
         $lookup =  new PathLookup($connection);
         $hostUuid = $vm->get('runtime_host_uuid');
         if ($hostUuid === null) {
-            $hostInfo = null;
+            $hostInfo = '-';
+            $hostResources = '-';
         } else {
             try {
                 $host = HostSystem::load($hostUuid, $connection);
@@ -56,9 +57,10 @@ class VmLocationInfoTable extends NameValueTable
                     $lookup->linkToObject($hostUuid),
                     Html::tag('br'),
                     ConnectionStateDetails::getFor($vm->get('connection_state')),
-                    $this->prepareHostInfo($host),
                 ];
+                $hostResources = $this->prepareHostInfo($host);
             } catch (NotFoundError $e) {
+                $hostResources = '-';
                 $hostInfo = Html::tag('span', [
                     'class' => 'error'
                 ], $this->translate('Failed to load related host'));
@@ -67,6 +69,8 @@ class VmLocationInfoTable extends NameValueTable
 
         $this->addNameValuePairs([
             $this->translate('Host') => $hostInfo,
+            // Better: Host CPU / Host Memory
+            $this->translate('Host Resources') => $hostResources,
             $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
             $this->translate('Path') => PathToObjectRenderer::render($vm),
             $this->translate('vCenter') => new VCenterLink($this->vCenter),

@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use gipfl\IcingaWeb2\Widget\NameValueTable;
 use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;

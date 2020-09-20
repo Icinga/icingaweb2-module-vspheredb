@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
 

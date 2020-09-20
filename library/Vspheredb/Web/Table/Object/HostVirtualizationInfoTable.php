@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Web\Table\NameValueTable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
