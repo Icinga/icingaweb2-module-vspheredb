@@ -6,7 +6,12 @@ a:hover::before {
   text-decoration: none;
 }
 
-p.error, p.warning, p.information {
+span.error {
+  color: @colorCritical;
+}
+
+p.legacy-error {
+  background-color: @colorCritical;
   color: white;
   padding: 1em 2em;
   font-weight: bold;
@@ -15,22 +20,6 @@ p.error, p.warning, p.information {
     color: inherit;
     text-decoration: underline;
   }
-}
-
-span.error {
-  color: @colorCritical;
-}
-
-p.error {
-  background-color: @colorCritical;
-}
-
-p.warning {
-  background-color: @colorWarning;
-}
-
-p.information {
-  background-color: @colorOk;
 }
 
 div.section {
@@ -264,22 +253,6 @@ div.event-heatmap-calendars > table.calendar {
   td.other-month, td.other-month a, td.future-day, td.future-day a {
     color: @gray-light;
   }
-}
-
-p.information, p.warning, p.critical {
-  margin: 0.5em 0 0.5em 0;
-  background-color: @color-ok;
-  color: white;
-  font-weight: bold;
-  padding: 1em;
-}
-
-p.warning {
-  background-color: @color-warning;
-}
-
-p.critical {
-  background-color: @color-critical;
 }
 
 .controls.show-compact {

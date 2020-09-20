@@ -9,7 +9,7 @@ use Icinga\Application\Modules\Manager;
 </div>
 
 <div class="content">
-<p class="state-hint error"><?= $this->escape($this->message) ?></p>
+<p class="legacy-error"><?= $this->escape($this->message) ?></p>
 <table class="common-table table-row-selectable">
 <thead>
 <tr>
@@ -22,9 +22,9 @@ use Icinga\Application\Modules\Manager;
 <?php
 
 foreach ($this->dependencies as $module => $required) {
-    /** @var Manager $this->modules */
-    if ($modules->hasEnabled($module)) {
-        $installed = $modules->getModule($module, false)->getVersion();
+    assert($this->modules instanceof Manager);
+    if ($this->modules->hasEnabled($module)) {
+        $installed = $this->modules->getModule($module, false)->getVersion();
         $installed = \ltrim($installed, 'v'); // v0.6.0 VS 0.6.0
         if (\preg_match('/^([<>=]+)\s*v?(\d+\.\d+\.\d+)$/', $required, $match)) {
             $operator = $match[1];
@@ -43,7 +43,7 @@ foreach ($this->dependencies as $module => $required) {
                 ['name' => $module],
                 ['class' => "icon-$icon"]
         );
-    } elseif ($modules->hasInstalled($module)) {
+    } elseif ($this->modules->hasInstalled($module)) {
         $installed = $this->translate('disabled');
         $link = $this->qlink($module, 'config/module', ['name' => $module], ['class' => 'icon-cancel']);
     } else {
