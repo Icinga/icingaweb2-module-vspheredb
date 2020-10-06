@@ -2,13 +2,17 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use ipl\Html\FormElement\SubmitElement;
+use gipfl\Web\Form as gForm;
 
-class VCenterServerForm extends Form
+class VCenterServerForm extends gForm
 {
+    use TranslationHelper;
+
     const UNCHANGED_PASSWORD = '__UNCHANGED__';
 
     protected $objectClassName = VCenterServer::class;
@@ -112,10 +116,11 @@ class VCenterServerForm extends Form
                 'In case your vCenter is only reachable through a proxy, please'
                 . ' choose it\'s protocol right here'
             ),
-            'multiOptions' => $this->optionalEnum([
+            'multiOptions' => [
+                null     => $this->translate('- please choose -'),
                 'HTTP'   => $this->translate('HTTP proxy'),
                 'SOCKS5' => $this->translate('SOCKS5 proxy'),
-            ]),
+            ],
             'class' => 'autosubmit'
         ]);
 

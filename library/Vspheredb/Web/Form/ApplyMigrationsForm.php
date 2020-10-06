@@ -2,14 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use Exception;
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Web\Notification;
-use ipl\Html\Html;
 
 class ApplyMigrationsForm extends Form
 {
+    use TranslationHelper;
+
     /** @var  Migrations */
     protected $migrations;
 
