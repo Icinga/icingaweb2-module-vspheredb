@@ -2,13 +2,17 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
+use gipfl\Web\Form as gForm;
 
-class VCenterForm extends Form
+class VCenterForm extends gForm
 {
+    use TranslationHelper;
+
     protected $objectClassName = VCenterServer::class;
 
     /** @var VCenterServer */
