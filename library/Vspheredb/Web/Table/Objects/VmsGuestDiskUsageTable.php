@@ -16,7 +16,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
         'disk_path',
     ];
 
-    protected $withHistory = true;
+    protected $withHistory = false;
 
     public function filterHost($uuid)
     {
