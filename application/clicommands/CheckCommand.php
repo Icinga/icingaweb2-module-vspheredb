@@ -29,7 +29,7 @@ class CheckCommand extends CommandBase
      *
      * USAGE
      *
-     * icingacli vspheredb check host --name <name> [--perfdata]
+     * icingacli vspheredb check host [--name <name>] [--perfdata]
      */
     public function hostAction()
     {
@@ -75,7 +75,7 @@ class CheckCommand extends CommandBase
      *
      * USAGE
      *
-     * icingacli vspheredb check vm --name <name> [--perfdata]
+     * icingacli vspheredb check vm [--name <name>] [--perfdata]
      */
     public function vmAction()
     {
@@ -120,7 +120,7 @@ class CheckCommand extends CommandBase
      *
      * USAGE
      *
-     * icingacli vspheredb check datastore --name <name> [--perfdata]
+     * icingacli vspheredb check datastore [--name <name>] [--perfdata]
      */
     public function datastoreAction()
     {
