@@ -827,7 +827,7 @@ CREATE TABLE performance_counter (
   label VARCHAR(96) NOT NULL,
   group_name VARCHAR(32) NOT NULL,
   unit_name VARCHAR(32) NOT NULL,
-  summary VARCHAR(255) NOT NULL,
+  summary text NOT NULL,
   stats_type ENUM( -- statsType
     'absolute',
     'delta',
