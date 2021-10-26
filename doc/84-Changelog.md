@@ -43,6 +43,7 @@ restart the *Background Daemon*.
 * FEATURE: allow to define a custom vCenter display name (#121)
 * FEATURE: show VM templates as such to make them distinguishable (#205)
 * FEATURE: add vCenter-related object summaries (#237)
+* FEATURE: provide a MOB link for every vCenter (#267)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)

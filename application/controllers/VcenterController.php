@@ -12,6 +12,7 @@ use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
+use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterHeader;
@@ -33,6 +34,7 @@ class VcenterController extends Controller
                 ['class' => 'icon-edit']
             ));
         }
+        $this->actions()->add(new MobLink($vCenter));
         $this->setAutorefreshInterval(10);
         // $this->content()->add(new VCenterSyncInfo($vCenter));
         $perf = $this->perf();
