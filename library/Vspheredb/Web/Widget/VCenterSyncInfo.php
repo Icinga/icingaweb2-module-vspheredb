@@ -32,7 +32,7 @@ class VCenterSyncInfo extends BaseHtmlElement
 
         $title = Html::tag('h1', null, sprintf(
             $this->translate('VCenter %s'),
-            $this->vCenter->getFirstServer()->get('host')
+            $this->vCenter->getFirstServer(false)->get('host')
         ));
         $this->add($title);
         if ($sync->isAlive()) {
