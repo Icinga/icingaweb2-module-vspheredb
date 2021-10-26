@@ -197,7 +197,7 @@ class RpcWorker implements PacketHandler
 
     protected function setServers($servers)
     {
-        $this->servers = ServerSet::fromPlainObject($servers);
+        $this->servers = ServerSet::fromSerialization($servers);
         foreach ($this->servers->getServers() as $server) {
             $id = $server->get('vcenter_id');
             if (! isset($this->apis[$id])) {

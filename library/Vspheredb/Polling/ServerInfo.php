@@ -2,13 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Polling;
 
+use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use InvalidArgumentException;
-use JsonSerializable;
 use function array_key_exists;
-use function json_encode;
 
-class ServerInfo implements JsonSerializable
+class ServerInfo implements JsonSerialization
 {
     /** @var array */
     protected $properties;
@@ -22,7 +21,7 @@ class ServerInfo implements JsonSerializable
         $this->properties = $properties;
     }
 
-    public static function fromPlainObject($object)
+    public static function fromSerialization($object)
     {
         // Validation will be implemented once this is remote
         return new static((array) $object);

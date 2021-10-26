@@ -2,10 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Polling;
 
+use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
-use JsonSerializable;
 
-class ServerSet implements JsonSerializable
+class ServerSet implements JsonSerialization
 {
     protected $servers = [];
 
@@ -20,11 +20,11 @@ class ServerSet implements JsonSerializable
         }
     }
 
-    public static function fromPlainObject($object)
+    public static function fromSerialization($any)
     {
         $self = new static();
-        foreach ($object as $key => $server) {
-            $info = ServerInfo::fromPlainObject($server);
+        foreach ($any as $key => $server) {
+            $info = ServerInfo::fromSerialization($server);
             // This doesn't fail - yet
             assert($key === $info->getIdentifier());
             $self->addServer($info);
