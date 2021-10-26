@@ -43,7 +43,7 @@ class VCenterServersTable extends BaseTable
         return sprintf(
             '%s://%s@%s',
             $row->scheme,
-            $row->username,
+            rawurlencode($row->username),
             $row->host
         );
     }
