@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use Icinga\Module\Vspheredb\Json;
+use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualSwitch;
 use ipl\Html\Html;
 
@@ -55,7 +55,7 @@ class PortGroupsTable extends ObjectsTable
                         return '-';
                     } else {
                         $ranges = [];
-                        foreach (Json::decode($row->vlan_ranges) as $range) {
+                        foreach (JsonString::decode($row->vlan_ranges) as $range) {
                             if (! empty($ranges)) {
                                 $ranges[] = Html::tag('br');
                             }

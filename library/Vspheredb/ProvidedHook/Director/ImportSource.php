@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\ProvidedHook\Director;
 
+use gipfl\Json\JsonString;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Json;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Adapter_Abstract as ZfDb;
 
@@ -152,7 +152,7 @@ class ImportSource extends ImportSourceHook
         if (\in_array($objectType, ['host_system', 'virtual_machine'])) {
             foreach ($result as &$row) {
                 if ($row->custom_values !== null) {
-                    $row->custom_values = Json::decode($row->custom_values);
+                    $row->custom_values = JsonString::decode($row->custom_values);
                 }
             }
         }

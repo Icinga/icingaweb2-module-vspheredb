@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Module\Vspheredb\Json;
+use gipfl\Json\JsonString;
 
 trait CustomValueSupport
 {
@@ -15,7 +15,7 @@ trait CustomValueSupport
         if ($value === null) {
             $this->set('custom_values', null);
         } else {
-            $this->set('custom_values', Json::encode($value));
+            $this->set('custom_values', JsonString::encode($value));
         }
     }
 

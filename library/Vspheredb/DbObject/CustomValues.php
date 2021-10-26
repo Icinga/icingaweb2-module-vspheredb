@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Module\Vspheredb\Json;
+use gipfl\Json\JsonString;
 use JsonSerializable;
 
 class CustomValues implements JsonSerializable
@@ -17,7 +17,7 @@ class CustomValues implements JsonSerializable
     public static function fromJson($string)
     {
         if (\strlen($string) > 0) {
-            return new static((array) Json::decode($string));
+            return new static((array) JsonString::decode($string));
         } else {
             return new static;
         }

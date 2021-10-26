@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\Json\JsonString;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Decorator\DdDtDecorator;
 use Icinga\Module\Vspheredb\Hook\PerfDataReceiverHook;
-use Icinga\Module\Vspheredb\Json;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\PerformanceSets;
 use Icinga\Module\Vspheredb\Storable\PerfdataSubscription;
 use Icinga\Module\Vspheredb\Web\Form\Element\VCenterSelection;
@@ -61,9 +61,8 @@ class VCenterPerformanceCollectionForm extends ObjectForm
                 $settings[$key] = $value;
             }
         }
-        $flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-        $finalValues['settings'] = Json::encode($settings, $flags);
-        $finalValues['performance_sets'] = Json::encode($finalValues['performance_sets'], $flags);
+        $finalValues['settings'] = JsonString::encode($settings);
+        $finalValues['performance_sets'] = JsonString::encode($finalValues['performance_sets']);
 
         return $finalValues;
     }
