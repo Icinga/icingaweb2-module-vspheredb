@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Exception;
+use gipfl\Json\JsonSerialization;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Module\Vspheredb\Api;
@@ -13,10 +14,11 @@ use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 
-abstract class BaseDbObject extends VspheredbDbObject
+abstract class BaseDbObject extends VspheredbDbObject implements JsonSerialization
 {
-    /** @var Db $connection Exists in parent, but IDEs need a berrer hint */
+    /** @var Db $connection Exists in parent, but IDEs need a better hint */
     protected $connection;
 
     protected $keyName = 'id';
@@ -167,6 +169,36 @@ abstract class BaseDbObject extends VspheredbDbObject
         }
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $serialized = [];
+        foreach ($this->getProperties() as $key => $value) {
+            if ($this->isBooleanProperty($key)) {
+                $value = DbProperty::dbToBoolean($value);
+            } elseif ($this->isObjectReference($key)) {
+                $value = '0x' . bin2hex($value);
+            } elseif ($key === 'uuid' || substr($key, -5) === '_uuid') { // Hint: SHOULD be keys or references
+                if (strlen($value) === 16) {
+                    $value = Uuid::fromBytes($value)->toString();
+                } else {
+                    $value = '0x' . bin2hex($value);
+                }
+            }
+            /* elseif ($this->isDateTimeProperty($key)) {
+                // TODO: ISO with ms/ns?
+            }*/
+
+            $serialized[$key] = $value;
+        }
+
+        return $serialized;
+    }
+
+    public static function fromSerialization($any)
+    {
+        return static::create((array) $any);
     }
 
     protected function createUuidForMoref($value, VCenter $vCenter)
