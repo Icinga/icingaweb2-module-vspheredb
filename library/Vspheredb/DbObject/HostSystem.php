@@ -68,7 +68,11 @@ class HostSystem extends BaseDbObject
     public function quickStats()
     {
         if ($this->quickStats === null) {
-            $this->quickStats = HostQuickStats::load($this->get('uuid'), $this->connection);
+            if (HostQuickStats::exists($this->get('uuid'), $this->connection)) {
+                $this->quickStats = HostQuickStats::load($this->get('uuid'), $this->connection);
+            } else {
+                $this->quickStats = HostQuickStats::create();
+            }
         }
 
         return $this->quickStats;
