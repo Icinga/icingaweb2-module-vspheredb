@@ -12,7 +12,6 @@ use Icinga\Module\Vspheredb\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
-use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 
 abstract class BaseDbObject extends VspheredbDbObject
@@ -129,26 +128,6 @@ abstract class BaseDbObject extends VspheredbDbObject
     }
 
     /**
-     * @param $value
-     * @return null|string
-     */
-    protected function makeBooleanValue($value)
-    {
-        if ($value === true) {
-            return 'y';
-        } elseif ($value === false) {
-            return 'n';
-        } elseif ($value === null) {
-            return null;
-        } else {
-            throw new InvalidArgumentException(
-                'Boolean expected, got %s',
-                var_export($value, 1)
-            );
-        }
-    }
-
-    /**
      * @param $properties
      * @param VCenter $vCenter
      * @return $this
@@ -164,7 +143,7 @@ abstract class BaseDbObject extends VspheredbDbObject
                 if ($this->isObjectReference($property)) {
                     $value = $this->createUuidForMoref($value, $vCenter);
                 } elseif ($this->isBooleanProperty($property)) {
-                    $value = $this->makeBooleanValue($value);
+                    $value = DbProperty::booleanToDb($value);
                 } elseif ($this->isDateTimeProperty($property)) {
                     $value = Util::timeStringToUnixMs($value);
                 } elseif ($value instanceof ElementDescription) {

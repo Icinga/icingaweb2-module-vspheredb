@@ -22,7 +22,7 @@ abstract class BaseVmHardwareDbObject extends BaseDbObject
                     $value = $vCenter->makeBinaryGlobalUuid($value);
                 }
             } elseif ($this->isBooleanProperty($property)) {
-                $value = $this->makeBooleanValue($value);
+                $value = DbProperty::booleanToDb($value);
             }
 
             $this->set($property, $value);

@@ -144,7 +144,7 @@ class VirtualMachine extends BaseDbObject
         }
 
         if (is_bool($value)) {
-            $value = $this->makeBooleanValue($value);
+            $value = DbProperty::booleanToDb($value);
         }
 
         return $this->reallySet('paused', $value);
