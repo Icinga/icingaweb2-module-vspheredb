@@ -185,7 +185,7 @@ class HostsTable extends ObjectsTable
             ['h' => 'host_system'],
             'o.uuid = h.uuid',
             []
-        )->join(
+        )->joinLeft(
             ['hqs' => 'host_quick_stats'],
             'h.uuid = hqs.uuid',
             []
