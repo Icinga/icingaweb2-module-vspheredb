@@ -41,7 +41,7 @@ abstract class ObjectForm extends Form
 
     public function wasNew()
     {
-        $this->wasNew;
+        return $this->wasNew;
     }
 
     public function isNew()
