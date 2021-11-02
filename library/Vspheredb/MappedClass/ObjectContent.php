@@ -59,14 +59,50 @@ class ObjectContent
         return false;
     }
 
+    /**
+     * @return bool
+     */
+    public function reportsNoPermission()
+    {
+        if ($this->missingSet === null) {
+            return false;
+        }
+
+        foreach ($this->missingSet as $missingProperty) {
+            if ($missingProperty->isNoPermission()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function toNewObject()
     {
         $class = ApiClassMap::requireTypeMap($this->obj->type);
         $obj = new $class;
-        foreach ($this->propSet as $dynamicProperty) {
-            $obj->{$dynamicProperty->name} = $dynamicProperty->val;
+        if ($this->propSet) {
+            $obj->obj = $this->obj;
+            foreach ($this->propSet as $dynamicProperty) {
+                $obj->{$dynamicProperty->name} = $dynamicProperty->val;
+            }
         }
 
         return $obj;
+    }
+
+    public function jsonSerialize()
+    {
+        $obj = [
+            'obj' => $this->obj
+        ];
+        if ($this->propSet) {
+            foreach ($this->propSet as $dynamicProperty) {
+                $obj[$dynamicProperty->name] = $dynamicProperty->val;
+            }
+        }
+        // TODO: How to deal with missingset?
+
+        return (array) $obj;
     }
 }
