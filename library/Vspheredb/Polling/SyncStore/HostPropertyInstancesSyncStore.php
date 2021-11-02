@@ -11,6 +11,7 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
 
     protected $baseKey = 'undefined.property';
     protected $keyProperty = 'undefinedKeyProperty';
+    protected $dbKeyProperty = 'undefinedKeyProperty';
     protected $instanceClass = 'undefinedInstanceClass';
 
     public function store($result, $class, SyncStats $stats)
@@ -20,6 +21,7 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
 
         $baseKey = $this->baseKey;
         $keyProperty = $this->keyProperty;
+        $dbKeyProperty = $this->dbKeyProperty;
         $instanceClass = $this->instanceClass;
 
         $apiObjects = [];
@@ -37,7 +39,7 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
                 if (! array_key_exists($idx, $dbObjects)) {
                     $dbObjects[$idx] = $class::create([
                         'host_uuid'  => $uuid,
-                        $keyProperty => $key
+                        $dbKeyProperty => $key
                     ], $connection);
                 }
                 $dbObjects[$idx]->setMapped($instance, $this->vCenter);
