@@ -60,11 +60,16 @@ class SoapClient extends PhpSoapClient
     {
         $headers = [
             'User-Agent'   => 'Icinga vSphere Client/1.1',
-            'Content-Type' => 'text/xml; charset=utf-8',
             'Connection'   => 'Keep-Alive',
             'Keep-Alive'   => '300',
-            'SOAPAction'   => $action,
         ];
+        if ($version === SOAP_1_1) {
+            $headers['SOAPAction'] = $action;
+            $headers['Content-Type'] = 'text/xml; charset=utf-8';
+        } elseif ($version === SOAP_1_2) {
+            $headers['Content-Type'] = 'application/soap+xml; charset=utf-8; action=' . $action;
+        }
+
         // TODO: we might want to collect summaries for sent/received bytes
         // Logger::debug('SOAPClient: ready to send %s', Format::bytes(strlen($request)));
         $result = $this->curl->post($location, $request, $headers);
