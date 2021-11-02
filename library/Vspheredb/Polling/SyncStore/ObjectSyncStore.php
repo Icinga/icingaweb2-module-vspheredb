@@ -2,8 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
-use gipfl\ZfDb\Adapter\Adapter;
-use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\CustomFieldsManager;
 use Icinga\Module\Vspheredb\RemoteSync\SyncHelper;
