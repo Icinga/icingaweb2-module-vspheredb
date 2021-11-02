@@ -79,6 +79,19 @@ class VmQuickStats extends BaseDbObject
         return $this;
     }
 
+    public static function loadFor(VirtualMachine $object)
+    {
+        if ($object->hasBeenLoadedFromDb()) {
+            $connection = $object->getConnection();
+            $uuid = $object->get('uuid');
+            if (static::exists($uuid, $connection)) {
+                return static::load($uuid, $connection);
+            }
+        }
+
+        return static::create();
+    }
+
     protected function setUptime($value)
     {
         if ($value === 0) {

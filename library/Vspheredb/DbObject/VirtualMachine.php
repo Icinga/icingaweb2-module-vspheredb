@@ -95,21 +95,6 @@ class VirtualMachine extends BaseDbObject
         // 'runtime.suspendTime' 'runtime_last_suspend_time',
     ];
 
-    protected $quickStats;
-
-    /**
-     * @return VmQuickStats
-     * @throws \Icinga\Exception\NotFoundError
-     */
-    public function quickStats()
-    {
-        if ($this->quickStats === null) {
-            $this->quickStats = VmQuickStats::load($this->get('uuid'), $this->connection);
-        }
-
-        return $this->quickStats;
-    }
-
     /**
      * @param Api $api
      * @return array

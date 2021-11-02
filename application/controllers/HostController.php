@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use Icinga\Authentication\Auth;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -35,11 +36,12 @@ class HostController extends Controller
         $host = $this->addHost();
         $this->content()->addAttributes(['class' => 'host-info']);
         $vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
+        $quickStats = HostQuickStats::loadFor($host);
         $this->addSections([
-            new HostSystemInfoTable($host, $vCenter),
+            new HostSystemInfoTable($host, $quickStats, $vCenter),
             new HostVirtualizationInfoTable($host),
             new CustomValueDetails($host),
-            new HostHardwareInfoTable($host),
+            new HostHardwareInfoTable($host, $quickStats),
             new HostMonitoringInfo($host),
             new HostPhysicalNicTable($host),
         ]);

@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Widget\BiosInfo;
@@ -20,12 +21,16 @@ class HostSystemInfoTable extends NameValueTable
     /** @var HostSystem */
     protected $host;
 
+    /** @var HostQuickStats */
+    protected $quickStats;
+
     /** @var VCenter */
     protected $vCenter;
 
-    public function __construct(HostSystem $host, VCenter $vCenter)
+    public function __construct(HostSystem $host, HostQuickStats $quickStats, VCenter $vCenter)
     {
         $this->host = $host;
+        $this->quickStats = $quickStats;
         $this->vCenter = $vCenter;
     }
 
@@ -40,7 +45,7 @@ class HostSystemInfoTable extends NameValueTable
             $this->translate('Model') =>  $host->get('sysinfo_model'),
             $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
             $this->translate('BIOS Version') => new BiosInfo($host),
-            $this->translate('Uptime')       => DateFormatter::formatDuration($host->quickStats()->get('uptime')),
+            $this->translate('Uptime')       => DateFormatter::formatDuration($this->quickStats->get('uptime')),
             $this->translate('System UUID')  => Html::tag('pre', $host->get('sysinfo_uuid')),
         ]);
     }

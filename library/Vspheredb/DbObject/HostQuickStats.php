@@ -35,4 +35,17 @@ class HostQuickStats extends BaseDbObject
     {
         return HostSystem::getSelectSet();
     }
+
+    public static function loadFor(HostSystem $object)
+    {
+        if ($object->hasBeenLoadedFromDb()) {
+            $connection = $object->getConnection();
+            $uuid = $object->get('uuid');
+            if (static::exists($uuid, $connection)) {
+                return static::load($uuid, $connection);
+            }
+        }
+
+        return static::create();
+    }
 }

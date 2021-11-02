@@ -30,11 +30,11 @@ class HostHeader extends HtmlDocument
         ];
 
         $cpu = new CpuAbsoluteUsage(
-            $host->quickStats()->get('overall_cpu_usage'),
+            $this->quickStats->get('overall_cpu_usage'),
             $host->get('hardware_cpu_cores')
         );
         $mem = new MemoryUsage(
-            $host->quickStats()->get('overall_memory_usage_mb'),
+            $this->quickStats->get('overall_memory_usage_mb'),
             $host->get('hardware_memory_size_mb')
         );
         $title = Html::tag('h1', [
