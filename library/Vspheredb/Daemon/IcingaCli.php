@@ -59,7 +59,7 @@ class IcingaCli
             if ($state->succeeded()) {
                 $deferred->resolve();
             } else {
-                $deferred->reject($state);
+                $deferred->reject(new \RuntimeException($state->getReason()));
             }
         });
         $process->start($loop);
