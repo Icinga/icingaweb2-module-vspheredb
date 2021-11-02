@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Exception;
+use gipfl\Cli\Process;
 use gipfl\Cli\Tty;
 use gipfl\Log\Filter\LogLevelFilter;
 use gipfl\Log\IcingaWeb\IcingaLogger;
@@ -14,7 +15,6 @@ use gipfl\Protocol\JsonRpc\Connection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use gipfl\SystemD\systemd;
 use Icinga\Cli\Command as CliCommand;
-use Icinga\Module\Vspheredb\CliUtil;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use React\EventLoop\Factory as Loop;
@@ -174,7 +174,7 @@ class Command extends CliCommand
             $this->fail($message);
         }
 
-        CliUtil::setTitle(sprintf(
+        Process::setTitle(sprintf(
             'Icinga::vSphereDB::%s: (%sfailed: %s)',
             $task,
             $subject ? "$subject: " : '',

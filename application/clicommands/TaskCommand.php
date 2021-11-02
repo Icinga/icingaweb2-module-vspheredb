@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Exception;
-use Icinga\Module\Vspheredb\CliUtil;
+use gipfl\Cli\Process;
 use Icinga\Module\Vspheredb\Daemon\PerfDataRunner;
 use Icinga\Module\Vspheredb\Daemon\RpcWorker;
 use Icinga\Module\Vspheredb\Daemon\SyncRunner;
@@ -30,10 +30,10 @@ class TaskCommand extends Command
         $this->loop()->futureTick(function () {
             $hostname = null;
             try {
-                CliUtil::setTitle('Icinga::vSphereDB::initialize');
+                Process::setTitle('Icinga::vSphereDB::initialize');
                 $server = $this->requireVCenterServer();
                 $hostname = $server->get('host');
-                CliUtil::setTitle(sprintf('Icinga::vSphereDB::initialize (%s)', $hostname));
+                Process::setTitle(sprintf('Icinga::vSphereDB::initialize (%s)', $hostname));
                 VCenterInitialization::initializeFromServer($server, $this->logger);
                 $this->loop()->stop();
             } catch (Exception $e) {
@@ -57,7 +57,7 @@ class TaskCommand extends Command
         $this->loop()->futureTick(function () {
             $subject = null;
             try {
-                CliUtil::setTitle('Icinga::vSphereDB::sync');
+                Process::setTitle('Icinga::vSphereDB::sync');
                 $vCenter = $this->requireVCenter();
                 $subject = $vCenter->get('name');
                 if ($subject === null) {
@@ -75,7 +75,6 @@ class TaskCommand extends Command
     {
         $this->loop()->futureTick(function () {
             try {
-                CliUtil::setTitle('Icinga::vSphereDB::worker');
                 $worker = new RpcWorker($this->rpc, $this->logger, $this->loop());
                 $worker->run();
             } catch (Exception $e) {
@@ -94,16 +93,16 @@ class TaskCommand extends Command
 
     protected function runSync(VCenter $vCenter, $subject)
     {
-        CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s)', $subject));
+        Process::setTitle(sprintf('Icinga::vSphereDB::sync (%s)', $subject));
         $time = microtime(true);
         (new SyncRunner($vCenter, $this->logger))
             ->showTrace($this->showTrace())
             ->on('beginTask', function ($taskName) use ($subject, &$time) {
-                CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s: %s)', $subject, $taskName));
+                Process::setTitle(sprintf('Icinga::vSphereDB::sync (%s: %s)', $subject, $taskName));
                 $time = microtime(true);
             })
             ->on('endTask', function ($taskName) use ($subject, &$time) {
-                CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s)', $subject));
+                Process::setTitle(sprintf('Icinga::vSphereDB::sync (%s)', $subject));
                 $duration = microtime(true) - $time;
                 $this->logger->debug(sprintf(
                     'Task "%s" took %.2Fms on %s',
@@ -113,7 +112,7 @@ class TaskCommand extends Command
                 ));
             })
             ->on('dbError', function (\Zend_Db_Exception $e) use ($subject) {
-                CliUtil::setTitle(sprintf('Icinga::vSphereDB::sync (%s: FAILED)', $subject));
+                Process::setTitle(sprintf('Icinga::vSphereDB::sync (%s: FAILED)', $subject));
                 $this->failFriendly('sync', $e, $subject);
             })
             ->run($this->loop())
