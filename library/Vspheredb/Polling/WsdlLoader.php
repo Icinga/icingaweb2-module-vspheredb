@@ -1,0 +1,156 @@
+<?php
+
+namespace Icinga\Module\Vspheredb\Polling;
+
+use gipfl\Curl\CurlAsync;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
+use React\EventLoop\LoopInterface;
+use React\Promise\Deferred;
+use React\Promise\ExtendedPromiseInterface;
+use function file_exists;
+use function file_put_contents;
+use function unlink;
+
+class WsdlLoader
+{
+    protected $requiredFiles = [
+        'vimService.wsdl',
+        'vim.wsdl',
+        'core-types.xsd',
+        'query-types.xsd',
+        'query-messagetypes.xsd',
+        'reflect-types.xsd',
+        'reflect-messagetypes.xsd',
+        'vim-types.xsd',
+        'vim-messagetypes.xsd',
+    ];
+
+    protected $logger;
+
+    /** @var LoopInterface */
+    protected $loop;
+
+    protected $cacheDir;
+
+    protected $curl;
+
+    protected $serverInfo;
+
+    protected $baseUrl;
+
+    /** @var ExtendedPromiseInterface[] */
+    protected $pending = [];
+
+    /** @var ?Deferred */
+    protected $deferred;
+
+    public function __construct($cacheDir, LoggerInterface $logger, ServerInfo $server, CurlAsync $curl)
+    {
+        $this->cacheDir = $cacheDir;
+        $this->logger = $logger;
+        $this->serverInfo = $server;
+        $this->curl = $curl;
+        $this->baseUrl = $server->getUrl();
+    }
+
+    public function fetchInitialWsdlFile(LoopInterface $loop)
+    {
+        $this->loop = $loop;
+        return $this->fetchFiles()->then(function () {
+            return $this->cacheDir . '/' . $this->requiredFiles[0];
+        });
+    }
+
+    public function stop()
+    {
+        if ($this->deferred) {
+            $deferred = $this->deferred;
+            $pending = $this->pending;
+            $this->deferred = null;
+            $this->pending = [];
+            $deferred->reject();
+            foreach ($pending as $promise) {
+                $promise->cancel();
+            }
+        }
+    }
+
+    public function flushWsdlCache()
+    {
+        $dir = $this->cacheDir;
+        $unlinked = false;
+        foreach ($this->requiredFiles as $file) {
+            if (file_exists("$dir/$file")) {
+                unlink("$dir/$file");
+                $unlinked = true;
+            }
+        }
+        if ($unlinked) {
+            $this->logger->notice("Flushed WSDL Cache in $dir");
+        }
+    }
+
+    protected function processFileResult(ResponseInterface $response, $file)
+    {
+        // Ignore unwanted delayed responses
+        if (isset($pending[$file])) {
+            $this->logger->info("Loaded sdk/$file");
+            file_put_contents($this->cacheDir . "/$file", $response->getBody());
+            unset($pending[$file]);
+            $this->resolveIfReady();
+        }
+    }
+
+    protected function processFileFailure(\Exception $e, $file)
+    {
+        if (isset($pending[$file])) {
+            $logUrl = $this->url($file);
+            $this->logger->error("Loading $logUrl failed: " . $e->getMessage());
+            $this->pending = []; // TODO: is there a way to stop pending requests?
+            $this->flushWsdlCache();
+            $this->deferred->reject($e);
+        }
+    }
+
+    protected function fetchFiles()
+    {
+        if ($this->deferred) {
+            $this->logger->notice('Calling WsdlLoader::fetchFiles while already loading');
+            return $this->deferred->promise();
+        }
+        $this->deferred = new Deferred();
+        $this->pending = [];
+        $curl = $this->curl;
+        $dir = $this->cacheDir;
+        foreach ($this->requiredFiles as $file) {
+            if (! file_exists("$dir/$file")) {
+                $this->pending[$file] = $curl
+                    ->get($this->url($file), [], CurlOptions::forServerInfo($this->serverInfo))
+                    ->then(function (ResponseInterface $response) use ($file) {
+                        $this->processFileResult($response, $file);
+                    }, function (\Exception $e) use ($file) {
+                        $this->processFileFailure($e, $file);
+                    });
+            }
+        }
+
+        return $this->deferred->promise();
+    }
+
+    protected function resolveIfReady()
+    {
+        if (empty($this->pending)) {
+            $deferred = $this->deferred;
+            $this->deferred = null;
+            $this->loop->futureTick(function () use ($deferred) {
+                $deferred->resolve();
+            });
+        }
+    }
+
+    protected function url($file)
+    {
+        return $this->baseUrl . "/sdk/$file";
+    }
+}
