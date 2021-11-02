@@ -10,7 +10,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 class RetrieveResult
 {
     /** @var ObjectContent[] retrieved objects */
-    public $objects;
+    public $objects = [];
 
     /**
      * A token used to retrieve further retrieve results.
@@ -21,6 +21,11 @@ class RetrieveResult
      * PropertyCollector object that returned it.
      *
      * If unset, there are no further results to retrieve after this RetrieveResult.
+     *
+     *
+     * ContinueRetrievePropertiesEx([
+     *  _this => PropertyCollector (ref)
+     * token => string
      *
      * @var string|null
      */
@@ -44,6 +49,16 @@ class RetrieveResult
         foreach ($this->objects as $objectContent) {
             // TODO: eventually add a flag dealing with $objectContent->hasMissingProperties()
             $result[] = $objectContent->toNewObject();
+        }
+
+        return $result;
+    }
+
+    public function jsonSerialize()
+    {
+        $result = [];
+        foreach ($this->objects as $object) {
+            $result[] = $object->jsonSerialize();
         }
 
         return $result;
