@@ -14,6 +14,15 @@ use function unlink;
 
 class WsdlLoader
 {
+    /**
+     * Involved WSDL files
+     *
+     * We'll always fetch and store them in case they are not available. Pay
+     * attention when modifying this list, we'll use the first one to start
+     * with when connecting to the SOAP API
+     *
+     * @var array
+     */
     protected $requiredFiles = [
         'vimService.wsdl',
         'vim.wsdl',
@@ -119,7 +128,7 @@ class WsdlLoader
             $this->logger->notice('Calling WsdlLoader::fetchFiles while already loading');
             return $this->deferred->promise();
         }
-        $this->deferred = new Deferred();
+        $this->deferred = $deferred = new Deferred();
         $this->pending = [];
         $curl = $this->curl;
         $dir = $this->cacheDir;
@@ -135,7 +144,9 @@ class WsdlLoader
             }
         }
 
-        return $this->deferred->promise();
+        $this->resolveIfReady();
+
+        return $deferred->promise();
     }
 
     protected function resolveIfReady()
