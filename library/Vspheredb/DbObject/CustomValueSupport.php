@@ -8,7 +8,7 @@ trait CustomValueSupport
 {
     /**
      * @param $value
-     * @throws \Icinga\Module\Vspheredb\Exception\JsonException
+     * @throws \gipfl\Json\JsonEncodeException
      */
     protected function setCustomValues($value)
     {

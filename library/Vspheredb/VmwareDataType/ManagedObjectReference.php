@@ -2,7 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\VmwareDataType;
 
-class ManagedObjectReference
+use JsonSerializable;
+
+class ManagedObjectReference implements JsonSerializable
 {
     /**
      * @codingStandardsIgnoreStart
@@ -30,5 +32,13 @@ class ManagedObjectReference
         }
 
         return $this->_;
+    }
+
+    public function jsonSerialize()
+    {
+        return (object) [
+            '_'    => $this->_,
+            'type' => $this->type,
+        ];
     }
 }
