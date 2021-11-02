@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Polling;
 
 use gipfl\Json\JsonSerialization;
+use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use InvalidArgumentException;
 use function array_key_exists;
@@ -36,6 +37,11 @@ class ServerInfo implements JsonSerialization
         return new static($server->getProperties());
     }
 
+    public function isEnabled()
+    {
+        return $this->get('enabled') === 'y';
+    }
+
     /**
      * @param $key
      * @param null $default
@@ -56,7 +62,22 @@ class ServerInfo implements JsonSerialization
 
     public function jsonSerialize()
     {
+        ksort($this->properties);
         return (object) $this->properties;
+    }
+
+    public function getUrl()
+    {
+        return sprintf(
+            '%s://%s',
+            $this->get('scheme'),
+            $this->get('host') // Hint: eventually contains the port
+        );
+    }
+
+    public function equals(ServerInfo $info)
+    {
+        return JsonString::encode($info) === JsonString::encode($this);
     }
 
     public function getIdentifier()
@@ -64,7 +85,7 @@ class ServerInfo implements JsonSerialization
         return sprintf(
             '%s://%s@%s',
             $this->get('scheme'),
-            $this->get('username'),
+            rawurlencode($this->get('username')),
             $this->get('host')
         );
     }

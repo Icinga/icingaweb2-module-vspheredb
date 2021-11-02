@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Polling;
 
 use gipfl\Json\JsonSerialization;
+use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 
 class ServerSet implements JsonSerialization
@@ -59,6 +60,11 @@ class ServerSet implements JsonSerialization
         }
 
         return new static($serverInfo);
+    }
+
+    public function equals(ServerSet $set)
+    {
+        return JsonString::encode($set) === JsonString::encode($this);
     }
 
     public function jsonSerialize()
