@@ -63,18 +63,6 @@ class HostSystem extends BaseDbObject
         'summary.hardware.numNics'          => 'hardware_num_nic',
     ];
 
-    protected static function getDefaultPropertySet()
-    {
-        return array_merge(
-            parent::getDefaultPropertySet(),
-            [
-                'summary.hardware.memorySize',
-                'hardware.biosInfo.releaseDate',
-                'summary.hardware.otherIdentifyingInfo',
-            ]
-        );
-    }
-
     public function countVms()
     {
         $db = $this->getDb();

@@ -2,10 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Module\Vspheredb\Api;
-use Icinga\Module\Vspheredb\PropertySet\PropertySet;
-use Icinga\Module\Vspheredb\SelectSet\VirtualMachineSelectSet;
-
 class VirtualMachine extends BaseDbObject
 {
     use CustomValueSupport;
@@ -96,28 +92,6 @@ class VirtualMachine extends BaseDbObject
     ];
 
     /**
-     * @param Api $api
-     * @return array
-     * @throws \Icinga\Exception\AuthenticationException
-     */
-    public static function fetchAllFromApi(Api $api)
-    {
-        // Temporarily override parent method. This should be replaced by some
-        // map defining minimum version requirements for certain properties.
-        $propertySet = static::getDefaultPropertySet();
-        if (version_compare($api->getAbout()->apiVersion, '6.0', '<')) {
-            $propertySet = array_values(array_filter($propertySet, function ($value) {
-                return $value !== 'runtime.paused';
-            }));
-        }
-
-        return $api->propertyCollector()->collectObjectProperties(
-            new PropertySet(static::getType(), $propertySet),
-            static::getSelectSet()
-        );
-    }
-
-    /**
      * @param $value
      * @return $this
      */
@@ -163,15 +137,5 @@ class VirtualMachine extends BaseDbObject
         } else {
             $this->set('boot_order', null);
         }
-    }
-
-    /**
-     * Explicitly defined, parent class would ship the same
-     *
-     * @return VirtualMachineSelectSet
-     */
-    public static function getSelectSet()
-    {
-        return new VirtualMachineSelectSet();
     }
 }

@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Db\DbObject;
-use RuntimeException;
 
 class MappingHelper
 {

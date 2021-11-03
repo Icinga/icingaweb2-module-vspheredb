@@ -223,129 +223,10 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return $this->object;
     }
 
-    /**
-     * @param Api $api
-     * @return array
-     */
-    public static function fetchAllFromApi(Api $api)
-    {
-        return $api->propertyCollector()->collectObjectProperties(
-            new PropertySet(static::getType(), static::getDefaultPropertySet()),
-            static::getSelectSet()
-        );
-    }
-
-    /**
-     * @return SelectSet
-     */
-    public static function getSelectSet()
-    {
-        $class = '\\Icinga\\Module\\Vspheredb\\SelectSet\\' . static::getType() . 'SelectSet';
-        return new $class;
-    }
-
     public static function getType()
     {
-        $parts = explode('\\', get_class(static::dummyObject()));
+        $parts = explode('\\', get_class(static::create()));
         return end($parts);
-    }
-
-    protected static function getDefaultPropertySet()
-    {
-        return array_keys(static::dummyObject()->propertyMap);
-    }
-
-    protected static function dummyObject()
-    {
-        return static::create();
-    }
-
-    /**
-     * @param VCenter $vCenter
-     * @param LoggerInterface $logger
-     * @param BaseDbObject[] $dbObjects
-     * @param \stdClass[] $newObjects
-     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
-     */
-    protected static function storeSync(VCenter $vCenter, LoggerInterface $logger, &$dbObjects, &$newObjects)
-    {
-        $type = static::getType();
-        $vCenterUuid = $vCenter->getUuid();
-        $db = $vCenter->getConnection();
-        $dba = $vCenter->getDb();
-        $logger->debug("Ready to store $type");
-        $dba->beginTransaction();
-        try {
-            $modified = 0;
-            $created = 0;
-            $dummy = static::dummyObject();
-            $newUuids = [];
-
-            $new = [];
-            foreach ($newObjects as $object) {
-                $uuid = $vCenter->makeBinaryGlobalUuid($object->id);
-
-                $newUuids[$uuid] = $uuid;
-                if (array_key_exists($uuid, $dbObjects)) {
-                    $dbObject = $dbObjects[$uuid];
-                } else {
-                    $dbObjects[$uuid] = $dbObject = static::create([
-                        'uuid' => $uuid,
-                        'vcenter_uuid' => $vCenterUuid
-                    ], $db);
-                }
-                $dbObject->setMapped($object, $vCenter);
-                if ($dbObject->hasBeenLoadedFromDb()) {
-                    if ($dbObject->hasBeenModified()) {
-                        $dbObject->store();
-                        $modified++;
-                    }
-                } else {
-                    $new[] = $dbObject;
-                }
-            }
-
-            $del = [];
-            foreach ($dbObjects as $existing) {
-                $uuid = $existing->get('uuid');
-                if (!array_key_exists($uuid, $newUuids)) {
-                    $del[] = $uuid;
-                }
-            }
-
-            if (!empty($del)) {
-                $dba->delete(
-                    $dummy->getTableName(),
-                    $dba->quoteInto('uuid IN (?)', $del)
-                );
-            }
-            foreach ($new as $dbObject) {
-                $dbObject->store();
-                $created++;
-            }
-            $dba->commit();
-        } catch (Exception $error) {
-            $logger->error('Storing Sync failed: ' . $error->getMessage());
-            try {
-                $dba->rollBack();
-                /** @var $dba \Zend_Db_Adapter_Pdo_Abstract */
-            } catch (\Exception $e) {
-                // There is nothing we can do.
-            }
-
-            throw $error;
-        }
-        $logger->debug(sprintf(
-            "$type: %d new, %d modified, %d deleted (got %d from API)",
-            $created,
-            $modified,
-            count($del),
-            count($newObjects)
-        ));
-    }
-
-    public static function onStoreSync(Db $db)
-    {
     }
 
     /**
@@ -364,25 +245,5 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
                 ->where('vcenter_uuid = ?', $vCenter->get('uuid')),
             $dummy->keyName
         );
-    }
-
-    /**
-     * @param VCenter $vCenter
-     * @param LoggerInterface $logger
-     * @throws NotFoundError
-     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
-     * @throws \Zend_Db_Exception
-     */
-    public static function syncFromApi(VCenter $vCenter, LoggerInterface $logger)
-    {
-        $type = static::getType();
-        $db = $vCenter->getConnection();
-        $logger->debug("Loading existing $type from DB");
-        $existing = static::loadAllForVCenter($vCenter);
-        $logger->debug(sprintf("Got %d existing $type", count($existing)));
-        $objects = static::fetchAllFromApi($vCenter->getApi($logger));
-        $logger->debug(sprintf("Got %d $type from VCenter", count($objects)));
-        static::storeSync($vCenter, $logger, $existing, $objects);
-        static::onStoreSync($db);
     }
 }

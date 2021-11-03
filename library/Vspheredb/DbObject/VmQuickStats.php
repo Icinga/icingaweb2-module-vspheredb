@@ -56,11 +56,6 @@ class VmQuickStats extends BaseDbObject
         'summary.quickStats.uptimeSeconds'                => 'uptime',
     ];
 
-    public static function getType()
-    {
-        return VirtualMachine::getType();
-    }
-
     /**
      * Valid are values from 0 to max allowed memory, but I've met -1 on an
      * ESXi host in the wild (6.7)
