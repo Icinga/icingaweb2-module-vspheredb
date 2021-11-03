@@ -6,17 +6,12 @@ use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
-use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\InfluxDbConnectionFactory;
-use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\InfluxDbConnectionV1;
-use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\InfluxDbConnectionV2;
+use Icinga\Module\Vspheredb\Daemon\RemoteClient;
+use Icinga\Web\Notification;
 use ipl\Html\FormElement\BaseFormElement;
 use ipl\Html\FormElement\SelectElement;
-use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
-use React\Promise\Deferred;
-use React\Promise\Promise;
 use function Clue\React\Block\await;
-use function React\Promise\resolve;
 
 class InfluxDbConnectionForm extends Form
 {
@@ -27,9 +22,6 @@ class InfluxDbConnectionForm extends Form
     /** @var LoopInterface */
     protected $loop;
 
-    /** @var InfluxDbConnectionV1|InfluxDbConnectionV2 */
-    protected $influxDb;
-
     /** @var array|null|false */
     protected $dbList;
 
@@ -38,6 +30,16 @@ class InfluxDbConnectionForm extends Form
     protected $influxDbVersion;
 
     protected $baseUrlElement;
+    /**
+     * @var RemoteClient
+     */
+    protected $client;
+
+    public function __construct(LoopInterface $loop, RemoteClient $client)
+    {
+        $this->loop = $loop;
+        $this->client = $client;
+    }
 
     public function assemble()
     {
@@ -80,32 +82,25 @@ class InfluxDbConnectionForm extends Form
         return $this;
     }
 
-    protected function getInfluxDb()
+    protected function prepareParams()
     {
-        $baseUrl = $this->getValue('base_url');
-
-        switch ($this->getDetectedApiVersion()) {
+        $params = [
+            'baseUrl' => $this->getValue('base_url'),
+        ];
+        switch ($this->getApiVersion()) {
             case 'v1':
-                return new InfluxDbConnectionV1(
-                    $this->loop(),
-                    $baseUrl,
-                    $this->getValue('username'),
-                    $this->getValue('password')
-                );
+                $params['apiVersion'] = 'v1';
+                $params['username'] = $this->getValue('username');
+                $params['password'] = $this->getValue('password');
+                break;
             case 'v2':
-                return new InfluxDbConnectionV2(
-                    $this->loop(),
-                    $baseUrl,
-                    $this->getValue('org'),
-                    $this->getValue('token')
-                );
-            default:
-                try {
-                    return await(InfluxDbConnectionFactory::create($this->loop(), $baseUrl), $this->loop(), 5);
-                } catch (Exception $e) {
-                    return null;
-                }
+                $params['apiVersion'] = 'v2';
+                $params['org'] = $this->getValue('org');
+                $params['token'] = $this->getValue('token');
+                break;
         }
+
+        return $params;
     }
 
     protected function getDbList()
@@ -117,15 +112,19 @@ class InfluxDbConnectionForm extends Form
         return $this->dbList;
     }
 
+    protected function remoteRequest($request, $params = [])
+    {
+        return await($this->client->request($request, $params), $this->loop, 5);
+    }
+
     protected function refreshDbList()
     {
+        if ($this->getValue('base_url') === null) {
+            return;
+        }
         try {
-            $influxDb = $this->getInfluxDb();
-            if (! $influxDb) {
-                return;
-            }
             $this->dbList = \array_filter(
-                await($influxDb->listDatabases(), $this->loop(), 5),
+                (array) $this->remoteRequest('influxdb.listDatabases', $this->prepareParams()),
                 function ($value) {
                     return $value[0] !== '_';
                 }
@@ -205,6 +204,13 @@ class InfluxDbConnectionForm extends Form
             $apiVersion,
             $detectedVersion
         ));
+        $selectedOption = $element->getOption($apiVersion);
+        $selectedOption->setLabel(\sprintf(
+            $this->translate('%s (detected %s)'),
+            $apiVersion,
+            $detectedVersion
+        ));
+       // $element->setValue($apiVersion);
     }
 
     protected function addV1Credentials()
@@ -222,24 +228,25 @@ class InfluxDbConnectionForm extends Form
     {
         $this->addElement('text', 'token', [
             'label'       => $this->translate('Token'),
-            'description' => $this->translate('InfluxDB Token (InfluxDB -> Data -> Tokens'),
+            // 'description' => $this->translate('InfluxDB Token (InfluxDB -> Data -> Tokens'),
             'required'    => true,
         ]);
         $this->addElement('text', 'org', [
             'label'       => $this->translate('Organisation'),
-            'description' => $this->translate('InfluxDB Token (InfluxDB -> Data -> Tokens'),
             'required'    => true,
         ]);
     }
 
     protected function detectInfluxDbVersion($baseUrl)
     {
+        if ($this->getValue('base_url') === null) {
+            return null;
+        }
         try {
-            $promise = InfluxDbConnectionFactory::create($this->loop(), $baseUrl)
-                ->then(function ($connection) {
-                    return $connection->getVersion();
-                });
-            $version = await($promise, $this->loop(), 5);
+            $promise = $this->client->request('influxdb.discoverVersion', [
+                'baseUrl' => $baseUrl,
+            ]);
+            $version = await($promise, $this->loop, 5);
             if ($this->versionIsFine($version)) {
                 $this->setCheckedApiVersionFor($baseUrl, $version);
                 $this->markUrlAsValidated();
@@ -259,14 +266,26 @@ class InfluxDbConnectionForm extends Form
         $this->setElementValue('checked_api_version', $version);
     }
 
+    protected function createDatabase($name)
+    {
+        Notification::info("Creating $name");
+        $promise = $this->client->request('influxdb.createDatabase', $this->prepareParams() + [
+            'dbName' => $name
+        ]);
+        $result = await($promise, $this->loop);
+        Notification::info("DON $name");
+
+        return $result;
+    }
+
     protected function createRequestedDb(BaseFormElement $element, TextWithActionButton $action)
     {
         $name = $element->getValue();
         try {
-            await($this->getInfluxDb()->createDatabase($name), $this->loop());
+            $this->createDatabase($name);
             $this->remove($action->getButton());
             $this->remove($action->getElement());
-            $list = $this->getDbList();
+            $this->refreshDbList();
             $dbOptions = $this->getDbOptions();
             if ($element instanceof SelectElement) {
                 $element->setOptions($dbOptions);
@@ -275,7 +294,7 @@ class InfluxDbConnectionForm extends Form
                 $element->setValue($name);
             } else {
                 $this->triggerElementError(
-                    $element,
+                    $element->getName(),
                     $this->translate('There is no such DB/Bucket: "%s"'),
                     $name
                 );
@@ -315,7 +334,7 @@ class InfluxDbConnectionForm extends Form
         } elseif ($this->getDbList()) {
             $elDbName = $this->createElement('select', 'dbname', [
                 'label'       => $this->translate('Database'),
-                'description' => $this->translate('InfluxDB database name'),
+                // 'description' => $this->translate('InfluxDB database name'),
                 'class'       => 'autosubmit',
                 'options'     => $this->getDbOptions()
             ]);
@@ -323,7 +342,6 @@ class InfluxDbConnectionForm extends Form
         } else {
             $elDbName = $this->createElement('text', 'dbname', [
                 'label'       => $this->translate('Database'),
-                'description' => $this->translate('InfluxDB database name'),
                 'required'    => true,
             ]);
             $this->addElement($elDbName);
@@ -345,14 +363,5 @@ class InfluxDbConnectionForm extends Form
         }
 
         return $this;
-    }
-
-    protected function loop()
-    {
-        if ($this->loop === null) {
-            $this->loop = Factory::create();
-        }
-
-        return $this->loop;
     }
 }
