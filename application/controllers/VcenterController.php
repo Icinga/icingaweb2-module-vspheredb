@@ -15,6 +15,7 @@ use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use Icinga\Module\Vspheredb\Web\Widget\UsageSummary;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterHeader;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
 use Icinga\Web\Notification;
@@ -37,15 +38,7 @@ class VcenterController extends Controller
         $this->actions()->add(new MobLink($vCenter));
         $this->setAutorefreshInterval(10);
         // $this->content()->add(new VCenterSyncInfo($vCenter));
-        $perf = $this->perf();
-        $this->content()->add((new NameValueTable())->addNameValuePairs([
-            'CPU'    => new CpuUsage($perf->used_mhz, $perf->total_mhz),
-            'Memory' => new MemoryUsage($perf->used_mb, $perf->total_mb),
-            'Disk'   => new MemoryUsage(
-                ($perf->ds_capacity - $perf->ds_free_space) / (1024 * 1024),
-                $perf->ds_capacity / (1024 * 1024)
-            ),
-        ]));
+        $this->content()->add(new UsageSummary($this->perf()));
         $this->content()->add(new SubTitle($this->translate('Object Summaries')));
         $this->content()->add(new VCenterSummaries($vCenter));
     }
