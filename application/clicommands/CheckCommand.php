@@ -6,6 +6,7 @@ use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
@@ -100,6 +101,11 @@ class CheckCommand extends Command
         return ManagedObject::load($this->params->getRequired('name'), $this->db());
     }
 
+    protected function lookup()
+    {
+        return new CheckRelatedLookup($this->db());
+    }
+
     /**
      * Check all Hosts
      *
@@ -110,7 +116,7 @@ class CheckCommand extends Command
     public function hostsAction()
     {
         $this->showOverallStatusForProblems(
-            HostSystem::listNonGreenObjects(Db::newConfiguredInstance())
+            $this->lookup()->listNonGreenObjects('HostSystem')
         );
     }
 
@@ -151,7 +157,7 @@ class CheckCommand extends Command
     public function vmsAction()
     {
         $this->showOverallStatusForProblems(
-            VirtualMachine::listNonGreenObjects(Db::newConfiguredInstance())
+            $this->lookup()->listNonGreenObjects('VirtualMachine')
         );
     }
 
@@ -183,7 +189,7 @@ class CheckCommand extends Command
     public function datastoresAction()
     {
         $this->showOverallStatusForProblems(
-            Datastore::listNonGreenObjects(Db::newConfiguredInstance())
+            $this->lookup()->listNonGreenObjects('Datastore')
         );
     }
 
