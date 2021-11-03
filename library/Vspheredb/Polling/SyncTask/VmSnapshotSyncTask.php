@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Polling\SyncTask;
 use Icinga\Module\Vspheredb\DbObject\VmSnapshot;
 use Icinga\Module\Vspheredb\Polling\PropertySet\VmSnapshotPropertySet;
 use Icinga\Module\Vspheredb\Polling\SelectSet\VirtualMachineSelectSet;
+use Icinga\Module\Vspheredb\Polling\SyncStore\VmSnapshotSyncStore;
 
 class VmSnapshotSyncTask extends SyncTask
 {
@@ -13,4 +14,5 @@ class VmSnapshotSyncTask extends SyncTask
     protected $objectClass = VmSnapshot::class;
     protected $selectSetClass = VirtualMachineSelectSet::class;
     protected $propertySetClass = VmSnapshotPropertySet::class;
+    protected $syncStoreClass = VmSnapshotSyncStore::class;
 }
