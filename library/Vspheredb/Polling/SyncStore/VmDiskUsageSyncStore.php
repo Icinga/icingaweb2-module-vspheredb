@@ -15,11 +15,7 @@ class VmDiskUsageSyncStore extends SyncStore
         $vCenterUuid = $vCenter->getUuid();
 
         $connection = $vCenter->getConnection();
-        $dbObjects = [];
-        foreach ($class::loadAllForVCenter($vCenter) as $object) {
-            $key = $object->get('vm_uuid') . $object->get('disk_path');
-            $dbObjects[$key] = $object;
-        }
+        $dbObjects = $class::loadAllForVCenter($vCenter);
 
         $seen = [];
         foreach ($result as $object) {
