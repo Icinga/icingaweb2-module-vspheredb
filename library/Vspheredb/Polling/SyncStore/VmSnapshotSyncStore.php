@@ -27,7 +27,7 @@ class VmSnapshotSyncStore extends SyncStore
             // TODO: should we store the snapshot->currentSnapshot (ref)?
             $snapshots = $this->flattenSnapshots($object->snapshot->rootSnapshotList);
             foreach ($snapshots as $snapshot) {
-                $idx = $vCenter->makeBinaryGlobalUuid($snapshot->snapshot);
+                $idx = $vCenter->makeBinaryGlobalMoRefUuid($snapshot->snapshot);
                 $seen[$idx] = $idx;
                 if (! array_key_exists($idx, $dbObjects)) {
                     $dbObjects[$idx] = VmSnapshot::create([

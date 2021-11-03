@@ -2,18 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Exception;
 use gipfl\Json\JsonSerialization;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
-use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\MappedClass\ElementDescription;
-use Icinga\Module\Vspheredb\PropertySet\PropertySet;
-use Icinga\Module\Vspheredb\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
-use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
 abstract class BaseDbObject extends VspheredbDbObject implements JsonSerialization
@@ -204,7 +199,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         if (empty($value)) {
             return null;
         } elseif ($value instanceof ManagedObjectReference) {
-            return $vCenter->makeBinaryGlobalUuid($value->_);
+            return $vCenter->makeBinaryGlobalMoRefUuid($value);
         } else {
             return $vCenter->makeBinaryGlobalUuid($value);
         }

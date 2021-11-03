@@ -27,7 +27,7 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
         $apiObjects = [];
         foreach ($result as $object) {
             $object = (object) $object;
-            $uuid = $this->vCenter->makeBinaryGlobalUuid($object->obj);
+            $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid($object->obj);
             if (! isset($object->$baseKey) || ! property_exists($object->$baseKey, $instanceClass)) {
                 // No instance information for this host
                 continue;

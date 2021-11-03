@@ -24,7 +24,7 @@ class VmHardwareSyncStore extends SyncStore
         $seen = [];
         foreach ($result as $object) {
             $object = (object) $object;
-            $uuid = $vCenter->makeBinaryGlobalUuid($object->obj);
+            $uuid = $vCenter->makeBinaryGlobalMoRefUuid($object->obj);
             if (! isset($object->{'config.hardware'})) {
                 continue;
             }

@@ -28,7 +28,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
         foreach ($result as $map) {
             $map = (object) $map;
             $moRef = $map->obj;
-            $vmUuid = $vCenter->makeBinaryGlobalUuid($moRef);
+            $vmUuid = $vCenter->makeBinaryGlobalMoRefUuid($moRef);
             if (! isset($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'})) {
                 continue;
             }
@@ -38,7 +38,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
                 $timestamp = null;
             }
             foreach ($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'} as $usage) {
-                $dsUuid = $vCenter->makeBinaryGlobalUuid($usage->datastore);
+                $dsUuid = $vCenter->makeBinaryGlobalMoRefUuid($usage->datastore);
                 $key = "$vmUuid$dsUuid";
                 $usage = [
                     'committed'   => $usage->committed,

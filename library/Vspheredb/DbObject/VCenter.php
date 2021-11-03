@@ -142,10 +142,15 @@ class VCenter extends BaseDbObject
     public function makeBinaryGlobalUuid($moRefId)
     {
         if ($moRefId instanceof ManagedObjectReference) {
-            return sha1($this->get('uuid') . $moRefId->_, true);
+            return $this->makeBinaryGlobalMoRefUuid($moRefId);
         } else {
             return sha1($this->get('uuid') . $moRefId, true);
         }
+    }
+
+    public function makeBinaryGlobalMoRefUuid(ManagedObjectReference $moRef)
+    {
+        return sha1($this->get('uuid') . $moRef->_, true);
     }
 
     /**

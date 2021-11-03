@@ -36,7 +36,7 @@ class ObjectSyncStore extends SyncStore
             $object = (object) $object; // Not required after we moved to serialization
             /** @var ManagedObjectReference $moRef */
             $moRef = $object->obj;
-            $uuid = $this->vCenter->makeBinaryGlobalUuid($moRef);
+            $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid($moRef);
             $object->uuid = $uuid;
             if ($this->customFieldsManager) {
                 self::mapResultCustomValues($object, $this->customFieldsManager);

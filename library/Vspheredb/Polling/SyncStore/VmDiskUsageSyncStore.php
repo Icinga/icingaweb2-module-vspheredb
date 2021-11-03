@@ -20,7 +20,7 @@ class VmDiskUsageSyncStore extends SyncStore
         $seen = [];
         foreach ($result as $object) {
             $object = (object) $object;
-            $uuid = $vCenter->makeBinaryGlobalUuid($object->obj);
+            $uuid = $vCenter->makeBinaryGlobalMoRefUuid($object->obj);
             if (! property_exists($object->{'guest.disk'}, 'GuestDiskInfo')) {
                 // Should we preserve them? Flag outdated?
                 continue;
