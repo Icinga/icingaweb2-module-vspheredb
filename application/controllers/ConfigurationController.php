@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use gipfl\ZfDbStore\ZfDbStore;
+use Icinga\Module\Vspheredb\Polling\ApiConnection;
 use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
 use Icinga\Module\Vspheredb\Web\Form\MonitoringConnectionForm;
 use Icinga\Module\Vspheredb\Web\Form\VCenterPerformanceCollectionForm;
@@ -18,6 +19,9 @@ use ipl\Html\Html;
 
 class ConfigurationController extends Controller
 {
+    use AsyncControllerHelper;
+    use RpcServerUpdateHelper;
+
     public function init()
     {
         $this->assertPermission('vspheredb/admin');
@@ -70,9 +74,48 @@ class ConfigurationController extends Controller
                 ]
             )
         );
-
+        try {
+            $connections = $this->mapServerConnectionsToId($this->syncRpcCall('vsphere.getApiConnections'));
+            foreach ($connections as $conns) {
+                foreach ($conns as $conn) {
+                    if (in_array($conn->state, [
+                        ApiConnection::STATE_INIT,
+                        ApiConnection::STATE_LOGIN,
+                    ])) {
+                        $this->setAutorefreshInterval(5);
+                    }
+                }
+            }
+            $this->setAutorefreshInterval(5);
+        } catch (\Exception $e) {
+            $connections = null;
+            $this->content()->add(
+                Hint::warning($this->translate('Got no connection information. Is the Damon running?'))
+            );
+            $this->setAutorefreshInterval(5);
+        }
         $table = new VCenterServersTable($this->db());
+        $table->setServerConnections($connections);
+        $table->setRequest($this->getServerRequest());
+        $table->on('formAction', function () {
+            Notification::info($this->sendServerInfoToSocket());
+            $this->redirectNow($this->url());
+        });
         $table->renderTo($this);
+    }
+
+    protected function mapServerConnectionsToId($connections)
+    {
+        $connectionsByServer = [];
+        foreach ((array) $connections as $id => $connection) {
+            if (isset($connectionsByServer[$connection->server_id])) {
+                $connectionsByServer[$connection->server_id][$id] = $connection;
+            } else {
+                $connectionsByServer[$connection->server_id] = [$id => $connection];
+            }
+        }
+
+        return $connectionsByServer;
     }
 
     public function monitoringAction()
