@@ -155,10 +155,8 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
                     $value = \lcfirst($value->key);
                 }
                 if ($property === 'customValues') {
-                    if ($vCenter->getApi()->hasCustomFieldsManager()) {
-                        $value = $vCenter->getApi()->customFieldsManager()->mapFields($value);
-                    } else {
-                        continue;
+                    if (empty((array) $value)) {
+                        $value = null;
                     }
                 }
 
