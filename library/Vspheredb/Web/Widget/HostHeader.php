@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
@@ -11,9 +12,13 @@ class HostHeader extends HtmlDocument
     /** @var HostSystem */
     protected $host;
 
-    public function __construct(HostSystem $host)
+    /** @var HostQuickStats */
+    protected $quickStats;
+
+    public function __construct(HostSystem $host, HostQuickStats $quickStats)
     {
         $this->host = $host;
+        $this->quickStats = $quickStats;
     }
 
     /**
