@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -11,9 +10,7 @@ use Icinga\Module\Vspheredb\Web\Form\VCenterForm;
 use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
-use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
-use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\UsageSummary;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterHeader;
@@ -22,6 +19,9 @@ use Icinga\Web\Notification;
 
 class VcenterController extends Controller
 {
+    use AsyncControllerHelper;
+    use RpcServerUpdateHelper;
+
     public function indexAction()
     {
         $vCenter = $this->requireVCenter();
@@ -129,6 +129,7 @@ class VcenterController extends Controller
                         : $this->translate('A new Connection has successfully been created')
                 );
                 $object->store();
+                $msg .= '. ' . $this->sendServerInfoToSocket();
             } else {
                 $msg = $this->translate('No action taken, object has not been modified');
             }
