@@ -9,7 +9,7 @@ use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 
 class VeeamBackupRunDetails extends NameValueTable
 {
@@ -49,10 +49,10 @@ class VeeamBackupRunDetails extends NameValueTable
     {
         try {
             // TODO: this is ugly.
-            $db = Db::newConfiguredInstance();
-            $vm = VirtualMachine::findOneBy([
+            $lookup = new CheckRelatedLookup(Db::newConfiguredInstance());
+            $vm = $lookup->findOneBy('VirtualMachine', [
                 'guest_host_name' => $name
-            ], $db);
+            ]);
             return Link::create($name, 'vspheredb/vm', [
                 'uuid' => \bin2hex($vm->get('uuid'))
             ]);

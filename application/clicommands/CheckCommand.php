@@ -8,7 +8,6 @@ use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
@@ -83,27 +82,17 @@ class CheckCommand extends Command
     public function hostAction()
     {
         $this->run(function () {
-            $db = $this->db();
-            $host = HostSystem::findOneBy([
+            $host = $this->lookup()->findOneBy('HostSystem', [
                 'host_name' => $this->params->getRequired('name')
-            ], $db);
-            $quickStats = HostQuickStats::load($host->get('uuid'), $db);
+            ]);
+            assert($host instanceof HostSystem);
+            $quickStats = HostQuickStats::loadFor($host);
             $this
                 ->checkOverallHealth($host->object())
                 ->checkRuntimePowerState($host)
                 ->checkUptime($quickStats, $host)
             ;
         });
-    }
-
-    protected function requireObject()
-    {
-        return ManagedObject::load($this->params->getRequired('name'), $this->db());
-    }
-
-    protected function lookup()
-    {
-        return new CheckRelatedLookup($this->db());
     }
 
     /**
@@ -130,17 +119,17 @@ class CheckCommand extends Command
     public function vmAction()
     {
         $this->run(function () {
-            $db = Db::newConfiguredInstance();
             try {
-                $vm = VirtualMachine::findOneBy([
+                $vm = $this->lookup()->findOneBy('VirtualMachine', [
                     'object_name' => $this->params->getRequired('name')
-                ], $db);
+                ]);
             } catch (NotFoundError $e) {
-                $vm = VirtualMachine::findOneBy([
+                $vm = $this->lookup()->findOneBy('VirtualMachine', [
                     'guest_host_name' => $this->params->getRequired('name')
-                ], $db);
+                ]);
             }
-            $quickStats = VmQuickStats::load($vm->get('uuid'), $db);
+            assert($vm instanceof VirtualMachine);
+            $quickStats = VmQuickStats::loadFor($vm);
             $this->checkOverallHealth($vm->object())
                 ->checkRuntimePowerState($vm)
                 ->checkUptime($quickStats, $vm);
@@ -171,10 +160,9 @@ class CheckCommand extends Command
     public function datastoreAction()
     {
         $this->run(function () {
-            $db = Db::newConfiguredInstance();
-            $datastore = Datastore::findOneBy([
+            $datastore = $this->lookup()->findOneBy('Datastore', [
                 'object_name' => $this->params->getRequired('name')
-            ], $db);
+            ]);
             $this->checkOverallHealth($datastore->object());
         });
     }
@@ -323,6 +311,16 @@ class CheckCommand extends Command
         }
 
         return $this;
+    }
+
+    protected function requireObject()
+    {
+        return ManagedObject::load($this->params->getRequired('name'), $this->db());
+    }
+
+    protected function lookup()
+    {
+        return new CheckRelatedLookup($this->db());
     }
 
     protected function db()

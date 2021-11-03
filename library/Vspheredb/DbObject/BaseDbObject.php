@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use gipfl\Json\JsonSerialization;
-use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\MappedClass\ElementDescription;
@@ -28,62 +27,6 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     protected $booleanProperties = [];
 
     protected $dateTimeProperties = [];
-
-    /**
-     * @param array $filter
-     * @param Db $connection
-     * @return static
-     * @throws NotFoundError
-     */
-    public static function findOneBy($filter, Db $connection)
-    {
-        $result = static::findBy($filter, $connection);
-
-        if (empty($result)) {
-            throw new NotFoundError('No object found for given filter');
-        }
-
-        if (count($result) > 1) {
-            throw new NotFoundError('More than one object found for given filter');
-        }
-
-        $object = new static();
-        $object->setConnection($connection)->setDbProperties($result[0]);
-
-        return $object;
-    }
-
-    /**
-     * @param array $filter
-     * @param Db $connection
-     * @return array
-     */
-    private static function findBy($filter, Db $connection)
-    {
-        $db = $connection->getDbAdapter();
-        $table = static::create()->getTableName();
-        $select = $db->select()->from($table);
-
-        foreach ($filter as $key => $value) {
-            if ($key === 'object_name') {
-                $type = static::getType();
-                $select->join(
-                    'object',
-                    $db->quoteInto("object.uuid = $table.uuid AND object.object_type = ?", $type),
-                    []
-                );
-            }
-            if ($value === null) {
-                $select->where($key);
-            } elseif (strpos($key, '?') === false) {
-                $select->where("$key = ?", $value);
-            } else {
-                $select->where($key, $value);
-            }
-        }
-
-        return $db->fetchAll($select);
-    }
 
     public function isObjectReference($property)
     {

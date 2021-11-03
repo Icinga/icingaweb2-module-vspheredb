@@ -647,7 +647,7 @@ abstract class DbObject
             ->setDbProperties($row);
     }
 
-    protected function setDbProperties($properties)
+    public function setDbProperties($properties)
     {
         foreach ($properties as $key => $val) {
             if (! array_key_exists($key, $this->properties)) {
