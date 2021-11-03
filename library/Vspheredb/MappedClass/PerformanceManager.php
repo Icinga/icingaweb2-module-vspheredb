@@ -18,6 +18,7 @@ class PerformanceManager
         return $this->perfCounter;
     }
 
+    // TODO: Verify whether this hack is still necessary
     public function __set($key, $value)
     {
         if ($key === 'perfCounter') {
