@@ -39,7 +39,10 @@ class RetrieveResult
         return $this->token !== null;
     }
 
-    public function getObjects()
+    /**
+     * @return array
+     */
+    public function makeObjects()
     {
         if (empty($this->objects)) {
             return [];
