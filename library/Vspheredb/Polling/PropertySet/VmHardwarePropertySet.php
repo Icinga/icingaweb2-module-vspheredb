@@ -10,7 +10,7 @@ class VmHardwarePropertySet implements PropertySet
     {
         return [
             PropertySpec::create('VirtualMachine', [
-                'hardware.pciDevice',
+                'config.hardware',
             ])
         ];
     }
