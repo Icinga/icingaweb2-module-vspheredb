@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
 use gipfl\ZfDb\Adapter\Adapter;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
-use Icinga\Module\Vspheredb\RemoteSync\SyncStats;
+use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
 
 abstract class SyncStore

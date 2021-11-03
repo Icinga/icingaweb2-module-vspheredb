@@ -3,8 +3,8 @@
 namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
-use Icinga\Module\Vspheredb\RemoteSync\SyncHelper;
-use Icinga\Module\Vspheredb\RemoteSync\SyncStats;
+use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
+use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 class ManagedObjectReferenceSyncStore extends SyncStore

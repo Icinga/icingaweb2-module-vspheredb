@@ -3,8 +3,8 @@
 namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
 use Icinga\Module\Vspheredb\DbObject\VmSnapshot;
-use Icinga\Module\Vspheredb\RemoteSync\SyncHelper;
-use Icinga\Module\Vspheredb\RemoteSync\SyncStats;
+use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
+use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 
 class VmSnapshotSyncStore extends SyncStore
 {

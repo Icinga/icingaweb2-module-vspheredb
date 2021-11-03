@@ -5,8 +5,8 @@ namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 use Icinga\Module\Vspheredb\DbObject\VmDisk;
 use Icinga\Module\Vspheredb\DbObject\VmHardware;
 use Icinga\Module\Vspheredb\DbObject\VmNetworkAdapter;
-use Icinga\Module\Vspheredb\RemoteSync\SyncHelper;
-use Icinga\Module\Vspheredb\RemoteSync\SyncStats;
+use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
+use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use InvalidArgumentException;
 
 class VmHardwareSyncStore extends SyncStore

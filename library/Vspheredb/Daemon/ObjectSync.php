@@ -26,7 +26,7 @@ use Icinga\Module\Vspheredb\Polling\SyncTask\VmQuickStatsSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmSnapshotSyncTask;
 use Icinga\Module\Vspheredb\Polling\VsphereApi;
 use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
-use Icinga\Module\Vspheredb\RemoteSync\SyncStats;
+use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use Throwable;
