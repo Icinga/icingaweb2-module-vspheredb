@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Hook;
 
+use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\DataPoint;
 use Icinga\Web\Hook;
 use InvalidArgumentException;
@@ -60,7 +61,7 @@ abstract class PerfDataReceiverHook implements LoggerAwareInterface
     /**
      * @return Form
      */
-    abstract public function getConfigurationForm();
+    abstract public function getConfigurationForm(RemoteClient $client);
 
     /**
      * @var DataPoint[] $points

@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\ProvidedHook\Vspheredb;
 
+use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Hook\PerfDataReceiverHook;
 use Icinga\Module\Vspheredb\Web\Form\InfluxDbConnectionForm;
 
@@ -12,8 +13,8 @@ class PerfDataReceiverInfluxDb extends PerfDataReceiverHook
         return 'InfluxDB';
     }
 
-    public function getConfigurationForm()
+    public function getConfigurationForm(RemoteClient $client)
     {
-        return new InfluxDbConnectionForm();
+        return new InfluxDbConnectionForm($this->loop, $client);
     }
 }

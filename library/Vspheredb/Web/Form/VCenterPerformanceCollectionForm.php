@@ -6,17 +6,35 @@ use gipfl\Json\JsonString;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Decorator\DdDtDecorator;
+use gipfl\ZfDbStore\Store;
+use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Hook\PerfDataReceiverHook;
 use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\PerformanceSets;
 use Icinga\Module\Vspheredb\Storable\PerfdataSubscription;
 use Icinga\Module\Vspheredb\Web\Form\Element\VCenterSelection;
 use ipl\Html\FormElement\SubmitElement;
+use React\EventLoop\LoopInterface;
 
 class VCenterPerformanceCollectionForm extends ObjectForm
 {
     use TranslationHelper;
 
     protected $class = PerfdataSubscription::class;
+    /**
+     * @var RemoteClient
+     */
+    protected $client;
+    /**
+     * @var LoopInterface
+     */
+    protected $loop;
+
+    public function __construct(LoopInterface $loop, RemoteClient $client, Store $store)
+    {
+        $this->loop = $loop;
+        $this->client = $client;
+        parent::__construct($store);
+    }
 
     public function assemble()
     {
@@ -32,7 +50,8 @@ class VCenterPerformanceCollectionForm extends ObjectForm
         if ($implementation = $this->selectImplementation()) {
             $this->addImplementation($implementation);
         }
-        $this->addPerformanceSets();
+        // TODO: web 2.9 broke Multiselect
+        // $this->addPerformanceSets();
         $this->addButtons();
     }
 
@@ -62,7 +81,9 @@ class VCenterPerformanceCollectionForm extends ObjectForm
             }
         }
         $finalValues['settings'] = JsonString::encode($settings);
-        $finalValues['performance_sets'] = JsonString::encode($finalValues['performance_sets']);
+        // TODO: re-enable, once we fixec multi-select
+        // $finalValues['performance_sets'] = JsonString::encode($finalValues['performance_sets']);
+        $finalValues['performance_sets'] = JsonString::encode([]);
 
         return $finalValues;
     }
@@ -96,11 +117,13 @@ class VCenterPerformanceCollectionForm extends ObjectForm
     {
         /** @var PerfDataReceiverHook $instance */
         $instance = new $implementation;
-        $form = $instance->getConfigurationForm();
+        $instance->setLoop($this->loop);
+        $form = $instance->getConfigurationForm($this->client);
         if ($form instanceof Form) {
             $form->disableCsrf();
             $form->doNotCheckFormName();
         }
+        $form->populate($this->getSentValues());
         // TODO: Clone Request, strip our values from request?
         $form->handleRequest($this->getRequest());
         $form->ensureAssembled();

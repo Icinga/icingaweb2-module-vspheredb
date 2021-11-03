@@ -146,7 +146,7 @@ class ConfigurationController extends Controller
             . ' Please configure a graphing implementation...'
         )));
         $store = new ZfDbStore($this->db()->getDbAdapter());
-        $form = new VCenterPerformanceCollectionForm($store);
+        $form = new VCenterPerformanceCollectionForm($this->loop(), $this->remoteClient(), $store);
         $form->on(VCenterPerformanceCollectionForm::ON_SUCCESS, function () use ($form) {
             if ($form->wasNew()) {
                 Notification::success($this->translate(
