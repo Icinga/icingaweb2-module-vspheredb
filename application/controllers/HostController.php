@@ -15,7 +15,6 @@ use Icinga\Module\Vspheredb\Web\Table\HostSensorsTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostHardwareInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostSystemInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostVirtualizationInfoTable;
-use Icinga\Module\Vspheredb\Web\Table\Object\HostVmsInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
@@ -27,6 +26,9 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 class HostController extends Controller
 {
     use DetailSections;
+
+    /** @var HostHeader */
+    protected $hostHeader;
 
     /**
      * @throws MissingParameterException|NotFoundError
@@ -60,7 +62,7 @@ class HostController extends Controller
 
         $table->filterHost($host->get('uuid'))->renderTo($this);
         $summaries = new Summaries($table, $this->db(), $this->url());
-        $this->content()->prepend($summaries);
+        $this->hostHeader->getIcons()->prepend($summaries);
     }
 
     /**
@@ -102,7 +104,7 @@ class HostController extends Controller
     {
         $host = HostSystem::load(hex2bin($this->params->getRequired('uuid')), $this->db());
         $quickStats = HostQuickStats::loadFor($host);
-        $this->controls()->add(new HostHeader($host, $quickStats));
+        $this->controls()->add($this->hostHeader = new HostHeader($host, $quickStats));
         $this->setTitle($host->object()->get('object_name'));
         $this->handleTabs($host);
 
