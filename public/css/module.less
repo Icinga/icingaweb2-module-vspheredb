@@ -125,8 +125,11 @@ i.icon {
     color: @color-ok;
   }
 
-  &.poweredOff::before, &.suspended::before, &.red::before, &.DOWN::before {
+  &.red::before, &.DOWN::before {
     color: @color-critical;
+  }
+  &.poweredOff::before, &.suspended::before {
+    color: @text-color;
   }
 
   &.standby::before, &.yellow::before {
