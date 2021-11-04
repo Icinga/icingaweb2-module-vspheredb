@@ -6,8 +6,7 @@ use gipfl\IcingaWeb2\Icon;
 use gipfl\Json\JsonString;
 use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Vspheredb\DbObject\VCenterServer;
-use Icinga\Module\Vspheredb\Polling\ServerSet;
+use Icinga\Module\Vspheredb\Web\Form\LogLevelForm;
 use Icinga\Module\Vspheredb\Web\Table\ControlSocketConnectionsTable;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -35,8 +34,23 @@ class DaemonController extends Controller
             Html::tag('h3', $this->translate('vSphere API Connections')),
             $this->prepareVsphereConnectionTable(),
             Html::tag('h3', $this->translate('Damon Log Output')),
+            $this->prepareLogSettings(),
             $this->prepareLogWindow()
         ]);
+    }
+
+    protected function prepareLogSettings()
+    {
+        $logLevelForm = new LogLevelForm($this->remoteClient(), $this->loop());
+        $logLevelForm->on($logLevelForm::ON_SUCCESS, function () {
+            $this->redirectNow($this->url());
+        });
+        $logLevelForm->handleRequest($this->getServerRequest());
+        if ($logLevelForm->talkedToSocket()) {
+            return [$this->translate('Log level') . ': ', $logLevelForm];
+        }
+
+        return null;
     }
 
     protected function prepareDaemonInfo()
