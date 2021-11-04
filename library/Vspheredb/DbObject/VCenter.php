@@ -3,13 +3,9 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Polling\ServerInfo;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class VCenter extends BaseDbObject
 {
@@ -18,9 +14,6 @@ class VCenter extends BaseDbObject
     protected $keyName = 'instance_uuid';
 
     protected $autoincKeyName = 'id';
-
-    /** @var Api */
-    private $api;
 
     protected $defaultProperties = [
         'id'                      => null,
@@ -76,26 +69,6 @@ class VCenter extends BaseDbObject
     public static function loadWithHexUuid($uuid, Db $db)
     {
         return static::load(\hex2bin(\str_replace('-', '', $uuid)), $db);
-    }
-
-    /**
-     * @param LoggerInterface|null $logger
-     * @return Api
-     * @throws \Icinga\Exception\NotFoundError
-     */
-    public function getApi(LoggerInterface $logger = null)
-    {
-        if ($this->api === null) {
-            if ($logger === null) {
-                $logger = new NullLogger();
-            }
-            $this->api = Api::forServer(
-                ServerInfo::fromServer($this->getFirstServer()),
-                $logger
-            );
-        }
-
-        return $this->api;
     }
 
     /**
