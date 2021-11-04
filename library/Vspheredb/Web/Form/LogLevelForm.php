@@ -49,7 +49,7 @@ class LogLevelForm extends InlineForm
             NextConfirmCancel::buttonNext($currentLevel ?: $this->translate('unspecified'), [
                 'title' => $this->translate('Click to change the current Daemon Log Level')
             ]),
-            NextConfirmCancel::buttonConfirm($this->translate('set')),
+            NextConfirmCancel::buttonConfirm($this->translate('Set')),
             NextConfirmCancel::buttonCancel($this->translate('Cancel'))
         );
         $toggle->showWithConfirm(new SelectElement('log_level', [
