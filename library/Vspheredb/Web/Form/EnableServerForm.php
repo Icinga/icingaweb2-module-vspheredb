@@ -2,10 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use Icinga\Module\Vspheredb\Db;
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form\Feature\NextConfirmCancel;
+use gipfl\Web\InlineForm;
 
 class EnableServerForm extends InlineForm
 {
+    use TranslationHelper;
+
     protected $serverId;
 
     /** @var \Zend_Db_Adapter_Abstract */
@@ -15,7 +19,6 @@ class EnableServerForm extends InlineForm
     {
         $this->serverId = $serverId;
         $this->db = $db;
-        parent::__construct();
     }
 
     public function getUniqueFormName()
@@ -25,7 +28,11 @@ class EnableServerForm extends InlineForm
 
     protected function assemble()
     {
-        $this->provideAction($this->translate('Enable'), $this->translate('Really enable'));
+        (new NextConfirmCancel(
+            NextConfirmCancel::buttonNext($this->translate('Enable')),
+            NextConfirmCancel::buttonConfirm($this->translate('Really enable')),
+            NextConfirmCancel::buttonCancel($this->translate('Cancel'))
+        ))->addToForm($this);
     }
 
     public function onSuccess()
