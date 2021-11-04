@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Daemon;
 
 use Exception;
 use gipfl\Curl\CurlAsync;
+use gipfl\Log\Logger;
 use gipfl\RpcDaemon\Connections;
 use gipfl\RpcDaemon\ControlSocket;
 use gipfl\RpcDaemon\RpcContextConnections;
@@ -86,14 +87,18 @@ class RemoteApi
     {
         $socket->on('connection', function (ConnectionInterface $connection) {
             $peer = $this->unixSocketInspection->getPeerInfo($connection);
-            $this->connections->addIncomingConnection($connection, [
+            $contexts = [
                 // new RpcContextProcess($peer, $this, $this->loop), // Daemon!
                 new RpcContextConnections($peer, $this->connections),
                 new RpcContextSystem($peer),
                 new RpcContextVsphere($this->apiConnectionHandler, $peer),
                 new RpcContextInfluxDb($this->curl, $this->loop, $this->logger, $peer),
                 new RpcContextCurl($this->curl, $peer),
-            ]);
+            ];
+            if ($this->logger instanceof Logger) {
+                $contexts[] = new RpcContextLogger($this->logger, $peer);
+            }
+            $this->connections->addIncomingConnection($connection, $contexts);
         });
         $socket->on('error', function (Exception $error) {
             // Connection error, Socket remains functional
