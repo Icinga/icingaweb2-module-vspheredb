@@ -9,17 +9,17 @@ use gipfl\Web\Form\Decorator\DdDtDecorator;
 use gipfl\ZfDbStore\Store;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Hook\PerfDataReceiverHook;
-use Icinga\Module\Vspheredb\PerformanceData\PerformanceSet\PerformanceSets;
-use Icinga\Module\Vspheredb\Storable\PerfdataSubscription;
-use Icinga\Module\Vspheredb\Web\Form\Element\VCenterSelection;
+use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
 use ipl\Html\FormElement\SubmitElement;
 use React\EventLoop\LoopInterface;
 
-class VCenterPerformanceCollectionForm extends ObjectForm
+class PerfdataConsumerForm extends ObjectForm
 {
+    const ON_DELETE = 'delete';
+
     use TranslationHelper;
 
-    protected $class = PerfdataSubscription::class;
+    protected $class = PerfdataConsumer::class;
     /**
      * @var RemoteClient
      */
@@ -38,38 +38,44 @@ class VCenterPerformanceCollectionForm extends ObjectForm
 
     public function assemble()
     {
-        $selectVcenter = (new VCenterSelection($this->store->getDb()))
-            ->setLabel($this->translate('VCenter'));
-        $selectVcenter->getOption(null)->setLabel($this->translate('All of them'));
-        $this->addElement($selectVcenter);
+        $this->addElement('text', 'name', [
+            'label'       => $this->translate('Name'),
+            'required'    => true,
+            'description' => $this->translate('Arbitrary unique name for this Performance Data Consumer'),
+        ]);
         $this->addElement('boolean', 'enabled', [
             'label' => $this->translate('Enabled'),
             'value' => 'y',
             'required' => true,
         ]);
+        if ($this->object instanceof PerfdataConsumer) {
+            $this->populate((array) $this->object->settings());
+        }
         if ($implementation = $this->selectImplementation()) {
             $this->addImplementation($implementation);
         }
         // TODO: web 2.9 broke Multiselect
         // $this->addPerformanceSets();
-        $this->addButtons();
+        $this->addButtons($implementation);
+    }
+
+    public function isValidEvent($event)
+    {
+        if ($event === self::ON_DELETE) {
+            return true;
+        }
+
+        return parent::isValidEvent($event);
     }
 
     public function getValues()
     {
         $values = parent::getValues();
-        if (array_key_exists('vcenter', $values)) {
-            if ($values['vcenter'] !== null) {
-                $values['vcenter_uuid'] = hex2bin($values['vcenter']);
-            }
-            unset($values['vcenter']);
-        }
         $mainProperties = [
             'implementation',
+            'name',
             'settings',
             'enabled',
-            'vcenter_uuid',
-            'performance_sets',
         ];
         $finalValues = [];
         $settings = [];
@@ -81,26 +87,15 @@ class VCenterPerformanceCollectionForm extends ObjectForm
             }
         }
         $finalValues['settings'] = JsonString::encode($settings);
-        // TODO: re-enable, once we fixec multi-select
-        // $finalValues['performance_sets'] = JsonString::encode($finalValues['performance_sets']);
-        $finalValues['performance_sets'] = JsonString::encode([]);
 
         return $finalValues;
     }
 
-    protected function addPerformanceSets()
-    {
-        $sets = PerformanceSets::enumAvailableSets();
-        $this->addElement('multiSelect', 'performance_sets', [
-            'label'    => $this->translate('Performance Sets'),
-            'options'  => $sets,
-            'required' => true,
-            'value'    => array_keys($sets),
-        ]);
-    }
-
     protected function selectImplementation()
     {
+        if (! $this->isNew()) {
+            return $this->object->get('implementation');
+        }
         $this->addElement('select', 'implementation', [
             'label'    => $this->translate('Implementation'),
             'options'  => [
@@ -133,9 +128,9 @@ class VCenterPerformanceCollectionForm extends ObjectForm
         }
     }
 
-    protected function addButtons()
+    protected function addButtons($implementation)
     {
-        if ($this->getValue('implementation')) {
+        if ($implementation) {
             $submit = new SubmitElement('submit', [
                 'label' => $this->isNew() ? $this->translate('Create') : $this->translate('Store')
             ]);
@@ -143,14 +138,26 @@ class VCenterPerformanceCollectionForm extends ObjectForm
             $this->setSubmitButton($submit);
             $deco = $submit->getWrapper();
             assert($deco instanceof DdDtDecorator);
-            $back = new SubmitElement('btn_back', [
-                'label' => $this->translate('Back')
-            ]);
-            $deco->dd()->add($back);
-            $this->registerElement($back);
-            if ($back->hasBeenPressed()) {
-                // Hint: too late
-                $this->setElementValue('implementation', null);
+
+            if ($this->isNew()) {
+                $back = new SubmitElement('btn_back', [
+                    'label' => $this->translate('Back')
+                ]);
+                $deco->dd()->add($back);
+                $this->registerElement($back);
+                if ($back->hasBeenPressed()) {
+                    $this->setElementValue('implementation', null);
+                }
+            } else {
+                $delete = new SubmitElement('btn_delete', [
+                    'label' => $this->translate('Delete')
+                ]);
+                $deco->dd()->add($delete);
+                $this->registerElement($delete);
+                if ($delete->hasBeenPressed()) {
+                    $this->store->delete($this->object);
+                    $this->emit(self::ON_DELETE, [$this]);
+                }
             }
         } else {
             $this->addElement('submit', 'submit', [

@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
@@ -21,9 +20,6 @@ class InfluxDbConnectionForm extends Form
 
     /** @var LoopInterface */
     protected $loop;
-
-    /** @var array|null|false */
-    protected $dbList;
 
     protected $detectedApiVersion;
 
@@ -68,7 +64,6 @@ class InfluxDbConnectionForm extends Form
         ]);
         $this->appendVersionInformation($this->getDetectedApiVersion(), $this->getInfluxDbVersion());
         $this->addCredentials();
-        $this->addDbSelection();
     }
 
     protected function addCredentials()
@@ -103,36 +98,9 @@ class InfluxDbConnectionForm extends Form
         return $params;
     }
 
-    protected function getDbList()
-    {
-        if ($this->dbList === null) {
-            $this->refreshDbList();
-        }
-
-        return $this->dbList;
-    }
-
     protected function remoteRequest($request, $params = [])
     {
         return await($this->client->request($request, $params), $this->loop, 5);
-    }
-
-    protected function refreshDbList()
-    {
-        if ($this->getValue('base_url') === null) {
-            return;
-        }
-        try {
-            $this->dbList = \array_filter(
-                (array) $this->remoteRequest('influxdb.listDatabases', $this->prepareParams()),
-                function ($value) {
-                    return $value[0] !== '_';
-                }
-            );
-        } catch (\Exception $e) {
-            // Hint: we no longer refresh if it's false
-            $this->dbList = false;
-        }
     }
 
     protected function getDetectedApiVersion()
@@ -243,10 +211,9 @@ class InfluxDbConnectionForm extends Form
             return null;
         }
         try {
-            $promise = $this->client->request('influxdb.discoverVersion', [
+            $version = $this->remoteRequest('influxdb.discoverVersion', [
                 'baseUrl' => $baseUrl,
             ]);
-            $version = await($promise, $this->loop, 5);
             if ($this->versionIsFine($version)) {
                 $this->setCheckedApiVersionFor($baseUrl, $version);
                 $this->markUrlAsValidated();
@@ -266,51 +233,6 @@ class InfluxDbConnectionForm extends Form
         $this->setElementValue('checked_api_version', $version);
     }
 
-    protected function createDatabase($name)
-    {
-        Notification::info("Creating $name");
-        $promise = $this->client->request('influxdb.createDatabase', $this->prepareParams() + [
-            'dbName' => $name
-        ]);
-        $result = await($promise, $this->loop);
-        Notification::info("DON $name");
-
-        return $result;
-    }
-
-    protected function createRequestedDb(BaseFormElement $element, TextWithActionButton $action)
-    {
-        $name = $element->getValue();
-        try {
-            $this->createDatabase($name);
-            $this->remove($action->getButton());
-            $this->remove($action->getElement());
-            $this->refreshDbList();
-            $dbOptions = $this->getDbOptions();
-            if ($element instanceof SelectElement) {
-                $element->setOptions($dbOptions);
-            }
-            if (\in_array($name, $dbOptions)) {
-                $element->setValue($name);
-            } else {
-                $this->triggerElementError(
-                    $element->getName(),
-                    $this->translate('There is no such DB/Bucket: "%s"'),
-                    $name
-                );
-            }
-        } catch (\Exception $e) {
-            $element->addMessage($e->getMessage());
-        }
-    }
-
-    protected function getDbOptions()
-    {
-        return [null => $this->translate('Please choose')]
-        + \array_combine($this->dbList, $this->dbList)
-        + ['_new' => ' -> ' . $this->translate('Create a new Database')];
-    }
-
     protected function versionIsFine($version)
     {
         return \version_compare($version, static::INFLUXDB_MIN_SUPPORTED_VERSION, 'ge');
@@ -323,45 +245,5 @@ class InfluxDbConnectionForm extends Form
         }
 
         return \version_compare($version, '1.999.999', 'gt') ? 'v2' : 'v1';
-    }
-
-    protected function addDbSelection()
-    {
-        if ($this->getSentValue('dbname') === '_new') {
-            $elDbName = $this->createElement('hidden', 'dbname');
-            $this->registerElement($elDbName);
-            $this->prepend($elDbName);
-        } elseif ($this->getDbList()) {
-            $elDbName = $this->createElement('select', 'dbname', [
-                'label'       => $this->translate('Database'),
-                // 'description' => $this->translate('InfluxDB database name'),
-                'class'       => 'autosubmit',
-                'options'     => $this->getDbOptions()
-            ]);
-            $this->addElement($elDbName);
-        } else {
-            $elDbName = $this->createElement('text', 'dbname', [
-                'label'       => $this->translate('Database'),
-                'required'    => true,
-            ]);
-            $this->addElement($elDbName);
-        }
-        if ($this->getValue('dbname') === '_new') {
-            $action = new TextWithActionButton('new_dbname', [
-                'label'       => $this->translate('New Database'),
-                'description' => $this->translate('New InfluxDB database name'),
-                'required'    => true,
-            ], [
-                'label' => $this->translate('Create'),
-                'title' => $this->translate('Create a new InfluxDB database')
-            ]);
-            $action->addToForm($this);
-            if ($action->getButton()->hasBeenPressed()) {
-                assert($elDbName instanceof BaseFormElement);
-                $this->createRequestedDb($elDbName, $action);
-            }
-        }
-
-        return $this;
     }
 }

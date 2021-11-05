@@ -4,11 +4,9 @@ namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
-use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
 use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
 use Icinga\Module\Vspheredb\Web\Form\MonitoringConnectionForm;
-use Icinga\Module\Vspheredb\Web\Form\VCenterPerformanceCollectionForm;
 use Icinga\Module\Vspheredb\Web\Table\MonitoredObjectMappingTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\ConfigTabs;
@@ -176,32 +174,6 @@ class ConfigurationController extends Controller
             $res->vcenter = \bin2hex($res->vcenter_uuid);
             $form->populate((array) $res);
         }
-        $form->handleRequest($this->getServerRequest());
-        $this->content()->add($form);
-    }
-
-    public function perfdataAction()
-    {
-        $this->tabs(new ConfigTabs($this->db()))->activate('perfdata');
-        $this->addTitle($this->translate('Performance Data'));
-        $this->content()->add(Html::tag('p', $this->translate(
-            'This module can collect Performance Data from your vCenters or ESXi Hosts.'
-            . ' Please configure a graphing implementation...'
-        )));
-        $store = new ZfDbStore($this->db()->getDbAdapter());
-        $form = new VCenterPerformanceCollectionForm($this->loop(), $this->remoteClient(), $store);
-        $form->on(VCenterPerformanceCollectionForm::ON_SUCCESS, function () use ($form) {
-            if ($form->wasNew()) {
-                Notification::success($this->translate(
-                    'Performance data subscription has been created'
-                ));
-            } else {
-                Notification::success($this->translate(
-                    'Performance data subscription has been updated'
-                ));
-            }
-            $this->redirectNow($this->url());
-        });
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
     }

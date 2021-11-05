@@ -39,6 +39,14 @@ abstract class ObjectForm extends Form
         return $this;
     }
 
+    /**
+     * @return ?StorableInterface
+     */
+    public function getObject()
+    {
+        return $this->object;
+    }
+
     public function wasNew()
     {
         return $this->wasNew;
