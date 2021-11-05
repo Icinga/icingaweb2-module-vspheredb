@@ -6,7 +6,7 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Data\ResourceFactory;
-use Icinga\Module\Vspheredb\ProvidedHook\Vspheredb\PerfDataReceiverInfluxDb;
+use Icinga\Module\Vspheredb\ProvidedHook\Vspheredb\PerfDataConsumerInfluxDb;
 use Icinga\Module\Vspheredb\Web\Form\PerfdataConsumerForm;
 use RingCentral\Psr7\ServerRequest;
 
@@ -34,7 +34,7 @@ class PerfdataconsumerCommand extends Command
         $params = [
             'name'           => $name,
             'enabled'        => $enabled ? 'y' : 'n',
-            'implementation' => PerfDataReceiverInfluxDb::class, // $implementation,
+            'implementation' => PerfDataConsumerInfluxDb::class, // $implementation,
             'submit'         => 'Create',
         ] + $this->params->getParams();
         if ($this->submitForm($params)) {

@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Hook;
 
+use gipfl\InfluxDb\DataPoint;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
-use Icinga\Module\Vspheredb\PerformanceData\InfluxDb\DataPoint;
 use Icinga\Web\Hook;
 use InvalidArgumentException;
 use ipl\Html\Form;
@@ -11,7 +11,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use React\EventLoop\LoopInterface;
 
-abstract class PerfDataReceiverHook implements LoggerAwareInterface
+abstract class PerfDataConsumerHook implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

@@ -1,10 +1,10 @@
 <?php
 
-use Icinga\Module\Vspheredb\ProvidedHook\Vspheredb\PerfDataReceiverInfluxDb;
+use Icinga\Module\Vspheredb\ProvidedHook\Vspheredb\PerfDataConsumerInfluxDb;
 
 /** @var $this \Icinga\Application\Modules\Module */
 $this->provideHook('director/ImportSource');
-$this->provideHook('vspheredb/PerfDataReceiver', PerfDataReceiverInfluxDb::class);
+$this->provideHook('vspheredb/PerfDataConsumer', PerfDataConsumerInfluxDb::class);
 
 $modules = $this->app->getModuleManager();
 foreach ($this->getDependencies() as $module => $required) {

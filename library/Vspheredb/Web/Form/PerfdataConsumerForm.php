@@ -8,7 +8,7 @@ use gipfl\Web\Form;
 use gipfl\Web\Form\Decorator\DdDtDecorator;
 use gipfl\ZfDbStore\Store;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
-use Icinga\Module\Vspheredb\Hook\PerfDataReceiverHook;
+use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
 use ipl\Html\FormElement\SubmitElement;
 use React\EventLoop\LoopInterface;
@@ -100,7 +100,7 @@ class PerfdataConsumerForm extends ObjectForm
             'label'    => $this->translate('Implementation'),
             'options'  => [
                     null => $this->translate('- please choose -'),
-                ] + PerfDataReceiverHook::enum(),
+                ] + PerfDataConsumerHook::enum(),
             'required' => true,
             'class'    => 'autosubmit',
         ]);
@@ -110,7 +110,7 @@ class PerfdataConsumerForm extends ObjectForm
 
     protected function addImplementation($implementation)
     {
-        /** @var PerfDataReceiverHook $instance */
+        /** @var PerfDataConsumerHook $instance */
         $instance = new $implementation;
         $instance->setLoop($this->loop);
         $form = $instance->getConfigurationForm($this->client);

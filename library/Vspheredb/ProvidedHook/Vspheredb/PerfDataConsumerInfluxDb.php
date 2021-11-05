@@ -3,10 +3,10 @@
 namespace Icinga\Module\Vspheredb\ProvidedHook\Vspheredb;
 
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
-use Icinga\Module\Vspheredb\Hook\PerfDataReceiverHook;
+use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Module\Vspheredb\Web\Form\InfluxDbConnectionForm;
 
-class PerfDataReceiverInfluxDb extends PerfDataReceiverHook
+class PerfDataConsumerInfluxDb extends PerfDataConsumerHook
 {
     public static function getName()
     {
