@@ -6,8 +6,6 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
-use Icinga\Web\Notification;
-use ipl\Html\FormElement\BaseFormElement;
 use ipl\Html\FormElement\SelectElement;
 use React\EventLoop\LoopInterface;
 use function Clue\React\Block\await;
