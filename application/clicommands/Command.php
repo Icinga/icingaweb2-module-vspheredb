@@ -15,6 +15,8 @@ use gipfl\Protocol\JsonRpc\Connection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use gipfl\SystemD\systemd;
 use Icinga\Cli\Command as CliCommand;
+use Icinga\Module\Vspheredb\Configuration;
+use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use React\EventLoop\Factory as Loop;
@@ -36,6 +38,9 @@ class Command extends CliCommand
 
     /** @var Connection|null */
     protected $rpc;
+
+    /** @var RemoteClient */
+    protected $remoteClient;
 
     public function init()
     {
@@ -74,6 +79,18 @@ class Command extends CliCommand
         }
 
         return $this;
+    }
+
+    /**
+     * @return RemoteClient
+     */
+    protected function remoteClient()
+    {
+        if ($this->remoteClient === null) {
+            $this->remoteClient = new RemoteClient(Configuration::getSocketPath(), $this->loop());
+        }
+
+        return $this->remoteClient;
     }
 
     protected function enableRpc()
@@ -152,6 +169,10 @@ class Command extends CliCommand
         return $this->vCenter;
     }
 
+    /**
+     * @param string $msg
+     * @return never-return
+     */
     public function fail($msg)
     {
         echo $this->screen->colorize("$msg\n", 'red');
