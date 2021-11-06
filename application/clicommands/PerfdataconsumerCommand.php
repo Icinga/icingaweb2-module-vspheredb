@@ -6,7 +6,6 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Data\ResourceFactory;
-use Icinga\Module\Vspheredb\ProvidedHook\Vspheredb\PerfDataConsumerInfluxDb;
 use Icinga\Module\Vspheredb\Web\Form\PerfdataConsumerForm;
 use RingCentral\Psr7\ServerRequest;
 
@@ -34,7 +33,7 @@ class PerfdataconsumerCommand extends Command
         $params = [
             'name'           => $name,
             'enabled'        => $enabled ? 'y' : 'n',
-            'implementation' => PerfDataConsumerInfluxDb::class, // $implementation,
+            'implementation' => $implementation,
             'submit'         => 'Create',
         ] + $this->params->getParams();
         if ($this->submitForm($params)) {
@@ -68,7 +67,7 @@ class PerfdataconsumerCommand extends Command
             foreach ($form->getElements() as $element) {
                 if (! $element->isValid()) {
                     foreach ($element->getMessages() as $message) {
-                        $this->failForMessage($message);
+                        $this->fail(sprintf('--%s: %s', $element->getName(), $this->wantErrorMessage($message)));
                     }
                     $this->fail(sprintf('--%s is not valid', $element->getName()));
                 }
@@ -79,19 +78,19 @@ class PerfdataconsumerCommand extends Command
             $this->fail('Validation failed for unknown reasons');
         }
         foreach ($form->getMessages() as $message) {
-            $this->failForMessage($message);
+            $this->fail($this->wantErrorMessage($message));
         }
 
         return $success;
     }
 
-    protected function failForMessage($message)
+    protected function wantErrorMessage($message)
     {
         if ($message instanceof \Exception) {
-            $this->fail($message->getMessage());
-        } else {
-            $this->fail($message);
+            return $message->getMessage();
         }
+
+        return $message;
     }
 
     protected function getStore()

@@ -111,7 +111,15 @@ class PerfdataConsumerForm extends ObjectForm
     protected function addImplementation($implementation)
     {
         /** @var PerfDataConsumerHook $instance */
-        $instance = new $implementation;
+        $class = PerfDataConsumerHook::getClass($implementation);
+        if (! $class || ! class_exists($class)) {
+            $this->triggerElementError('implementation', sprintf(
+                $this->translate('There is no such PerfdataConsumer: %s'),
+                $implementation
+            ));
+            return;
+        }
+        $instance = new $class;
         $instance->setLoop($this->loop);
         $form = $instance->getConfigurationForm($this->client);
         if ($form instanceof Form) {
@@ -164,15 +172,5 @@ class PerfdataConsumerForm extends ObjectForm
                 'label' => $this->translate('Next')
             ]);
         }
-        /*
-        $this->addElement('submit', 'btn_delete', [
-            'label' => $this->translate('Delete')
-        ]);
-        $deleteButton = $this->getElement('btn_delete');
-        if ($deleteButton && $deleteButton->hasBeenPressed()) {
-            $this->getObject()->delete();
-            $this->deleted = true;
-        }
-        */
     }
 }

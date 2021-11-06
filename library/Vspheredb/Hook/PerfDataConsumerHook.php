@@ -11,6 +11,11 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use React\EventLoop\LoopInterface;
 
+/**
+ * Please do not implement this Hook, it is still subject to change
+ *
+ * @internal
+ */
 abstract class PerfDataConsumerHook implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -91,17 +96,30 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     public static function enum()
     {
         $enum = [];
-        /** @var static $implementation */
-        foreach (Hook::all('vspheredb/PerfDataReceiver') as $name => $implementation) {
-            $module = static::getModuleFromClassName(get_class($implementation));
-            if ($module === 'Vspheredb') {
-                $enum[$name] = $implementation->getName();
+        /** @var static $instance */
+        foreach (Hook::all('vspheredb/PerfDataConsumer') as $class => $instance) {
+            $module = static::getModuleFromClassName($class);
+            $idx = $instance::getName();
+            if ($module === 'vspheredb') {
+                $enum[$idx] = $idx;
             } else {
-                $enum[$name] = $implementation->getName() . " ($module)";
+                $enum[$idx] = "$idx ($module)";
             }
         }
 
         return $enum;
+    }
+
+    public static function getClass($name)
+    {
+        /** @var static $instance */
+        foreach (Hook::all('vspheredb/PerfDataConsumer') as $class => $instance) {
+            if ($instance::getName() === $name) {
+                return $class;
+            }
+        }
+
+        return null;
     }
 
     protected static function getClassBaseName($class)
@@ -115,7 +133,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
         $parts = \explode('\\', ltrim($class, '\\'));
         if (count($parts) >= 3) {
             if ($parts[0] === 'Icinga' && $parts[1] === 'Module') {
-                return $parts[2];
+                return \lcfirst($parts[2]);
             }
         }
 
