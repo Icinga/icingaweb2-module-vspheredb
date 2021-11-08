@@ -46,23 +46,29 @@ class ObjectSync
     /** @var LoggerInterface */
     protected $logger;
 
-    protected $availableTasks = [
+    protected $fastTasks = [
+        HostQuickStatsSyncTask::class,
+        VmQuickStatsSyncTask::class,
+    ];
+
+    protected $normalTasks = [
         ManagedObjectReferenceSyncTask::class,
         HostSystemSyncTask::class,
         VirtualMachineSyncTask::class,
         DatastoreSyncTask::class,
         StoragePodSyncTask::class,
         ComputeResourceSyncTask::class,
-        HostQuickStatsSyncTask::class,
-        VmQuickStatsSyncTask::class,
+        VmDiskUsageSyncTask::class,
+        VmDatastoreUsageSyncTask::class,
+        VmSnapshotSyncTask::class,
+    ];
+
+    protected $slowTasks = [
         HostHardwareSyncTask::class,
         HostSensorSyncTask::class,
         HostPhysicalNicSyncTask::class,
         HostVirtualNicSyncTask::class,
-        VmDiskUsageSyncTask::class,
         VmHardwareSyncTask::class,
-        VmSnapshotSyncTask::class,
-        VmDatastoreUsageSyncTask::class,
     ];
 
     /** @var SyncStore[] */
@@ -100,7 +106,13 @@ class ObjectSync
         });
         $this->runAllTasks();
         $this->loop->addPeriodicTimer(60, function () {
-            $this->runAllTasks();
+            $this->runTasks($this->fastTasks);
+        });
+        $this->loop->addPeriodicTimer(170, function () {
+            $this->runTasks($this->normalTasks);
+        });
+        $this->loop->addPeriodicTimer(600, function () {
+            $this->runTasks($this->slowTasks);
         });
         $this->loop->futureTick(function () {
             $this->refreshOutdatedDatastores();
@@ -118,11 +130,16 @@ class ObjectSync
         }
     }
 
-    protected function runAllTasks()
+    protected function runTasks(array $tasks)
     {
-        foreach ($this->availableTasks as $task) {
+        foreach ($tasks as $task) {
             $this->runTask(new $task);
         }
+    }
+
+    protected function runAllTasks()
+    {
+        $this->runTasks(array_merge($this->fastTasks, $this->normalTasks, $this->slowTasks));
     }
 
     protected function runTask(SyncTask $task)
