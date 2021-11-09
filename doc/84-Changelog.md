@@ -65,6 +65,7 @@ restart the *Background Daemon*.
 * FEATURE: synchronize many Host Network related objects (#177)
 * FEATURE: log VMs with no parent to learn more about them (#202)
 * FEATURE: log entries now show the related server name (#264)
+* FEATURE: logging to journald takes place via socket (#271)
 
 ### Integrations
 * FEATURE: ship more VM properties with our Director Import Source

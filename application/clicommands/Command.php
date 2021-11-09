@@ -8,6 +8,7 @@ use gipfl\Cli\Tty;
 use gipfl\Log\Filter\LogLevelFilter;
 use gipfl\Log\IcingaWeb\IcingaLogger;
 use gipfl\Log\Logger;
+use gipfl\Log\Writer\JournaldLogger;
 use gipfl\Log\Writer\JsonRpcWriter;
 use gipfl\Log\Writer\SystemdStdoutWriter;
 use gipfl\Log\Writer\WritableStreamWriter;
@@ -117,7 +118,11 @@ class Command extends CliCommand
         }
         $loop = $this->loop();
         if (systemd::startedThisProcess()) {
-            $logger->addWriter(new SystemdStdoutWriter($loop));
+            if (@file_exists(JournaldLogger::JOURNALD_SOCKET)) {
+                $logger->addWriter((new JournaldLogger())->setIdentifier('icinga-vspheredb'));
+            } else {
+                $logger->addWriter(new SystemdStdoutWriter($loop));
+            }
         } else {
             $logger->addWriter(new WritableStreamWriter(new WritableResourceStream(STDERR, $loop)));
         }
