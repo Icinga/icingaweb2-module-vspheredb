@@ -44,6 +44,7 @@ restart the *Background Daemon*.
 * FEATURE: show VM templates as such to make them distinguishable (#205)
 * FEATURE: add vCenter-related object summaries (#237)
 * FEATURE: provide a MOB link for every vCenter (#267)
+* FEATURE: show Host System images for known vendors and models (#270)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)

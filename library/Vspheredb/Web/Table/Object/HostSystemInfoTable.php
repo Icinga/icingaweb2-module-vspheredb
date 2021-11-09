@@ -42,7 +42,10 @@ class HostSystemInfoTable extends NameValueTable
         $this->addNameValuePairs([
             $this->translate('Tools') => $this->prepareTools($host),
             $this->translate('Vendor') => $host->get('sysinfo_vendor'),
-            $this->translate('Model') =>  $host->get('sysinfo_model'),
+            $this->translate('Model') =>  $this->renderVendorModel(
+                $host->get('sysinfo_vendor'),
+                $host->get('sysinfo_model')
+            ),
             $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
             $this->translate('BIOS Version') => new BiosInfo($host),
             $this->translate('Uptime')       => DateFormatter::formatDuration($this->quickStats->get('uptime')),
@@ -74,6 +77,28 @@ class HostSystemInfoTable extends NameValueTable
         $tools[] = new MobLink($this->vCenter, $host, 'MOB');
 
         return $tools;
+    }
+
+    protected function renderVendorModel($vendor, $model)
+    {
+        $images = include __DIR__ . '/known-vendor-model-images.php';
+        if (isset($images[$vendor][$model])) {
+            $url = $images[$vendor][$model];
+            $baseUrl = parse_url($url, PHP_URL_HOST);
+            $img = Html::tag('img', [
+                'src' => $images[$vendor][$model],
+                'referrerpolicy' => 'no-referrer',
+                'alt'   => $model,
+                'title' => "$model - ",
+                'style' => 'max-width: 100%'
+            ]);
+
+            return [$model, Html::tag('br'), Html::tag('br'), $img, Html::tag('br'), Html::tag('div', [
+                'style' => 'text-align: right',
+            ], "© $vendor (https://$baseUrl)")];
+        }
+
+        return $model;
     }
 
     protected function linkToDellSupport($serviceTag)
