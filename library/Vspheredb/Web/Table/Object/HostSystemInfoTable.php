@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
+use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -70,6 +71,9 @@ class HostSystemInfoTable extends NameValueTable
     {
         $tools = [];
 
+        if ($this->vCenter->getFirstServer(false, false) === null) {
+            return Hint::warning($this->translate('There is no configured connection for this vCenter'));
+        }
         if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
             $tools[] = new Html5UiLink($this->vCenter, $host, 'HTML5 UI');
             $tools[] = ' ';

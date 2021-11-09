@@ -136,6 +136,10 @@ class VmEssentialInfoTable extends NameValueTable
     {
         $tools = [];
 
+        // TODO: find a better solution. This triggers the query twice, we should pass ServerInfo to the link
+        if ($this->vCenter->getFirstServer(false, false) === null) {
+            return Hint::warning($this->translate('There is no configured connection for this vCenter'));
+        }
         $tools[] = new VmrcLink($this->vCenter, $vm, 'VMRC');
         $tools[] = ' ';
         if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {

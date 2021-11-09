@@ -76,7 +76,7 @@ class VCenter extends BaseDbObject
      * @return VCenterServer
      * @throws NotFoundError
      */
-    public function getFirstServer($enabled = true)
+    public function getFirstServer($enabled = true, $required = true)
     {
         $db = $this->getConnection()->getDbAdapter();
         $query = $db->select()
@@ -105,10 +105,12 @@ class VCenter extends BaseDbObject
                     'Found no server for vCenterId=' . $this->get('id')
                 );
             }
-        } else {
+        } elseif ($required) {
             throw new NotFoundError(
                 'Found no server for vCenterId=' . $this->get('id')
             );
+        } else {
+            return null;
         }
     }
 
