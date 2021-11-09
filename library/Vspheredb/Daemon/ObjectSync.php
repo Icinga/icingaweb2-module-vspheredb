@@ -29,7 +29,6 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
-use Throwable;
 use function React\Promise\resolve;
 
 class ObjectSync
