@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Module\Vspheredb\Util;
+use Ramsey\Uuid\Uuid;
 
 class VmDisk extends BaseVmHardwareDbObject
 {
@@ -54,7 +54,7 @@ class VmDisk extends BaseVmHardwareDbObject
     {
         // @codingStandardsIgnoreEnd
         if (strlen($value) > 16) {
-            $value = Util::uuidToBin($value);
+            $value = Uuid::fromString($value)->getBytes();
         }
 
         return parent::reallySet('disk_uuid', $value);

@@ -7,10 +7,10 @@ use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
-use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 
 class VmHardwareTree extends BaseHtmlElement
 {
@@ -186,7 +186,7 @@ class VmHardwareTree extends BaseHtmlElement
         );
 
         if (false === $info) {
-            return sprintf('Port group %s not found', Util::uuidToHex($uuid));
+            return sprintf('Port group %s not found', Uuid::fromBytes($uuid)->toString());
         }
 
         return Link::create(

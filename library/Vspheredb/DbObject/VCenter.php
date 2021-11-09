@@ -6,6 +6,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use Ramsey\Uuid\Uuid;
 
 class VCenter extends BaseDbObject
 {
@@ -136,10 +137,10 @@ class VCenter extends BaseDbObject
     {
         // @codingStandardsIgnoreEnd
         if (strlen($value) > 16) {
-            $value = Util::uuidToBin($value);
+            $this->reallySet('instance_uuid', Uuid::fromString($value)->getBytes());
+        } else {
+            $this->reallySet('instance_uuid', $value);
         }
-
-        $this->reallySet('instance_uuid', $value);
     }
 
     /**
