@@ -57,7 +57,11 @@ class ApiConnection implements EventEmitterInterface
     {
         $this->curl = $curl;
         $this->serverInfo = $serverInfo;
-        $this->logger = new PrefixLogger(sprintf('[server %d] ', $serverInfo->get('id')), $logger);
+        $this->logger = new PrefixLogger(sprintf(
+            '[%s (id=%d)] ',
+            $serverInfo->get('host'),
+            $serverInfo->get('id')
+        ), $logger);
         $this->initializeStateMachine(self::STATE_STOPPED);
         $this->onTransition(self::STATE_STOPPED, self::STATE_INIT, function () {
             $this->eventuallyRemoveScheduledAttempt();

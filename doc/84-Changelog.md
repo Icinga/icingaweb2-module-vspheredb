@@ -64,6 +64,7 @@ restart the *Background Daemon*.
 * FEATURE: synchronize VirtualMachines belonging to vApps (#31)
 * FEATURE: synchronize many Host Network related objects (#177)
 * FEATURE: log VMs with no parent to learn more about them (#202)
+* FEATURE: log entries now show the related server name (#264)
 
 ### Integrations
 * FEATURE: ship more VM properties with our Director Import Source
