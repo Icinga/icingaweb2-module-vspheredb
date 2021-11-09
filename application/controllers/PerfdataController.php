@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use gipfl\Web\Widget\Hint;
+use gipfl\ZfDbStore\NotFoundError;
 use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -83,7 +84,15 @@ class PerfdataController extends Controller
         } else {
             $this->addSingleTab($this->translate('Consumer'));
             $uuid = Uuid::fromString($uuid);
-            $consumer = $store->load($uuid->getBytes(), PerfdataConsumer::class);
+            try {
+                $consumer = $store->load($uuid->getBytes(), PerfdataConsumer::class);
+            } catch (NotFoundError $e) {
+                $this->addTitle($this->translate('Not found'));
+                $this->content()->add(
+                    Hint::error($this->translate('There is no such Performance Data Consumer: %s'), $uuid->toString())
+                );
+                return;
+            }
             $this->addTitle($consumer->get('name'));
             $form->setObject($consumer);
         }
