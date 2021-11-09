@@ -26,9 +26,6 @@ use React\Stream\WritableResourceStream;
 
 class Command extends CliCommand
 {
-    /** @var VCenter */
-    private $vCenter;
-
     /** @var LoopInterface */
     private $loop;
 
@@ -155,18 +152,6 @@ class Command extends CliCommand
         foreach ($settings as $setting) {
             putenv("$setting=");
         }
-    }
-
-    protected function getVCenter()
-    {
-        if ($this->vCenter === null) {
-            $this->vCenter = VCenter::loadWithAutoIncId(
-                $this->requiredParam('vCenter'),
-                Db::newConfiguredInstance()
-            );
-        }
-
-        return $this->vCenter;
     }
 
     /**

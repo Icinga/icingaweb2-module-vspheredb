@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 
@@ -34,7 +35,7 @@ class CheckCommand extends Command
     public function vcenterconnectionAction()
     {
         $this->run(function () {
-            $vCenter = $this->getVCenter();
+            $vCenter = VCenter::loadWithAutoIncId($this->requiredParam('vCenter'), Db::newConfiguredInstance());
             $vCenterName = $vCenter->get('name');
             $api = $vCenter->getApi($this->logger);
             try {
