@@ -61,17 +61,10 @@ class ConfigurationController extends Controller
         $this->tabs(new ConfigTabs($this->db()))->activate('servers');
         $this->setAutorefreshInterval(10);
         $this->addTitle($this->translate('vCenter Servers'));
-        $this->actions()->add(
-            Link::create(
-                $this->translate('Add'),
-                'vspheredb/vcenter/server',
-                null,
-                [
-                    'class' => 'icon-plus',
-                    'data-base-target' => '_next'
-                ]
-            )
-        );
+        $this->actions()->add(Link::create($this->translate('Add'), 'vspheredb/vcenter/server', null, [
+            'class' => 'icon-plus',
+            'data-base-target' => '_next'
+        ]));
         try {
             $connections = $this->mapServerConnectionsToId($this->syncRpcCall('vsphere.getApiConnections'));
             foreach ($connections as $conns) {
@@ -99,7 +92,11 @@ class ConfigurationController extends Controller
             Notification::info($this->sendServerInfoToSocket());
             $this->redirectNow($this->url());
         });
-        $table->renderTo($this);
+        if (count($table) === 0) {
+            $this->content()->add(Hint::info($this->translate('Please define your first Server Connection')));
+        } else {
+            $table->renderTo($this);
+        }
     }
 
     protected function mapServerConnectionsToId($connections)
