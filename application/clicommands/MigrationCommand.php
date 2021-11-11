@@ -2,10 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
-// use gipfl\DbMigration\Migrations;
-use Icinga\Data\Db\DbConnection;
-use Icinga\Data\ResourceFactory;
-use Icinga\Module\Vspheredb\Db\Migrations;
+use Icinga\Module\Vspheredb\Db;
 
 /**
  * Handle DB migrations
@@ -63,9 +60,6 @@ class MigrationCommand extends Command
 
     protected function migrations()
     {
-        $connection = ResourceFactory::create($this->Config()->get('db', 'resource'));
-        // TODO: return new Migrations($this->db(), $this->app->getBaseDir('schema'), 'vspheredb_schema_migration');
-        return new Migrations($connection, $this->app->getBaseDir('schema'));
+        return Db::migrationsForDb(Db::newConfiguredInstance());
     }
 }
-
