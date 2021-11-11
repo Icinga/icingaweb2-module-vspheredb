@@ -4,13 +4,17 @@ namespace Icinga\Module\Vspheredb\Daemon;
 
 use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
-use gipfl\Protocol\JsonRpc\Connection;
-use Icinga\Module\Vspheredb\Rpc\LogProxy;
+use gipfl\Process\FinishedProcessState;
+use gipfl\Protocol\JsonRpc\Handler\NamespacedPacketHandler;
+use gipfl\Protocol\JsonRpc\JsonRpcConnection;
+use Icinga\Module\Vspheredb\Daemon\RpcNamespace\LogProxy;
 use Psr\Log\LoggerInterface;
 use React\ChildProcess\Process;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Stream\Util;
+use RuntimeException;
+use function React\Promise\Timer\timeout;
 
 class DbProcessRunner implements EventEmitterInterface
 {
@@ -22,7 +26,7 @@ class DbProcessRunner implements EventEmitterInterface
     /** @var LoggerInterface */
     protected $logger;
 
-    /** @var Connection */
+    /** @var JsonRpcConnection */
     protected $rpc;
 
     protected $logProxy;
@@ -53,6 +57,10 @@ class DbProcessRunner implements EventEmitterInterface
     public function request($method, $params = [])
     {
         // return $this->rpc->request($method, $params);
+        if ($this->rpc === null) {
+            throw new RuntimeException('Process RPC is not ready');
+        }
+
         $deferred = new Deferred();
         $this->queue[] = [$deferred, $method, $params];
         $this->scheduleNextRequest();
@@ -83,18 +91,30 @@ class DbProcessRunner implements EventEmitterInterface
         });
     }
 
+    protected function rejectQueue(\Exception $e)
+    {
+        foreach ($this->queue as $entry) {
+            $entry[0]->reject($e);
+        }
+        $this->queue = [];
+    }
+
     public function run(LoopInterface $loop)
     {
         if ($this->process) {
-            throw new \RuntimeException('Process is already running');
+            throw new RuntimeException('Process is already running');
         }
         $this->loop = $loop;
         $command = new IcingaCliRpc();
-        $command->setArguments(['vspheredb', 'db', 'run']);
+        $command->setArguments(['vspheredb', 'db', 'run', '--rpc']);
         $command->on('start', function (Process $process) {
             $this->process = $process;
-            $process->on('exit', function () {
+            $process->on('exit', function ($exitCode, $termSignal) {
+                $message = (new FinishedProcessState($exitCode, $termSignal))->getReason();
                 $this->removeProcess();
+                $this->rejectQueue(new \Exception($message));
+                $this->logger->error($message);
+                $this->emit('error', [new \Exception($message)]);
             });
             $this->emit('ready'); // TODO: once DB is connected
         });
@@ -102,9 +122,16 @@ class DbProcessRunner implements EventEmitterInterface
 
         $logProxy = new LogProxy($this->logger);
         $logProxy->setPrefix("[db] ");
-        $command->rpc()->setHandler($this->logProxy, 'logger');
+        timeout($command->rpc(), 10, $loop)->then(function (JsonRpcConnection $rpc) {
+            $handler = new NamespacedPacketHandler();
+            $handler->registerNamespace('logger', $this->logProxy);
+            $this->rpc = $rpc;
+        }, function (\Exception $e) {
+            $this->emit('error', [
+                'DB Process failed to initialize: ' . $e->getMessage()
+            ]);
+        });
 
-        $this->rpc = $command->rpc();
         return $command->run($loop);
     }
 }
