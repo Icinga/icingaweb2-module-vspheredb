@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use Exception;
+use gipfl\DbMigration\Migrations;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
@@ -10,7 +11,6 @@ use gipfl\Web\Widget\Hint;
 use Icinga\Application\Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
 
@@ -204,7 +204,7 @@ class ChooseDbResourceForm extends Form
      */
     protected function migrations()
     {
-        return new Migrations($this->getDb());
+        return Db::migrationsForDb($this->getDb());
     }
 
     public function setModuleConfig(Config $config)

@@ -27,7 +27,7 @@ class Controller extends CompatController
         if ($this->db === null) {
             try {
                 $this->db = Db::newConfiguredInstance();
-                $migrations = new Db\Migrations($this->db);
+                $migrations = Db::migrationsForDb($this->db);
                 if (! $migrations->hasSchema()) {
                     $this->redirectToConfiguration();
                 }

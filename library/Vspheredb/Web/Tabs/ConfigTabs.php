@@ -6,7 +6,6 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Db\Migrations;
 
 class ConfigTabs extends Tabs
 {
@@ -25,10 +24,10 @@ class ConfigTabs extends Tabs
     protected function assemble()
     {
         if ($this->connection) {
-            $migrations = new Migrations($this->connection);
+            $migrations = Db::migrationsForDb($this->connection);
         } else {
             try {
-                $migrations = new Migrations(Db::newConfiguredInstance());
+                $migrations = Db::migrationsForDb(Db::newConfiguredInstance());
             } catch (Exception $e) {
                 $migrations = null;
             }

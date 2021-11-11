@@ -3,13 +3,12 @@
 namespace Icinga\Module\Vspheredb\Web\Widget\Config;
 
 use Exception;
+use gipfl\DbMigration\Migrations;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Module\Vspheredb\Web\Form\ApplyMigrationsForm;
-use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -87,7 +86,7 @@ class ProposeMigrations extends HtmlDocument
 
     protected function showEventualProblems(Db $db)
     {
-        $migrations = new Migrations($db);
+        $migrations = Db::migrationsForDb($db);
 
         if ($migrations->hasSchema()) {
             if ($migrations->hasPendingMigrations()) {
@@ -106,7 +105,7 @@ class ProposeMigrations extends HtmlDocument
 
     protected function showMigrations(Db $db)
     {
-        $migrations = new Migrations($db);
+        $migrations = Db::migrationsForDb($db);
 
         if ($migrations->hasSchema()) {
             if ($migrations->hasPendingMigrations()) {
@@ -117,7 +116,7 @@ class ProposeMigrations extends HtmlDocument
                 $this->addForm($migrations);
             }
         } else {
-            if ($migrations->hasModuleRelatedTable()) {
+            if ($migrations->hasTable('virtual_machine')) {
                 $this->add(Hint::error($this->translate(
                     'The chosen Database resource contains related tables,'
                     . ' but the schema is not complete. In case you tried'

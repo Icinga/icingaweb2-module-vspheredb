@@ -2,10 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\DbMigration\Migrations;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Widget\Hint;
-use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Web\Notification;
 
 class ApplyMigrationsForm extends Form

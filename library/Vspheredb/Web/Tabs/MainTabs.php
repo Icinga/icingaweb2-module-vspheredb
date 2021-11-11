@@ -7,7 +7,6 @@ use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Db\Migrations;
 
 class MainTabs extends Tabs
 {
@@ -41,7 +40,7 @@ class MainTabs extends Tabs
         $isAdmin = $this->auth->hasPermission('vspheredb/admin');
 
         if ($connection) {
-            $migrations = new Migrations($connection);
+            $migrations = Db::migrationsForDb($connection);
 
             if ($migrations->hasSchema()) {
                 $this->add('vcenters', [
