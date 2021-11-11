@@ -44,7 +44,7 @@ class InfluxDbConnectionForm extends Form
             'description' => $this->translate('InfluxDB base URL, like http://influxdb.example.com:8086'),
             'required'    => true,
         ], [
-            'label' => $this->translate('Überprüfen'),
+            'label' => $this->translate('Verify'),
             'title' => $this->translate('Attempt to establish a connection to your InfluxDB instance')
         ]);
         $this->baseUrlElement->addToForm($this);
