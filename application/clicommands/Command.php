@@ -4,25 +4,18 @@ namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Exception;
 use gipfl\Cli\Process;
-use gipfl\Cli\Tty;
 use gipfl\Log\Filter\LogLevelFilter;
 use gipfl\Log\IcingaWeb\IcingaLogger;
 use gipfl\Log\Logger;
 use gipfl\Log\Writer\JournaldLogger;
-use gipfl\Log\Writer\JsonRpcWriter;
 use gipfl\Log\Writer\SystemdStdoutWriter;
 use gipfl\Log\Writer\WritableStreamWriter;
-use gipfl\Protocol\JsonRpc\Connection;
-use gipfl\Protocol\NetString\StreamWrapper;
 use gipfl\SystemD\systemd;
 use Icinga\Cli\Command as CliCommand;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
-use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\DbObject\VCenter;
 use React\EventLoop\Factory as Loop;
 use React\EventLoop\LoopInterface;
-use React\Stream\ReadableResourceStream;
 use React\Stream\WritableResourceStream;
 
 class Command extends CliCommand
@@ -34,9 +27,6 @@ class Command extends CliCommand
 
     protected $logger;
 
-    /** @var Connection|null */
-    protected $rpc;
-
     /** @var RemoteClient */
     protected $remoteClient;
 
@@ -45,9 +35,6 @@ class Command extends CliCommand
         $this->app->getModuleManager()->loadEnabledModules();
         $this->clearProxySettings();
         $this->initializeLogger();
-        if ($this->isRpc()) {
-            $this->enableRpc();
-        }
     }
 
     protected function loop()
@@ -89,22 +76,6 @@ class Command extends CliCommand
         }
 
         return $this->remoteClient;
-    }
-
-    protected function enableRpc()
-    {
-        if (Tty::isSupported()) {
-            $stdin = (new Tty($this->loop()))->setEcho(false)->stdin();
-        } else {
-            $stdin = new ReadableResourceStream(STDIN, $this->loop());
-        }
-        $netString = new StreamWrapper(
-            $stdin,
-            new WritableResourceStream(STDOUT, $this->loop())
-        );
-        $this->rpc = new Connection();
-        $this->rpc->handle($netString);
-        $this->logger->addWriter(new JsonRpcWriter($this->rpc));
     }
 
     protected function initializeLogger()
