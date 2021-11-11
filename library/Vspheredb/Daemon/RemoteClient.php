@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
-use gipfl\Protocol\JsonRpc\Connection;
+use gipfl\Protocol\JsonRpc\JsonRpcConnection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
@@ -13,7 +13,7 @@ class RemoteClient
 {
     protected $path;
 
-    /** @var Connection */
+    /** @var JsonRpcConnection */
     protected $connection;
 
     /** @var LoopInterface */
@@ -29,14 +29,14 @@ class RemoteClient
 
     public function request($method, $params = null)
     {
-        return $this->connection()->then(function (Connection $connection) use ($method, $params) {
+        return $this->connection()->then(function (JsonRpcConnection $connection) use ($method, $params) {
             return $connection->request($method, $params);
         });
     }
 
     public function notify($method, $params = null)
     {
-        return $this->connection()->then(function (Connection $connection) use ($method, $params) {
+        return $this->connection()->then(function (JsonRpcConnection $connection) use ($method, $params) {
             $connection->notification($method, $params);
         });
     }
@@ -58,8 +58,7 @@ class RemoteClient
     {
         $connector = new UnixConnector($this->loop);
         $connected = function (ConnectionInterface $connection) {
-            $jsonRpc = new Connection();
-            $jsonRpc->handle(new StreamWrapper($connection));
+            $jsonRpc = new JsonRpcConnection(new StreamWrapper($connection));
             $this->connection = $jsonRpc;
             $this->pendingConnection = null;
             $connection->on('close', function () {
