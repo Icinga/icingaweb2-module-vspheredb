@@ -4,12 +4,13 @@ namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Exception;
 use gipfl\Cli\Process;
-use gipfl\Cli\Tty;
 use gipfl\Log\IcingaWeb\IcingaLogger;
 use gipfl\Log\Logger;
-use gipfl\Protocol\JsonRpc\Connection;
+use gipfl\Log\Writer\JsonRpcConnectionWriter;
+use gipfl\Protocol\JsonRpc\Handler\NamespacedPacketHandler;
+use gipfl\Protocol\JsonRpc\JsonRpcConnection;
 use gipfl\Protocol\NetString\StreamWrapper;
-use Icinga\Module\Vspheredb\Daemon\DbRunner;
+use Icinga\Module\Vspheredb\Daemon\RpcNamespace\DbRunner;
 use React\EventLoop\LoopInterface;
 use React\Stream\ReadableResourceStream;
 use React\Stream\WritableResourceStream;
@@ -19,18 +20,19 @@ use React\Stream\WritableResourceStream;
  */
 class DbCommand extends Command
 {
-    /**
-     * icingacli vspheredb db run
-     */
     public function runAction()
     {
+        if (!$this->isRpc()) {
+            $this->fail('This is an internal command and should not be called directly');
+        }
         $this->loop()->futureTick(function () {
             $this->logger = $this->prepareLogger();
             try {
-                Process::setTitle('Icinga::vSphereDB::DB');
+                Process::setTitle('Icinga::vSphereDB::DB::idle');
                 $rpc = $this->prepareJsonRpc($this->loop());
-                $this->logger->error('test');
-                $rpc->setHandler(new DbRunner($this->logger), 'vspheredb');
+                $this->logger->addWriter(new JsonRpcConnectionWriter($rpc));
+                $handler = new NamespacedPacketHandler();
+                $handler->registerNamespace('vspheredb', new DbRunner($this->logger));
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
                 // This allows to flush streams, especially pending log messages
@@ -56,14 +58,9 @@ class DbCommand extends Command
      */
     protected function prepareJsonRpc(LoopInterface $loop)
     {
-        if (Tty::isSupported()) {
-            $stdin = (new Tty($loop))->setEcho(false)->stdin();
-        } else {
-            $stdin = new ReadableResourceStream(STDIN, $loop);
-        }
-        $netString = new StreamWrapper($stdin, new WritableResourceStream(STDOUT, $loop));
-        $rpc = new Connection();
-        $rpc->handle($netString);
-        return $rpc;
+        return new JsonRpcConnection(new StreamWrapper(
+            new ReadableResourceStream(STDIN, $loop),
+            new WritableResourceStream(STDOUT, $loop)
+        ));
     }
 }
