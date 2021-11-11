@@ -22,10 +22,12 @@ use Icinga\Module\Vspheredb\MappedClass\ServiceContent;
 use Icinga\Module\Vspheredb\MappedClass\SessionManager;
 use Icinga\Module\Vspheredb\MappedClass\UserSession;
 use Icinga\Module\Vspheredb\Polling\PropertySet\PropertySet;
+use Icinga\Module\Vspheredb\Polling\SelectSet\HostSystemSelectSet;
 use Icinga\Module\Vspheredb\Polling\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\SafeCacheDir;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\ExtendedPromiseInterface;
@@ -350,6 +352,39 @@ class VsphereApi
     {
         return $this->getServiceInstance()->then(function (ServiceContent $serviceContent) {
             return $serviceContent->rootFolder;
+        });
+    }
+
+    /**
+     * Returns either the Instance UUID for a vCenter or the Host System UUID for an ESXi Host
+     * @return PromiseInterface <UuidInterface>
+     */
+    public function fetchUniqueId()
+    {
+        return $this->getServiceInstance()->then(function (ServiceContent $content) {
+            if ($content->about->instanceUuid === null) {
+                return $this->fetchSpecSet([PropertyFilterSpec::create(
+                    [ObjectSpec::create($content->rootFolder, HostSystemSelectSet::create(), false)],
+                    [PropertySpec::create('HostSystem', ['hardware.systemInfo.uuid'])]
+                )])->then(function ($result) {
+                    if (empty($result)) {
+                        throw new \RuntimeException('Unable to fetch host object for ESXi system');
+                    }
+                    if (count($result) > 1) {
+                        throw new \RuntimeException(sprintf(
+                            'Expected to get one host from an ESXi system, got %d',
+                            count($result)
+                        ));
+                    }
+                    if (isset($result[0]['hardware.systemInfo.uuid'])) {
+                        return Uuid::fromString($result[0]['hardware.systemInfo.uuid']);
+                    }
+
+                    throw new \RuntimeException('Got no hardware.systemInfo.uuid from ESXi host');
+                });
+            } else {
+                return Uuid::fromString($content->about->instanceUuid);
+            }
         });
     }
 
