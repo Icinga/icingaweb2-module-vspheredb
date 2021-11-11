@@ -11,11 +11,13 @@ use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
 use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
+use Icinga\Module\Vspheredb\Web\Widget\ResourceUsageLoader;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\UsageSummary;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterHeader;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
 use Icinga\Web\Notification;
+use Ramsey\Uuid\Uuid;
 
 class VcenterController extends Controller
 {
@@ -38,7 +40,11 @@ class VcenterController extends Controller
         $this->actions()->add(new MobLink($vCenter));
         $this->setAutorefreshInterval(10);
         // $this->content()->add(new VCenterSyncInfo($vCenter));
-        $this->content()->add(new UsageSummary($this->perf()));
+        $this->content()->add(new UsageSummary(
+            (new ResourceUsageLoader($vCenter->getConnection()->getDbAdapter()))
+                ->filterVCenterUuid(Uuid::fromBytes($this->requireVCenter()->getUuid()))
+                ->fetch()
+        ));
         $this->content()->add(new SubTitle($this->translate('Object Summaries')));
         $this->content()->add(new VCenterSummaries($vCenter));
     }
@@ -72,37 +78,6 @@ class VcenterController extends Controller
         $form->handleRequest($this->getServerRequest());
 
         $this->content()->add($form);
-    }
-
-    protected function perf()
-    {
-        $vCenter = $this->requireVCenter();
-        $db = $vCenter->getConnection()->getDbAdapter();
-        $query = $db->select()->from(
-            ['h' => 'host_system'],
-            [
-                'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
-                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
-                'used_mb'   => 'SUM(hqs.overall_memory_usage_mb)',
-                'total_mb'  => 'SUM(h.hardware_memory_size_mb)',
-            ]
-        )->join(
-            ['hqs' => 'host_quick_stats'],
-            'h.uuid = hqs.uuid',
-            []
-        )->where('h.vcenter_uuid = ?', $vCenter->getUuid());
-        $compute = $db->fetchRow($query);
-            $query = $db->select()->from(
-                ['ds' => 'datastore'],
-                [
-                    'ds_capacity'             => 'SUM(ds.capacity)',
-                    'ds_free_space'           => 'SUM(ds.free_space)',
-                    'ds_uncommitted'          => 'SUM(ds.uncommitted)',
-                ]
-            )->where('ds.vcenter_uuid = ?', $vCenter->getUuid());
-        $storage = $db->fetchRow($query);
-
-        return (object) ((array) $compute + (array) $storage);
     }
 
     /**

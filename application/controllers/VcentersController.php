@@ -11,6 +11,8 @@ use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\Config\ProposeMigrations;
 use Icinga\Module\Vspheredb\Web\Widget\CpuAbsoluteUsage;
+use Icinga\Module\Vspheredb\Web\Widget\ResourceUsageLoader;
+use Icinga\Module\Vspheredb\Web\Widget\UsageSummary;
 use Icinga\Module\Vspheredb\WebUtil;
 use ipl\Html\Html;
 
@@ -35,15 +37,20 @@ class VcentersController extends ObjectsController
             ['class' => 'icon-chart-pie']
         ));
         */
-        (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
-            ->appendTo($this->actions());
         $count = count($table);
-        $this->addTitle($this->translate('VCenters') . ' (%d)', $count);
+        $this->addTitle($this->translate('Monitored vCenters') . ' (%d)', $count);
         if ($count === 0) {
             $this->addNoVCenterHint();
+            return;
         }
+        $this->content()->add(new UsageSummary(
+            (new ResourceUsageLoader($this->db()->getDbAdapter()))->fetch()
+        ));
+
+        (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
+            ->appendTo($this->actions());
         $this->showTable($table, 'vspheredb/groupedvms');
-        $this->controls()->prepend($this->cpuSummary($table));
+        // $this->controls()->prepend($this->cpuSummary($table));
     }
 
     protected function addNoVCenterHint()
@@ -52,7 +59,7 @@ class VcentersController extends ObjectsController
             $this->translate('No vCenter available. You might want to check your %s or your %s'),
             Link::create(
                 $this->translate('Server Connections'),
-                'vspheredb/vcenter/servers'
+                'vspheredb/configuration/servers'
             ),
             Link::create(
                 $this->translate('Daemon Status'),

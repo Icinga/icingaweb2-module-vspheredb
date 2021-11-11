@@ -5,7 +5,6 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 use Icinga\Module\Vspheredb\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlDocument;
 
 class UsageSummary extends BaseHtmlElement
 {
@@ -15,26 +14,26 @@ class UsageSummary extends BaseHtmlElement
         'class' => 'usage-summary-widget'
     ];
 
-    public function __construct($perf)
+    public function __construct(ResourceUsage $usate)
     {
         $attr = ['class' => 'usage-detail'];
         $attrBox =  ['class' => 'usage-dashlet'];
         $this->add(Html::tag('div', ['style' => 'width: 100%'], [
             Html::tag('div', $attrBox, [
-                Html::tag('div', $attr, $this->smallUnit(Format::mhz($perf->used_mhz))),
-                new CpuUsage($perf->used_mhz, $perf->total_mhz),
+                Html::tag('div', $attr, $this->smallUnit(Format::mhz($usate->usedMhz))),
+                new CpuUsage($usate->usedMhz, $usate->totalMhz),
             ]),
             Html::tag('div', $attrBox, [
-                Html::tag('div', $attr, $this->smallUnit(Format::mBytes($perf->used_mb))),
-                new MemoryUsage($perf->used_mb, $perf->total_mb),
+                Html::tag('div', $attr, $this->smallUnit(Format::mBytes($usate->usedMb))),
+                new MemoryUsage($usate->usedMb, $usate->totalMb),
             ]),
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(
-                    Format::mBytes(($perf->ds_capacity - $perf->ds_free_space) / (1024 * 1024))
+                    Format::mBytes(($usate->dsCapacity - $usate->dsFreeSpace) / (1024 * 1024))
                 )),
                 new MemoryUsage(
-                    ($perf->ds_capacity - $perf->ds_free_space) / (1024 * 1024),
-                    $perf->ds_capacity / (1024 * 1024)
+                    ($usate->dsCapacity - $usate->dsFreeSpace) / (1024 * 1024),
+                    $usate->dsCapacity / (1024 * 1024)
                 )
             ]),
         ]));
@@ -48,5 +47,4 @@ class UsageSummary extends BaseHtmlElement
             Html::tag('span', ['class' => 'unit'], $parts[1])
         ];
     }
-
 }
