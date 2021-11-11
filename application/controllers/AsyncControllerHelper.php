@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Clue\React\Block;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
-use Clue\React\Block;
 use React\EventLoop\Factory as Loop;
 
 trait AsyncControllerHelper
@@ -16,9 +16,7 @@ trait AsyncControllerHelper
 
     protected function syncRpcCall($method, $params = [], $timeout = 30)
     {
-        $promise = $this->remoteClient()->request($method, $params);
-
-        return Block\await($promise, $this->loop(), $timeout);
+        return Block\await($this->remoteClient()->request($method, $params), $this->loop(), $timeout);
     }
 
     /**
