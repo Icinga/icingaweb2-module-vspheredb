@@ -29,6 +29,15 @@ class VcentersController extends ObjectsController
         $this->checkDaemonStatus();
         $this->checkForMigrations();
         $table = new VCenterSummaryTable($this->db(), $this->url());
+        $this->actions()->add(Link::create(
+            $this->translate('Add Connection'),
+            'vspheredb/vcenter/server',
+            null,
+            [
+                'class' => 'icon-plus',
+                'data-base-target' => '_next'
+            ]
+        ));
         /*
         $this->actions()->add(Link::create(
             $this->translate('Chart'),
