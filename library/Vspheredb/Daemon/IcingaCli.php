@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Daemon;
 
 use Evenement\EventEmitterTrait;
-use gipfl\Protocol\JsonRpc\Connection;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 
@@ -13,9 +12,6 @@ class IcingaCli
 
     /** @var IcingaCliRunner */
     protected $runner;
-
-    /** @var Connection|null */
-    protected $rpc;
 
     protected $arguments = [];
 
