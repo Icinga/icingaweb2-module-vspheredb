@@ -5,13 +5,21 @@ namespace Icinga\Module\Vspheredb\Polling;
 use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
 use gipfl\Curl\CurlAsync;
-use Icinga\Module\Vspheredb\Daemon\RemoteApi;
+use gipfl\ReactUtils\RetryUnless;
+use Icinga\Module\Vspheredb\MappedClass\ServiceContent;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
+use React\Promise\Deferred;
+use function React\Promise\Timer\timeout;
 
 class ApiConnectionHandler implements EventEmitterInterface
 {
     use EventEmitterTrait;
+
+    const ON_INITIALIZED_SERVER = 'initialized';
+    const ON_CONNECT = 'connection';
+    const ON_DISCONNECT = 'disconnect';
 
     /** @var CurlAsync */
     protected $curl;
@@ -31,8 +39,8 @@ class ApiConnectionHandler implements EventEmitterInterface
     /** @var array [vcenterId => [ServerInfo, ...] */
     protected $vCenterCandidates = [];
 
-    /** @var RemoteApi */
-    protected $remoteApi;
+    /** @var array [serverId => Promise] */
+    protected $initializations = [];
 
     public function __construct(CurlAsync $curl, LoggerInterface $logger)
     {
@@ -74,6 +82,19 @@ class ApiConnectionHandler implements EventEmitterInterface
                 continue;
             }
             $vCenterId = $server->get('vcenter_id');
+            if ($vCenterId === null) {
+                if (! isset($this->initializations[$server->get('id')])) {
+                    $this->initializations[$server->get('id')] = RetryUnless::succeeding(function () use ($server) {
+                        return timeout($this
+                            ->initialize($server)
+                            ->then(function (ServiceContent $content, UuidInterface $uuid) use ($server) {
+                                $this->emit(self::ON_INITIALIZED_SERVER, [$server, $content->about, $uuid]);
+                            }), 300, $this->loop);
+                    });
+                }
+
+                continue;
+            }
             if (!isset($vCenterCandidates[$vCenterId])) {
                 $vCenterCandidates[$vCenterId] = [];
             }
@@ -83,6 +104,37 @@ class ApiConnectionHandler implements EventEmitterInterface
         $this->vCenterCandidates = $vCenterCandidates;
         $this->removeUnConfiguredApiConnections();
         $this->launchNewlyConfiguredVCenters();
+    }
+
+    protected function initialize(ServerInfo $server)
+    {
+        $apiConnection = $this->createApiConnection($server);
+        $deferred = new Deferred(function () use ($apiConnection) {
+            $apiConnection->stop();
+        });
+        $apiConnection->on('ready', function (ApiConnection $connection) use ($server, $deferred) {
+            $connection->getApi()
+                ->fetchUniqueId()
+                ->then(function (UuidInterface $uuid) use ($connection, $server, $deferred) {
+                    return $connection->getApi()
+                        ->getServiceInstance()
+                        ->then(function (ServiceContent $content) use ($server, $uuid, $deferred, $connection) {
+                            $connection->stop();
+                            $deferred->resolve([$content->about, $uuid]);
+                        });
+                }, function (\Exception $e) use ($deferred) {
+                    $this->logger->error($e->getMessage());
+                    $deferred->reject($e);
+                });
+        });
+        $this->logger->notice(sprintf(
+            'Initializing server %d: %s',
+            $server->get('id'),
+            $server->get('host')
+        ));
+        $apiConnection->run($this->loop);
+
+        return $deferred->promise();
     }
 
     protected function launchNewlyConfiguredVCenters()
@@ -101,7 +153,7 @@ class ApiConnectionHandler implements EventEmitterInterface
                 if (! isset($this->apiConnections[$vCenterId])) {
                     $apiConnection = $this->createApiConnection($server);
                     $apiConnection->on('ready', function (ApiConnection $connection) {
-                        $this->emit('apiConnection', [$connection]);
+                        $this->emit(self::ON_CONNECT, [$connection]);
                     });
                     $this->apiConnections[$vCenterId] = $apiConnection;
 
@@ -132,6 +184,7 @@ class ApiConnectionHandler implements EventEmitterInterface
             if (!isset($this->vCenterCandidates[$vCenterId])) {
                 $remove[$vCenterId] = $connection;
                 $connection->stop();
+                $this->emit(self::ON_DISCONNECT, [$connection]);
             }
         }
         foreach ($remove as $vCenterId => $connection) {
