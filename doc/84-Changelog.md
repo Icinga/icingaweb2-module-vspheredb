@@ -20,6 +20,7 @@ restart the *Background Daemon*.
 * FIX: Server Form presents masked dummy value, not masked password
 * FIX: sorting hosts by state summary
 * FIX: do not fail when showing VMs with missing linked hosts (#204)
+* FIX: show and link dependencies for web 2.9+ (#258)
 * FEATURE: show Virtual Machine Custom Values (#88)
 * FEATURE: Hosts Table now provides ESXi version column
 * FEATURE: show Host NIC information (#177)
