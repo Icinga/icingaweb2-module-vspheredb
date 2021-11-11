@@ -103,10 +103,10 @@ class WsdlLoader
     protected function processFileResult(ResponseInterface $response, $file)
     {
         // Ignore unwanted delayed responses
-        if (isset($pending[$file])) {
+        if (isset($this->pending[$file])) {
             $this->logger->info("Loaded sdk/$file");
             file_put_contents($this->cacheDir . "/$file", $response->getBody());
-            unset($pending[$file]);
+            unset($this->pending[$file]);
             $this->resolveIfReady();
         }
     }
