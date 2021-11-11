@@ -1,65 +1,35 @@
 <?php
 
-namespace Icinga\Module\Vspheredb\Daemon;
+namespace Icinga\Module\Vspheredb\Daemon\RpcNamespace;
 
 use gipfl\Log\Filter\LogLevelFilter;
 use gipfl\Log\Logger;
 use gipfl\Log\LogLevel;
-use gipfl\Protocol\JsonRpc\Handler\RpcContext;
-use gipfl\Protocol\JsonRpc\Handler\RpcUserInfo;
-use gipfl\Protocol\JsonRpc\Request;
 
-class RpcContextLogger extends RpcContext
+class RpcNamespaceLogger
 {
     /** @var Logger */
     protected $logger;
 
-    public function __construct(Logger $logger, RpcUserInfo $userInfo)
+    public function __construct(Logger $logger)
     {
         $this->logger = $logger;
-        parent::__construct($userInfo);
-    }
-
-    public function getNamespace()
-    {
-        return 'logger';
-    }
-
-    public function isAccessible()
-    {
-        return true;
     }
 
     /**
-     * @param Request $request
+     * @return string
      */
-    public function getLogLevelRequest(Request $request)
+    public function getLogLevelRequest()
     {
         return LogLevel::mapNumericToName($this->getCurrentNumericLogLevel());
     }
 
-    protected function getCurrentNumericLogLevel()
-    {
-        $level = LogLevel::LEVEL_DEBUG;
-        foreach ($this->logger->getFilters() as $filter) {
-            if ($filter instanceof LogLevelFilter) {
-                $filterLevel = LogLevel::mapNameToNumeric($filter->getLevel());
-                if ($filterLevel < $level) {
-                    $level = $filterLevel;
-                }
-            }
-        }
-
-        return $level;
-    }
-
     /**
-     * @rpcParam string $level
-     * @param Request $request
+     * @param string $level
+     * @return bool
      */
-    public function setLogLevelRequest(Request $request)
+    public function setLogLevelRequest($level)
     {
-        $level = $request->getParam('level');
         $formerLevel = $this->getCurrentNumericLogLevel();
         $numericLevel = LogLevel::mapNameToNumeric($level);
         if ($formerLevel === $numericLevel) {
@@ -84,5 +54,20 @@ class RpcContextLogger extends RpcContext
         }
 
         return true;
+    }
+
+    protected function getCurrentNumericLogLevel()
+    {
+        $level = LogLevel::LEVEL_DEBUG;
+        foreach ($this->logger->getFilters() as $filter) {
+            if ($filter instanceof LogLevelFilter) {
+                $filterLevel = LogLevel::mapNameToNumeric($filter->getLevel());
+                if ($filterLevel < $level) {
+                    $level = $filterLevel;
+                }
+            }
+        }
+
+        return $level;
     }
 }

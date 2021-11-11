@@ -1,51 +1,35 @@
 <?php
 
-namespace Icinga\Module\Vspheredb\Daemon;
+namespace Icinga\Module\Vspheredb\Daemon\RpcNamespace;
 
-use gipfl\Protocol\JsonRpc\Handler\RpcContext;
-use gipfl\Protocol\JsonRpc\Request;
-use gipfl\RpcDaemon\RpcUserInfo;
 use Icinga\Module\Vspheredb\Polling\ApiConnectionHandler;
 use Icinga\Module\Vspheredb\Polling\ServerSet;
 
-class RpcContextVsphere extends RpcContext
+class RpcNamespaceVsphere
 {
     /** @var ApiConnectionHandler */
     protected $apiConnectionHandler;
 
-    public function __construct(ApiConnectionHandler $apiConnectionHandler, RpcUserInfo $userInfo)
+    public function __construct(ApiConnectionHandler $apiConnectionHandler)
     {
-        parent::__construct($userInfo);
         $this->apiConnectionHandler = $apiConnectionHandler;
     }
 
-    public function getNamespace()
-    {
-        return 'vsphere';
-    }
-
-    public function isAccessible()
-    {
-        return true;
-    }
-
     /**
-     * @rpcParam ServerSet $servers Server Set
-     * @param Request $request
+     * @param \Icinga\Module\Vspheredb\Polling\ServerSet $servers
      * @return bool
      */
-    public function setServersRequest(Request $request)
+    public function setServersRequest(ServerSet $servers)
     {
-        $this->apiConnectionHandler->setServerSet(ServerSet::fromSerialization($request->getParam('servers')));
+        $this->apiConnectionHandler->setServerSet($servers);
 
         return true;
     }
 
     /**
-     * @param Request $request
      * @return object
      */
-    public function getApiConnectionsRequest(Request $request)
+    public function getApiConnectionsRequest()
     {
         $result = [];
         foreach ($this->apiConnectionHandler->getApiConnections() as $api) {
