@@ -41,7 +41,7 @@ class ConfigTabs extends Tabs
             ]);
             $this->add('perfdata', [
                 'label' => $this->translate('Performance Data'),
-                'url'   => 'vspheredb/configuration/perfdata',
+                'url'   => 'vspheredb/perfdata/consumers',
             ]);
 
             // Disable Tab unless #160 is ready
