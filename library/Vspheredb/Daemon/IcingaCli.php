@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Daemon;
 
 use Evenement\EventEmitterTrait;
+use gipfl\Process\FinishedProcessState;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 
