@@ -5,6 +5,8 @@ Wants=network.target
 
 [Service]
 Type=notify
+EnvironmentFile=-/etc/default/icinga-vspheredb
+EnvironmentFile=-/etc/sysconfig/icinga-vspheredb
 ExecStart=/usr/bin/icingacli vspheredb daemon run
 ; For debugging purposes:
 ; ExecStart=/usr/bin/icingacli vspheredb daemon run --trace --debug
