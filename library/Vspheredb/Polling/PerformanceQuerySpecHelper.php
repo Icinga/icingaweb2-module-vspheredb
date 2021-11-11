@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Vspheredb\PerformanceData\PerformanceSet;
+namespace Icinga\Module\Vspheredb\Polling;
 
 use Icinga\Module\Vspheredb\MappedClass\PerfMetricId;
 use Icinga\Module\Vspheredb\MappedClass\PerfQuerySpec;
