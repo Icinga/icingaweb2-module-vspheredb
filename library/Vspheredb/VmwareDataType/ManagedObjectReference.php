@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\VmwareDataType;
 
-use JsonSerializable;
+use gipfl\Json\JsonSerialization;
 
-class ManagedObjectReference implements JsonSerializable
+class ManagedObjectReference implements JsonSerialization
 {
     /**
      * @codingStandardsIgnoreStart
@@ -25,20 +25,16 @@ class ManagedObjectReference implements JsonSerializable
         return $this->type . '[' . $this->_ . ']';
     }
 
-    public function __toString()
-    {
-        if (true) {
-            throw new \Exception('Moref to string!');
-        }
-
-        return $this->_;
-    }
-
     public function jsonSerialize()
     {
         return (object) [
             '_'    => $this->_,
             'type' => $this->type,
         ];
+    }
+
+    public static function fromSerialization($any)
+    {
+        return new static($any->_, $any->type);
     }
 }
