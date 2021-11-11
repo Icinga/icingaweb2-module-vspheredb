@@ -29,9 +29,7 @@ class DaemonController extends Controller
         $this->content()->add([
             Html::tag('h3', $this->translate('Damon Processes')),
             $this->prepareDaemonInfo(),
-            Html::tag('h3', $this->translate('Control Socket Connections')),
-            $this->prepareConnectionTable(),
-            Html::tag('h3', $this->translate('vSphere API Connections')),
+            Html::tag('h3', $this->translate('vmWare API Connections')),
             $this->prepareVsphereConnectionTable(),
             Html::tag('h3', $this->translate('Damon Log Output')),
             $this->prepareLogSettings(),
@@ -132,7 +130,12 @@ class DaemonController extends Controller
     protected function prepareVsphereConnectionTable()
     {
         try {
-            return new VsphereApiConnectionTable($this->syncRpcCall('vsphere.getApiConnections'));
+            $table = new VsphereApiConnectionTable($this->syncRpcCall('vsphere.getApiConnections'));
+            if ($table->count() === 0) {
+                return Hint::info($this->translate('The vSphereDB Daemon is currently not polling any vCenter'));
+            }
+
+            return $table;
         } catch (\Exception $exception) {
             return Hint::error($exception->getMessage());
         }
