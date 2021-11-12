@@ -3,13 +3,14 @@
 namespace Icinga\Module\Vspheredb\MappedClass;
 
 /***
+ * Result of RetrievePropertiesEx and ContinueRetrievePropertiesEx
  *
  * https://www.vmware.com/support/developer/converter-sdk/conv61_apireference/vmodl.query.PropertyCollector.RetrieveResult.html
  */
 class RetrieveResult
 {
-    /** @var ObjectContent[] */
-    public $objects;
+    /** @var ObjectContent[] retrieved objects */
+    public $objects = [];
 
     /**
      * A token used to retrieve further retrieve results.
@@ -21,12 +22,48 @@ class RetrieveResult
      *
      * If unset, there are no further results to retrieve after this RetrieveResult.
      *
+     *
+     * ContinueRetrievePropertiesEx([
+     *  _this => PropertyCollector (ref)
+     * token => string
+     *
      * @var string|null
      */
     public $token;
 
+    /**
+     * @return bool
+     */
     public function hasMoreResults()
     {
         return $this->token !== null;
+    }
+
+    /**
+     * @return array
+     */
+    public function makeObjects()
+    {
+        if (empty($this->objects)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($this->objects as $objectContent) {
+            // TODO: eventually add a flag dealing with $objectContent->hasMissingProperties()
+            $result[] = $objectContent->toNewObject();
+        }
+
+        return $result;
+    }
+
+    public function jsonSerialize()
+    {
+        $result = [];
+        foreach ($this->objects as $object) {
+            $result[] = $object->jsonSerialize();
+        }
+
+        return $result;
     }
 }

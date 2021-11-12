@@ -2,11 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\ProvidedHook\Director;
 
+use gipfl\Json\JsonString;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Json;
+use Ramsey\Uuid\Uuid;
 use Zend_Db_Adapter_Abstract as ZfDb;
 
 /**
@@ -21,6 +22,7 @@ class ImportSource extends ImportSourceHook
 
     protected $hostColumns = [
         'object_name'             => 'o.object_name',
+        'vcenter_name'            => 'vc.name',
         'sysinfo_vendor'          => 'h.sysinfo_vendor',
         'sysinfo_model'           => 'h.sysinfo_model',
         'bios_version'            => 'h.bios_version',
@@ -33,6 +35,7 @@ class ImportSource extends ImportSourceHook
 
     protected $vmColumns = [
         'object_name'       => 'o.object_name',
+        'vcenter_name'      => 'vc.name',
         'guest_ip_address'  => 'vm.guest_ip_address',
         'hardware_numcpu'   => 'vm.hardware_numcpu',
         'hardware_memorymb' => 'vm.hardware_memorymb',
@@ -45,6 +48,7 @@ class ImportSource extends ImportSourceHook
     protected $computeResourceColumns = [
         'object_name'              => 'o.object_name',
         'object_type'              => 'o.object_type',
+        'vcenter_name'             => 'vc.name',
         'effective_cpu_mhz'        => 'cr.effective_cpu_mhz',
         'effective_memory_size_mb' => 'cr.effective_memory_size_mb',
         'cpu_cores'                => 'cr.cpu_cores',
@@ -53,6 +57,14 @@ class ImportSource extends ImportSourceHook
         'hosts'                    => 'cr.hosts',
         'total_cpu_mhz'            => 'cr.total_cpu_mhz',
         'total_memory_size_mb'     => 'cr.total_memory_size_mb',
+    ];
+
+    protected $datastoreColumns = [
+        'object_name'          => 'o.object_name',
+        'vcenter_name'         => 'vc.name',
+        'maintenance_mode'     => 'ds.maintenance_mode',
+        'capacity'             => 'ds.capacity',
+        'multiple_host_access' => 'ds.multiple_host_access',
     ];
 
     public function getName()
@@ -68,9 +80,44 @@ class ImportSource extends ImportSourceHook
                 'host_system'      => $form->translate('Host Systems'),
                 'virtual_machine'  => $form->translate('Virtual Machine'),
                 'compute_resource' => $form->translate('Compute Resource'),
+                'datastore'        => $form->translate('Datastore'),
             ]),
             'required' => true
         ]);
+        $form->addElement('select', 'vcenter_uuid', [
+            'label' => $form->translate('VCenter'),
+            'multiOptions' => [
+                null => $form->translate('- any -')
+            ] + self::enumVCenters(),
+        ]);
+    }
+
+    protected static function enumVCenters()
+    {
+        $db = Db::newConfiguredInstance();
+        $pairs = $db->fetchPairs(
+            $db->select()->from(['vc' => 'vcenter'], [
+                'uuid' => 'LOWER(HEX(vc.instance_uuid))',
+                'name' => "vc.name || ' (' || REPLACE(vc.api_name, 'VMware ', '') || ')'",
+            ])->order('vc.name')
+        );
+        $enum = [];
+        foreach ($pairs as $uuid => $label) {
+            $enum[Uuid::fromString($uuid)->toString()] = $label;
+        }
+
+        return $enum;
+    }
+
+    protected function eventuallyFilterVCenter($query)
+    {
+        $vCenterUuid = $this->getSetting('vcenter_uuid');
+        if ($vCenterUuid !== null) {
+            $vCenterUuid = Uuid::fromString($vCenterUuid)->getBytes();
+            $query->where('o.vcenter_uuid = ?', $vCenterUuid);
+        }
+
+        return $query;
     }
 
     public function fetchData()
@@ -80,17 +127,23 @@ class ImportSource extends ImportSourceHook
         $objectType = $this->getSetting('object_type');
         switch ($objectType) {
             case 'host_system':
-                $result = $db->fetchAll($this->prepareHostsQuery($db));
+                $query = $this->prepareHostsQuery($db);
                 break;
             case 'virtual_machine':
-                $result = $db->fetchAll($this->prepareVmQuery($db));
+                $query = $this->prepareVmQuery($db);
                 break;
             case 'compute_resource':
-                $result = $db->fetchAll($this->prepareComputeResourceQuery($db));
+                $query = $this->prepareComputeResourceQuery($db);
+                break;
+            case 'datastore':
+                $query = $this->prepareDatastoreQuery($db);
                 break;
             default:
                 return [];
         }
+        $result = $db->fetchAll(
+            $this->eventuallyFilterVCenter($this->joinVCenter($query))
+        );
 
         if (empty($result)) {
             return [];
@@ -99,7 +152,7 @@ class ImportSource extends ImportSourceHook
         if (\in_array($objectType, ['host_system', 'virtual_machine'])) {
             foreach ($result as &$row) {
                 if ($row->custom_values !== null) {
-                    $row->custom_values = Json::decode($row->custom_values);
+                    $row->custom_values = JsonString::decode($row->custom_values);
                 }
             }
         }
@@ -134,6 +187,24 @@ class ImportSource extends ImportSourceHook
         )->order('o.object_name')->order('o.uuid');
     }
 
+    protected function prepareDatastoreQuery(ZfDb $db)
+    {
+        return $db->select()->from(['o' => 'object'], $this->datastoreColumns)->join(
+            ['ds' => 'datastore'],
+            'o.uuid = ds.uuid',
+            []
+        )->order('o.object_name')->order('o.uuid');
+    }
+
+    protected function joinVCenter($query)
+    {
+        return $query->join(
+            ['vc' => 'vcenter'],
+            'vc.instance_uuid = o.vcenter_uuid',
+            []
+        );
+    }
+
     public function listColumns()
     {
         switch ($this->getSetting('object_type')) {
@@ -143,6 +214,8 @@ class ImportSource extends ImportSourceHook
                 return \array_keys($this->vmColumns);
             case 'compute_resource':
                 return \array_keys($this->computeResourceColumns);
+            case 'datastore':
+                return \array_keys($this->datastoreColumns);
             default:
                 return [];
         }

@@ -56,11 +56,6 @@ class VmQuickStats extends BaseDbObject
         'summary.quickStats.uptimeSeconds'                => 'uptime',
     ];
 
-    public static function getType()
-    {
-        return VirtualMachine::getType();
-    }
-
     /**
      * Valid are values from 0 to max allowed memory, but I've met -1 on an
      * ESXi host in the wild (6.7)
@@ -77,6 +72,19 @@ class VmQuickStats extends BaseDbObject
         parent::reallySet('host_memory_usage_mb', $value);
 
         return $this;
+    }
+
+    public static function loadFor(VirtualMachine $object)
+    {
+        if ($object->hasBeenLoadedFromDb()) {
+            $connection = $object->getConnection();
+            $uuid = $object->get('uuid');
+            if (static::exists($uuid, $connection)) {
+                return static::load($uuid, $connection);
+            }
+        }
+
+        return static::create();
     }
 
     protected function setUptime($value)

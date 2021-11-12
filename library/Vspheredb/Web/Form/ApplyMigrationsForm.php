@@ -2,13 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use Exception;
-use Icinga\Module\Vspheredb\Db\Migrations;
+use gipfl\DbMigration\Migrations;
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
+use gipfl\Web\Widget\Hint;
 use Icinga\Web\Notification;
-use ipl\Html\Html;
 
 class ApplyMigrationsForm extends Form
 {
+    use TranslationHelper;
+
     /** @var  Migrations */
     protected $migrations;
 
@@ -19,7 +22,6 @@ class ApplyMigrationsForm extends Form
 
     public function assemble()
     {
-        $this->prepareWebForm();
         if ($this->migrations->hasSchema()) {
             $count = $this->migrations->countPendingMigrations();
             if ($count === 1) {
@@ -31,9 +33,7 @@ class ApplyMigrationsForm extends Form
                 );
             }
         } else {
-            $this->add(Html::tag('p', [
-                'class' => 'state-hint warning'
-            ], $this->translate('There is no vSphereDB schema in this database')));
+            $this->add(Hint::warning($this->translate('There is no vSphereDB schema in this database')));
             $label = $this->translate('Create schema');
         }
         $this->addElement('submit', 'submit', [

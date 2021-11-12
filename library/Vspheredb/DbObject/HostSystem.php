@@ -53,8 +53,8 @@ class HostSystem extends BaseDbObject
         'runtime.powerState'                => 'runtime_power_state',
         // TODO: Introduce HostRuntimeInfo?
         // https://<vcenter>/mob/?moid=ha%2dhost&doPath=runtime
-        // runtime.inMaintenanceMode	boolean	false
-        // runtime.inQuarantineMode	boolean	Unset
+        // runtime.inMaintenanceMode   boolean  false
+        // runtime.inQuarantineMode    boolean  Unset
         'runtime.dasHostState'              => 'dasHostState',
         'summary.customValue'               => 'customValues',
         'summary.hardware.cpuMhz'           => 'hardware_cpu_mhz',
@@ -62,29 +62,6 @@ class HostSystem extends BaseDbObject
         'summary.hardware.numHBAs'          => 'hardware_num_hba',
         'summary.hardware.numNics'          => 'hardware_num_nic',
     ];
-
-    protected $quickStats;
-
-    public function quickStats()
-    {
-        if ($this->quickStats === null) {
-            $this->quickStats = HostQuickStats::load($this->get('uuid'), $this->connection);
-        }
-
-        return $this->quickStats;
-    }
-
-    protected static function getDefaultPropertySet()
-    {
-        return array_merge(
-            parent::getDefaultPropertySet(),
-            [
-                'summary.hardware.memorySize',
-                'hardware.biosInfo.releaseDate',
-                'summary.hardware.otherIdentifyingInfo',
-            ]
-        );
-    }
 
     public function countVms()
     {

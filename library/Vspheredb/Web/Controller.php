@@ -6,7 +6,6 @@ use Exception;
 use gipfl\IcingaWeb2\CompatController;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
-use ipl\Html\Html;
 
 class Controller extends CompatController
 {
@@ -23,21 +22,12 @@ class Controller extends CompatController
         }
     }
 
-    protected function addHint($message, $class = 'information')
-    {
-        $this->content()->add(Html::tag('p', [
-            'class' => $class
-        ], $message));
-
-        return $this;
-    }
-
     protected function db()
     {
         if ($this->db === null) {
             try {
                 $this->db = Db::newConfiguredInstance();
-                $migrations = new Db\Migrations($this->db);
+                $migrations = Db::migrationsForDb($this->db);
                 if (! $migrations->hasSchema()) {
                     $this->redirectToConfiguration();
                 }
@@ -57,8 +47,10 @@ class Controller extends CompatController
 
     protected function redirectToConfiguration()
     {
-        if ($this->getRequest()->getControllerName() !== 'configuration') {
-            $this->redirectNow('vspheredb/configuration');
+        if ($this->getRequest()->getControllerName() !== 'configuration'
+            || $this->getRequest()->getActionName() !== 'database'
+        ) {
+            $this->redirectNow('vspheredb/configuration/database');
         }
     }
 }

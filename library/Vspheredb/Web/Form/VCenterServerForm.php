@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
@@ -9,6 +11,8 @@ use ipl\Html\FormElement\SubmitElement;
 
 class VCenterServerForm extends Form
 {
+    use TranslationHelper;
+
     const UNCHANGED_PASSWORD = '__UNCHANGED__';
 
     protected $objectClassName = VCenterServer::class;
@@ -27,7 +31,6 @@ class VCenterServerForm extends Form
 
     public function assemble()
     {
-        $this->prepareWebForm();
         if (! class_exists('SoapClient')) {
             $this->addMessage($this->translate(
                 'The PHP SOAP extension (php-soap) is not installed/enabled'
@@ -64,6 +67,14 @@ class VCenterServerForm extends Form
         ]);
 
         $ssl = $this->getValue('scheme', 'https') === 'https';
+        $this->addElement('boolean', 'enabled', [
+            'label'       => $this->translate('Enabled'),
+            'description' => $this->translate(
+                'Whether the background daemon should actively poll this node.'
+            ),
+            'required'    => true,
+            'value'       => 'y',
+        ]);
 
         if ($ssl) {
             $this->addElement('boolean', 'ssl_verify_peer', [
@@ -112,10 +123,11 @@ class VCenterServerForm extends Form
                 'In case your vCenter is only reachable through a proxy, please'
                 . ' choose it\'s protocol right here'
             ),
-            'multiOptions' => $this->optionalEnum([
+            'multiOptions' => [
+                null     => $this->translate('- please choose -'),
                 'HTTP'   => $this->translate('HTTP proxy'),
                 'SOCKS5' => $this->translate('SOCKS5 proxy'),
-            ]),
+            ],
             'class' => 'autosubmit'
         ]);
 
@@ -176,7 +188,6 @@ class VCenterServerForm extends Form
     public function getValues()
     {
         $values = parent::getValues();
-        $values['enabled'] = 'y';
         if (! $this->isNew()) {
             if ($values['password'] === self::UNCHANGED_PASSWORD) {
                 unset($values['password']);

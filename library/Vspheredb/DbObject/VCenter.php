@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Module\Vspheredb\Api;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Application\Logger;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use Ramsey\Uuid\Uuid;
 
 class VCenter extends BaseDbObject
 {
@@ -15,9 +15,6 @@ class VCenter extends BaseDbObject
     protected $keyName = 'instance_uuid';
 
     protected $autoincKeyName = 'id';
-
-    /** @var Api */
-    private $api;
 
     protected $defaultProperties = [
         'id'                      => null,
@@ -76,51 +73,60 @@ class VCenter extends BaseDbObject
     }
 
     /**
-     * @return Api
-     * @throws \Icinga\Exception\NotFoundError
-     */
-    public function getApi()
-    {
-        if ($this->api === null) {
-            $this->api = $this->createNewApiConnection();
-        }
-
-        return $this->api;
-    }
-
-    /**
-     * @return Api
-     * @throws \Icinga\Exception\NotFoundError
-     */
-    public function createNewApiConnection()
-    {
-        return Api::forServer($this->getFirstServer());
-    }
-
-    /**
+     * @param bool $enabled
      * @return VCenterServer
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
-    public function getFirstServer()
+    public function getFirstServer($enabled = true, $required = true)
     {
         $db = $this->getConnection()->getDbAdapter();
-        $serverId = $db->fetchOne(
-            $db->select()
-                ->from('vcenter_server')
-                ->where('vcenter_id = ?', $this->get('id'))
-                ->limit(1)
-        );
-
-        return VCenterServer::loadWithAutoIncId($serverId, $this->getConnection());
+        $query = $db->select()
+            ->from('vcenter_server')
+            ->where('vcenter_id = ?', $this->get('id'))
+            ->limit(1);
+        if ($enabled) {
+            $query->where('enabled = ?', 'y');
+        }
+        $serverId = $db->fetchOne($query);
+        if ($serverId) {
+            return VCenterServer::loadWithAutoIncId($serverId, $this->getConnection());
+        } elseif ($enabled) {
+            $serverId = $db->fetchOne(
+                $db->select()
+                    ->from('vcenter_server')
+                    ->where('vcenter_id = ?', $this->get('id'))
+                    ->limit(1)
+            );
+            if ($serverId) {
+                throw new NotFoundError(
+                    'All server connections configured for this vCenter have been disabled'
+                );
+            } else {
+                throw new NotFoundError(
+                    'Found no server for vCenterId=' . $this->get('id')
+                );
+            }
+        } elseif ($required) {
+            throw new NotFoundError(
+                'Found no server for vCenterId=' . $this->get('id')
+            );
+        } else {
+            return null;
+        }
     }
 
     public function makeBinaryGlobalUuid($moRefId)
     {
         if ($moRefId instanceof ManagedObjectReference) {
-            return sha1($this->get('uuid') . $moRefId->_, true);
+            return $this->makeBinaryGlobalMoRefUuid($moRefId);
         } else {
             return sha1($this->get('uuid') . $moRefId, true);
         }
+    }
+
+    public function makeBinaryGlobalMoRefUuid(ManagedObjectReference $moRef)
+    {
+        return sha1($this->get('uuid') . $moRef->_, true);
     }
 
     /**
@@ -131,10 +137,10 @@ class VCenter extends BaseDbObject
     {
         // @codingStandardsIgnoreEnd
         if (strlen($value) > 16) {
-            $value = Util::uuidToBin($value);
+            $this->reallySet('instance_uuid', Uuid::fromString($value)->getBytes());
+        } else {
+            $this->reallySet('instance_uuid', $value);
         }
-
-        $this->reallySet('instance_uuid', $value);
     }
 
     /**
@@ -145,45 +151,5 @@ class VCenter extends BaseDbObject
     public function getConnection()
     {
         return $this->connection;
-    }
-
-    /**
-     * Hint: this also updates the vCenter.
-     *
-     * @param Api $api
-     * @param Db $db
-     * @return VCenter
-     * @throws \Icinga\Exception\AuthenticationException
-     * @throws \Icinga\Exception\NotFoundError
-     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
-     */
-    public static function fromApi(Api $api, Db $db, $name)
-    {
-        $about = $api->getAbout();
-        $uuid = $api->getBinaryUuid();
-        if (VCenter::exists($uuid, $db)) {
-            $vCenter = VCenter::load($uuid, $db);
-        } else {
-            $vCenter = VCenter::create([], $db);
-        }
-
-        // Workaround for ESXi, about has no instanceUuid
-        $about->instanceUuid = $uuid;
-        $vCenter->setMapped($about, $vCenter);
-        $vCenter->set('name', $name);
-
-        if ($vCenter->hasBeenModified()) {
-            if ($vCenter->hasBeenLoadedFromDb()) {
-                Logger::info('vCenter has been modified');
-            } else {
-                Logger::info('vCenter has been created');
-            }
-
-            $vCenter->store();
-        } else {
-            Logger::info("vCenter hasn't been changed");
-        }
-
-        return $vCenter;
     }
 }

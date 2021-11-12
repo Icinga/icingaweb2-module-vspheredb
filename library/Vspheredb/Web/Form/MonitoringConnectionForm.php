@@ -2,20 +2,17 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use Icinga\Data\Db\DbConnection;
-use Icinga\Module\Vspheredb\Web\QueryParams;
-use ipl\Html\BaseHtmlElement;
-use ipl\Html\Form;
-use ipl\Html\FormDecorator\DdDtDecorator;
-use ipl\Html\FormDecorator\DecoratorInterface;
-use ipl\Html\FormElement\SubmitElement;
-use ipl\Html\Html;
-use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Widget\Hint;
 use Icinga\Application\Config;
+use Icinga\Data\Db\DbConnection;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Web\QueryParams;
 use InvalidArgumentException;
-use ipl\Html\HtmlDocument;
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
+use ipl\Html\FormElement\SubmitElement;
+use ipl\Html\Html;
 
 class MonitoringConnectionForm extends Form
 {
@@ -27,13 +24,11 @@ class MonitoringConnectionForm extends Form
     {
         $this->addElementLoader(__NAMESPACE__ . '\\Element');
         $this->db = $connection->getDbAdapter();
-        Html::tag('div', ['class' => ['icinga-module', 'module-director']])->wrap($this);
-        $this->setDefaultElementDecorator(new DdDtDecorator());
     }
 
     protected function assemble()
     {
-        $this->add(Html::tag('p', $this->translate(
+        $this->add(Hint::info($this->translate(
             'The vSphereDB module can hook into the Icinga monitoring module.'
             . ' This allows to show context information related to your Virtualization'
             . ' infrastructure next to each monitored Host.'
@@ -139,19 +134,18 @@ class MonitoringConnectionForm extends Form
             'options'     => $idoOptions,
         ]);
 
-        $submit = $this->createElement('submit', 'submit', [
+        $submit = new SubmitElement('submit', [
             'label' => $this->translate('Store')
         ]);
-        $buttons = new HtmlDocument();
-        $buttons->add($submit)->setSeparator(' ');
-        $this->registerElement($submit);
+        $this->addElement($submit);
 
         if ($id = $this->getId()) {
             $delete = new SubmitElement('delete', [
                 'label' => $this->translate('Delete')
             ]);
-
-            $buttons->add($delete);
+            $deco = $submit->getWrapper();
+            assert($deco instanceof Form\Decorator\DdDtDecorator);
+            $deco->dd()->add($delete);
             $this->registerElement($delete);
             if ($delete->hasBeenPressed()) {
                 $this->db->delete(
@@ -160,11 +154,6 @@ class MonitoringConnectionForm extends Form
                 );
             }
         }
-
-        $this->addElement('html', 'buttons', [
-            'content' => $buttons,
-            'ignore'  => true,
-        ]);
     }
 
     protected function getId()

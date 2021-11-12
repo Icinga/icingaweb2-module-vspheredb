@@ -9,18 +9,18 @@ next (will be 1.2.0)
   documentations contain related details
 
 ### Upgrading
-introduced
 This release brings Schema migrations, which can be applied with a single click
 in the Frontend. Please **Apply** the pending schema migration. Afterwards please
 restart the *Background Daemon*.
 
 ### UI
-* FIX: hide column for experimental feature (#153)
+* FIX: hide column for an experimental feature (#153)
 * FIX: avoid PHP warnings on 7.4 when showing Host details/special cols (#169)
 * FIX: deleting Server connections has been fixed (#155)
 * FIX: Server Form presents masked dummy value, not masked password
 * FIX: sorting hosts by state summary
 * FIX: do not fail when showing VMs with missing linked hosts (#204)
+* FIX: show and link dependencies for web 2.9+ (#258)
 * FEATURE: show Virtual Machine Custom Values (#88)
 * FEATURE: Hosts Table now provides ESXi version column
 * FEATURE: show Host NIC information (#177)
@@ -42,6 +42,10 @@ restart the *Background Daemon*.
 * FEATURE: VM details now show host resource usage (#120)
 * FEATURE: Provide suggestions in case there is no vCenter (#189)
 * FEATURE: allow to define a custom vCenter display name (#121)
+* FEATURE: show VM templates as such to make them distinguishable (#205)
+* FEATURE: add vCenter-related object summaries (#237)
+* FEATURE: provide a MOB link for every vCenter (#267)
+* FEATURE: show Host System images for known vendors and models (#270)
 
 ### CLI
 * FIX: vm check now also looks for object name (#109)
@@ -61,11 +65,15 @@ restart the *Background Daemon*.
 * FEATURE: synchronize VirtualMachines belonging to vApps (#31)
 * FEATURE: synchronize many Host Network related objects (#177)
 * FEATURE: log VMs with no parent to learn more about them (#202)
+* FEATURE: log entries now show the related server name (#264)
+* FEATURE: logging to journald takes place via socket (#271)
 
 ### Integrations
 * FEATURE: ship more VM properties with our Director Import Source
 * FEATURE: ship Custom Values for the Icinga Director (#88)
-* FEATURE: Import Source now ships Compute Resources (#185)
+* FEATURE: Import Source now ships Compute Resources (#185) and Datastores (#246)
+* FEATURE: vCenter name is now shipped with all importable object types (#248)
+* FEATURE: it's now possible to filter Imports by vCenter (#247)
 
 ### DB Schema
 * FIX: dropped a unique constraint on BIOS UUID because of VMware bugs (#83, #99)

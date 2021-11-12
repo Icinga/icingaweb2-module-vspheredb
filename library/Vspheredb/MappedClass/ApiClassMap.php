@@ -10,26 +10,6 @@ class ApiClassMap
 {
     protected static $map;
 
-    public static function createInstanceForObjectContent(ObjectContent $content)
-    {
-        $map = static::getMap();
-        $type = $content->obj->type;
-        if (isset($map[$type])) {
-            $class = $map[$type];
-            $obj = new $class;
-            foreach ($content->propSet as $dynamicProperty) {
-                $obj->{$dynamicProperty->name} = $dynamicProperty->val;
-            }
-
-            return $obj;
-        } else {
-            throw new RuntimeException(sprintf(
-                'Type "%s" has no class mapping',
-                $type
-            ));
-        }
-    }
-
     public static function getMap()
     {
         if (self::$map === null) {
@@ -37,6 +17,24 @@ class ApiClassMap
         }
 
         return self::$map;
+    }
+
+    public static function hasTypeMap($type)
+    {
+        return isset(static::getMap()[$type]);
+    }
+
+    public static function requireTypeMap($type)
+    {
+        $map = static::getMap();
+        if (isset($map[$type])) {
+            return $map[$type];
+        }
+
+        throw new RuntimeException(sprintf(
+            'Type "%s" has no class mapping',
+            $type
+        ));
     }
 
     public static function prepareMap()
@@ -56,6 +54,51 @@ class ApiClassMap
             'NoPermission'         => NoPermission::class,
             'SecurityError'        => SecurityError::class,
             'LocalizedMethodFault' => LocalizedMethodFault::class,
+            'ServiceContent'       => ServiceContent::class,
+            'AboutInfo'            => AboutInfo::class,
+            'Folder'               => Folder::class,
+            'Datacenter'           => Datacenter::class,
+            'Datastore'            => Datastore::class,
+            'ResourcePool'         => ResourcePool::class,
+            'Network'              => Network::class,
+            'SessionManager'       => SessionManager::class,
+            'UserSession'          => UserSession::class,
+            'Tag'                  => Tag::class,
+            'RetrieveOptions'      => RetrieveOptions::class,
+
+            'ObjectSpec'           => ObjectSpec::class,
+            'SelectionSpec'        => SelectionSpec::class,
+            'TraversalSpec'        => TraversalSpec::class,
+            'PropertyFilterSpec'   => PropertyFilterSpec::class,
+            'PropertySpec'         => PropertySpec::class,
+            'EventFilterSpec'      => EventFilterSpec::class,
+            'EventFilterSpecByEntity'   => EventFilterSpecByEntity::class,
+            'EventFilterSpecByTime'     => EventFilterSpecByTime::class,
+            'EventFilterSpecByUsername' => EventFilterSpecByUsername::class,
+
+            'ManagedEntity'        => ManagedEntity::class,
+            'AlarmState'           => AlarmState::class,
+            'Action'               => Action::class,
+            'Alarm'                => Alarm::class,
+            'AlarmAction'          => AlarmAction::class,
+            'AlarmExpression'      => AlarmExpression::class,
+            'AlarmInfo'            => AlarmInfo::class,
+            'AlarmSetting'         => AlarmSetting::class,
+            'AlarmTriggeringAction'               => AlarmTriggeringAction::class,
+            'AlarmTriggeringActionTransitionSpec' => AlarmTriggeringActionTransitionSpec::class,
+            'AndAlarmExpression'   => AndAlarmExpression::class,
+            'CreateTaskAction'     => CreateTaskAction::class,
+            'EventAlarmExpression' => EventAlarmExpression::class,
+            'EventAlarmExpressionComparison' => EventAlarmExpressionComparison::class,
+            'ExtensibleManagedObject' => ExtensibleManagedObject::class,
+            'MethodAction'            => MethodAction::class,
+            'MethodActionArgument'    => MethodActionArgument::class,
+            'MetricAlarmExpression'   => MetricAlarmExpression::class,
+            'OrAlarmExpression'       => OrAlarmExpression::class,
+            'RunScriptAction'         => RunScriptAction::class,
+            'SendEmailAction'         => SendEmailAction::class,
+            'SendSNMPAction'          => SendSNMPAction::class,
+            'StateAlarmExpression'    => StateAlarmExpression::class,
 
             // 'ManagedObjectNotFoundFault' => "$base\\ManagedObjectNotFoundFault",
             // 'AlarmEvent'              => "$base\\AlarmEvent",

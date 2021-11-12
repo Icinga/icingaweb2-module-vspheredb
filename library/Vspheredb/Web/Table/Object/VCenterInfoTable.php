@@ -3,9 +3,9 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
-use Icinga\Module\Vspheredb\Util;
+use Ramsey\Uuid\Uuid;
 
 class VCenterInfoTable extends NameValueTable
 {
@@ -30,7 +30,7 @@ class VCenterInfoTable extends NameValueTable
                 $c->get('version'),
                 $c->get('build')
             ),
-            $this->translate('UUID') => Util::uuidToHex($c->get('instance_uuid')),
+            $this->translate('UUID') => Uuid::fromBytes($c->get('instance_uuid'))->toString(),
             // $this->translate('Version') => $c->get('version'),
             $this->translate('OS Type') => $c->get('os_type'),
             $this->translate('API Type') => $c->get('api_type'),

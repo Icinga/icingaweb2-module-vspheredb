@@ -22,7 +22,7 @@ class Html5UiLink extends BaseHtmlElement
     {
         /** @var HostSystem|VirtualMachine $object */
         $managedObject = $object->object();
-        $server = $vCenter->getFirstServer();
+        $server = $vCenter->getFirstServer(false);
         $this->setContent($label);
 
         if ($object instanceof VirtualMachine) {
@@ -65,7 +65,6 @@ class Html5UiLink extends BaseHtmlElement
         //     \rawurldecode($objectId),
         //     'vsphere.core.viTree.hostsAndClustersView'
         // );
-
     }
 
     /**

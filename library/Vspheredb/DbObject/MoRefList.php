@@ -85,6 +85,6 @@ abstract class MoRefList
         }
         sort($list, SORT_REGULAR); // TODO: check flag documentation
 
-        return sha1(implode($list, true));
+        return sha1(implode($list), true);
     }
 }

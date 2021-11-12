@@ -19,6 +19,7 @@ class VCenterSummaryTable extends HostSummaryTable
 
     protected function initialize()
     {
+        $this->setAttribute('data-base-target', '_self');
         parent::initialize();
         $this->addAvailableColumns([
             $this->createColumn('datastore_usage', $this->translate('Storage'), [
@@ -29,7 +30,7 @@ class VCenterSummaryTable extends HostSummaryTable
                     ($row->ds_capacity - $row->ds_free_space) / 1000000,
                     $row->ds_capacity / 1000000
                 );
-            }),
+            })->setSortExpression('(ds.ds_capacity - ds.ds_free_space) / ds.ds_capacity'),
             $this->createColumn('vcenter_software', $this->translate('Software'), [
                 'software_name' => 'vc.api_name',
                 'software_version' => 'vc.version',

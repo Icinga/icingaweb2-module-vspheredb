@@ -1,10 +1,12 @@
 [Unit]
 Description=Icinga vSphereDB Daemon
-Documentation=https://icinga.com/docs/vsphere/latest/
+Documentation=https://icinga.com/docs/icinga-module-for-vsphere/latest/
 Wants=network.target
 
 [Service]
 Type=notify
+EnvironmentFile=-/etc/default/icinga-vspheredb
+EnvironmentFile=-/etc/sysconfig/icinga-vspheredb
 ExecStart=/usr/bin/icingacli vspheredb daemon run
 ; For debugging purposes:
 ; ExecStart=/usr/bin/icingacli vspheredb daemon run --trace --debug

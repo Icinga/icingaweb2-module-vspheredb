@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
+use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Form\FilterHostParentForm;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
@@ -54,7 +55,7 @@ class EventsController extends Controller
         }
         $count = count($table);
         if ($count === 0) {
-            $this->addHint($this->translate('No events found'), 'warning');
+            $this->content()->add(Hint::warning($this->translate('No events found')));
         }
 
         $table->renderTo($this);
@@ -91,13 +92,13 @@ class EventsController extends Controller
         }
         $events = $heatMap->getEvents();
         if (empty($events)) {
-            $this->addHint('No events found', 'warning');
+            $this->content()->add(Hint::warning($this->translate('No events found')));
             $maxPerDay = $total = 0;
         } else {
             $maxPerDay = max($events);
             $total = array_sum($events);
-            $this->addHint(sprintf(
-                '%d events, max %d per day',
+            $this->content()->add(Hint::ok(
+                $this->translate('%s events, max %s per day'),
                 $total,
                 $maxPerDay
             ));

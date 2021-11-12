@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Daemon;
 
 use Evenement\EventEmitterTrait;
-use gipfl\Protocol\JsonRpc\Connection;
+use gipfl\Process\FinishedProcessState;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 
@@ -13,9 +13,6 @@ class IcingaCli
 
     /** @var IcingaCliRunner */
     protected $runner;
-
-    /** @var Connection|null */
-    protected $rpc;
 
     protected $arguments = [];
 
@@ -59,7 +56,7 @@ class IcingaCli
             if ($state->succeeded()) {
                 $deferred->resolve();
             } else {
-                $deferred->reject($state);
+                $deferred->reject(new \RuntimeException($state->getReason()));
             }
         });
         $process->start($loop);

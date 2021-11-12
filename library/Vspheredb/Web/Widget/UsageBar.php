@@ -28,6 +28,8 @@ class UsageBar extends BaseHtmlElement
 
     protected $formatter;
 
+    protected $showLabels = true;
+
     public function __construct($used, $capacity)
     {
         $this->used = $used;
@@ -57,6 +59,12 @@ class UsageBar extends BaseHtmlElement
         return $this;
     }
 
+    public function showLabels($show = true)
+    {
+        $this->showLabels = (bool) $show;
+        return $this;
+    }
+
     protected function format($value)
     {
         if ($this->formatter === null) {
@@ -80,7 +88,7 @@ class UsageBar extends BaseHtmlElement
 
     protected function getLabelUsed()
     {
-        return $this->translate('Used') . ': ' . $this->format($this->used);
+        return sprintf($this->translate('%s used'), $this->format($this->used));
     }
 
     protected function getLabelCapacity()
@@ -90,7 +98,7 @@ class UsageBar extends BaseHtmlElement
 
     protected function assembleBar(BaseHtmlElement $bar)
     {
-        if ($this->capacity !== null) {
+        if ($this->capacity !== null && $this->capacity !== 0) {
             $bar->add($this->makeSegment($this->used / $this->capacity, $this->getTitleUsed()));
         }
     }
@@ -103,7 +111,9 @@ class UsageBar extends BaseHtmlElement
         ]);
         $this->assembleBar($usage);
         $this->add($usage);
-        $this->addLabels();
+        if ($this->showLabels) {
+            $this->addLabels();
+        }
     }
 
     protected function addLabels()

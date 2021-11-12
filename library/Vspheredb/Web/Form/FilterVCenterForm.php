@@ -3,9 +3,9 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Form\Element\VCenterSelection;
-use ipl\Html\Form;
 
 class FilterVCenterForm extends Form
 {
@@ -18,6 +18,11 @@ class FilterVCenterForm extends Form
     {
         $this->db = $connection->getDbAdapter();
         $this->setMethod('GET');
+    }
+
+    public function hasDefaultElementDecorator()
+    {
+        return false;
     }
 
     public function getHexUuid()

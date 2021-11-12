@@ -6,6 +6,7 @@ use Icinga\Exception\MissingParameterException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmEssentialInfoTable;
@@ -91,7 +92,7 @@ class VmController extends Controller
     {
         /** @var VirtualMachine $vm */
         $vm = VirtualMachine::load(hex2bin($this->params->getRequired('uuid')), $this->db());
-        $this->controls()->add(new VmHeader($vm));
+        $this->controls()->add(new VmHeader($vm, VmQuickStats::loadFor($vm)));
         $this->setTitle($vm->object()->get('object_name'));
         $this->handleTabs();
 

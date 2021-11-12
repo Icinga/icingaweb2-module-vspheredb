@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use gipfl\Translation\TranslationHelper;
-use ipl\Html\Form;
+use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
 
 class FilterHostParentForm extends Form
@@ -16,6 +16,11 @@ class FilterHostParentForm extends Form
     {
         $this->db = $connection->getDbAdapter();
         $this->setMethod('GET');
+    }
+
+    public function hasDefaultElementDecorator()
+    {
+        return false;
     }
 
     protected function assemble()
@@ -48,17 +53,24 @@ class FilterHostParentForm extends Form
 
         $this->addElement('select', 'type', [
             'options' => [
-                null => $this->translate('- filter -')
+                null => $this->translate('- filter by event type -')
             ] + array_combine($vMotionEvents, $vMotionEvents)
                 + array_combine($otherKnownEvents, $otherKnownEvents),
             'class' => 'autosubmit',
         ]);
-        $this->addElement('select', 'parent', [
-            'options' => [
-                    null => $this->translate('- filter -')
-                ] + $this->enumHostParents(),
-            'class' => 'autosubmit',
-        ]);
+        $parents = $this->enumHostParents();
+        if (empty($parents)) {
+            $element = $this->createElement('hidden', 'parent');
+            $this->prepend($element);
+            $this->registerElement($element);
+        } else {
+            $this->addElement('select', 'parent', [
+                'options' => [
+                        null => $this->translate('- filter by parent -')
+                    ] + $parents,
+                'class' => 'autosubmit',
+            ]);
+        }
     }
 
     public function onSuccess()

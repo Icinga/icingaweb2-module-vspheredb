@@ -6,23 +6,72 @@ use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 
 /**
  * vSphereDB Check Command
  */
-class CheckCommand extends CommandBase
+class CheckCommand extends Command
 {
     use CheckPluginHelper;
 
     /** @var Db */
     protected $db;
+
+    /**
+     * This establishes a connection to the given vCenter
+     *
+     * USAGE
+     *
+     * icingacli vspheredb check vcenter [--vCenter <id>]
+     */
+    public function vcenterconnectionAction()
+    {
+        $this->run(function () {
+            $vCenter = VCenter::loadWithAutoIncId($this->requiredParam('vCenter'), Db::newConfiguredInstance());
+            $vCenterName = $vCenter->get('name');
+            $api = $vCenter->getApi($this->logger);
+            try {
+                $about = $api->getServiceInstance()->about;
+                $time = $api->getCurrentTime()->format('U.u');
+            } catch (\Exception $e) {
+                if (preg_match('/CURL ERROR: (.+)$/', $e->getMessage(), $match)) {
+                    $this->addProblem('CRITICAL', sprintf(
+                        'Failed to contact %s: %s',
+                        $vCenterName,
+                        $match[1]
+                    ));
+                } else {
+                    $this->addProblem('UNKNOWN', $e->getMessage());
+                }
+                return;
+            }
+            $timeDiff = microtime(true) - (float)$time;
+            if (abs($timeDiff) > 0.1) {
+                $this->raiseState('warning');
+                if (abs($timeDiff) > 3) {
+                    $this->raiseState('critical');
+                }
+                printf("%0.3fms Time difference detected\n", $timeDiff * 1000);
+            }
+
+            echo sprintf(
+                "%s: Connected to %s on %s, api=%s (%s)\n",
+                $vCenterName,
+                $about->fullName,
+                $about->osType,
+                $about->apiType,
+                $about->licenseProductName
+            );
+        });
+    }
 
     /**
      * Check Host Health
@@ -34,22 +83,17 @@ class CheckCommand extends CommandBase
     public function hostAction()
     {
         $this->run(function () {
-            $db = $this->db();
-            $host = HostSystem::findOneBy([
+            $host = $this->lookup()->findOneBy('HostSystem', [
                 'host_name' => $this->params->getRequired('name')
-            ], $db);
-            $quickStats = HostQuickStats::load($host->get('uuid'), $db);
+            ]);
+            assert($host instanceof HostSystem);
+            $quickStats = HostQuickStats::loadFor($host);
             $this
                 ->checkOverallHealth($host->object())
                 ->checkRuntimePowerState($host)
                 ->checkUptime($quickStats, $host)
             ;
         });
-    }
-
-    protected function requireObject()
-    {
-        return ManagedObject::load($this->params->getRequired('name'), $this->db());
     }
 
     /**
@@ -62,7 +106,7 @@ class CheckCommand extends CommandBase
     public function hostsAction()
     {
         $this->showOverallStatusForProblems(
-            HostSystem::listNonGreenObjects(Db::newConfiguredInstance())
+            $this->lookup()->listNonGreenObjects('HostSystem')
         );
     }
 
@@ -76,17 +120,17 @@ class CheckCommand extends CommandBase
     public function vmAction()
     {
         $this->run(function () {
-            $db = Db::newConfiguredInstance();
             try {
-                $vm = VirtualMachine::findOneBy([
+                $vm = $this->lookup()->findOneBy('VirtualMachine', [
                     'object_name' => $this->params->getRequired('name')
-                ], $db);
+                ]);
             } catch (NotFoundError $e) {
-                $vm = VirtualMachine::findOneBy([
+                $vm = $this->lookup()->findOneBy('VirtualMachine', [
                     'guest_host_name' => $this->params->getRequired('name')
-                ], $db);
+                ]);
             }
-            $quickStats = VmQuickStats::load($vm->get('uuid'), $db);
+            assert($vm instanceof VirtualMachine);
+            $quickStats = VmQuickStats::loadFor($vm);
             $this->checkOverallHealth($vm->object())
                 ->checkRuntimePowerState($vm)
                 ->checkUptime($quickStats, $vm);
@@ -103,7 +147,7 @@ class CheckCommand extends CommandBase
     public function vmsAction()
     {
         $this->showOverallStatusForProblems(
-            VirtualMachine::listNonGreenObjects(Db::newConfiguredInstance())
+            $this->lookup()->listNonGreenObjects('VirtualMachine')
         );
     }
 
@@ -117,10 +161,9 @@ class CheckCommand extends CommandBase
     public function datastoreAction()
     {
         $this->run(function () {
-            $db = Db::newConfiguredInstance();
-            $datastore = Datastore::findOneBy([
+            $datastore = $this->lookup()->findOneBy('Datastore', [
                 'object_name' => $this->params->getRequired('name')
-            ], $db);
+            ]);
             $this->checkOverallHealth($datastore->object());
         });
     }
@@ -135,7 +178,7 @@ class CheckCommand extends CommandBase
     public function datastoresAction()
     {
         $this->showOverallStatusForProblems(
-            Datastore::listNonGreenObjects(Db::newConfiguredInstance())
+            $this->lookup()->listNonGreenObjects('Datastore')
         );
     }
 
@@ -269,6 +312,16 @@ class CheckCommand extends CommandBase
         }
 
         return $this;
+    }
+
+    protected function requireObject()
+    {
+        return ManagedObject::load($this->params->getRequired('name'), $this->db());
+    }
+
+    protected function lookup()
+    {
+        return new CheckRelatedLookup($this->db());
     }
 
     protected function db()

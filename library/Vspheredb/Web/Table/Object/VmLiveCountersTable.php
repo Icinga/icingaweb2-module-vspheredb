@@ -5,7 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 use DateTime;
 use Exception;
 use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Web\Table\NameValueTable;
 use Icinga\Application\Benchmark;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;

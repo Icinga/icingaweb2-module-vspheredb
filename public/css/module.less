@@ -6,7 +6,12 @@ a:hover::before {
   text-decoration: none;
 }
 
-p.error, p.warning, p.information {
+span.error {
+  color: @colorCritical;
+}
+
+p.legacy-error {
+  background-color: @colorCritical;
   color: white;
   padding: 1em 2em;
   font-weight: bold;
@@ -15,22 +20,6 @@ p.error, p.warning, p.information {
     color: inherit;
     text-decoration: underline;
   }
-}
-
-span.error {
-  color: @colorCritical;
-}
-
-p.error {
-  background-color: @colorCritical;
-}
-
-p.warning {
-  background-color: @colorWarning;
-}
-
-p.information {
-  background-color: @colorOk;
 }
 
 div.section {
@@ -136,8 +125,11 @@ i.icon {
     color: @color-ok;
   }
 
-  &.poweredOff::before, &.suspended::before, &.red::before, &.DOWN::before {
+  &.red::before, &.DOWN::before {
     color: @color-critical;
+  }
+  &.poweredOff::before, &.suspended::before {
+    color: @text-color;
   }
 
   &.standby::before, &.yellow::before {
@@ -264,22 +256,6 @@ div.event-heatmap-calendars > table.calendar {
   td.other-month, td.other-month a, td.future-day, td.future-day a {
     color: @gray-light;
   }
-}
-
-p.information, p.warning, p.critical {
-  margin: 0.5em 0 0.5em 0;
-  background-color: @color-ok;
-  color: white;
-  font-weight: bold;
-  padding: 1em;
-}
-
-p.warning {
-  background-color: @color-warning;
-}
-
-p.critical {
-  background-color: @color-critical;
 }
 
 .controls.show-compact {
@@ -651,9 +627,7 @@ table {
 }
 
 div.object-summaries {
-  background-color: @text-color;
   border-radius: 0.5em;
-  color: @text-color-inverted;
   padding: 0.25em 0.25em 0.25em 0.25em;
   vertical-align: middle;
 
@@ -684,31 +658,32 @@ div.object-summaries {
       box-shadow: inset 0 0 4em 4em rgba(255,255,255,0.3);
     }
     &.chosen {
-      border-color: white;
+      border-color: @text-color;
     }
   }
 
   a.red, a.poweredoff, a.suspended {
-    color: white;
+    color: @text-color-inverted;
     background-color: @color-critical;
   }
 
   a.yellow, a.standby {
-    color: white;
+    color: @text-color-inverted;
     background-color: @color-warning;
   }
 
   a.green, a.poweredon {
-    color: white;
+    color: @text-color-inverted;
     background-color: @color-ok;
   }
 
   a.unknown {
-    color: white;
+    color: @text-color-inverted;
     background-color: @color-unknown;
   }
 
   a.gray {
+    color: @text-color-inverted;
     background-color: @gray;
   }
 }
@@ -776,17 +751,6 @@ div.health {
 }
 
 /** Various **/
-
-table.name-value-table a {
-  color: @icinga-blue;
-}
-
-table.name-value-table pre {
-  background-color: transparent;
-  margin: 0;
-  padding: 0;
-}
-
 tr.state td:first-child, tr.event td:first-child {
   padding-left: 2em;
   &::before {
@@ -898,9 +862,9 @@ div.resource-usage {
     background-color: @gray-lighter;
     height: 1em;
     border-radius: 0.3em;
-    -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
-    -moz-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
-    box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 0 2px 0 rgba(0,0,0,0.3);
+    -moz-box-shadow: inset 0 0 2px 0 rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 2px 0 rgba(0,0,0,0.3);
     overflow: hidden;
     > .usage {
       height: 100%;
@@ -916,10 +880,9 @@ div.resource-usage {
   }
 }
 
-#layout.twocols :not(&#col2), #layout.minimal-layout {
-  div.content div.resource-usage {
+#layout.twocols, #layout.minimal-layout {
+  div.resource-usage {
     .usage-used {
-      display: block;
       width: 100%;
     }
     .usage-capacity {
@@ -1081,9 +1044,6 @@ ul.tree li.collapsed > .handle {
 
 /** From Director pre.logfile, modified */
 div.logWindow {
-  height: 31.25em;
-  // height: 4.5em;
-  // //font-size: 0.875em;
   line-height: 1.25em;
   border: 1px solid @gray-lighter;
   color: #ddd;
@@ -1107,7 +1067,7 @@ pre.logOutput {
     font-weight: bold;
   }
 
-  .error {
+  .error, .critical, .emergency {
     color: @color-critical;
   }
 
@@ -1115,12 +1075,8 @@ pre.logOutput {
     color: @color-warning;
   }
 
-  .info {
+  .info, .notice {
     color: @color-ok;
-  }
-
-  .notice {
-    // color: @color-ok;
   }
 
   .debug {
@@ -1129,6 +1085,31 @@ pre.logOutput {
 }
 
 /** End logfile */
+div.vm-template {
+  float: left;
+  border: 0.75em solid @text-color;
+  height: 6em;
+  box-sizing: border-box;
+  width: 6em;
+  border-radius: 1em;
+  text-align: center;
+  display: inline-block;
+  background-color: @gray;
+  margin-right: 1em;
+  color: @text-color;
+  padding: 0.2em 0;
+  i.state {
+    &:before {
+      color: @text-color;
+    }
+    font-size: 2.2em;
+  }
+}
+
+div.host-header {
+  min-height: 6em; // CPU float height
+}
+
 .cpu {
   border: 0.75em solid @text-color;
   height: 6em;
@@ -1204,58 +1185,82 @@ div.controls .cpu {
   }
 }
 
-.form-element-description {
-  color: @text-color;
-  font-style: italic;
-  margin: 0.25em 0 0 15em;
-  padding-left: 0.5em;
-  width: 100%;
+div.summary-countlet {
+  width: 49%;
+  margin-right: 1%;
+  margin-bottom: 1em;
+  padding: 1em;
+  text-align: center;
+  display: inline-block;
+  height: 10em;
+  color: @text-color-inverted;
+  h3 {
+    font-size: 1.6em;
+    margin: 1em 0 0.5em 0;
+  }
+  .badge {
+    font-size: 1.5em;
+    margin-right: 0.5em;
+    border: 1px solid @text-color-inverted;
+  }
+  &.state-red {
+    background-image: linear-gradient(115deg, fade(@color-critical, 95%), fade(@color-critical, 70%));
+    border: 1px solid @color-critical;
+  }
+  &.state-green {
+    background-image: linear-gradient(115deg, fade(@color-ok, 95%), fade(@color-ok, 70%));
+    border: 1px solid @color-ok;
+  }
+  &.state-yellow {
+    background-image: linear-gradient(115deg, fade(@color-warning, 95%), fade(@color-warning, 70%));
+    border: 1px solid @color-warning;
+  }
+  &.state-gray {
+    background-image: linear-gradient(115deg, fade(@gray, 95%), fade(@gray, 70%));
+    border: 1px solid @gray;
+  }
 }
 
-.form-compat26 {
-
-  .form-element-description {
-    max-width: 36em;
-    padding: 0;
-    width: auto;
-  }
-  .control-label-group {
-    width: 15em;
+.badge {
+  &.state-red {
+    background-color: @color-critical;
   }
 
-  select {
-    max-width: 36em;
-    min-width: 20em;
-    line-height: 2em;
-    height: 2.4em;
-    padding-left: 0.5em;
-    border-style: solid;
-    border-color: transparent;
-    border-bottom-color: @gray-light;
-    border-width: 1px 1px 1px 3px;
-    background-color: white;
+  &.state-green {
+    background-color: @color-ok;
   }
 
-  select option {
-    height: 2em;
-    padding-top: 0.3em;
+  &.state-yellow {
+    background-color: @color-warning;
   }
 
-  select[multiple] {
-    height: auto;
+  &.state-gray {
+    background-color: @gray;
   }
+}
 
-  select[multiple=multiple] {
-    height: auto;
-  }
-
-  input[type=text], input[type=password], textarea, select {
-    max-width: 36em;
-    min-width: 20em;
+#layout.minimal-layout, #layout.poor-layout, #layout.compact-layout.twocols {
+  div.summary-countlet {
     width: 100%;
   }
+}
 
-  select:focus, textarea:focus {
-    border-color: @icinga-blue;
+div.usage-summary-widget {
+  div.usage-dashlet {
+    text-align: center;
+    vertical-align: top;
+    width: 32%;
+    margin-right: 1%;
+    overflow: hidden;
+    display: inline-block;
+    .unit {
+      font-size: 0.6em;
+      font-weight: normal;
+    }
+  }
+
+  div.usage-detail {
+    font-size: 3.5em;
+    font-weight: bold;
   }
 }

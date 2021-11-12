@@ -26,13 +26,16 @@ class HostQuickStats extends BaseDbObject
         'summary.quickStats.uptime'                    => 'uptime',
     ];
 
-    public static function getType()
+    public static function loadFor(HostSystem $object)
     {
-        return HostSystem::getType();
-    }
+        if ($object->hasBeenLoadedFromDb()) {
+            $connection = $object->getConnection();
+            $uuid = $object->get('uuid');
+            if (static::exists($uuid, $connection)) {
+                return static::load($uuid, $connection);
+            }
+        }
 
-    public static function getSelectSet()
-    {
-        return HostSystem::getSelectSet();
+        return static::create();
     }
 }

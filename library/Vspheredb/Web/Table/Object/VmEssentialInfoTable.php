@@ -4,8 +4,9 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Web\Table\NameValueTable;
 use Exception;
+use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
@@ -135,6 +136,10 @@ class VmEssentialInfoTable extends NameValueTable
     {
         $tools = [];
 
+        // TODO: find a better solution. This triggers the query twice, we should pass ServerInfo to the link
+        if ($this->vCenter->getFirstServer(false, false) === null) {
+            return Hint::warning($this->translate('There is no configured connection for this vCenter'));
+        }
         $tools[] = new VmrcLink($this->vCenter, $vm, 'VMRC');
         $tools[] = ' ';
         if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
@@ -203,10 +208,10 @@ class VmEssentialInfoTable extends NameValueTable
             }
         } catch (Exception $e) {
             return [
-                Html::tag('p', ['class' => 'error'], sprintf(
+                Hint::error(
                     $this->translate('Unable to check monitoring state: %s'),
                     $e->getMessage()
-                ))
+                )
             ];
         }
     }

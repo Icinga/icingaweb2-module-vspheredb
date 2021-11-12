@@ -3,20 +3,56 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Icon;
+use gipfl\Json\JsonString;
+use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Vspheredb\Web\Form\LogLevelForm;
+use Icinga\Module\Vspheredb\Web\Table\ControlSocketConnectionsTable;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\VsphereApiConnectionTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
+use Icinga\Module\Vspheredb\WebUtil;
 use ipl\Html\Html;
 use ipl\Html\Table;
 
 class DaemonController extends Controller
 {
+    use AsyncControllerHelper;
+
     public function indexAction()
     {
-        // $this->setAutorefreshInterval(1);
+        $this->assertPermission('vspheredb/admin');
+        $this->setAutorefreshInterval(30);
         $this->addTitle($this->translate('vSphereDB Daemon Status'));
         $this->handleTabs();
+        $this->content()->add([
+            Html::tag('h3', $this->translate('Damon Processes')),
+            $this->prepareDaemonInfo(),
+            Html::tag('h3', $this->translate('vmWare API Connections')),
+            $this->prepareVsphereConnectionTable(),
+            Html::tag('h3', $this->translate('Damon Log Output')),
+            $this->prepareLogSettings(),
+            $this->prepareLogWindow()
+        ]);
+    }
+
+    protected function prepareLogSettings()
+    {
+        $logLevelForm = new LogLevelForm($this->remoteClient(), $this->loop());
+        $logLevelForm->on($logLevelForm::ON_SUCCESS, function () {
+            $this->redirectNow($this->url());
+        });
+        $logLevelForm->handleRequest($this->getServerRequest());
+        if ($logLevelForm->talkedToSocket()) {
+            return [$this->translate('Log level') . ': ', $logLevelForm];
+        }
+
+        return null;
+    }
+
+    protected function prepareDaemonInfo()
+    {
         $db = $this->db()->getDbAdapter();
         $daemon = $db->fetchRow(
             $db->select()
@@ -24,13 +60,47 @@ class DaemonController extends Controller
                 ->order('ts_last_refresh DESC')
                 ->limit(1)
         );
-        $lineCount = 2000;
-        $logLines = $db->fetchAll($db->select()->from([
-            'l' => $db->select()
-                ->from('vspheredb_daemonlog')
-                ->order('ts_create DESC')
-                ->limit($lineCount)
-        ])->order('ts_create ASC')->limit($lineCount));
+
+        if ($daemon) {
+            if ($daemon->ts_last_refresh / 1000 < time() - 10) {
+                return Hint::error(Html::sprintf(
+                    "Daemon keep-alive is outdated in our database, last refresh was %s",
+                    WebUtil::timeAgo($daemon->ts_last_refresh / 1000)
+                ));
+            } else {
+                return $this->prepareProcessTable(JsonString::decode($daemon->process_info));
+            }
+        } else {
+            return Hint::error($this->translate('Daemon is either not running or not connected to the Database'));
+        }
+    }
+
+    protected function prepareProcessTable($processes)
+    {
+        $table = new Table();
+        foreach ($processes as $pid => $process) {
+            $table->add($table::row([
+                [
+                    Icon::create($process->running ? 'ok' : 'warning-empty'),
+                    ' ',
+                    $pid
+                ],
+                $process->command,
+                Format::bytes($process->memory->rss)
+            ]));
+        }
+
+        return $table;
+    }
+
+    protected function prepareLogWindow()
+    {
+        $db = $this->db()->getDbAdapter();
+        $lineCount = 1000;
+        $logLines = $db->fetchAll($db->select()
+            ->from('vspheredb_daemonlog')
+            ->order('ts_create DESC')
+            ->limit($lineCount));
         $log = Html::tag('pre', ['class' => 'logOutput']);
         $logWindow = Html::tag('div', ['class' => 'logWindow'], $log);
         foreach ($logLines as $line) {
@@ -45,42 +115,30 @@ class DaemonController extends Controller
             ], "$tsFormatted: " . $line->message));
         }
 
-        if ($daemon) {
-            if ($daemon->ts_last_refresh / 1000 < time() - 10) {
-                $info = Html::tag('p', [
-                    'class' => 'error'
-                ], Html::sprintf(
-                    "Daemon keep-alive is outdated, last refresh was %s",
-                    $this->timeAgo($daemon->ts_last_refresh / 1000)
-                ));
-            } else {
-                $processes = json_decode($daemon->process_info);
-                $table = new Table();
-                foreach ($processes as $pid => $process) {
-                    $table->add($table::row([
-                        [
-                            Icon::create($process->running ? 'ok' : 'warning-empty'),
-                            ' ',
-                            $pid
-                        ],
-                        $process->command,
-                        Format::bytes($process->memory->rss)
-                    ]));
-                }
-                $info = $table;
-            }
-        } else {
-            $info = Html::tag('p', ['class' => 'error'], 'Daemon is not running');
-        }
-        $this->content()->add([$info, $logWindow]);
+        return $logWindow;
     }
 
-    protected function timeAgo($time)
+    protected function prepareConnectionTable()
     {
-        return Html::tag('span', [
-            'class' => 'time-ago',
-            'title' => DateFormatter::formatDateTime($time)
-        ], DateFormatter::timeAgo($time));
+        try {
+            return new ControlSocketConnectionsTable($this->syncRpcCall('connections.list'));
+        } catch (\Exception $exception) {
+            return Hint::error($exception->getMessage());
+        }
+    }
+
+    protected function prepareVsphereConnectionTable()
+    {
+        try {
+            $table = new VsphereApiConnectionTable($this->syncRpcCall('vsphere.getApiConnections'));
+            if ($table->count() === 0) {
+                return Hint::info($this->translate('The vSphereDB Daemon is currently not polling any vCenter'));
+            }
+
+            return $table;
+        } catch (\Exception $exception) {
+            return Hint::error($exception->getMessage());
+        }
     }
 
     protected function handleTabs()

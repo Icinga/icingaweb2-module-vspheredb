@@ -35,7 +35,7 @@ class VmrcLink extends HtmlDocument
     protected function assemble()
     {
         try {
-            $server = $this->vCenter->getFirstServer();
+            $server = $this->vCenter->getFirstServer(false);
             $this->add(Html::tag('a', [
                 'href' => sprintf(
                     'vmrc://%s/?moid=%s',

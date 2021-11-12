@@ -2,20 +2,20 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Module\Vspheredb\Json;
+use gipfl\Json\JsonString;
 
 trait CustomValueSupport
 {
     /**
      * @param $value
-     * @throws \Icinga\Module\Vspheredb\Exception\JsonException
+     * @throws \gipfl\Json\JsonEncodeException
      */
     protected function setCustomValues($value)
     {
         if ($value === null) {
             $this->set('custom_values', null);
         } else {
-            $this->set('custom_values', Json::encode($value));
+            $this->set('custom_values', JsonString::encode($value));
         }
     }
 

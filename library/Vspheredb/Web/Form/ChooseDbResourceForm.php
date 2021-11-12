@@ -3,16 +3,21 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use Exception;
+use gipfl\DbMigration\Migrations;
 use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
+use gipfl\Web\Widget\Hint;
 use Icinga\Application\Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Db\Migrations;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
 
 class ChooseDbResourceForm extends Form
 {
+    use TranslationHelper;
+
     private $config;
 
     private $storeConfigLabel;
@@ -23,7 +28,6 @@ class ChooseDbResourceForm extends Form
 
     protected function assemble()
     {
-        $this->prepareWebForm();
         $this->storeConfigLabel = $this->translate('Store configuration');
 
         $this->addResourceConfigElements();
@@ -62,10 +66,10 @@ class ChooseDbResourceForm extends Form
                 $this->getElement('resource')
                     ->addMessage('Could not connect to database: ' . $e->getMessage());
 
-                $this->addHint($this->translate(
+                $this->add(Hint::info($this->translate(
                     'Please make sure that your database exists and your user has'
                     . ' been granted enough permissions'
-                ));
+                )));
             }
         }
     }
@@ -78,20 +82,20 @@ class ChooseDbResourceForm extends Form
         $this->addElement('select', 'resource', array(
             'required'      => true,
             'label'         => $this->translate('DB Resource'),
-            'multiOptions'  => $this->optionalEnum($resources),
+            'multiOptions'  => [null => $this->translate('- please choose -')] + $resources,
             'class'         => 'autosubmit',
             'value'         => $config->get('db', 'resource')
         ));
 
         if (!$this->getResourceName()) {
-            $this->addHint($this->translate(
+            $this->add(Hint::info($this->translate(
                 'No database resource has been configured yet. Please choose a'
                 . ' resource to complete your config'
-            ));
+            )));
         }
 
         if (empty($resources)) {
-            $this->addHint(Html::sprintf(
+            $this->add(Hint::info(Html::sprintf(
                 $this->translate('Please click %s to create new MySQL/MariaDB resource'),
                 Link::create(
                     $this->translate('here'),
@@ -99,7 +103,7 @@ class ChooseDbResourceForm extends Form
                     null,
                     ['data-base-target' => '_main']
                 )
-            ));
+            )));
         }
 
         $this->addElement('submit', 'submit', [
@@ -200,7 +204,7 @@ class ChooseDbResourceForm extends Form
      */
     protected function migrations()
     {
-        return new Migrations($this->getDb());
+        return Db::migrationsForDb($this->getDb());
     }
 
     public function setModuleConfig(Config $config)

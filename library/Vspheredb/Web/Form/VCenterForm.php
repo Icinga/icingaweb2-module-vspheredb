@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -9,6 +11,8 @@ use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 
 class VCenterForm extends Form
 {
+    use TranslationHelper;
+
     protected $objectClassName = VCenterServer::class;
 
     /** @var VCenterServer */
@@ -25,7 +29,6 @@ class VCenterForm extends Form
 
     public function assemble()
     {
-        $this->prepareWebForm();
         $this->addElement('text', 'name', [
             'label'       => $this->translate('Name'),
             'description' => $this->translate(
