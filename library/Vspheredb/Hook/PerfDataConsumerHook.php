@@ -112,6 +112,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
 
     public static function getClass($name)
     {
+        // TODO: module/Name for foreign ones?
         /** @var static $instance */
         foreach (Hook::all('vspheredb/PerfDataConsumer') as $class => $instance) {
             if ($instance::getName() === $name) {
