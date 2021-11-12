@@ -2,7 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
-use Icinga\Module\Vspheredb\Daemon\Daemon;
+use gipfl\SimpleDaemon\Daemon;
+use Icinga\Module\Vspheredb\Daemon\VsphereDbDaemon;
 
 class DaemonCommand extends Command
 {
@@ -15,15 +16,21 @@ class DaemonCommand extends Command
      */
     public function runAction()
     {
+        $this->assertNoVcenterParam();
+        $daemon = new Daemon();
+        $daemon->setLogger($this->logger);
+        $daemon->attachTask(new VsphereDbDaemon());
+        $daemon->run($this->loop());
+        $this->eventuallyStartMainLoop();
+    }
+
+    protected function assertNoVcenterParam()
+    {
         if ($this->params->get('vCenterId')) {
             $this->fail(
                 'The parameter --vCenterId has been deprecated with v1.0.0,'
                 . ' please check our documentation'
             );
         }
-
-        $daemon = new Daemon($this->logger);
-        $daemon->run($this->loop());
-        $this->eventuallyStartMainLoop();
     }
 }
