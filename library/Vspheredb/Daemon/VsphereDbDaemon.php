@@ -135,12 +135,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             if ($this->systemd && strlen($statusSummary) > 0) {
                 $this->systemd->setStatus($statusSummary);
             }
-            print_r($this->componentStates);
-            print_r($daemonState->getComponentStates());
             foreach ($this->componentStates as $component => $state) {
                 $newState = $daemonState->getComponentState($component);
                 if ($state !== $newState) {
-                    $this->onComponentChange($component, $state, $newState);
+                    $this->loop->futureTick(function () use ($component, $state, $newState) {
+                        $this->onComponentChange($component, $state, $newState);
+                    });
                 }
             }
             $this->componentStates = $daemonState->getComponentStates();
@@ -159,35 +159,81 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     protected function onComponentChange($component, $formerState, $currentState)
     {
         $this->logger->notice("[$component] component changed from $formerState to $currentState");
+        if ($this->daemonState->getComponentState($component) !== $currentState) {
+            $this->logger->warning(sprintf(
+                "[%s] component should be %s, but is now %s. Race condition?",
+                $component,
+                $currentState,
+                $this->daemonState->getComponentState($component)
+            ));
+        }
         if ($component === self::COMPONENT_DB) {
             if ($formerState === self::STATE_READY) {
-                if ($this->apiConnectionHandler) {
-                    $this->apiConnectionHandler->stop();
-                }
-                $this->stopAllApiTasks();
                 $this->stopConfigWatch();
-                $this->eventuallyDisconnectFromDb();
+                $this->stopComponent(self::COMPONENT_API);
+                $this->stopComponent(self::COMPONENT_LOCALDB);
             } elseif ($currentState === self::STATE_IDLE) {
                 $this->runConfigWatch();
             } elseif ($currentState === self::STATE_READY) {
-                $this->reconnectToDb();
+                $this->setLocalDbState(self::STATE_STARTING);
             }
         }
         if ($component === self::COMPONENT_LOCALDB) {
-            if ($currentState === self::STATE_FAILED) {
-                $this->logger->error('Failed. Will try to reconnect to the Database');
-                $this->eventuallyDisconnectFromDb();
-                $delay = $this->delayOnFailed;
-                $this->logger->warning("Failed. Reconnecting in ${delay}s");
-                $this->loop->addTimer($delay, function () {
+            switch ($currentState) {
+                case self::STATE_STARTING:
                     $this->reconnectToDb();
-                });
-
-            } elseif ($currentState === self::STATE_READY) {
-                $this->apiConnectionHandler->run($this->loop);
-                $this->daemonState->setComponentState(self::COMPONENT_API, self::STATE_READY);
-                $this->refreshConfiguredServers();
+                    break;
+                case self::STATE_FAILED:
+                    $this->logger->error('Failed. Will try to reconnect to the Database');
+                    $this->eventuallyDisconnectFromDb();
+                    $delay = $this->delayOnFailed;
+                    $this->logger->warning("Failed. Reconnecting in ${delay}s");
+                    $this->loop->addTimer($delay, function () {
+                        if ($this->getLocalDbState() === self::STATE_FAILED) {
+                            $this->setLocalDbState(self::STATE_STARTING);
+                        }
+                    });
+                    break;
+                case self::STATE_READY:
+                    $this->setApiState(self::STATE_STARTING);
+                    break;
+                case self::STATE_STOPPING:
+                    $this->eventuallyDisconnectFromDb();
+                    $this->stopComponent(self::COMPONENT_API);
+                    $this->setLocalDbState(self::STATE_STOPPED);
+                    break;
             }
+        }
+        if ($component === self::COMPONENT_API) {
+            switch ($currentState) {
+                case self::STATE_STARTING:
+                    $this->apiConnectionHandler->run($this->loop);
+                    $this->setApiState(self::STATE_READY);
+                    break;
+                case self::STATE_READY:
+                    $this->refreshConfiguredServers();
+                    $this->daemonState->setState(self::STATE_READY);
+                    break;
+                case self::STATE_FAILED:
+                    $this->logger->error('[api] failed');
+                    // Intentional fall-through:
+                case self::STATE_STOPPING:
+                    if ($this->apiConnectionHandler) {
+                        $this->apiConnectionHandler->stop();
+                    }
+                    $this->stopAllApiTasks();
+                    $this->setApiState(self::STATE_STOPPED);
+                    break;
+            }
+        }
+    }
+
+    protected function stopComponent($component)
+    {
+        $state = $this->daemonState;
+        if (! in_array($state->getComponentState($component), [self::STATE_STOPPED, self::STATE_STOPPING])) {
+            $state->setComponentState($component, self::STATE_STOPPING);
+            $this->daemonState->setState(self::STATE_IDLE);
         }
     }
     
@@ -199,6 +245,21 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     protected function setLocalDbState($state)
     {
         $this->daemonState->setComponentState(self::COMPONENT_LOCALDB, $state);
+    }
+
+    protected function setApiState($state)
+    {
+        $this->daemonState->setComponentState(self::COMPONENT_API, $state);
+    }
+
+    protected function getApiState()
+    {
+        return $this->daemonState->getComponentState(self::COMPONENT_API);
+    }
+
+    protected function getLocalDbState()
+    {
+        return $this->daemonState->getComponentState(self::COMPONENT_LOCALDB);
     }
 
     protected function initializeDbProcess()
@@ -284,7 +345,6 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     protected function onApiConnection(ApiConnection $connection)
     {
-        $this->logger->info('Got new connected API');
         $vCenter = VCenter::loadWithAutoIncId(
             $connection->getServerInfo()->get('vcenter_id'),
             $this->connection
@@ -295,6 +355,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             $serverInfo->get('host'),
             $serverInfo->get('id')
         ), $this->logger);
+        $logger->info('connection is ready');
 
         $apiSync = new ObjectSync($vCenter, $connection->getApi(), $logger);
         $perfDataSync = new PerfDataSync($vCenter, $connection->getApi(), $this->curl, $this->loop, $logger);
@@ -308,7 +369,6 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     protected function prepareApi(LoopInterface $loop, LoggerInterface $logger)
     {
-        $this->daemonState->setComponentState('api', self::STATE_STARTING);
         $socketPath = Configuration::getSocketPath();
 
         $curl = new CurlAsync($loop);
@@ -498,6 +558,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             $sent = $this->sendDbConfigToRunner();
         }
         $sent->then(function () {
+            $this->stopComponent(self::COMPONENT_API);
             $this->setDbState(self::STATE_READY);
         }, function (Exception $e) {
             $this->logger->error('[configwatch] Sending DB Config failed: ' . $e->getMessage());
