@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Daemon;
 use Evenement\EventEmitterTrait;
 use Icinga\Application\Config;
 use React\EventLoop\LoopInterface;
+use React\EventLoop\TimerInterface;
 
 /**
  * ConfigWatch
@@ -15,6 +16,8 @@ use React\EventLoop\LoopInterface;
 class ConfigWatch
 {
     use EventEmitterTrait;
+
+    const ON_CONFIG = 'dbConfig';
 
     /** @var string */
     protected $configFile;
@@ -29,6 +32,12 @@ class ConfigWatch
     protected $resourceConfig;
 
     protected $interval = 3;
+
+    /** @var TimerInterface */
+    protected $timer;
+
+    /** @var LoopInterface */
+    protected $loop;
 
     public function __construct($dbResourceName = null)
     {
@@ -48,14 +57,22 @@ class ConfigWatch
         $check = function () {
             $this->checkForFreshConfig();
         };
-        $loop->addPeriodicTimer($this->interval, $check);
+        $this->timer = $loop->addPeriodicTimer($this->interval, $check);
         $loop->futureTick($check);
+    }
+
+    public function stop()
+    {
+        if ($this->timer) {
+            $this->loop->cancelTimer($this->timer);
+            $this->timer = null;
+        }
     }
 
     protected function checkForFreshConfig()
     {
         if ($this->configHasBeenChanged()) {
-            $this->emit('dbConfig', [$this->resourceConfig]);
+            $this->emit(self::ON_CONFIG, [$this->resourceConfig]);
         }
     }
 
