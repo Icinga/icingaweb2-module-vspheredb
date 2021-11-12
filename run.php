@@ -1,7 +1,7 @@
 <?php
 
+use Icinga\Module\Vspheredb\Application\DependencyChecker;
 use Icinga\Module\Vspheredb\ProvidedHook\Vspheredb\PerfDataConsumerInfluxDb;
-use Icinga\Module\Director\Application\DependencyChecker;
 
 /** @var $this \Icinga\Application\Modules\Module */
 $checker = new DependencyChecker($this->app);
