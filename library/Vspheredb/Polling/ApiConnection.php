@@ -58,7 +58,7 @@ class ApiConnection implements EventEmitterInterface
         $this->curl = $curl;
         $this->serverInfo = $serverInfo;
         $this->logger = new PrefixLogger(sprintf(
-            '[%s (id=%d)] ',
+            '[api %s (id=%d)] ',
             $serverInfo->get('host'),
             $serverInfo->get('id')
         ), $logger);

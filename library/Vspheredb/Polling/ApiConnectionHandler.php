@@ -55,7 +55,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         if ($this->servers === null || ! $servers->equals($this->servers)) {
             $this->servers = $servers;
             if ($this->loop) {
-                $this->applyServers();
+                $this->applyServers($this->servers);
             }
         }
     }
@@ -74,10 +74,10 @@ class ApiConnectionHandler implements EventEmitterInterface
         return $this->apiConnections;
     }
 
-    protected function applyServers()
+    protected function applyServers(ServerSet $servers)
     {
         $vCenterCandidates = [];
-        foreach ($this->servers->getServers() as $server) {
+        foreach ($servers->getServers() as $server) {
             if (! $server->isEnabled()) {
                 continue;
             }
@@ -128,7 +128,7 @@ class ApiConnectionHandler implements EventEmitterInterface
                 });
         });
         $this->logger->notice(sprintf(
-            'Initializing server %d: %s',
+            '[api] initializing server %d: %s',
             $server->get('id'),
             $server->get('host')
         ));
@@ -158,7 +158,7 @@ class ApiConnectionHandler implements EventEmitterInterface
                     $this->apiConnections[$vCenterId] = $apiConnection;
 
                     $this->logger->notice(sprintf(
-                        'Launching server %d: %s',
+                        '[api] launching server %d: %s',
                         $server->get('id'),
                         $this->vCenterConnectionLogName($vCenterId, $apiConnection)
                     ));
@@ -189,7 +189,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         }
         foreach ($remove as $vCenterId => $connection) {
             $this->logger->notice(
-                'Removed vCenter connection for ' . $this->vCenterConnectionLogName($vCenterId, $connection)
+                '[api] removed vCenter connection for ' . $this->vCenterConnectionLogName($vCenterId, $connection)
             );
             // $this->remoteApi->removeApiConnection($connection);
             unset($this->apiConnections[$vCenterId]);
@@ -204,6 +204,11 @@ class ApiConnectionHandler implements EventEmitterInterface
     public function run(LoopInterface $loop)
     {
         $this->loop = $loop;
-        $this->applyServers();
+        $this->applyServers($this->servers);
+    }
+
+    public function stop()
+    {
+        $this->applyServers(new ServerSet());
     }
 }
