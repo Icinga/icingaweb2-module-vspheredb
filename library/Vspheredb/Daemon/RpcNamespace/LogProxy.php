@@ -28,7 +28,7 @@ class LogProxy
      * @param string $message
      * @param array $context
      */
-    public function logRequest($level, $message, $context = [])
+    public function logNotification($level, $message, $context = [])
     {
         $this->logger->log($level, $this->prefix . $message, $context);
     }
