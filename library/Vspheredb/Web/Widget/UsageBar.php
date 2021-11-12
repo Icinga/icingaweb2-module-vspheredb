@@ -28,6 +28,8 @@ class UsageBar extends BaseHtmlElement
 
     protected $formatter;
 
+    protected $showLabels = true;
+
     public function __construct($used, $capacity)
     {
         $this->used = $used;
@@ -54,6 +56,12 @@ class UsageBar extends BaseHtmlElement
     {
         $this->formatter = $callback;
 
+        return $this;
+    }
+
+    public function showLabels($show = true)
+    {
+        $this->showLabels = (bool) $show;
         return $this;
     }
 
@@ -103,7 +111,9 @@ class UsageBar extends BaseHtmlElement
         ]);
         $this->assembleBar($usage);
         $this->add($usage);
-        $this->addLabels();
+        if ($this->showLabels) {
+            $this->addLabels();
+        }
     }
 
     protected function addLabels()
