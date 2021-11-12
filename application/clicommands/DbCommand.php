@@ -29,10 +29,10 @@ class DbCommand extends Command
             $this->logger = $this->prepareLogger();
             try {
                 Process::setTitle('Icinga::vSphereDB::DB::idle');
-                $rpc = $this->prepareJsonRpc($this->loop());
-                $this->logger->addWriter(new JsonRpcConnectionWriter($rpc));
                 $handler = new NamespacedPacketHandler();
-                $handler->registerNamespace('vspheredb', new DbRunner($this->logger));
+                $handler->registerNamespace('vspheredb', new DbRunner($this->logger, $this->loop()));
+                $rpc = $this->prepareJsonRpc($this->loop(), $handler);
+                $this->logger->addWriter(new JsonRpcConnectionWriter($rpc));
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
                 // This allows to flush streams, especially pending log messages
@@ -56,11 +56,11 @@ class DbCommand extends Command
     /**
      * Prepares a JSON-RPC Connection on STDIN/STDOUT
      */
-    protected function prepareJsonRpc(LoopInterface $loop)
+    protected function prepareJsonRpc(LoopInterface $loop, $handler)
     {
         return new JsonRpcConnection(new StreamWrapper(
             new ReadableResourceStream(STDIN, $loop),
             new WritableResourceStream(STDOUT, $loop)
-        ));
+        ), $handler);
     }
 }
