@@ -29,6 +29,7 @@ class DbProcessRunner implements EventEmitterInterface
     /** @var JsonRpcConnection */
     protected $rpc;
 
+    /** @var LogProxy */
     protected $logProxy;
 
     /** @var Process */
@@ -128,17 +129,15 @@ class DbProcessRunner implements EventEmitterInterface
 
         $this->logProxy = new LogProxy($this->logger);
         $this->logProxy->setPrefix("[db] ");
-        timeout($command->rpc(), 10, $loop)->then(function (JsonRpcConnection $rpc) {
+        $promise = timeout($command->rpc(), 10, $loop)->then(function (JsonRpcConnection $rpc) {
             $handler = new NamespacedPacketHandler();
             $handler->registerNamespace('logger', $this->logProxy);
+            $rpc->setHandler($handler);
             $this->rpc = $rpc;
-            $this->emit('ready'); // TODO: once DB is connected
-        }, function (\Exception $e) {
-            $this->emit('error', [
-                'DB Process failed to initialize: ' . $e->getMessage()
-            ]);
         });
 
-        return $command->run($loop);
+        $command->run($loop);
+
+        return $promise;
     }
 }
