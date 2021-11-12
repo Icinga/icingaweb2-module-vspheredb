@@ -23,7 +23,7 @@ class DbCleanup
         $this->logger = $logger;
     }
 
-    public function run()
+    public function runForStartup()
     {
         $this->logger->notice('Running DB cleanup (this could take some time)');
         $db = $this->db;
@@ -51,13 +51,27 @@ WHERE;
            WHERE d.instance_uuid = vspheredb_daemonlog.instance_uuid
         )
 QUERY;
-        $result = $db->delete('vspheredb_daemonlog', $where);
+        $this->optimizeWhenDeleted($db->delete('vspheredb_daemonlog', $where));
+        $this->logger->notice('DB has been cleaned up');
+    }
+
+    public function runRegular()
+    {
+        $this->logger->notice('Running DB cleanup (this could take some time)');
+        $db = $this->db;
+        $this->optimizeWhenDeleted(
+            $db->delete('vspheredb_daemonlog', $db->quoteInto('ts_create < ?', (time() - 86400) * 1000))
+        );
+        $this->logger->notice('DB has been cleaned up');
+    }
+
+    protected function optimizeWhenDeleted($result)
+    {
         if ($result > 0) {
             $this->logger->info(
                 "Removed $result outdated daemon log lines, optimizing table"
             );
+            $this->db->query('OPTIMIZE TABLE vspheredb_daemonlog')->execute();
         }
-        $db->query('OPTIMIZE TABLE vspheredb_daemonlog')->execute();
-        $this->logger->notice('DB has been cleaned up');
     }
 }
