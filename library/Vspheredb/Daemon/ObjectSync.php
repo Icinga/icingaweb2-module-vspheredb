@@ -82,6 +82,8 @@ class ObjectSync implements DaemonTask
     /** @var ExtendedPromiseInterface[] */
     protected $runningTasks = [];
 
+    protected $ready = false;
+
     public function __construct(VCenter $vCenter, VsphereApi $api, LoggerInterface $logger)
     {
         $this->vCenter = $vCenter;
@@ -92,15 +94,12 @@ class ObjectSync implements DaemonTask
     public function start(LoopInterface $loop)
     {
         $this->loop = $loop;
-        $loop->futureTick(function () {
-            $this->initialize();
-        });
-
-        return resolve();
+        return $this->initialize();
     }
 
     public function stop()
     {
+        $this->ready = false;
         foreach ($this->timers as $timer) {
             $this->loop->cancelTimer($timer);
         }
@@ -108,16 +107,19 @@ class ObjectSync implements DaemonTask
         foreach ($this->runningTasks as $task) {
             // TODO: change how they're being launched, so we can stop them
         }
+        $this->runningTasks = [];
 
         return resolve();
     }
 
     protected function initialize()
     {
-        $this->prepareSyncResultHandler()->then(function () {
+        return $this->prepareSyncResultHandler()->then(function () {
+            $this->ready = true;
             $this->scheduleTasks();
         }, function ($e) {
             $this->logger->error($e->getMessage());
+            throw $e;
         });
     }
 
@@ -177,6 +179,14 @@ class ObjectSync implements DaemonTask
         $this->runningTasks[$idx] = $this->api
             ->fetchBySelectAndPropertySetClass($task->getSelectSetClass(), $task->getPropertySetClass())
             ->then(function ($result) use ($task, $idx) {
+                if (! $this->ready) {
+                    $this->logger->warning(sprintf(
+                        'Not storing result for %s, task has been stopped',
+                        $task->getLabel()
+                    ));
+                    unset($this->runningTasks[$idx]);
+                    return resolve();
+                }
                 $stats = new SyncStats($task->getLabel());
                 $this->requireSyncStoreInstance($task->getSyncStoreClass())
                     ->store($result, $task->getObjectClass(), $stats);
