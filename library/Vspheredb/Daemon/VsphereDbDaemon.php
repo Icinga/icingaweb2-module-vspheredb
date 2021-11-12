@@ -358,13 +358,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $logger->info('connection is ready');
 
         $apiSync = new ObjectSync($vCenter, $connection->getApi(), $logger);
-        $perfDataSync = new PerfDataSync($vCenter, $connection->getApi(), $this->curl, $this->loop, $logger);
         $this->runningTasks[spl_object_hash($connection)] = [
             'sync' => $apiSync,
-            'perf' => $perfDataSync,
         ];
         $apiSync->start($this->loop);
-        $perfDataSync->start($this->loop);
     }
 
     protected function prepareApi(LoopInterface $loop, LoggerInterface $logger)
