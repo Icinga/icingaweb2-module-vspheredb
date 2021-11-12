@@ -88,7 +88,7 @@ class UsageBar extends BaseHtmlElement
 
     protected function getLabelUsed()
     {
-        return $this->translate('Used') . ': ' . $this->format($this->used);
+        return sprintf($this->translate('%s used'), $this->format($this->used));
     }
 
     protected function getLabelCapacity()
