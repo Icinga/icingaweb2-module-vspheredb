@@ -44,7 +44,11 @@ class DbProcessRunner implements EventEmitterInterface
     public function stop()
     {
         if ($this->process) {
-            $this->process->close();
+            $process = $this->process;
+            $this->process = null;
+            if ($process->isRunning()) {
+                $process->close();
+            }
         }
     }
 
@@ -110,22 +114,25 @@ class DbProcessRunner implements EventEmitterInterface
         $command->on('start', function (Process $process) {
             $this->process = $process;
             $process->on('exit', function ($exitCode, $termSignal) {
-                $message = (new FinishedProcessState($exitCode, $termSignal))->getReason();
-                $this->removeProcess();
-                $this->rejectQueue(new \Exception($message));
-                $this->logger->error($message);
-                $this->emit('error', [new \Exception($message)]);
+                // If there is no process, we have been stopped
+                if ($this->process) {
+                    $message = (new FinishedProcessState($exitCode, $termSignal))->getReason();
+                    $this->removeProcess();
+                    $this->rejectQueue(new \Exception($message));
+                    $this->logger->error($message);
+                    $this->emit('error', [new \Exception($message)]);
+                }
             });
-            $this->emit('ready'); // TODO: once DB is connected
         });
         Util::forwardEvents($command, $this, ['error']);
 
-        $logProxy = new LogProxy($this->logger);
-        $logProxy->setPrefix("[db] ");
+        $this->logProxy = new LogProxy($this->logger);
+        $this->logProxy->setPrefix("[db] ");
         timeout($command->rpc(), 10, $loop)->then(function (JsonRpcConnection $rpc) {
             $handler = new NamespacedPacketHandler();
             $handler->registerNamespace('logger', $this->logProxy);
             $this->rpc = $rpc;
+            $this->emit('ready'); // TODO: once DB is connected
         }, function (\Exception $e) {
             $this->emit('error', [
                 'DB Process failed to initialize: ' . $e->getMessage()
