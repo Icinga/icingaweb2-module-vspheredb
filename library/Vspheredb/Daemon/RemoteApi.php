@@ -65,7 +65,7 @@ class RemoteApi
         if (empty($path)) {
             throw new \InvalidArgumentException('Control socket path expected, got none');
         }
-        $this->logger->info("Launching control socket in $path");
+        $this->logger->info("[socket] launching control socket in $path");
         $socket = new ControlSocket($path);
         $socket->run($this->loop);
         $this->addSocketEventHandlers($socket);
