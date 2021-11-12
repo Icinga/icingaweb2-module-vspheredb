@@ -87,31 +87,62 @@ abstract class HostSummaryTable extends ObjectsTable
         });
     }
 
+    protected function hasChosenColumn($name)
+    {
+        return in_array($name, $this->getChosenColumnNames());
+    }
+
     protected function initialize()
     {
         $this->addAvailableColumns([
             $this->createGroupingColumn(),
 
-            $this->createColumn('hardware_cpu_cores', 'Cores', 'SUM(h.hardware_cpu_cores)')
-                ->setDefaultSortDirection('DESC'),
-
-            $this->createColumn('cpu', 'CPU', [
+            $this->createColumn('cpu', $this->translate('CPU'), [
                 'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
                 'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
             ])->setRenderer(function ($row) {
-                return new CpuUsage($row->used_mhz, $row->total_mhz);
+                $bar = new CpuUsage($row->used_mhz, $row->total_mhz);
+                if ($this->hasChosenColumn('overall_cpu_usage') || $this->hasChosenColumn('hardware_cpu_mhz')) {
+                    $bar->showLabels(false);
+                }
+                return $bar;
             })->setSortExpression(
                 'SUM(hqs.overall_cpu_usage) / SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
             )->setDefaultSortDirection('DESC'),
+            $this->createColumn('overall_cpu_usage', $this->translate('Used'), 'SUM(hqs.overall_cpu_usage)')
+                ->setRenderer(function ($row) {
+                    return Format::mhz($row->overall_cpu_usage);
+                })->setDefaultSortDirection('DESC'),
+            $this->createColumn(
+                'hardware_cpu_mhz',
+                $this->translate('Capacity'),
+                'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
+            )->setRenderer(function ($row) {
+                return Format::mhz($row->hardware_cpu_mhz);
+            })->setDefaultSortDirection('DESC'),
+            $this->createColumn('hardware_cpu_cores', $this->translate('Cores'), 'SUM(h.hardware_cpu_cores)')
+                ->setDefaultSortDirection('DESC'),
 
-            $this->createColumn('memory', 'Memory', [
+            $this->createColumn('memory', $this->translate('Memory'), [
                 'used_mb'  => 'SUM(hqs.overall_memory_usage_mb)',
                 'total_mb' => 'SUM(h.hardware_memory_size_mb)',
             ])->setRenderer(function ($row) {
-                return new MemoryUsage($row->used_mb, $row->total_mb);
+                $bar = new MemoryUsage($row->used_mb, $row->total_mb);
+                if ($this->hasChosenColumn('overall_memory_usage') || $this->hasChosenColumn('hardware_memorymb')) {
+                    $bar->showLabels(false);
+                }
+                return $bar;
             })->setSortExpression(
                 'AVG(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)'
             )->setDefaultSortDirection('DESC'),
+            $this->createColumn('overall_memory_usage', $this->translate('Used'), 'SUM(hqs.overall_memory_usage_mb)')
+                ->setRenderer(function ($row) {
+                    return Format::mBytes($row->overall_memory_usage);
+                })->setDefaultSortDirection('DESC'),
+            $this->createColumn('hardware_memorymb', $this->translate('Capacity'), 'SUM(h.hardware_memory_size_mb)')
+                ->setRenderer(function ($row) {
+                    return Format::mBytes($row->hardware_memorymb);
+                })->setDefaultSortDirection('DESC'),
 
             $this->createColumn('cnt_hosts', 'Hosts', 'COUNT(*)')
                 ->setDefaultSortDirection('DESC'),
@@ -143,26 +174,6 @@ abstract class HostSummaryTable extends ObjectsTable
                 "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
                 "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
             ])->setDefaultSortDirection('DESC'),
-
-            $this->createColumn('hardware_cpu_mhz', 'CPU Capacity', 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)')
-                ->setRenderer(function ($row) {
-                    return Format::mhz($row->hardware_cpu_mhz);
-                })->setDefaultSortDirection('DESC'),
-
-            $this->createColumn('overall_cpu_usage', 'CPU Usage', 'SUM(hqs.overall_cpu_usage)')
-                ->setRenderer(function ($row) {
-                    return Format::mhz($row->overall_cpu_usage);
-                })->setDefaultSortDirection('DESC'),
-
-            $this->createColumn('hardware_memorymb', 'Memory Capacity', 'SUM(h.hardware_memory_size_mb)')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->hardware_memorymb);
-                })->setDefaultSortDirection('DESC'),
-
-            $this->createColumn('overall_memory_usage', 'Memory Usage', 'SUM(hqs.overall_memory_usage_mb)')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->overall_memory_usage);
-                })->setDefaultSortDirection('DESC'),
 
             /*
              // Not yet, this was an early prototype based no monitoring vars
