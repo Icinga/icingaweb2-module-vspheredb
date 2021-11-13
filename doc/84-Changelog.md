@@ -33,7 +33,7 @@ restart the *Background Daemon*.
 * FEATURE: support 'compact' mode for dashboard use (#134)
 * FEATURE: vCenter summary now shows Storage totals (#191)
 * FEATURE: optional VMware software column for the vCenter overview (#192)
-* FEATURE: Veeam backup tool info now also works with Custom Values (#193)
+* FEATURE: Veritas NetBackup backup tool info now also works with Custom Values (#193)
 * FEATURE: VM location details now provide a link to the vCenter (#148)
 * FEATURE: HTML5 UI link has been introduced (#194)
 * FEATURE: vCenter links point to new vCenter summary/detail page (#195)

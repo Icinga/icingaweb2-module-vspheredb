@@ -6,7 +6,7 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
-use Icinga\Module\Vspheredb\Addon\VeeamBackup;
+use Icinga\Module\Vspheredb\Addon\NetBackup;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\CustomValues;
@@ -61,7 +61,7 @@ class CustomValueDetails extends HtmlDocument
     {
         $tools = [
             new IbmSpectrumProtect(),
-            new VeeamBackup(),
+            new NetBackup(),
             new VRangerBackup(),
         ];
 

@@ -9,7 +9,7 @@ use Exception;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
-use Icinga\Module\Vspheredb\Addon\VeeamBackup;
+use Icinga\Module\Vspheredb\Addon\NetBackup;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -54,7 +54,7 @@ class VmEssentialInfoTable extends NameValueTable
     {
         $tools = [
             new IbmSpectrumProtect(),
-            new VeeamBackup(),
+            new NetBackup(),
             new VRangerBackup(),
         ];
         foreach ($tools as $tool) {

@@ -7,19 +7,18 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Vspheredb\Addon\VeeamBackup;
+use Icinga\Module\Vspheredb\Addon\NetBackup;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 
-class VeeamBackupRunDetails extends NameValueTable
+class NetBackupRunDetails extends NameValueTable
 {
     use TranslationHelper;
 
     /**
-     * VeeamBackupRunDetails constructor.
-     * @param VeeamBackup $details
+     * @param NetBackup $details
      */
-    public function __construct(VeeamBackup $details)
+    public function __construct(NetBackup $details)
     {
         $attributes = $details->requireParsedAttributes();
 
