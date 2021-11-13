@@ -6,6 +6,7 @@ use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\NetBackup;
+use Icinga\Module\Vspheredb\Addon\VeeamBackup;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
@@ -56,6 +57,7 @@ class BackupToolInfo extends HtmlDocument
         return [
             new IbmSpectrumProtect(),
             new NetBackup(),
+            new VeeamBackup(),
             new VRangerBackup(),
         ];
     }
