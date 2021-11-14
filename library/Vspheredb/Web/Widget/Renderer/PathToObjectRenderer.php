@@ -31,7 +31,7 @@ class PathToObjectRenderer
         $uuid = $object->get('uuid');
         /** @var \Icinga\Module\Vspheredb\Db $connection */
         $connection = $object->getConnection();
-        $lookup =  new PathLookup($connection);
+        $lookup =  new PathLookup($connection->getDbAdapter());
         $class = \get_class($object);
         if (isset($this->classLinkMap[$class])) {
             $baseUrl = $this->classLinkMap[$class];

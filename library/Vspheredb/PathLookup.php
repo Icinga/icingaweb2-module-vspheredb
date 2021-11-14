@@ -3,15 +3,19 @@
 namespace Icinga\Module\Vspheredb;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Adapter\Adapter;
 
 class PathLookup
 {
     /** @var \Zend_Db_Adapter_Abstract */
     protected $db;
 
-    public function __construct(Db $db)
+    /**
+     * @param Adapter|\Zend_Db_Adapter_Abstract $db
+     */
+    public function __construct($db)
     {
-        $this->db = $db->getDbAdapter();
+        $this->db = $db;
     }
 
     /**

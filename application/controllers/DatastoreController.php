@@ -25,7 +25,7 @@ class DatastoreController extends Controller
         $uuid = hex2bin($this->params->getRequired('uuid'));
         $ds = $this->addDatastore();
 
-        $lookup = new PathLookup($this->db());
+        $lookup = new PathLookup($this->db()->getDbAdapter());
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
         foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
             $path->add(Link::create(

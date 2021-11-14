@@ -158,7 +158,7 @@ class ObjectsController extends Controller
     protected function pathLookup()
     {
         if ($this->pathLookup === null) {
-            $this->pathLookup = new PathLookup($this->db());
+            $this->pathLookup = new PathLookup($this->db()->getDbAdapter());
         }
 
         return $this->pathLookup;

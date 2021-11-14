@@ -102,7 +102,7 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected function renderDisk($disk, $device, $controller)
     {
-        $lookup = new PathLookup($this->getDb());
+        $lookup = new PathLookup($this->getDb()->getDbAdapter());
         $result = [];
         if ($disk->datastore_uuid !== null) {
             $link = $lookup->linkToObject($disk->datastore_uuid);

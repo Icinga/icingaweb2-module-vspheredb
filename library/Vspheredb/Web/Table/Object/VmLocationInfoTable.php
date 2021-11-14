@@ -46,7 +46,7 @@ class VmLocationInfoTable extends NameValueTable
         $vm = $this->vm;
         /** @var \Icinga\Module\Vspheredb\Db $connection */
         $connection = $vm->getConnection();
-        $lookup =  new PathLookup($connection);
+        $lookup =  new PathLookup($connection->getDbAdapter());
         $hostUuid = $vm->get('runtime_host_uuid');
         if ($hostUuid === null) {
             $hostInfo = '-';
