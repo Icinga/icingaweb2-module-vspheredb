@@ -4,10 +4,12 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * @method Db getConnection()
+ */
 class VCenter extends BaseDbObject
 {
     protected $table = 'vcenter';
@@ -141,15 +143,5 @@ class VCenter extends BaseDbObject
         } else {
             $this->reallySet('instance_uuid', $value);
         }
-    }
-
-    /**
-     * Just to help the IDE
-     *
-     * @return Db
-     */
-    public function getConnection()
-    {
-        return $this->connection;
     }
 }
