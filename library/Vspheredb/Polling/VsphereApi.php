@@ -132,7 +132,7 @@ class VsphereApi
     {
         if ($this->cookieStore->hasCookies()) {
             return $this->getCurrentSession()->then(function (UserSession $session) {
-                $this->logger->notice(sprintf(
+                $this->logger->debug(sprintf(
                     "Our session for %s@%s is still valid",
                     $session->userName,
                     $session->ipAddress
@@ -143,15 +143,11 @@ class VsphereApi
                 if ($e instanceof RequestError) {
                     return reject($e);
                 }
-                if ($e instanceof NoSessionForCookieError) {
-                    $this->logger->notice('Dropping outdated Cookies, logging in again');
-                    $this->cookieStore->forgetCookies();
-                    return $this->login();
+                $message = 'Dropping outdated Cookies, logging in again';
+                if (! $e instanceof NoSessionForCookieError) {
+                    $message .= '. Unknown Error: '. get_class($e) . ' ' .  $e->getMessage();
                 }
-                $this->logger->notice(
-                    'Dropping outdated Cookies, logging in again. Unknown Error: '
-                    . get_class($e) . ' ' .  $e->getMessage()
-                );
+                $this->logger->notice($message);
                 $this->cookieStore->forgetCookies();
                 return $this->login();
             });
