@@ -85,12 +85,10 @@ class HostSystemInfoTable extends NameValueTable
 
     protected function renderVendorModel($vendor, $model)
     {
-        $images = include __DIR__ . '/known-vendor-model-images.php';
-        if (isset($images[$vendor][$model])) {
-            $url = $images[$vendor][$model];
+        if ($url = $this->findVendorModel($vendor, $model)) {
             $baseUrl = parse_url($url, PHP_URL_HOST);
             $img = Html::tag('img', [
-                'src' => $images[$vendor][$model],
+                'src' => $url,
                 'referrerpolicy' => 'no-referrer',
                 'alt'   => $model,
                 'title' => "$model - ",
@@ -103,6 +101,23 @@ class HostSystemInfoTable extends NameValueTable
         }
 
         return $model;
+    }
+
+    protected function findVendorModel($vendor, $model)
+    {
+        $images = include __DIR__ . '/known-vendor-model-images.php';
+        if (isset($images[$vendor][$model])) {
+            return $images[$vendor][$model];
+        }
+        if (isset($images[$vendor])) {
+            foreach ($images[$vendor] as $pattern => $url) {
+                if (substr($pattern, 0, 1) === '/' && preg_match($pattern, $model)) {
+                    return $url;
+                }
+            }
+        }
+
+        return null;
     }
 
     protected function linkToDellSupport($serviceTag)
