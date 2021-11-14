@@ -113,7 +113,7 @@ class WsdlLoader
 
     protected function processFileFailure(\Exception $e, $file)
     {
-        if (isset($pending[$file])) {
+        if (isset($this->pending[$file])) {
             $logUrl = $this->url($file);
             $this->logger->error("Loading $logUrl failed: " . $e->getMessage());
             $this->pending = []; // TODO: is there a way to stop pending requests?
