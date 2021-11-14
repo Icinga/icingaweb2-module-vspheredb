@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
+use Icinga\Module\Vspheredb\Web\Widget\GrafanaVmPanel;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
@@ -34,6 +35,9 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
 
     public function renderRow($row)
     {
+        // $this->add($this::row([
+        //     new GrafanaVmPanel($this->vm->object(), [1, 3], $row->label, 'All')
+        // ]));
         if ($this->withPerfImages) {
             return $this::row([
                 $this->formatMultiLine($row),

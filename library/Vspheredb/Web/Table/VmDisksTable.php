@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
+use Icinga\Module\Vspheredb\Web\Widget\GrafanaVmPanel;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
@@ -57,6 +58,9 @@ class VmDisksTable extends ZfQueryBasedTable
             $row->hardware_bus_number,
             $row->hardware_unit_nmber
         );
+        // $this->add($this::row([
+        //     new GrafanaVmPanel($this->vm->object(), [10, 61, 60], 'All', $row->hardware_label)
+        // ]));
 
         if ($this->withPerfImages) {
             return $this::tr([
