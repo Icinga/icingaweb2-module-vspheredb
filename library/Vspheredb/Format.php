@@ -2,18 +2,30 @@
 
 namespace Icinga\Module\Vspheredb;
 
-use Icinga\Util\Format as WebFormat;
-
 class Format
 {
-    public static function bytes($bytes)
+    public static function bytes($value)
     {
-        return WebFormat::bytes($bytes);
+        $base = 1024;
+        $units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+        if ($value == 0) {
+            return sprintf('%.3G %s', 0, $units[0]);
+        }
+
+        $sign = '';
+        if ($value < 0) {
+            $value = abs($value);
+            $sign = '-';
+        }
+
+        $pow = floor(log($value, $base));
+        $result = $value / pow($base, $pow);
+        return sprintf('%s%.3G %s', $sign, $result, $units[$pow]);
     }
 
-    public static function mBytes($mb)
+    public static function mBytes($value)
     {
-        return WebFormat::bytes($mb * 1024 * 1024);
+        return static::bytes($value * 1024 * 1024);
     }
 
     public static function linkSpeedMb($mb)
@@ -21,7 +33,7 @@ class Format
         if ($mb >= 1000000) {
             return sprintf('%.3G TBit/s', $mb / 1000000);
         } elseif ($mb >= 1000) {
-            return sprintf('%.3G GBit/s', floor($mb / 1000));
+            return sprintf('%.3G GBit/s', $mb / 1000);
         } else {
             return sprintf('%.3G MBit/s', $mb);
         }
