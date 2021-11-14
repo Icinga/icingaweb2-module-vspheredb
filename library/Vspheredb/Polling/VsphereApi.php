@@ -418,9 +418,8 @@ class VsphereApi
     protected function requireRetrieveResult($result)
     {
         if (! isset($result->returnval)) {
-            return new RetrieveResult();
-            // Should not be reached, as Authentication or Connection Errors are thrown beforehand
-            // throw new Exception('Got no returnval for RetrievePropertiesEx');
+            throw new \RuntimeException('Got no returnval / RetrieveResult');
+            // return new RetrieveResult();
         }
 
         $result = $result->returnval;
