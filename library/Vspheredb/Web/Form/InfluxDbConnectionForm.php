@@ -192,13 +192,13 @@ class InfluxDbConnectionForm extends Form
 
     protected function addV2Credentials()
     {
-        $this->addElement('text', 'token', [
-            'label'       => $this->translate('Token'),
-            // 'description' => $this->translate('InfluxDB Token (InfluxDB -> Data -> Tokens'),
+        $this->addElement('text', 'username', [
+            'label'       => $this->translate('Organisation'),
             'required'    => true,
         ]);
-        $this->addElement('text', 'org', [
-            'label'       => $this->translate('Organisation'),
+        $this->addElement('text', 'password', [
+            'label'       => $this->translate('Token'),
+            // 'description' => $this->translate('InfluxDB Token (InfluxDB -> Data -> Tokens'),
             'required'    => true,
         ]);
     }
