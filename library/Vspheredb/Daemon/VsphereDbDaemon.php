@@ -529,7 +529,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         if ($this->connection !== null) {
             try {
                 if ($refresh) {
-                    $this->refreshMyState();
+                    $this->refreshMyState(false);
                 }
                 $this->connection->getDbAdapter()->closeConnection();
 
@@ -596,7 +596,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function refreshMyState()
+    protected function refreshMyState($disconnectOnError = true)
     {
         if ($this->connection === null) {
             return;
@@ -614,7 +614,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             }
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
-            $this->eventuallyDisconnectFromDb(false);
+            if ($disconnectOnError) {
+                $this->eventuallyDisconnectFromDb(false);
+            }
         }
     }
 
