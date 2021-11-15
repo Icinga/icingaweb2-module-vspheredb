@@ -4,31 +4,25 @@ namespace Icinga\Module\Vspheredb\Web\Form;
 
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
-use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
-use Icinga\Module\Vspheredb\DbObject\VCenterServer;
+use ipl\Html\Html;
 
 class VCenterForm extends Form
 {
     use TranslationHelper;
 
-    protected $objectClassName = VCenterServer::class;
+    /** @var VCenter */
+    protected $vCenter;
 
-    /** @var VCenterServer */
-    protected $object;
-
-    protected $db;
-
-    protected $deleted = false;
-
-    public function __construct(Db $db)
+    public function __construct(VCenter $vCenter)
     {
-        $this->db = $db;
+        $this->vCenter = $vCenter;
+        $this->populate($vCenter->getProperties());
     }
 
     public function assemble()
     {
+        $this->add(Html::tag('h3', $this->translate('Rename this vCenter')));
         $this->addElement('text', 'name', [
             'label'       => $this->translate('Name'),
             'description' => $this->translate(
@@ -37,55 +31,12 @@ class VCenterForm extends Form
             ),
         ]);
         $this->addElement('submit', 'submit', [
-            'label' => $this->isNew() ? $this->translate('Create') : $this->translate('Store')
+            'label' => $this->translate('Rename')
         ]);
-        /*
-        $this->addElement('submit', 'btn_delete', [
-            'label' => $this->translate('Delete')
-        ]);
-        $deleteButton = $this->getElement('btn_delete');
-        if ($deleteButton && $deleteButton->hasBeenPressed()) {
-            $this->getObject()->delete();
-            $this->deleted = true;
-        }
-        */
-    }
-
-    public function isNew()
-    {
-        return $this->object === null || ! $this->object->hasBeenLoadedFromDb();
-    }
-
-    public function setObject(VCenter $object)
-    {
-        $this->object = $object;
-        $properties = $object->getProperties();
-        $this->populate($properties);
-
-        return $this;
-    }
-
-    /**
-     * @return BaseDbObject
-     */
-    public function getObject()
-    {
-        if ($this->object === null) {
-            /** @var BaseDbObject $class */
-            $class = $this->objectClassName;
-            $this->object = $class::create([], $this->db);
-        }
-
-        return $this->object;
-    }
-
-    public function hasBeenDeleted()
-    {
-        return $this->deleted;
     }
 
     public function onSuccess()
     {
-        $this->getObject()->setProperties($this->getValues());
+        $this->vCenter->setProperties($this->getValues())->store();
     }
 }

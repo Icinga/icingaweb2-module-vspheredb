@@ -54,7 +54,6 @@ class VcenterController extends Controller
         $this->assertPermission('vspheredb/admin');
         $vCenter = $this->requireVCenter();
         $this->tabs(new VCenterTabs($vCenter))->activate('vcenter');
-        $this->setAutorefreshInterval(10);
         $this->controls()->add(new VCenterHeader($vCenter));
         $this->actions()->add(Link::create(
             $this->translate('Back'),
@@ -62,21 +61,18 @@ class VcenterController extends Controller
             ['vcenter' => $this->params->get('vcenter')],
             ['class' => 'icon-left-big']
         ));
-        $form = new VCenterForm($this->db());
-        $form->setObject($vCenter);
-        $form->on(VCenterForm::ON_SUCCESS, function (VCenterForm $form) {
-            $object = $form->getObject();
-            if ($object->hasBeenModified()) {
-                $msg = $this->translate('The vCenter has successfully been stored');
-                $object->store();
-            } else {
-                $msg = $this->translate('No action taken, vCenter has not been modified');
-            }
+
+        $success = function () use ($vCenter) {
+            $msg = $vCenter->hasBeenModified()
+                ? $this->translate('The vCenter has successfully been stored')
+                : $this->translate('No action taken, vCenter has not been modified');
             Notification::success($msg);
             $this->redirectNow($this->getOriginalUrl());
-        });
-        $form->handleRequest($this->getServerRequest());
+        };
 
+        $form = new VCenterForm($vCenter);
+        $form->on(VCenterForm::ON_SUCCESS, $success);
+        $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
     }
 
