@@ -179,6 +179,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             }
         }
         if ($component === self::COMPONENT_LOCALDB) {
+            if ($formerState === self::STATE_READY) {
+                $this->stopComponent(self::COMPONENT_API);
+            }
             switch ($currentState) {
                 case self::STATE_STARTING:
                     $this->reconnectToDb();
