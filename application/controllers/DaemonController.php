@@ -31,6 +31,8 @@ class DaemonController extends Controller
             $this->prepareDaemonInfo(),
             Html::tag('h3', $this->translate('vmWare API Connections')),
             $this->prepareVsphereConnectionTable(),
+            Html::tag('h3', $this->translate('Pending HTTP Requests')),
+            $this->prepareCurlInfoTable(),
             Html::tag('h3', $this->translate('Damon Log Output')),
             $this->prepareLogSettings(),
             $this->prepareLogWindow()
@@ -122,6 +124,28 @@ class DaemonController extends Controller
     {
         try {
             return new ControlSocketConnectionsTable($this->syncRpcCall('connections.list'));
+        } catch (\Exception $exception) {
+            return Hint::error($exception->getMessage());
+        }
+    }
+
+    protected function prepareCurlInfoTable()
+    {
+        try {
+            $table = new Table();
+            foreach ((array) $this->syncRpcCall('curl.getPendingConnections') as $connection) {
+                $table->add(Table::row([
+                    $connection->url,
+                    isset($connection->request_header) ? Html::tag('a', [
+                        'title' => $connection->request_header
+                    ], preg_replace('/\n.+/s', '', $connection->request_header)) : '-',
+                    \Icinga\Util\Format::seconds(floor($connection->total_time))
+                ]));
+            }
+            if (count($table) === 0) {
+                return $this->translate('Currently there are no requests pending');
+            }
+            return $table;
         } catch (\Exception $exception) {
             return Hint::error($exception->getMessage());
         }
