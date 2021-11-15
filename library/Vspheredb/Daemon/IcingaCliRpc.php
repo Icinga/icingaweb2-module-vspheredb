@@ -49,11 +49,17 @@ class IcingaCliRpc extends IcingaCli
      */
     public function rpc()
     {
-        if ($this->rpc) {
-            return resolve($this->rpc);
-        }
         if (! $this->waitingForRpc) {
             $this->waitingForRpc = new Deferred();
+        }
+
+        if ($this->rpc) {
+            $this->loop->futureTick(function () {
+                if ($this->rpc && $deferred = $this->waitingForRpc) {
+                    $this->waitingForRpc = null;
+                    $deferred->resolve($this->rpc);
+                }
+            });
         }
 
         return $this->waitingForRpc->promise();

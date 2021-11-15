@@ -16,6 +16,9 @@ class IcingaCli
 
     protected $arguments = [];
 
+    /** @var LoopInterface */
+    protected $loop;
+
     public function __construct(IcingaCliRunner $runner = null)
     {
         if ($runner === null) {
@@ -44,6 +47,7 @@ class IcingaCli
 
     public function run(LoopInterface $loop)
     {
+        $this->loop = $loop;
         $process = $this->runner->command($this->getArguments());
         $canceller = function () use ($process) {
             // TODO: first soft, then hard
