@@ -52,7 +52,7 @@ class OverviewTree extends BaseHtmlElement
             if ($this->typeFilter
                 && (string) $item->parent_object_type === 'Datacenter'
                 && $item->object_name !== $this->typeFilter) {
-                continue;
+                // continue; // see #260
             }
             $item->children = [];
             $all[$item->uuid] = $item;
