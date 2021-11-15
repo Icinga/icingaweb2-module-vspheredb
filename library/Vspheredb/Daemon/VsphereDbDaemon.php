@@ -177,6 +177,13 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             } elseif ($currentState === self::STATE_READY) {
                 $this->setLocalDbState(self::STATE_STARTING);
             }
+            if ($currentState === self::STATE_FAILED) {
+                $this->loop->addTimer(10, function () {
+                    if ($this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_FAILED) {
+                        $this->setDbState(self::STATE_STARTING);
+                    }
+                });
+            }
         }
         if ($component === self::COMPONENT_LOCALDB) {
             if ($formerState === self::STATE_READY) {
