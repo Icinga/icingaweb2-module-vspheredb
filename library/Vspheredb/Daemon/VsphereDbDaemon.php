@@ -278,12 +278,16 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->setDbState(self::STATE_STARTING);
         $dbRunner->on('error', function (Exception $e) {
             $this->dbIsReady = false;
-            $this->setDbState(self::STATE_FAILED);
+            $this->loop->futureTick(function () {
+                $this->setDbState(self::STATE_FAILED);
+            });
             $this->logger->error('DB runner is failing: ' . $e->getMessage());
         });
         $dbRunner->run($this->loop)->then(function () use ($dbRunner) {
             $this->dbRunner = $dbRunner;
-            $this->setDbState(self::STATE_IDLE);
+            $this->loop->futureTick(function () {
+                $this->setDbState(self::STATE_IDLE);
+            });
         });
     }
 
