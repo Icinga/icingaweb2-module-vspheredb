@@ -357,11 +357,28 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         ), $this->logger);
         $logger->info('connection is ready');
 
-        $apiSync = new ObjectSync($vCenter, $connection->getApi(), $logger);
-        $this->runningTasks[spl_object_hash($connection)] = [
-            'sync' => $apiSync,
-        ];
-        $apiSync->start($this->loop);
+        try {
+            $this->launchTasksForConnection($connection, [
+                new ObjectSync($vCenter, $connection->getApi(), $logger),
+            ]);
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage());
+        }
+    }
+
+    /**
+     * @param ApiConnection $connection
+     * @param DaemonTask[] $tasks
+     */
+    protected function launchTasksForConnection(ApiConnection $connection, array $tasks)
+    {
+        $idx = spl_object_hash($connection);
+        $this->runningTasks[$idx] = $tasks;
+
+        foreach ($tasks as $task) {
+            $this->logger->info('Starting task');
+            $task->start($this->loop);
+        }
     }
 
     protected function prepareApi(LoopInterface $loop, LoggerInterface $logger)
@@ -398,7 +415,11 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     protected function stopApiTasksForConnection(ApiConnection $connection)
     {
-        $idx = spl_object_hash($connection);
+        $this->stopApiTasksByConnectionIdx(spl_object_hash($connection));
+    }
+
+    protected function stopApiTasksByConnectionIdx($idx)
+    {
         if (isset($this->runningTasks[$idx])) {
             /** @var DaemonTask $task */
             foreach ($this->runningTasks[$idx] as $task) {
