@@ -96,6 +96,7 @@ class VCenterSummaries extends BaseHtmlElement
             'VM Templates',
             'vspheredb/vmtemplates'
         );
+        /*
         $this->addCountlet(
             $db->fetchRow(
                 $db->select()->from(['o' => 'object'], $columns)
@@ -126,6 +127,7 @@ class VCenterSummaries extends BaseHtmlElement
             'Distributed Portgroups',
             'vspheredb/portgroups'
         );
+        */
         $this->addCountlet(
             $db->fetchRow(
                 $db->select()->from(['o' => 'object'], $columns)

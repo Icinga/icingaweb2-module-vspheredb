@@ -189,6 +189,9 @@ class VmHardwareTree extends BaseHtmlElement
             return sprintf('Port group %s not found', Uuid::fromBytes($uuid)->toString());
         }
 
+        return sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics);
+
+        // TODO:
         return Link::create(
             sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics),
             'vspheredb/portgroup',
