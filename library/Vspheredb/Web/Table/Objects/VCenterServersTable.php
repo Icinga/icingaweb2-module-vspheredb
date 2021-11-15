@@ -52,6 +52,7 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
                 case ApiConnection::STATE_STOPPING:
                     return Icon::create('cancel');
             }
+
             return Icon::create('off');
         } else {
             if ($enabled) {

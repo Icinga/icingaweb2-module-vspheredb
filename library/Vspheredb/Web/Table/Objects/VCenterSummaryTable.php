@@ -159,10 +159,10 @@ class VCenterSummaryTable extends HostSummaryTable
         $ds = $this->db()->select()->from(
             ['ds' => 'datastore'],
             [
-                'vcenter_uuid'            => 'ds.vcenter_uuid',
-                'ds_capacity'             => 'SUM(ds.capacity)',
-                'ds_free_space'           => 'SUM(ds.free_space)',
-                'ds_uncommitted'          => 'SUM(ds.uncommitted)',
+                'vcenter_uuid'   => 'ds.vcenter_uuid',
+                'ds_capacity'    => 'SUM(ds.capacity)',
+                'ds_free_space'  => 'SUM(ds.free_space)',
+                'ds_uncommitted' => 'SUM(ds.uncommitted)',
             ]
         )->group('ds.vcenter_uuid');
 
