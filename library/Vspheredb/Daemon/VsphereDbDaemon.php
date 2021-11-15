@@ -158,7 +158,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     protected function onComponentChange($component, $formerState, $currentState)
     {
-        $this->logger->notice("[$component] component changed from $formerState to $currentState");
+        $this->logger->debug("[$component] component changed from $formerState to $currentState");
         if ($this->daemonState->getComponentState($component) !== $currentState) {
             $this->logger->warning(sprintf(
                 "[%s] component should be %s, but is now %s. Race condition?",
