@@ -3,11 +3,14 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
+use Icinga\Module\Vspheredb\Storable\PerfdataSubscription;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\VCenterForm;
 use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
+use Icinga\Module\Vspheredb\Web\Form\VCenterShipMetricsForm;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
 use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
@@ -72,6 +75,17 @@ class VcenterController extends Controller
 
         $form = new VCenterForm($vCenter);
         $form->on(VCenterForm::ON_SUCCESS, $success);
+        $form->handleRequest($this->getServerRequest());
+        $this->content()->add($form);
+
+        $store = new ZfDbStore($this->db()->getDbAdapter());
+        $form = new VCenterShipMetricsForm($store, $vCenter, $this->remoteClient(), $this->loop());
+        if ($subscription = PerfdataSubscription::optionallyLoadForVCenter($vCenter, $store)) {
+            $form->setObject($subscription);
+        }
+        $form->on(VCenterShipMetricsForm::ON_SUCCESS, function () {
+            $this->redirectNow($this->getOriginalUrl());
+        });
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
     }

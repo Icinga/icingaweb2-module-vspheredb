@@ -3,10 +3,11 @@
 namespace Icinga\Module\Vspheredb\Hook;
 
 use gipfl\InfluxDb\DataPoint;
+use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
+use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
 use Icinga\Web\Hook;
 use InvalidArgumentException;
-use ipl\Html\Form;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use React\EventLoop\LoopInterface;
@@ -68,7 +69,21 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
      */
     abstract public function getConfigurationForm(RemoteClient $client);
 
+    public function getSubscriptionForm(RemoteClient $client)
+    {
+        return null;
+    }
+
+    public static function createConsumerInstance(PerfdataConsumer $consumer, LoopInterface $loop)
+    {
+        $class = static::getClass($consumer->get('implementation'));
+        /** @var PerfDataConsumerHook $instance */
+        return $class::initialize($loop, $consumer->settings());
+    }
+
     /**
+     * Hint: Currently unused
+     *
      * @var DataPoint[] $points
      */
     public function pushDataPoints($points)
@@ -83,7 +98,9 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     }
 
     /**
-     * Override this method, otherwise all data will be drpped
+     * Hint: Currently unused
+     *
+     * Override this method, otherwise all data will be dropped
      *
      * @return bool
      */
@@ -110,6 +127,10 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
         return $enum;
     }
 
+    /**
+     * @param $name
+     * @return string|null|static
+     */
     public static function getClass($name)
     {
         // TODO: module/Name for foreign ones?

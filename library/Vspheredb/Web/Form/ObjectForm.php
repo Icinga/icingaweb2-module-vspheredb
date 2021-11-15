@@ -82,21 +82,7 @@ abstract class ObjectForm extends Form
             $object = $this->object;
             $object->setProperties($this->getValues());
         } else {
-            /** @var StorableInterface $class Not really an object, it's a class name */
-            $class = $this->getObjectClass();
-            $object = $class::create($this->getValues());
-            $this->object = $object;
-
-            if ($object->getKeyProperty() === 'uuid') {
-                $object->set('uuid', Uuid::uuid4()->getBytes());
-            }
-
-            if ($object->hasProperty('ts_created')) {
-                $object->set('ts_created', static::now());
-            }
-            if ($object->hasProperty('created_by')) {
-                 $object->set('created_by', Auth::getInstance()->getUser()->getUsername());
-            }
+            $object = $this->createObject();
         }
 
         if ($object->hasProperty('ts_modified') && $object->isModified()) {
@@ -106,5 +92,26 @@ abstract class ObjectForm extends Form
             $object->set('modified_by', Auth::getInstance()->getUser()->getUsername());
         }
         $this->store->store($object);
+    }
+
+    protected function createObject()
+    {
+        /** @var StorableInterface $class Not really an object, it's a class name */
+        $class = $this->getObjectClass();
+        $object = $class::create($this->getValues());
+        $this->object = $object;
+
+        if ($object->getKeyProperty() === 'uuid') {
+            $object->set('uuid', Uuid::uuid4()->getBytes());
+        }
+
+        if ($object->hasProperty('ts_created')) {
+            $object->set('ts_created', static::now());
+        }
+        if ($object->hasProperty('created_by')) {
+            $object->set('created_by', Auth::getInstance()->getUser()->getUsername());
+        }
+
+        return $object;
     }
 }
