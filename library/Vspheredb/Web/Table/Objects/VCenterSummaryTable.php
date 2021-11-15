@@ -2,7 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use gipfl\IcingaWeb2\Icon;
+use Icinga\Module\Vspheredb\Polling\ApiConnection;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
+use ipl\Html\Html;
 
 class VCenterSummaryTable extends HostSummaryTable
 {
@@ -11,6 +14,112 @@ class VCenterSummaryTable extends HostSummaryTable
     protected $groupBy = 'o.vcenter_uuid';
 
     protected $nameColumn = 'vc.name';
+
+    protected $connections;
+
+    /**
+     * @param mixed $connections
+     * @return VCenterSummaryTable
+     */
+    public function setConnections($connections)
+    {
+        $this->connections = $connections;
+        return $this;
+    }
+
+    /**
+     * @param string $state
+     * @return Icon
+     */
+    protected function getConnectionStatusIcon($state, $label)
+    {
+        switch ($state) {
+            case 'unknown':
+                return Icon::create('help', [
+                    'class' => 'unknown',
+                    'title' => sprintf(
+                        $this->translate('Connections to %s have been enabled, but none is currently active'),
+                        $label
+                    )
+                ]);
+            case 'disabled':
+                return Icon::create('cancel', [
+                    'title' => sprintf(
+                        $this->translate('Connections to %s have been disabled'),
+                        $label
+                    )
+                ]);
+            case ApiConnection::STATE_CONNECTED:
+                return Icon::create('ok', [
+                    'class' => 'green',
+                    'title' => sprintf(
+                        $this->translate('API connection with %s is fine'),
+                        $label
+                    ),
+                ]);
+            case ApiConnection::STATE_LOGIN:
+                return Icon::create('spinner', [
+                    'class' => 'yellow',
+                    'title' => sprintf(
+                        $this->translate('Trying to log in to %s'),
+                        $label
+                    )
+                ]);
+            case ApiConnection::STATE_INIT:
+                return Icon::create('spinner', [
+                    'class' => 'yellow',
+                    'title' => sprintf(
+                        $this->translate('Initializing API connection with %s'),
+                        $label
+                    )
+                ]);
+            case ApiConnection::STATE_FAILING:
+                return Icon::create('warning-empty', [
+                    'class' => 'red',
+                    'title' => sprintf(
+                        $this->translate('API connection with %s is failing'),
+                        $label
+                    )
+                ]);
+            case ApiConnection::STATE_STOPPING:
+                return Icon::create('cancel', [
+                    'class' => 'yellow',
+                    'title' => sprintf(
+                        $this->translate('Stopping API connection with %s'),
+                        $label
+                    )
+                ]);
+        }
+
+        return Icon::create('warning-empty', [
+            'class' => 'warning',
+            'title' => $this->translate('There is no configured server for this vCenter')
+        ]);
+    }
+
+    protected function getExtraIcons($row)
+    {
+        if ($this->connections === null) {
+            return null;
+        }
+
+        $icons = Html::tag('span', [
+            'style' => 'float: right'
+        ]);
+        $vcenterId = $row->vcenter_id;
+        if (isset($this->connections[$vcenterId])) {
+            foreach ($this->connections[$vcenterId] as $connection) {
+                $icons->add($this->getConnectionStatusIcon($connection->state, $connection->server));
+            }
+        } else {
+            $icons->add(Icon::create('warning-empty', [
+                'class' => 'yellow',
+                'title' => $this->translate('There is no configured server for this vCenter')
+            ]));
+        }
+
+        return $icons;
+    }
 
     public function getDefaultColumnNames()
     {
@@ -60,7 +169,7 @@ class VCenterSummaryTable extends HostSummaryTable
         return parent::prepareUnGroupedQuery()->join(
             ['vc' => 'vcenter'],
             'vc.instance_uuid = o.vcenter_uuid',
-            []
+            ['vcenter_id' => 'vc.id']
         )->joinLeft(
             ['ds' => $ds],
             'vc.instance_uuid = ds.vcenter_uuid',

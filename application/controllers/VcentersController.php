@@ -18,6 +18,55 @@ use ipl\Html\Html;
 
 class VcentersController extends ObjectsController
 {
+    use AsyncControllerHelper;
+
+    protected function getConnectionsByVCenter()
+    {
+        try {
+            $connections = $this->syncRpcCall('vsphere.getApiConnections');
+        } catch (\Exception $e) {
+            return null;
+        }
+        $connectionsByVCenter = $this->getConfiguredServersByVCenter();
+        foreach ((array) $connections as $id => $connection) {
+            if (isset($connectionsByVCenter[$connection->vcenter_id])) {
+                $connectionsByVCenter[$connection->vcenter_id][$connection->server_id]->state = $connection->state;
+            } else {
+                $connectionsByVCenter[$connection->vcenter_id] = [$connection->server_id => (object) [
+                    'state'  => $connection->state,
+                    'server' => $connection->server,
+                ]];
+            }
+        }
+
+        return $connectionsByVCenter;
+    }
+
+    protected function getConfiguredServersByVCenter()
+    {
+        $db = $this->db()->getDbAdapter();
+        $result = [];
+        foreach ($db->fetchAll(
+            $db->select()->from('vcenter_server', [
+                'id',
+                'vcenter_id',
+                'host',
+                'enabled'
+            ])
+        ) as $server) {
+            if (! isset($result[$server->vcenter_id])) {
+                $result[$server->vcenter_id] = [];
+            }
+            $result[$server->vcenter_id][$server->id] = (object) [
+                'server' => $server->host,
+                'enabled' => $server->enabled === 'y',
+                'state'   => $server->enabled === 'n' ? 'disabled' : 'unknown',
+            ];
+        }
+
+        return $result;
+    }
+
     /**
      * @throws \Zend_Db_Select_Exception
      */
@@ -29,6 +78,9 @@ class VcentersController extends ObjectsController
         $this->checkDaemonStatus();
         $this->checkForMigrations();
         $table = new VCenterSummaryTable($this->db(), $this->url());
+        if (null !== ($connections = $this->getConnectionsByVCenter())) {
+            $table->setConnections($connections);
+        }
         $this->actions()->add(Link::create(
             $this->translate('Add Connection'),
             'vspheredb/vcenter/server',

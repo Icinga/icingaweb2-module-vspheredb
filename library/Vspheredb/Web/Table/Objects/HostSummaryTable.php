@@ -80,10 +80,15 @@ abstract class HostSummaryTable extends ObjectsTable
             );
 
             return [
+                $this->getExtraIcons($row),
                 $link,
                 $this->renderHostSummaries($row),
             ];
         });
+    }
+
+    protected function getExtraIcons($row)
+    {
     }
 
     protected function hasChosenColumn($name)
