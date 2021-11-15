@@ -658,13 +658,15 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     protected function refreshConfiguredServers()
     {
+        if ($this->connection === null) {
+            return;
+        }
         try {
             if ($this->daemonState->getComponentState(self::COMPONENT_API) === self::STATE_READY) {
                 $vServers = VCenterServer::loadAll($this->connection, null, 'id');
                 $this->apiConnectionHandler->setServerSet(ServerSet::fromServers($vServers));
             }
         } catch (Exception $e) {
-            $this->daemonState->setState(self::STATE_FAILED);
             $this->logger->error('Failed to refresh server list: ' . $e->getMessage());
             $this->setLocalDbState(self::STATE_FAILED);
         }
