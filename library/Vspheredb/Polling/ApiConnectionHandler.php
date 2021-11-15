@@ -6,6 +6,7 @@ use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
 use gipfl\Curl\CurlAsync;
 use gipfl\ReactUtils\RetryUnless;
+use Icinga\Module\Vspheredb\MappedClass\AboutInfo;
 use Icinga\Module\Vspheredb\MappedClass\ServiceContent;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\UuidInterface;
@@ -96,8 +97,11 @@ class ApiConnectionHandler implements EventEmitterInterface
                     $retry = RetryUnless::succeeding(function () use ($server) {
                         return $this
                             ->initialize($server)
-                            ->then(function (ServiceContent $content, UuidInterface $uuid) use ($server) {
-                                $this->emit(self::ON_INITIALIZED_SERVER, [$server, $content->about, $uuid]);
+                            ->then(function ($initialized) use ($server) {
+                                /** @var AboutInfo $content */
+                                /** @var UuidInterface $uuid */
+                                list($about, $uuid) = $initialized;
+                                $this->emit(self::ON_INITIALIZED_SERVER, [$server, $about, $uuid]);
                             });
                     });
                     $retry->setLogger($this->logger);
