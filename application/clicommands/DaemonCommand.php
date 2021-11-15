@@ -16,6 +16,7 @@ class DaemonCommand extends Command
      */
     public function runAction()
     {
+        $this->assertRequiredExtensionsAreLoaded();
         $this->assertNoVcenterParam();
         $daemon = new Daemon();
         $daemon->setLogger($this->logger);
@@ -31,6 +32,21 @@ class DaemonCommand extends Command
                 'The parameter --vCenterId has been deprecated with v1.0.0,'
                 . ' please check our documentation'
             );
+        }
+    }
+
+    protected function assertRequiredExtensionsAreLoaded()
+    {
+        $required = ['soap', 'posix', 'pcntl'];
+        $missing = [];
+        foreach ($required as $extension) {
+            if (! extension_loaded($extension)) {
+                $missing[] = "php-$extension";
+            }
+        }
+
+        if (! empty($missing)) {
+            $this->fail('Cannot run because of missing dependencies: ' . implode(', ', $missing));
         }
     }
 }
