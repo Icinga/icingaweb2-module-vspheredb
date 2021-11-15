@@ -63,6 +63,16 @@ class VCenter extends BaseDbObject
         );
     }
 
+    public function isHostAgent()
+    {
+        return $this->get('api_type') === 'HostAgent';
+    }
+
+    public function isVirtualCenter()
+    {
+        return $this->get('api_type') === 'VirtualCenter';
+    }
+
     // TODO: Settle with one or the other
     public function getUuid()
     {

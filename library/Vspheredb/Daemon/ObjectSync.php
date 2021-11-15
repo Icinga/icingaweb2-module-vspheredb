@@ -87,7 +87,7 @@ class ObjectSync implements DaemonTask
     public function __construct(VCenter $vCenter, VsphereApi $api, LoggerInterface $logger)
     {
         $this->vCenter = $vCenter;
-        if ($vCenter->get('api_type') === 'HostAgent') {
+        if ($vCenter->isHostAgent()) {
             $this->removeVCenterOnlyTasks();
         }
         $this->api = $api;
