@@ -317,6 +317,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             $this->processInfo->fqdn,
             $this->processInfo->pid
         );
+        $this->dbLogger->on('error', function () {
+            $this->setLocalDbState(self::STATE_FAILED);
+        });
         $this->dbLogger->setLogger($logger);
         $logger->addWriter($this->dbLogger);
     }
