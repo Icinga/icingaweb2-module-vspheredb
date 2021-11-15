@@ -12,6 +12,7 @@ use Icinga\Module\Vspheredb\MappedClass\UserSession;
 use Icinga\Module\Vspheredb\SafeCacheDir;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
+use React\EventLoop\TimerInterface;
 use React\Promise\ExtendedPromiseInterface;
 
 class ApiConnection implements EventEmitterInterface
@@ -53,6 +54,9 @@ class ApiConnection implements EventEmitterInterface
     /** @var RetryUnless */
     protected $wsdlPromise;
 
+    /** @var TimerInterface */
+    protected $sessionChecker;
+
     public function __construct(CurlAsync $curl, ServerInfo $serverInfo, LoggerInterface $logger)
     {
         $this->curl = $curl;
@@ -63,7 +67,7 @@ class ApiConnection implements EventEmitterInterface
             $serverInfo->get('id')
         ), $logger);
         $this->initializeStateMachine(self::STATE_STOPPED);
-        $this->onTransition(self::STATE_STOPPED, self::STATE_INIT, function () {
+        $this->onTransition([self::STATE_STOPPED, self::STATE_FAILING], self::STATE_INIT, function () {
             $this->eventuallyRemoveScheduledAttempt();
             $this->startWsdlDownload();
         });
@@ -71,6 +75,7 @@ class ApiConnection implements EventEmitterInterface
             $this->login();
         });
         $this->onTransition(self::STATE_LOGIN, self::STATE_CONNECTED, function () {
+            $this->runSessionChecker();
             $this->emit('ready', [$this]);
         });
         $this->onTransition(self::STATE_INIT, self::STATE_STOPPING, function () {
@@ -91,16 +96,34 @@ class ApiConnection implements EventEmitterInterface
         });
         $this->onTransition(self::STATE_CONNECTED, self::STATE_STOPPING, function () {
             $this->stopping = true;
+            $this->stopSessionChecker();
             $this->setState(self::STATE_STOPPED);
         });
         $this->onTransition(self::STATE_STOPPING, self::STATE_STOPPED, function () {
             $this->stopping = false;
         });
-        // TODO: Does not allow transitions:
-        $this->onState(self::STATE_FAILING, function () {
+        $this->onTransition(self::STATE_CONNECTED, self::STATE_FAILING, function () {
             $this->loop->futureTick(function () {
-                // emit failing?
+                $this->stopSessionChecker();
                 $this->scheduleNextAttempt();
+                $this->emit('error', [$this]);
+            });
+        });
+    }
+
+    protected function stopSessionChecker()
+    {
+        $this->loop->cancelTimer($this->sessionChecker);
+        $this->sessionChecker = null;
+    }
+
+    protected function runSessionChecker()
+    {
+        $this->sessionChecker = $this->loop->addPeriodicTimer(150, function () {
+            $this->getApi()->eventuallyLogin()->otherwise(function () {
+                $this->loop->futureTick(function () {
+                    $this->setState(self::STATE_FAILING);
+                });
             });
         });
     }
