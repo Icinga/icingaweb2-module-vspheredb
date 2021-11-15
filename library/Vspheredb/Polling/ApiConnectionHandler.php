@@ -10,7 +10,9 @@ use Icinga\Module\Vspheredb\MappedClass\ServiceContent;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
+use React\EventLoop\TimerInterface;
 use React\Promise\Deferred;
+use React\Promise\ExtendedPromiseInterface;
 use function React\Promise\Timer\timeout;
 
 class ApiConnectionHandler implements EventEmitterInterface
@@ -39,8 +41,14 @@ class ApiConnectionHandler implements EventEmitterInterface
     /** @var array [vcenterId => [ServerInfo, ...] */
     protected $vCenterCandidates = [];
 
-    /** @var array [serverId => Promise] */
+    /** @var ExtendedPromiseInterface[] [serverId => Promise] */
     protected $initializations = [];
+
+    /** @var TimerInterface[] [serverId => TimerInterface] */
+    protected $failing = [];
+
+    /** @var ServerSet */
+    protected $appliedServers;
 
     public function __construct(CurlAsync $curl, LoggerInterface $logger)
     {
@@ -81,10 +89,11 @@ class ApiConnectionHandler implements EventEmitterInterface
             if (! $server->isEnabled()) {
                 continue;
             }
+            $serverId = $server->get('id');
             $vCenterId = $server->get('vcenter_id');
             if ($vCenterId === null) {
-                if (! isset($this->initializations[$server->get('id')])) {
-                    $this->initializations[$server->get('id')] = RetryUnless::succeeding(function () use ($server) {
+                if (! isset($this->initializations[$serverId])) {
+                    $this->initializations[$serverId] = RetryUnless::succeeding(function () use ($server) {
                         return timeout($this
                             ->initialize($server)
                             ->then(function (ServiceContent $content, UuidInterface $uuid) use ($server) {
@@ -98,12 +107,16 @@ class ApiConnectionHandler implements EventEmitterInterface
             if (!isset($vCenterCandidates[$vCenterId])) {
                 $vCenterCandidates[$vCenterId] = [];
             }
-            $vCenterCandidates[$vCenterId][$server->get('id')] = $server;
+            if (isset($this->failing[$serverId])) {
+                continue;
+            }
+            $vCenterCandidates[$vCenterId][$serverId] = $server;
         }
 
         $this->vCenterCandidates = $vCenterCandidates;
         $this->removeUnConfiguredApiConnections();
         $this->launchNewlyConfiguredVCenters();
+        $this->appliedServers = $servers;
     }
 
     protected function initialize(ServerInfo $server)
@@ -155,6 +168,21 @@ class ApiConnectionHandler implements EventEmitterInterface
                     $apiConnection->on('ready', function (ApiConnection $connection) {
                         $this->emit(self::ON_CONNECT, [$connection]);
                     });
+                    $apiConnection->on('error', function (ApiConnection $connection) use ($vCenterId) {
+                        $serverId = $connection->getServerInfo()->get('id');
+                        $this->logger->warning(sprintf(
+                            'Server %s disabled for 60 seconds',
+                            $connection->getServerInfo()->get('host')
+                        ));
+                        $this->failing[$serverId] = $this->loop->addTimer(60, function () use ($serverId) {
+                            $this->loop->cancelTimer($this->failing[$serverId]);
+                            unset($this->failing[$serverId]);
+                            $this->applyServers($this->appliedServers);
+                        });
+                        $this->emit(self::ON_DISCONNECT, [$connection]);
+                        unset($this->apiConnections[$vCenterId]);
+                        $this->applyServers($this->appliedServers);
+                    });
                     $this->apiConnections[$vCenterId] = $apiConnection;
 
                     $this->logger->notice(sprintf(
@@ -183,16 +211,16 @@ class ApiConnectionHandler implements EventEmitterInterface
         foreach ($this->apiConnections as $vCenterId => $connection) {
             if (!isset($this->vCenterCandidates[$vCenterId])) {
                 $remove[$vCenterId] = $connection;
-                $connection->stop();
-                $this->emit(self::ON_DISCONNECT, [$connection]);
             }
         }
         foreach ($remove as $vCenterId => $connection) {
             $this->logger->notice(
                 '[api] removed vCenter connection for ' . $this->vCenterConnectionLogName($vCenterId, $connection)
             );
-            // $this->remoteApi->removeApiConnection($connection);
+            $connection->stop();
             unset($this->apiConnections[$vCenterId]);
+            $this->emit(self::ON_DISCONNECT, [$connection]);
+            // $this->remoteApi->removeApiConnection($connection);
         }
     }
 
