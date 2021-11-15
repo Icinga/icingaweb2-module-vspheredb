@@ -30,6 +30,7 @@ class ConfigurationController extends Controller
     {
         $this->addTitle($this->translate('vSphereDB Database Configuration'));
         $this->tabs(new ConfigTabs())->activate('database');
+        $this->setAutorefreshInterval(10);
         $form = new ChooseDbResourceForm();
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
