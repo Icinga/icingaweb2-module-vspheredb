@@ -829,10 +829,10 @@ CREATE TABLE performance_counter (
   vcenter_uuid VARBINARY(16) NOT NULL,
   counter_key INT UNSIGNED NOT NULL,
   name VARCHAR(32) NOT NULL COLLATE utf8_bin,
-  label VARCHAR(96) NOT NULL,
+  label VARCHAR(255) NOT NULL,
   group_name VARCHAR(32) NOT NULL,
   unit_name VARCHAR(32) NOT NULL,
-  summary VARCHAR(255) NOT NULL,
+  summary TEXT NOT NULL,
   stats_type ENUM( -- statsType
     'absolute',
     'delta',
@@ -924,4 +924,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (34, NOW());
+VALUES (35, NOW());
