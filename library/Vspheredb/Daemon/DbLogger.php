@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
+use Evenement\EventEmitterInterface;
+use Evenement\EventEmitterTrait;
 use Exception;
 use gipfl\Log\LogWriterWithContext;
 use Icinga\Module\Vspheredb\Db;
@@ -9,8 +11,9 @@ use Icinga\Module\Vspheredb\Util;
 use Psr\Log\LoggerAwareTrait;
 use SplStack;
 
-class DbLogger implements LogWriterWithContext
+class DbLogger implements LogWriterWithContext, EventEmitterInterface
 {
+    use EventEmitterTrait;
     use LoggerAwareTrait;
 
     const ERROR_PREFIX = 'DbLogger failed: ';
@@ -100,6 +103,7 @@ class DbLogger implements LogWriterWithContext
             if ($this->logger) {
                 $this->logger->debug(self::ERROR_PREFIX . $e->getMessage());
             }
+            $this->emit('error', [$e]);
         }
     }
 
