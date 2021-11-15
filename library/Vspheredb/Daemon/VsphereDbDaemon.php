@@ -360,6 +360,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         try {
             $this->launchTasksForConnection($connection, [
                 new ObjectSync($vCenter, $connection->getApi(), $logger),
+                new PerfDataSync($vCenter, $connection->getApi(), $this->curl, $this->loop, $logger),
             ]);
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
