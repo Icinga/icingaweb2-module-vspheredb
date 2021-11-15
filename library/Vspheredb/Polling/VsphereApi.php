@@ -141,7 +141,8 @@ class VsphereApi
                 return $session;
             }, function (Exception $e) {
                 if ($e instanceof RequestError) {
-                    return reject($e);
+                    $this->logger->error($e->getMessage());
+                    throw $e;
                 }
                 $message = 'Dropping outdated Cookies, logging in again';
                 if (! $e instanceof NoSessionForCookieError) {
