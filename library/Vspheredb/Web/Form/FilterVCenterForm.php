@@ -14,6 +14,10 @@ class FilterVCenterForm extends Form
     /** @var \Zend_Db_Adapter_Abstract  */
     protected $db;
 
+    protected $useFormName = false;
+
+    protected $useCsrf = false;
+
     public function __construct(Db $connection)
     {
         $this->db = $connection->getDbAdapter();
