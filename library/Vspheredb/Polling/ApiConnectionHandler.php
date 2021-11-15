@@ -93,13 +93,16 @@ class ApiConnectionHandler implements EventEmitterInterface
             $vCenterId = $server->get('vcenter_id');
             if ($vCenterId === null) {
                 if (! isset($this->initializations[$serverId])) {
-                    $this->initializations[$serverId] = RetryUnless::succeeding(function () use ($server) {
-                        return timeout($this
+                    $retry = RetryUnless::succeeding(function () use ($server) {
+                        return $this
                             ->initialize($server)
                             ->then(function (ServiceContent $content, UuidInterface $uuid) use ($server) {
                                 $this->emit(self::ON_INITIALIZED_SERVER, [$server, $content->about, $uuid]);
-                            }), 300, $this->loop);
+                            });
                     });
+                    $retry->setLogger($this->logger);
+                    $this->initializations[$serverId] = $retry;
+                    $retry->setInterval(5)->slowDownAfter(5, 30)->run($this->loop);
                 }
 
                 continue;
