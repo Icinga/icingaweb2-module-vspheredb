@@ -64,11 +64,12 @@ URL="${REPO_URL}/archive/v${MODULE_VERSION}.tar.gz"
 SOCKET_PATH=/run/icinga-vspheredb
 TMPFILES_CONFIG=/etc/tmpfiles.d/icinga-vspheredb.conf
 
-useradd -r -g "${DAEMON_GROUP}" -d /var/lib/${DAEMON_USER} -s /bin/false ${DAEMON_USER}
+getent "${DAEMON_GROUP}" || useradd -r -g "${DAEMON_GROUP}" \
+  -d /var/lib/${DAEMON_USER} -s /bin/false ${DAEMON_USER}
 install -d -o "${DAEMON_USER}" -g "${DAEMON_GROUP}" -m 0750 /var/lib/${DAEMON_USER}
 install -d -m 0755 "${TARGET_DIR}"
 
-test -d "${TARGET_DIR}_TMP" && 
+test -d "${TARGET_DIR}_TMP" && rm -rf "${TARGET_DIR}_TMP"
 test -d "${TARGET_DIR}_BACKUP" && rm -rf "${TARGET_DIR}_BACKUP"
 wget -q -O - "$URL" | tar xfz - -C "${TARGET_DIR}_TMP" --strip-components 1 \
   && mv "${TARGET_DIR}" "${TARGET_DIR}_BACKUP" \
@@ -78,7 +79,7 @@ wget -q -O - "$URL" | tar xfz - -C "${TARGET_DIR}_TMP" --strip-components 1 \
 grep -q "${SOCKET_PATH}" /etc/tmpfiles.d/icinga-vspheredb.conf \
   || echo "d ${SOCKET_PATH} 0755 ${DAEMON_USER} ${DAEMON_GROUP} -" \
   >> "${TMPFILES_CONFIG}"
-cp "${TARGET_DIR}/contrib/systemd/icinga-vspheredb.service" /etc/systemd/system/
+cp -f "${TARGET_DIR}/contrib/systemd/icinga-vspheredb.service" /etc/systemd/system/
 systemd-tmpfiles --create "${TMPFILES_CONFIG}"
 
 icingacli module enable vspheredb
