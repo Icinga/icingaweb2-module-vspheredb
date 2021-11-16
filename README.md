@@ -42,5 +42,25 @@ This module differs substantially as it:
 Those two main design decisions allow us to show and monitor many more details
 while putting much less burden on your virtualization platform.
 
+Screenshots
+-----------
+
+### All your vCenters (or ESXi connections)
+
+![vCenter Overview](doc/screenshot/00_preview/01_vspheredb-summary.png)
+
+### Single vCenter overview
+
+![vSphereDB Dashlets](doc/screenshot/00_preview/02_vspheredb-dashlets.png)
+
+### Host Details
+
+![Host Details](doc/screenshot/00_preview/03_vspheredb_host-details.png)
+
+### VM Dashboard in Grafana
+
+![VM Grafana Dashboard](doc/screenshot/00_preview/04_grafana-details.png)
+
+### Datastore Inspection
 
 ![VMware vSphere Datastores](doc/screenshot/00_preview/00_preview_vmware-vsphere-datastores.png)
