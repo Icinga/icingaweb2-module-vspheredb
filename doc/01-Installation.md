@@ -58,7 +58,7 @@ DAEMON_GROUP="icingaweb2"
 ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"
 REPO_URL="https://github.com/icinga/icingaweb2-module-vspheredb"
 TARGET_DIR="${ICINGAWEB_MODULEPATH}/vspheredb"
-URL="${REPO_URL}/archive/v${MODULE_VERSION}.tar.gz"
+URL="${REPO_URL}/archive/refs/tags/v${MODULE_VERSION}.tar.gz"
 
 # systemd defaults:
 SOCKET_PATH=/run/icinga-vspheredb
