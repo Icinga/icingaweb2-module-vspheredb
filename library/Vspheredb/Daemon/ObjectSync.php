@@ -196,7 +196,7 @@ class ObjectSync implements DaemonTask
             $this->logger->notice("Task '$label' is already running, skipping");
             return;
         }
-        $this->logger->debug("Running Task '$label'");
+        // $this->logger->debug("Running Task '$label'");
 
 
         if ($task instanceof StandaloneTask) {
