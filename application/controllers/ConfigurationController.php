@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
+use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
 use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
 use Icinga\Module\Vspheredb\Web\Form\MonitoringConnectionForm;
@@ -45,12 +46,32 @@ class ConfigurationController extends Controller
             if ($db === null) {
                 return;
             }
+            $this->content()->add(Html::tag('br'));
+            $migrations = Db::migrationsForDb($db);
+            if (! $migrations->hasSchema()) {
+                $this->content()->add(Hint::warning($this->translate(
+                    'The database has no vSphereDB schema. Waiting for the Background Daemon'
+                    . ' to initialize the database'
+                )));
+                return;
+            }
 
+            if ($migrations->hasPendingMigrations()) {
+                $this->content()->add(Hint::warning($this->translate(
+                    'The database has pending DB migrations. Please restart the Background'
+                    . ' daemon to apply them'
+                )));
+                return;
+            }
+
+            // Obsolete:
+            /*
             $migrations = new ProposeMigrations($db, $this->Auth(), $this->getServerRequest());
             if ($migrations->hasAppliedMigrations()) {
                 $this->redirectNow($this->url());
             }
             $this->content()->add($migrations);
+            */
         }
     }
 

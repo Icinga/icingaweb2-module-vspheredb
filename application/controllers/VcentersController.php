@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
+use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
@@ -189,10 +190,19 @@ class VcentersController extends ObjectsController
 
     protected function checkForMigrations()
     {
+        if (Db::migrationsForDb($this->db())->hasPendingMigrations()) {
+            $this->redirectNow('configuration/database');
+        };
+
+        return;
+
+        // Obsolete:
+        /*
         $migrations = new ProposeMigrations($this->db(), $this->Auth(), $this->getServerRequest());
         if ($migrations->hasAppliedMigrations()) {
             $this->redirectNow($this->url());
         }
         $this->content()->add($migrations);
+        */
     }
 }
