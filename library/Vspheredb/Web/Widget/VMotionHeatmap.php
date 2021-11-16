@@ -50,11 +50,12 @@ class VMotionHeatmap extends EventHeatmapCalendars
 
     protected function prepareQuery()
     {
+        $maxDays = 400;
         $query = $this->db->select()->from(['veh' => 'vm_event_history'], [
             // TODO: / 86400 + offset
             'day' => 'DATE(FROM_UNIXTIME(veh.ts_event_ms / 1000))',
             'cnt' => 'COUNT(*)'
-        ])->group('day');
+        ])->where('veh.ts_event_ms > ?', time() * 1000 - 86400 * $maxDays * 1000)->group('day');
 
         if ($this->eventType !== null && $this->eventType !== '') {
             $query->where(

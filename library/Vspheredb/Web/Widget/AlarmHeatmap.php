@@ -28,11 +28,12 @@ class AlarmHeatmap extends EventHeatmapCalendars
 
     protected function prepareQuery()
     {
+        $maxDays = 400;
         return $this->db->select()->from('alarm_history', [
             // TODO: / 86400 + offset
             'day' => 'DATE(FROM_UNIXTIME(ts_event_ms / 1000))',
             'cnt' => 'COUNT(*)'
-        ])->group('day');
+        ])->where('ts_event_ms > ?', time() * 1000 - 86400 * $maxDays * 1000)->group('day');
     }
 
     public function getEvents()
