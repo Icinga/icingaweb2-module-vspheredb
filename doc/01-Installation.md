@@ -86,9 +86,12 @@ systemctl daemon-reload
 systemctl enable icinga-vspheredb.service --now
 ```
 
-### Create a related Icinga Web 2 Database resource
+You're ready to go
+------------------
 
-Now you can head on to **Virtualization (vmWare) in your menu. vSphereDB will
+### Choose your Icinga Web 2 Database resource
+
+Now you can head on to **Virtualization (vmWare)** in your menu. vSphereDB will
 ask you to choose a specific DB resource:
 
 ![Choose database resource](screenshot/01_installation/003_choose-db.png)
@@ -97,6 +100,8 @@ Finally, you only need to wait for the Background Daemon to prepare the database
 for you:
 
 ![Waiting for the schema](screenshot/01_installation/004_wait-for-schema.png)
+
+That's it!
 
 FAQ
 ---
