@@ -54,6 +54,7 @@ class ConfigWatch
      */
     public function run(LoopInterface $loop)
     {
+        $this->loop = $loop;
         $check = function () {
             $this->checkForFreshConfig();
         };
