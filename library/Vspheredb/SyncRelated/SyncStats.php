@@ -41,6 +41,11 @@ class SyncStats
         $this->deleted += $count;
     }
 
+    public function hasChanges()
+    {
+        return $this->created > 0 || $this->modified > 0 || $this->deleted > 0;
+    }
+
     public function getLogMessage()
     {
         return sprintf(
