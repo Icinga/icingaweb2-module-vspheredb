@@ -77,7 +77,7 @@ wget -q -O - "$URL" | tar xfz - -C "${TARGET_DIR}_TMP" --strip-components 1 \
   && mv "${TARGET_DIR}_TMP" "${TARGET_DIR}" \
   && rm -rf "${TARGET_DIR}_BACKUP"
 
-echo "d ${SOCKET_PATH} 0755 ${DAEMON_USER} ${DAEMON_GROUP} -" >> "${TMPFILES_CONFIG}"
+echo "d ${SOCKET_PATH} 0755 ${DAEMON_USER} ${DAEMON_GROUP} -" > "${TMPFILES_CONFIG}"
 cp -f "${TARGET_DIR}/contrib/systemd/icinga-vspheredb.service" /etc/systemd/system/
 systemd-tmpfiles --create "${TMPFILES_CONFIG}"
 
