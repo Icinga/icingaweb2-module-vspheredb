@@ -102,6 +102,9 @@ class ApiConnection implements EventEmitterInterface
         $this->onTransition(self::STATE_STOPPING, self::STATE_STOPPED, function () {
             $this->stopping = false;
         });
+        $this->onTransition(self::STATE_LOGIN, self::STATE_FAILING, function () {
+            $this->emit('error', [$this]);
+        });
         $this->onTransition(self::STATE_CONNECTED, self::STATE_FAILING, function () {
             $this->loop->futureTick(function () {
                 $this->stopSessionChecker();
