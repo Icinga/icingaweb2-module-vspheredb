@@ -394,7 +394,6 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->runningTasks[$idx] = $tasks;
 
         foreach ($tasks as $task) {
-            $this->logger->info('Starting task');
             $task->start($this->loop);
         }
     }

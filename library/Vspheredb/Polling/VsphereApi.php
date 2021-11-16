@@ -66,6 +66,9 @@ class VsphereApi
     /** @var ?ManagedObjectReference */
     private $eventCollector;
 
+    /** @var int */
+    private $lastEventTimestamp;
+
     public function __construct(
         $initialWsdlFile,
         ServerInfo $server,
@@ -385,6 +388,13 @@ class VsphereApi
         });
     }
 
+    public function setLastEventTimestamp($timestamp)
+    {
+        $this->lastEventTimestamp = $timestamp;
+
+        return $this;
+    }
+
     protected function fetchFullResult(RetrieveResult $result, &$objects)
     {
         $deferred = new Deferred();
@@ -492,20 +502,27 @@ class VsphereApi
         if ($this->eventCollector) {
             return resolve($this->eventCollector);
         }
-// TODO: with $lastEventTimestamp
-        return $this->createEventCollector()->then(function (ManagedObjectReference $collector) {
-            $this->eventCollector = $collector;
-            return $collector;
+
+        return $this->createEventCollector($this->lastEventTimestamp)->then(function ($result) {
+            if (isset($result->returnval) && $result->returnval instanceof ManagedObjectReference) {
+                $this->eventCollector = $result->returnval;
+
+                return $this->rewindEventCollector()->then(function () {
+                    return $this->eventCollector;
+                });
+            }
+
+            throw new \RuntimeException('EventCollector reference expected, got ' . var_export($result, 1));
         });
     }
 
     protected function callOnEventCollector($method, $arguments = [])
     {
-        // this->createEventCollector
-        $collector = new ManagedObjectReference(
-            'EventHistoryCollector',
-            'session[522f50f1-b44a-7705-35f9-8379a4f6cf2b]521f5b6c-62e7-2660-9a43-8ae9edcb5c89'
-        );
+        // Sample:
+        // $collector = new ManagedObjectReference(
+        //     'EventHistoryCollector',
+        //     'session[52244af1-bf50-7602-35f9-8379a4f7056b]526601fc-62e7-25b6-9a43-8aecb5c89ed9'
+        // );
         return $this->getEventCollector()->then(function (ManagedObjectReference $collector) use ($method, $arguments) {
             return $this->call($collector, $method, $arguments)->then(function ($result) {
                 if (property_exists($result, 'returnval')) {

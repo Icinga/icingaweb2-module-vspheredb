@@ -6,6 +6,7 @@ use Exception;
 use gipfl\SimpleDaemon\DaemonTask;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\CustomFieldsManager;
+use Icinga\Module\Vspheredb\Polling\SyncStore\VmEventHistorySyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncStore\SyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncStore\VmDatastoreUsageSyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncTask\ComputeResourceSyncTask;
@@ -17,11 +18,13 @@ use Icinga\Module\Vspheredb\Polling\SyncTask\HostSensorSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\HostSystemSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\HostVirtualNicSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\ManagedObjectReferenceSyncTask;
+use Icinga\Module\Vspheredb\Polling\SyncTask\StandaloneTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\StoragePodSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\SyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VirtualMachineSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmDatastoreUsageSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmDiskUsageSyncTask;
+use Icinga\Module\Vspheredb\Polling\SyncTask\VmEventHistorySyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmHardwareSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmQuickStatsSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmSnapshotSyncTask;
@@ -82,11 +85,16 @@ class ObjectSync implements DaemonTask
     /** @var ExtendedPromiseInterface[] */
     protected $runningTasks = [];
 
+    protected $eventStore;
+
     protected $ready = false;
 
     public function __construct(VCenter $vCenter, VsphereApi $api, LoggerInterface $logger)
     {
         $this->vCenter = $vCenter;
+        $this->eventStore = new VmEventHistorySyncStore($vCenter->getDb(), $vCenter, $logger);
+        $api->setLastEventTimestamp($this->eventStore->getLastEventTimeStamp());
+
         if ($vCenter->isHostAgent()) {
             $this->removeVCenterOnlyTasks();
         }
@@ -155,6 +163,9 @@ class ObjectSync implements DaemonTask
         $this->timers[] = $this->loop->addPeriodicTimer(300, function () {
             $this->refreshOutdatedDatastores();
         });
+        $this->timers[] = $this->loop->addPeriodicTimer(2, function () {
+            $this->runTasks([VmEventHistorySyncTask::class]);
+        });
     }
 
     protected function refreshOutdatedDatastores()
@@ -182,32 +193,43 @@ class ObjectSync implements DaemonTask
         $label = $task->getLabel();
         $idx = get_class($task);
         if (isset($this->runningTasks[$idx])) {
-            $this->logger->notice("Task $label is already running, skipping");
+            $this->logger->notice("Task '$label' is already running, skipping");
             return;
         }
-        $this->logger->debug("Running Task $label");
-        $this->runningTasks[$idx] = $this->api
-            ->fetchBySelectAndPropertySetClass($task->getSelectSetClass(), $task->getPropertySetClass())
-            ->then(function ($result) use ($task, $idx) {
-                if (! $this->ready) {
-                    $this->logger->warning(sprintf(
-                        'Not storing result for %s, task has been stopped',
-                        $task->getLabel()
-                    ));
-                    unset($this->runningTasks[$idx]);
-                    return resolve();
-                }
-                $stats = new SyncStats($task->getLabel());
-                $this->requireSyncStoreInstance($task->getSyncStoreClass())
-                    ->store($result, $task->getObjectClass(), $stats);
-                $this->logger->info($stats->getLogMessage());
+        $this->logger->debug("Running Task '$label'");
 
+
+        if ($task instanceof StandaloneTask) {
+            $instance = $task->run($this->api, $this->logger);
+        } else {
+            $instance = $this->api->fetchBySelectAndPropertySetClass(
+                $task->getSelectSetClass(),
+                $task->getPropertySetClass()
+            );
+        }
+
+        $this->runningTasks[$idx] = $instance->then(function ($result) use ($task, $idx) {
+            if (! $this->ready) {
+                $this->logger->warning(sprintf(
+                    "Not storing result for '%s', task has been stopped",
+                    $task->getLabel()
+                ));
                 unset($this->runningTasks[$idx]);
                 return resolve();
-            }, function (Exception $e) use ($idx, $label) {
-                $this->logger->error("$label: " . $e->getMessage());
-                unset($this->runningTasks[$idx]);
-            });
+            }
+            $stats = new SyncStats($task->getLabel());
+            $this->requireSyncStoreInstance($task->getSyncStoreClass())
+                ->store($result, $task->getObjectClass(), $stats);
+            if ($stats->hasChanges()) {
+                $this->logger->info($stats->getLogMessage());
+            }
+
+            unset($this->runningTasks[$idx]);
+            return resolve();
+        }, function (Exception $e) use ($idx, $label) {
+            $this->logger->error("$label: " . $e->getMessage());
+            unset($this->runningTasks[$idx]);
+        });
     }
 
     /**
@@ -239,20 +261,5 @@ class ObjectSync implements DaemonTask
             $this->syncStores[ObjectSyncStore::class] = $instance;
             return resolve();
         });
-    }
-
-    protected function fetchEvents()
-    {
-        /*
-        $api->rewindEventCollector()->then(function ($result) use ($api) {
-            var_dump($result);
-            return $api->readNextEvents();
-        })->then(function ($result) {
-            var_dump(get_class($result));
-            var_dump($result);
-        }, function (\Throwable $e) {
-            $this->logException($e);
-        });
-        */
     }
 }
