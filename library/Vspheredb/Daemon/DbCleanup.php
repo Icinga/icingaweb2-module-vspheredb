@@ -41,7 +41,7 @@ WHERE;
         $result = $db->delete('vspheredb_daemon', $where);
         if ($result > 0) {
             $this->logger->info(
-                "Removed information related to $result formerly running daemon instance(s)",
+                "Removed information related to $result formerly running daemon instance(s)"
             );
         }
         $db->query('OPTIMIZE TABLE vspheredb_daemon')->execute();
