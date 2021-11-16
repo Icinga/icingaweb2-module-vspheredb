@@ -1,17 +1,26 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-next (will be 1.2.0)
---------------------
+v1.2.0
+------
+
+With a background daemon rewritten from scratch, this version improves performance,
+speed and stability. It no longer requires a dedicated process per vCenter/ESXi
+connection.
+
+There have been many improvements to the UI. And last but not least, you can now
+optionally ship  performance data / metrics to InfluxDB instances.
 
 ### Breaking Changes
-* Dependencies have been raised, our [Installation](01-Installation.md)
-  documentations contain related details
+* Installation procedure has been changed
 
 ### Upgrading
-This release brings Schema migrations, which can be applied with a single click
-in the Frontend. Please **Apply** the pending schema migration. Afterwards please
-restart the *Background Daemon*.
+
+Please restart the Background Daemon after upgrading to v1.2.0. It then launches
+its new Control Socket and applies DB Schema migrations on its own.  The daemon
+now needs write permissions for a special directory. Once again, our
+[Installation](01-Installation.md) documentation should contain everything you
+need.
 
 ### UI
 * FIX: hide column for an experimental feature (#153)

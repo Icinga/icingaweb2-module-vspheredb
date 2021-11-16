@@ -10,7 +10,7 @@ EnvironmentFile=-/etc/sysconfig/icinga-vspheredb
 ExecStart=/usr/bin/icingacli vspheredb daemon run
 ; For debugging purposes:
 ; ExecStart=/usr/bin/icingacli vspheredb daemon run --trace --debug
-User=icingaweb2
+User=icinga-vspheredb
 
 NotifyAccess=main
 WatchdogSec=10

@@ -19,140 +19,98 @@ Requirements
 Once you got Icinga Web 2 up and running, all required dependencies should
 already be there. All, but `php-soap` and `php-posix`. They are available on
 all major Linux distributions and can be installed with your package manager
-(yum, apt...). Same goes also for non-Linux systems. Please do not forget to
-restart your web server service afterwards.
+(yum, apt...). Same also goes true for non-Linux systems.
 
-Installation from .tar.gz
--------------------------
-
-Download the latest version and extract it to a folder named
-`vspheredb` in one of your Icinga Web 2 module path directories.
-
-You might want to use a script as follows for this task:
-```sh
-ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"
-REPO_URL="https://github.com/Icinga/icingaweb2-module-vspheredb"
-TARGET_DIR="${ICINGAWEB_MODULEPATH}/vspheredb"
-MODULE_VERSION="1.1.0"
-URL="${REPO_URL}/archive/v${MODULE_VERSION}.tar.gz"
-install -d -m 0755 "${TARGET_DIR}"
-wget -q -O - "$URL" | tar xfz - -C "${TARGET_DIR}" --strip-components 1
-```
-
-Installation from GIT repository
---------------------------------
-
-Another convenient method is the installation directly from our GIT repository.
-Just clone the repository to one of your Icinga Web 2 module path directories.
-It will be immediately ready for use:
-
-```sh
-ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"
-REPO_URL="https://github.com/Icinga/icingaweb2-module-vspheredb"
-TARGET_DIR="${ICINGAWEB_MODULEPATH}/vspheredb"
-git clone "${REPO_URL}" "${TARGET_DIR}"
-```
-
-You can now directly use our current GIT master or check out a specific version.
-
-Database
---------
+Preparation - Database
+----------------------
 
 ### Create an empty database on MariaDB (or MySQL)
 
-HINT: You should replace `some-password` with a secure custom password.
+The vSphereDB module requires a MariaDB or MySQL database:
 
     mysql -e "CREATE DATABASE vspheredb CHARACTER SET 'utf8mb4' COLLATE utf8mb4_bin;
        CREATE USER vspheredb@localhost IDENTIFIED BY 'some-password';
        GRANT ALL ON vspheredb.* TO vspheredb@localhost;"
 
-### Create a related Icinga Web 2 Database resource
+HINT: You should replace `some-password` with a secure custom password.
 
 In your web frontend please go to `Configuration / Application / Resources`
 and create a new database resource pointing to your newly created database.
 Please make sure that you choose `utf8mb4` as an encoding.
 
-Alternatively, you could also manally add a resource definition to your
-resources.ini:
+![Database configuration](screenshot/01_installation/002_configure-db.png)
 
-#### /etc/icingaweb2/resources.ini
 
-```ini
-[vSphereDB]
-type = "db"
-db = "mysql"
-host = "localhost"
-; port = 3306
-dbname = "vspheredb"
-username = "vspheredb"
-password = "***"
-charset = "utf8mb4"
-```
+Installation
+------------
 
-Tell vSphereDB about it's database
-----------------------------------
+### Modul installation (or upgrade)
 
-In the module's config.ini (usually `/etc/icingaweb2/modules/vspheredb/config.ini`)
-you need to reference above DB connection:
+This script downloads the [latest version](https://github.com/Icinga/icingaweb2-module-vspheredb/releases)
+and extract installs it to the default Icinga Web 2 module directory. An eventually
+existing module installation will be replaced, so this can be used for upgrades too:
 
-```ini
-[db]
-resource = "vSphereDB"
-```
+```shell
+# You can customize these settings, but we suggest to stick with our defaults:
+MODULE_VERSION="1.2.0"
+DAEMON_USER="icingavspheredb"
+DAEMON_GROUP="icingaweb2"
+ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"
+REPO_URL="https://github.com/icinga/icingaweb2-module-vspheredb"
+TARGET_DIR="${ICINGAWEB_MODULEPATH}/vspheredb"
+URL="${REPO_URL}/archive/v${MODULE_VERSION}.tar.gz"
 
-Enable the newly installed module
----------------------------------
+# systemd defaults:
+SOCKET_PATH=/run/icinga-vspheredb
+TMPFILES_CONFIG=/etc/tmpfiles.d/icinga-vspheredb.conf
 
-Enable the `vspheredb` module either on the CLI by running...
+useradd -r -g "${DAEMON_GROUP}" -d /var/lib/${DAEMON_USER} -s /bin/false ${DAEMON_USER}
+install -d -o "${DAEMON_USER}" -g "${DAEMON_GROUP}" -m 0750 /var/lib/${DAEMON_USER}
+install -d -m 0755 "${TARGET_DIR}"
 
-```sh
+test -d "${TARGET_DIR}_TMP" && 
+test -d "${TARGET_DIR}_BACKUP" && rm -rf "${TARGET_DIR}_BACKUP"
+wget -q -O - "$URL" | tar xfz - -C "${TARGET_DIR}_TMP" --strip-components 1 \
+  && mv "${TARGET_DIR}" "${TARGET_DIR}_BACKUP" \
+  && mv "${TARGET_DIR}_TMP" "${TARGET_DIR}" \
+  && rm -rf "${TARGET_DIR}_BACKUP"
+
+grep -q "${SOCKET_PATH}" /etc/tmpfiles.d/icinga-vspheredb.conf \
+  || echo "d ${SOCKET_PATH} 0755 ${DAEMON_USER} ${DAEMON_GROUP} -" \
+  >> "${TMPFILES_CONFIG}"
+cp "${TARGET_DIR}/contrib/systemd/icinga-vspheredb.service" /etc/systemd/system/
+systemd-tmpfiles --create "${TMPFILES_CONFIG}"
+
 icingacli module enable vspheredb
+systemctl daemon-reload
+systemctl enable icinga-vspheredb.service --now
 ```
 
-...or go to your Icinga Web 2 frontend, choose `Configuration` -&gt; `Modules`
--&gt; `vspheredb` module - and `enable` it:
+### Create a related Icinga Web 2 Database resource
 
-![Enable the vSphere module](screenshot/01_installation/001_enable-module.png)
+Now you can head on to **Virtualization (vmWare) in your menu. vSphereDB will
+ask you to choose a specific DB resource:
 
-Now please:
-* Eventually SHIFT-Reload your browser window to get a fresh CSS/JS bundle
-* Got to `Virtualization (VMware)` choose your DB resource and create the schema
-* Enable the background daemon (see below)
+![Choose database resource](screenshot/01_installation/003_choose-db.png)
 
-Enabling and running the background daemon
-------------------------------------------
+Finally, you only need to wait for the Background Daemon to prepare the database
+for you:
 
-The preferred method of running the Background Daemon is via SystemD. We ship
-a sample Unit File, so if you have an `icingaweb2` User on your system all you
-need to do is:
+![Waiting for the schema](screenshot/01_installation/004_wait-for-schema.png)
 
-    cp contrib/systemd/icinga-vspheredb.service  /etc/systemd/system/
-    systemctl daemon-reload
-    systemctl enable icinga-vspheredb
-    systemctl start icinga-vspheredb
+FAQ
+---
 
-Otherwise please use a member of the `icingaweb2` group like `apache` or
-`www-data`. You might also want to create a new dedicated User with read
-permissions for `/etc/icingaweb2`.
+### Running without SystemD
 
-That's it, your daemon should now be running. Feel free to configure as many
-vCenter Servers as you want.
-
-### Without SystemD
-
-When not running SystemD you're on your own, the command you're looking for is:
+systemd is not a hard requirement, you can use any supervisor you want. The
+command you're looking for is:
 
     /usr/bin/icingacli vspheredb daemon run
 
-High availability
------------------
+### High availability
 
-If you want to have this service highly available you should make sure you have
-seperate solutions for the database and the daemon.
-
-The database can be easily made highly available with MariaDB master-master
-replication. You could have this already for your Icinga 2 IDO. Make sure
-to use only one virtual-IP to connect to the database.
-
-You could use tools like corosync and pacemaker to make the daemon highly
-available. Please do **not** run multiple daemons writing into the same database.
+Using an active-active replication is the preferred way when running vSphereDB.
+Please do **not** run multiple daemons writing into the same database, make sure
+to have only one vSphereDB daemon instance running at the same time. Configure a
+floating IP for your database connection.
