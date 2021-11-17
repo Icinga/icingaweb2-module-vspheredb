@@ -21,6 +21,15 @@ return  [
             . 'product_images/dell_enterprise_products/enterprise_systems/'
             . 'poweredge/r_series/r940/global_spi/enterprise-servers-poweredge-dellemc-'
             . 'per940-bezel-lcd-2-if-on-left-relativesize-500-ng.psd?fmt=jpg',
+        'PowerEdge R6515' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
+            . 'product_images/dell_enterprise_products/enterprise_systems/'
+            . 'poweredge/poweredge_amd/pdp/poweredge-r6515-lf-555x200-pdp.jpg?fmt=jpg',
+        'PowerEdge R7515' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
+            . 'product_images/dell_enterprise_products/enterprise_systems/'
+            . 'poweredge/c6525/global_spi/ng/enterprise-server-poweredge-r7515-lf-relativesize-500-ng.psd?fmt=jpg',
+        'PowerEdge R7525' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
+            . 'product_images/dell_enterprise_products/enterprise_systems/'
+            . 'poweredge/poweredge_r7525/global_spi/ng/enterprise-servers-poweredge-r7525-lf-relativesize-500-ng.psd?fmt=jpg',
     ],
     'HPE' => [
         'Synergy 480 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00020236en_us/'
