@@ -196,7 +196,7 @@ class ObjectSync implements DaemonTask
             $this->logger->notice("Task '$label' is already running, skipping");
             return;
         }
-        // $this->logger->debug("Running Task '$label'");
+        $this->logger->debug("Running Task '$label'");
 
 
         if ($task instanceof StandaloneTask) {
@@ -209,6 +209,7 @@ class ObjectSync implements DaemonTask
         }
 
         $this->runningTasks[$idx] = $instance->then(function ($result) use ($task, $idx) {
+            $this->logger->debug(sprintf("Got Result for '%s'", $task->getLabel()));
             if (! $this->ready) {
                 $this->logger->warning(sprintf(
                     "Not storing result for '%s', task has been stopped",
@@ -222,6 +223,11 @@ class ObjectSync implements DaemonTask
                 ->store($result, $task->getObjectClass(), $stats);
             if ($stats->hasChanges()) {
                 $this->logger->info($stats->getLogMessage());
+            } else {
+                $this->logger->debug(sprintf(
+                    "Task '%s' had no changes",
+                    $task->getLabel()
+                ));
             }
 
             unset($this->runningTasks[$idx]);

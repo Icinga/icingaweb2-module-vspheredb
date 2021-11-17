@@ -68,17 +68,21 @@ class ApiConnection implements EventEmitterInterface
         ), $logger);
         $this->initializeStateMachine(self::STATE_STOPPED);
         $this->onTransition([self::STATE_STOPPED, self::STATE_FAILING], self::STATE_INIT, function () {
+            $this->logger->info('stop/fail -> init');
             $this->eventuallyRemoveScheduledAttempt();
             $this->startWsdlDownload();
         });
         $this->onTransition(self::STATE_INIT, self::STATE_LOGIN, function () {
+            $this->logger->info('init -> login');
             $this->login();
         });
         $this->onTransition(self::STATE_LOGIN, self::STATE_CONNECTED, function () {
+            $this->logger->info('login -> connected');
             $this->runSessionChecker();
             $this->emit('ready', [$this]);
         });
         $this->onTransition(self::STATE_INIT, self::STATE_STOPPING, function () {
+            $this->logger->info('init -> stopping');
             $this->stopping = true;
             if ($this->wsdlPromise) {
                 $this->wsdlPromise->cancel();
@@ -87,6 +91,7 @@ class ApiConnection implements EventEmitterInterface
             $this->setState(self::STATE_STOPPED);
         });
         $this->onTransition(self::STATE_LOGIN, self::STATE_STOPPING, function () {
+            $this->logger->info('login -> stopping');
             $this->stopping = true;
             if ($this->loginPromise) {
                 $this->loginPromise->cancel();
@@ -95,17 +100,20 @@ class ApiConnection implements EventEmitterInterface
             $this->setState(self::STATE_STOPPED);
         });
         $this->onTransition(self::STATE_CONNECTED, self::STATE_STOPPING, function () {
+            $this->logger->info('connected -> stopping');
             $this->stopping = true;
             $this->stopSessionChecker();
             $this->setState(self::STATE_STOPPED);
         });
         $this->onTransition(self::STATE_STOPPING, self::STATE_STOPPED, function () {
+            $this->logger->info('stopping -> stopping');
             $this->stopping = false;
         });
         $this->onTransition(self::STATE_LOGIN, self::STATE_FAILING, function () {
             $this->emit('error', [$this]);
         });
         $this->onTransition(self::STATE_CONNECTED, self::STATE_FAILING, function () {
+            $this->logger->info('connected -> failing');
             $this->loop->futureTick(function () {
                 $this->stopSessionChecker();
                 $this->scheduleNextAttempt();
@@ -170,6 +178,7 @@ class ApiConnection implements EventEmitterInterface
         $this->wsdlPromise = RetryUnless::succeeding([$this, 'fetchWsdl'])
             ->setInterval(10)
             ->slowDownAfter(6, 60);
+        $this->wsdlPromise->setLogger($this->logger);
 
         $this->wsdlPromise->run($this->loop)
             ->then(function ($wsdlFile) {
