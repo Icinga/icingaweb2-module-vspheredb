@@ -573,7 +573,7 @@ class VsphereApi
             'features'           => SOAP_SINGLE_ELEMENT_ARRAYS | SOAP_USE_XSI_ARRAY_TYPE,
             'cache_wsdl'         => WSDL_CACHE_NONE,
             'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-        ], CurlOptions::forServerInfo($this->server));
+        ], CurlOptions::forServerInfo($this->server), $this->logger);
         $this->soapClient->setCookieStore($this->cookieStore);
     }
 
