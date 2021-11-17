@@ -533,7 +533,7 @@ class VsphereApi
             }, function (Exception $e) {
                 if ($e instanceof \SoapFault) {
                     if (isset($e->detail) && current($e->detail)->enc_stype === 'ManagedObjectNotFound') {
-                        // $this->collector = null;
+                        $this->eventCollector = null;
                         throw new \RuntimeException(
                             'Dropping formerly known EventCollector: ' . $e->getMessage(),
                             $e->getCode(),
