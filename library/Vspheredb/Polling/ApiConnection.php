@@ -187,24 +187,17 @@ class ApiConnection implements EventEmitterInterface
     protected function login()
     {
         $api = new VsphereApi($this->wsdlFile, $this->serverInfo, $this->curl, $this->loop, $this->logger);
-
-        $this->loginPromise = RetryUnless::succeeding([$api, 'eventuallyLogin'])
-            ->setInterval(5)
-            ->slowDownAfter(3, 10);
-        $this->loginPromise->setLogger($this->logger);
-
-        $this->loginPromise->run($this->loop)
-            ->then(function (UserSession $session) use ($api) {
-                $this->api = $api;
-                $this->loginPromise = null;
-                $this->setState(self::STATE_CONNECTED);
-            }, function (\Exception $e) {
-                $this->loginPromise = null;
-                if (! $this->stopping) {
-                    $this->logger->error($e->getMessage());
-                    $this->setState(self::STATE_FAILING);
-                }
-            });
+        return $this->loginPromise = $api->eventuallyLogin()->then(function (UserSession $session) use ($api) {
+            $this->api = $api;
+            $this->loginPromise = null;
+            $this->setState(self::STATE_CONNECTED);
+        }, function (\Exception $e) {
+            $this->loginPromise = null;
+            if (! $this->stopping) {
+                $this->setState(self::STATE_FAILING);
+            }
+            throw $e;
+        });
     }
 
     public function stop()
