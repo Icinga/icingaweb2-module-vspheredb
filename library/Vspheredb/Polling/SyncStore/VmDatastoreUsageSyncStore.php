@@ -10,6 +10,8 @@ use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Psr\Log\LoggerInterface;
+use function React\Promise\all;
+use function React\Promise\resolve;
 
 class VmDatastoreUsageSyncStore extends SyncStore
 {
@@ -95,7 +97,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
     public static function refreshOutdatedVms(VsphereApi $api, $vms, LoggerInterface $logger)
     {
         if (empty($vms)) {
-            return;
+            return resolve();
         }
 
         $logger->info(sprintf(
@@ -103,9 +105,12 @@ class VmDatastoreUsageSyncStore extends SyncStore
             count($vms)
         ));
 
+        $pending = [];
         foreach (array_keys($vms) as $moref) {
-            $api->call(new ManagedObjectReference('VirtualMachine', $moref), 'RefreshStorageInfo');
+            $pending[] = $api->call(new ManagedObjectReference('VirtualMachine', $moref), 'RefreshStorageInfo');
         }
+
+        return all($pending);
     }
 
     protected function makeWhere(\Zend_Db_Adapter_Abstract $db, $vmUuid, $dsUuid)

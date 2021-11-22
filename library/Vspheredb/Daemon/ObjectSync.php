@@ -167,9 +167,20 @@ class ObjectSync implements DaemonTask
 
     protected function refreshOutdatedDatastores()
     {
+        $idx = VmDatastoreUsageSyncStore::class;
+        $label = 'Refresh outdated VMs';
+        if (isset($this->runningTasks[$idx])) {
+            $this->logger->notice("Task '$label' is already running, skipping");
+            return;
+        }
+        $this->logger->debug("Running Task '$label'");
+
         $vms = VmDatastoreUsageSyncStore::fetchOutdatedVms($this->vCenter, 900, 30);
         if (! empty($vms)) {
-            VmDatastoreUsageSyncStore::refreshOutdatedVms($this->api, $vms, $this->logger);
+            $this->runningTasks[$idx] = VmDatastoreUsageSyncStore::refreshOutdatedVms($this->api, $vms, $this->logger)
+                ->then(function () use ($idx) {
+                    unset($this->runningTasks[$idx]);
+                });
         }
     }
 
