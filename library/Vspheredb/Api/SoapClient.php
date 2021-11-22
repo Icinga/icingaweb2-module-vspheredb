@@ -69,19 +69,23 @@ class SoapClient
 
         return $this->curl->send($request, $this->curlOptions)
             ->then(function (ResponseInterface $response) use ($method) {
-                $status = $response->getStatusCode();
-                if ($status > 199 && $status<= 299) {
-                    try {
-                        $result =  $this->decoder->decode($method, (string)$response->getBody());
-                        $this->checkResponseForCookies($response);
+                try {
+                    $result = $this->decoder->decode($method, (string)$response->getBody());
+                    $this->checkResponseForCookies($response);
 
-                        return $result;
-                    } catch (\Exception $e) {
-                        $this->logger->debug('Failing Response: ' . $response->getBody());
-                        throw $e;
+                    return $result;
+                } catch (\Exception $e) {
+                    $status = $response->getStatusCode();
+
+                    if ($status > 199 && $status<= 299) {
+                        throw new \Exception($response->getReasonPhrase());
                     }
-                } else {
-                    throw new \Exception($response->getReasonPhrase());
+
+                    $this->logger->error(
+                        'Failing Response: ' . substr(preg_replace('/\r?\n/', '\\n', $response->getBody()), 0, 500)
+                    );
+
+                    throw $e;
                 }
             });
     }
