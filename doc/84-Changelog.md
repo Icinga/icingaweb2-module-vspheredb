@@ -1,6 +1,56 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.2.1
+------
+
+This is a minor bugfix release. Problems with certain vSphere/curl combinations
+have been addressed, support for older PHP versions has been fixed. This affected
+only End Of Live versions (&lt;7.3), but we still support them. Depending on your
+Curl version, you might have faced problems with vmWare 7.x, this has been solved.
+
+To use authentication with InfluxDB v1.x please upgrade the Incubator module to
+at least v0.10.1. This is optional, we'll not raise dependencies  with a patch
+release. The other fixes a mostly there to improve debugging and logging, and to
+avoid useless API requests under error conditions.
+
+We usually do not add new features to patch releases, but this release ships a
+bunch of new Host Vendor images for HPE, Fujitsu and Dell servers. We're pretty
+confident that they'll not cause any problems.
+
+### Upgrading
+
+To benefit from all fixes, please restart the *Background Daemon* after upgrading
+the module.
+
+### Scheduling
+* FIX: Refreshing outdated VM datastore usage can no longer run in parallel (#288)
+
+### SOAP, vmWARE API
+* FIX: avoid some CURL versions to send Expect: 100 continue (#274)
+* FIX: log non-SOAP errors, but let SOAP errors go through (#274)
+
+### Background Daemon Tasks
+* FIX: login errors are now propagated immediately, causing visible error (#286)
+* FIX: refresh outdated VM datastore usage in small chunks (#287)
+* FIX: do not refresh outdated VM-related datastore usage on startup (#281)
+* FIX: EventCollector instances might fail, we now forget about them (#289)
+
+### InfluxDB
+* FIX: Fix authentication with InfluxDB v1.x (#283)
+
+### Compatibility
+* FIX: remove a trailing comma, that broke support for (EOL) PHP versions (#276)
+
+### UI
+* FEATURE: new Host Vendor images have been added (#277, #278)
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/8?closed=1)
+
+
+
 v1.2.0
 ------
 
