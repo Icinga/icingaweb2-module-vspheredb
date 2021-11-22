@@ -157,9 +157,6 @@ class ObjectSync implements DaemonTask
         $this->timers[] = $this->loop->addPeriodicTimer(600, function () {
             $this->runTasks($this->slowTasks);
         });
-        $this->loop->futureTick(function () {
-            $this->refreshOutdatedDatastores();
-        });
         $this->timers[] = $this->loop->addPeriodicTimer(300, function () {
             $this->refreshOutdatedDatastores();
         });
