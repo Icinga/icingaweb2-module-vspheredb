@@ -4,10 +4,10 @@
 v1.2.1
 ------
 
-This is a minor bugfix release. Problems with certain vSphere/curl combinations
-have been addressed, support for older PHP versions has been fixed. This affected
-only End Of Live versions (&lt;7.3), but we still support them. Depending on your
-Curl version, you might have faced problems with vmWare 7.x, this has been solved.
+This is a minor bugfix release. A problem with older PHP versions has been fixed.
+This affected only End Of Live versions (&lt;7.3), but we still support them.
+Depending on your  Curl version, you might have faced problems with vmWare 7.x.
+This has also been solved.
 
 To use authentication with InfluxDB v1.x please upgrade the Incubator module to
 at least v0.10.1. This is optional, we'll not raise dependencies  with a patch
