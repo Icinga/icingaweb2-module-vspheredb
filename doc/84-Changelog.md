@@ -106,6 +106,8 @@ need.
 * FEATURE: provide a MOB link for every vCenter (#267)
 * FEATURE: show Host System images for known vendors and models (#270)
 
+![vCenter Overview](screenshot/00_preview/01_vspheredb-summary.png)
+
 ### CLI
 * FIX: vm check now also looks for object name (#109)
 * FIX: strip non-UTF8-characters from error messages (#124)
@@ -133,6 +135,8 @@ need.
 * FEATURE: Import Source now ships Compute Resources (#185) and Datastores (#246)
 * FEATURE: vCenter name is now shipped with all importable object types (#248)
 * FEATURE: it's now possible to filter Imports by vCenter (#247)
+
+![VM Grafana Dashboard](screenshot/00_preview/04_grafana-details.png)
 
 ### DB Schema
 * FIX: dropped a unique constraint on BIOS UUID because of VMware bugs (#83, #99)
