@@ -75,6 +75,9 @@ class SoapClient
 
                     return $result;
                 } catch (\Exception $e) {
+                    if ($e instanceof \SoapFault) {
+                        throw $e;
+                    }
                     $status = $response->getStatusCode();
 
                     if ($status > 199 && $status<= 299) {
