@@ -28,6 +28,7 @@ the module.
 * FIX: refresh outdated VM datastore usage in small chunks (#287)
 * FIX: do not refresh outdated VM-related datastore usage on startup (#281)
 * FIX: EventCollector instances might fail, we now forget about them (#289)
+* FEATURE: DB process stop is now enforced after a short timeout (#290)
 
 ### SOAP, vmWARE API
 * FIX: avoid some CURL versions to send Expect: 100 continue (#274)

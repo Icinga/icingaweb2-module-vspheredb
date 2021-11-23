@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Daemon;
 use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
 use gipfl\Process\FinishedProcessState;
+use gipfl\Process\ProcessKiller;
 use gipfl\Protocol\JsonRpc\Handler\NamespacedPacketHandler;
 use gipfl\Protocol\JsonRpc\JsonRpcConnection;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\LogProxy;
@@ -48,7 +49,7 @@ class DbProcessRunner implements EventEmitterInterface
             $process = $this->process;
             $this->process = null;
             if ($process->isRunning()) {
-                $process->close();
+                ProcessKiller::terminateProcess($process, $this->loop, 2);
             }
         }
     }
