@@ -36,6 +36,8 @@ return  [
             . 'attachment/a00039214.png/',
         'Synergy 480 Gen10 w/ PCIe Exp Mod' => 'https://support.hpe.com/hpesc/public/api/document/a00020236en_us/'
             . 'attachment/a00039214.png/',
+        'Synergy 660 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00019294en_us/'
+            . 'attachment/a00072909.png/',
         'ProLiant DL380 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00019682en_us/'
             . 'attachment/a00050167.png/',
         'ProLiant BL460c Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00019527en_us/'
