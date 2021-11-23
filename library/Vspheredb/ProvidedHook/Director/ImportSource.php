@@ -5,7 +5,6 @@ namespace Icinga\Module\Vspheredb\ProvidedHook\Director;
 use gipfl\Json\JsonString;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
-use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\Db;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Adapter_Abstract as ZfDb;
@@ -17,9 +16,6 @@ use Zend_Db_Adapter_Abstract as ZfDb;
  */
 class ImportSource extends ImportSourceHook
 {
-    /** @var Api */
-    protected $api;
-
     protected $hostColumns = [
         'object_name'             => 'o.object_name',
         'vcenter_name'            => 'vc.name',
@@ -112,7 +108,7 @@ class ImportSource extends ImportSourceHook
     protected function eventuallyFilterVCenter($query)
     {
         $vCenterUuid = $this->getSetting('vcenter_uuid');
-		if (strlen($vCenterUuid) > 0) {
+        if (strlen($vCenterUuid) > 0) {
             $vCenterUuid = Uuid::fromString($vCenterUuid)->getBytes();
             $query->where('o.vcenter_uuid = ?', $vCenterUuid);
         }
