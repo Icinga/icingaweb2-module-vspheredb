@@ -16,6 +16,8 @@ use React\EventLoop\LoopInterface;
 
 class VCenterShipMetricsForm extends ObjectForm
 {
+    const ON_DELETE = 'delete';
+
     use FormElementStealer;
     use TranslationHelper;
 
@@ -113,6 +115,15 @@ class VCenterShipMetricsForm extends ObjectForm
         if ($form = $instance->getSubscriptionForm($this->remoteClient)) {
             $this->addFormElementsFrom($form);
         }
+    }
+
+    public function isValidEvent($event)
+    {
+        if ($event === self::ON_DELETE) {
+            return true;
+        }
+
+        return parent::isValidEvent($event);
     }
 
     public function createObject()

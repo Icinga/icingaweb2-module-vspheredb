@@ -86,6 +86,9 @@ class VcenterController extends Controller
         $form->on(VCenterShipMetricsForm::ON_SUCCESS, function () {
             $this->redirectNow($this->getOriginalUrl());
         });
+        $form->on(VCenterShipMetricsForm::ON_DELETE, function () {
+            $this->redirectNow($this->getOriginalUrl());
+        });
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
     }
