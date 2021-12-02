@@ -7,12 +7,12 @@ a:hover::before {
 }
 
 span.error {
-  color: @colorCritical;
+  color: @color-critical;
 }
 
 p.legacy-error {
-  background-color: @colorCritical;
-  color: white;
+  background-color: @color-critical;
+  color: @text-color;
   padding: 1em 2em;
   font-weight: bold;
 
@@ -208,7 +208,7 @@ th.table-header-day {
 }
 
 tr.disabled {
-  color: @gray;
+  color: @disabled-gray;
   font-style: italic;
 }
 
@@ -270,8 +270,8 @@ div.event-heatmap-calendars > table.calendar {
   > a {
     width: 20em;
     height: 20em;
-    background-color: gray;
-    color: white;
+    background-color: @gray;
+    color: @text-color;
     display: inline-block;
     text-decoration: none;
     margin: 0.2em;
@@ -379,7 +379,7 @@ div.action-bar > ul ul {
   min-width: 10em;
   position: absolute;
   display: none;
-  color: white;
+  color: @text-color-on-icinga-blue;
   background-color: @icinga-blue;
 
   a {
@@ -387,7 +387,7 @@ div.action-bar > ul ul {
     padding: 0.3em 0.5em 0.3em 1em;
     margin: 0;
     outline: none;
-    color: white;
+    color: @text-color-on-icinga-blue;
 
     &:hover {
       text-decoration: underline;
@@ -409,7 +409,7 @@ div.action-bar > ul > li > a {
 div.action-bar > ul > li:hover {
   background-color: @icinga-blue;
   & > a {
-    color: white;
+    color: @text-color;
     text-decoration: none;
   }
 }
@@ -463,7 +463,7 @@ table.common-table th {
     right: 0;
     display: none;
     color: @text-color-inverted;
-    background-color: @text-color;
+    background-color: @white;
     border-radius: 0.1em;
     border-top-left-radius: 0;
     box-shadow: 1em 1em 1em 0 rgba(0, 0, 0, 0.2);
@@ -495,7 +495,7 @@ table.common-table th {
     padding: 0.2em 0.5em;
   }
   > ul > li:hover {
-    background-color: @text-color;
+    background-color: @white;
     border-top-left-radius: 0.1em;
     border-top-right-radius: 0.1em;
     & > a {
@@ -512,7 +512,7 @@ table.common-table th {
   padding-left: 1em;
   line-height: 2em;
   text-decoration: none;
-  color: #777;
+  color: @text-color;
   outline: 0;
   background-repeat: no-repeat;
   background-position: 0.8em 0.4em;
@@ -538,15 +538,15 @@ ul.tree li.collapsed > .handle {
 /** Tree custom **/
 
 .tree li a.red::before {
-  color: @colorCritical;
+  color: @color-critical;
 }
 
 .tree li a.yellow::before {
-  color: @colorWarning;
+  color: @color-warning;
 }
 
 .tree li a.green::before {
-  color: @colorOk;
+  color: @color-ok;
 }
 
 
@@ -564,6 +564,7 @@ form.quicksearch {
     margin-left: 1.5em;
     font-size: 0.75em;
     font-weight: normal;
+    color: @menu-color;
     &:focus {
       width: 16em;
       .transition(width 0.5s ease);
@@ -616,13 +617,13 @@ table {
   }
 
   tr.datastore td:first-child::before {
-    color: @colorOk;
+    color: @color-ok;
   }
   tr.yellow td:first-child::before {
-    color: @colorWarning;
+    color: @color-warning;
   }
   tr.red td:first-child::before {
-    color: @colorCritical;
+    color: @color-critical;
   }
 }
 
@@ -690,7 +691,7 @@ div.object-summaries {
 
 table {
   a.state {
-    color: white;
+    color: @text-color;
     display: inline-block;
     min-width: 2em;
     font-weight: bold;
@@ -712,7 +713,7 @@ table {
       box-shadow: inset 0 0 4em 4em rgba(255,255,255,0.3);
     }
     &.chosen {
-      border-color: white;
+      border-color: @text-color;
     }
 
     &.red, &.poweredoff, &.suspended {
@@ -971,7 +972,7 @@ div.disk-usage {
       background-color: rgb(70, 128, 255) !important;
     }
     &.unknown:hover {
-      background-color: #555 !important;
+      background-color: @gray-light;
     }
 
     &.free {
@@ -1014,7 +1015,7 @@ div.disk-usage {
   padding-left: 2.4em;
   line-height: 2em;
   text-decoration: none;
-  color: #777;
+  color: @text-color;
   outline: 0;
   background-repeat: no-repeat;
   background-position: 0.8em 0.4em;
@@ -1046,7 +1047,7 @@ ul.tree li.collapsed > .handle {
 div.logWindow {
   line-height: 1.25em;
   border: 1px solid @gray-lighter;
-  color: #ddd;
+  color: @text-color;
   overflow-y: scroll;
   padding: 0;
 }
@@ -1060,7 +1061,7 @@ pre.logOutput {
   white-space: pre-wrap;
 
   a {
-    color: #fff;
+    color: @text-color;
   }
 
   .loglevel, .application {
@@ -1120,7 +1121,7 @@ div.host-header {
   display: inline-block;
   padding: 0.5em 0;
   background-color: @color-ok;
-  color: white;
+  color: @text-color;
   margin-right: 1em;
   &.warning {
     background-color: @color-warning-handled;
