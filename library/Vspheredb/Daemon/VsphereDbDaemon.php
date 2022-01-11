@@ -179,8 +179,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             }
             if ($currentState === self::STATE_FAILED) {
                 $this->loop->addTimer(10, function () {
+                    $this->stopDbProcess();
+                    $this->stopConfigWatch();
                     if ($this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_FAILED) {
-                        $this->setDbState(self::STATE_STARTING);
+                        $this->initializeDbProcess();
                     }
                 });
             }
@@ -289,6 +291,14 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                 $this->setDbState(self::STATE_IDLE);
             });
         });
+    }
+
+    protected function stopDbProcess()
+    {
+        if ($this->dbRunner) {
+            $this->dbRunner->stop();
+            $this->dbRunner = null;
+        }
     }
 
     protected function keepRefreshingServerConfig()

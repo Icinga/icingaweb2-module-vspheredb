@@ -94,6 +94,11 @@ class DbRunner
     protected function connect($config)
     {
         $this->logger->debug('Connecting to DB');
+        try {
+            $this->disconnect();
+        } catch (\Exception $e) {
+            // Ignore disconnection errors
+        }
         $this->connection = new Db(new ConfigObject((array) $config));
         $this->db = $this->connection->getDbAdapter()->getConnection();
     }
