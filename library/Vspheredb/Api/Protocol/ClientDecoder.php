@@ -48,6 +48,7 @@ final class ClientDecoder extends SoapClient
      *
      * @see SoapClient::__doRequest()
      */
+    #[\ReturnTypeWillChange]
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
         // the actual result doesn't actually matter, just return the given result

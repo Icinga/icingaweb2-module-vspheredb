@@ -46,6 +46,7 @@ final class ClientEncoder extends SoapClient
      *
      * @see SoapClient::__doRequest()
      */
+    #[\ReturnTypeWillChange]
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
         $headers = [];
