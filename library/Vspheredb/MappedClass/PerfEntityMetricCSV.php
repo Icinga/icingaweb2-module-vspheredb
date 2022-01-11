@@ -24,8 +24,11 @@ class PerfEntityMetricCSV implements JsonSerialization
         foreach ($any->value as $value) {
             $self->value[] = PerfMetricSeriesCSV::fromSerialization($value);
         }
+
+        return $self;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object) [

@@ -91,6 +91,7 @@ class ObjectContent
         return $obj;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $obj = [

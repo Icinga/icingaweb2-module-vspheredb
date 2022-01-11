@@ -25,6 +25,7 @@ class PerfMetricSeriesCSV implements JsonSerialization
         return $self;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object) [

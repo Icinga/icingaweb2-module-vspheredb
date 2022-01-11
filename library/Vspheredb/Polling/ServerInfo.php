@@ -60,6 +60,7 @@ class ServerInfo implements JsonSerialization
         throw new InvalidArgumentException("Trying to access invalid property: '$key'");
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         ksort($this->properties);

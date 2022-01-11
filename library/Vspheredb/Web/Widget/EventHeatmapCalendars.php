@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use gipfl\Format\LocalTimeFormat;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\Table;
@@ -73,21 +74,21 @@ abstract class EventHeatmapCalendars extends BaseHtmlElement
             return;
         }
 
+        $timeFormat = new LocalTimeFormat();
         $max = max($events);
 
         $firstRow = true;
         $table = $body = $row = null;
 
         $weekday = '7';
-
         $lastMonth = null;
         $lastDayOfMonth = 0;
 
         foreach ($events as $day => $count) {
             $time = strtotime($day);
-            $month = strftime('%B', $time);
-            $dayOfMonth = strftime('%e', $time);
-            $weekday = strftime('%u', $time);
+            $month = $timeFormat->getMonthName($time);
+            $dayOfMonth = $timeFormat->getNumericDayInMonth($time);
+            $weekday = $timeFormat->format($time, 'c');
 
             if ($month !== $lastMonth) {
                 $table = $this->newTable($month);

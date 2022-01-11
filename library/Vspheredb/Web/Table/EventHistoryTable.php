@@ -83,7 +83,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         if (in_array($row->event_type, $this->vMotionEvents)) {
             $content[] = 'Path: ';
             $content[] = $this->deferredVMotionPath($row);
-            if ($row->user_name !== null) {
+            if ($row->user_name !== null && strlen($row->user_name) > 0) {
                 $content[] = Html::tag('br');
                 $content[] = sprintf('User: %s', $row->user_name);
             }
@@ -209,7 +209,7 @@ class EventHistoryTable extends ZfQueryBasedTable
     {
         if (is_array($type)) {
             $this->eventType = $type;
-        } elseif (strlen($type)) {
+        } elseif ($type !== null && strlen($type)) {
             $this->eventType = $type;
         }
 
@@ -218,7 +218,7 @@ class EventHistoryTable extends ZfQueryBasedTable
 
     public function filterParent($uuid)
     {
-        if (strlen($uuid)) {
+        if ($uuid !== null && strlen($uuid)) {
             $this->parent = $uuid;
         }
 
@@ -368,7 +368,7 @@ class EventHistoryTable extends ZfQueryBasedTable
             }
         }
 
-        if ($row->datastore_uuid !== $row->destination_datastore_uuid) {
+        if ($row->datastore_uuid !== $row->destination_datastore_uuid && $row->destination_datastore_uuid !== null) {
             if ($this->datastore) {
                 if ($row->datastore_uuid === $this->datastore->get('uuid')) {
                     $html->add($this->showFromDatastoreMigration($row));

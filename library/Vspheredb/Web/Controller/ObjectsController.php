@@ -58,7 +58,10 @@ class ObjectsController extends Controller
 
     protected function eventuallyFilterByParent(ObjectsTable $table, $url, $defaultTitle = null)
     {
-        $parent = hex2bin($this->params->get('uuid'));
+        $parent = $this->params->get('uuid');
+        if ($parent !== null) {
+            $parent = hex2bin($parent);
+        }
 
         if ($parent) {
             $lookup = $this->pathLookup();

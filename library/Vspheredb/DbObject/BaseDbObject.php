@@ -83,6 +83,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return $this;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $serialized = [];

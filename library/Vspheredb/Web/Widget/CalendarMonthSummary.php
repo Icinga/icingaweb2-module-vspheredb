@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use gipfl\Format\LocalTimeFormat;
 use ipl\Html\HtmlElement;
 use gipfl\IcingaWeb2\Link;
 use ipl\Html\Table;
@@ -44,6 +45,8 @@ class CalendarMonthSummary extends Table
 
     protected $forcedMax;
 
+    protected $timeFormat;
+
     public function __construct($year, $month)
     {
         $this->calendar = new Calendar();
@@ -51,6 +54,7 @@ class CalendarMonthSummary extends Table
         $this->month = $month;
         $this->strMonth = sprintf('%d-%02d', $year, $month);
         $this->strToday = date('Y-m-d');
+        $this->timeFormat = new LocalTimeFormat();
     }
 
     public function setRgb($red, $green, $blue)
@@ -208,7 +212,8 @@ class CalendarMonthSummary extends Table
 
     protected function getMonthName()
     {
-        return strftime('%B', $this->getMonthAsTimestamp());
+        return $this->timeFormat->getMonthName($this->getMonthAsTimestamp());
+        return date('F', $this->getMonthAsTimestamp());
     }
 
     protected function createWeekdayHeader()

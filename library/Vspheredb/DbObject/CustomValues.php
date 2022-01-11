@@ -16,11 +16,7 @@ class CustomValues implements JsonSerializable
 
     public static function fromJson($string)
     {
-        if (\strlen($string) > 0) {
-            return new static((array) JsonString::decode($string));
-        } else {
-            return new static;
-        }
+        return new static((array) JsonString::decodeOptional($string));
     }
 
     public function isEmpty()
@@ -47,6 +43,7 @@ class CustomValues implements JsonSerializable
         }
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object) $this->values;

@@ -122,6 +122,9 @@ class HostSystemInfoTable extends NameValueTable
 
     protected function linkToDellSupport($serviceTag)
     {
+        if ($serviceTag === null) {
+            return '-';
+        }
         $urlPattern = 'http://www.dell.com/support/home/product-support/servicetag/%s/drivers';
 
         $url = sprintf(

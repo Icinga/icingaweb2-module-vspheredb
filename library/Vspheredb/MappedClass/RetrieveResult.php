@@ -57,6 +57,7 @@ class RetrieveResult
         return $result;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $result = [];

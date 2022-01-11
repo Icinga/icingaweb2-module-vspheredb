@@ -186,7 +186,7 @@ class VmHardwareTree extends BaseHtmlElement
         );
 
         if (false === $info) {
-            return sprintf('Port group %s not found', Uuid::fromBytes($uuid)->toString());
+            return sprintf('Port group %s not found', bin2hex($uuid));
         }
 
         return sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics);

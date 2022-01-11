@@ -204,10 +204,10 @@ class VCenterServerForm extends Form
     {
         $this->object = $object;
         $properties = $object->getProperties();
-        if (\strlen($properties['password'])) {
+        if ($properties['password'] !== null && \strlen($properties['password'])) {
             $properties['password'] = self::UNCHANGED_PASSWORD;
         }
-        if (\strlen($properties['proxy_pass'])) {
+        if ($properties['proxy_pass'] !== null && \strlen($properties['proxy_pass'])) {
             $properties['proxy_pass'] = self::UNCHANGED_PASSWORD;
         }
         $this->populate($properties);

@@ -67,6 +67,7 @@ class ServerSet implements JsonSerialization
         return JsonString::encode($set) === JsonString::encode($this);
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object) $this->servers;

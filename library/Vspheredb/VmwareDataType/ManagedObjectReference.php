@@ -25,6 +25,7 @@ class ManagedObjectReference implements JsonSerialization
         return $this->type . '[' . $this->_ . ']';
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object) [
