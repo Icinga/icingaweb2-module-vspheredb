@@ -191,7 +191,7 @@ class VcentersController extends ObjectsController
     protected function checkForMigrations()
     {
         if (Db::migrationsForDb($this->db())->hasPendingMigrations()) {
-            $this->redirectNow('configuration/database');
+            $this->redirectNow('vspheredb/configuration/database');
         };
 
         return;
