@@ -15,6 +15,7 @@ use gipfl\SimpleDaemon\SystemdAwareTask;
 use gipfl\SystemD\NotifySystemD;
 use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
+use Icinga\Module\Vspheredb\Application\MemoryLimit;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -108,6 +109,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     public function start(LoopInterface $loop)
     {
+        MemoryLimit::raiseTo('1024M');
         $this->loop = $loop;
         $logger = $this->logger;
         $this->daemonState = $this->initializeDaemonState();
