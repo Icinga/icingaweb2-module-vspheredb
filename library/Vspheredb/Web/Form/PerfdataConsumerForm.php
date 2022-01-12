@@ -45,7 +45,7 @@ class PerfdataConsumerForm extends ObjectForm
             'value' => 'y',
             'required' => true,
         ]);
-        if ($this->object instanceof PerfdataConsumer) {
+        if ($this->object instanceof PerfdataConsumer && !$this->hasBeenSent()) {
             $this->populate((array) $this->object->settings());
         }
         if ($implementation = $this->selectImplementation()) {
