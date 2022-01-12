@@ -69,7 +69,7 @@ class VCenterShipMetricsForm extends ObjectForm
     public function assemble()
     {
         $this->add(Html::tag('h3', $this->translate('Ship Performance Data')));
-        if ($this->object instanceof PerfdataSubscription) {
+        if ($this->object instanceof PerfdataSubscription && !$this->hasBeenSent()) {
             $this->populate((array) $this->object->settings());
         }
 
