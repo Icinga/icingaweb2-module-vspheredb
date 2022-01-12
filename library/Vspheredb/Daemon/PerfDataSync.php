@@ -266,7 +266,7 @@ class PerfDataSync implements DaemonTask
         $this->loop->futureTick(function () {
             $this->loadWriterConfig();
             if ($this->influxDbWriter) {
-                $this->sync(180);
+                $this->sync(18); // Used to be 180 (= 1hour, reduced to fix problems with slow systems)
             }
         });
     }
