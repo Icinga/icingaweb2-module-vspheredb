@@ -116,6 +116,11 @@ class PerfDataSync implements DaemonTask
             'vcenter_settings' => 'ps.settings'
         ]));
         if (! $row) {
+            $this->influxDb = null;
+            if ($this->influxDbWriter) {
+                $this->influxDbWriter->stop();
+                $this->influxDbWriter = null;
+            }
             return;
         }
         $vCenterSettings = JsonString::decode($row->vcenter_settings);
