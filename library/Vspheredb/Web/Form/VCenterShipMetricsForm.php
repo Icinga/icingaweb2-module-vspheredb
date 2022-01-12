@@ -85,6 +85,11 @@ class VCenterShipMetricsForm extends ObjectForm
     protected function selectConsumer()
     {
         $consumers = $this->fetchConsumers();
+        if ($this->object) {
+            $consumer = Uuid::fromBytes($this->object->get('consumer_uuid'))->toString();
+        } else {
+            $consumer = null;
+        }
         $this->addElement('select', 'consumer', [
             'label' => $this->translate('Consumer'),
             'options' => [null => $this->translate('- please choose -')] + $this->enumConsumers($consumers),
@@ -93,7 +98,7 @@ class VCenterShipMetricsForm extends ObjectForm
                 Link::create($this->translate('Performance Data Consumers'), 'vspheredb/perfdata/consumers')
             ),
             'required' => true,
-            'value' => Uuid::fromBytes($this->object->get('consumer_uuid'))->toString(),
+            'value' => $consumer,
             'class' => 'autosubmit',
         ]);
         $this->addHidden('enabled', [
