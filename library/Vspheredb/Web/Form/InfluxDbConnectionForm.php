@@ -29,6 +29,8 @@ class InfluxDbConnectionForm extends Form
      */
     protected $client;
 
+    protected $checkedNow = false;
+
     public function __construct(LoopInterface $loop, RemoteClient $client)
     {
         $this->loop = $loop;
@@ -71,29 +73,37 @@ class InfluxDbConnectionForm extends Form
         } else {
             $this->addV1Credentials();
         }
+        $this->validateCredentials();
 
         return $this;
     }
 
-    protected function prepareParams()
+    protected function validateCredentials()
     {
-        $params = [
-            'baseUrl' => $this->getValue('base_url'),
-        ];
-        switch ($this->getApiVersion()) {
-            case 'v1':
-                $params['apiVersion'] = 'v1';
-                $params['username'] = $this->getValue('username');
-                $params['password'] = $this->getValue('password');
-                break;
-            case 'v2':
-                $params['apiVersion'] = 'v2';
-                $params['org'] = $this->getValue('org');
-                $params['token'] = $this->getValue('token');
-                break;
+        if (!$this->checkedNow) {
+            return;
         }
+        $username = $this->getValue('username');
+        if (empty($username)) {
+            return;
+        }
+        try {
+            if ($this->tryCredentials(
+                $this->getValue('base_url'),
+                $this->getValue('apiVersion'),
+                $username,
+                $this->getValue('password')
+            )) {
+                $this->getElement('password')->getAttributes()->add('class', 'validated');
+            }
+        } catch (\Exception $e) {
+            $this->getElement('password')->addMessage($this->getExceptionMessageWithoutPhpFile($e));
+        }
+    }
 
-        return $params;
+    protected function getExceptionMessageWithoutPhpFile(\Exception $e)
+    {
+        return preg_replace('/\sin\s.+?\.php\(\d+\)/', '', $e->getMessage());
     }
 
     protected function remoteRequest($request, $params = [])
@@ -213,6 +223,7 @@ class InfluxDbConnectionForm extends Form
                 'baseUrl' => $baseUrl,
             ]);
             if ($this->versionIsFine($version)) {
+                $this->checkedNow = true;
                 $this->setCheckedApiVersionFor($baseUrl, $version);
                 $this->markUrlAsValidated();
                 return $version;
@@ -223,6 +234,16 @@ class InfluxDbConnectionForm extends Form
             $this->triggerElementError('base_url', $e->getMessage());
             return false;
         }
+    }
+
+    protected function tryCredentials($baseUrl, $apiVersion, $username, $password)
+    {
+        return $this->remoteRequest('influxdb.testConnection', [
+            'baseUrl'  => $baseUrl,
+            'apiVersion' => $apiVersion,
+            'username' => $username,
+            'password' => $password,
+        ]);
     }
 
     protected function setCheckedApiVersionFor($baseUrl, $version)
