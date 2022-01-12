@@ -66,13 +66,13 @@ class ObjectsController extends Controller
         if ($parent) {
             $lookup = $this->pathLookup();
             $name = $lookup->getObjectName($parent);
-            $uuids = $lookup->listFoldersBelongingTo($parent);
             if ($name) {
                 $this->addTitle($name);
             } else {
                 $this->addTitle($defaultTitle);
             }
             if ($this->params->get('showDescendants')) {
+                $uuids = $lookup->listFoldersBelongingTo($parent);
                 $table->filterParentUuids($uuids);
             } else {
                 $table->filterParentUuids([$parent]);
