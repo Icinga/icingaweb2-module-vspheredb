@@ -69,23 +69,7 @@ class VmEventHistorySyncStore extends SyncStore
      */
     protected function getLastEventKey()
     {
-        $db = $this->db;
-        $uuid = $this->vCenter->getUuid();
-
-        $union = $db->select()->union([
-            'vmeh' => $db->select()->from(
-                'vm_event_history',
-                ['event_key' => 'MAX(event_key)']
-            )->where('vcenter_uuid = ?', $uuid),
-            'ah' => $db->select()->from(
-                'alarm_history',
-                ['event_key' => 'MAX(event_key)']
-            )->where('vcenter_uuid = ?', $uuid),
-        ], Select::SQL_UNION_ALL);
-
-        return (int) $db->fetchOne(
-            $db->select()->from(['u' => $union], 'MAX(event_key)')
-        );
+        return $this->selectLast('event_key');
     }
 
     /**
@@ -95,22 +79,27 @@ class VmEventHistorySyncStore extends SyncStore
      */
     public function getLastEventTimeStamp()
     {
+        return $this->selectLast('ts_event_ms');
+    }
+
+    protected function selectLast($column)
+    {
         $db = $this->db;
         $uuid = $this->vCenter->getUuid();
 
         $union = $db->select()->union([
             'vmeh' => $db->select()->from(
                 'vm_event_history',
-                ['ts_event_ms' => 'MAX(ts_event_ms)']
+                [$column => "MAX($column)"]
             )->where('vcenter_uuid = ?', $uuid),
             'ah' => $db->select()->from(
                 'alarm_history',
-                ['ts_event_ms' => 'MAX(ts_event_ms)']
+                [$column => "MAX($column)"]
             )->where('vcenter_uuid = ?', $uuid),
         ], Select::SQL_UNION_ALL);
 
         return (int) $db->fetchOne(
-            $db->select()->from(['u' => $union], 'MAX(ts_event_ms)')
+            $db->select()->from(['u' => $union], "MAX($column)")
         );
     }
 }
