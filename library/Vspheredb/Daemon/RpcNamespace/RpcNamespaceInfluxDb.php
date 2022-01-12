@@ -47,10 +47,8 @@ class RpcNamespaceInfluxDb
      */
     public function testConnectionRequest($baseUrl, $apiVersion = null, $username = null, $password = null)
     {
-        return $this->connect($baseUrl, $apiVersion, $username, $password)->then(function () {
+        return $this->listDatabasesRequest($baseUrl, $apiVersion, $username, $password)->then(function () {
             return true;
-        }, function () {
-            return false;
         });
     }
 
