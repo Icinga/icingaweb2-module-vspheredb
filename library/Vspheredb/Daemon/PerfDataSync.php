@@ -249,6 +249,7 @@ class PerfDataSync implements DaemonTask
     protected function scheduleTasks()
     {
         $this->timers[] = $this->loop->addPeriodicTimer(120, function () {
+            $this->loadWriterConfig();
             if ($this->influxDbWriter) {
                 $this->sync(18);
             }
