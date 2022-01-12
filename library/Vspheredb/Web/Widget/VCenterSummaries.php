@@ -86,6 +86,7 @@ class VCenterSummaries extends BaseHtmlElement
             'vspheredb/vms'
         );
         // 4 base VMs are missing! (parent_id = null)
+        /*
         $this->addCountlet(
             $db->fetchRow(
                 $db->select()->from(['o' => 'object'], $columns)
@@ -96,7 +97,6 @@ class VCenterSummaries extends BaseHtmlElement
             'VM Templates',
             'vspheredb/vmtemplates'
         );
-        /*
         $this->addCountlet(
             $db->fetchRow(
                 $db->select()->from(['o' => 'object'], $columns)
