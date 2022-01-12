@@ -27,6 +27,7 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\PerfCounterInfoSyncStore;
 use Icinga\Module\Vspheredb\Polling\VsphereApi;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -161,6 +162,9 @@ class PerfDataSync implements DaemonTask
             $vCenterSettings->dbname,
             $this->loop
         );
+        if ($this->influxDbWriter instanceof LoggerAwareInterface) { // Compat, older writers do not have this
+            $this->influxDbWriter->setLogger($this->logger);
+        }
         $this->influxDbWriter->setPrecision('s');
     }
 
