@@ -83,13 +83,7 @@ trait FormElementStealer
         $form->doNotCheckFormName();
         if ($object = $this->getObject()) {
             if (method_exists($object, 'settings')) {
-                $populate = [];
-                foreach ($object->settings() as $key => $value) {
-                    $populate[] = $key;
-                }
-                foreach ($populate as $key) {
-                    $form->populate($populate);
-                }
+                $form->populate((array) $object->settings());
             }
         }
 
@@ -100,6 +94,5 @@ trait FormElementStealer
         foreach ($form->getElements() as $element) {
             $this->registerElement($element);
         }
-        // $form->populate($this->getSentValues());
     }
 }
