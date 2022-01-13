@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncStore\SyncStore;
+use Icinga\Module\Vspheredb\Polling\SyncStore\VmEventHistorySyncStore;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
@@ -127,6 +128,20 @@ class DbRunner
         );
 
         return true;
+    }
+
+    /**
+     * @param int $vCenterId
+     * @return int
+     * @throws \Icinga\Exception\NotFoundError
+     */
+    public function getLastEventTimeStampRequest($vCenterId)
+    {
+        return VmEventHistorySyncStore::selectLast(
+            $this->db,
+            $this->requireVCenter($vCenterId)->getUuid(),
+            'ts_event_ms'
+        );
     }
 
     /**

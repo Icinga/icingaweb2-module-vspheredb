@@ -74,7 +74,7 @@ class VmEventHistorySyncStore extends SyncStore
      */
     protected function getLastEventKey()
     {
-        return $this->selectLast('event_key');
+        return static::selectLast($this->db, $this->vCenter->getUuid(), 'event_key');
     }
 
     /**
@@ -84,29 +84,26 @@ class VmEventHistorySyncStore extends SyncStore
      */
     public function getLastEventTimeStamp()
     {
-        return $this->selectLast('ts_event_ms');
+        return static::selectLast($this->db, $this->vCenter->getUuid(), 'ts_event_ms');
     }
 
     /**
+     * @param $db
+     * @param string $vCenterUuid
      * @param string $column
      * @return int
-     * @throws \Zend_Db_Select_Exception
-     * @throws \gipfl\ZfDb\Exception\SelectException
      */
-    protected function selectLast($column)
+    public static function selectLast($db, $vCenterUuid, $column)
     {
-        $db = $this->db;
-        $uuid = $this->vCenter->getUuid();
-
         $union = $db->select()->union([
             'vmeh' => $db->select()->from(
                 'vm_event_history',
                 [$column => "MAX($column)"]
-            )->where('vcenter_uuid = ?', $uuid),
+            )->where('vcenter_uuid = ?', $vCenterUuid),
             'ah' => $db->select()->from(
                 'alarm_history',
                 [$column => "MAX($column)"]
-            )->where('vcenter_uuid = ?', $uuid),
+            )->where('vcenter_uuid = ?', $vCenterUuid),
         ], Select::SQL_UNION_ALL);
 
         return (int) $db->fetchOne(

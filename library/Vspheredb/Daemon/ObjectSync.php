@@ -6,8 +6,6 @@ use Exception;
 use gipfl\SimpleDaemon\DaemonTask;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\CustomFieldsManager;
-use Icinga\Module\Vspheredb\Polling\SyncStore\VmEventHistorySyncStore;
-use Icinga\Module\Vspheredb\Polling\SyncStore\SyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncStore\VmDatastoreUsageSyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncTask\ComputeResourceSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\DatastoreSyncTask;
@@ -29,7 +27,6 @@ use Icinga\Module\Vspheredb\Polling\SyncTask\VmHardwareSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmQuickStatsSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmSnapshotSyncTask;
 use Icinga\Module\Vspheredb\Polling\VsphereApi;
-use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
@@ -82,9 +79,6 @@ class ObjectSync implements DaemonTask
     /** @var ExtendedPromiseInterface[] */
     protected $runningTasks = [];
 
-    /** @var VmEventHistorySyncStore */
-    protected $eventStore;
-
     protected $ready = false;
 
     /** @var DbProcessRunner */
@@ -93,9 +87,6 @@ class ObjectSync implements DaemonTask
     public function __construct(VCenter $vCenter, VsphereApi $api, DbProcessRunner $dbRunner, LoggerInterface $logger)
     {
         $this->vCenter = $vCenter;
-        $this->eventStore = new VmEventHistorySyncStore($vCenter->getDb(), $vCenter, $logger);
-        $api->setLastEventTimestamp($this->eventStore->getLastEventTimeStamp());
-
         if ($vCenter->isHostAgent()) {
             $this->removeVCenterOnlyTasks();
         }
@@ -135,6 +126,8 @@ class ObjectSync implements DaemonTask
     protected function initialize()
     {
         return $this->prepareSyncResultHandler()->then(function () {
+            return $this->prepareEventPolling();
+        })->then(function () {
             $this->ready = true;
             $this->scheduleTasks();
         }, function ($e) {
@@ -251,6 +244,21 @@ class ObjectSync implements DaemonTask
         });
     }
 
+    protected function prepareEventPolling()
+    {
+        return $this->dbRunner->request('vspheredb.getLastEventTimeStamp', [
+            'vCenterId' => $this->vCenter->get('id')
+        ])->then(function ($lastTimestamp) {
+            $this->logger->error('LAST TS: ' . $lastTimestamp);
+            $this->api->setLastEventTimestamp($lastTimestamp);
+        });
+    }
+
+    /**
+     * Refreshes the custom fields map in the DB process
+     *
+     * @return \React\Promise\PromiseInterface
+     */
     protected function prepareSyncResultHandler()
     {
         return $this->api->fetchCustomFieldsManager()->then(function (CustomFieldsManager $manager = null) {
