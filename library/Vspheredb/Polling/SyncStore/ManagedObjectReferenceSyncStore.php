@@ -31,6 +31,16 @@ class ManagedObjectReferenceSyncStore extends SyncStore
             }
             /** @var ManagedObjectReference $moRef */
             $uuid = $vCenter->makeBinaryGlobalMoRefUuid($moRef);
+            if (isset($fetched[$uuid])) {
+                $this->logger->error(sprintf(
+                    'Got MoRef UUID twice: %s/%s VS %s (%s)',
+                    $moRef->_,
+                    $name,
+                    $fetched[$uuid],
+                    bin2hex($uuid)
+                ));
+                return;
+            }
             $fetched[$uuid] = $name;
             $nameUuids[$moRef->_] = $uuid;
             if (array_key_exists($uuid, $objects)) {

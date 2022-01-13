@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
+use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 class VmDiskUsageSyncStore extends SyncStore
 {
@@ -20,7 +21,11 @@ class VmDiskUsageSyncStore extends SyncStore
         $seen = [];
         foreach ($result as $object) {
             $object = (object) $object;
-            $uuid = $vCenter->makeBinaryGlobalMoRefUuid($object->obj);
+            if ($object->obj instanceof ManagedObjectReference) {
+                $uuid = $vCenter->makeBinaryGlobalMoRefUuid($object->obj);
+            } else {
+                $uuid = $vCenter->makeBinaryGlobalMoRefUuid(ManagedObjectReference::fromSerialization($object->obj));
+            }
             if (! property_exists($object->{'guest.disk'}, 'GuestDiskInfo')) {
                 // Should we preserve them? Flag outdated?
                 continue;

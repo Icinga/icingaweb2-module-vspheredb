@@ -36,6 +36,6 @@ class ManagedObjectReference implements JsonSerialization
 
     public static function fromSerialization($any)
     {
-        return new static($any->_, $any->type);
+        return new static($any->type, $any->_);
     }
 }
