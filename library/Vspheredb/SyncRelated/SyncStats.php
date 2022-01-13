@@ -2,7 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\SyncRelated;
 
-class SyncStats
+use gipfl\Json\JsonSerialization;
+
+class SyncStats implements JsonSerialization
 {
     protected $created = 0;
     protected $modified = 0;
@@ -57,5 +59,30 @@ class SyncStats
             $this->totalFromDb,
             $this->totalFromApi
         );
+    }
+
+    public static function fromSerialization($any)
+    {
+        $self = new static($any->label);
+        $self->created      = $any->created;
+        $self->modified     = $any->modified;
+        $self->deleted      = $any->deleted;
+        $self->totalFromApi = $any->totalFromApi;
+        $self->totalFromDb  = $any->totalFromDb;
+
+        return $self;
+    }
+
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return (object) [
+            'label'        => $this->label,
+            'created'      => $this->created,
+            'modified'     => $this->modified,
+            'deleted'      => $this->deleted,
+            'totalFromApi' => $this->totalFromApi,
+            'totalFromDb'  => $this->totalFromDb,
+        ];
     }
 }

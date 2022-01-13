@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
+use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 abstract class HostPropertyInstancesSyncStore extends SyncStore
 {
@@ -27,7 +28,11 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
         $apiObjects = [];
         foreach ($result as $object) {
             $object = (object) $object;
-            $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid($object->obj);
+            if ($object->obj instanceof ManagedObjectReference) {
+                $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid($object->obj);
+            } else {
+                $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid(ManagedObjectReference::fromSerialization($object->obj));
+            }
             if (! isset($object->$baseKey) || ! property_exists($object->$baseKey, $instanceClass)) {
                 // No instance information for this host
                 continue;

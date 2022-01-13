@@ -112,7 +112,7 @@ class DbProcessRunner implements EventEmitterInterface
         }
         $this->loop = $loop;
         $command = new IcingaCliRpc();
-        $command->setArguments(['vspheredb', 'db', 'run', '--rpc']);
+        $command->setArguments(['vspheredb', 'db', 'run', '--rpc', '--debug']);
         $command->on('start', function (Process $process) {
             $this->process = $process;
             $process->on('exit', function ($exitCode, $termSignal) {

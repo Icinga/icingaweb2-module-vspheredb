@@ -26,6 +26,11 @@ class VmEventHistorySyncStore extends SyncStore
             $this->lastEventTimestamp = $this->getLastEventTimeStamp();
             $stats->setFromApi(count($result));
             foreach ($result as $key => $event) {
+                if (! isset($event->__class)) {
+                    $this->logger->error(json_encode($event));
+                    return;
+                }
+                $event = KnownEvent::fromSerialization($event);
                 // printf("%s <= %s\n", $event->key, $this->lastEventKey);
                 if (! method_exists($event, 'getTimestampMs')) {
                     throw new RuntimeException('This is not a known event: ' . var_export($event, 1));
@@ -82,6 +87,12 @@ class VmEventHistorySyncStore extends SyncStore
         return $this->selectLast('ts_event_ms');
     }
 
+    /**
+     * @param string $column
+     * @return int
+     * @throws \Zend_Db_Select_Exception
+     * @throws \gipfl\ZfDb\Exception\SelectException
+     */
     protected function selectLast($column)
     {
         $db = $this->db;

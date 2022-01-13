@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 /**
@@ -37,7 +38,7 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  * restarting VMs as required. All FDMs provide the VM/Application Health
  * Monitoring Service.
  */
-class ClusterDasFdmHostState
+class ClusterDasFdmHostState implements JsonSerialization
 {
     /**
      * The Availability State of a host based on information reported by the
@@ -96,4 +97,22 @@ class ClusterDasFdmHostState
 
     /** @var ManagedObjectReference|null */
     public $stateReporter;
+
+    public static function fromSerialization($any)
+    {
+        $self = new static;
+        $self->state = $any->state;
+        $self->stateReporter = $any->stateReporter;
+
+        return $self;
+    }
+
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return (object) [
+            'state' => $this->state,
+            'stateReporter' => $this->stateReporter,
+        ];
+    }
 }

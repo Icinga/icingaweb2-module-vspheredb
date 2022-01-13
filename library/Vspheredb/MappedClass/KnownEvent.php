@@ -3,8 +3,8 @@
 namespace Icinga\Module\Vspheredb\MappedClass;
 
 use DateTime;
+use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
-use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Zend_Db_Adapter_Abstract as ZfDbAdapter;
 
 /**
@@ -13,7 +13,7 @@ use Zend_Db_Adapter_Abstract as ZfDbAdapter;
  * We use this as a base class for all vim.event.Event implementations
  * handled by us
  */
-abstract class KnownEvent
+abstract class KnownEvent implements JsonSerialization
 {
     /** @var int The parent or group ID */
     public $chainId;
@@ -92,5 +92,23 @@ abstract class KnownEvent
         $time = new DateTime($string);
 
         return (int) (1000 * $time->format('U.u'));
+    }
+
+    public static function fromSerialization($any)
+    {
+        $class = $any->__class;
+        $self = new $class;
+        foreach (unserialize($any->properties) as $key => $value) {
+            $self->$key = $value;
+        }
+
+        return $self;
+    }
+
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        // TODO: serialize without (un)serialize(), as this needs to work across nodes
+        return ['__class' => get_class($this), 'properties' => serialize(get_object_vars($this))];
     }
 }

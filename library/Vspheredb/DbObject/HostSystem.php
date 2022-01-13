@@ -107,11 +107,12 @@ class HostSystem extends BaseDbObject
         }
     }
 
-    protected function setDasHostState(ClusterDasFdmHostState $state = null)
+    protected function setDasHostState($state = null)
     {
         if ($state === null) {
             $this->set('das_host_state', null);
         } else {
+            /** @var ClusterDasFdmHostState|\stdClass $state */
             $this->set('das_host_state', $state->state);
         }
     }

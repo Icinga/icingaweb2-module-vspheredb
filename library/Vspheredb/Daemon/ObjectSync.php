@@ -85,11 +85,15 @@ class ObjectSync implements DaemonTask
     /** @var ExtendedPromiseInterface[] */
     protected $runningTasks = [];
 
+    /** @var VmEventHistorySyncStore */
     protected $eventStore;
 
     protected $ready = false;
 
-    public function __construct(VCenter $vCenter, VsphereApi $api, LoggerInterface $logger)
+    /** @var DbProcessRunner */
+    protected $dbRunner;
+
+    public function __construct(VCenter $vCenter, VsphereApi $api, DbProcessRunner $dbRunner, LoggerInterface $logger)
     {
         $this->vCenter = $vCenter;
         $this->eventStore = new VmEventHistorySyncStore($vCenter->getDb(), $vCenter, $logger);
@@ -100,6 +104,7 @@ class ObjectSync implements DaemonTask
         }
         $this->api = $api;
         $this->logger = $logger;
+        $this->dbRunner = $dbRunner;
     }
 
     protected function removeVCenterOnlyTasks()
@@ -206,7 +211,6 @@ class ObjectSync implements DaemonTask
         }
         // $this->logger->debug("Running Task '$label'");
 
-
         if ($task instanceof StandaloneTask) {
             $instance = $task->run($this->api, $this->logger);
         } else {
@@ -225,15 +229,36 @@ class ObjectSync implements DaemonTask
                 unset($this->runningTasks[$idx]);
                 return resolve();
             }
-            $stats = new SyncStats($task->getLabel());
-            $this->requireSyncStoreInstance($task->getSyncStoreClass())
-                ->store($result, $task->getObjectClass(), $stats);
-            if ($stats->hasChanges()) {
-                $this->logger->info($stats->getLogMessage());
-            }
+            if (false && $task instanceof StandaloneTask) {
+                $stats = new SyncStats($task->getLabel());
+                $this->requireSyncStoreInstance($task->getSyncStoreClass())
+                    ->store($result, $task->getObjectClass(), $stats);
+                if ($stats->hasChanges()) {
+                    $this->logger->info($stats->getLogMessage());
+                }
 
-            unset($this->runningTasks[$idx]);
-            return resolve();
+                unset($this->runningTasks[$idx]);
+                return resolve();
+            } else {
+                return $this->dbRunner->request('vspheredb.processSyncTaskResult', [
+                    'vCenterId'   => (int) $this->vCenter->get('id'),
+                    'result'      => $result,
+                    'taskLabel'   => $task->getLabel(),
+                    'storeClass'  => $task->getSyncStoreClass(),
+                    'objectClass' => $task->getObjectClass(),
+                ])->then(function ($stats) use ($idx) {
+                    $stats = SyncStats::fromSerialization($stats);
+                    if ($stats->hasChanges()) {
+                        $this->logger->info($stats->getLogMessage());
+                    }
+
+                    unset($this->runningTasks[$idx]);
+                    return resolve();
+                }, function (Exception $e) use ($idx) {
+                    unset($this->runningTasks[$idx]);
+                    $this->logger->error($e->getMessage());
+                })->done();
+            }
         }, function (Exception $e) use ($idx, $label) {
             $this->logger->error("$label: " . $e->getMessage());
             unset($this->runningTasks[$idx]);
