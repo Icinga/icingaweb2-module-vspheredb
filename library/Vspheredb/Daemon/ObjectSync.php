@@ -226,57 +226,29 @@ class ObjectSync implements DaemonTask
                 unset($this->runningTasks[$idx]);
                 return resolve();
             }
-            if (false && $task instanceof StandaloneTask) {
-                $stats = new SyncStats($task->getLabel());
-                $this->requireSyncStoreInstance($task->getSyncStoreClass())
-                    ->store($result, $task->getObjectClass(), $stats);
+
+            return $this->dbRunner->request('vspheredb.processSyncTaskResult', [
+                'vCenterId'   => (int) $this->vCenter->get('id'),
+                'result'      => $result,
+                'taskLabel'   => $task->getLabel(),
+                'storeClass'  => $task->getSyncStoreClass(),
+                'objectClass' => $task->getObjectClass(),
+            ])->then(function ($stats) use ($idx) {
+                $stats = SyncStats::fromSerialization($stats);
                 if ($stats->hasChanges()) {
                     $this->logger->info($stats->getLogMessage());
                 }
 
                 unset($this->runningTasks[$idx]);
                 return resolve();
-            } else {
-                return $this->dbRunner->request('vspheredb.processSyncTaskResult', [
-                    'vCenterId'   => (int) $this->vCenter->get('id'),
-                    'result'      => $result,
-                    'taskLabel'   => $task->getLabel(),
-                    'storeClass'  => $task->getSyncStoreClass(),
-                    'objectClass' => $task->getObjectClass(),
-                ])->then(function ($stats) use ($idx) {
-                    $stats = SyncStats::fromSerialization($stats);
-                    if ($stats->hasChanges()) {
-                        $this->logger->info($stats->getLogMessage());
-                    }
-
-                    unset($this->runningTasks[$idx]);
-                    return resolve();
-                }, function (Exception $e) use ($idx) {
-                    unset($this->runningTasks[$idx]);
-                    $this->logger->error($e->getMessage());
-                })->done();
-            }
+            }, function (Exception $e) use ($idx) {
+                unset($this->runningTasks[$idx]);
+                $this->logger->error($e->getMessage());
+            })->done();
         }, function (Exception $e) use ($idx, $label) {
             $this->logger->error("$label: " . $e->getMessage());
             unset($this->runningTasks[$idx]);
         });
-    }
-
-    /**
-     * @param $class
-     * @return SyncStore
-     */
-    protected function requireSyncStoreInstance($class)
-    {
-        if (! isset($this->syncStores[$class])) {
-            $this->syncStores[$class] = new $class(
-                $this->vCenter->getConnection()->getDbAdapter(),
-                $this->vCenter,
-                $this->logger
-            );
-        }
-
-        return $this->syncStores[$class];
     }
 
     protected function prepareSyncResultHandler()
