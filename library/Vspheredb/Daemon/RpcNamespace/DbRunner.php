@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\Application\MemoryLimit;
 use Icinga\Module\Vspheredb\Daemon\DbCleanup;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncStore\SyncStore;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
@@ -108,6 +109,24 @@ class DbRunner
         }
 
         return Db::migrationsForDb($this->connection)->hasPendingMigrations();
+    }
+
+    /**
+     * @param int $vCenterId
+     * @param array $map
+     * @return bool
+     */
+    public function setCustomFieldsMapRequest($vCenterId, $map)
+    {
+        $vCenter = $this->requireVCenter($vCenterId);
+        $this->vCenterSyncStores[$vCenterId][ObjectSyncStore::class] = new ObjectSyncStore(
+            $vCenter->getConnection()->getDbAdapter(),
+            $vCenter,
+            $this->logger,
+            $map
+        );
+
+        return true;
     }
 
     /**

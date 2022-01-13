@@ -76,9 +76,6 @@ class ObjectSync implements DaemonTask
         VmHardwareSyncTask::class,
     ];
 
-    /** @var SyncStore[] */
-    protected $syncStores = [];
-
     /** @var TimerInterface[]  */
     protected $timers = [];
 
@@ -285,14 +282,14 @@ class ObjectSync implements DaemonTask
     protected function prepareSyncResultHandler()
     {
         return $this->api->fetchCustomFieldsManager()->then(function (CustomFieldsManager $manager = null) {
-            $instance = new ObjectSyncStore(
-                $this->vCenter->getConnection()->getDbAdapter(),
-                $this->vCenter,
-                $this->logger,
-                $manager
-            );
-            $this->syncStores[ObjectSyncStore::class] = $instance;
-            return resolve();
+            if ($manager === null) {
+                return resolve();
+            }
+
+            return $this->dbRunner->request('vspheredb.setCustomFieldsMap', [
+                'vCenterId' => $this->vCenter->get('id'),
+                'map'       => $manager->requireMap(),
+            ]);
         });
     }
 }

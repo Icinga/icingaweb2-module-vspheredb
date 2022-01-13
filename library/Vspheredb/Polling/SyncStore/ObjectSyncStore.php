@@ -15,16 +15,16 @@ class ObjectSyncStore extends SyncStore
 
     const CUSTOM_VALUE_KEY = 'summary.customValue';
 
-    /** @var ?CustomFieldsManager */
-    protected $customFieldsManager;
+    /** @var ?array */
+    protected $customFieldsMap;
 
     public function __construct(
         $db,
         VCenter $vCenter,
         LoggerInterface $logger,
-        CustomFieldsManager $customFieldsManager = null
+        array $customFieldsMap = null
     ) {
-        $this->customFieldsManager = $customFieldsManager;
+        $this->customFieldsMap = $customFieldsMap;
         parent::__construct($db, $vCenter, $logger);
     }
 
@@ -41,8 +41,8 @@ class ObjectSyncStore extends SyncStore
             }
             $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid($moRef);
             $object->uuid = $uuid;
-            if ($this->customFieldsManager) {
-                self::mapResultCustomValues($object, $this->customFieldsManager);
+            if ($this->customFieldsMap !== null) {
+                self::mapResultCustomValues($object, $this->customFieldsMap);
             }
             $fromApi[$uuid] = $object;
         }
@@ -72,12 +72,12 @@ class ObjectSyncStore extends SyncStore
         $this->storeSyncObjects($connection->getDbAdapter(), $dbObjects, $result, $stats);
     }
 
-    protected static function mapResultCustomValues($object, CustomFieldsManager $manager)
+    protected static function mapResultCustomValues($object, array $map)
     {
         $key = self::CUSTOM_VALUE_KEY;
         if (isset($object->$key) && ! empty((array) $object->$key)) {
             // We fetched single properties, not full objects. Therefore, the property contains type as key:
-            $mapped = $manager->mapValues($object->$key->CustomFieldValue);
+            $mapped = CustomFieldsManager::mapValuesWithMap($object->$key->CustomFieldValue, $map);
             $object->$key = $mapped;
         }
     }

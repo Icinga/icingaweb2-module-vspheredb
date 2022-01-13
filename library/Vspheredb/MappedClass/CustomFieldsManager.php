@@ -11,7 +11,11 @@ class CustomFieldsManager
 
     public function mapValues($values)
     {
-        $map = $this->requireMap();
+        return static::mapValuesWithMap($values, $this->requireMap());
+    }
+
+    public static function mapValuesWithMap($values, array $map)
+    {
         $result = [];
         /** @var CustomFieldValue $value */
         foreach ($values as $value) {
@@ -26,7 +30,7 @@ class CustomFieldsManager
         return (object) $result;
     }
 
-    protected function requireMap()
+    public function requireMap()
     {
         if ($this->map === null) {
             if (isset($this->field->CustomFieldDef)) { // Mapping goes wrong for arrays of X
