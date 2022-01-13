@@ -20,7 +20,7 @@ abstract class SimpleBackupTool implements BackupTool
      */
     public function wantsAnnotation($annotation)
     {
-        return strpos($annotation, static::PREFIX) !== false;
+        return $annotation !== null && strpos($annotation, static::PREFIX) !== false;
     }
 
     /**

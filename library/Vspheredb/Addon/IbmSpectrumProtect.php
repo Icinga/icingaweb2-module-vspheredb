@@ -50,7 +50,7 @@ class IbmSpectrumProtect implements BackupTool
      */
     public function wantsAnnotation($annotation)
     {
-        return strpos($annotation, static::OPEN_TAG) !== false;
+        return $annotation !== null && strpos($annotation, static::OPEN_TAG) !== false;
     }
 
     /**
