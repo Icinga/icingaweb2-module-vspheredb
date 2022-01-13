@@ -81,7 +81,9 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
         $tr = $this::tr([
             // TODO: move to CSS
-            $this::td($caption),
+            $this::td($caption, [
+                'title' => $caption
+            ]),
             $this::td(Format::bytes($row->capacity, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
             $this::td($free, ['style' => 'width: 25%;']),
             $this::td($this->makeDisk($row), ['style' => 'width: 25%;'])
