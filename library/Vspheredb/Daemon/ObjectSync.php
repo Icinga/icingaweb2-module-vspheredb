@@ -249,7 +249,6 @@ class ObjectSync implements DaemonTask
         return $this->dbRunner->request('vspheredb.getLastEventTimeStamp', [
             'vCenterId' => $this->vCenter->get('id')
         ])->then(function ($lastTimestamp) {
-            $this->logger->error('LAST TS: ' . $lastTimestamp);
             $this->api->setLastEventTimestamp($lastTimestamp);
         });
     }
