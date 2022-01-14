@@ -1,6 +1,58 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.3.0
+------
+
+This version fixes issues which could occur when running for at least medium-
+sized vmWare installations while using a DB with relatively high latencies. We
+are now handing over data we fetched from your vCenter to a dedicated sub-process,
+which then synchronizes batched information to your DB task per task.
+
+You can spot the current task in your process list, in case a task takes longer
+than expected:
+
+![Process list - current DB task](screenshot/84_changelog/0805_processlist-dbtask.png)
+
+vSphereDB strongly suggests using a vmWare user with a global readonly permission,
+however with this release it is now also possible to use a user who has been
+granted read permissions for only a small sub-tree of your vCenter.
+
+PHP 8.1 is now supported and can be used as soon as we release a related Icinga
+Web 2 version.
+
+## UI
+* FIX: deleting an InfluxDB subscription succeeded, but error popped up (#293)
+* FIX: got a wrong web UI redirection when running with an outdated DB schema
+* FIX: Changing InfluxDB version once configured didn't work (#314)
+* FIX: VCenter Summary links to "Templates" page was useless (#315)
+* FIX: very long mount point names no longer have an impact on the UI
+* FEATURE: small performance tweaks for views filtering for a single parent
+* FEATURE: the InfluxDB connection form now validates your credentials (#284)
+* FEATURE: an InfluxDB consumer can now be modified, no need for delete/create
+* FEATURE: new Host Vendor images have been added (#291)
+* FEATURE: setups with access to no Hosts, just VMs are now supported (#306)
+
+### InfluxDB
+* FIX: race condition in our chunked asynchronous writer has been fixed (#318)
+* FIX: no longer fetching a full hour of data on startup, reduces memory footprint
+* FEATURE: failing InfluxDB requests are now being logged
+
+## DB:
+* FIX: last event timestamp lookup was slower than it should have been (#311)
+* FIX: we're now retrying, if the initialization fails early (#307, #312)
+
+## Background Daemon
+* FEATURE: protect ourselves against overly conservative memory restrictions (#313)
+* FEATURE: we no longer complain about getting no Hosts, Datastores, and similar (#306)
+* FIX: a useless error message for those w/o Storage Pods has been removed (#310)
+* FIX: DB sub processes now ships debug log to it's parent
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/7?closed=1)
+
+
 v1.2.1
 ------
 
