@@ -140,13 +140,7 @@ class ObjectsController extends Controller
         if (isset($this->otherTabActions[$action])) {
             $action = $this->otherTabActions[$action];
         }
-        $urlParams = [];
-        if (null !== ($showDescendants = $this->url()->getParam('showDescendants'))) {
-            $urlParams['showDescendants'] = $showDescendants;
-        }
-        if (null !== ($uuid = $this->url()->getParam('uuid'))) {
-            $urlParams['uuid'] = $uuid;
-        }
+        $urlParams = $this->getParentParamsToPreserve();
 
         $this->tabs()->add('vms', [
             'label'     => $this->translate('Virtual Machine'),
@@ -166,6 +160,19 @@ class ObjectsController extends Controller
         //     'url'       => 'vspheredb/switches',
         // ])
         ->activate($action);
+    }
+
+    protected function getParentParamsToPreserve()
+    {
+        $urlParams = [];
+        if (null !== ($showDescendants = $this->url()->getParam('showDescendants'))) {
+            $urlParams['showDescendants'] = $showDescendants;
+        }
+        if (null !== ($uuid = $this->url()->getParam('uuid'))) {
+            $urlParams['uuid'] = $uuid;
+        }
+
+        return $urlParams;
     }
 
     protected function pathLookup()

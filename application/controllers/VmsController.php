@@ -30,17 +30,18 @@ class VmsController extends ObjectsController
             return;
         }
 
+        $urlParams = $this->getParentParamsToPreserve();
         $this->actions()->add([
             Link::create(
                 $this->translate('Disk Usage'),
                 'vspheredb/vms/diskusage',
-                null,
+                $urlParams,
                 ['class' => 'icon-chart-pie']
             ),
             Link::create(
                 $this->translate('Snapshots'),
                 'vspheredb/vms/snapshot',
-                null,
+                $urlParams,
                 ['class' => 'icon-database']
             ),
         ]);
@@ -57,17 +58,19 @@ class VmsController extends ObjectsController
     public function diskusageAction()
     {
         $this->handleTabs();
+
+        $urlParams = $this->getParentParamsToPreserve();
         $this->actions()->add([
             Link::create(
                 $this->translate('Table'),
                 'vspheredb/vms',
-                null,
+                $urlParams,
                 ['class' => 'icon-left-small']
             ),
             Link::create(
                 $this->translate('Snapshots'),
                 'vspheredb/vms/snapshot',
-                null,
+                $urlParams,
                 ['class' => 'icon-database']
             ),
         ]);
@@ -80,17 +83,18 @@ class VmsController extends ObjectsController
     public function snapshotAction()
     {
         $this->handleTabs();
+        $urlParams = $this->getParentParamsToPreserve();
         $this->actions()->add([
             Link::create(
                 $this->translate('Disk Usage'),
                 'vspheredb/vms/diskusage',
-                null,
+                $urlParams,
                 ['class' => 'icon-chart-pie']
             ),
             Link::create(
                 $this->translate('Table'),
                 'vspheredb/vms',
-                null,
+                $urlParams,
                 ['class' => 'icon-left-small']
             ),
         ]);
