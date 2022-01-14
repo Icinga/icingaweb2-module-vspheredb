@@ -61,7 +61,12 @@ class VCenterSummaryTable extends ObjectsTable
 
     public function getDefaultColumnNames()
     {
-        return \array_merge(parent::getDefaultColumnNames(), ['datastore_usage']);
+        return [
+            $this->groupByAlias,
+            'cpu',
+            'memory',
+            'datastore_usage',
+        ];
     }
 
     protected function initialize()
