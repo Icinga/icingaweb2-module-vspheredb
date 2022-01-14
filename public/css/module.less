@@ -462,18 +462,17 @@ table.common-table th {
     position: absolute;
     right: 0;
     display: none;
-    color: @text-color-inverted;
-    background-color: @white;
+    background-color: @tr-active-color;
     border-radius: 0.1em;
     border-top-left-radius: 0;
-    box-shadow: 1em 1em 1em 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0.3em 0.3em 0.3em 0 rgba(0, 0, 0, 0.2);
 
     a {
       display: block;
       padding: 0.3em 0.5em 0.3em 1em;
       margin: 0;
       outline: none;
-      color: @text-color-inverted;
+      color: @icinga-blue;
 
       &:hover {
         text-decoration: underline;
@@ -495,11 +494,11 @@ table.common-table th {
     padding: 0.2em 0.5em;
   }
   > ul > li:hover {
-    background-color: @white;
+    background-color: @tr-active-color;
     border-top-left-radius: 0.1em;
     border-top-right-radius: 0.1em;
     & > a {
-      color: @text-color-inverted;
+      color: @icinga-blue;
       text-decoration: none;
     }
   }

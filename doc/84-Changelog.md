@@ -39,6 +39,7 @@ Web 2 version.
 * FEATURE: setups with access to no Hosts, just VMs are now supported (#306)
 * FEATURE: VM/Host/Datastore tabs now preserve (recursive) parent filter (#320)
 * FEATURE: preserve and pass (recursive) parent filter to VM disks/snapshots (#321)
+* FEATURE: some CSS refinements here and there (#323)
 
 ### InfluxDB
 * FIX: race condition in our chunked asynchronous writer has been fixed (#318)
