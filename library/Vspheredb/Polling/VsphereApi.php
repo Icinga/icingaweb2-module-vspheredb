@@ -429,8 +429,9 @@ class VsphereApi
     protected function requireRetrieveResult($result)
     {
         if (! isset($result->returnval)) {
-            throw new \RuntimeException('Got no returnval / RetrieveResult');
-            // return new RetrieveResult();
+            return new RetrieveResult();
+            // TODO: test outdated EventCollector. Does it still fail, as it should?
+            // throw new \RuntimeException('Got no returnval / RetrieveResult');
         }
 
         $result = $result->returnval;
