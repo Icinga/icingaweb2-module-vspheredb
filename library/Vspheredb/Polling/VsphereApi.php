@@ -183,9 +183,10 @@ class VsphereApi
     public function logout()
     {
         return $this->callOnServiceInstanceObject('sessionManager', 'Logout')->then(function () {
+            $this->logger->notice('Logged out');
             $this->cookieStore->forgetCookies();
         }, function (Exception $exception) {
-            $this->logger->error($exception->getMessage());
+            $this->logger->error('Logout failed: ' . $exception->getMessage());
             $this->cookieStore->forgetCookies();
         });
     }
