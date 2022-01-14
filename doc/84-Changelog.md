@@ -4,15 +4,19 @@
 v1.3.0
 ------
 
-This version fixes issues which could occur when running for at least medium-
-sized vmWare installations while using a DB with relatively high latencies. We
-are now handing over data we fetched from your vCenter to a dedicated sub-process,
-which then synchronizes batched information to your DB task per task.
+This version fixes issues which could have occurred when running for at least
+medium-sized vmWare installations while using a DB with relatively high
+latencies. We are now handing over data we fetched from your vCenter to a
+dedicated subprocess,  which then synchronizes batched information to your DB
+task per task.
 
-You can spot the current task in your process list, in case a task takes longer
-than expected:
+In case a task takes longer than expected, you can now spot it in your process
+list. The DB process always shows its current task:
 
 ![Process list - current DB task](screenshot/84_changelog/0805_processlist-dbtask.png)
+
+InfluxDB support is now easier to configure, error handling improved, and it is
+now more robust to run.
 
 vSphereDB strongly suggests using a vmWare user with a global readonly permission,
 however with this release it is now also possible to use a user who has been
