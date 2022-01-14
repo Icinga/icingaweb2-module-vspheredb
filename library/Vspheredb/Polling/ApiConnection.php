@@ -97,7 +97,10 @@ class ApiConnection implements EventEmitterInterface
         $this->onTransition(self::STATE_CONNECTED, self::STATE_STOPPING, function () {
             $this->stopping = true;
             $this->stopSessionChecker();
-            $this->setState(self::STATE_STOPPED);
+            $done = function () {
+                $this->setState(self::STATE_STOPPED);
+            };
+            $this->api->logout()->then($done, $done);
         });
         $this->onTransition(self::STATE_STOPPING, self::STATE_STOPPED, function () {
             $this->stopping = false;

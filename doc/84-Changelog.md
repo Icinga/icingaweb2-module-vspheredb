@@ -25,7 +25,7 @@ granted read permissions for only a small sub-tree of your vCenter.
 PHP 8.1 is now supported and can be used as soon as we release a related Icinga
 Web 2 version.
 
-## UI
+### UI
 * FIX: deleting an InfluxDB subscription succeeded, but error popped up (#293)
 * FIX: got a wrong web UI redirection when running with an outdated DB schema
 * FIX: Changing InfluxDB version once configured didn't work (#314)
@@ -45,11 +45,14 @@ Web 2 version.
 * FIX: no longer fetching a full hour of data on startup, reduces memory footprint
 * FEATURE: failing InfluxDB requests are now being logged
 
-## DB:
+### DB:
 * FIX: last event timestamp lookup was slower than it should have been (#311)
 * FIX: we're now retrying, if the initialization fails early (#307, #312)
 
-## Background Daemon
+### vSphere API
+* FEATURE: changes to a connection now cause a full logout if connected (#322)
+
+### Background Daemon
 * FEATURE: protect ourselves against overly conservative memory restrictions (#313)
 * FEATURE: we no longer complain about getting no Hosts, Datastores, and similar (#306)
 * FIX: a useless error message for those w/o Storage Pods has been removed (#310)
