@@ -4,14 +4,13 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 class DatacentersTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/datacenter';
+    protected $baseUrl = 'vspheredb/vms?showDescendants';
 
     protected function initialize()
     {
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
             $this->createObjectNameColumn()
-
         ]);
     }
 

@@ -31,6 +31,7 @@ Web 2 version.
 * FIX: Changing InfluxDB version once configured didn't work (#314)
 * FIX: VCenter Summary links to "Templates" page was useless (#315)
 * FIX: very long mount point names no longer have an impact on the UI
+* FIX: link from "Datacenters" table pointed to a 404 (#319)
 * FEATURE: small performance tweaks for views filtering for a single parent
 * FEATURE: the InfluxDB connection form now validates your credentials (#284)
 * FEATURE: an InfluxDB consumer can now be modified, no need for delete/create
