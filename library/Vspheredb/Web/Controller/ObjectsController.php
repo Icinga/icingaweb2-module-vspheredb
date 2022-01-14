@@ -140,16 +140,26 @@ class ObjectsController extends Controller
         if (isset($this->otherTabActions[$action])) {
             $action = $this->otherTabActions[$action];
         }
+        $urlParams = [];
+        if (null !== ($showDescendants = $this->url()->getParam('showDescendants'))) {
+            $urlParams['showDescendants'] = $showDescendants;
+        }
+        if (null !== ($uuid = $this->url()->getParam('uuid'))) {
+            $urlParams['uuid'] = $uuid;
+        }
 
         $this->tabs()->add('vms', [
             'label'     => $this->translate('Virtual Machine'),
             'url'       => 'vspheredb/vms',
+            'urlParams' => $urlParams,
         ])->add('hosts', [
             'label'     => $this->translate('Hosts'),
             'url'       => 'vspheredb/hosts',
+            'urlParams' => $urlParams,
         ])->add('datastores', [
             'label'     => $this->translate('Datastores'),
             'url'       => 'vspheredb/datastores',
+            'urlParams' => $urlParams,
         ])
         // ->add('switches', [
         //     'label'     => $this->translate('Switches'),

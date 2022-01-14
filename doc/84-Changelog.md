@@ -37,6 +37,7 @@ Web 2 version.
 * FEATURE: an InfluxDB consumer can now be modified, no need for delete/create
 * FEATURE: new Host Vendor images have been added (#291)
 * FEATURE: setups with access to no Hosts, just VMs are now supported (#306)
+* FEATURE: VM/Host/Datastore tabs now preserve (recursive) parent filter (#320)
 
 ### InfluxDB
 * FIX: race condition in our chunked asynchronous writer has been fixed (#318)
