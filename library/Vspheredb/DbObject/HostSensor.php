@@ -48,8 +48,12 @@ class HostSensor extends BaseDbObject
         }
     }
 
+    /**
+     * @codingStandardsIgnoreStart
+     */
     public function setHealth_state($healthState)
     {
+        // @codingStandardsIgnoreEnd
         if (is_object($healthState)) {
             $this->reallySet('health_state', lcfirst($healthState->key));
         } else {

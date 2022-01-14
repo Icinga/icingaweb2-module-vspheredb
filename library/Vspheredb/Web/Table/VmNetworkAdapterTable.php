@@ -60,12 +60,12 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
                 $row->port_key,
                 $row->portgroup_name
                 /* // TODO:
-                Link::create(
-                    $row->portgroup_name,
-                    'vspheredb/portgroup',
-                    ['uuid' => \bin2hex($row->portgroup_uuid)],
-                    ['data-base-target' => '_next']
-                )
+                // Link::create(
+                //     $row->portgroup_name,
+                //     'vspheredb/portgroup',
+                //     ['uuid' => \bin2hex($row->portgroup_uuid)],
+                //     ['data-base-target' => '_next']
+                // )
                 */
             );
         }

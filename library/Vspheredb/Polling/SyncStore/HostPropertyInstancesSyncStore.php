@@ -28,10 +28,13 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
         $apiObjects = [];
         foreach ($result as $object) {
             $object = (object) $object;
+            // Hint: this is now dealt with by makeBinaryGlobalMoRefUuid()
             if ($object->obj instanceof ManagedObjectReference) {
                 $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid($object->obj);
             } else {
-                $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid(ManagedObjectReference::fromSerialization($object->obj));
+                $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid(
+                    ManagedObjectReference::fromSerialization($object->obj)
+                );
             }
             if (! isset($object->$baseKey) || ! property_exists($object->$baseKey, $instanceClass)) {
                 // No instance information for this host

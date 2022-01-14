@@ -29,7 +29,8 @@ return  [
             . 'poweredge/c6525/global_spi/ng/enterprise-server-poweredge-r7515-lf-relativesize-500-ng.psd?fmt=jpg',
         'PowerEdge R7525' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
             . 'product_images/dell_enterprise_products/enterprise_systems/'
-            . 'poweredge/poweredge_r7525/global_spi/ng/enterprise-servers-poweredge-r7525-lf-relativesize-500-ng.psd?fmt=jpg',
+            . 'poweredge/poweredge_r7525/global_spi/ng/enterprise-servers-poweredge-r7525-lf-relativesize-500-ng.psd'
+            . '?fmt=jpg',
     ],
     'HPE' => [
         'Synergy 480 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00020236en_us/'
@@ -63,7 +64,8 @@ return  [
     ],
     'FUJITSU' => [
         'PRIMERGY CX2560 M5' => 'https://www.fujitsu.com/de/imagesgig5/W-DK43300_tcm20-4285182_tcm20-5309118-32.png',
-        'PRIMERGY RX2540 M1' => 'https://www.fujitsu.com/global/imagesgig5/W-DK72231_tcm100-5877559_tcm100-5309118-32.png',
+        'PRIMERGY RX2540 M1' => 'https://www.fujitsu.com/global/imagesgig5/W-DK72231_tcm100-5877559_tcm100-5309118-32'
+            . '.png',
         'PRIMERGY RX2540 M2' => 'https://www.fujitsu.com/de/Images/W-DK42852_tcm20-3057159.png',
         'PRIMERGY RX2540 M3' => 'https://www.fujitsu.com/de/Images/W-DK42852_tcm20-3057159.png',
         'PRIMERGY RX2540 M4' => 'https://www.fujitsu.com/de/Images/W-DK42852_tcm20-3057159.png',
