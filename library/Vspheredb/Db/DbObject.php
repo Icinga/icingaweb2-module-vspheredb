@@ -74,18 +74,6 @@ abstract class DbObject
     protected $binaryProperties = [];
 
     /**
-     * Filled with object instances when prefetchAll is used
-     */
-    protected static $prefetched = array();
-
-    /**
-     * object_name => id map for prefetched objects
-     */
-    protected static $prefetchedNames = array();
-
-    protected static $prefetchStats = array();
-
-    /**
      * Constructor is not accessible and should not be overridden
      */
     protected function __construct()
@@ -1037,77 +1025,6 @@ abstract class DbObject
         return $obj;
     }
 
-    protected static function classWasPrefetched()
-    {
-        $class = get_called_class();
-        return array_key_exists($class, self::$prefetched);
-    }
-
-    /**
-     * @param $key
-     * @return static|bool
-     */
-    protected static function getPrefetched($key)
-    {
-        $class = get_called_class();
-        if (static::hasPrefetched($key)) {
-            if (is_string($key)
-                && array_key_exists($class, self::$prefetchedNames)
-                && array_key_exists($key, self::$prefetchedNames[$class])
-            ) {
-                return self::$prefetched[$class][
-                    self::$prefetchedNames[$class][$key]
-                ];
-            } else {
-                return self::$prefetched[$class][$key];
-            }
-        } else {
-            return false;
-        }
-    }
-
-    protected static function hasPrefetched($key)
-    {
-        $class = get_called_class();
-        if (! array_key_exists($class, self::$prefetchStats)) {
-            self::$prefetchStats[$class] = (object) array(
-                'miss'         => 0,
-                'hits'         => 0,
-                'hitNames'     => 0,
-                'combinedMiss' => 0
-            );
-        }
-
-        if (is_array($key)) {
-            self::$prefetchStats[$class]->combinedMiss++;
-            return false;
-        }
-
-        if (array_key_exists($class, self::$prefetched)) {
-            if (is_string($key)
-                && array_key_exists($class, self::$prefetchedNames)
-                && array_key_exists($key, self::$prefetchedNames[$class])
-            ) {
-                self::$prefetchStats[$class]->hitNames++;
-                return true;
-            } elseif (array_key_exists($key, self::$prefetched[$class])) {
-                self::$prefetchStats[$class]->hits++;
-                return true;
-            } else {
-                self::$prefetchStats[$class]->miss++;
-                return false;
-            }
-        } else {
-            self::$prefetchStats[$class]->miss++;
-            return false;
-        }
-    }
-
-    public static function getPrefetchStats()
-    {
-        return self::$prefetchStats;
-    }
-
     /**
      * @param $id
      * @param DbConnection $connection
@@ -1124,11 +1041,6 @@ abstract class DbObject
          */
         $id = (int) $id;
 
-        if ($prefetched = static::getPrefetched($id)) {
-            return $prefetched;
-        }
-
-        /** @var DbObject $obj */
         $obj = new static;
         $obj->setConnection($connection)
             ->set($obj->autoincKeyName, $id)
@@ -1145,11 +1057,6 @@ abstract class DbObject
      */
     public static function load($id, DbConnection $connection)
     {
-        if ($prefetched = static::getPrefetched($id)) {
-            return $prefetched;
-        }
-
-        /** @var DbObject $obj */
         $obj = new static;
         $obj->setConnection($connection)->setKey($id)->loadFromDb();
 
@@ -1191,63 +1098,12 @@ abstract class DbObject
     }
 
     /**
-     * @param DbConnection $connection
-     * @param bool $force
-     *
-     * @return static[]
-     */
-    public static function prefetchAll(DbConnection $connection, $force = false)
-    {
-        $dummy = static::create();
-        $class = get_class($dummy);
-        $autoInc = $dummy->getAutoincKeyName();
-        $keyName = $dummy->getKeyName();
-
-        if ($force || ! array_key_exists($class, self::$prefetched)) {
-            self::$prefetched[$class] = static::loadAll($connection, null, $autoInc);
-            if (! is_array($keyName) && $keyName !== $autoInc) {
-                foreach (self::$prefetched[$class] as $k => $v) {
-                    self::$prefetchedNames[$class][$v->$keyName] = $k;
-                }
-            }
-        }
-
-        return self::$prefetched[$class];
-    }
-
-    public static function clearPrefetchCache()
-    {
-        $class = get_called_class();
-        if (! array_key_exists($class, self::$prefetched)) {
-            return;
-        }
-
-        unset(self::$prefetched[$class]);
-        unset(self::$prefetchedNames[$class]);
-        unset(self::$prefetchStats[$class]);
-    }
-
-    public static function clearAllPrefetchCaches()
-    {
-        self::$prefetched = array();
-        self::$prefetchedNames = array();
-        self::$prefetchStats = array();
-    }
-
-    /**
      * @param $id
      * @param DbConnection $connection
      * @return bool
      */
     public static function exists($id, DbConnection $connection)
     {
-        if (static::getPrefetched($id)) {
-            return true;
-        } elseif (static::classWasPrefetched()) {
-            return false;
-        }
-
-        /** @var DbObject $obj */
         $obj = new static;
         $obj->setConnection($connection)->setKey($id);
         return $obj->existsInDb();
