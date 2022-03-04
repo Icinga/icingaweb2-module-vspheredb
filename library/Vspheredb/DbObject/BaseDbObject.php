@@ -95,7 +95,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
             } elseif ($key === 'uuid' || substr($key, -5) === '_uuid') { // Hint: SHOULD be keys or references
                 if (strlen($value) === 16) {
                     $value = Uuid::fromBytes($value)->toString();
-                } else {
+                } elseif ($value !== null) {
                     $value = '0x' . bin2hex($value);
                 }
             }
