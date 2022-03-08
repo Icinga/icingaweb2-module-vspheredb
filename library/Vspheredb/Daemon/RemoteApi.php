@@ -101,9 +101,10 @@ class RemoteApi
 
             $peer = UnixSocketInspection::getPeer($connection);
             if (!$this->isAllowed($peer)) {
-                $jsonRpc->setHandler(new FailingPacketHandler(new Error(Error::METHOD_NOT_FOUND, [
-                    sprintf('%s is not allowed to control this socket', $peer->getUsername())
-                ])));
+                $jsonRpc->setHandler(new FailingPacketHandler(new Error(Error::METHOD_NOT_FOUND, sprintf(
+                    '%s is not allowed to control this socket',
+                    $peer->getUsername()
+                ))));
                 $this->loop->addTimer(10, function () use ($connection) {
                     $connection->close();
                 });
