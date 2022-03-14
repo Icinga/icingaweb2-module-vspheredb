@@ -22,7 +22,6 @@ use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
 use function posix_getegid;
-use function posix_getgrgid;
 
 class RemoteApi
 {
@@ -79,18 +78,14 @@ class RemoteApi
         }
         $myGid = posix_getegid();
         $peerGid = $peer->getGid();
+        // Hint: $myGid makes also part of id -G, this is the fast lane for those using
+        //       php-fpm and the user icingaweb2 (with the very same main group as we have)
         if ($peerGid === $myGid) {
             return true;
         }
-        $additionalGroups = posix_getgrgid(posix_getegid())['members'];
-        foreach ($additionalGroups as $groupName) {
-            $gid = posix_getgrnam($groupName)['gid'];
-            if ($gid === $peerGid) {
-                return true;
-            }
-        }
 
-        return false;
+        $uid = $peer->getUid();
+        return in_array($myGid, array_map('intval', explode(' ', `id -G $uid`)));
     }
 
     protected function addSocketEventHandlers(ControlSocket $socket)
