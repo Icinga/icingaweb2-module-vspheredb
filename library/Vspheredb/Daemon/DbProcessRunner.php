@@ -86,6 +86,7 @@ class DbProcessRunner implements EventEmitterInterface
             return;
         }
         $next = array_shift($this->queue);
+        /** @var Deferred $deferred */
         $deferred = $next[0];
 
         $this->rpc->request($next[1], $next[2])->then(function ($result) use ($deferred) {
