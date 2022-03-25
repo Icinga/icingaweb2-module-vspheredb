@@ -20,6 +20,9 @@ class ApiConnection implements EventEmitterInterface
     use EventEmitterTrait;
     use StateMachine;
 
+    const ON_READY = 'ready';
+    const ON_ERROR = 'error';
+
     const STATE_STOPPED = 'stopped';
     const STATE_STOPPING = 'stopping';
     const STATE_INIT = 'initializing';
@@ -76,7 +79,7 @@ class ApiConnection implements EventEmitterInterface
         });
         $this->onTransition(self::STATE_LOGIN, self::STATE_CONNECTED, function () {
             $this->runSessionChecker();
-            $this->emit('ready', [$this]);
+            $this->emit(self::ON_READY, [$this]);
         });
         $this->onTransition(self::STATE_INIT, self::STATE_STOPPING, function () {
             $this->stopping = true;
@@ -105,14 +108,17 @@ class ApiConnection implements EventEmitterInterface
         $this->onTransition(self::STATE_STOPPING, self::STATE_STOPPED, function () {
             $this->stopping = false;
         });
+        $this->onTransition(self::STATE_INIT, self::STATE_FAILING, function () {
+            $this->emit(self::ON_ERROR, [$this]);
+        });
         $this->onTransition(self::STATE_LOGIN, self::STATE_FAILING, function () {
-            $this->emit('error', [$this]);
+            $this->emit(self::ON_ERROR, [$this]);
         });
         $this->onTransition(self::STATE_CONNECTED, self::STATE_FAILING, function () {
             $this->loop->futureTick(function () {
                 $this->stopSessionChecker();
                 $this->scheduleNextAttempt();
-                $this->emit('error', [$this]);
+                $this->emit(self::ON_ERROR, [$this]);
             });
         });
     }

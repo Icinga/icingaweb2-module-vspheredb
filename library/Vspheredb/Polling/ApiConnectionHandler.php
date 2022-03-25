@@ -132,7 +132,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         $deferred = new Deferred(function () use ($apiConnection) {
             $apiConnection->stop();
         });
-        $apiConnection->on('ready', function (ApiConnection $connection) use ($server, $deferred) {
+        $apiConnection->on(ApiConnection::ON_READY, function (ApiConnection $connection) use ($server, $deferred) {
             $connection->getApi()
                 ->fetchUniqueId()
                 ->then(function (UuidInterface $uuid) use ($connection, $server, $deferred) {
@@ -172,7 +172,7 @@ class ApiConnectionHandler implements EventEmitterInterface
             foreach ($servers as $server) {
                 if (! isset($this->apiConnections[$vCenterId])) {
                     $apiConnection = $this->createApiConnection($server);
-                    $apiConnection->on('ready', function (ApiConnection $connection) {
+                    $apiConnection->on(ApiConnection::ON_READY, function (ApiConnection $connection) {
                         $this->emit(self::ON_CONNECT, [$connection]);
                     });
                     $apiConnection->on('error', function (ApiConnection $connection) use ($vCenterId) {
