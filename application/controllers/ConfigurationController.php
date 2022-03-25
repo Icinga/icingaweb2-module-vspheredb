@@ -110,7 +110,7 @@ class ConfigurationController extends Controller
         $table = new VCenterServersTable($this->db());
         $table->setServerConnections($connections);
         $table->setRequest($this->getServerRequest());
-        $table->on('formAction', function () {
+        $table->on(VCenterServersTable::ON_FORM_ACTION, function () {
             Notification::info($this->sendServerInfoToSocket());
             $this->redirectNow($this->url());
         });

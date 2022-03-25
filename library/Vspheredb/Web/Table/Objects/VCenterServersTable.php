@@ -16,6 +16,8 @@ use Psr\Http\Message\RequestInterface;
 
 class VCenterServersTable extends BaseTable implements EventEmitterInterface
 {
+    const ON_FORM_ACTION = 'formAction';
+
     use EventEmitterTrait;
 
     protected $request;
@@ -104,7 +106,7 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
                     'data-base-target' => '_self'
                 ]);
                 $form->on($form::ON_SUCCESS, function () {
-                    $this->emit('formAction');
+                    $this->emit(self::ON_FORM_ACTION);
                 });
                 $form->handleRequest($this->request);
                 $form->ensureAssembled();
