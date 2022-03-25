@@ -13,6 +13,10 @@ return  [
         'PowerEdge R740' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
             . 'product_images/dell_enterprise_products/enterprise_systems/poweredge/r_series/r740/global_spi/'
             . 'enterprise-servers-poweredge-dellemc-per740-dvd-lf-on-left-relativesize-500-ng.psd?fmt=png-alpha',
+        'PowerEdge R750' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
+            . 'product_images/dell_enterprise_products/enterprise_systems/'
+            . 'poweredge/r_series/r750/global_spi/ng/enterprise-servers-poweredge-r750'
+            . '-lf-relativesize-500-ng.psd?fmt=jpg',
         'PowerEdge R930' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
             . 'product_images/dell_enterprise_products/enterprise_systems/'
             . 'poweredge/poweredge_r930/global_spi/'
