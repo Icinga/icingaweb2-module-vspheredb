@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Module\Vspheredb\Db;
+
 class VCenterServer extends BaseDbObject
 {
     protected $table = 'vcenter_server';
@@ -23,4 +25,17 @@ class VCenterServer extends BaseDbObject
         'ssl_verify_host' => null,
         'enabled'         => null,
     ];
+
+    /**
+     * @param Db $db
+     * @return VCenterServer[]
+     */
+    public static function loadEnabledServers(Db $db)
+    {
+        return static::loadAll(
+            $db,
+            $db->getDbAdapter()->select()->from('vcenter_server')->where('enabled = ?', 'y'),
+            'id'
+        );
+    }
 }

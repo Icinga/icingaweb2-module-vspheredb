@@ -13,10 +13,7 @@ trait RpcServerUpdateHelper
         try {
             $connection = $this->db();
             if ($this->syncRpcCall('vsphere.setServers', [
-                'servers' => ServerSet::fromServers(VCenterServer::loadAll(
-                    $connection,
-                    $connection->getDbAdapter()->select()->from('vcenter_server')->where('enabled = ?', 'y')
-                ))
+                'servers' => ServerSet::fromServers(VCenterServer::loadEnabledServers($connection))
             ])) {
                 return $this->translate('Daemon configuration has been refreshed');
             } else {

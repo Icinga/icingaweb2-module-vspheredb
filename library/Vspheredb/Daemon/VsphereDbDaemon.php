@@ -678,8 +678,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
         try {
             if ($this->daemonState->getComponentState(self::COMPONENT_API) === self::STATE_READY) {
-                $vServers = VCenterServer::loadAll($this->connection, null, 'id');
-                $this->apiConnectionHandler->setServerSet(ServerSet::fromServers($vServers));
+                $this->apiConnectionHandler->setServerSet(
+                    ServerSet::fromServers(VCenterServer::loadEnabledServers($this->connection))
+                );
             }
         } catch (Exception $e) {
             $this->logger->error('Failed to refresh server list: ' . $e->getMessage());
