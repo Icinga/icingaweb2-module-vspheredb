@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Polling;
 
 use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
+use Exception;
 use gipfl\Curl\CurlAsync;
 use gipfl\Log\PrefixLogger;
 use gipfl\ReactUtils\RetryUnless;
@@ -101,6 +102,7 @@ class ApiConnection implements EventEmitterInterface
         });
         $this->onTransition(self::STATE_CONNECTED, self::STATE_STOPPING, function () {
             $this->stopping = true;
+            $this->logger->debug('Logging out');
             $this->stopSessionChecker();
             $done = function () {
                 $this->setState(self::STATE_STOPPED);
@@ -134,7 +136,8 @@ class ApiConnection implements EventEmitterInterface
     protected function runSessionChecker()
     {
         $this->sessionChecker = $this->loop->addPeriodicTimer(150, function () {
-            $this->getApi()->eventuallyLogin()->otherwise(function () {
+            $this->getApi()->eventuallyLogin()->otherwise(function (Exception $e) {
+                $this->logger->error('Login failed: ' . $e->getMessage());
                 $this->loop->futureTick(function () {
                     $this->setState(self::STATE_FAILING);
                 });
@@ -208,9 +211,10 @@ class ApiConnection implements EventEmitterInterface
             $this->api = $api;
             $this->loginPromise = null;
             $this->setState(self::STATE_CONNECTED);
-        }, function (\Exception $e) {
+        }, function (Exception $e) {
             $this->loginPromise = null;
             if (! $this->stopping) {
+                $this->logger->error('Login failed: ' . $e->getMessage());
                 $this->setState(self::STATE_FAILING);
             }
             throw $e;

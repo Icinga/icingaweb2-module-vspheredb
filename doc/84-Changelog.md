@@ -61,6 +61,7 @@ Web 2 version.
 * FIX: a useless error message for those w/o Storage Pods has been removed (#310)
 * FIX: DB sub processes now ships debug log to it's parent
 * FIX: invalid UTF-8 characters from exceptions are now filtered (#337)
+* FIX: login/authentication errors are now being logged (#338)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
