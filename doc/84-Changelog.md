@@ -59,6 +59,7 @@ Web 2 version.
 * FEATURE: we no longer complain about getting no Hosts, Datastores, and similar (#306)
 * FIX: a useless error message for those w/o Storage Pods has been removed (#310)
 * FIX: DB sub processes now ships debug log to it's parent
+* FIX: invalid UTF-8 characters from exceptions are now filtered (#337)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
