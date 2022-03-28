@@ -58,10 +58,13 @@ Web 2 version.
 * FEATURE: protect ourselves against overly conservative memory restrictions (#313)
 * FEATURE: we no longer complain about getting no Hosts, Datastores, and similar (#306)
 * FEATURE: former sessions are now logged out when initiating a connection (#339)
+* FEATURE: WSDL files from disk cache are now being validated (#340)
+* FIX: errors when fetching WSDL files are now logged, invalid files rejected (#335)
 * FIX: a useless error message for those w/o Storage Pods has been removed (#310)
 * FIX: DB sub processes now ships debug log to it's parent
 * FIX: invalid UTF-8 characters from exceptions are now filtered (#337)
 * FIX: login/authentication errors are now being logged (#338)
+* FIX: initialization background are stopped correctly on failure (#341)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our

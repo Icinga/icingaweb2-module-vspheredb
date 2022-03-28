@@ -2,14 +2,18 @@
 
 namespace Icinga\Module\Vspheredb\Polling;
 
+use Exception;
 use gipfl\Curl\CurlAsync;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\ExtendedPromiseInterface;
+use SoapClient;
+use SoapFault;
 use function file_exists;
 use function file_put_contents;
+use function React\Promise\reject;
 use function unlink;
 
 class WsdlLoader
@@ -67,8 +71,13 @@ class WsdlLoader
     {
         $this->loop = $loop;
         return $this->fetchFiles()->then(function () {
-            return $this->cacheDir . '/' . $this->requiredFiles[0];
+            return $this->getInitialFilename();
         });
+    }
+
+    protected function getInitialFilename()
+    {
+        return $this->cacheDir . '/' . $this->requiredFiles[0];
     }
 
     public function stop()
@@ -111,14 +120,17 @@ class WsdlLoader
         }
     }
 
-    protected function processFileFailure(\Exception $e, $file)
+    protected function processFileFailure(Exception $e, $file)
     {
         if (isset($this->pending[$file])) {
             $logUrl = $this->url($file);
             $this->logger->error("Loading $logUrl failed: " . $e->getMessage());
+            if (count($this->pending) > 1) {
+                $this->logger->debug(sprintf('Stopping %d pending requests', count($this->pending) - 1));
+            }
             $this->pending = []; // TODO: is there a way to stop pending requests?
             $this->flushWsdlCache();
-            $this->deferred->reject($e);
+            $this->deferred->reject(new Exception('Loading WSDL files failed'));
         }
     }
 
@@ -138,8 +150,13 @@ class WsdlLoader
                 $this->pending[$file] = $curl
                     ->get($this->url($file), [], CurlOptions::forServerInfo($this->serverInfo))
                     ->then(function (ResponseInterface $response) use ($file) {
-                        $this->processFileResult($response, $file);
-                    }, function (\Exception $e) use ($file) {
+                        $status = $response->getStatusCode();
+                        if ($status > 199 && $status<= 299) {
+                            $this->processFileResult($response, $file);
+                        } else {
+                            $this->processFileFailure(new Exception($response->getReasonPhrase()), $file);
+                        }
+                    }, function (Exception $e) use ($file) {
                         $this->processFileFailure($e, $file);
                     });
             }
@@ -156,7 +173,13 @@ class WsdlLoader
             $deferred = $this->deferred;
             $this->deferred = null;
             $this->loop->futureTick(function () use ($deferred) {
-                $deferred->resolve();
+                try {
+                    new SoapClient($this->getInitialFilename());
+                    $deferred->resolve();
+                } catch (SoapFault $e) {
+                    $this->flushWsdlCache();
+                    $deferred->reject($e);
+                }
             });
         }
     }

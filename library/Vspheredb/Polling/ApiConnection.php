@@ -7,7 +7,6 @@ use Evenement\EventEmitterTrait;
 use Exception;
 use gipfl\Curl\CurlAsync;
 use gipfl\Log\PrefixLogger;
-use gipfl\ReactUtils\RetryUnless;
 use Icinga\Module\Vspheredb\Daemon\StateMachine;
 use Icinga\Module\Vspheredb\MappedClass\UserSession;
 use Icinga\Module\Vspheredb\SafeCacheDir;
@@ -55,7 +54,7 @@ class ApiConnection implements EventEmitterInterface
     /** @var ExtendedPromiseInterface */
     protected $loginPromise;
 
-    /** @var RetryUnless */
+    /** @var ExtendedPromiseInterface */
     protected $wsdlPromise;
 
     /** @var TimerInterface */
@@ -181,11 +180,7 @@ class ApiConnection implements EventEmitterInterface
 
     protected function startWsdlDownload()
     {
-        $this->wsdlPromise = RetryUnless::succeeding([$this, 'fetchWsdl'])
-            ->setInterval(10)
-            ->slowDownAfter(6, 60);
-
-        $this->wsdlPromise->run($this->loop)
+        $this->wsdlPromise = $this->fetchWsdl()
             ->then(function ($wsdlFile) {
                 $this->wsdlFile = $wsdlFile;
                 $this->wsdlPromise = null;
@@ -193,6 +188,7 @@ class ApiConnection implements EventEmitterInterface
             }, function () {
                 $this->wsdlPromise = null;
                 if (! $this->stopping) {
+                    $this->logger->error('WSDL download failed');
                     $this->setState(self::STATE_FAILING);
                 }
             });

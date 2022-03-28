@@ -4,8 +4,8 @@ namespace Icinga\Module\Vspheredb\Polling;
 
 use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
+use Exception;
 use gipfl\Curl\CurlAsync;
-use gipfl\ReactUtils\RetryUnless;
 use Icinga\Module\Vspheredb\MappedClass\AboutInfo;
 use Icinga\Module\Vspheredb\MappedClass\ServiceContent;
 use Psr\Log\LoggerInterface;
@@ -13,8 +13,6 @@ use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
 use React\Promise\Deferred;
-use React\Promise\ExtendedPromiseInterface;
-use function React\Promise\Timer\timeout;
 
 class ApiConnectionHandler implements EventEmitterInterface
 {
@@ -42,7 +40,7 @@ class ApiConnectionHandler implements EventEmitterInterface
     /** @var array [vcenterId => [ServerInfo, ...] */
     protected $vCenterCandidates = [];
 
-    /** @var ExtendedPromiseInterface[] [serverId => Promise] */
+    /** @var Deferred[] [serverId => Deferred] */
     protected $initializations = [];
 
     /** @var TimerInterface[] [serverId => TimerInterface] */
@@ -56,12 +54,12 @@ class ApiConnectionHandler implements EventEmitterInterface
         // $this->remoteApi = $remoteApi;
         $this->curl = $curl;
         $this->logger = $logger;
-        $this->setServerSet(new ServerSet());
+        $this->servers = $this->appliedServers = new ServerSet();
     }
 
     public function setServerSet(ServerSet $servers)
     {
-        if ($this->servers === null || ! $servers->equals($this->servers)) {
+        if (!$servers->equals($this->servers)) {
             $this->servers = $servers;
             if ($this->loop) {
                 $this->applyServers($this->servers);
@@ -85,37 +83,27 @@ class ApiConnectionHandler implements EventEmitterInterface
 
     protected function applyServers(ServerSet $servers)
     {
+        if ($servers->equals($this->appliedServers)) {
+            $this->logger->debug('Server Set is unchanged');
+            return;
+        }
         $vCenterCandidates = [];
         foreach ($servers->getServers() as $server) {
-            if (! $server->isEnabled()) {
+            $serverId = $server->get('id');
+            // Hint: isEnabled is not required, we apply only enabled ones
+            if (! $server->isEnabled() || isset($this->failing[$serverId])) {
                 continue;
             }
-            $serverId = $server->get('id');
             $vCenterId = $server->get('vcenter_id');
             if ($vCenterId === null) {
                 if (! isset($this->initializations[$serverId])) {
-                    $retry = RetryUnless::succeeding(function () use ($server) {
-                        return $this
-                            ->initialize($server)
-                            ->then(function ($initialized) use ($server) {
-                                /** @var AboutInfo $content */
-                                /** @var UuidInterface $uuid */
-                                list($about, $uuid) = $initialized;
-                                $this->emit(self::ON_INITIALIZED_SERVER, [$server, $about, $uuid]);
-                            });
-                    });
-                    $retry->setLogger($this->logger);
-                    $this->initializations[$serverId] = $retry;
-                    $retry->setInterval(5)->slowDownAfter(5, 30)->run($this->loop);
+                    $this->startInitialization($server);
                 }
 
                 continue;
             }
             if (!isset($vCenterCandidates[$vCenterId])) {
                 $vCenterCandidates[$vCenterId] = [];
-            }
-            if (isset($this->failing[$serverId])) {
-                continue;
             }
             $vCenterCandidates[$vCenterId][$serverId] = $server;
         }
@@ -124,6 +112,23 @@ class ApiConnectionHandler implements EventEmitterInterface
         $this->removeUnConfiguredApiConnections();
         $this->launchNewlyConfiguredVCenters();
         $this->appliedServers = $servers;
+        $this->removeObsoleteFailingServers();
+    }
+
+    protected function startInitialization(ServerInfo $server)
+    {
+        $serverId = $server->get('id');
+        $this->initializations[$serverId] = $initialize = $this->initialize($server);
+
+        $initialize->promise()->then(function ($initialized) use ($server) {
+            /** @var AboutInfo $content */
+            /** @var UuidInterface $uuid */
+            list($about, $uuid) = $initialized;
+            $this->emit(self::ON_INITIALIZED_SERVER, [$server, $about, $uuid]);
+        }, function (Exception $e) use ($serverId) {
+            unset($this->initializations[$serverId]);
+            $this->logger->error('Initialization failed: ' . $e->getMessage());
+        });
     }
 
     protected function initialize(ServerInfo $server)
@@ -142,10 +147,14 @@ class ApiConnectionHandler implements EventEmitterInterface
                             $connection->stop();
                             $deferred->resolve([$content->about, $uuid]);
                         });
-                }, function (\Exception $e) use ($deferred) {
+                }, function (Exception $e) use ($deferred) {
                     $this->logger->error($e->getMessage());
                     $deferred->reject($e);
                 });
+        });
+        $apiConnection->on(ApiConnection::ON_ERROR, function (ApiConnection $connection) use ($server, $deferred) {
+            $deferred->reject(new Exception('Initialization failed'));
+            $this->setFailed($server);
         });
         $this->logger->notice(sprintf(
             '[api] initializing server %d: %s',
@@ -154,7 +163,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         ));
         $apiConnection->run($this->loop);
 
-        return $deferred->promise();
+        return $deferred;
     }
 
     protected function launchNewlyConfiguredVCenters()
@@ -175,20 +184,11 @@ class ApiConnectionHandler implements EventEmitterInterface
                     $apiConnection->on(ApiConnection::ON_READY, function (ApiConnection $connection) {
                         $this->emit(self::ON_CONNECT, [$connection]);
                     });
-                    $apiConnection->on('error', function (ApiConnection $connection) use ($vCenterId) {
-                        $serverId = $connection->getServerInfo()->get('id');
-                        $this->logger->warning(sprintf(
-                            'Server %s disabled for 60 seconds',
-                            $connection->getServerInfo()->get('host')
-                        ));
-                        $this->failing[$serverId] = $this->loop->addTimer(60, function () use ($serverId) {
-                            $this->loop->cancelTimer($this->failing[$serverId]);
-                            unset($this->failing[$serverId]);
-                            $this->applyServers($this->appliedServers);
-                        });
-                        $this->emit(self::ON_DISCONNECT, [$connection]);
+                    $apiConnection->on(ApiConnection::ON_ERROR, function (ApiConnection $connection) use ($vCenterId) {
                         unset($this->apiConnections[$vCenterId]);
-                        $this->applyServers($this->appliedServers);
+                        // $this->logger->error('GOT AN ERROR');
+                        $this->setFailed($connection->getServerInfo());
+                        $this->emit(self::ON_DISCONNECT, [$connection]);
                     });
                     $this->apiConnections[$vCenterId] = $apiConnection;
 
@@ -203,6 +203,25 @@ class ApiConnectionHandler implements EventEmitterInterface
         }
     }
 
+    protected function setFailed(ServerInfo $server)
+    {
+        $serverId = $server->get('id');
+        $this->logger->warning(sprintf(
+            'Server %s disabled for 60 seconds',
+            $server->get('host')
+        ));
+        $this->failing[$serverId] = $this->loop->addTimer(60, function () use ($server) {
+            $serverId = $server->get('id');
+            if (! isset($this->failing[$serverId])) {
+                $this->logger->error(sprintf('Not retrying %s, connection has been removed', $server->getIdentifier()));
+                return;
+            }
+            $this->loop->cancelTimer($this->failing[$serverId]);
+            unset($this->failing[$serverId]);
+            $this->applyServers($this->appliedServers);
+        });
+    }
+
     protected function vCenterConnectionLogName($vCenterId, ApiConnection $apiConnection)
     {
         return sprintf(
@@ -210,6 +229,30 @@ class ApiConnectionHandler implements EventEmitterInterface
             $vCenterId,
             $apiConnection->getServerInfo()->getIdentifier()
         );
+    }
+
+    protected function listAppliedServers()
+    {
+        $list = [];
+        foreach ($this->appliedServers->getServers() as $serverInfo) {
+            if ($serverInfo->isEnabled()) {
+                $list[$serverInfo->get('id')] = true;
+            }
+        }
+
+        return $list;
+    }
+
+    protected function removeObsoleteFailingServers()
+    {
+        $serverMap = $this->listAppliedServers();
+        foreach ($this->failing as $serverId => $timer) {
+            if (!isset($serverMap[$serverId])) {
+                $this->loop->cancelTimer($timer);
+                $this->logger->notice(sprintf('[api] removing failing server (id=%d)', $serverId));
+                unset($this->failing[$serverId]);
+            }
+        }
     }
 
     protected function removeUnConfiguredApiConnections()
@@ -227,7 +270,6 @@ class ApiConnectionHandler implements EventEmitterInterface
             $connection->stop();
             unset($this->apiConnections[$vCenterId]);
             $this->emit(self::ON_DISCONNECT, [$connection]);
-            // $this->remoteApi->removeApiConnection($connection);
         }
     }
 
@@ -244,6 +286,7 @@ class ApiConnectionHandler implements EventEmitterInterface
 
     public function stop()
     {
-        $this->applyServers(new ServerSet());
+        $this->logger->notice('Stopping API connection handler');
+        $this->applyServers($this->servers = new ServerSet());
     }
 }
