@@ -192,6 +192,20 @@ class VsphereApi
     }
 
     /**
+     * Eventually logout
+     */
+    public function eventuallyLogout()
+    {
+        return $this->callOnServiceInstanceObject('sessionManager', 'Logout')->then(function () {
+            $this->logger->notice('Logged out');
+            $this->cookieStore->forgetCookies();
+        }, function () {
+            $this->cookieStore->forgetCookies();
+            return resolve();
+        });
+    }
+
+    /**
      * @param ManagedObjectReference $self
      * @param $method
      * @param array $arguments
