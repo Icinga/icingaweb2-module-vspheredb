@@ -57,6 +57,7 @@ Web 2 version.
 ### Background Daemon
 * FEATURE: protect ourselves against overly conservative memory restrictions (#313)
 * FEATURE: we no longer complain about getting no Hosts, Datastores, and similar (#306)
+* FEATURE: former sessions are now logged out when initiating a connection (#339)
 * FIX: a useless error message for those w/o Storage Pods has been removed (#310)
 * FIX: DB sub processes now ships debug log to it's parent
 * FIX: invalid UTF-8 characters from exceptions are now filtered (#337)

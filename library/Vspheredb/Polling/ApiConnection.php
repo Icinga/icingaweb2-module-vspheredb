@@ -75,7 +75,9 @@ class ApiConnection implements EventEmitterInterface
             $this->startWsdlDownload();
         });
         $this->onTransition(self::STATE_INIT, self::STATE_LOGIN, function () {
-            $this->login();
+            $this->eventuallyLogout()->then(function () {
+                $this->login();
+            });
         });
         $this->onTransition(self::STATE_LOGIN, self::STATE_CONNECTED, function () {
             $this->runSessionChecker();
@@ -191,6 +193,12 @@ class ApiConnection implements EventEmitterInterface
                     $this->setState(self::STATE_FAILING);
                 }
             });
+    }
+
+    protected function eventuallyLogout()
+    {
+        $api = new VsphereApi($this->wsdlFile, $this->serverInfo, $this->curl, $this->loop, $this->logger);
+        return $api->eventuallyLogout();
     }
 
     protected function login()
