@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\ZfDb\Adapter\Adapter;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 
 class PathLookup
 {
@@ -30,7 +31,7 @@ class PathLookup
 
         $query = $this->db->select()
             ->from(['o' => 'object'], ['object_name', 'object_type'])
-            ->where('uuid = ?', $uuid);
+            ->where('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db));
 
         $row = $this->db->fetchRow($query);
         if ($row) {
@@ -68,7 +69,7 @@ class PathLookup
     {
         $query = $this->db->select()
             ->from(['o' => 'object'], 'object_name')
-            ->where('uuid = ?', $uuid);
+            ->where('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db));
 
         return $this->db->fetchOne($query);
     }
@@ -109,7 +110,7 @@ class PathLookup
     protected function fetchChildFolderListFor($uuid)
     {
         $query = $this->db->select()->from('object', 'uuid')
-            ->where('parent_uuid = ?', $uuid)
+            ->where('parent_uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db))
             ->where('object_type NOT IN (?)', ['HostSystem', 'VirtualMachine']);
 
         return $this->db->fetchCol($query);
@@ -135,7 +136,7 @@ class PathLookup
     {
         $query = $this->db->select()
             ->from('object', 'parent_uuid')
-            ->where('uuid = ?', $uuid);
+            ->where('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db));
 
         $parent = $this->db->fetchOne($query);
         if ($parent) {

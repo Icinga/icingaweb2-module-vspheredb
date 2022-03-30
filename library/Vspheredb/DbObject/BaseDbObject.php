@@ -38,6 +38,19 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return in_array($property, $this->booleanProperties);
     }
 
+    protected function isBinaryColumn($column)
+    {
+        if ($this->isObjectReference($column)) {
+            return true;
+        }
+
+        if ($column === 'uuid' || substr($column, -5) === '_uuid') {
+            return true;
+        }
+
+        return parent::isBinaryColumn($column);
+    }
+
     public function isDateTimeProperty($property)
     {
         return in_array($property, $this->dateTimeProperties);
@@ -151,13 +164,14 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     public static function loadAllForVCenter(VCenter $vCenter)
     {
         $dummy = new static();
+        $connection = $vCenter->getConnection();
 
         return static::loadAll(
-            $vCenter->getConnection(),
+            $connection,
             $vCenter->getDb()
                 ->select()
                 ->from($dummy->getTableName())
-                ->where('vcenter_uuid = ?', $vCenter->get('uuid')),
+                ->where('vcenter_uuid = ?', $connection->quoteBinary($vCenter->get('uuid'))),
             $dummy->keyName
         );
     }

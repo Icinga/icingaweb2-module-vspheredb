@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
 use Exception;
 use http\Exception\InvalidArgumentException;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\MappedClass\PerfCounterInfo;
 use Icinga\Module\Vspheredb\MappedClass\PerformanceManager;
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
@@ -78,17 +79,17 @@ class PerfCounterInfoSyncStore extends SyncStore
             $existingGroups = $db->fetchPairs(
                 $db->select()
                     ->from('performance_group', ['name', '(1)'])
-                    ->where('vcenter_uuid = ?', $uuid)
+                    ->where('vcenter_uuid = ?', DbUtil::quoteBinaryCompat($uuid, $db))
             );
             $existingUnits = $db->fetchPairs(
                 $db->select()
                     ->from('performance_unit', ['name', '(1)'])
-                    ->where('vcenter_uuid = ?', $uuid)
+                    ->where('vcenter_uuid = ?', DbUtil::quoteBinaryCompat($uuid, $db))
             );
             $existingCounters = $db->fetchPairs(
                 $db->select()
                     ->from('performance_counter', ['counter_key', '(1)'])
-                    ->where('vcenter_uuid = ?', $uuid)
+                    ->where('vcenter_uuid = ?', DbUtil::quoteBinaryCompat($uuid, $db))
             );
             foreach ($groups as $group) {
                 if (! isset($existingGroups[$group['name']])) {

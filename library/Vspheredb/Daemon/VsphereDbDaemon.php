@@ -18,6 +18,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Module\Vspheredb\Application\MemoryLimit;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\MappedClass\AboutInfo;
@@ -632,7 +633,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                 'instance_uuid' => $this->processInfo->instance_uuid,
                 'ts_last_refresh' => Util::currentTimestamp(),
                 'process_info' => json_encode($this->getProcessInfo()),
-            ], $db->quoteInto('instance_uuid = ?', $this->processInfo->instance_uuid));
+            ], $db->quoteInto('instance_uuid = ?', DbUtil::quoteBinaryCompat($this->processInfo->instance_uuid, $db)));
 
             if (!$updated) {
                 $this->insertMyState($db);

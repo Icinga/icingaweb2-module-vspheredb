@@ -55,10 +55,11 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected function fetchDisks()
     {
-        $db = $this->getDb()->getDbAdapter();
+        $connection = $this->getDb();
+        $db = $connection->getDbAdapter();
         $query = $db->select()
             ->from('vm_disk')
-            ->where('vm_uuid = ?', $this->vm->get('uuid'))
+            ->where('vm_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
             ->order('hardware_key');
 
         foreach ($db->fetchAll($query) as $disk) {
@@ -68,10 +69,11 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected function fetchNics()
     {
-        $db = $this->getDb()->getDbAdapter();
+        $connection = $this->getDb();
+        $db = $connection->getDbAdapter();
         $query = $db->select()
             ->from('vm_network_adapter')
-            ->where('vm_uuid = ?', $this->vm->get('uuid'))
+            ->where('vm_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
             ->order('hardware_key');
 
         foreach ($db->fetchAll($query) as $nic) {
@@ -84,10 +86,11 @@ class VmHardwareTree extends BaseHtmlElement
         $this->fetchDisks();
         $this->fetchNics();
         $this->diskPerf = $this->fetchDiskPerf();
-        $db = $this->getDb()->getDbAdapter();
+        $connection = $this->getDb();
+        $db = $connection->getDbAdapter();
         $query = $db->select()
             ->from('vm_hardware')
-            ->where('vm_uuid = ?', $this->vm->get('uuid'))
+            ->where('vm_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
             ->order('hardware_key');
 
         foreach ($db->fetchAll($query) as $row) {
@@ -166,7 +169,8 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected function linkToPortGroup($uuid)
     {
-        $db = $this->getDb()->getDbAdapter();
+        $connection = $this->getDb();
+        $db = $connection->getDbAdapter();
         $info = $db->fetchRow(
             $db->select()->from(
                 ['o' => 'object'],
@@ -179,10 +183,9 @@ class VmHardwareTree extends BaseHtmlElement
                 ['vna' => 'vm_network_adapter'],
                 'vna.portgroup_uuid = o.uuid',
                 []
-            )->where(
-                'o.uuid = ?',
-                $uuid
-            )->group('o.uuid')
+            )
+            ->where('o.uuid = ?', $connection->quoteBinary($uuid))
+            ->group('o.uuid')
         );
 
         if (false === $info) {
@@ -201,7 +204,8 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected function fetchDiskPerf()
     {
-        $db = $this->getDb()->getDbAdapter();
+        $connection = $this->getDb();
+        $db = $connection->getDbAdapter();
 
         $values = '(' . implode(" || ',' || ", [
             "COALESCE(value_minus4, '0')",
@@ -216,7 +220,7 @@ class VmHardwareTree extends BaseHtmlElement
             'instance',
             'counter_key',
             'value' => $values,
-        ])->where('object_uuid = ?', $this->vm->get('uuid'))
+        ])->where('object_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
         ->where('counter_key IN (?)', [171, 172]);
 
         $rows = $db->fetchAll($query);

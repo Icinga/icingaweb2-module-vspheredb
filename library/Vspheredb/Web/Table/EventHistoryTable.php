@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
@@ -254,7 +255,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         $this->fetchedUuids = $db->fetchPairs(
             $db->select()
                 ->from('object', ['uuid', 'object_name'])
-                ->where('uuid IN (?)', array_values($this->requiredUuids))
+                ->where('uuid IN (?)', DbUtil::quoteBinaryCompat(array_values($this->requiredUuids), $db))
         );
     }
 
@@ -326,7 +327,9 @@ class EventHistoryTable extends ZfQueryBasedTable
             'destination_datastore_uuid',
         ];
         foreach ($properties as $property) {
-            $this->requiredUuids[$row->$property] = $row->$property;
+            if ($row->$property !== null) {
+                $this->requiredUuids[$row->$property] = $row->$property;
+            }
         }
 
         $content = new DeferredText(function () use ($row) {
