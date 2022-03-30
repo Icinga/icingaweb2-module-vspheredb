@@ -77,7 +77,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
             'object_name' => 'o.object_name',
         ])->join(
             ['vm' => 'virtual_machine'],
-            "vm.uuid = o.uuid AND vm.template = 'n'",
+            "vm.uuid = o.uuid AND vm.template = 'n' AND vm.runtime_power_state = 'poweredOn'",
             []
         )->join(
             ['vdu' => 'vm_datastore_usage'],
