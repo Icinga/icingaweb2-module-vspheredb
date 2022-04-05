@@ -2,39 +2,46 @@
 
 return  [
     'Dell Inc.' => [
-        'PowerEdge R610' => 'https://i.dell.com/das/dih.ashx/500x500/das/xa_____/'
-            . 'global-site-design%20WEB/a4e7238a-6504-5d0c-f2b0-a8be72120af0/1/'
-            . 'OriginalJPG?id=Dell/Product_Images/Dell_Enterprise_Products/Enterprise_Systems/'
-            . 'PowerEdge/PowerEdge_R610/front_facing/server-poweredge-r610-front-overhead-relativesized-500.jpg',
-        'PowerEdge R730' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
-            . 'product_images/dell_enterprise_products/enterprise_systems/'
-            . 'poweredge/poweredge_r730/global_spi/'
-            . 'server-poweredge-r730-front-relativesize-500-ng-v2.psd?fmt=jpg',
-        'PowerEdge R740' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
-            . 'product_images/dell_enterprise_products/enterprise_systems/poweredge/r_series/r740/global_spi/'
-            . 'enterprise-servers-poweredge-dellemc-per740-dvd-lf-on-left-relativesize-500-ng.psd?fmt=png-alpha',
-        'PowerEdge R750' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
-            . 'product_images/dell_enterprise_products/enterprise_systems/'
-            . 'poweredge/r_series/r750/global_spi/ng/enterprise-servers-poweredge-r750'
-            . '-lf-relativesize-500-ng.psd?fmt=jpg',
-        'PowerEdge R930' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
-            . 'product_images/dell_enterprise_products/enterprise_systems/'
-            . 'poweredge/poweredge_r930/global_spi/'
-            . 'server-poweredge-r930-left-relativesize-500-ng.psd?fmt=jpg',
-        'PowerEdge R940' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
-            . 'product_images/dell_enterprise_products/enterprise_systems/'
-            . 'poweredge/r_series/r940/global_spi/enterprise-servers-poweredge-dellemc-'
-            . 'per940-bezel-lcd-2-if-on-left-relativesize-500-ng.psd?fmt=jpg',
-        'PowerEdge R6515' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
-            . 'product_images/dell_enterprise_products/enterprise_systems/'
-            . 'poweredge/poweredge_amd/pdp/poweredge-r6515-lf-555x200-pdp.jpg?fmt=jpg',
-        'PowerEdge R7515' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
-            . 'product_images/dell_enterprise_products/enterprise_systems/'
-            . 'poweredge/c6525/global_spi/ng/enterprise-server-poweredge-r7515-lf-relativesize-500-ng.psd?fmt=jpg',
-        'PowerEdge R7525' => 'https://i.dell.com/is/image/DellContent//content/dam/global-site-design/'
-            . 'product_images/dell_enterprise_products/enterprise_systems/'
-            . 'poweredge/poweredge_r7525/global_spi/ng/enterprise-servers-poweredge-r7525-lf-relativesize-500-ng.psd'
-            . '?fmt=jpg',
+        'PowerEdge R610' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
+            . 'poweredge_r610/best_of/server-poweredge-r610-bestof-500.png?fmt=png-alpha',
+
+        'PowerEdge R620' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
+            . 'poweredge_r620/best_of/server-poweredge-r620-left-bestof-500.psd?fmt=png-alpha',
+        'PowerEdge R720' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
+            . 'poweredge_r720/best_of/server-poweredge-r720-right-bestof-500.psd?fmt=png-alpha',
+
+        'PowerEdge R730' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
+            . 'poweredge_r730/global_spi/server-poweredge-r730-left-bestof-500-ng-v2.psd?fmt=png-alpha',
+        'PowerEdge R930' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
+            . 'poweredge_r930/global_spi/server-poweredge-r930-left-bestof-500-ng.psd?fmt=png-alpha',
+
+        'PowerEdge R740' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-asset-library/products/enterprise_servers/poweredge/'
+            . 'r740/dellemc_per740_24x25_2_lf.psd?wid=500&fmt=png-alpha',
+        'PowerEdge R740xd' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-asset-library/products/enterprise_servers/poweredge/'
+            . 'r740xd/dellemc_per740xd_24x25_bezel_2_lf.psd?wid=500&fmt=png-alpha',
+        'PowerEdge R940' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-asset-library/products/enterprise_servers/poweredge/'
+            . 'r940/dellemc_per940_24x2_5_bezel_lcd_lf.psd?wid=500&fmt=png-alpha',
+
+        'PowerEdge R750' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
+            . 'r_series/r750/global_spi/ng/enterprise-servers-poweredge-r750-lf-bestof-500-ng.psd?fmt=png-alpha',
+        'PowerEdge R6515' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-asset-library/products/enterprise_servers/poweredge/'
+            . 'r6515/dellemc_per6515_10x25_emc-lcd-bezel_lf.psd?wid=500&fmt=png-alpha',
+        'PowerEdge R7515' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
+            . 'c6525/global_spi/ng/enterprise-server-poweredge-r7515-lf-bestof-500-ng.psd?fmt=png-alpha',
+        'PowerEdge R7525' => 'https://i.dell.com/is/image/DellContent/content/dam/'
+            . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
+            . 'poweredge_r7525/global_spi/ng/enterprise-servers-poweredge-r7525-lf-bestof-500-ng.psd?fmt=png-alpha',
     ],
     'HPE' => [
         'Synergy 480 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00020236en_us/'
@@ -45,6 +52,8 @@ return  [
             . 'attachment/a00072909.png/',
         'ProLiant DL380 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00019682en_us/'
             . 'attachment/a00050167.png/',
+        'ProLiant DL385 Gen10 Plus' => 'https://support.hpe.com/hpesc/public/api/document/a00095439en_us/'
+            . 'attachment/a00100900.png/',
         'ProLiant BL460c Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00019527en_us/'
             . 'attachment/a00050263.png/',
         'ProLiant DL560 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/product-image/i00022852/payload',
