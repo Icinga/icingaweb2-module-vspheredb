@@ -29,13 +29,24 @@ class NetBackupRunDetails extends NameValueTable
             );
             return;
         }
-
-        $this->addNameValuePairs([
-            $this->translate('Job name')      => $attributes['Job name'],
-            $this->translate('Last Run Time') => DateFormatter::formatDateTime($attributes['Time']),
-            $this->translate('Backup host')   => $this->renderBackupHost($attributes['Backup host']),
-        ]);
-
+        if (isset($attributes['Job name'])) {
+            $this->addNameValueRow(
+                $this->translate('Job name'),
+                $attributes['Job name']
+            );
+        }
+        if (isset($attributes['Time'])) {
+            $this->addNameValueRow(
+                $this->translate('Last Run Time'),
+                DateFormatter::formatDateTime($attributes['Time'])
+            );
+        }
+        if (isset($attributes['Backup host'])) {
+            $this->addNameValueRow(
+                $this->translate('Backup host'),
+                $this->renderBackupHost($attributes['Backup host'])
+            );
+        }
         if (isset($attributes['Backup folder'])) {
             $this->addNameValueRow(
                 $this->translate('Backup folder'),
