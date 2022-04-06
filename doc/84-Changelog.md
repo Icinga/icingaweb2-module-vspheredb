@@ -61,6 +61,7 @@ Web 2 version.
 * FEATURE: we no longer complain about getting no Hosts, Datastores, and similar (#306)
 * FEATURE: former sessions are now logged out when initiating a connection (#339)
 * FEATURE: WSDL files from disk cache are now being validated (#340)
+* FIX: outdated storage information are refreshed with a 6-hour grace period (#316)
 * FIX: errors when fetching WSDL files are now logged, invalid files rejected (#335)
 * FIX: a useless error message for those w/o Storage Pods has been removed (#310)
 * FIX: DB sub processes now ships debug log to it's parent
