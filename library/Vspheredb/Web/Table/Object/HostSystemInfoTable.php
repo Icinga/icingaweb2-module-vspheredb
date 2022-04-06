@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
+use gipfl\IcingaWeb2\Icon;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use gipfl\Web\Widget\Hint;
@@ -49,9 +50,20 @@ class HostSystemInfoTable extends NameValueTable
             ),
             $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
             $this->translate('BIOS Version') => new BiosInfo($host),
-            $this->translate('Uptime')       => DateFormatter::formatDuration($this->quickStats->get('uptime')),
+            $this->translate('Uptime')       => $this->showUptime($this->quickStats->get('uptime')),
             $this->translate('System UUID')  => Html::tag('pre', $host->get('sysinfo_uuid')),
         ]);
+    }
+
+    protected function showUptime($uptime)
+    {
+        return [
+            DateFormatter::formatDuration($uptime),
+            $uptime < 900 ? Icon::create('warning-empty', [
+                'class' => ['state', 'yellow'],
+                'title' => $this->translate('System booted recently'),
+            ]) : null,
+        ];
     }
 
     /**

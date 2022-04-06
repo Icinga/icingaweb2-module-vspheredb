@@ -42,6 +42,7 @@ Web 2 version.
 * FEATURE: VM/Host/Datastore tabs now preserve (recursive) parent filter (#320)
 * FEATURE: preserve and pass (recursive) parent filter to VM disks/snapshots (#321)
 * FEATURE: some CSS refinements here and there (#323)
+* FEATURE: UI now warns about recently booted VMs and Hosts (#332)
 
 ### InfluxDB
 * FIX: race condition in our chunked asynchronous writer has been fixed (#318)

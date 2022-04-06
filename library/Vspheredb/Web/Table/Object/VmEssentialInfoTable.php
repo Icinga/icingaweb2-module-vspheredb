@@ -2,11 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
+use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Exception;
 use gipfl\Web\Widget\Hint;
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\NetBackup;
@@ -15,6 +17,7 @@ use Icinga\Module\Vspheredb\Addon\VRangerBackup;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\Link\Html5UiLink;
@@ -116,7 +119,22 @@ class VmEssentialInfoTable extends NameValueTable
             $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
             $this->translate('Guest OS') => $guest,
             $this->translate('Guest Utilities') => $guestInfo,
+            // $this->translate('Test') => $this->getMonitoringInfo($vm),
         ]);
+        $quickStats = VmQuickStats::loadFor($vm);
+        if ($vm->get('runtime_power_state') === 'poweredOn') {
+            $uptime = $quickStats->get('uptime');
+            $this->addNameValueRow(
+                $this->translate('Uptime'),
+                [
+                    DateFormatter::formatDuration($uptime),
+                    $uptime < 900 ? Icon::create('warning-empty', [
+                        'class' => ['state', 'yellow'],
+                        'title' => $this->translate('System booted recently'),
+                    ]) : null,
+                ]
+            );
+        }
 
         $migrations = new VmRecentMigrationHistory($vm);
         $cntMigrations = $migrations->countWeeklyMigrationAttempts();
