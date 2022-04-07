@@ -34,14 +34,14 @@ class EventsController extends Controller
         ));
 
         $form = $this->addFilterForm();
-        $day = $this->params->shift('day');
+        $day = $this->params->get('day');
 
         $table = new EventHistoryTable($this->db());
         $table
             ->filterEventType($form->getElement('type')->getValue())
             ->filterParent($form->getElement('parent')->getValue());
-        $dayStamp = strtotime($day);
         if ($day) {
+            $dayStamp = strtotime($day);
             $this->addTitle('Event History on %s', DateFormatter::formatDate($dayStamp));
             $table->getQuery()->where(
                 'ts_event_ms >= ?',
