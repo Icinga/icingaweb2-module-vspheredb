@@ -25,6 +25,10 @@ granted read permissions for only a small subtree of your vCenter.
 PHP 8.1 is now supported and can be used as soon as we release a related Icinga
 Web 2 version.
 
+### Upgrading
+
+Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
 ### UI
 * FIX: deleting an InfluxDB subscription succeeded, but error popped up (#293)
 * FIX: got a wrong web UI redirection when running with an outdated DB schema

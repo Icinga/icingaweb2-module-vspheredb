@@ -4,17 +4,17 @@
 Requirements
 ------------
 
-* Icinga Web 2 (&gt;= 2.5 should work, we test only &gt; 2.8)
-* PHP (&gt;= 5.6, preferably 7.x - 64bit only)
+* Icinga Web 2 (&gt;= 2.8)
+* PHP (&gt;= 5.6, preferably 7.x or 8.x - 64bit only)
 * php-soap
 * php-pcntl (might already be built into your PHP binary)
 * php-posix (on RHEL/CentOS this is php-process, or rh-php7x-php-process)
 * MySQL (&gt;= 5.6) or MariaDB (&gt;= 5.5.3)
 * The following Icinga modules must be installed and enabled:
-  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>=0.10.1)
+  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>=0.14)
   * If you are using Icinga Web &lt; 2.9.0, the following modules are also required
     * [ipl](https://github.com/Icinga/icingaweb2-module-ipl) (>=0.5.0)
-    * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>=0.7.0)
+    * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>=0.8.0)
 
 Once you got Icinga Web 2 up and running, all required dependencies should
 already be there. All, but `php-soap` and `php-posix`. They are available on
@@ -44,7 +44,7 @@ Please make sure that you choose `utf8mb4` as an encoding.
 Installation
 ------------
 
-### Modul installation (or upgrade)
+### Module installation (or upgrade)
 
 This script downloads the [latest version](https://github.com/Icinga/icingaweb2-module-vspheredb/releases)
 and extract installs it to the default Icinga Web 2 module directory. An eventually
@@ -52,7 +52,7 @@ existing module installation will be replaced, so this can be used for upgrades 
 
 ```shell
 # You can customize these settings, but we suggest to stick with our defaults:
-MODULE_VERSION="1.2.1"
+MODULE_VERSION="1.3.0"
 DAEMON_USER="icingavspheredb"
 DAEMON_GROUP="icingaweb2"
 ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"

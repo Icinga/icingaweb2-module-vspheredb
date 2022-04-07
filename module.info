@@ -1,8 +1,8 @@
 Name: vSphereDB
-Version: master
+Version: 1.3.0
 Depends: ipl (>=0.5.0), incubator (>=0.14.0), reactbundle (>=0.8.0)
 Description: VMware vSphere DB
- This module replicates yout most important vCencer configuration items. It
+ This module replicates your most important vCenter configuration items. It
  provides a fast, lightweight (read-only) frontend and highlights potential
  issues. The UI tries to visualize Virtual Machines, Hosts and Datastores
  with lots of related information
@@ -10,7 +10,4 @@ Description: VMware vSphere DB
  Another purpose of this module is being a Import Source provider for the
  Icinga Director. It has no dependency on any SDK library, had been written
  from scratch for vCenter 6.x and tested with different installations of
- vCenter 6.0. Directly accessing ESXi 6.5 hosts also worked fine.
-
- We expect it to work fine also with older versions, but had no access to
- such for tests so far. In case you have, please let us know!
+ vCenter 6.x and 7.x. Directly accessing ESXi hosts also worked fine.
