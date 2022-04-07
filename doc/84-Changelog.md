@@ -7,7 +7,7 @@ v1.3.0
 This version fixes issues which could have occurred when running for at least
 medium-sized vmWare installations while using a DB with relatively high
 latencies. We are now handing over data we fetched from your vCenter to a
-dedicated subprocess,  which then synchronizes batched information to your DB
+dedicated subprocess, which then synchronizes batched information to your DB
 task per task.
 
 In case a task takes longer than expected, you can now spot it in your process
@@ -15,12 +15,12 @@ list. The DB process always shows its current task:
 
 ![Process list - current DB task](screenshot/84_changelog/0805_processlist-dbtask.png)
 
-InfluxDB support is now easier to configure, error handling improved, and it is
-now more robust to run.
+Error Handling has been improved, making the daemon more robust, InfluxDB support
+is easier to configure.
 
 vSphereDB strongly suggests using a vmWare user with a global readonly permission,
 however with this release it is now also possible to use a user who has been
-granted read permissions for only a small sub-tree of your vCenter.
+granted read permissions for only a small subtree of your vCenter.
 
 PHP 8.1 is now supported and can be used as soon as we release a related Icinga
 Web 2 version.
