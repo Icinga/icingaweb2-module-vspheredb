@@ -25,9 +25,27 @@ class VCenterSummaries extends BaseHtmlElement
         $this->vCenter = $vCenter;
     }
 
+    protected function selectObject($type, $columns)
+    {
+        $connection = $this->vCenter->getConnection();
+        $db = $connection->getDbAdapter();
+        $vCenterUuid = $this->vCenter->getUuid();
+
+        $query = $db->select()->from(['o' => 'object'], $columns);
+        if (is_array($type)) {
+            $query->where('object_type IN (?)', $type);
+        } else {
+            $query->where('object_type = ?', $type);
+        }
+        $query->where('vcenter_uuid = ?', $connection->quoteBinary($vCenterUuid));
+
+        return $query;
+    }
+
     protected function assemble()
     {
-        $db = $this->vCenter->getDb();
+        $connection = $this->vCenter->getConnection();
+        $db = $connection->getDbAdapter();
         $vCenterUuid = $this->vCenter->getUuid();
 
         $columns = [
@@ -39,39 +57,23 @@ class VCenterSummaries extends BaseHtmlElement
         ];
 
         $this->addCountlet(
-            $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
-                    ->where('object_type = ?', 'Datacenter')
-                    ->where('vcenter_uuid = ?', $vCenterUuid)
-            ),
+            $db->fetchRow($this->selectObject('Datacenter', $columns)),
             'Datacenters',
             'vspheredb/datacenters'
         );
         $this->addCountlet(
-            $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
-                    ->where('object_type IN (?)', ['ClusterComputeResource', 'ComputeResource'])
-                    ->where('vcenter_uuid = ?', $vCenterUuid)
-            ),
+            $db->fetchRow($this->selectObject(['ClusterComputeResource', 'ComputeResource'], $columns)),
             'Compute Resources',
             // 'vspheredb/compute-resources'
             'vspheredb/resources/clusters'
         );
         $this->addCountlet(
-            $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
-                    ->where('object_type = ?', 'HostSystem')
-                    ->where('vcenter_uuid = ?', $vCenterUuid)
-            ),
+            $db->fetchRow($this->selectObject('HostSystem', $columns)),
             'Host Systems',
             'vspheredb/hosts'
         );
         $this->addCountlet(
-            $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
-                    ->where('object_type = ?', 'Datastore')
-                    ->where('vcenter_uuid = ?', $vCenterUuid)
-            ),
+            $db->fetchRow($this->selectObject('Datastore', $columns)),
             'Datastores',
             'vspheredb/datastores'
         );
@@ -80,7 +82,7 @@ class VCenterSummaries extends BaseHtmlElement
                 $db->select()->from(['o' => 'object'], $columns)
                     ->join(['vm' => 'virtual_machine'], 'vm.uuid = o.uuid', [])
                     ->where('vm.template = ?', 'n')
-                    ->where('vm.vcenter_uuid = ?', $vCenterUuid)
+                    ->where('vm.vcenter_uuid = ?', $connection->quoteBinary($vCenterUuid))
             ),
             'Virtual Machines',
             'vspheredb/vms'
@@ -129,20 +131,12 @@ class VCenterSummaries extends BaseHtmlElement
         );
         */
         $this->addCountlet(
-            $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
-                    ->where('object_type = ?', 'StoragePod')
-                    ->where('vcenter_uuid = ?', $vCenterUuid)
-            ),
+            $db->fetchRow($this->selectObject('StoragePod', $columns)),
             'Storage Pods',
             'vspheredb/storagepods'
         );
         $this->addCountlet(
-            $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
-                    ->where('object_type = ?', 'ResourcePool')
-                    ->where('vcenter_uuid = ?', $vCenterUuid)
-            ),
+            $db->fetchRow($this->selectObject('ResourcePool', $columns)),
             'Resource Pools',
             'vspheredb/resourcepools'
         );

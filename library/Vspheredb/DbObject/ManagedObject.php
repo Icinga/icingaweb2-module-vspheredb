@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 
 class ManagedObject extends VspheredbDbObject
 {
@@ -59,12 +60,13 @@ class ManagedObject extends VspheredbDbObject
     {
         $dummy = new static();
 
+        $db = $vCenter->getDb();
         return static::loadAll(
             $vCenter->getConnection(),
-            $vCenter->getDb()
+            $db
                 ->select()
                 ->from($dummy->getTableName())
-                ->where('vcenter_uuid = ?', $vCenter->get('uuid')),
+                ->where('vcenter_uuid = ?', DbUtil::quoteBinaryCompat($vCenter->get('uuid'), $db)),
             $dummy->keyName
         );
     }
@@ -76,5 +78,14 @@ class ManagedObject extends VspheredbDbObject
         } else {
             return $this->parent->calculateLevel() + 1;
         }
+    }
+
+    protected function isBinaryColumn($column)
+    {
+        if ($column === 'uuid' || substr($column, -5) === '_uuid') {
+            return true;
+        }
+
+        return parent::isBinaryColumn($column);
     }
 }
