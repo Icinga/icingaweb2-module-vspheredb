@@ -150,7 +150,7 @@ class VCenterServerForm extends Form
                     ),
                 ]);
 
-                $passRequired = \strlen($this->getValue('proxy_user')) > 0;
+                $passRequired = $this->getValue('proxy_user') !== null && \strlen($this->getValue('proxy_user')) > 0;
 
                 $this->addElement('password', 'proxy_pass', [
                     'label' => $this->translate('Proxy Password'),
