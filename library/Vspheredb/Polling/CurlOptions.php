@@ -31,7 +31,7 @@ class CurlOptions
             CURLOPT_HTTPHEADER => [
                 "Host: $host",
                 'Expect:',
-                'User-Agent: Icinga-vSphereDB/1.2',
+                'User-Agent: Icinga-vSphereDB/1.3',
             ]
         ];
 
