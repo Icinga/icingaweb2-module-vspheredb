@@ -14,6 +14,9 @@ When talking to your vCenters through an HTTP proxy, you should also upgrade the
 Incubator module to at least v0.15.0. We consider raising dependencies a breaking
 change, that's why we do not enforce this version unless v1.4.0.
 
+### vSphere API
+* FEATURE: SOAP client now identifies itself as Icinga-vSphereDB/1.3 (#349)
+
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/10?closed=1)
