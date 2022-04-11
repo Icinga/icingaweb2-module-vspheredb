@@ -41,7 +41,8 @@ class CurlOptions
         // }
 
         if ($proxyType = $server->get('proxy_type')) {
-            $options[CURLOPT_PROXY] = $server->get('proxy_address');
+            // TODO: Depending on the PHP and Curl version, we might want to support HTTPS proxies
+            $options[CURLOPT_PROXY] = 'http://' . $server->get('proxy_address');
             $options[CURLOPT_PROXYTYPE] = static::wantCurlProxyType($proxyType);
 
             if ($proxyUser = $server->get('proxy_user')) {
