@@ -11,6 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use React\Promise\ExtendedPromiseInterface;
+use SoapFault;
 
 /**
  * Heavily inspired by Clue\React\Soap
@@ -75,7 +76,13 @@ class SoapClient
 
                     return $result;
                 } catch (\Exception $e) {
-                    if ($e instanceof \SoapFault) {
+                    if ($e instanceof SoapFault) {
+                        if ($e->getMessage() === 'looks like we got no XML document') {
+                            throw new SoapFault(
+                                $e->faultcode,
+                                $e->getMessage() . ': ' . $this->getBodyPart($response)
+                            );
+                        }
                         throw $e;
                     }
                     $status = $response->getStatusCode();
@@ -85,12 +92,17 @@ class SoapClient
                     }
 
                     $this->logger->error(
-                        'Failing Response: ' . substr(preg_replace('/\r?\n/', '\\n', $response->getBody()), 0, 500)
+                        'Failing Response: ' . $this->getBodyPart($response)
                     );
 
                     throw $e;
                 }
             });
+    }
+
+    protected function getBodyPart(ResponseInterface $response)
+    {
+        return str_replace(["\r", "\n"], ['\\r', '\\n'], substr($response->getBody(), 0, 500));
     }
 
     protected function addCookiesToRequest(RequestInterface $request, $soapFunctionName)
