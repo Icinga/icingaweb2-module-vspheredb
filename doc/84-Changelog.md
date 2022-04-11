@@ -1,6 +1,24 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+next - v1.3.1
+-------------
+
+This is a minor bugfix release. It fixes some cosmetic issues and helps those
+who configured vCenter connections through HTTP proxies.
+
+### Upgrading
+
+Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+When talking to your vCenters through an HTTP proxy, you should also upgrade the
+Incubator module to at least v0.15.0. We consider raising dependencies a breaking
+change, that's why we do not enforce this version unless v1.4.0.
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/10?closed=1)
+
+
 v1.3.0
 ------
 
