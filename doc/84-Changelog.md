@@ -17,6 +17,7 @@ change, that's why we do not enforce this version unless v1.4.0.
 ### vSphere API
 * FEATURE: SOAP client now identifies itself as Icinga-vSphereDB/1.3 (#349)
 * FEATURE: HTTP proxy option is now prefixed with its scheme (#350)
+* FEATURE: SOAP client now logs response body parts on SOAP fault (#348)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
