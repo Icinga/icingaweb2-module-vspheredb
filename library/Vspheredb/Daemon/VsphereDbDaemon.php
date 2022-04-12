@@ -523,8 +523,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     protected function reconnectToDb()
     {
-        $this->eventuallyDisconnectFromDb();
-        $this->logger->notice('[localdb] reconnecting');
+        if ($this->connection !== null) {
+            $this->eventuallyDisconnectFromDb();
+            $this->logger->notice('[localdb] reconnecting');
+        }
         $this->setLocalDbState(self::STATE_STARTING);
         RetryUnless::succeeding(function () {
             if ($this->dbConfig === null) {
