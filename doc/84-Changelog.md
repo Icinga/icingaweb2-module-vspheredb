@@ -1,8 +1,8 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-next - v1.3.1
--------------
+v1.3.1 (unreleased)
+-------------------
 
 This is a minor bugfix release. It fixes some cosmetic issues and helps those
 who configured vCenter connections through HTTP proxies.
