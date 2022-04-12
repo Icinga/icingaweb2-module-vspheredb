@@ -14,6 +14,7 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 
 ### Background Daemon
 * FIX: log "reconnecting to DB" only when doing so (#353)
+* FEATURE: log a notice, when main processes DB connection is ready (#354)
 
 ### Requirements
 * BREAKING: PHP 7.1 is now required (#351)

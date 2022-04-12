@@ -481,6 +481,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         };
         try {
             if ($this->hasSchema()) {
+                $this->logger->notice('[localdb] ready');
                 $this->setLocalDbState(self::STATE_READY);
             } else {
                 $fail(new Exception('DB has no schema'));
