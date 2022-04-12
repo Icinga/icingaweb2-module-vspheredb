@@ -633,7 +633,6 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         try {
             $db = $this->connection->getDbAdapter();
             $updated = $db->update('vspheredb_daemon', [
-                'instance_uuid' => $this->processInfo->instance_uuid,
                 'ts_last_refresh' => Util::currentTimestamp(),
                 'process_info' => json_encode($this->getProcessInfo()),
             ], $db->quoteInto('instance_uuid = ?', DbUtil::quoteBinaryCompat($this->processInfo->instance_uuid, $db)));
