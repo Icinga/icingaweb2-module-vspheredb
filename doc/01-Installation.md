@@ -9,7 +9,7 @@ Requirements
 * php-soap
 * php-pcntl (might already be built into your PHP binary)
 * php-posix (on RHEL/CentOS this is php-process, or rh-php7x-php-process)
-* MySQL (&gt;= 5.6) or MariaDB (&gt;= 5.5.3)
+* MySQL (&gt;= 5.7) or MariaDB (&gt;= 10.3)
 * The following Icinga modules must be installed and enabled:
   * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>=0.15)
   * If you are using Icinga Web &lt; 2.9.0, the following modules are also required

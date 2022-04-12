@@ -14,6 +14,7 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 
 ### Requirements
 * BREAKING: PHP 7.1 is now required (#351)
+* FEATURE: officially supported DB Server versions have been raised (#352)
 
 v1.3.1 (unreleased)
 -------------------
