@@ -90,6 +90,9 @@ abstract class SimpleBackupTool implements BackupTool
 
     protected function parseAnnotation($annotation)
     {
+        if ($annotation === null) {
+            return;
+        }
         $this->lastAttributes = null;
         $begin = strpos($annotation, static::PREFIX);
         if ($begin === false) {
