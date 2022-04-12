@@ -1,6 +1,20 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.4.0 (unreleased)
+-------------------
+
+### Upgrading
+
+Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
+### Breaking Changes
+* This module now requires at least PHP 7.1, please check our [Installation documentation](01-Installation.md)
+  for related details
+
+### Requirements
+* BREAKING: PHP 7.1 is now required (#351)
+
 v1.3.1 (unreleased)
 -------------------
 
