@@ -488,9 +488,9 @@ class EventHistoryTable extends ZfQueryBasedTable
             '%s %s',
             Icon::create('endtime'),
             Link::create(
-                $this->getUuidName($row->host_uuid),
+                $this->getUuidName($row->destination_host_uuid),
                 'vspheredb/host',
-                ['uuid' => bin2hex($row->host_uuid)]
+                ['uuid' => bin2hex($row->destination_host_uuid)]
             )
         );
     }
@@ -505,9 +505,9 @@ class EventHistoryTable extends ZfQueryBasedTable
             '%s %s',
             Icon::create('starttime'),
             Link::create(
-                $this->getUuidName($row->destination_host_uuid),
+                $this->getUuidName($row->host_uuid),
                 'vspheredb/host',
-                ['uuid' => bin2hex($row->destination_host_uuid)]
+                ['uuid' => bin2hex($row->host_uuid)]
             )
         );
     }
