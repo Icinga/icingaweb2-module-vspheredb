@@ -24,6 +24,10 @@ class DbConnection extends IcingaDbConnection
 
     public function quoteBinary($binary)
     {
+        if ($binary === '') {
+            return '';
+        }
+
         if (is_array($binary)) {
             return array_map([$this, 'quoteBinary'], $binary);
         }
