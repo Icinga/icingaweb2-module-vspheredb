@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\Web\Form\Decorator\DdDtDecorator;
 use gipfl\Web\Widget\Hint;
 use Icinga\Application\Config;
 use Icinga\Data\Db\DbConnection;
@@ -38,7 +39,6 @@ class MonitoringConnectionForm extends Form
             'label'    => $this->translate('vCenter'),
             'options'  => $this->optionalEnum($this->enumVCenters()),
             'ignore'   => true,
-            'required' => true,
         ]);
 
         $this->addElement('select', 'source_type', [
@@ -144,7 +144,7 @@ class MonitoringConnectionForm extends Form
                 'label' => $this->translate('Delete')
             ]);
             $deco = $submit->getWrapper();
-            assert($deco instanceof Form\Decorator\DdDtDecorator);
+            assert($deco instanceof DdDtDecorator);
             $deco->dd()->add($delete);
             $this->registerElement($delete);
             if ($delete->hasBeenPressed()) {
@@ -166,7 +166,10 @@ class MonitoringConnectionForm extends Form
         $values = $this->getValues();
         $db = $this->db;
         $id = $this->getId();
-        $vCenterUuid = \hex2bin($this->getValue('vcenter'));
+        $vCenterUuid = $this->getValue('vcenter');
+        if ($vCenterUuid !== null) {
+            $values['vcenter_uuid'] = hex2bin($vCenterUuid);
+        }
         if ($id) {
             $db->update(
                 'monitoring_connection',
@@ -178,7 +181,6 @@ class MonitoringConnectionForm extends Form
                 $db->select()->from('monitoring_connection', 'MAX(priority)')
             ) + 1;
             $db->insert('monitoring_connection', $values + [
-                'vcenter_uuid' => $vCenterUuid,
                 'priority'     => $priority,
             ]);
         }
@@ -212,6 +214,10 @@ class MonitoringConnectionForm extends Form
         return $result;
     }
 
+    /**
+     * UNUSED
+     * @return array
+     */
     protected function enumHostParents()
     {
         $db = $this->db;

@@ -12,3 +12,4 @@ if (! $checker->satisfiesDependencies($this)) {
 
 $this->provideHook('director/ImportSource');
 $this->provideHook('vspheredb/PerfDataConsumer', PerfDataConsumerInfluxDb::class);
+$this->provideHook('monitoring/DetailviewExtension');
