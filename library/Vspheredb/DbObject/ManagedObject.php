@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Module\Vspheredb\Db\DbUtil;
+use RuntimeException;
 
 class ManagedObject extends VspheredbDbObject
 {
@@ -38,6 +39,11 @@ class ManagedObject extends VspheredbDbObject
         $this->set('level', $this->calculateLevel());
     }
 
+    public function getBinaryUuid()
+    {
+        return $this->get('uuid');
+    }
+
     public function setParent(ManagedObject $object)
     {
         $this->parent = $object;
@@ -69,6 +75,16 @@ class ManagedObject extends VspheredbDbObject
                 ->where('vcenter_uuid = ?', DbUtil::quoteBinaryCompat($vCenter->get('uuid'), $db)),
             $dummy->keyName
         );
+    }
+
+    public function getNumericLevel()
+    {
+        $level = $this->get('level');
+        if ($level === null) {
+            throw new RuntimeException('Cannot read ManagedObject level before setting one');
+        }
+
+        return (int) $level;
     }
 
     public function calculateLevel()

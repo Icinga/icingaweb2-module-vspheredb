@@ -73,8 +73,13 @@ class VCenter extends BaseDbObject
         return $this->get('api_type') === 'VirtualCenter';
     }
 
-    // TODO: Settle with one or the other
+    // TODO: Settle with one or the other. This should better give a UUID object
     public function getUuid()
+    {
+        return $this->get('instance_uuid');
+    }
+
+    public function getBinaryUuid()
     {
         return $this->get('instance_uuid');
     }

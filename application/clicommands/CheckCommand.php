@@ -2,18 +2,22 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use gipfl\Cli\Screen;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
-use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
+use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\CheckResultSet;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
+use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 
 /**
  * vSphereDB Check Command
@@ -86,13 +90,7 @@ class CheckCommand extends Command
             $host = $this->lookup()->findOneBy('HostSystem', [
                 'host_name' => $this->params->getRequired('name')
             ]);
-            assert($host instanceof HostSystem);
-            $quickStats = HostQuickStats::loadFor($host);
-            $this
-                ->checkOverallHealth($host->object())
-                ->checkRuntimePowerState($host)
-                ->checkUptime($quickStats, $host)
-            ;
+            $this->runChecks($host, 'host');
         });
     }
 
@@ -129,11 +127,7 @@ class CheckCommand extends Command
                     'guest_host_name' => $this->params->getRequired('name')
                 ]);
             }
-            assert($vm instanceof VirtualMachine);
-            $quickStats = VmQuickStats::loadFor($vm);
-            $this->checkOverallHealth($vm->object())
-                ->checkRuntimePowerState($vm)
-                ->checkUptime($quickStats, $vm);
+            $this->runChecks($vm, 'vm');
         });
     }
 
@@ -164,7 +158,7 @@ class CheckCommand extends Command
             $datastore = $this->lookup()->findOneBy('Datastore', [
                 'object_name' => $this->params->getRequired('name')
             ]);
-            $this->checkOverallHealth($datastore->object());
+            $this->runChecks($datastore, 'datastore');
         });
     }
 
@@ -180,6 +174,44 @@ class CheckCommand extends Command
         $this->showOverallStatusForProblems(
             $this->lookup()->listNonGreenObjects('Datastore')
         );
+    }
+
+    protected function runChecks(BaseDbObject $object, string $type)
+    {
+        $tree = new MonitoringRulesTree($this->db(), $type);
+        $settings = $tree->getInheritedSettingsFor($object);
+        $settings->setInternalDefaults(RuleSetRegistry::default());
+        $all = new CheckResultSet('Checking VM');
+        foreach (RuleSetRegistry::default()->getSets() as $set) {
+            if ($settings->isDisabled($set)) {
+                continue;
+            }
+            $checkSet = new CheckResultSet($set->getLabel());
+            $all->addResult($checkSet);
+            foreach ($set->getRules() as $rule) {
+                if ($settings->isDisabled($set, $rule)) {
+                    continue;
+                }
+                if (!$rule::supportsObjectType($type)) {
+                    continue;
+                }
+                $ruleSettings = $settings->withRemovedPrefix(Settings::prefix($set, $rule));
+                foreach ($rule->checkObject($object, $ruleSettings) as $result) {
+                    $checkSet->addResult($result);
+                }
+            }
+        }
+        echo $this->colorizeOutput($all->getOutput()) . PHP_EOL;
+        exit($all->getState()->getExitCode());
+    }
+
+    protected function colorizeOutput(string $string): string
+    {
+        $screen = Screen::factory();
+        $pattern = '/\[(OK|WARNING|CRITICAL|UNKNOWN)]\s/';
+        return preg_replace_callback($pattern, function ($match) use ($screen) {
+            return '[' .$screen->colorize($match[1], (new CheckPluginState($match[1]))->getColor()) . '] ';
+        }, $string);
     }
 
     protected function showOverallStatusForProblems($problems)

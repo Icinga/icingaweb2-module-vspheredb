@@ -23,6 +23,9 @@ $section->add(N_('Datastores'))
 // $section->add(N_('Anomalies'))
 //     ->setUrl('vspheredb/anomalies')
 //     ->setPriority(45);
+$section->add(N_('Monitoring Rules'))
+    ->setUrl('vspheredb/monitoring')
+    ->setPriority(45);
 $section->add(N_('History'))
     ->setUrl('vspheredb/events/heatmap')
     ->setPriority(49);
