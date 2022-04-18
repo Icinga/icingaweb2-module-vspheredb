@@ -12,7 +12,7 @@ with a lot of commandline options, we had a rule-based approach in mind.
 ![Sample Check Command Output](screenshot/03_checks/031-check_command.png)
 
 Finally, with v1.4.0 we're shipping such. The Check Command provides many new
-granular details, and the Web UI is able to also show them:
+granular details, and the Web UI is also able to show them:
 
 ![Monitoring Details - UI](screenshot/03_checks/032-monitoring_details.png)
 
