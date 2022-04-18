@@ -4,6 +4,36 @@
 v1.4.0 (unreleased)
 -------------------
 
+This release addresses one of our most-wanted feature requests. Many of you
+asked for advanced Check Plugins and related possibilities. Those requests have
+not been unheard, but we had other plans: instead of shipping a lot of Plugins
+with a lot of commandline options, we had a rule-based approach in mind.
+
+![Sample Check Command Output](screenshot/03_checks/031-check_command.png)
+
+Finally, with v1.4.0 we're shipping such. The Check Command provides many new
+granular details, and the Web UI is able to also show them:
+
+![Monitoring Details - UI](screenshot/03_checks/032-monitoring_details.png)
+
+You can continue to use the existing  simplistic Check Commands, but their behavior
+is no longer predefined: You're allowed to tweak a lot of settings and thresholds
+directly in the Web frontend.
+
+![Monitoring Rules](screenshot/03_checks/033-monitoring_rules.png)
+
+All this at a hierarchical level, so if you organized your Objects in folders,
+you can apply different settings to different vCenters, Datacenters, Environments
+and so on.
+
+![Monitoring Rule Hierarchy](screenshot/03_checks/034-monitoring_rule_hierarchy.png)
+
+For more related details, please check the related [Documentation Section](31-Check_Commands.md).
+
+Also, this release now integrates with the Icinga Web Monitoring module. In case
+a monitored Host maps to a VMware Host or VirtualMachine, related details are now
+shown directly in the Monitoring module, linking to vSphereDB.
+
 ### Upgrading
 
 Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
