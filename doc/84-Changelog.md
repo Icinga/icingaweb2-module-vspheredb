@@ -60,6 +60,10 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 * BREAKING: PHP 7.1 is now required (#351)
 * FEATURE: officially supported DB Server versions have been raised (#352)
 
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/9?closed=1)
+
 v1.3.1
 ------
 
