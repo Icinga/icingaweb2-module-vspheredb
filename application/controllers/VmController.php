@@ -2,11 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use gipfl\IcingaWeb2\Link;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
+use Icinga\Module\Vspheredb\Monitoring\Table\ObjectRulesCheckTable;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmEssentialInfoTable;
@@ -83,6 +85,31 @@ class VmController extends Controller
         $table->filterEntityUuid($this->addVm()->get('uuid'))->renderTo($this);
     }
 
+    public function monitoringAction()
+    {
+        $object = $this->addVm();
+        $showSettings = $this->params->get('showSettings');
+        $table = new ObjectRulesCheckTable($object, $this->db());
+        if ($showSettings) {
+            $table->showSettings();
+            $settingsLink = Link::create(
+                $this->translate('Hide Settings'),
+                $this->url()->without('showSettings'),
+                null,
+                ['class' => 'icon-left-big']
+            );
+        } else {
+            $settingsLink = Link::create(
+                $this->translate('Show Settings'),
+                $this->url()->with('showSettings', true),
+                null,
+                ['class' => 'icon-services']
+            );
+        }
+        $this->actions()->add($settingsLink);
+        $this->content()->add($table);
+    }
+
     /**
      * @return VirtualMachine
      * @throws MissingParameterException
@@ -93,6 +120,7 @@ class VmController extends Controller
         /** @var VirtualMachine $vm */
         $vm = VirtualMachine::load(hex2bin($this->params->getRequired('uuid')), $this->db());
         $this->controls()->add(new VmHeader($vm, VmQuickStats::loadFor($vm)));
+        $this->controls()->addAttributes(['class' => 'controls-with-object-header']);
         $this->setTitle($vm->object()->get('object_name'));
         $this->handleTabs();
 
@@ -117,6 +145,10 @@ class VmController extends Controller
         ])->add('alarms', [
             'label'     => $this->translate('Alarms'),
             'url'       => 'vspheredb/vm/alarms',
+            'urlParams' => $params
+        ])->add('monitoring', [
+            'label'     => $this->translate('Monitoring'),
+            'url'       => 'vspheredb/vm/monitoring',
             'urlParams' => $params
         ])
         ->activate($this->getRequest()->getActionName());
