@@ -1,6 +1,6 @@
 Name: vSphereDB
 Version: master
-Depends: ipl (>=0.5.0), incubator (>=0.15.0), reactbundle (>=0.8.0)
+Depends: ipl (>=0.5.0), incubator (>=0.16.0), reactbundle (>=0.8.0)
 Description: VMware vSphere DB
  This module replicates your most important vCenter configuration items. It
  provides a fast, lightweight (read-only) frontend and highlights potential
