@@ -722,7 +722,7 @@ CREATE TABLE vm_event_history (
 CREATE TABLE monitoring_connection (
   id INT(10) UNSIGNED AUTO_INCREMENT NOT NULL,
   priority SMALLINT(5) UNSIGNED NOT NULL,
-  vcenter_uuid VARBINARY(16) NOT NULL,
+  vcenter_uuid VARBINARY(16) DEFAULT NULL,
   source_type ENUM (
       'ido',
       'icinga2-api',
@@ -933,4 +933,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (37, NOW());
+VALUES (38, NOW());
