@@ -15,6 +15,7 @@
             this.module.on('mouseover', 'thead tr', this.checkForHeaderHref);
             this.module.on('mouseover', '.content [href]', this.highlightMatchingLinks);
             this.module.on('mouseout', '.content [href]', this.removeMatchingLinksHighlight);
+            this.module.on('click', '.tree li a', this.activateTreeLink);
             this.module.on('keydown', '', this.keyDown);
             this.module.on('keyup', '', this.keyUp);
             this.module.on('keyup', 'form.quicksearch input.search', this.keyUpInQuickSearch);
@@ -47,6 +48,12 @@
                 this.matchingLinks = $('div.container.module-vspheredb .content [href*="' + match[1] + '"]').not($link);
                 this.matchingLinks.addClass('same-link-hovered');
             }
+        },
+
+        activateTreeLink: function (ev) {
+            // href will be added because of sort icons
+            $(ev.currentTarget).closest('.tree').find('a').removeClass('active');
+            $(ev.currentTarget).addClass('active');
         },
 
         checkForHeaderHref: function (ev) {
