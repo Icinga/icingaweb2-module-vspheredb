@@ -11,7 +11,7 @@ Requirements
 * php-posix (on RHEL/CentOS this is php-process, or rh-php7x-php-process)
 * MySQL (&gt;= 5.7) or MariaDB (&gt;= 10.3)
 * The following Icinga modules must be installed and enabled:
-  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>=0.15)
+  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>=0.16)
   * If you are using Icinga Web &lt; 2.9.0, the following modules are also required
     * [ipl](https://github.com/Icinga/icingaweb2-module-ipl) (>=0.5.0)
     * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>=0.8.0)
@@ -52,7 +52,7 @@ existing module installation will be replaced, so this can be used for upgrades 
 
 ```shell
 # You can customize these settings, but we suggest to stick with our defaults:
-MODULE_VERSION="1.3.1"
+MODULE_VERSION="1.4.0"
 DAEMON_USER="icingavspheredb"
 DAEMON_GROUP="icingaweb2"
 ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"

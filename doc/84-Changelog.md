@@ -1,8 +1,8 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-v1.4.0 (unreleased)
--------------------
+v1.4.0
+------
 
 This release addresses one of our most-wanted feature requests. Many of you
 asked for advanced Check Plugins and related possibilities. Those requests have
@@ -45,6 +45,16 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 ### Background Daemon
 * FIX: log "reconnecting to DB" only when doing so (#353)
 * FEATURE: log a notice, when main processes DB connection is ready (#354)
+
+### CLI
+* FEATURE: Monitoring Rules have been implemented (#357)
+* FEATURE: Disk checks are now available (#198)
+
+### Documentation
+* FEATURE: check commands are now documented (#221)
+
+### Database Schema
+* FIX: addressed an older schema upgrade issue, affecting v1.1.0 (#298)
 
 ### Requirements
 * BREAKING: PHP 7.1 is now required (#351)
