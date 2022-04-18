@@ -1254,3 +1254,74 @@ div.usage-summary-widget {
     position: absolute;
   }
 }
+
+form.ruleform {
+  width: 40em;
+
+  input[type=number] {
+    max-width: 36em;
+    min-width: 20em;
+    width: 100%;
+  }
+
+  dt {
+    text-align: right;
+    label {
+      font-weight: normal;
+    }
+    max-width: unset;
+    width: 60%;
+  }
+  dd {
+    max-width: unset;
+    width: 40%;
+  }
+}
+
+.overview-chapter {
+  h2 {
+    margin-top: 2em;
+  }
+  p {
+    max-width: 60em;
+  }
+  a {
+    text-decoration: underline;
+    color: @icinga-blue;
+  }
+}
+
+div.controls-with-object-header > div.gipfl-action-bar {
+  margin-top: 2em;
+}
+
+table.object-rules-check-table {
+  th {
+    text-align: left;
+  }
+  td {
+    vertical-align: top;
+  }
+  pre {
+    margin-top: 0.5em;
+  }
+  .badge {
+    width: 8em;
+    margin-right: 1em;
+  }
+}
+
+/* Should be moved to gipfl */
+form.gipfl-form {
+  dl {
+    &.active {
+      // pointing to active element:
+      dt label::after {
+        display: none;
+      }
+      dt label {
+        text-decoration: underline;
+      }
+    }
+  }
+}
