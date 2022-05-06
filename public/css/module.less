@@ -516,6 +516,15 @@ table.common-table th {
   outline: 0;
   background-repeat: no-repeat;
   background-position: 0.8em 0.4em;
+  &.configured {
+    font-weight: bold;
+  }
+  &.active {
+    color: @icinga-blue;
+  }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 ul.tree li > .handle {
