@@ -16,6 +16,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\RuleForm;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
+use RuntimeException;
 
 class MonitoringController extends Controller
 {
@@ -125,15 +126,17 @@ class MonitoringController extends Controller
         $this->addSingleTab($this->translate('Rules'));
         $uuid = $this->params->get('uuid');
         $db = $this->db();
+        $objectTypeLabel = $this->getTypeLabelForObjectType($chosenType);
         if ($uuid === null) {
             $binaryUuid = '';
-            $title = $this->translate('Global VM Monitoring Rules');
+            $title = sprintf($this->translate('Global Monitoring Rules for %s'), $objectTypeLabel);
         } else {
             $binaryUuid = hex2bin($uuid);
             if (strlen($binaryUuid) === 16) {
                 $vCenter = VCenter::load($binaryUuid, $db);
                 $title = sprintf(
-                    $this->translate('vCenter VM Monitoring Rules: %s'),
+                    $this->translate('vCenter Monitoring Rules for %s: %s'),
+                    $objectTypeLabel,
                     $vCenter->get('name')
                 );
             } else {
@@ -142,13 +145,15 @@ class MonitoringController extends Controller
                 if ($parent->getNumericLevel() === 2) {
                     $dataCenter = ManagedObject::load($parent->get('parent_uuid'), $db);
                     $title = sprintf(
-                        $this->translate('DataCenter VM Monitoring Rules: %s (%s)'),
+                        $this->translate('DataCenter Monitoring Rules for %s: %s (%s)'),
+                        $objectTypeLabel,
                         $dataCenter->get('object_name'),
                         $vCenter->get('name')
                     );
                 } else {
                     $title = sprintf(
-                        $this->translate('Folder VM Monitoring Rules: %s (%s)'),
+                        $this->translate('Folder Monitoring Rules for %s: %s (%s)'),
+                        $objectTypeLabel,
                         $parent->get('object_name'),
                         $vCenter->get('name')
                     );
@@ -179,5 +184,19 @@ class MonitoringController extends Controller
         $form->addElement('submit', 'submit', [
             'label' => $this->translate('Store')
         ]);
+    }
+
+    protected function getTypeLabelForObjectType(string $type): string
+    {
+        switch ($type) {
+            case 'host':
+                return $this->translate('Host Systems');
+            case 'vm':
+                return $this->translate('Virtual Machines');
+            case 'datastore':
+                return $this->translate('Datastores');
+        }
+
+        throw new RuntimeException("Unexpected object type: '$type'");
     }
 }
