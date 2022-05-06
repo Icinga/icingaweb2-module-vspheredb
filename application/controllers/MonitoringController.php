@@ -174,7 +174,6 @@ class MonitoringController extends Controller
             }
             // $this->redirectNow($this->url());
         });
-        $this->content()->add(Html::tag('pre', print_r($form->getNormalizedValues(), 1)));
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
         $form->addElement('submit', 'submit', [
