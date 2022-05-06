@@ -46,7 +46,7 @@ class MonitoringRuleSet
             $db->select()
                 ->from(MonitoringRuleSet::TABLE, 'settings')
                 ->where('object_uuid = ?', $uuid)
-                ->where('object_uuid = ?', $uuid)
+                ->where('object_folder = ?', $objectFolder)
         );
         if ($settings) {
             $self = new static($uuid, $objectFolder, Settings::fromSerialization(JsonString::decode($settings)));
