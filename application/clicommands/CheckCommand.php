@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
+use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -181,7 +182,7 @@ class CheckCommand extends Command
         $tree = new MonitoringRulesTree($this->db(), $type);
         $settings = $tree->getInheritedSettingsFor($object);
         $settings->setInternalDefaults(RuleSetRegistry::default());
-        $all = new CheckResultSet('Checking VM');
+        $all = new CheckResultSet(sprintf('%s, according configured rules', $this->getTypeLabelForObject($object)));
         foreach (RuleSetRegistry::default()->getSets() as $set) {
             if ($settings->isDisabled($set)) {
                 continue;
@@ -203,6 +204,19 @@ class CheckCommand extends Command
         }
         echo $this->colorizeOutput($all->getOutput()) . PHP_EOL;
         exit($all->getState()->getExitCode());
+    }
+
+    protected function getTypeLabelForObject(BaseDbObject $object): string
+    {
+        if ($object instanceof HostSystem) {
+            return 'Host System';
+        } elseif ($object instanceof VirtualMachine) {
+            return 'Virtual Machine';
+        } elseif ($object instanceof Datastore) {
+            return 'Datastore';
+        }
+
+        return 'Object';
     }
 
     protected function colorizeOutput(string $string): string
