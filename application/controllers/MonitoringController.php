@@ -14,6 +14,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTreeRenderer;
 use Icinga\Module\Vspheredb\Monitoring\Rule\RuleForm;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
 use RuntimeException;
@@ -79,7 +80,12 @@ class MonitoringController extends Controller
             Html::tag('h2', $this->translate('Defining Check Commands')),
             Html::tag('p', Html::sprintf(
                 $this->translate('Check our %s for instructions of how to set them up'),
-                Link::create($this->translate('documentation'), '#') // TODO
+                Documentation::link(
+                    $this->translate('Documentation'),
+                    'vspheredb',
+                    '31-Check_Commands',
+                    $this->translate('Icinga vSphereDB Check Commands')
+                )
             ))
         ]);
     }
