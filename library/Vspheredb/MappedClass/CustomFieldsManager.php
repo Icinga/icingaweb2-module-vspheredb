@@ -36,8 +36,9 @@ class CustomFieldsManager
             if (isset($this->field->CustomFieldDef)) { // Mapping goes wrong for arrays of X
                 $fields = $this->field->CustomFieldDef;
             } else {
-                var_dump($this);
-                die('Custom Fields Manager is now correct');
+                // Used to be die('Custom Fields Manager is not correct');
+                // However, this triggers on v5.5 (see #377)
+                $fields = [];
             }
             $this->map = [];
             foreach ($fields as $field) {
