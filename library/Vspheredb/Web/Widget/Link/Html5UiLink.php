@@ -7,7 +7,11 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
+use Ramsey\Uuid\Uuid;
+use function rawurlencode;
+use function sprintf;
 
 class Html5UiLink extends BaseHtmlElement
 {
@@ -26,45 +30,42 @@ class Html5UiLink extends BaseHtmlElement
         $this->setContent($label);
 
         if ($object instanceof VirtualMachine) {
-            $url = \sprintf(
-                'https://%s/ui/#/host/vms/%s',
+            $ur = 'https://%s/ui/#?extensionId=%s&objectId=%s&navigator=%s';
+
+            // Choose main detail view:
+            //  $extension = 'vsphere.core.vm.monitor'; // Shows 'Monitor' Tab
+            // $extension = 'vsphere.core.inventory.serverObjectViewsExtension';
+            $extension = 'vsphere.core.vm.summary';
+
+            // Choose left-hand tree view:
+            // $navigator = 'vsphere.core.viTree.hostsAndClustersView';
+            $navigator = 'vsphere.core.viTree.vmsAndTemplatesView';
+            $objectId = sprintf(
+                'urn:vmomi:%s:%s:%s',
+                'VirtualMachine',
+                $managedObject->get('moref'),
+                Uuid::fromBytes($vCenter->getBinaryUuid())->toString()
+            );
+            $url = sprintf(
+                $ur,
                 $server->get('host'),
-                \rawurlencode($managedObject->get('moref'))
+                rawurlencode($extension),
+                rawurlencode($objectId),
+                rawurlencode($navigator)
             );
         } elseif ($object instanceof HostSystem) {
-            $url = \sprintf(
+            $url = sprintf(
                 'https://%s/ui/#/host/%s',
                 $server->get('host'),
-                \rawurlencode($managedObject->get('moref'))
+                rawurlencode($managedObject->get('moref'))
             );
         } else {
-            throw new \InvalidArgumentException('No support');
+            throw new InvalidArgumentException('No support');
         }
         $this->setAttribute('href', $url);
         $this->setAttribute('class', 'icon-home');
         $this->setAttribute('title', $this->translate('Open the VMware HTML 5 UI'));
         $this->setAttribute('target', '_blank'); // To keep the session
-
-        // Needs testing. Here are some other examples:
-
-        // https://vcenter.example.com/ui/#?extensionId=vsphere.core.vm.monitor&'
-        //  . 'objectId=urn:vmomi:VirtualMachine:vm-12345:'
-        //  . 'EA70A975-CD34-12AB-12BC-AB18AF45CEB7'
-        //  . '&navigator=vsphere.core.viTree.hostsAndClustersView
-
-        // $objectId = \sprintf(
-        //     'urn:vmomi:ObjectClass:%s:%s:',
-        //     'VirtualMachine', //  'ManagedObjectReference',
-        //     $server->
-        //     $managedObject->get('moref')
-        // );
-        // $url = \sprintf(
-        //     'https://%s/ui/#?extensionId=%s&objectId=%s&navigator=%s',
-        //     $server->get('host'), // contains port
-        //     'vsphere.core.vm.summary', // or vsphere.core.vm.monitor?
-        //     \rawurldecode($objectId),
-        //     'vsphere.core.viTree.hostsAndClustersView'
-        // );
     }
 
     /**
