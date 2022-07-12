@@ -213,6 +213,18 @@ class ApiClassMap
             'PhysicalNicLinkInfo'     => PhysicalNicLinkInfo::class,
             'PhysicalNicSpec'         => PhysicalNicSpec::class,
             'HostNumericSensorInfo'   => HostNumericSensorInfo::class,
+
+            'HostHostBusAdapter'                      => HostHostBusAdapter::class,
+
+            'HostBlockHba'                            => HostBlockHba::class,
+            'HostFibreChannelHba'                     => HostFibreChannelHba::class,
+            'HostFibreChannelOverEthernetHba'         => HostFibreChannelOverEthernetHba::class,
+            'HostFibreChannelOverEthernetHbaLinkInfo' => HostFibreChannelOverEthernetHbaLinkInfo::class,
+            'HostParallelScsiHba'                     => HostParallelScsiHba::class,
+            'HostPcieHba'                             => HostPcieHba::class,
+            'HostRdmaHba'                             => HostRdmaHba::class,
+            'HostSerialAttachedHba'                   => HostSerialAttachedHba::class,
+            'HostTcpHba'                              => HostTcpHba::class,
         ];
 
         return $map;
