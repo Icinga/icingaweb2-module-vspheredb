@@ -84,6 +84,7 @@ class VmEssentialInfoTable extends NameValueTable
     {
         $vm = $this->vm;
         $uuid = $vm->get('uuid');
+        $this->addNameValueRow($this->translate('Tools'), $this->prepareTools($vm));
         if ($annotation = $vm->get('annotation')) {
             $this->addNameValueRow(
                 $this->translate('Annotation'),
@@ -114,7 +115,6 @@ class VmEssentialInfoTable extends NameValueTable
             $vm->get('guest_state') ?: 'unknown'
         );
         $this->addNameValuePairs([
-            $this->translate('Tools') => $this->prepareTools($vm),
             $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
             $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
             $this->translate('Guest OS') => $guest,
