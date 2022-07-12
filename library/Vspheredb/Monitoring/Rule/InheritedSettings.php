@@ -126,6 +126,9 @@ class InheritedSettings extends Settings
 
     public function setInherited($name, $value, $inheritedFrom = null)
     {
+        if ($this->get($name) !== null) {
+            return;
+        }
         parent::set($name, $value);
         $this->inheritedFromUuids[$name] = $inheritedFrom;
         if ($inheritedFrom) {
