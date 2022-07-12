@@ -7,15 +7,38 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
-use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use function rawurlencode;
 use function sprintf;
 
 class Html5UiLink extends BaseHtmlElement
 {
     use TranslationHelper;
+
+    const QUERYSTRING_V7 = '/ui/#?extensionId=%s&objectId=%s&navigator=%s';
+    const V6_QUERYSTRING = [
+        HostSystem::class     => '/ui/#/host/%s',
+        VirtualMachine::class => '/ui/#/host/vms/%s',
+    ];
+    const OBJECT_TYPES = [
+        HostSystem::class     => 'HostSystem',
+        VirtualMachine::class => 'VirtualMachine',
+    ];
+
+    // left-hand tree view:
+    const V7_NAVIGATOR = [
+        HostSystem::class     => 'vsphere.core.viTree.hostsAndClustersView',
+        VirtualMachine::class => 'vsphere.core.viTree.vmsAndTemplatesView',
+    ];
+    const V7_EXTENSION = [
+        // Choose main detail view:
+        //  $extension = 'vsphere.core.vm.monitor'; // Shows 'Monitor' Tab
+        // $extension = 'vsphere.core.inventory.serverObjectViewsExtension';
+        HostSystem::class     => 'vsphere.core.host.summary',
+        VirtualMachine::class => 'vsphere.core.vm.summary',
+    ];
 
     /** @var BaseDbObject */
     protected $object;
@@ -24,48 +47,73 @@ class Html5UiLink extends BaseHtmlElement
 
     public function __construct(VCenter $vCenter, BaseDbObject $object, $label)
     {
-        /** @var HostSystem|VirtualMachine $object */
-        $managedObject = $object->object();
-        $server = $vCenter->getFirstServer(false);
         $this->setContent($label);
-
-        if ($object instanceof VirtualMachine) {
-            $ur = 'https://%s/ui/#?extensionId=%s&objectId=%s&navigator=%s';
-
-            // Choose main detail view:
-            //  $extension = 'vsphere.core.vm.monitor'; // Shows 'Monitor' Tab
-            // $extension = 'vsphere.core.inventory.serverObjectViewsExtension';
-            $extension = 'vsphere.core.vm.summary';
-
-            // Choose left-hand tree view:
-            // $navigator = 'vsphere.core.viTree.hostsAndClustersView';
-            $navigator = 'vsphere.core.viTree.vmsAndTemplatesView';
-            $objectId = sprintf(
-                'urn:vmomi:%s:%s:%s',
-                'VirtualMachine',
-                $managedObject->get('moref'),
-                Uuid::fromBytes($vCenter->getBinaryUuid())->toString()
-            );
-            $url = sprintf(
-                $ur,
-                $server->get('host'),
-                rawurlencode($extension),
-                rawurlencode($objectId),
-                rawurlencode($navigator)
-            );
-        } elseif ($object instanceof HostSystem) {
-            $url = sprintf(
-                'https://%s/ui/#/host/%s',
-                $server->get('host'),
-                rawurlencode($managedObject->get('moref'))
-            );
-        } else {
-            throw new InvalidArgumentException('No support');
-        }
-        $this->setAttribute('href', $url);
+        $this->setAttribute('href', self::prepareUrl($vCenter, $object));
         $this->setAttribute('class', 'icon-home');
         $this->setAttribute('title', $this->translate('Open the VMware HTML 5 UI'));
         $this->setAttribute('target', '_blank'); // To keep the session
+    }
+
+    protected static function prepareUrl(VCenter $vCenter, BaseDbObject $object)
+    {
+        $url = self::prepareBaseUrl($vCenter);
+        if (self::isV7($vCenter)) {
+            $url .= self::linkV7($object, $vCenter);
+        } else {
+            $url .= self::linkV6($object);
+        }
+
+        return $url;
+    }
+
+    protected static function prepareBaseUrl(VCenter $vCenter)
+    {
+        return 'https://' . $vCenter->getFirstServer(false)->get('host');
+    }
+
+    protected static function isV7(VCenter $vCenter)
+    {
+        return version_compare($vCenter->get('version'), '7.0.0', '>=');
+    }
+
+    protected static function linkV6(BaseDbObject $object)
+    {
+        return sprintf(self::pick(self::V6_QUERYSTRING, $object), rawurlencode($object->object()->get('moref')));
+    }
+
+    protected static function linkV7(BaseDbObject $object, VCenter $vCenter)
+    {
+        return sprintf(
+            self::QUERYSTRING_V7,
+            rawurlencode(self::pick(self::V7_EXTENSION, $object)),
+            rawurlencode(self::prepareV7ObjectId($vCenter, $object)),
+            rawurlencode(self::pick(self::V7_NAVIGATOR, $object))
+        );
+    }
+
+    protected static function prepareV7ObjectId(VCenter $vCenter, BaseDbObject $object)
+    {
+        return sprintf(
+            'urn:vmomi:%s:%s:%s',
+            self::pick(self::OBJECT_TYPES, $object),
+            self::moref($object),
+            Uuid::fromBytes($vCenter->getBinaryUuid())->toString()
+        );
+    }
+
+    protected static function moref(BaseDbObject $object)
+    {
+        return $object->object()->get('moref');
+    }
+
+    protected static function pick(array $list, BaseDbObject $object)
+    {
+        $class = get_class($object);
+        if (isset($list[$class])) {
+            return $list[$class];
+        }
+
+        throw new RuntimeException("Unable to generate HTML5 UI link for $class");
     }
 
     /**
