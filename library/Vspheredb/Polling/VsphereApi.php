@@ -548,13 +548,16 @@ class VsphereApi
                 return [];
             }, function (Exception $e) {
                 if ($e instanceof \SoapFault) {
-                    if (isset($e->detail) && current($e->detail)->enc_stype === 'ManagedObjectNotFound') {
-                        $this->eventCollector = null;
-                        throw new \RuntimeException(
-                            'Dropping formerly known EventCollector: ' . $e->getMessage(),
-                            $e->getCode(),
-                            $e
-                        );
+                    if (isset($e->detail)) {
+                        $details = (array)$e->detail;
+                        if (current($details)->enc_stype === 'ManagedObjectNotFound') {
+                            $this->eventCollector = null;
+                            throw new \RuntimeException(
+                                'Dropping formerly known EventCollector: ' . $e->getMessage(),
+                                $e->getCode(),
+                                $e
+                            );
+                        }
                     }
                 }
                 throw $e;
