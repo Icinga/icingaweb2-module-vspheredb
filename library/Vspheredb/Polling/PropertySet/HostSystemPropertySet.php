@@ -36,7 +36,6 @@ class HostSystemPropertySet implements PropertySet
                 'summary.hardware.memorySize',
                 'hardware.biosInfo.releaseDate',
                 'summary.hardware.otherIdentifyingInfo',
-                'config.storageDevice.hostBusAdapter',
             ])
         ];
     }

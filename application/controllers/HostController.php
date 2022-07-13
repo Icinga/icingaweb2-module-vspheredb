@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\HostHbaTable;
 use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
 use Icinga\Module\Vspheredb\Web\Table\HostPhysicalNicTable;
 use Icinga\Module\Vspheredb\Web\Table\HostSensorsTable;
@@ -46,6 +47,7 @@ class HostController extends Controller
             new HostHardwareInfoTable($host, $quickStats),
             new HostMonitoringInfo($host),
             new HostPhysicalNicTable($host),
+            new HostHbaTable($host),
         ]);
     }
 

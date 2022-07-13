@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\VmDatastoreUsageSyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncTask\ComputeResourceSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\DatastoreSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\HostHardwareSyncTask;
+use Icinga\Module\Vspheredb\Polling\SyncTask\HostHbaSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\HostPhysicalNicSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\HostQuickStatsSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\HostSensorSyncTask;
@@ -68,6 +69,7 @@ class ObjectSync implements DaemonTask
     protected $slowTasks = [
         HostHardwareSyncTask::class,
         HostSensorSyncTask::class,
+        HostHbaSyncTask::class,
         HostPhysicalNicSyncTask::class,
         HostVirtualNicSyncTask::class,
         VmHardwareSyncTask::class,
