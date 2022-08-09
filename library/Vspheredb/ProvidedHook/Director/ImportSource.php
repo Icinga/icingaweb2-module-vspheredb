@@ -31,6 +31,7 @@ class ImportSource extends ImportSourceHook
 
     protected $vmColumns = [
         'object_name'       => 'o.object_name',
+        'moref'             => 'o.moref',
         'vcenter_name'      => 'vc.name',
         'guest_ip_address'  => 'vm.guest_ip_address',
         'hardware_numcpu'   => 'vm.hardware_numcpu',
