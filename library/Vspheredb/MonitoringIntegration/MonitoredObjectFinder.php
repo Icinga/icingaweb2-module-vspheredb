@@ -92,7 +92,7 @@ class MonitoredObjectFinder
         }
 
         if (preg_match('/^vars./', $monProperty)) {
-            $varName = substr($monProperty, 4);
+            $varName = substr($monProperty, 5);
             $vars = $object->customvars;
             if (isset($vars[$varName])) {
                 $value = $vars[$varName];
