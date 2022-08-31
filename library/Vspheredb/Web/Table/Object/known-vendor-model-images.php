@@ -74,6 +74,16 @@ return  [
         'ThinkAgile VX 1U Node -[7Y93CTO4WW]-' => 'https://lenovopress.com/assets/images/LP0932/VX-1U-overview.png',
         'ThinkSystem SR850 -[7X19CTO1WW]-' => 'https://lenovopress.com/assets/images/LP1301/'
             . 'ThinkSystem-SR850-V2-500px.png',
+        'ThinkSystem SR650 -[7X06CTO1WW]-' => 'https://lenovopress.lenovo.com/assets/images/LP1050/'
+            . 'ThinkSystem%20SR650%20server.jpg',
+        'ThinkSystem SR950 -[7X12CTO1WW]-' => 'https://lenovopress.lenovo.com/assets/images/LP0647/'
+            . 'ThinkSystem%20SR950.png',
+        'ThinkAgile HX1321 Node -[7Y89CTO1WW]-' => 'https://lenovopress.lenovo.com/assets/images/LP0887/'
+            . 'HX1321-overview.png',
+        'ThinkAgile HX7520 Appliance -[7X84CTO6WW]-' => 'https://lenovopress.lenovo.com/assets/images/LP0730/'
+            . 'HX7520-overview.png',
+        'Lenovo ThinkAgile HX7520 Appliance -[7X84CTO6WW]-' => 'https://lenovopress.lenovo.com/assets/images/LP0730/'
+            . 'HX7520-overview.png',
     ],
     'FUJITSU' => [
         'PRIMERGY CX2560 M5' => 'https://www.fujitsu.com/de/imagesgig5/W-DK43300_tcm20-4285182_tcm20-5309118-32.png',
@@ -92,5 +102,9 @@ return  [
         //    x3850 X6 -[3837Z91]-
         //    x3850 X6 -[3837Z91]-
         // Lenovo: https://lenovopress.com/assets/images/tips1250/Lenovo%20System%20x3850%20X6%20v4.jpg
+    ],
+    'Nutanix' => [
+        'NX-3170-G8' => 'https://download.nutanix.com/documentation/NX-hardware/images/'
+        . 'front-panel-callouts-nx3170g8-nx8170g8.png',
     ],
 ];
