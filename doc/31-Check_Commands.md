@@ -22,10 +22,13 @@ failing or in a dubios state:
 
 The following image shows a sample output:
 
-![Monitoring Rules - Menu](screenshot/03_checks/038-health_check.png)
+![vSphereDB Health Check](screenshot/03_checks/038-health_check.png)
 
 Formatting slightly differs based on whether you're monitoring multiple
-vCenters/ESXi hosts, or just a single one.
+vCenters/ESXi hosts, or just a single one. In case the daemon is not running,
+this will also be reported:
+
+![Daemon not running - vSphereDB Health Check](screenshot/03_checks/039-health_check-no_daemon.png)
 
 Monitoring Rule Definitions
 ---------------------------
