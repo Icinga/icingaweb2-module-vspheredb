@@ -50,10 +50,7 @@ class VCenterSummaryTable extends ObjectsTable
                 $icons->add(VCenterConnectionStatusIcon::create($connection->state, $connection->server));
             }
         } else {
-            $icons->add(Icon::create('warning-empty', [
-                'class' => 'yellow',
-                'title' => $this->translate('There is no configured server for this vCenter')
-            ]));
+            $icons->add(VCenterConnectionStatusIcon::noServer());
         }
 
         return $icons;

@@ -6,13 +6,15 @@ use gipfl\Cli\Screen;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\CheckPluginHelper;
+use Icinga\Module\Vspheredb\Configuration;
+use Icinga\Module\Vspheredb\Daemon\ConnectionState;
+use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
-use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\CheckResultSet;
@@ -31,51 +33,61 @@ class CheckCommand extends Command
     protected $db;
 
     /**
-     * This establishes a connection to the given vCenter
-     *
-     * USAGE
-     *
-     * icingacli vspheredb check vcenter [--vCenter <id>]
+     * Check vSphereDB daemon health
+     */
+    public function healthAction()
+    {
+        $this->run(function () {
+            $client = new RemoteClient(Configuration::getSocketPath(), $this->loop());
+            return $client->request('vsphere.getApiConnections')->then(function ($result) {
+                $connState = new ConnectionState($result, $this->db()->getDbAdapter());
+                $vCenters = $connState->getVCenters();
+                $connections = $connState->getConnectionsByVCenter();
+                foreach ($vCenters as $vcenter) {
+                    $vcenterId = $vcenter->vcenter_id;
+                    $prefix = sprintf('%s, %s: ', $vcenter->name, $vcenter->software);
+                    if (isset($connections[$vcenterId])) {
+                        foreach ($connections[$vcenterId] as $connection) {
+                            if ($connection->enabled) {
+                                $this->addProblem(
+                                    ConnectionState::getIcingaState($connection->state),
+                                    $prefix . ConnectionState::describe($connection->state, $connection->server)
+                                );
+                            } else {
+                                $this->addMessage(
+                                    "[DISABLED] $prefix"
+                                    . ConnectionState::describe($connection->state, $connection->server)
+                                );
+                            }
+                        }
+                    } else {
+                        $this->addProblem('WARNING', $prefix . ConnectionState::describeNoServer());
+                    }
+                }
+
+                if (count($vCenters) > 1) {
+                    if ($this->getState() === 0) {
+                        $this->prependMessage('All vCenters/ESXi Hosts are connected');
+                    } else {
+                        $this->prependMessage('There are problems with some vCenters/ESXi Host connections');
+                    }
+                }
+            }, function (\Exception $e) {
+                $message = $e->getMessage();
+                if (preg_match('/^Unable to connect/', $message)) {
+                    $message = "Daemon not running? $message";
+                }
+                $this->addProblem('CRITICAL', $message);
+            });
+        });
+    }
+
+    /**
+     * @deprecated
      */
     public function vcenterconnectionAction()
     {
-        $this->run(function () {
-            $vCenter = VCenter::loadWithAutoIncId($this->requiredParam('vCenter'), Db::newConfiguredInstance());
-            $vCenterName = $vCenter->get('name');
-            $api = $vCenter->getApi($this->logger);
-            try {
-                $about = $api->getServiceInstance()->about;
-                $time = $api->getCurrentTime()->format('U.u');
-            } catch (\Exception $e) {
-                if (preg_match('/CURL ERROR: (.+)$/', $e->getMessage(), $match)) {
-                    $this->addProblem('CRITICAL', sprintf(
-                        'Failed to contact %s: %s',
-                        $vCenterName,
-                        $match[1]
-                    ));
-                } else {
-                    $this->addProblem('UNKNOWN', $e->getMessage());
-                }
-                return;
-            }
-            $timeDiff = microtime(true) - (float)$time;
-            if (abs($timeDiff) > 0.1) {
-                $this->raiseState('warning');
-                if (abs($timeDiff) > 3) {
-                    $this->raiseState('critical');
-                }
-                printf("%0.3fms Time difference detected\n", $timeDiff * 1000);
-            }
-
-            echo sprintf(
-                "%s: Connected to %s on %s, api=%s (%s)\n",
-                $vCenterName,
-                $about->fullName,
-                $about->osType,
-                $about->apiType,
-                $about->licenseProductName
-            );
-        });
+        $this->addProblem('UNKNOWN', 'This check no longer exists. Please use `icingacli vspheredb check health`');
     }
 
     /**

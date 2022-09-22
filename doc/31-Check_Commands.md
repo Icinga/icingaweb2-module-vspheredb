@@ -10,6 +10,23 @@ be very efficient, that's why we opted for shared responsibility:
 * **Monitoring Rule Definitions** can be configured in the UI, and have a direct
   influence on related Check Commands
 
+Self-Monitoring Health Check
+----------------------------
+
+There is a generic health check, which talks to the vSphereDB daemon through
+it's Unix socket, reports generic health information, complains in case the
+daemon is not reachable or when one of the vCenters/ESXi host connections is
+failing or in a dubios state:
+
+    icingacli vspheredb check health
+
+The following image shows a sample output:
+
+![Monitoring Rules - Menu](screenshot/03_checks/038-health_check.png)
+
+Formatting slightly differs based on whether you're monitoring multiple
+vCenters/ESXi hosts, or just a single one.
+
 Monitoring Rule Definitions
 ---------------------------
 

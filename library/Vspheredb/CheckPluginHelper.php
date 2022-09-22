@@ -2,10 +2,11 @@
 
 namespace Icinga\Module\Vspheredb;
 
-use Error;
 use Exception;
 use gipfl\Cli\Screen;
+use Icinga\Module\Vspheredb\Clicommands\Command;
 use InvalidArgumentException;
+use React\Promise\PromiseInterface;
 
 trait CheckPluginHelper
 {
@@ -52,19 +53,43 @@ trait CheckPluginHelper
      */
     protected function run($callable)
     {
-        if (\is_callable($callable)) {
-            try {
-                $callable();
-            } catch (Exception $e) {
-                $this->addProblem('UNKNOWN', $this->stripNonUtf8Characters($e->getMessage()));
-            } catch (Error $e) {
-                $this->addProblem('UNKNOWN', $this->stripNonUtf8Characters($e->getMessage()));
+        /** @var Command $this */
+        $this->loop()->futureTick(function () use ($callable) {
+            $result = null;
+            if (\is_callable($callable)) {
+                try {
+                    $result = $callable();
+                } catch (Exception $e) {
+                    $this->addProblem('UNKNOWN', $this->stripNonUtf8Characters($e->getMessage()));
+                    $this->showOptionalTrace($e);
+                } catch (\Throwable $e) {
+                    $this->addProblem('UNKNOWN', $this->stripNonUtf8Characters($e->getMessage()));
+                    $this->showOptionalTrace($e);
+                }
+            } else {
+                $this->addProblem('UNKNOWN', 'CheckPluginHelper requires a "callable"');
             }
-        } else {
-            $this->addProblem('UNKNOWN', 'CheckPluginHelper requires a "callable"');
-        }
 
-        $this->shutdown();
+            if ($result instanceof PromiseInterface) {
+                $result->then(function () {
+                    // All done
+                }, function (Exception $e) {
+                    $this->addProblem('UNKNOWN', $e->getMessage());
+                })->always(function () {
+                    $this->shutdown();
+                });
+            } else {
+                $this->shutdown();
+            }
+        });
+        $this->eventuallyStartMainLoop();
+    }
+
+    protected function showOptionalTrace($e)
+    {
+        if ($this->showTrace()) {
+            echo $e->getTraceAsString();
+        }
     }
 
     /**
@@ -99,8 +124,8 @@ trait CheckPluginHelper
         $this->raiseState($state);
         $stateName = $this->getStateName($state);
         $this->addMessage(sprintf(
-            '%s %s',
-            $this->getOutputScreen()->colorize("[$stateName]", $this->stateColors[$stateName]),
+            '[%s] %s',
+            $this->getOutputScreen()->colorize($stateName, $this->stateColors[$stateName]),
             $message
         ));
 
@@ -188,7 +213,13 @@ trait CheckPluginHelper
 
     protected function shutdown()
     {
-        echo implode("\n", $this->getMessages()) . "\n";
-        exit($this->getState());
+        $messages = $this->getMessages();
+        if (! empty($messages)) {
+            echo implode("\n", $messages) . "\n";
+        }
+        $this->loop()->addTimer(0.01, function () {
+            $this->loop()->stop();
+            exit($this->getState());
+        });
     }
 }

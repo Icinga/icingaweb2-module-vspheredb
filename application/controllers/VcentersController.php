@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
+use Icinga\Module\Vspheredb\Daemon\ConnectionState;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
@@ -28,44 +29,8 @@ class VcentersController extends ObjectsController
         } catch (\Exception $e) {
             return null;
         }
-        $connectionsByVCenter = $this->getConfiguredServersByVCenter();
-        foreach ((array) $connections as $id => $connection) {
-            if (isset($connectionsByVCenter[$connection->vcenter_id])) {
-                $connectionsByVCenter[$connection->vcenter_id][$connection->server_id]->state = $connection->state;
-            } else {
-                $connectionsByVCenter[$connection->vcenter_id] = [$connection->server_id => (object) [
-                    'state'  => $connection->state,
-                    'server' => $connection->server,
-                ]];
-            }
-        }
-
-        return $connectionsByVCenter;
-    }
-
-    protected function getConfiguredServersByVCenter()
-    {
-        $db = $this->db()->getDbAdapter();
-        $result = [];
-        foreach ($db->fetchAll(
-            $db->select()->from('vcenter_server', [
-                'id',
-                'vcenter_id',
-                'host',
-                'enabled'
-            ])
-        ) as $server) {
-            if (! isset($result[$server->vcenter_id])) {
-                $result[$server->vcenter_id] = [];
-            }
-            $result[$server->vcenter_id][$server->id] = (object) [
-                'server' => $server->host,
-                'enabled' => $server->enabled === 'y',
-                'state'   => $server->enabled === 'n' ? 'disabled' : 'unknown',
-            ];
-        }
-
-        return $result;
+        $connectionState = new ConnectionState($connections, $this->db()->getDbAdapter());
+        return $connectionState->getConnectionsByVCenter();
     }
 
     /**
