@@ -17,7 +17,7 @@ class ConnectionState
         ApiConnection::STATE_FAILING   => 'CRITICAL',
         ApiConnection::STATE_STOPPED   => 'WARNING',
         ApiConnection::STATE_STOPPING  => 'WARNING',
-        'unknown' => 'UNKNOWN',
+        'unknown' => 'CRITICAL',
     ];
     /** @var array */
     protected $daemonApiConnections;
