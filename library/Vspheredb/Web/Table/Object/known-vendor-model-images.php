@@ -4,8 +4,9 @@ return  [
     'Dell Inc.' => [
         'PowerEdge R610' => 'https://i.dell.com/is/image/DellContent/content/dam/'
             . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
-            . 'poweredge_r610/best_of/server-poweredge-r610-bestof-500.png?fmt=png-alpha',
-
+            . 'poweredge_r610/front_facing/server-poweredge-r610-front-overhead-relativesized-500.jpg',
+            // Alpha looks better, but has the wrong aspect ratio:
+            // . 'poweredge_r610/best_of/server-poweredge-r610-bestof-500.png?fmt=png-alpha',
         'PowerEdge R620' => 'https://i.dell.com/is/image/DellContent/content/dam/'
             . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
             . 'poweredge_r620/best_of/server-poweredge-r620-left-bestof-500.psd?fmt=png-alpha',
