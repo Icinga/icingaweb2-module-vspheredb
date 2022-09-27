@@ -16,6 +16,8 @@ use ipl\Html\Html;
 
 class DatastoreController extends Controller
 {
+    use SingleObjectMonitoring;
+
     /**
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
@@ -72,6 +74,11 @@ class DatastoreController extends Controller
             ->renderTo($this);
     }
 
+    public function monitoringAction()
+    {
+        $this->showMonitoringDetails($this->addDatastore());
+    }
+
     /**
      * @return Datastore
      * @throws \Icinga\Exception\MissingParameterException
@@ -96,6 +103,10 @@ class DatastoreController extends Controller
         ])->add('events', [
             'label'     => $this->translate('Events'),
             'url'       => 'vspheredb/datastore/events',
+            'urlParams' => $params
+        ])->add('monitoring', [
+            'label'     => $this->translate('Monitoring'),
+            'url'       => 'vspheredb/datastore/monitoring',
             'urlParams' => $params
         ])->activate($this->getRequest()->getActionName());
     }

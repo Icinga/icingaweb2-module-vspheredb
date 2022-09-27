@@ -1321,6 +1321,35 @@ table.object-rules-check-table {
   }
 }
 
+.check-result {
+  font-family: "Liberation Mono", "Lucida Console", Courier, monospace;
+  &::before {
+    font-family: "Liberation Mono", "Lucida Console", Courier, monospace;
+    content: '[';
+    color: @text-color;
+  }
+  &::after {
+    font-family: "Liberation Mono", "Lucida Console", Courier, monospace;
+    content: ']';
+    color: @text-color;
+  }
+  &.state-critical {
+    color: @color-critical;
+  }
+
+  &.state-ok {
+    color: @color-ok;
+  }
+
+  &.state-warning {
+    color: @color-warning;
+  }
+
+  &.state-unknown {
+    color: @color-unknown;
+  }
+}
+
 /* Should be moved to gipfl */
 form.gipfl-form {
   dl {

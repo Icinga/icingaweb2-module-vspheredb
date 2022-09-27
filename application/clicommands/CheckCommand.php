@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use gipfl\Cli\Screen;
-use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Configuration;
@@ -12,15 +11,9 @@ use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\DbObject\Datastore;
-use Icinga\Module\Vspheredb\DbObject\HostSystem;
-use Icinga\Module\Vspheredb\DbObject\ManagedObject;
-use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
-use Icinga\Module\Vspheredb\Monitoring\CheckResultSet;
-use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
-use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
-use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
+use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
+use InvalidArgumentException;
 
 /**
  * vSphereDB Check Command
@@ -103,7 +96,7 @@ class CheckCommand extends Command
             $host = $this->lookup()->findOneBy('HostSystem', [
                 'host_name' => $this->params->getRequired('name')
             ]);
-            $this->runChecks($host, 'host');
+            $this->runChecks($host);
         });
     }
 
@@ -140,7 +133,7 @@ class CheckCommand extends Command
                     'guest_host_name' => $this->params->getRequired('name')
                 ]);
             }
-            $this->runChecks($vm, 'vm');
+            $this->runChecks($vm);
         });
     }
 
@@ -171,7 +164,7 @@ class CheckCommand extends Command
             $datastore = $this->lookup()->findOneBy('Datastore', [
                 'object_name' => $this->params->getRequired('name')
             ]);
-            $this->runChecks($datastore, 'datastore');
+            $this->runChecks($datastore);
         });
     }
 
@@ -189,46 +182,30 @@ class CheckCommand extends Command
         );
     }
 
-    protected function runChecks(BaseDbObject $object, string $type)
+    protected function runChecks(BaseDbObject $object)
     {
-        $tree = new MonitoringRulesTree($this->db(), $type);
-        $settings = $tree->getInheritedSettingsFor($object);
-        $settings->setInternalDefaults(RuleSetRegistry::default());
-        $all = new CheckResultSet(sprintf('%s, according configured rules', $this->getTypeLabelForObject($object)));
-        foreach (RuleSetRegistry::default()->getSets() as $set) {
-            if ($settings->isDisabled($set)) {
-                continue;
-            }
-            $checkSet = new CheckResultSet($set->getLabel());
-            $all->addResult($checkSet);
-            foreach ($set->getRules() as $rule) {
-                if ($settings->isDisabled($set, $rule)) {
-                    continue;
-                }
-                if (!$rule::supportsObjectType($type)) {
-                    continue;
-                }
-                $ruleSettings = $settings->withRemovedPrefix(Settings::prefix($set, $rule));
-                foreach ($rule->checkObject($object, $ruleSettings) as $result) {
-                    $checkSet->addResult($result);
-                }
-            }
+        $runner = new CheckRunner($this->db());
+        if ($section = $this->params->get(CheckRunner::RULESET_NAME_PARAMETER)) {
+            self::assertString($section, '--' . CheckRunner::RULESET_NAME_PARAMETER);
+            $runner->setRuleSetName($section);
         }
-        echo $this->colorizeOutput($all->getOutput()) . PHP_EOL;
-        exit($all->getState()->getExitCode());
+        if ($rule = $this->params->get(CheckRunner::RULE_NAME_PARAMETER)) {
+            self::assertString($rule, '--' . CheckRunner::RULE_NAME_PARAMETER);
+            $runner->setRuleName($rule);
+        }
+        if ($this->params->get('inspect')) {
+            $runner->enableInspection();
+        }
+        $result = $runner->check($object);
+        echo $this->colorizeOutput($result->getOutput()) . PHP_EOL;
+        exit($result->getState()->getExitCode());
     }
 
-    protected function getTypeLabelForObject(BaseDbObject $object): string
+    protected static function assertString($string, string $label)
     {
-        if ($object instanceof HostSystem) {
-            return 'Host System';
-        } elseif ($object instanceof VirtualMachine) {
-            return 'Virtual Machine';
-        } elseif ($object instanceof Datastore) {
-            return 'Datastore';
+        if (! is_string($string)) {
+            throw new InvalidArgumentException("$label must be a string");
         }
-
-        return 'Object';
     }
 
     protected function colorizeOutput(string $string): string

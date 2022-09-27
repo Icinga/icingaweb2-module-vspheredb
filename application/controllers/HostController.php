@@ -27,6 +27,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 class HostController extends Controller
 {
     use DetailSections;
+    use SingleObjectMonitoring;
 
     /** @var HostHeader */
     protected $hostHeader;
@@ -98,6 +99,11 @@ class HostController extends Controller
         $table->filterHost($this->addHost())->renderTo($this);
     }
 
+    public function monitoringAction()
+    {
+        $this->showMonitoringDetails($this->addHost());
+    }
+
     /**
      * @return HostSystem
      * @throws MissingParameterException|NotFoundError
@@ -142,6 +148,10 @@ class HostController extends Controller
         ])->add('events', [
             'label' => $this->translate('Events'),
             'url' => 'vspheredb/host/events',
+            'urlParams' => ['uuid' => $hexId]
+        ])->add('monitoring', [
+            'label' => $this->translate('Monitoring'),
+            'url' => 'vspheredb/host/monitoring',
             'urlParams' => ['uuid' => $hexId]
         ])
         ->activate($this->getRequest()->getActionName());

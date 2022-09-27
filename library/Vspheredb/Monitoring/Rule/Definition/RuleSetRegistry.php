@@ -7,6 +7,12 @@ use RuntimeException;
 
 class RuleSetRegistry implements JsonSerialization
 {
+    protected static $allSets = [
+        DefaultRuleSet::class,
+        DiskHealthRuleSet::class,
+        ConfigurationPolicyRuleSet::class,
+    ];
+
     /** @var MonitoringRuleSetDefinition[] */
     protected $sets = [];
 
@@ -28,13 +34,21 @@ class RuleSetRegistry implements JsonSerialization
         return $this->sets;
     }
 
+    public static function byName(string $name): RuleSetRegistry
+    {
+        /** @var string|MonitoringRuleSetDefinition $class */
+        foreach (self::$allSets as $class) {
+            if ($class::getIdentifier() === $name) {
+                return new static([$class]);
+            }
+        }
+
+        throw new \InvalidArgumentException("There is no Rule Set named '$name'");
+    }
+
     public static function default(): RuleSetRegistry
     {
-        return new static([
-            DefaultRuleSet::class,
-            DiskHealthRuleSet::class,
-            ConfigurationPolicyRuleSet::class,
-        ]);
+        return new static(self::$allSets);
     }
 
     public function loadSet(string $class)

@@ -2,8 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring;
 
-use Icinga\Module\Director\CheckPlugin\CheckResult;
-
 class CheckResultSet implements CheckResultInterface
 {
     const NUMERATION_PREFIX = ' \\_ ';
@@ -13,6 +11,8 @@ class CheckResultSet implements CheckResultInterface
 
     /** @var CheckResultInterface[] */
     protected $results = [];
+
+    protected $prependedOutput = '';
 
     public function __construct(string $name)
     {
@@ -41,7 +41,11 @@ class CheckResultSet implements CheckResultInterface
 
     public function getOutput($prefix = ''): string
     {
+        $indent = strlen($prefix . self::NUMERATION_PREFIX . '[');
         $lines = [sprintf('%s[%s] %s', $prefix, $this->getState()->getName(), $this->name)];
+        if ($this->prependedOutput !== '') {
+            $lines[] = $this->indent($this->prependedOutput, $indent - 4);
+        }
         foreach ($this->results as $result) {
             if ($result instanceof CheckResultSet) {
                 if ($result->isEmpty()) {
@@ -54,11 +58,38 @@ class CheckResultSet implements CheckResultInterface
                     $prefix,
                     self::NUMERATION_PREFIX,
                     $result->getState()->getName(),
-                    $result->getOutput()
+                    $this->indentAllButFirstLine($result->getOutput(), $indent)
                 );
             }
         }
 
         return implode(PHP_EOL, $lines);
+    }
+
+    public function prependOutput(string $output)
+    {
+        $this->prependedOutput .= $output;
+    }
+
+    protected function indentAllButFirstLine(string $string, int $spaces): string
+    {
+        $lines = explode(PHP_EOL, rtrim($string));
+        return array_shift($lines) . $this->indent(implode(PHP_EOL, $lines), $spaces);
+    }
+
+    protected function indent(string $string, int $spaces): string
+    {
+        $lines = explode(PHP_EOL, rtrim($string, PHP_EOL));
+        $output = '';
+        $prefix = str_repeat(' ', $spaces);
+        foreach ($lines as $line) {
+            if ($output === '') {
+                $output .= "$prefix$line";
+            } else {
+                $output .= "\n$prefix$line";
+            }
+        }
+
+        return "$output"; // Hint: "$output\n" would be "correcter"
     }
 }

@@ -2,13 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
-use gipfl\IcingaWeb2\Link;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
-use Icinga\Module\Vspheredb\Monitoring\Table\ObjectRulesCheckTable;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmEssentialInfoTable;
@@ -29,6 +27,7 @@ use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
 class VmController extends Controller
 {
     use DetailSections;
+    use SingleObjectMonitoring;
 
     /**
      * @throws MissingParameterException
@@ -87,27 +86,7 @@ class VmController extends Controller
 
     public function monitoringAction()
     {
-        $object = $this->addVm();
-        $showSettings = $this->params->get('showSettings');
-        $table = new ObjectRulesCheckTable($object, $this->db());
-        if ($showSettings) {
-            $table->showSettings();
-            $settingsLink = Link::create(
-                $this->translate('Hide Settings'),
-                $this->url()->without('showSettings'),
-                null,
-                ['class' => 'icon-left-big']
-            );
-        } else {
-            $settingsLink = Link::create(
-                $this->translate('Show Settings'),
-                $this->url()->with('showSettings', true),
-                null,
-                ['class' => 'icon-services']
-            );
-        }
-        $this->actions()->add($settingsLink);
-        $this->content()->add($table);
+        $this->showMonitoringDetails($this->addVm());
     }
 
     /**

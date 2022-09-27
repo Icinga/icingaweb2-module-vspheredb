@@ -23,7 +23,7 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
 
     public function getLabel(): string
     {
-        return $this->translate('VMware Object State');
+        return $this->translate('Overall VMware Object State');
     }
 
     public function checkObject(BaseDbObject $object, Settings $settings): array
