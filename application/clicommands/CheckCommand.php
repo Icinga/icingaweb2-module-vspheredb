@@ -280,33 +280,7 @@ class CheckCommand extends Command
         }
     }
 
-    /**
-     * @param ManagedObject $object
-     * @return $this
-     */
-    protected function checkOverallHealth(ManagedObject $object)
-    {
-        switch ($object->get('overall_status')) {
-            case 'green':
-                $this->prependMessage('Overall status is "green"');
-                break;
-            case 'gray':
-                $this->addProblem('CRITICAL', 'Overall status is "gray", VM might be unreachable');
-                break;
-            case 'yellow':
-                $this->addProblem('WARNING', 'Overall status is "yellow"');
-                break;
-            case 'red':
-                $this->addProblem('CRITICAL', 'Overall status is "critical"');
-                break;
-            default:
-                // Cannot happen
-        }
-
-        return $this;
-    }
-
-    protected function getStateForColor($color)
+    protected function getStateForColor($color): string
     {
         $colors = [
             'green'  => 'OK',
@@ -318,71 +292,12 @@ class CheckCommand extends Command
         return $colors[$color];
     }
 
-    /**
-     * @param BaseDbObject $object
-     * @return $this
-     */
-    protected function checkRuntimePowerState(BaseDbObject $object)
-    {
-        if ($object instanceof VirtualMachine) {
-            $what = 'Virtual Machine';
-        } elseif ($object instanceof HostSystem) {
-            $what = 'Host System';
-        } else {
-            $what = 'Object';
-        }
-
-        switch ($object->get('runtime_power_state')) {
-            case 'poweredOff':
-                $this->addProblem('CRITICAL', "$what has been powered off");
-                break;
-            case 'suspended':
-                $this->addProblem('CRITICAL', "$what has been suspended");
-                break;
-            case 'unknown':
-                $this->addProblem('UNKNOWN', "$what power state is unknown, might be disconnected");
-                break;
-            case 'poweredOn':
-            default:
-                // That's fine
-                // Cannot happen
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param BaseDbObject $stats
-     * @param BaseDbObject $object
-     * @return $this
-     */
-    protected function checkUptime(BaseDbObject $stats, BaseDbObject $object)
-    {
-        if ($object->get('runtime_power_state') !== 'poweredOn') {
-            // No need to check uptime
-            return $this;
-        }
-        if ($stats->get('uptime') < 900) {
-            $this->addProblem('WARNING', sprintf(
-                'System booted %s ago',
-                DateFormatter::formatDuration($stats->get('uptime'))
-            ));
-        }
-
-        return $this;
-    }
-
-    protected function requireObject()
-    {
-        return ManagedObject::load($this->params->getRequired('name'), $this->db());
-    }
-
-    protected function lookup()
+    protected function lookup(): CheckRelatedLookup
     {
         return new CheckRelatedLookup($this->db());
     }
 
-    protected function db()
+    protected function db(): Db
     {
         if ($this->db === null) {
             $this->db = Db::newConfiguredInstance();
