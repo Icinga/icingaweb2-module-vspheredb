@@ -6,6 +6,7 @@ use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
 use Exception;
 use gipfl\Curl\CurlAsync;
+use gipfl\Log\PrefixLogger;
 use Icinga\Module\Vspheredb\MappedClass\AboutInfo;
 use Icinga\Module\Vspheredb\MappedClass\ServiceContent;
 use Icinga\Module\Vspheredb\Monitoring\Health\ApiConnectionInfo;
@@ -25,6 +26,9 @@ class ApiConnectionHandler implements EventEmitterInterface
 
     /** @var CurlAsync */
     protected $curl;
+
+    /** @var LoggerInterface */
+    protected $parentLogger;
 
     /** @var LoggerInterface */
     protected $logger;
@@ -55,11 +59,10 @@ class ApiConnectionHandler implements EventEmitterInterface
 
     public function __construct(CurlAsync $curl, LoggerInterface $logger)
     {
-        // $this->remoteApi = $remoteApi;
         $this->curl = $curl;
-        $this->logger = $logger;
-        $this->servers = new ServerSet();
-        $this->appliedServers = new ServerSet();
+        $this->parentLogger = $logger;
+        $this->logger = new PrefixLogger('[api] ', $logger);
+        $this->appliedServers = $this->servers = new ServerSet();
     }
 
     public function setServerSet(ServerSet $servers)
@@ -179,7 +182,7 @@ class ApiConnectionHandler implements EventEmitterInterface
             $this->setFailed($server, $message);
         });
         $this->logger->notice(sprintf(
-            '[api] initializing server %d: %s',
+            'initializing server %d: %s',
             $server->getServerId(),
             $server->getIdentifier()
         ));
@@ -221,7 +224,7 @@ class ApiConnectionHandler implements EventEmitterInterface
                     $this->apiConnections[$vCenterId] = $apiConnection;
 
                     $this->logger->notice(sprintf(
-                        '[api] launching server %d: %s',
+                        'launching server %d: %s',
                         $server->getServerId(),
                         $this->vCenterConnectionLogName($vCenterId, $apiConnection)
                     ));
@@ -283,7 +286,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         foreach ($this->failing as $serverId => $timer) {
             if (!isset($serverMap[$serverId])) {
                 $this->loop->cancelTimer($timer);
-                $this->logger->notice(sprintf('[api] removing failing server (id=%d)', $serverId));
+                $this->logger->notice(sprintf('removing failing server (id=%d)', $serverId));
                 unset($this->failing[$serverId]);
                 unset($this->failingErrorMessages[$serverId]);
             }
@@ -303,7 +306,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         }
         foreach ($remove as $vCenterId => $connection) {
             $this->logger->notice(
-                '[api] removed vCenter connection for ' . $this->vCenterConnectionLogName($vCenterId, $connection)
+                'removed vCenter connection for ' . $this->vCenterConnectionLogName($vCenterId, $connection)
             );
             $connection->stop();
             unset($this->apiConnections[$vCenterId]);
@@ -313,7 +316,7 @@ class ApiConnectionHandler implements EventEmitterInterface
 
     protected function createApiConnection(ServerInfo $server): ApiConnection
     {
-        return new ApiConnection($this->curl, $server, $this->logger);
+        return new ApiConnection($this->curl, $server, $this->parentLogger);
     }
 
     public function run(LoopInterface $loop)
