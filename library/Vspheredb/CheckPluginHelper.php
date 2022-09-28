@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb;
 use Exception;
 use gipfl\Cli\Screen;
 use Icinga\Module\Vspheredb\Clicommands\Command;
+use Icinga\Module\Vspheredb\Daemon\ConnectionState;
 use InvalidArgumentException;
 use React\Promise\PromiseInterface;
 
@@ -75,6 +76,7 @@ trait CheckPluginHelper
                     // All done
                 }, function (Exception $e) {
                     $this->addProblem('UNKNOWN', $e->getMessage());
+                    $this->showOptionalTrace($e);
                 })->always(function () {
                     $this->shutdown();
                 });

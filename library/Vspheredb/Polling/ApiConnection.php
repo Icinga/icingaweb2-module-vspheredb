@@ -60,6 +60,9 @@ class ApiConnection implements EventEmitterInterface
     /** @var TimerInterface */
     protected $sessionChecker;
 
+    /** @var ?string */
+    protected $lastErrorMessage = null;
+
     public function __construct(CurlAsync $curl, ServerInfo $serverInfo, LoggerInterface $logger)
     {
         $this->curl = $curl;
@@ -136,7 +139,7 @@ class ApiConnection implements EventEmitterInterface
     {
         $this->sessionChecker = $this->loop->addPeriodicTimer(150, function () {
             $this->getApi()->eventuallyLogin()->otherwise(function (Exception $e) {
-                $this->logger->error('Login failed: ' . $e->getMessage());
+                $this->logError('Login failed: ' . $e->getMessage());
                 $this->loop->futureTick(function () {
                     $this->setState(self::STATE_FAILING);
                 });
@@ -188,7 +191,7 @@ class ApiConnection implements EventEmitterInterface
             }, function () {
                 $this->wsdlPromise = null;
                 if (! $this->stopping) {
-                    $this->logger->error('WSDL download failed');
+                    $this->logError('WSDL download failed');
                     $this->setState(self::STATE_FAILING);
                 }
             });
@@ -207,10 +210,11 @@ class ApiConnection implements EventEmitterInterface
             $this->api = $api;
             $this->loginPromise = null;
             $this->setState(self::STATE_CONNECTED);
+            $this->lastErrorMessage = null;
         }, function (Exception $e) {
             $this->loginPromise = null;
             if (! $this->stopping) {
-                $this->logger->error('Login failed: ' . $e->getMessage());
+                $this->logError('Login failed: ' . $e->getMessage());
                 $this->setState(self::STATE_FAILING);
             }
             throw $e;
@@ -230,9 +234,20 @@ class ApiConnection implements EventEmitterInterface
 
     public function fetchWsdl()
     {
-        $serverId = $this->serverInfo->get('id');
+        $serverId = $this->serverInfo->getServerId();
         $cacheDir = SafeCacheDir::getSubDirectory("wsdl-$serverId");
         $loader = new WsdlLoader($cacheDir, $this->logger, $this->serverInfo, $this->curl);
         return $loader->fetchInitialWsdlFile($this->loop);
+    }
+
+    public function getLastErrorMessage(): ?string
+    {
+        return $this->lastErrorMessage;
+    }
+
+    protected function logError($message)
+    {
+        $this->lastErrorMessage = $message;
+        $this->logger->error($message);
     }
 }

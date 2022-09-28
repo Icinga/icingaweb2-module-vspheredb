@@ -3,56 +3,64 @@
 namespace Icinga\Module\Vspheredb\Polling;
 
 use gipfl\Json\JsonSerialization;
-use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 
 class ServerSet implements JsonSerialization
 {
+    /** @var array<int, ServerInfo> */
     protected $servers = [];
 
     /**
      * ServerSet constructor.
      * @param ServerInfo[] $servers
      */
-    public function __construct($servers = [])
+    public function __construct(array $servers = [])
     {
         foreach ($servers as $server) {
             $this->addServer($server);
         }
     }
 
-    public static function fromSerialization($any)
+    public static function fromSerialization($any): ServerSet
     {
         $self = new static();
-        foreach ($any as $key => $server) {
+        foreach ($any as $server) {
             $info = ServerInfo::fromSerialization($server);
-            // This doesn't fail - yet
-            assert($key === $info->getIdentifier());
             $self->addServer($info);
         }
 
         return $self;
     }
 
+    public function listServerIds(): array
+    {
+        return array_keys($this->servers);
+    }
+
     public function addServer(ServerInfo $server)
     {
-        $this->servers[$server->getIdentifier()] = $server;
+        $this->servers[$server->getServerId()] = $server;
         ksort($this->servers);
+    }
+
+    public function getServer(int $serverId): ServerInfo
+    {
+        return $this->servers[$serverId];
     }
 
     /**
      * @return ServerInfo[]
      */
-    public function getServers()
+    public function getServers(): array
     {
-        return $this->servers;
+        return array_values($this->servers);
     }
 
     /**
      * @param VCenterServer[] $servers
      * @return static
      */
-    public static function fromServers($servers)
+    public static function fromServers(array $servers): ServerSet
     {
         $serverInfo = [];
         foreach ($servers as $server) {
@@ -62,14 +70,24 @@ class ServerSet implements JsonSerialization
         return new static($serverInfo);
     }
 
-    public function equals(ServerSet $set)
+    public function equals(ServerSet $set): bool
     {
-        return JsonString::encode($set) === JsonString::encode($this);
+        if ($set->listServerIds() !== $this->listServerIds()) {
+            return false;
+        }
+
+        foreach ($this->servers as $id => $server) {
+            if (! $set->getServer($id)->equals($server)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return (object) $this->servers;
+        // Hint: returning $this->servers would ship in a JSON object, keys are not sequential
+        return array_values($this->servers);
     }
 }

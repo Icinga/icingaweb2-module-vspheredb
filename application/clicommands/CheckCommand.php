@@ -13,6 +13,8 @@ use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
+use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
+use Icinga\Module\Vspheredb\Monitoring\Health\VCenterInfo;
 use InvalidArgumentException;
 
 /**
@@ -34,28 +36,10 @@ class CheckCommand extends Command
             $client = new RemoteClient(Configuration::getSocketPath(), $this->loop());
             return $client->request('vsphere.getApiConnections')->then(function ($result) {
                 $connState = new ConnectionState($result, $this->db()->getDbAdapter());
-                $vCenters = $connState->getVCenters();
+                $vCenters = VCenterInfo::fetchAll($this->db()->getDbAdapter());
                 $connections = $connState->getConnectionsByVCenter();
                 foreach ($vCenters as $vcenter) {
-                    $vcenterId = $vcenter->vcenter_id;
-                    $prefix = sprintf('%s, %s: ', $vcenter->name, $vcenter->software);
-                    if (isset($connections[$vcenterId])) {
-                        foreach ($connections[$vcenterId] as $connection) {
-                            if ($connection->enabled) {
-                                $this->addProblem(
-                                    ConnectionState::getIcingaState($connection->state),
-                                    $prefix . ConnectionState::describe($connection->state, $connection->server)
-                                );
-                            } else {
-                                $this->addMessage(
-                                    "[DISABLED] $prefix"
-                                    . ConnectionState::describe($connection->state, $connection->server)
-                                );
-                            }
-                        }
-                    } else {
-                        $this->addProblem('WARNING', $prefix . ConnectionState::describeNoServer());
-                    }
+                    $this->checkVCenterConnection($vcenter, $connections);
                 }
 
                 if (count($vCenters) > 1) {
@@ -205,6 +189,34 @@ class CheckCommand extends Command
     {
         if (! is_string($string)) {
             throw new InvalidArgumentException("$label must be a string");
+        }
+    }
+
+    /**
+     * @param VCenterInfo $vcenter
+     * @param array<int, array<int, ServerConnectionInfo>> $connections
+     * @return void
+     */
+    protected function checkVCenterConnection(VCenterInfo $vcenter, array $connections)
+    {
+        $vcenterId = $vcenter->id;
+        $prefix = sprintf('%s, %s: ', $vcenter->name, $vcenter->software);
+        if (isset($connections[$vcenterId])) {
+            foreach ($connections[$vcenterId] as $connection) {
+                if ($connection->enabled) {
+                    $this->addProblem(
+                        $connection->getIcingaState(),
+                        $prefix . ConnectionState::describe($connection)
+                    );
+                } else {
+                    $this->addMessage(
+                        "[DISABLED] $prefix"
+                        . ConnectionState::describe($connection)
+                    );
+                }
+            }
+        } else {
+            $this->addProblem('WARNING', $prefix . ConnectionState::describeNoServer());
         }
     }
 

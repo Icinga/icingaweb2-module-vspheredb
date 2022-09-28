@@ -4,13 +4,15 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Icon;
 use Icinga\Module\Vspheredb\Daemon\ConnectionState;
+use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
 
 class VCenterConnectionStatusIcon
 {
-    public static function create(string $state, string $label): Icon
+    public static function create(ServerConnectionInfo $info): Icon
     {
-        $title = ConnectionState::describe($state, $label);
+        $state = $info->getState();
+        $title = ConnectionState::describe($info);
         switch ($state) {
             case 'unknown':
                 return Icon::create('help', ['class' => 'unknown', 'title' => $title]);

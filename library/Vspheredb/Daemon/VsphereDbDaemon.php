@@ -367,7 +367,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $db = $this->connection->getDbAdapter();
         $db->update('vcenter_server', [
             'vcenter_id' => $vCenter->get('id')
-        ], $db->quoteInto('id = ?', $server->get('id')));
+        ], $db->quoteInto('id = ?', $server->getServerId()));
         $this->loop->futureTick(function () {
             $this->refreshConfiguredServers();
         });
@@ -376,7 +376,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     protected function onApiConnection(ApiConnection $connection)
     {
         $vCenter = VCenter::loadWithAutoIncId(
-            $connection->getServerInfo()->get('vcenter_id'),
+            $connection->getServerInfo()->getVCenterId(),
             $this->connection
         );
         $serverInfo =  $connection->getServerInfo();

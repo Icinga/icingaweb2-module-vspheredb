@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
-use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Format;
+use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterConnectionStatusIcon;
@@ -23,13 +23,14 @@ class VCenterSummaryTable extends ObjectsTable
 
     protected $nameColumn = 'vc.name';
 
+    /** @var array<int, array<int, ServerConnectionInfo>> */
     protected $connections;
 
     /**
-     * @param mixed $connections
+     * @param array<int, array<int, ServerConnectionInfo>> $connections
      * @return VCenterSummaryTable
      */
-    public function setConnections($connections)
+    public function setConnections(array $connections): self
     {
         $this->connections = $connections;
         return $this;
@@ -47,7 +48,7 @@ class VCenterSummaryTable extends ObjectsTable
         $vcenterId = $row->vcenter_id;
         if (isset($this->connections[$vcenterId])) {
             foreach ($this->connections[$vcenterId] as $connection) {
-                $icons->add(VCenterConnectionStatusIcon::create($connection->state, $connection->server));
+                $icons->add(VCenterConnectionStatusIcon::create($connection));
             }
         } else {
             $icons->add(VCenterConnectionStatusIcon::noServer());

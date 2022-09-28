@@ -19,10 +19,24 @@ class ServerInfo implements JsonSerialization
      */
     public function __construct(array $properties)
     {
+        $properties['id'] = (int) $properties['id'];
+        if (isset($properties['vcenter_id'])) {
+            $properties['vcenter_id'] = (int) $properties['vcenter_id'];
+        }
         $this->properties = $properties;
     }
 
-    public static function fromSerialization($object)
+    public function getServerId(): int
+    {
+        return $this->properties['id'];
+    }
+
+    public function getVCenterId(): ?int
+    {
+        return $this->properties['vcenter_id'];
+    }
+
+    public static function fromSerialization($object): ServerInfo
     {
         // Validation will be implemented once this is remote
         return new static((array) $object);
@@ -32,12 +46,12 @@ class ServerInfo implements JsonSerialization
      * @param VCenterServer $server
      * @return static
      */
-    public static function fromServer(VCenterServer $server)
+    public static function fromServer(VCenterServer $server): ServerInfo
     {
         return new static($server->getProperties());
     }
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->get('enabled') === 'y';
     }
@@ -60,8 +74,7 @@ class ServerInfo implements JsonSerialization
         throw new InvalidArgumentException("Trying to access invalid property: '$key'");
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): \stdClass
     {
         ksort($this->properties);
         return (object) $this->properties;
@@ -76,12 +89,12 @@ class ServerInfo implements JsonSerialization
         );
     }
 
-    public function equals(ServerInfo $info)
+    public function equals(ServerInfo $info): bool
     {
         return JsonString::encode($info) === JsonString::encode($this);
     }
 
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return sprintf(
             '%s://%s@%s',
