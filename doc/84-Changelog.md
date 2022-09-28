@@ -25,6 +25,7 @@ place.
 * FEATURE: the configuration tree now highlights nodes with rules (#369)
 * FEATURE: now also Host Systems and Datastores have a Monitoring tab (#395)
 * FEATURE: the UI now reflects all Check Command details (#398)
+* FEATURE: improved Rule set naming (#402)
 * FIX: Monitoring Rule inheritance had some bugs (#363)
 * FIX: Rules for different types on the same folder (DC only) conflicted (#365)
 
@@ -34,6 +35,7 @@ place.
 * FEATURE: Monitoring Rule checks now support Rule Set and Rule filters (#396)
 * FEATURE: provide an --inspect parameter for Monitoring Rule checks (#397)
 * FEATURE: health check now checks whether the schema is up-to-date (#403)
+* FEATURE: daemon keep-alive in the database is being checked (#404)
 
 ### Background Daemon
 * FIX: API connections did not recover from some error states (#399)

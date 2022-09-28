@@ -43,6 +43,8 @@ class CheckCommand extends Command
             if ($migrations->hasPendingMigrations()) {
                 $this->addProblem('WARNING', 'There are pending database schema migrations');
             };
+
+            $this->checkDaemonStatus();
             $client = new RemoteClient(Configuration::getSocketPath(), $this->loop());
             return $client->request('vsphere.getApiConnections')->then(function ($result) {
                 $connState = new ConnectionState($result, $this->db()->getDbAdapter());
@@ -245,6 +247,25 @@ class CheckCommand extends Command
             }
         } else {
             $this->addProblem('WARNING', $prefix . ConnectionState::describeNoServer());
+        }
+    }
+
+    protected function checkDaemonStatus()
+    {
+        $db = $this->db()->getDbAdapter();
+        $daemon = $db->fetchRow(
+            $db->select()->from('vspheredb_daemon')->order('ts_last_refresh DESC')->limit(1)
+        );
+
+        if ($daemon) {
+            if ($daemon->ts_last_refresh / 1000 < time() - 10) {
+                $this->addProblem('CRITICAL', sprintf(
+                    "Daemon keep-alive is outdated, last refresh was %s",
+                    DateFormatter::timeAgo($daemon->ts_last_refresh / 1000)
+                ));
+            }
+        } else {
+            $this->addProblem('CRITICAL', "Daemon is not writing to it's database");
         }
     }
 
