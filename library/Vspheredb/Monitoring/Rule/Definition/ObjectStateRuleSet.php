@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
-class DefaultRuleSet extends MonitoringRuleSetDefinition
+class ObjectStateRuleSet extends MonitoringRuleSetDefinition
 {
     public const RULE_CLASSES = [
         VMwareObjectStateRuleDefinition::class,
@@ -11,11 +11,11 @@ class DefaultRuleSet extends MonitoringRuleSetDefinition
 
     public function getLabel(): string
     {
-        return $this->translate('Default Rules');
+        return $this->translate('Object State Policy');
     }
 
     public static function getIdentifier(): string
     {
-        return 'Default';
+        return 'ObjectStatePolicy';
     }
 }

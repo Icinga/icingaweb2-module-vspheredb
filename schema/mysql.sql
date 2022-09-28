@@ -948,4 +948,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (39, NOW());
+VALUES (40, NOW());

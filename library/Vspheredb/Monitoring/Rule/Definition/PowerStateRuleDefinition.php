@@ -111,9 +111,9 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
     public function getInternalDefaults(): array
     {
         return [
-            'trigger_on_poweredOff ' => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_suspended'   => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_unknown'     => MonitoringStateTrigger::RAISE_UNKNOWN,
+            'trigger_on_poweredOff' => MonitoringStateTrigger::RAISE_CRITICAL,
+            'trigger_on_suspended'  => MonitoringStateTrigger::RAISE_CRITICAL,
+            'trigger_on_unknown'    => MonitoringStateTrigger::RAISE_UNKNOWN,
             'warning_for_uptime_less_than' => 900,
         ];
     }

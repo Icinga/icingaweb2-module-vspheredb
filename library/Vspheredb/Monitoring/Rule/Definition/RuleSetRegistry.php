@@ -8,7 +8,7 @@ use RuntimeException;
 class RuleSetRegistry implements JsonSerialization
 {
     protected static $allSets = [
-        DefaultRuleSet::class,
+        ObjectStateRuleSet::class,
         DiskHealthRuleSet::class,
         ConfigurationPolicyRuleSet::class,
     ];
