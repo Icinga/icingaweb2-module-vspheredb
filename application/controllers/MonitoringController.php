@@ -83,7 +83,7 @@ class MonitoringController extends Controller
                 Documentation::link(
                     $this->translate('Documentation'),
                     'vspheredb',
-                    '31-Check_Commands',
+                    '32-Monitoring_Rules',
                     $this->translate('Icinga vSphereDB Check Commands')
                 )
             ))
