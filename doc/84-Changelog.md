@@ -56,24 +56,24 @@ asked for advanced Check Plugins and related possibilities. Those requests have
 not been unheard, but we had other plans: instead of shipping a lot of Plugins
 with a lot of commandline options, we had a rule-based approach in mind.
 
-![Sample Check Command Output](screenshot/03_checks/031-check_command.png)
+![Sample Check Command Output](screenshot/03_checks/0301-check_command.png)
 
 Finally, with v1.4.0 we're shipping such. The Check Command provides many new
 granular details, and the Web UI is also able to show them:
 
-![Monitoring Details - UI](screenshot/03_checks/032-monitoring_details.png)
+![Monitoring Details - UI](screenshot/03_checks/0302-monitoring_details.png)
 
 You can continue to use the existing  simplistic Check Commands, but their behavior
 is no longer predefined: You're allowed to tweak a lot of settings and thresholds
 directly in the Web frontend.
 
-![Monitoring Rules](screenshot/03_checks/033-monitoring_rules.png)
+![Monitoring Rules](screenshot/03_checks/0303-monitoring_rules.png)
 
 All this at a hierarchical level, so if you organized your Objects in folders,
 you can apply different settings to different vCenters, Datacenters, Environments
 and so on.
 
-![Monitoring Rule Hierarchy](screenshot/03_checks/034-monitoring_rule_hierarchy.png)
+![Monitoring Rule Hierarchy](screenshot/03_checks/0304-monitoring_rule_hierarchy.png)
 
 For more related details, please check the related [Documentation Section](31-Check_Commands.md).
 
