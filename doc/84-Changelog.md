@@ -40,6 +40,7 @@ place.
 * FEATURE: daemon keep-alive in the database is being checked (#404)
 
 ### Background Daemon
+* FEATURE: errors on shutdown are now logged (#407)
 * FIX: API connections did not recover from some error states (#399)
 
 ### vSphere API

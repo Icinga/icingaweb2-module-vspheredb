@@ -322,10 +322,14 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     public function stop()
     {
-        $this->daemonState->setState(self::STATE_STOPPING);
-        $this->logger->notice('Shutting down');
-        $this->dbRunner->stop();
-        $this->eventuallyDisconnectFromDb();
+        try {
+            $this->daemonState->setState(self::STATE_STOPPING);
+            $this->logger->notice('Stopping vSphereDbDaemon');
+            $this->dbRunner->stop();
+            $this->eventuallyDisconnectFromDb();
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to stop vSphereDbDaemon: ' . $e->getMessage());
+        }
         return resolve();
     }
 
