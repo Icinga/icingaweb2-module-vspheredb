@@ -49,7 +49,7 @@ place.
 
 ### Integrations
 * FEATURE: Director Import Source now ships ManagedObject-references (#383, #384)
-* FEATURE: Director Import provices Sysinfo/BIOS-UUIDs (#385)
+* FEATURE: Director Import provides SysInfo/BIOS-UUIDs (#385)
 * FIX: Monitoring module integration, when configured with Custom Vars (#381)
 
 ### Fixed issues
