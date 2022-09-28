@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
+use Evenement\EventEmitterInterface;
+use Evenement\EventEmitterTrait;
 use Exception;
 use gipfl\Cli\Process;
 use gipfl\Curl\CurlAsync;
@@ -17,6 +19,7 @@ use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
 use Icinga\Module\Vspheredb\Application\MemoryLimit;
 use Icinga\Module\Vspheredb\Configuration;
+use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceProcess;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -33,11 +36,13 @@ use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
+use React\Stream\Util as StreamUtil;
 use RuntimeException;
 use function React\Promise\resolve;
 
-class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterface
+class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterface, EventEmitterInterface
 {
+    use EventEmitterTrait;
     use LoggerAwareTrait;
 
     const PROCESS_NAME = 'Icinga::vSphereDB';
@@ -419,6 +424,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->curl = $curl;
         $this->apiConnectionHandler = $connection = new ApiConnectionHandler($curl, $logger);
         $this->remoteApi = new RemoteApi($connection, $curl, $loop, $logger);
+        StreamUtil::forwardEvents($this->remoteApi, $this, [RpcNamespaceProcess::ON_RESTART]);
         $connection->on(
             ApiConnectionHandler::ON_INITIALIZED_SERVER,
             function (ServerInfo $server, AboutInfo $info, UuidInterface $uuid) {

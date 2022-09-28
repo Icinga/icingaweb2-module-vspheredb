@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
+use Evenement\EventEmitterInterface;
+use Evenement\EventEmitterTrait;
 use Exception;
 use gipfl\Curl\CurlAsync;
 use gipfl\Log\Logger;
@@ -12,6 +14,7 @@ use gipfl\Protocol\JsonRpc\JsonRpcConnection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use gipfl\Socket\UnixSocketInspection;
 use gipfl\Socket\UnixSocketPeer;
+use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceProcess;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceCurl;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceInfluxDb;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceLogger;
@@ -21,10 +24,13 @@ use Icinga\Module\Vspheredb\Polling\ApiConnectionHandler;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
+use React\Stream\Util;
 use function posix_getegid;
 
-class RemoteApi
+class RemoteApi implements EventEmitterInterface
 {
+    use EventEmitterTrait;
+
     /** @var LoggerInterface */
     protected $logger;
 
@@ -106,7 +112,10 @@ class RemoteApi
                 return;
             }
 
+            $rpcProcess = new RpcNamespaceProcess($this->loop);
+            Util::forwardEvents($rpcProcess, $this, [RpcNamespaceProcess::ON_RESTART]);
             $handler = new NamespacedPacketHandler();
+            $handler->registerNamespace('process', $rpcProcess);
             $handler->registerNamespace('system', new RpcNamespaceSystem());
             $handler->registerNamespace('vsphere', new RpcNamespaceVsphere($this->apiConnectionHandler));
             $handler->registerNamespace('influxdb', new RpcNamespaceInfluxDb($this->curl, $this->loop, $this->logger));

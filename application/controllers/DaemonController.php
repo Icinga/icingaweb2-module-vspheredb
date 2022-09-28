@@ -7,12 +7,14 @@ use gipfl\Json\JsonString;
 use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Form\LogLevelForm;
+use Icinga\Module\Vspheredb\Web\Form\RestartDaemonForm;
 use Icinga\Module\Vspheredb\Web\Table\ControlSocketConnectionsTable;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VsphereApiConnectionTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\WebUtil;
+use Icinga\Web\Notification;
 use ipl\Html\Html;
 use ipl\Html\Table;
 
@@ -70,7 +72,14 @@ class DaemonController extends Controller
                     WebUtil::timeAgo($daemon->ts_last_refresh / 1000)
                 ));
             } else {
-                return $this->prepareProcessTable(JsonString::decode($daemon->process_info));
+                $restartForm = new RestartDaemonForm($this->remoteClient(), $this->loop());
+                $restartForm->on($restartForm::ON_SUCCESS, function () {
+                    Notification::success('Daemon has been asked to restart');
+                    $this->redirectNow($this->url());
+                });
+                $restartForm->handleRequest($this->getServerRequest());
+
+                return [$restartForm, $this->prepareProcessTable(JsonString::decode($daemon->process_info))];
             }
         } else {
             return Hint::error($this->translate('Daemon is either not running or not connected to the Database'));

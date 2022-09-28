@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use gipfl\SimpleDaemon\Daemon;
+use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceProcess;
 use Icinga\Module\Vspheredb\Daemon\VsphereDbDaemon;
 
 class DaemonCommand extends Command
@@ -20,7 +21,11 @@ class DaemonCommand extends Command
         $this->assertNoVcenterParam();
         $daemon = new Daemon();
         $daemon->setLogger($this->logger);
-        $daemon->attachTask(new VsphereDbDaemon());
+        $vSphereDb = new VsphereDbDaemon();
+        $vSphereDb->on(RpcNamespaceProcess::ON_RESTART, function () use ($daemon) {
+            $daemon->reload();
+        });
+        $daemon->attachTask($vSphereDb);
         $daemon->run($this->loop());
         $this->eventuallyStartMainLoop();
     }
