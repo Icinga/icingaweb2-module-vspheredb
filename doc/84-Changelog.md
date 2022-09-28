@@ -30,6 +30,7 @@ place.
 
 ### Check Plugins
 * FEATURE: a new vSphereDB daemon health check has been introduced (#245, #400)
+* FEATURE: check for single vCenter connections has been reintroduced (#300, #401)
 * FEATURE: Monitoring Rule checks now support Rule Set and Rule filters (#396)
 * FEATURE: provide an --inspect parameter for Monitoring Rule checks (#397)
 

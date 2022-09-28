@@ -30,6 +30,13 @@ this will also be reported:
 
 ![Daemon not running - vSphereDB Health Check](screenshot/03_checks/039-health_check-no_daemon.png)
 
+In case you want to check whether the vCenter has a connection to a very specific
+vCenter, you can do so via:
+
+    icingacli vspheredb check vcenterconnection --vCenter <id>
+
+![Check a single vSphereDB connection](screenshot/03_checks/0310_check-vcenterconnection.png)
+
 Monitoring Rule Definitions
 ---------------------------
 

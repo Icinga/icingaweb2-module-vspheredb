@@ -55,16 +55,34 @@ class CheckCommand extends Command
                     $message = "Daemon not running? $message";
                 }
                 $this->addProblem('CRITICAL', $message);
+                $this->showOptionalTrace($e);
             });
         });
     }
 
     /**
-     * @deprecated
+     * Single vCenter Connection State
+     *
+     * This asks the daemon, whether there is a connection to the given vCenter
+     *
+     * USAGE
+     *
+     * icingacli vspheredb check vcenterconnection --vCenter <id>
      */
     public function vcenterconnectionAction()
     {
-        $this->addProblem('UNKNOWN', 'This check no longer exists. Please use `icingacli vspheredb check health`');
+        $this->run(function () {
+            $vcenter = VCenterInfo::fetchOne(
+                $this->requiredParam('vCenter'),
+                Db::newConfiguredInstance()->getDbAdapter()
+            );
+            $client = new RemoteClient(Configuration::getSocketPath(), $this->loop());
+            return $client->request('vsphere.getApiConnections')->then(function ($result) use ($vcenter) {
+                $connState = new ConnectionState($result, $this->db()->getDbAdapter());
+                $connections = $connState->getConnectionsByVCenter();
+                $this->checkVCenterConnection($vcenter, $connections);
+            });
+        });
     }
 
     /**
