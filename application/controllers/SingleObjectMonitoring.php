@@ -24,7 +24,7 @@ trait SingleObjectMonitoring
         $this->actions()->add($this->createMonitoringInspectionLink($inspect));
         $this->content()->add(Html::tag('pre', [
             'class' => 'logOutput',
-            'style' => 'font-size: 1.25em'
+            'style' => 'font-size: 1.15em'
         ], $this->colorizeOutput($result->getOutput())));
     }
 
