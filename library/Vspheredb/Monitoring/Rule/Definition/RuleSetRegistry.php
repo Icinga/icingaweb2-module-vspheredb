@@ -9,6 +9,7 @@ class RuleSetRegistry implements JsonSerialization
 {
     protected static $allSets = [
         ObjectStateRuleSet::class,
+        ComputeResourceUsageRuleSet::class,
         DiskHealthRuleSet::class,
         ConfigurationPolicyRuleSet::class,
     ];
