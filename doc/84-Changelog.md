@@ -34,6 +34,9 @@ place.
 * FEATURE: Monitoring Rule checks now support Rule Set and Rule filters (#396)
 * FEATURE: provide an --inspect parameter for Monitoring Rule checks (#397)
 
+### Background Daemon
+* FIX: API connections did not recover from some error states (#399)
+
 ### vSphere API
 * FEATURE: Host Bus Adapters are now synchronized (#380)
 * FIX: fixed compatibility with vSphere 5.5, caused by Custom Fields in v1.4 (#377)
