@@ -1,6 +1,52 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.5.0 (unreleased)
+-------------------
+
+Our Monitoring Rules, which have been introduced with v1.4.0, got a lot of
+interest and feedback. Apart from little fixes, this release brings many small
+related improvements. Thank your for all the input and also for some sponsored
+development days, which made this possible.
+
+Many improvements related to our Check Plugins (and their configuration) took
+place.
+
+### UI
+* FEATURE: connection health icons now show more details (#400)
+* FIX: links pointing to the VMware HTML5 UI have now work on v6.7 and v7.x (#209)
+* FIX: issues with dark/light mode in Icinga Web have been addressed (#355)
+* FIX: Monitoring Rules documentation link was missing (#360)
+* FIX: a debugging output leftover has been removed (#364)
+* FIX: Monitoring Rules menu entry is now shown to admins only (#366)
+* FIX: fixed formatting for values between 1000 and 1024, 1.02E+3 GiB vs 1.00 TiB (#367)
+
+### Monitoring Rules
+* FEATURE: the configuration tree now highlights nodes with rules (#369)
+* FEATURE: now also Host Systems and Datastores have a Monitoring tab (#395)
+* FEATURE: the UI now reflects all Check Command details (#398)
+* FIX: Monitoring Rule inheritance had some bugs (#363)
+* FIX: Rules for different types on the same folder (DC only) conflicted (#365)
+
+### Check Plugins
+* FEATURE: a new vSphereDB daemon health check has been introduced (#245, #400)
+* FEATURE: Monitoring Rule checks now support Rule Set and Rule filters (#396)
+* FEATURE: provide an --inspect parameter for Monitoring Rule checks (#397)
+
+### vSphere API
+* FEATURE: Host Bus Adapters are now synchronized (#380)
+* FIX: fixed compatibility with vSphere 5.5, caused by Custom Fields in v1.4 (#377)
+
+### Integrations
+* FEATURE: Director Import Source now ships ManagedObject-references (#383, #384)
+* FEATURE: Director Import provices Sysinfo/BIOS-UUIDs (#385)
+* FIX: Monitoring module integration, when configured with Custom Vars (#381)
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/11?closed=1)
+
+
 v1.4.0
 ------
 
@@ -63,6 +109,7 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/9?closed=1)
+
 
 v1.3.1
 ------
