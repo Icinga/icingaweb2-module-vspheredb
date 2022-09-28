@@ -33,6 +33,7 @@ place.
 * FEATURE: check for single vCenter connections has been reintroduced (#300, #401)
 * FEATURE: Monitoring Rule checks now support Rule Set and Rule filters (#396)
 * FEATURE: provide an --inspect parameter for Monitoring Rule checks (#397)
+* FEATURE: health check now checks whether the schema is up-to-date (#403)
 
 ### Background Daemon
 * FIX: API connections did not recover from some error states (#399)

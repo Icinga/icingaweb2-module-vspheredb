@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use gipfl\Cli\Screen;
+use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\CheckPluginHelper;
 use Icinga\Module\Vspheredb\Configuration;
@@ -16,6 +17,7 @@ use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Monitoring\Health\VCenterInfo;
 use InvalidArgumentException;
+use function React\Promise\resolve;
 
 /**
  * vSphereDB Check Command
@@ -33,6 +35,14 @@ class CheckCommand extends Command
     public function healthAction()
     {
         $this->run(function () {
+            $migrations = Db::migrationsForDb($this->db());
+            if (! $migrations->hasSchema()) {
+                $this->addProblem('CRITICAL', 'Database has no vSphereDB schema');
+                return resolve();
+            }
+            if ($migrations->hasPendingMigrations()) {
+                $this->addProblem('WARNING', 'There are pending database schema migrations');
+            };
             $client = new RemoteClient(Configuration::getSocketPath(), $this->loop());
             return $client->request('vsphere.getApiConnections')->then(function ($result) {
                 $connState = new ConnectionState($result, $this->db()->getDbAdapter());
