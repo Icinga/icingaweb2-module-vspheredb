@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use Icinga\Module\Vspheredb\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use gipfl\Translation\TranslationHelper;
@@ -36,20 +37,11 @@ class CpuAbsoluteUsage extends BaseHtmlElement
         if ($class !== null) {
             $this->addAttributes(['class' => $class]);
         }
-        if ($mhz > 1000000) {
-            $unit = 'THz';
-            $value = $mhz / 1000000;
-        } elseif ($mhz > 1000) {
-            $unit = 'GHz';
-            $value = $mhz / 1000;
-        } else {
-            $unit = 'MHz';
-            $value = $mhz;
-        }
+        [$unit, $value] = Format::mhzWithSeparateUnit($mhz);
         $this->add([
             Html::tag('span', [
                 'class' => 'cpu-consumption'
-            ], sprintf('%.3G', $value)),
+            ], $value),
             Html::tag('span', [
                 'class' => 'cpu-unit'
             ], $unit),

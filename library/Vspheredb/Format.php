@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 class Format
 {
-    public static function bytes($value)
+    public static function bytes($value): string
     {
         $base = 1024;
         $units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
@@ -28,12 +28,12 @@ class Format
         return sprintf('%s%s %s', $sign, $output, $units[$pow]);
     }
 
-    public static function mBytes($value)
+    public static function mBytes($value): string
     {
         return static::bytes($value * 1024 * 1024);
     }
 
-    public static function linkSpeedMb($mb)
+    public static function linkSpeedMb($mb): string
     {
         if ($mb >= 1000000) {
             return sprintf('%.3G TBit/s', $mb / 1000000);
@@ -44,7 +44,7 @@ class Format
         }
     }
 
-    public static function mhz($mhz)
+    public static function mhz($mhz): string
     {
         if ($mhz >= 1000000) {
             return sprintf('%.3G THz', $mhz / 1000000);
@@ -53,5 +53,21 @@ class Format
         } else {
             return sprintf('%.3G MHz', $mhz);
         }
+    }
+
+    public static function mhzWithSeparateUnit($mhz): array
+    {
+        if ($mhz > 1000000) {
+            $unit = 'THz';
+            $value = $mhz / 1000000;
+        } elseif ($mhz > 1000) {
+            $unit = 'GHz';
+            $value = $mhz / 1000;
+        } else {
+            $unit = 'MHz';
+            $value = $mhz;
+        }
+
+        return [sprintf('%.3G', $value), $unit];
     }
 }
