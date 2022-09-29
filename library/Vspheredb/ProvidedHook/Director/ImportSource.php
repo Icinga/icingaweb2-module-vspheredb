@@ -111,7 +111,7 @@ class ImportSource extends ImportSourceHook
     protected function eventuallyFilterVCenter($query)
     {
         $vCenterUuid = $this->getSetting('vcenter_uuid');
-        if (strlen($vCenterUuid) > 0) {
+        if ($vCenterUuid !== null && strlen($vCenterUuid) > 0) {
             $vCenterUuid = Uuid::fromString($vCenterUuid)->getBytes();
             $query->where('o.vcenter_uuid = ?', $vCenterUuid);
         }
