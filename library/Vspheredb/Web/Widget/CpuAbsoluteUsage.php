@@ -37,7 +37,7 @@ class CpuAbsoluteUsage extends BaseHtmlElement
         if ($class !== null) {
             $this->addAttributes(['class' => $class]);
         }
-        [$unit, $value] = Format::mhzWithSeparateUnit($mhz);
+        [$value, $unit] = Format::mhzWithSeparateUnit($mhz);
         $this->add([
             Html::tag('span', [
                 'class' => 'cpu-consumption'
