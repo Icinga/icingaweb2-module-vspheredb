@@ -163,7 +163,13 @@ class DaemonController extends Controller
     protected function prepareVsphereConnectionTable()
     {
         try {
-            $table = new VsphereApiConnectionTable($this->syncRpcCall('vsphere.getApiConnections'));
+            $table = new VsphereApiConnectionTable(array_map(function ($row) {
+                return [
+                    'vCenterId' => $row->vCenterId,
+                    'server'    => $row->server,
+                    'state'     =>  $row->state . (isset($row->lastErrorMessage) ? ': ' . $row->lastErrorMessage : ''),
+                ];
+            }, $this->syncRpcCall('vsphere.getApiConnections')));
             if ($table->count() === 0) {
                 return Hint::info($this->translate('The vSphereDB Daemon is currently not polling any vCenter'));
             }
