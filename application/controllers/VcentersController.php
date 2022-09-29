@@ -11,7 +11,6 @@ use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterSummaryTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
-use Icinga\Module\Vspheredb\Web\Widget\Config\ProposeMigrations;
 use Icinga\Module\Vspheredb\Web\Widget\CpuAbsoluteUsage;
 use Icinga\Module\Vspheredb\Web\Widget\ResourceUsageLoader;
 use Icinga\Module\Vspheredb\Web\Widget\UsageSummary;
@@ -158,16 +157,5 @@ class VcentersController extends ObjectsController
         if (Db::migrationsForDb($this->db())->hasPendingMigrations()) {
             $this->redirectNow('vspheredb/configuration/database');
         };
-
-        return;
-
-        // Obsolete:
-        /*
-        $migrations = new ProposeMigrations($this->db(), $this->Auth(), $this->getServerRequest());
-        if ($migrations->hasAppliedMigrations()) {
-            $this->redirectNow($this->url());
-        }
-        $this->content()->add($migrations);
-        */
     }
 }
