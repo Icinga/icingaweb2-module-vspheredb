@@ -53,7 +53,7 @@ class ApiConnectionInfo implements JsonSerialization
             $any->state,
             $any->server,
             $any->serverId,
-            $any->vcenterId,
+            $any->vCenterId,
             $any->lastErrorMessage ?? null
         );
 
@@ -86,7 +86,7 @@ class ApiConnectionInfo implements JsonSerialization
             'state' => $this->state,
             'server' => $this->server,
             'serverId' => $this->serverId,
-            'vcenterId' => $this->vCenterId,
+            'vCenterId' => $this->vCenterId,
         ];
 
         if ($this->lastErrorMessage) {
