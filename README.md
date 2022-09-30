@@ -16,7 +16,7 @@ but there is more. This module:
 * provides **Reports**, helping to track down anomalies or configuration errors
 * replicates the most interesting parts of your **Event- and Alarm History**
 
-We currently support all VMware versions from 5.5 to 7.0, and did I mention that
+We support all vSphere versions which are officially supported by VMware, and did I mention that
 all this is 100% free Open Source Software? Finally convinced? Then let's [get started](doc/01-Installation.md)!
 
 When **Upgrading** please read our [Changelog](doc/84-Changelog.md).
