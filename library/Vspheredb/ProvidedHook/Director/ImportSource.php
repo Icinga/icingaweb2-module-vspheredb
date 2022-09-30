@@ -18,6 +18,7 @@ class ImportSource extends ImportSourceHook
 {
     protected $hostColumns = [
         'object_name'             => 'o.object_name',
+        'uuid'                    => 'o.uuid',
         'vcenter_name'            => 'vc.name',
         'sysinfo_vendor'          => 'h.sysinfo_vendor',
         'sysinfo_model'           => 'h.sysinfo_model',
@@ -33,6 +34,7 @@ class ImportSource extends ImportSourceHook
     protected $vmColumns = [
         'object_name'       => 'o.object_name',
         'moref'             => 'o.moref',
+        'uuid'              => 'o.uuid',
         'vcenter_name'      => 'vc.name',
         'guest_ip_address'  => 'vm.guest_ip_address',
         'hardware_numcpu'   => 'vm.hardware_numcpu',
@@ -47,6 +49,7 @@ class ImportSource extends ImportSourceHook
     protected $computeResourceColumns = [
         'object_name'              => 'o.object_name',
         'object_type'              => 'o.object_type',
+        'uuid'                     => 'o.uuid',
         'vcenter_name'             => 'vc.name',
         'effective_cpu_mhz'        => 'cr.effective_cpu_mhz',
         'effective_memory_size_mb' => 'cr.effective_memory_size_mb',
@@ -150,6 +153,7 @@ class ImportSource extends ImportSourceHook
 
         if (\in_array($objectType, ['host_system', 'virtual_machine'])) {
             foreach ($result as &$row) {
+                $row->uuid = bin2hex($row->uuid);
                 if ($row->custom_values !== null) {
                     $row->custom_values = JsonString::decode($row->custom_values);
                 }
