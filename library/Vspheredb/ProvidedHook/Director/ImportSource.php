@@ -152,7 +152,7 @@ class ImportSource extends ImportSourceHook
         }
 
         if (\in_array($objectType, ['host_system', 'virtual_machine'])) {
-            foreach ($result as &$row) {
+            foreach ($result as $row) {
                 $row->uuid = bin2hex($row->uuid);
                 if ($row->custom_values !== null) {
                     $row->custom_values = JsonString::decode($row->custom_values);
