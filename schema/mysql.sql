@@ -775,18 +775,6 @@ CREATE TABLE host_monitoring_hoststate (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
-CREATE TABLE host_monitoring_property (
-  host_uuid VARBINARY(20) NOT NULL,
-  property_name VARCHAR(64) NOT NULL,
-  property_value VARCHAR(255) NOT NULL,
-  PRIMARY KEY (host_uuid, property_name),
-  CONSTRAINT host_monitoring_property_host
-    FOREIGN KEY host_uuid (host_uuid)
-    REFERENCES host_system (uuid)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
-
 CREATE TABLE vm_monitoring_hoststate (
   vm_uuid VARBINARY(20) NOT NULL,
   ido_connection_id INT(10) UNSIGNED NOT NULL,
@@ -800,18 +788,6 @@ CREATE TABLE vm_monitoring_hoststate (
   PRIMARY KEY (vm_uuid),
   INDEX sync_idx (ido_connection_id),
   CONSTRAINT vm_monitoring_host
-    FOREIGN KEY vm_uuid (vm_uuid)
-    REFERENCES virtual_machine (uuid)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
-
-CREATE TABLE vm_monitoring_property (
-  vm_uuid VARBINARY(20) NOT NULL,
-  property_name VARCHAR(64) NOT NULL,
-  property_value VARCHAR(255) NOT NULL,
-  PRIMARY KEY (vm_uuid, property_name),
-  CONSTRAINT vm_monitoring_property_vm
     FOREIGN KEY vm_uuid (vm_uuid)
     REFERENCES virtual_machine (uuid)
     ON DELETE CASCADE
@@ -948,4 +924,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (40, NOW());
+VALUES (41, NOW());
