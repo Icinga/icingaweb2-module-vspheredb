@@ -135,7 +135,7 @@ CREATE TABLE vcenter_event_history_collector (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE object (
-  uuid VARBINARY(20) NOT NULL, -- sha1(vcenter_uuid + moref)
+  uuid VARBINARY(16) NOT NULL, -- uuid5(vcenter_uuid, moref)
   vcenter_uuid VARBINARY(16) NOT NULL,
   -- Hint: 180 Bytes might seem overkill for MoRefs, but there are:
   --   52d4e949-55c225c2923-a7ba-009689221ad9-datastorebrowser (ESXi)
@@ -169,7 +169,7 @@ CREATE TABLE object (
      'red'
   ) NOT NULL,
   level TINYINT UNSIGNED NOT NULL,
-  parent_uuid VARBINARY(20) DEFAULT NULL,
+  parent_uuid VARBINARY(16) DEFAULT NULL,
   PRIMARY KEY(uuid),
   UNIQUE KEY vcenter_moref (vcenter_uuid, moref),
   INDEX object_type (object_type),
@@ -187,7 +187,7 @@ CREATE TABLE object (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE compute_resource (
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   effective_cpu_mhz INT UNSIGNED NOT NULL,
   effective_memory_size_mb BIGINT(20) UNSIGNED NOT NULL,
@@ -202,7 +202,7 @@ CREATE TABLE compute_resource (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_system (
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   host_name VARCHAR(255) DEFAULT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   product_api_version VARCHAR(32) NOT NULL, -- 6.0
@@ -245,7 +245,7 @@ CREATE TABLE host_system (
 
 CREATE TABLE host_pci_device (
   id VARCHAR(16) NOT NULL, -- bus:slot.function . But: 0000:00:00.0
-  host_uuid  VARBINARY(20) NOT NULL,
+  host_uuid  VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   bus BINARY(1) NOT NULL, -- byte
   slot BINARY(1) NOT NULL, -- byte
@@ -263,7 +263,7 @@ CREATE TABLE host_pci_device (
 
 CREATE TABLE host_sensor (
   name VARCHAR(128) NOT NULL,
-  host_uuid  VARBINARY(20) NOT NULL,
+  host_uuid  VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   health_state ENUM(
     'green',
@@ -284,7 +284,7 @@ CREATE TABLE host_sensor (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_physical_nic (
-  host_uuid VARBINARY(20) NOT NULL,
+  host_uuid VARBINARY(16) NOT NULL,
   nic_key VARCHAR(64) NOT NULL,
   auto_negotiate_supported ENUM ('y', 'n') DEFAULT NULL,
   device VARCHAR(128) NOT NULL,
@@ -299,7 +299,7 @@ CREATE TABLE host_physical_nic (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_virtual_nic (
-  host_uuid VARBINARY(20) NOT NULL,
+  host_uuid VARBINARY(16) NOT NULL,
   nic_key VARCHAR(64) NOT NULL,
   net_stack_instance_key VARCHAR(128) DEFAULT NULL,
   port VARCHAR(128) DEFAULT NULL,
@@ -339,7 +339,7 @@ CREATE TABLE host_virtual_nic (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_hba (
-  host_uuid VARBINARY(20) NOT NULL,
+  host_uuid VARBINARY(16) NOT NULL,
   hba_key VARCHAR(64) NOT NULL,
   device VARCHAR(128) NOT NULL,
   bus VARCHAR(128) DEFAULT NULL,
@@ -360,7 +360,7 @@ CREATE TABLE host_list (
 
 CREATE TABLE host_list_member (
   list_checksum VARBINARY(20) NOT NULL, -- sha1(uuid[uuid..])
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   PRIMARY KEY (uuid, list_checksum),
   CONSTRAINT host_list_member_list
     FOREIGN KEY host_list (list_checksum)
@@ -370,7 +370,7 @@ CREATE TABLE host_list_member (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE virtual_machine (
-  uuid  VARBINARY(20) NOT NULL,
+  uuid  VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   hardware_memorymb INT UNSIGNED NULL DEFAULT NULL,
   hardware_numcpu TINYINT UNSIGNED NULL DEFAULT NULL,
@@ -415,8 +415,8 @@ CREATE TABLE virtual_machine (
   guest_full_name VARCHAR(255) DEFAULT NULL, -- Red Hat Enterprise Linux 7 (64-bit)
   guest_host_name VARCHAR(255) DEFAULT NULL,
   guest_ip_address VARCHAR(50) DEFAULT NULL,
-  resource_pool_uuid VARBINARY(20) DEFAULT NULL,
-  runtime_host_uuid VARBINARY(20) DEFAULT NULL,
+  resource_pool_uuid VARBINARY(16) DEFAULT NULL,
+  runtime_host_uuid VARBINARY(16) DEFAULT NULL,
   runtime_last_boot_time DATETIME DEFAULT NULL, -- TODO: to BIGINT?
   runtime_last_suspend_time DATETIME DEFAULT NULL, -- TODO: to BIGINT?
   runtime_power_state ENUM (
@@ -438,7 +438,7 @@ CREATE TABLE vm_list (
 
 CREATE TABLE vm_list_member (
   list_checksum VARBINARY(20) NOT NULL, -- sha1(uuid[uuid..])
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   PRIMARY KEY (uuid, list_checksum),
   CONSTRAINT vm_list_member_list
     FOREIGN KEY vm_list (list_checksum)
@@ -448,7 +448,7 @@ CREATE TABLE vm_list_member (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE storage_pod (
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   pod_name VARCHAR(255) DEFAULT NULL,
   free_space BIGINT UNSIGNED NOT NULL,
@@ -458,7 +458,7 @@ CREATE TABLE storage_pod (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE distributed_virtual_switch (
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   num_hosts INT(10) NOT NULL,
   num_ports INT(10) NOT NULL,
   max_ports INT(10) NOT NULL,
@@ -472,7 +472,7 @@ CREATE TABLE distributed_virtual_switch (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE distributed_virtual_portgroup (
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   portgroup_type ENUM (
     'earlyBinding', -- assigned when reconfigured
     'ephemeral',    -- assigned when powered on
@@ -488,7 +488,7 @@ CREATE TABLE distributed_virtual_portgroup (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE datastore (
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   maintenance_mode ENUM(
       'normal',
@@ -510,10 +510,10 @@ CREATE TABLE datastore (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_snapshot (
-  uuid VARBINARY(20) NOT NULL,
-  parent_uuid VARBINARY(20) DEFAULT NULL,
+  uuid VARBINARY(16) NOT NULL,
+  parent_uuid VARBINARY(16) DEFAULT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
-  vm_uuid VARBINARY(20) NOT NULL,
+  vm_uuid VARBINARY(16) NOT NULL,
   id INT UNSIGNED NOT NULL,
   moref VARCHAR(32) NOT NULL, -- textual id, we have no object entry
   name VARCHAR(255) NOT NULL,
@@ -530,8 +530,8 @@ CREATE TABLE vm_snapshot (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_datastore_usage (
-  vm_uuid VARBINARY(20) NOT NULL,
-  datastore_uuid  VARBINARY(20) NOT NULL,
+  vm_uuid VARBINARY(16) NOT NULL,
+  datastore_uuid  VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   committed BIGINT(20) UNSIGNED DEFAULT NULL,
   uncommitted BIGINT(20) UNSIGNED DEFAULT NULL,
@@ -542,7 +542,7 @@ CREATE TABLE vm_datastore_usage (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_hardware (
-  vm_uuid VARBINARY(20) NOT NULL,
+  vm_uuid VARBINARY(16) NOT NULL,
   hardware_key INT(10) UNSIGNED NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   bus_number INT(10) UNSIGNED DEFAULT NULL,
@@ -555,10 +555,10 @@ CREATE TABLE vm_hardware (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_disk (
-  vm_uuid VARBINARY(20) NOT NULL,
+  vm_uuid VARBINARY(16) NOT NULL,
   hardware_key INT(10) UNSIGNED NOT NULL,
   disk_uuid VARBINARY(16) DEFAULT NULL, -- backing->uuid: 6000C272-5a6b-ca2f-1706-4d2493ba11f0
-  datastore_uuid VARBINARY(20) DEFAULT NULL, -- backing->datastore->_
+  datastore_uuid VARBINARY(16) DEFAULT NULL, -- backing->datastore->_
   file_name VARCHAR(255) DEFAULT NULL, -- backing->fileName: [DSNAME] <name>/<name>.vmdk
   capacity BIGINT(20) UNSIGNED DEFAULT NULL, -- capacityInBytes
   disk_mode ENUM(
@@ -579,7 +579,7 @@ CREATE TABLE vm_disk (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_disk_usage (
-  vm_uuid VARBINARY(20) NOT NULL,
+  vm_uuid VARBINARY(16) NOT NULL,
   disk_path VARCHAR(128) NOT NULL,
   capacity BIGINT(20) NOT NULL,
   free_space BIGINT(20) NOT NULL,
@@ -589,9 +589,9 @@ CREATE TABLE vm_disk_usage (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_network_adapter (
-  vm_uuid VARBINARY(20) NOT NULL,
+  vm_uuid VARBINARY(16) NOT NULL,
   hardware_key INT(10) UNSIGNED NOT NULL,
-  portgroup_uuid VARBINARY(20) DEFAULT NULL, -- port->portgroupKey (moid, dvportgroup-1288720)
+  portgroup_uuid VARBINARY(16) DEFAULT NULL, -- port->portgroupKey (moid, dvportgroup-1288720)
   port_key VARCHAR(64) DEFAULT NULL, -- port->portKey Can be 'c-31'
   mac_address VARCHAR(17) DEFAULT NULL, -- binary(6)? new xxeuid?
   address_type ENUM(
@@ -605,7 +605,7 @@ CREATE TABLE vm_network_adapter (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_quick_stats (
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   distributed_cpu_fairness INT(10) DEFAULT NULL,
   distributed_memory_fairness INT(10) DEFAULT NULL,
   overall_cpu_usage INT(10) UNSIGNED DEFAULT NULL,
@@ -617,7 +617,7 @@ CREATE TABLE host_quick_stats (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_quick_stats (
-  uuid VARBINARY(20) NOT NULL,
+  uuid VARBINARY(16) NOT NULL,
   ballooned_memory_mb INT(10) UNSIGNED DEFAULT NULL,
   compressed_memory_kb BIGINT(20) UNSIGNED DEFAULT NULL,
   consumed_overhead_memory_mb INT(10) UNSIGNED DEFAULT NULL,
@@ -657,8 +657,8 @@ CREATE TABLE alarm_history (
   ) NOT NULL,
   event_key BIGINT(20) UNSIGNED NOT NULL,
   event_chain_id BIGINT(20) UNSIGNED NOT NULL,
-  entity_uuid VARBINARY(20) DEFAULT NULL,
-  source_uuid VARBINARY(20) DEFAULT NULL,
+  entity_uuid VARBINARY(16) DEFAULT NULL,
+  source_uuid VARBINARY(16) DEFAULT NULL,
   alarm_name VARCHAR(255) DEFAULT NULL,
   alarm_moref VARCHAR(48) DEFAULT NULL,
   status_from ENUM(
@@ -710,15 +710,15 @@ CREATE TABLE vm_event_history (
   event_key BIGINT(20) UNSIGNED NOT NULL,
   event_chain_id BIGINT(20) UNSIGNED NOT NULL,
   is_template ENUM('y', 'n') DEFAULT NULL,
-  datacenter_uuid VARBINARY(20) DEFAULT NULL,
-  compute_resource_uuid VARBINARY(20) DEFAULT NULL,
-  host_uuid VARBINARY(20) DEFAULT NULL,
-  vm_uuid VARBINARY(20) DEFAULT NULL,
-  datastore_uuid VARBINARY(20) DEFAULT NULL,
-  dvs_uuid VARBINARY(20) DEFAULT NULL,
-  destination_host_uuid VARBINARY(20) DEFAULT NULL,
-  destination_datacenter_uuid VARBINARY(20) DEFAULT NULL,
-  destination_datastore_uuid VARBINARY(20) DEFAULT NULL,
+  datacenter_uuid VARBINARY(16) DEFAULT NULL,
+  compute_resource_uuid VARBINARY(16) DEFAULT NULL,
+  host_uuid VARBINARY(16) DEFAULT NULL,
+  vm_uuid VARBINARY(16) DEFAULT NULL,
+  datastore_uuid VARBINARY(16) DEFAULT NULL,
+  dvs_uuid VARBINARY(16) DEFAULT NULL,
+  destination_host_uuid VARBINARY(16) DEFAULT NULL,
+  destination_datacenter_uuid VARBINARY(16) DEFAULT NULL,
+  destination_datastore_uuid VARBINARY(16) DEFAULT NULL,
   full_message MEDIUMTEXT DEFAULT NULL,
   user_name VARCHAR(128) DEFAULT NULL,
   fault_message TEXT DEFAULT NULL,
@@ -757,7 +757,7 @@ CREATE TABLE monitoring_connection (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_monitoring_hoststate (
-  host_uuid VARBINARY(20) NOT NULL,
+  host_uuid VARBINARY(16) NOT NULL,
   ido_connection_id INT(10) UNSIGNED NOT NULL,
   icinga_object_id BIGINT(20) NOT NULL,
   current_state ENUM(
@@ -776,7 +776,7 @@ CREATE TABLE host_monitoring_hoststate (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_monitoring_hoststate (
-  vm_uuid VARBINARY(20) NOT NULL,
+  vm_uuid VARBINARY(16) NOT NULL,
   ido_connection_id INT(10) UNSIGNED NOT NULL,
   icinga_object_id BIGINT(20) NOT NULL,
   current_state ENUM(
@@ -795,7 +795,7 @@ CREATE TABLE vm_monitoring_hoststate (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE monitoring_rule_set (
-  object_uuid VARBINARY(20) NOT NULL, -- DataCenter or Folder
+  object_uuid VARBINARY(16) NOT NULL, -- DataCenter or Folder
   object_folder ENUM('root', 'vm', 'host', 'datastore') NOT NULL,
   settings TEXT NOT NULL, -- json-encoded param
   PRIMARY KEY (object_uuid, object_folder)
@@ -898,7 +898,7 @@ CREATE TABLE perfdata_subscription (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE counter_300x5 (
-  object_uuid VARBINARY(20) NOT NULL,
+  object_uuid VARBINARY(16) NOT NULL,
   counter_key INT UNSIGNED NOT NULL,
   instance VARCHAR(64) NOT NULL,
   ts_last BIGINT NOT NULL,
@@ -924,4 +924,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (41, NOW());
+VALUES (49, NOW());
