@@ -80,7 +80,7 @@ class ConnectionState
         return $result;
     }
 
-    public static function describe(string $state, string $label): string
+    public static function describe(ServerConnectionInfo $info): string
     {
         $t = StaticTranslator::get();
         $state = $info->getState();
