@@ -14,6 +14,8 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\VmEventHistorySyncStore;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
+use React\Promise\Deferred;
+use React\Promise\ExtendedPromiseInterface;
 use RuntimeException;
 
 /**
@@ -57,7 +59,7 @@ class DbRunner
 
     /**
      * @param object $config
-     * @return bool
+     * @return ExtendedPromiseInterface
      * @throws \Exception
      */
     public function setDbConfigRequest($config)
@@ -66,15 +68,26 @@ class DbRunner
             $this->vCenters = [];
             $this->vCenterSyncStores = [];
             $this->connect($config);
-            $this->applyMigrations();
-            $this->requireCleanup()->runForStartup();
-            $this->setProcessReadyTitle();
+            $deferred = new Deferred();
+            $this->loop->futureTick(function () use ($deferred) {
+                $this->applyMigrations()->then(function () use ($deferred) {
+                    try {
+                        $this->requireCleanup()->runForStartup();
+                        $this->setProcessReadyTitle();
+                    } catch (\Exception $e) {
+                        Process::setTitle('Icinga::vSphereDB::DB::failing');
+                        $deferred->reject($e);
+                    }
+                }, function (\Exception $e) use ($deferred) {
+                    $deferred->reject($e);
+                });
+            });
+
+            return $deferred->promise();
         } catch (\Exception $e) {
             Process::setTitle('Icinga::vSphereDB::DB::failing');
             throw $e;
         }
-
-        return true;
     }
 
     protected function setProcessReadyTitle()
@@ -252,11 +265,21 @@ class DbRunner
             }
             $this->logger->warning('Database has no schema, will be created');
         }
+        $deferred = new Deferred();
         if ($migrations->hasPendingMigrations()) {
             Process::setTitle('Icinga::vSphereDB::DB::migration');
             $this->logger->notice('Applying schema migrations');
-            $migrations->applyPendingMigrations();
-            $this->logger->notice('DB schema is ready');
+            $this->loop->futureTick(function () use ($migrations, $deferred) {
+                try {
+                    $migrations->applyPendingMigrations();
+                } catch (\Exception $e) {
+                    $deferred->reject($e);
+                }
+                $this->logger->notice('DB schema is ready');
+                $deferred->resolve();
+            });
         }
+
+        return $deferred->promise();
     }
 }
