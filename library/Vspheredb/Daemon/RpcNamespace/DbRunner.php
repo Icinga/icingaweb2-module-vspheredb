@@ -82,6 +82,7 @@ class DbRunner
                         Process::setTitle('Icinga::vSphereDB::DB::failing');
                         $deferred->reject($e);
                     }
+                    $deferred->resolve();
                 }, function (\Exception $e) use ($deferred) {
                     $deferred->reject($e);
                 });
