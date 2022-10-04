@@ -137,7 +137,7 @@ class VCenter extends BaseDbObject
         if ($moRefId instanceof ManagedObjectReference || $moRefId instanceof \stdClass) {
             return $this->makeBinaryGlobalMoRefUuid($moRefId);
         } elseif (is_string($moRefId)) {
-            return Uuid::uuid5($this->get('uuid'), $moRefId)->getBytes();
+            return Uuid::uuid5(Uuid::fromBytes($this->get('uuid')), $moRefId)->getBytes();
         } else {
             throw new \RuntimeException('MoRef expected, got ' . gettype($moRefId));
         }
@@ -153,7 +153,7 @@ class VCenter extends BaseDbObject
             $moRef = ManagedObjectReference::fromSerialization($moRef);
         }
 
-        return Uuid::uuid5($this->get('uuid'), $moRef->_)->getBytes();
+        return Uuid::uuid5(Uuid::fromBytes($this->get('uuid')), $moRef->_)->getBytes();
     }
 
     /**
