@@ -6,8 +6,11 @@ use gipfl\Json\JsonString;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Adapter_Abstract as ZfDb;
+use function array_keys;
+use function in_array;
 
 /**
  * Class ImportSource
@@ -94,7 +97,7 @@ class ImportSource extends ImportSourceHook
         ]);
     }
 
-    protected static function enumVCenters()
+    protected static function enumVCenters(): array
     {
         $db = Db::newConfiguredInstance();
         $pairs = $db->fetchPairs(
@@ -122,7 +125,7 @@ class ImportSource extends ImportSourceHook
         return $query;
     }
 
-    public function fetchData()
+    public function fetchData(): array
     {
         $connection = Db::newConfiguredInstance();
         $db = $connection->getDbAdapter();
@@ -151,9 +154,9 @@ class ImportSource extends ImportSourceHook
             return [];
         }
 
-        if (\in_array($objectType, ['host_system', 'virtual_machine'])) {
+        if (in_array($objectType, ['host_system', 'virtual_machine'])) {
             foreach ($result as $row) {
-                $row->uuid = bin2hex($row->uuid);
+                $row->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
                 if ($row->custom_values !== null) {
                     $row->custom_values = JsonString::decode($row->custom_values);
                 }
@@ -208,17 +211,17 @@ class ImportSource extends ImportSourceHook
         );
     }
 
-    public function listColumns()
+    public function listColumns(): array
     {
         switch ($this->getSetting('object_type')) {
             case 'host_system':
-                return \array_keys($this->hostColumns);
+                return array_keys($this->hostColumns);
             case 'virtual_machine':
-                return \array_keys($this->vmColumns);
+                return array_keys($this->vmColumns);
             case 'compute_resource':
-                return \array_keys($this->computeResourceColumns);
+                return array_keys($this->computeResourceColumns);
             case 'datastore':
-                return \array_keys($this->datastoreColumns);
+                return array_keys($this->datastoreColumns);
             default:
                 return [];
         }
@@ -226,7 +229,7 @@ class ImportSource extends ImportSourceHook
         // Alternative: return $this->callOnManagedObject('getDefaultPropertySet');
     }
 
-    protected function getManagedObjectClass()
+    protected function getManagedObjectClass(): string
     {
         return 'Icinga\\Module\\Vspheredb\\DbObject\\'
             . $this->getSetting('object_type');
@@ -246,7 +249,7 @@ class ImportSource extends ImportSourceHook
     /**
      * @inheritdoc
      */
-    public static function getDefaultKeyColumnName()
+    public static function getDefaultKeyColumnName(): ?string
     {
         return 'object_name';
     }
