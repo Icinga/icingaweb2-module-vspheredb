@@ -39,6 +39,7 @@ place.
 * FEATURE: provide an --inspect parameter for Monitoring Rule checks (#397)
 * FEATURE: health check now checks whether the schema is up-to-date (#403)
 * FEATURE: daemon keep-alive in the database is being checked (#404)
+* FEATURE: single object check commands now support --uuid (#415)
 
 ### Background Daemon
 * FEATURE: errors on shutdown are now logged (#407)

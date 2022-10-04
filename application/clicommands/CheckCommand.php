@@ -17,6 +17,7 @@ use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Monitoring\Health\VCenterInfo;
 use InvalidArgumentException;
+use Ramsey\Uuid\Uuid;
 use function React\Promise\resolve;
 
 /**
@@ -102,14 +103,22 @@ class CheckCommand extends Command
      *
      * USAGE
      *
-     * icingacli vspheredb check host [--name <name>]
+     * icingacli vspheredb check host [--name <name>|--uuid <uuid>]
      */
     public function hostAction()
     {
         $this->run(function () {
-            $host = $this->lookup()->findOneBy('HostSystem', [
-                'host_name' => $this->params->getRequired('name')
-            ]);
+            $uuid = $this->params->get('uuid');
+            if ($uuid !== null) {
+                $params = [
+                    'uuid' => Uuid::fromString($uuid)->getBytes()
+                ];
+            } else {
+                $params = [
+                    'host_name' => $this->params->getRequired('name')
+                ];
+            }
+            $host = $this->lookup()->findOneBy('HostSystem', $params);
             $this->runChecks($host);
         });
     }
@@ -133,19 +142,26 @@ class CheckCommand extends Command
      *
      * USAGE
      *
-     * icingacli vspheredb check vm [--name <name>]
+     * icingacli vspheredb check vm [--name <name>|--uuid <uuid>]
      */
     public function vmAction()
     {
         $this->run(function () {
-            try {
+            $uuid = $this->params->get('uuid');
+            if ($uuid !== null) {
                 $vm = $this->lookup()->findOneBy('VirtualMachine', [
-                    'object_name' => $this->params->getRequired('name')
+                    'uuid' => Uuid::fromString($uuid)->getBytes()
                 ]);
-            } catch (NotFoundError $e) {
-                $vm = $this->lookup()->findOneBy('VirtualMachine', [
-                    'guest_host_name' => $this->params->getRequired('name')
-                ]);
+            } else {
+                try {
+                    $vm = $this->lookup()->findOneBy('VirtualMachine', [
+                        'object_name' => $this->params->getRequired('name')
+                    ]);
+                } catch (NotFoundError $e) {
+                    $vm = $this->lookup()->findOneBy('VirtualMachine', [
+                        'guest_host_name' => $this->params->getRequired('name')
+                    ]);
+                }
             }
             $this->runChecks($vm);
         });
@@ -170,14 +186,22 @@ class CheckCommand extends Command
      *
      * USAGE
      *
-     * icingacli vspheredb check datastore [--name <name>]
+     * icingacli vspheredb check datastore [--name <name>|--uuid <uuid>]
      */
     public function datastoreAction()
     {
         $this->run(function () {
-            $datastore = $this->lookup()->findOneBy('Datastore', [
-                'object_name' => $this->params->getRequired('name')
-            ]);
+            $uuid = $this->params->get('uuid');
+            if ($uuid !== null) {
+                $params = [
+                    'uuid' => Uuid::fromString($uuid)->getBytes()
+                ];
+            } else {
+                $params = [
+                    'object_name' => $this->params->getRequired('name')
+                ];
+            }
+            $datastore = $this->lookup()->findOneBy('Datastore', $params);
             $this->runChecks($datastore);
         });
     }
