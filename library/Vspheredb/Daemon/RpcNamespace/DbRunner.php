@@ -17,6 +17,8 @@ use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\ExtendedPromiseInterface;
 use RuntimeException;
+use function React\Promise\reject;
+use function React\Promise\resolve;
 
 /**
  * Provides RPC methods
@@ -67,9 +69,11 @@ class DbRunner
         try {
             $this->vCenters = [];
             $this->vCenterSyncStores = [];
+            Process::setTitle('Icinga::vSphereDB::DB::connecting');
             $this->connect($config);
             $deferred = new Deferred();
             $this->loop->futureTick(function () use ($deferred) {
+                Process::setTitle('Icinga::vSphereDB::DB::migration');
                 $this->applyMigrations()->then(function () use ($deferred) {
                     try {
                         $this->requireCleanup()->runForStartup();
@@ -258,15 +262,20 @@ class DbRunner
 
     protected function applyMigrations()
     {
-        $migrations = Db::migrationsForDb($this->connection);
-        if (!$migrations->hasSchema()) {
-            if ($migrations->hasAnyTable()) {
-                throw new RuntimeException('DB has no vSphereDB schema and is not empty, aborting');
+        try {
+            $migrations = Db::migrationsForDb($this->connection);
+            if (!$migrations->hasSchema()) {
+                if ($migrations->hasAnyTable()) {
+                    throw new RuntimeException('DB has no vSphereDB schema and is not empty, aborting');
+                }
+                $this->logger->warning('Database has no schema, will be created');
             }
-            $this->logger->warning('Database has no schema, will be created');
+            $hasMigrations = $migrations->hasPendingMigrations();
+        } catch (\Exception $e) {
+            return reject($e);
         }
         $deferred = new Deferred();
-        if ($migrations->hasPendingMigrations()) {
+        if ($hasMigrations) {
             Process::setTitle('Icinga::vSphereDB::DB::migration');
             $this->logger->notice('Applying schema migrations');
             $this->loop->futureTick(function () use ($migrations, $deferred) {
@@ -278,6 +287,8 @@ class DbRunner
                 $this->logger->notice('DB schema is ready');
                 $deferred->resolve();
             });
+        } else {
+            return resolve();
         }
 
         return $deferred->promise();
