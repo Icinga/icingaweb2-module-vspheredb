@@ -43,7 +43,7 @@ place.
 ### Background Daemon
 * FEATURE: errors on shutdown are now logged (#407)
 * FIX: API connections did not recover from some error states (#399)
-* FIX: schema migration should be logged befort it takes place (#418)
+* FIX: schema migration should be logged before it takes place (#418)
 
 ### vSphere API
 * FEATURE: Host Bus Adapters are now synchronized (#380)
