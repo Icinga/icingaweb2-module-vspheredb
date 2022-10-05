@@ -151,6 +151,24 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return $this->object;
     }
 
+    public function setManagedObject(?ManagedObject $object)
+    {
+        if ($object === null) {
+            $this->object = null;
+            return;
+        }
+
+        if ($object->get('uuid') !== $this->get('uuid')) {
+            throw new \InvalidArgumentException(sprintf(
+                'Cannot set ManagedObject UUID %s, expected %s',
+                bin2hex($object->get('uuid')),
+                bin2hex($this->get('uuid'))
+            ));
+        }
+
+        $this->object = $object;
+    }
+
     public static function getType()
     {
         $parts = explode('\\', get_class(static::create()));

@@ -46,6 +46,7 @@ place.
 ### Background Daemon
 * FEATURE: errors on shutdown are now logged (#407)
 * FEATURE: object UUIDs are now logged in a human-readable way (#421)
+* FEATURE: new caching and preloading mechanisms have been implemented (#422)
 * FIX: API connections did not recover from some error states (#399)
 * FIX: schema migration should be logged before it takes place (#418)
 
