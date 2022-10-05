@@ -2,11 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Db;
 
+use gipfl\Json\JsonString;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Exception\DuplicateKeyException;
 use InvalidArgumentException;
 use LogicException;
+use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Zend_Db_Adapter_Abstract;
 use Zend_Db_Exception;
@@ -954,14 +956,35 @@ abstract class DbObject
 
     protected function getLogId()
     {
-        $id = $this->getId();
-        if (is_array($id)) {
-            $logId = json_encode($id);
-        } else {
-            $logId = $id;
+        if (is_array($this->keyName)) {
+            $id = [];
+            foreach ($this->keyName as $key) {
+                if (isset($this->properties[$key])) {
+                    $id[$key] = $this->getReadableProperty($key);
+                }
+            }
+            try {
+                return JsonString::encode($id);
+            } catch (\Exception $e) {
+                return 'Key encoding failed: ' . $e->getMessage();
+            }
         }
 
-        return $logId;
+        return $this->getReadableProperty($this->keyName);
+    }
+
+    protected function getReadableProperty($name)
+    {
+        if (isset($this->properties[$name])) {
+            $value = $this->properties[$name];
+            if (preg_match('/uuid$/', $name) && strlen($value) === 16) {
+                return Uuid::fromBytes($value)->toString();
+            }
+
+            return $value;
+        }
+
+        return $this->defaultProperties[$name];
     }
 
     public function delete()
