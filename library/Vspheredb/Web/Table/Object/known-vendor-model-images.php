@@ -45,21 +45,32 @@ return  [
             . 'poweredge_r7525/global_spi/ng/enterprise-servers-poweredge-r7525-lf-bestof-500-ng.psd?fmt=png-alpha',
     ],
     'HPE' => [
-        'Synergy 480 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00020236en_us/'
-            . 'attachment/a00039214.png/',
-        'Synergy 480 Gen10 w/ PCIe Exp Mod' => 'https://support.hpe.com/hpesc/public/api/document/a00020236en_us/'
-            . 'attachment/a00039214.png/',
-        'Synergy 660 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00019294en_us/'
-            . 'attachment/a00072909.png/',
-        'ProLiant DL380 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00019682en_us/'
-            . 'attachment/a00050167.png/',
-        'ProLiant DL385 Gen10 Plus' => 'https://support.hpe.com/hpesc/public/api/document/a00095439en_us/'
-            . 'attachment/a00100900.png/',
-        'ProLiant BL460c Gen10' => 'https://support.hpe.com/hpesc/public/api/document/a00019527en_us/'
-            . 'attachment/a00050263.png/',
-        'ProLiant DL560 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/product-image/i00022852/payload',
-        'ProLiant DL580 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/product-image/i00027400/payload',
-        'ProLiant DL360 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/product-image/i00023792/payload',
+        // End of life, found no HPE URL:
+        'ProLiant BL460c Gen10' => 'https://serverhero.de/media/image/category/1980/lg/'
+            . 'hpe-proliant-bl460c-g10-hpe.jpg',
+
+        // Instead of $zoom$, there is also: $superzoom$, $thumbnail$
+        'ProLiant DL160 Gen10'              => 'https://assets.ext.hpe.com/is/image/hpedam/s00001901?$zoom$#.png',
+        'ProLiant DL360 Gen10'              => 'https://assets.ext.hpe.com/is/image/hpedam/s00005869?$zoom$#.png',
+        'ProLiant DL380 Gen10'              => 'https://assets.ext.hpe.com/is/image/hpedam/s00009709?$zoom$#.png',
+        'ProLiant DL380 Gen10 Plus'         => 'https://assets.ext.hpe.com/is/image/hpedam/s00009868?$zoom$#.png',
+        'ProLiant DL385 Gen10 Plus'         => 'https://assets.ext.hpe.com/is/image/hpedam/s00009923?$zoom$#.png',
+        'ProLiant DL560 Gen10'              => 'https://assets.ext.hpe.com/is/image/hpedam/s00002844?$zoom$#.png',
+        'ProLiant DL580 Gen10'              => 'https://assets.ext.hpe.com/is/image/hpedam/s00005353?$zoom$#.png',
+
+        'Synergy 480 Gen10'                 => 'https://assets.ext.hpe.com/is/image/hpedam/s00002866?$zoom$#.png',
+        'Synergy 480 Gen10 w/ PCIe Exp Mod' => 'https://assets.ext.hpe.com/is/image/hpedam/s00003516?$zoom$#.png',
+        'Synergy 660 Gen10'                 => 'https://assets.ext.hpe.com/is/image/hpedam/s00005525?$zoom$#.png'
+
+        // With cover:
+        // 'ProLiant DL360 Gen10'           => 'https://assets.ext.hpe.com/is/image/hpedam/s00001312?$zoom$#.png',
+        // 'ProLiant DL380 Gen10'           => 'https://assets.ext.hpe.com/is/image/hpedam/s00006498?$zoom$#.png',
+        // 'ProLiant DL380 Gen10 Plus'      => 'https://assets.ext.hpe.com/is/image/hpedam/s00009867?$zoom$#.png',
+        // 'ProLiant DL385 Gen10 Plus'      => 'https://assets.ext.hpe.com/is/image/hpedam/s00006463?$zoom$#.png',
+        // 'ProLiant DL580 Gen10'           => 'https://assets.ext.hpe.com/is/image/hpedam/s00001910?$zoom$#.png',
+
+        // Variant:
+        // 'ProLiant DL560 Gen10' => 'https://assets.ext.hpe.com/is/image/hpedam/s00004976?$zoom$#.png',
     ],
     'HP' => [
         'ProLiant DL580 Gen9' => 'https://support.hpe.com/hpesc/public/api/document/c04683220/'
