@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
+use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
 use ipl\Html\Text;
@@ -25,7 +26,7 @@ trait SingleObjectMonitoring
         $this->content()->add(Html::tag('pre', [
             'class' => 'logOutput',
             'style' => 'font-size: 1.15em'
-        ], $this->colorizeOutput($result->getOutput())));
+        ], CheckPluginHelper::colorizeOutput($result->getOutput())));
         if ($this->Auth()->hasPermission('vspheredb/admin')) {
             switch ($object->getTableName()) {
                 case 'virtual_machine':
@@ -85,16 +86,5 @@ trait SingleObjectMonitoring
                 ['class' => 'icon-services']
             );
         }
-    }
-
-    protected function colorizeOutput(string $output): HtmlString
-    {
-        $pattern = '/\[(OK|WARNING|CRITICAL|UNKNOWN)]\s/';
-        $safeString = (new Text($output))->render();
-        $safeString = preg_replace_callback($pattern, function ($match) {
-            $state = strtolower($match[1]);
-            return Html::tag('span', ['class' => ['check-result', "state-$state"]], $match[1]) . ' ';
-        }, $safeString);
-        return new HtmlString($safeString);
     }
 }
