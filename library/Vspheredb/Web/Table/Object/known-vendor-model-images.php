@@ -62,14 +62,14 @@ return  [
         'ProLiant DL360 Gen10' => 'https://support.hpe.com/hpesc/public/api/document/product-image/i00023792/payload',
     ],
     'HP' => [
-        'ProLiant DL380 Gen9' => 'https://support.hpe.com/hpesc/public/api/document/c04438844/'
-            . 'attachment/c04444813.gif/',
-        'ProLiant BL460c Gen9' => 'https://support.hpe.com/hpesc/public/api/document/c04434541/'
-            . 'attachment/a00110345.gif/',
         'ProLiant DL580 Gen9' => 'https://support.hpe.com/hpesc/public/api/document/c04683220/'
-            . 'attachment/c04683239.gif/',
-        'ProLiant DL360 Gen9' => 'https://support.hpe.com/hpesc/public/api/document/c04442953/'
-            . '/attachment/a00076043.png/',
+            . 'GUID-D1718179-3841-49FA-83BC-D24B8C5933FF-high.gif',
+        'ProLiant DL360 Gen9' => 'https://techlibrary.hpe.com/docs/enterprise/servers/DL360Gen9/'
+            . 'DL360Gen9-setup/system_setup_overview/222491.png',
+        'ProLiant DL380 Gen9' => 'https://techlibrary.hpe.com/docs/enterprise/servers/DL380Gen9/'
+            . 'DL380Gen9-setup/system_setup_overview/222457.png',
+        'ProLiant BL460c Gen9' => 'https://techlibrary.hpe.com/docs/enterprise/servers/BL460cGen9/'
+            . 'BL460cGen9-setup/de/system_setup_overview/189999.png'
     ],
     'Lenovo' => [
         'ThinkAgile VX 1U Node -[7Y93CTO4WW]-' => 'https://lenovopress.com/assets/images/LP0932/VX-1U-overview.png',

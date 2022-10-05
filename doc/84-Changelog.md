@@ -22,6 +22,7 @@ place.
 * FIX: Monitoring Rules menu entry is now shown to admins only (#366)
 * FIX: fixed formatting for values between 1000 and 1024, 1.02E+3 GiB vs 1.00 TiB (#367)
 * FIX: guest disk usage percentage value visualisation (#411)
+* FIX: image URLs for ProLiant Gen9 servers have been fixed (#426)
 
 ### Monitoring Rules
 * FEATURE: the configuration tree now highlights nodes with rules (#369)
