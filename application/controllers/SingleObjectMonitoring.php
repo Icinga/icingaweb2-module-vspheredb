@@ -26,6 +26,27 @@ trait SingleObjectMonitoring
             'class' => 'logOutput',
             'style' => 'font-size: 1.15em'
         ], $this->colorizeOutput($result->getOutput())));
+        if ($this->Auth()->hasPermission('vspheredb/admin')) {
+            switch ($object->getTableName()) {
+                case 'virtual_machine':
+                    $tab = 'vmtree';
+                    break;
+                case 'host_system':
+                    $tab = 'hosttree';
+                    break;
+                case 'datastore':
+                    $tab = 'datastoretree';
+                    break;
+                default:
+                    $tab = null;
+            }
+            if ($tab) {
+                $this->content()->add(Html::tag('p', [Html::tag('br'), Html::sprintf(
+                    $this->translate('Please click %s to configure related Monitoring Rules'),
+                    Link::create($this->translate('here'), "vspheredb/monitoring/$tab")
+                )]));
+            }
+        }
     }
 
     protected function createMonitoringHint(BaseDbObject $object, ?bool $inspect = null): Hint

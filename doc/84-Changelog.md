@@ -29,6 +29,7 @@ place.
 * FEATURE: the UI now reflects all Check Command details (#398)
 * FEATURE: improved Rule set naming (#402)
 * FEATURE: it's now possible to define memory usage rules (#405)
+* FEATURE: current state now links to the related configuration page (#420)
 * FEATURE: CPU usage based rules have been implemented (#409)
 * FIX: Monitoring Rule inheritance had some bugs (#363)
 * FIX: Rules for different types on the same folder (DC only) conflicted (#365)
