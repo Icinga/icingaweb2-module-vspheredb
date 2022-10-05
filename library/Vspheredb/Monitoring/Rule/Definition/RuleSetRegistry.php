@@ -64,13 +64,12 @@ class RuleSetRegistry implements JsonSerialization
         $this->sets[$name] = $set;
     }
 
-    public static function fromSerialization($any)
+    public static function fromSerialization($any): RuleSetRegistry
     {
         return new static((array) $any);
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): \stdClass
     {
         $result = [];
         foreach ($this->sets as $set) {
