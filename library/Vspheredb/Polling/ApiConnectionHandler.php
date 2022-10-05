@@ -20,9 +20,10 @@ class ApiConnectionHandler implements EventEmitterInterface
 {
     use EventEmitterTrait;
 
-    const ON_INITIALIZED_SERVER = 'initialized';
-    const ON_CONNECT = 'connection';
-    const ON_DISCONNECT = 'disconnect';
+    public const ON_INITIALIZED_SERVER = 'initialized';
+    public const ON_CONNECT = 'connection';
+    public const ON_DISCONNECT = 'disconnect';
+    protected const TIMEOUT_ON_FAILURE = 60;
 
     /** @var CurlAsync */
     protected $curl;
@@ -238,15 +239,20 @@ class ApiConnectionHandler implements EventEmitterInterface
     {
         $serverId = $server->getServerId();
         $this->logger->warning(sprintf(
-            'Server %s disabled for 60 seconds',
-            $server->getIdentifier()
+            'Server %s will be disabled for %d seconds',
+            $server->getIdentifier(),
+            self::TIMEOUT_ON_FAILURE
         ));
         $this->failingErrorMessages[$serverId] = $message;
-        $this->failing[$serverId] = $this->loop->addTimer(60, function () use ($server) {
-            $this->logger->notice('Failing over for ' . $server->getIdentifier());
+        $this->failing[$serverId] = $this->loop->addTimer(self::TIMEOUT_ON_FAILURE, function () use ($server) {
             $serverId = $server->getServerId();
-            if (! isset($this->failing[$serverId])) {
-                $this->logger->error(sprintf('Not retrying %s, connection has been removed', $server->getIdentifier()));
+            if (isset($this->failing[$serverId])) {
+                $this->logger->notice('Retrying server ' . $server->getIdentifier());
+            } else {
+                $this->logger->warning(sprintf(
+                    'Not retrying %s, connection has been removed',
+                    $server->getIdentifier()
+                ));
                 return;
             }
             $this->loop->cancelTimer($this->failing[$serverId]);
