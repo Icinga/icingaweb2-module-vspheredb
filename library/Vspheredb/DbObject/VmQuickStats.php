@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Module\Vspheredb\Db;
+
 class VmQuickStats extends BaseDbObject
 {
     protected $keyName = 'uuid';
@@ -56,6 +58,18 @@ class VmQuickStats extends BaseDbObject
         'summary.quickStats.uptimeSeconds'                => 'uptime',
     ];
 
+    protected static $preloadCache = null;
+
+    public static function preloadAll(Db $db)
+    {
+        self::$preloadCache = self::loadAll($db, null, 'uuid');
+    }
+
+    public static function clearPreloadCache()
+    {
+        self::$preloadCache = null;
+    }
+
     /**
      * Valid are values from 0 to max allowed memory, but I've met -1 on an
      * ESXi host in the wild (6.7)
@@ -79,8 +93,14 @@ class VmQuickStats extends BaseDbObject
         if ($object->hasBeenLoadedFromDb()) {
             $connection = $object->getConnection();
             $uuid = $object->get('uuid');
-            if (static::exists($uuid, $connection)) {
-                return static::load($uuid, $connection);
+            if (self::$preloadCache === null) {
+                if (static::exists($uuid, $connection)) {
+                    return static::load($uuid, $connection);
+                }
+            } else {
+                if (isset(self::$preloadCache[$uuid])) {
+                    return self::$preloadCache[$uuid];
+                }
             }
         }
 
