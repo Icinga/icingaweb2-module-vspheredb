@@ -28,6 +28,8 @@ class MonitoringRuleSet
 
     protected $fromDb = false;
 
+    protected static $preloadCache = null;
+
     public function __construct(string $binaryUuid, string $objectFolder, Settings $settings = null)
     {
         $this->binaryUuid = $binaryUuid;
@@ -41,6 +43,11 @@ class MonitoringRuleSet
 
     public static function loadOptionalForUuid(string $uuid, string $objectFolder, Db $connection): ?MonitoringRuleSet
     {
+        if (self::$preloadCache !== null) {
+            $key = self::makeKey($uuid, $objectFolder);
+            return self::$preloadCache[$key] ?? null;
+        }
+
         $db = $connection->getDbAdapter();
         $settings = $db->fetchOne(
             $db->select()
@@ -55,6 +62,31 @@ class MonitoringRuleSet
         }
 
         return null;
+    }
+
+    protected static function makeKey($objectUuid, $objectFolder): string
+    {
+        // correct would be using UUID, but bin2hex() is faster, and this is internal only
+        return ($objectUuid === null ? 'null' : bin2hex($objectUuid))
+            . '|'
+            . json_encode($objectFolder);
+    }
+
+    public static function preloadAll(Db $connection)
+    {
+        $db = $connection->getDbAdapter();
+        self::$preloadCache = [];
+        foreach ($db->fetchAll($db->select()->from(MonitoringRuleSet::TABLE)) as $row) {
+            $uuid = $row->object_uuid;
+            $folder = $row->object_folder;
+            self::$preloadCache[self::makeKey($uuid, $folder)]
+                = new static($uuid, $folder, Settings::fromSerialization(JsonString::decode($row->settings)));
+        }
+    }
+
+    public static function clearPreloadCache()
+    {
+        self::$preloadCache = null;
     }
 
     public function store(Db $connection): bool

@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
+use Icinga\Module\Vspheredb\Monitoring\Rule\InheritedSettings;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use InvalidArgumentException;
@@ -34,6 +35,8 @@ class CheckRunner
     /** @var bool */
     protected $inspect = false;
 
+    protected $preloadedTrees = [];
+
     public function __construct(Db $db)
     {
         $this->db = $db;
@@ -58,18 +61,17 @@ class CheckRunner
         $this->inspect = $inspect;
     }
 
+    public function preloadTreeFor($type)
+    {
+        $this->preloadedTrees[$type] = new MonitoringRulesTree($this->db, $type);
+    }
+
     public function check(BaseDbObject $object): CheckResultSet
     {
         $type = self::getCheckTypeForObject($object);
-        if ($this->ruleSetName) {
-            $registry = RuleSetRegistry::byName($this->ruleSetName);
-        } else {
-            $registry = RuleSetRegistry::default();
-        }
+        $registry = $this->getRegistry();
+        $settings = $this->getSettingsForObject($object, $registry, $type);
 
-        $tree = new MonitoringRulesTree($this->db, $type);
-        $settings = $tree->getInheritedSettingsFor($object);
-        $settings->setInternalDefaults($registry);
         $all = new CheckResultSet(sprintf('%s, according configured rules', $this->getTypeLabelForObject($object)));
         $final = $this->ruleSetName === null ? $all : null;
         foreach ($registry->getSets() as $set) {
@@ -142,6 +144,63 @@ class CheckRunner
         }
 
         return $final;
+    }
+
+    protected function getRegistry(): RuleSetRegistry
+    {
+        if ($this->ruleSetName) {
+            return RuleSetRegistry::byName($this->ruleSetName);
+        } else {
+            return RuleSetRegistry::default();
+        }
+    }
+
+    protected function getSettingsForObject(
+        BaseDbObject    $object,
+        RuleSetRegistry $registry,
+        string          $type
+    ): InheritedSettings {
+        $tree = $this->preloadedTrees[$type] ?? new MonitoringRulesTree($this->db, $type);
+        $settings = $tree->getInheritedSettingsFor($object);
+        $settings->setInternalDefaults($registry);
+
+        return $settings;
+    }
+
+    /**
+     * @param BaseDbObject $object
+     * @return array<string, int>
+     */
+    public function checkForDb(BaseDbObject $object): array
+    {
+        $type = self::getCheckTypeForObject($object);
+        $registry = $this->getRegistry();
+        $settings = $this->getSettingsForObject($object, $registry, $type);
+        $results = [];
+        foreach ($registry->getSets() as $set) {
+            if ($settings->isDisabled($set)) {
+                continue;
+            }
+            $ruleSetResult = new CheckResultSet($set->getLabel());
+            foreach ($set->getRules() as $rule) {
+                if ($settings->isDisabled($set, $rule)) {
+                    continue;
+                }
+                if (!$rule::supportsObjectType($type)) {
+                    continue;
+                }
+                $ruleSettings = $settings->withRemovedPrefix(Settings::prefix($set, $rule));
+                $ruleResult = new CheckResultSet($rule->getLabel());
+                $ruleSetResult->addResult($ruleResult);
+                foreach ($rule->checkObject($object, $ruleSettings) as $result) {
+                    $ruleResult->addResult($result);
+                }
+                $results[$set::getIdentifier() . '/' . $rule::getIdentifier()] = $ruleResult->getState()->getName();
+            }
+            $results[$set::getIdentifier()] = $ruleSetResult->getState()->getName();
+        }
+
+        return $results;
     }
 
     protected function getTypeLabelForObject(BaseDbObject $object): string
