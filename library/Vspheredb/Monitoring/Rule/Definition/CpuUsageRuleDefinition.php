@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -48,7 +49,11 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
             $quickStats = VmQuickStats::loadFor($object);
             $cpuCount = $object->get('hardware_numcpu');
             if ($object->hasRuntimeHost()) {
-                $mhzSingleCpu = $object->getRuntimeHost()->get('hardware_cpu_mhz');
+                try {
+                    $mhzSingleCpu = $object->getRuntimeHost()->get('hardware_cpu_mhz');
+                } catch (NotFoundError $e) {
+                    $mhzSingleCpu = 2000;
+                }
             } else {
                 $mhzSingleCpu = 2000;
             }
