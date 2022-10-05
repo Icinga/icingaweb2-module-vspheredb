@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Exception\NotFoundError;
+
 class VirtualMachine extends BaseDbObject
 {
     use CustomValueSupport;
@@ -90,6 +92,62 @@ class VirtualMachine extends BaseDbObject
         // 'runtime.bootTime' => 'runtime_last_boot_time',
         // 'runtime.suspendTime' 'runtime_last_suspend_time',
     ];
+
+    /** @var ?HostSystem */
+    protected $runtimeHost = null;
+
+    public function hasRuntimeHost(): bool
+    {
+        return $this->get('runtime_host_uuid') !== null;
+    }
+
+    /**
+     * @return HostSystem
+     * @throws \Icinga\Exception\NotFoundError
+     */
+    public function getRuntimeHost(): HostSystem
+    {
+        $uuid = $this->get('runtime_host_uuid');
+        if ($uuid === null) {
+            throw new NotFoundError('This VM has no runtime host');
+        }
+        if ($this->runtimeHost && $this->runtimeHost->get('uuid') !== $uuid) {
+            $this->runtimeHost = null;
+        }
+
+        if ($this->runtimeHost === null) {
+            $this->runtimeHost = HostSystem::load($uuid, $this->connection);
+        }
+
+        return $this->runtimeHost;
+    }
+
+    /**
+     * Set the current runtime host object
+     *
+     * Can be used to avoid duplicate loading of the very same host. As of this
+     * writing, this does NOT change VM properties.
+     *
+     * @param HostSystem|null $host
+     * @return void
+     */
+    public function setRuntimeHost(?HostSystem $host)
+    {
+        if ($host === null) {
+            $this->runtimeHost = null;
+            return;
+        }
+
+        if ($host->get('uuid') !== $this->get('runtime_host_uuid')) {
+            throw new \InvalidArgumentException(sprintf(
+                'Cannot set runtime host with UUID %s, expected %s',
+                bin2hex($host->get('uuid')),
+                bin2hex($this->get('runtime_host_uuid'))
+            ));
+        }
+
+        $this->runtimeHost = $host;
+    }
 
     /**
      * @param $value
