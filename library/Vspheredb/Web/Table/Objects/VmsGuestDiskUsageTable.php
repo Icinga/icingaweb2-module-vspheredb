@@ -46,7 +46,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                     '%s free out of %s (%.2F %%)',
                     $row->free_space,
                     $row->capacity,
-                    $row->free_space / $row->capacity
+                    $row->free_space / $row->capacity * 100
                 );
 
                 return new SimpleUsageBar($row->capacity - $row->free_space, $row->capacity, $title);
