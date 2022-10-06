@@ -13,6 +13,9 @@ use Ramsey\Uuid\Uuid;
 
 class VCenterSummaryTable extends ObjectsTable
 {
+    protected $searchColumns = [
+        'name',
+    ];
     protected $baseUrl = 'vspheredb/vcenter';
 
     protected $baseUrlHosts = 'vspheredb/hosts';
@@ -150,7 +153,7 @@ class VCenterSummaryTable extends ObjectsTable
                 }
                 return $bar;
             })->setSortExpression(
-                'SUM(hqs.overall_cpu_usage) / SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
+                '(overall_cpu_usage / total_mhz)'
             )->setDefaultSortDirection('DESC'),
             $this->createColumn('overall_cpu_usage', $this->translate('Used'), 'SUM(hqs.overall_cpu_usage)')
                 ->setRenderer(function ($row) {
@@ -179,7 +182,7 @@ class VCenterSummaryTable extends ObjectsTable
                 }
                 return $bar;
             })->setSortExpression(
-                'AVG(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)'
+                '(memory_used_mb / memory_total_mb)'
             )->setDefaultSortDirection('DESC'),
             $this->createColumn('overall_memory_usage', $this->translate('Used'), 'SUM(hqs.overall_memory_usage_mb)')
                 ->setRenderer(function ($row) {
