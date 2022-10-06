@@ -55,6 +55,7 @@ place.
 * FEATURE: new caching and preloading mechanisms have been implemented (#422)
 * FIX: API connections did not recover from some error states (#399)
 * FIX: schema migration should be logged before it takes place (#418)
+* FIX: Host Sensor readings now support 64bit values (#428)
 
 ### vSphere API
 * FEATURE: Host Bus Adapters are now synchronized (#380)

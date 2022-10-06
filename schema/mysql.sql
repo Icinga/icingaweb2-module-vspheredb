@@ -271,7 +271,7 @@ CREATE TABLE host_sensor (
     'unknown',
     'red'
   ) NOT NULL,
-  current_reading INT NOT NULL,
+  current_reading BIGINT NOT NULL,
   unit_modifier SMALLINT NOT NULL,
   base_units VARCHAR(32) DEFAULT NULL,
   rate_units VARCHAR(32) DEFAULT NULL,
@@ -942,4 +942,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (50, NOW());
+VALUES (51, NOW());
