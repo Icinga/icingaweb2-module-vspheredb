@@ -16,6 +16,7 @@ place.
 * FEATURE: connection health icons now show more details (#400)
 * FEATURE: the daemon can now be restarted from the web UI (#406)
 * FEATURE: use alpha channel images for HPE servers, where available (#425)
+* FEATURE: CPU usage look has been improved (#427)
 * FIX: links pointing to the VMware HTML5 UI have now work on v6.7 and v7.x (#209)
 * FIX: issues with dark/light mode in Icinga Web have been addressed (#355)
 * FIX: Monitoring Rules documentation link was missing (#360)

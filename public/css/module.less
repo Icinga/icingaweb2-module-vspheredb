@@ -1093,7 +1093,7 @@ div.host-header {
 }
 
 .cpu {
-  border: 0.75em solid @text-color;
+  border: 0.75em solid fade(@text-color, 30%);
   height: 6em;
   box-sizing: border-box;
   width: 6em;
@@ -1106,7 +1106,7 @@ div.host-header {
   margin-right: 1em;
   &.warning {
     background-color: @color-warning-handled;
-    color: @text-color;
+    color: @text-color-inverted;
   }
   &.critical {
     background-color: @color-critical-handled;
