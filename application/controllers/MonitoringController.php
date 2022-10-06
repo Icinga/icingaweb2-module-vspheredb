@@ -14,6 +14,8 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTreeRenderer;
 use Icinga\Module\Vspheredb\Monitoring\Rule\RuleForm;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblematicObjectTable;
+use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemTable;
 use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
@@ -26,10 +28,13 @@ class MonitoringController extends Controller
         $this->assertPermission('vspheredb/admin');
         parent::init();
         $action = $this->getRequest()->getActionName();
-        if (preg_match('/tree$/', $action) || $action === 'index') {
+        if (preg_match('/tree$/', $action) || $action === 'index' || $action === 'configuration') {
             $this->tabs()->add('index', [
                 'label' => $this->translate('Monitoring'),
                 'url' => 'vspheredb/monitoring'
+            ])->add('configuration', [
+                'label' => $this->translate('Configuration'),
+                'url' => 'vspheredb/monitoring/configuration'
             ])->add('hosttree', [
                 'label' => $this->translate('Hosts'),
                 'url' => 'vspheredb/monitoring/hosttree'
@@ -55,6 +60,25 @@ class MonitoringController extends Controller
     }
 
     public function indexAction()
+    {
+        $this->addTitle($this->translate('Monitoring Rules'));
+        $table = new MonitoringRuleProblemTable($this->db()->getDbAdapter());
+        $table->renderTo($this);
+    }
+
+    public function problemsAction()
+    {
+        $this->addSingleTab($this->translate('Current Problems'));
+        $vCenter = hex2bin($this->params->getRequired('vcenter'));
+        $objectType = $this->params->getRequired('objectType');
+        $ruleSet = $this->params->getRequired('ruleSet');
+        $rule = $this->params->getRequired('rule');
+        $this->addTitle(sprintf('%s / %s (%s)', $ruleSet, $rule, $objectType));
+        $table = new MonitoringRuleProblematicObjectTable($this->db(), $vCenter, $objectType, $ruleSet, $rule);
+        $table->renderTo($this);
+    }
+
+    public function configurationAction()
     {
         $this->addTitle($this->translate('Monitoring Rules'));
         $this->content()->addAttributes([

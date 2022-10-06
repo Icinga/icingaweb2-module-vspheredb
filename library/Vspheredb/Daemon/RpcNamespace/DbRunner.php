@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\Application\MemoryLimit;
 use Icinga\Module\Vspheredb\Daemon\DbCleanup;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\Monitoring\PersistedRuleProblems;
 use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncStore\SyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncStore\VmEventHistorySyncStore;
@@ -53,6 +54,18 @@ class DbRunner
                 try {
                     $this->requireCleanup()->runRegular();
                 } catch (\Exception $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            }
+        });
+        $this->loop->addPeriodicTimer(90, function () {
+            if ($this->connection) {
+                try {
+                    $start = microtime(true);
+                    $this->refreshMonitoringRuleProblemsRequest();
+                    $duration = microtime(true) - $start;
+                    $this->logger->debug(sprintf('Refreshing Monitoring Rule problems took %.2Fs', $duration));
+                } catch (\Throwable $e) {
                     $this->logger->error($e->getMessage());
                 }
             }
@@ -190,6 +203,13 @@ class DbRunner
         $this->setProcessReadyTitle();
 
         return $stats;
+    }
+
+    public function refreshMonitoringRuleProblemsRequest()
+    {
+        $p = new PersistedRuleProblems($this->connection);
+        $p->refresh();
+        return true;
     }
 
     /**
