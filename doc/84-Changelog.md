@@ -62,6 +62,9 @@ place.
 * FEATURE: Host Bus Adapters are now synchronized (#380)
 * FIX: fixed compatibility with vSphere 5.5, caused by Custom Fields in v1.4 (#377)
 
+### InfluxDB
+* FIX: connections configured as "autodetect" used to fail silently (#386)
+
 ### Integrations
 * FEATURE: Director Import Source now ships ManagedObject-references (#383, #384)
 * FEATURE: Director Import provides SysInfo/BIOS-UUIDs (#385)

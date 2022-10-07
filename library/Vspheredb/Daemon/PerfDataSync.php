@@ -5,15 +5,10 @@ namespace Icinga\Module\Vspheredb\Daemon;
 use Exception;
 use gipfl\Curl\CurlAsync;
 use gipfl\InfluxDb\ChunkedInfluxDbWriter;
-use gipfl\InfluxDb\InfluxDbConnection;
-use gipfl\InfluxDb\InfluxDbConnectionFactory;
-use gipfl\InfluxDb\InfluxDbConnectionV1;
-use gipfl\InfluxDb\InfluxDbConnectionV2;
-use gipfl\Json\JsonString;
 use gipfl\SimpleDaemon\DaemonTask;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
-use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Module\Vspheredb\MappedClass\ServiceContent;
+use Icinga\Module\Vspheredb\PerformanceData\InfluxConnectionForVcenterLoader;
 use Icinga\Module\Vspheredb\PerformanceData\MetricCSVToInfluxDataPoint;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\CounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\CounterMap;
@@ -25,7 +20,6 @@ use Icinga\Module\Vspheredb\Polling\PerformanceSet\VmDiskPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\VmNetworkPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\SyncStore\PerfCounterInfoSyncStore;
 use Icinga\Module\Vspheredb\Polling\VsphereApi;
-use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -49,9 +43,6 @@ class PerfDataSync implements DaemonTask
     /** @var CurlAsync */
     protected $curl;
 
-    /** @var InfluxDbConnection */
-    protected $influxDb;
-
     /** @var ChunkedInfluxDbWriter */
     protected $influxDbWriter;
 
@@ -60,6 +51,8 @@ class PerfDataSync implements DaemonTask
 
     /** @var TimerInterface[]  */
     protected $timers = [];
+
+    protected $loadingWriterConfig = false;
 
     public function __construct(
         VCenter $vCenter,
@@ -97,82 +90,48 @@ class PerfDataSync implements DaemonTask
 
     protected function loadWriterConfig()
     {
-        try {
-            $this->loadConsumers();
-        } catch (Exception $e) {
-            $this->logger->error($e->getMessage());
-            $this->influxDbWriter = $this->influxDb = null;
+        if ($this->loadingWriterConfig) {
+            return resolve();
         }
+        $this->loadingWriterConfig = true;
+        $loader = InfluxConnectionForVcenterLoader::load($this->vCenter, $this->curl, $this->loop);
+        if (! $loader) {
+            $this->stopRunningInfluxDbInstances();
+            $this->loadingWriterConfig = false;
+            return resolve();
+        }
+        return $loader->then(function (?ChunkedInfluxDbWriter $writer) {
+            $this->stopRunningInfluxDbInstances();
+            $this->loadingWriterConfig = false;
+            if (! $writer) {
+                return;
+            }
+            if ($writer instanceof LoggerAwareInterface) { // Compat, older writers do not have this
+                $writer->setLogger($this->logger);
+            }
+            $this->stopRunningInfluxDbInstances();
+            $this->influxDbWriter = $writer;
+        }, function (Exception $e) {
+            $this->loadingWriterConfig = false;
+            $this->stopRunningInfluxDbInstances();
+            $this->logger->error('Failed to instantiate InfluxDB connection: ' . $e->getMessage());
+        });
     }
 
-    protected function loadConsumers()
+    protected function stopRunningInfluxDbInstances()
     {
-        $db = $this->vCenter->getConnection()->getDbAdapter();
-        // TODO: not here, not only one of them
-        $row = $db->fetchRow($db->select()->from([
-            'pc' => 'perfdata_consumer'
-        ], 'pc.*')->join([
-            'ps' => 'perfdata_subscription'
-        ], $db->quoteInto('ps.consumer_uuid = pc.uuid AND ps.vcenter_uuid = ?', $this->vCenter->get('instance_uuid')), [
-            'vcenter_settings' => 'ps.settings'
-        ]));
-        if (! $row) {
-            $this->influxDb = null;
-            if ($this->influxDbWriter) {
-                $this->influxDbWriter->stop();
-                $this->influxDbWriter = null;
-            }
-            return;
+        if ($this->influxDbWriter) {
+            $this->influxDbWriter->stop();
+            $this->influxDbWriter = null;
         }
-        $vCenterSettings = JsonString::decode($row->vcenter_settings);
-        unset($row->vcenter_settings);
-        $instance = PerfDataConsumerHook::createConsumerInstance(
-            PerfdataConsumer::create((array) $row),
-            $this->loop
-        );
-        switch ($instance->getSetting('api_version')) {
-            case 'v1':
-                $connection = new InfluxDbConnectionV1(
-                    $this->curl,
-                    $instance->getSetting('base_url'),
-                    $instance->getSetting('username'),
-                    $instance->getSetting('password')
-                );
-                break;
-            case 'v2':
-                $connection = new InfluxDbConnectionV2(
-                    $this->curl,
-                    $instance->getSetting('base_url'),
-                    $instance->getSetting('organization'),
-                    $instance->getSetting('token')
-                );
-                break;
-            default:
-                $connection = InfluxDbConnectionFactory::create(
-                    $this->curl,
-                    $instance->getSetting('base_url'),
-                    $instance->getSetting('username'),
-                    $instance->getSetting('password')
-                );
-        }
-
-        $this->influxDb = $connection;
-        $this->influxDbWriter = new ChunkedInfluxDbWriter(
-            $this->influxDb,
-            $vCenterSettings->dbname,
-            $this->loop
-        );
-        if ($this->influxDbWriter instanceof LoggerAwareInterface) { // Compat, older writers do not have this
-            $this->influxDbWriter->setLogger($this->logger);
-        }
-        $this->influxDbWriter->setPrecision('s');
     }
 
     protected function initialize()
     {
         $this->syncCounterInfo()->then(function () {
-            $this->loadWriterConfig();
-            $this->scheduleTasks();
+            $this->loadWriterConfig()->always(function () {
+                $this->scheduleTasks();
+            });
         }, function ($e) {
             $this->logger->error($e->getMessage());
         });
@@ -258,16 +217,18 @@ class PerfDataSync implements DaemonTask
     protected function scheduleTasks()
     {
         $this->timers[] = $this->loop->addPeriodicTimer(120, function () {
-            $this->loadWriterConfig();
-            if ($this->influxDbWriter) {
-                $this->sync(18);
-            }
+            $this->loadWriterConfig()->then(function () {
+                if ($this->influxDbWriter) {
+                    $this->sync(18);
+                }
+            });
         });
         $this->loop->futureTick(function () {
-            $this->loadWriterConfig();
-            if ($this->influxDbWriter) {
-                $this->sync(18); // Used to be 180 (= 1hour, reduced to fix problems with slow systems)
-            }
+            $this->loadWriterConfig()->then(function () {
+                if ($this->influxDbWriter) {
+                    $this->sync(18); // Used to be 180 (= 1hour, reduced to fix problems with slow systems)
+                }
+            });
         });
     }
 
