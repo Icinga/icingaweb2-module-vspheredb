@@ -12,6 +12,8 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  * type to which a particular custom field applies by setting its managedObjectType.
  * (If you do not set a managed object type for a custom field definition, the
  * field applies to all managed objects.)
+ *
+ * #[AllowDynamicProperties]
  */
 class ExtensibleManagedObject
 {

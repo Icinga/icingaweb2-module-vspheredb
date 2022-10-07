@@ -10,6 +10,8 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  * actually be performed on the entities contained within that Folder or
  * ResourcePool, so you cannot query for events on Folders and ResourcePools
  * themselves this way.
+ *
+ * #[AllowDynamicProperties]
  */
 class EventFilterSpecByEntity
 {

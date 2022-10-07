@@ -6,6 +6,8 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 /**
  * Information about the alarm's state.
+ *
+ * #[AllowDynamicProperties]
  */
 class AlarmState
 {

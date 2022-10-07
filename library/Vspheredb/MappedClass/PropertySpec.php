@@ -14,6 +14,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * union of the properties implied by the PropertySpec objects even, in the case
  * of a RetrieveResult, where there may be an applicable PropertySpec in more
  * than one filter.
+ *
+ * #[AllowDynamicProperties]
  */
 class PropertySpec
 {

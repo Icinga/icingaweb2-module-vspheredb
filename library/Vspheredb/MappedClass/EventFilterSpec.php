@@ -8,6 +8,8 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  * Event filter used to query events in the history collector database. The
  * client creates an event history collector with a filter specification, the
  * retrieves the events from the event history collector.
+ *
+ * #[AllowDynamicProperties]
  */
 class EventFilterSpec
 {

@@ -6,6 +6,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * Result of RetrievePropertiesEx and ContinueRetrievePropertiesEx
  *
  * https://www.vmware.com/support/developer/converter-sdk/conv61_apireference/vmodl.query.PropertyCollector.RetrieveResult.html
+ *
+ * #[AllowDynamicProperties]
  */
 class RetrieveResult
 {

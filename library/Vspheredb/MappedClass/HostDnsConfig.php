@@ -12,6 +12,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * A colon separates each field (:). For example, 2001:DB8:101::230:6eff:fe04:d9ff.
  * The address can also consist of the symbol '::' to represent multiple 16-bit
  * groups of contiguous 0's only once in an address as described in RFC 2373.
+ *
+ * #[AllowDynamicProperties]
  */
 class HostDnsConfig
 {

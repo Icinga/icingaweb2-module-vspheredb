@@ -2,6 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+/**
+ * #[AllowDynamicProperties]
+ */
 class LocalizedMethodFault
 {
     /** @var MethodFault */

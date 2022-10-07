@@ -6,6 +6,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * The virtual switch is a software entity to which multiple virtual network
  * adapters can connect to create a virtual network. It can also be bridged to
  * a physical network
+ *
+ * #[AllowDynamicProperties]
  */
 class HostVirtualSwitch
 {

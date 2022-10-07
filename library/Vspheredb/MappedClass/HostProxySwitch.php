@@ -9,6 +9,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * A hidden standard switch that resides on every host that is associated with
  * a vSphere distributed switch. The host proxy switch replicates the networking
  * configuration set on the vSphere distributed switch to the particular host.
+ *
+ * #[AllowDynamicProperties]
  */
 class HostProxySwitch
 {

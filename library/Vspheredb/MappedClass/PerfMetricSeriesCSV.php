@@ -7,6 +7,8 @@ use gipfl\Json\JsonSerialization;
 /**
  *
  * https://pubs.vmware.com/vsphere-6-5/topic/com.vmware.wssdk.apiref.doc/vim.PerformanceManager.MetricSeriesCSV.html
+ *
+ * #[AllowDynamicProperties]
  */
 class PerfMetricSeriesCSV implements JsonSerialization
 {

@@ -11,6 +11,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * consideration.
  *
  * This data object can also be named, using the "name" field in the base type.
+ *
+ * #[AllowDynamicProperties]
  */
 class TraversalSpec extends SelectionSpec
 {

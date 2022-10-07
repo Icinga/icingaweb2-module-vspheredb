@@ -6,6 +6,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * This data object type specifies a script that is triggered by an alarm. You
  * can use any elements of the ActionParameter enumerated list as part of your
  * script to provide information available at runtime.
+ *
+ * #[AllowDynamicProperties]
  */
 class RunScriptAction extends Action
 {

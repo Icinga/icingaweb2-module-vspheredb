@@ -2,6 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+/**
+ * #[AllowDynamicProperties]
+ */
 class PerfMetricId
 {
     /** @var int */

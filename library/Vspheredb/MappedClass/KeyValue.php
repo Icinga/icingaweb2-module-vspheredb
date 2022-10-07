@@ -4,6 +4,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 /**
  * Non-localized key/value pair
+ *
+ * #[AllowDynamicProperties]
  */
 class KeyValue
 {

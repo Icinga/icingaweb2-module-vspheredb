@@ -6,6 +6,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * UserSession
  *
  * Information about a current user session
+ *
+ * #[AllowDynamicProperties]
  */
 class UserSession
 {

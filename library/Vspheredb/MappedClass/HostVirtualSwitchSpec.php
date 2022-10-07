@@ -5,6 +5,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 /**
  * This data object type describes the VirtualSwitch specification representing
  * the properties on a VirtualSwitch that can be configured once the object exists
+ *
+ * #[AllowDynamicProperties]
  */
 class HostVirtualSwitchSpec
 {

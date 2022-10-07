@@ -4,6 +4,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 /**
  * This option specifies users used to filter event history
+ *
+ * #[AllowDynamicProperties]
  */
 class EventFilterSpecByUsername
 {

@@ -12,6 +12,8 @@ use Zend_Db_Adapter_Abstract as ZfDbAdapter;
  *
  * We use this as a base class for all vim.event.Event implementations
  * handled by us
+ *
+ * #[AllowDynamicProperties]
  */
 abstract class KnownEvent implements JsonSerialization
 {

@@ -15,6 +15,8 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  *
  * If the selectSet property is present, then this specifies additional objects
  * to filter. These objects are defined by one or more SelectionSpec objects.
+ *
+ * #[AllowDynamicProperties]
  */
 class ObjectSpec
 {

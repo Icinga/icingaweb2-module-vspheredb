@@ -68,6 +68,9 @@ place.
 * FEATURE: Director Import ships object UUIDs (#414)
 * FIX: Monitoring module integration, when configured with Custom Vars (#381)
 
+### Internals
+* FEATURES: SOAP-mapped classes support dynamic properties for PHP 8.2 (#430)
+
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/11?closed=1)

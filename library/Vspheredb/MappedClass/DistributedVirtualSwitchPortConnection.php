@@ -10,6 +10,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * - Virtual machine virtual NIC (VirtualEthernetCardDistributedVirtualPortBackingInfo)
  * - Host virtual NIC (HostVirtualNic)
  * - Physical NIC (HostNetworkInfo.pnic)
+ *
+ * #[AllowDynamicProperties]
  */
 class DistributedVirtualSwitchPortConnection
 {

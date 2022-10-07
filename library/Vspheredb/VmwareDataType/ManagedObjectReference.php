@@ -4,6 +4,9 @@ namespace Icinga\Module\Vspheredb\VmwareDataType;
 
 use gipfl\Json\JsonSerialization;
 
+/**
+ * #[AllowDynamicProperties]
+ */
 class ManagedObjectReference implements JsonSerialization
 {
     /**

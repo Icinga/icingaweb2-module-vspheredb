@@ -7,11 +7,13 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  *
  * This data object type describes system information including the name, type,
  * version, and build number.
+ *
+ * #[AllowDynamicProperties]
  */
 class AboutInfo
 {
     /**
-     * Indicates whether or not the service instance represents a standalone
+     * Indicates whether the service instance represents a standalone
      * host. If the service instance represents a standalone host, then the
      * physical inventory for that service instance is fixed to that single
      * host. VirtualCenter server provides additional features over single

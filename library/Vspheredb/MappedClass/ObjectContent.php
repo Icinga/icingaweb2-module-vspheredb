@@ -9,6 +9,8 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 /**
  * The ObjectContent data object type contains the contents retrieved for a
  * single managed object.
+ *
+ * #[AllowDynamicProperties]
  */
 class ObjectContent
 {
