@@ -31,7 +31,7 @@ class DaemonController extends Controller
         $this->content()->add([
             Html::tag('h3', $this->translate('Damon Processes')),
             $this->prepareDaemonInfo(),
-            Html::tag('h3', $this->translate('vmWare API Connections')),
+            Html::tag('h3', $this->translate('VMware API Connections')),
             $this->prepareVsphereConnectionTable(),
             Html::tag('h3', $this->translate('Pending HTTP Requests')),
             $this->prepareCurlInfoTable(),
