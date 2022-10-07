@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\IcingaWeb2\Icon;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form\Feature\NextConfirmCancel;
 use gipfl\Web\InlineForm;
