@@ -136,6 +136,7 @@ class HostSensorsTable extends ZfQueryBasedTable
             'health_state' => 'health_state',
             'cnt'          => 'COUNT(*)',
         ])
+            ->where('base_units IS NOT NULL')
             ->group('sensor_type')
             ->group('health_state')
             ->order('sensor_type')
