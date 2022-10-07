@@ -170,10 +170,14 @@ class ObjectSync implements DaemonTask
             $this->logger->notice("Task '$label' is already running, skipping");
             return;
         }
-        $this->logger->debug("Running Task '$label'");
+        // $this->logger->debug("Running Task '$label'");
 
-        $vms = VmDatastoreUsageSyncStore::fetchOutdatedVms($this->vCenter, 3600 * 6, 30);
-        if (! empty($vms)) {
+        $maxCount = 30;
+        $total = count(VmDatastoreUsageSyncStore::fetchOutdatedVms($this->vCenter, 3600 * 6));
+        $vms = VmDatastoreUsageSyncStore::fetchOutdatedVms($this->vCenter, 3600 * 6, $maxCount);
+        $count = count($vms);
+        if ($count > 0) {
+            $this->logger->debug("Refreshing  '$label': $count out of $total VMs with outdated storage information");
             $this->runningTasks[$idx] = VmDatastoreUsageSyncStore::refreshOutdatedVms($this->api, $vms, $this->logger)
                 ->then(function () use ($idx) {
                     unset($this->runningTasks[$idx]);
