@@ -1,6 +1,6 @@
 <?php
 
-return  [
+return [
     'Dell Inc.' => [
         'PowerEdge R610' => 'https://i.dell.com/is/image/DellContent/content/dam/'
             . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
@@ -22,21 +22,20 @@ return  [
             . 'poweredge_r930/global_spi/server-poweredge-r930-left-bestof-500-ng.psd?fmt=png-alpha',
 
         'PowerEdge R740' => 'https://i.dell.com/is/image/DellContent/content/dam/'
-            . 'global-asset-library/products/enterprise_servers/poweredge/'
-            . 'r740/dellemc_per740_24x25_2_lf.psd?wid=500&fmt=png-alpha',
-        'PowerEdge R740xd' => 'https://i.dell.com/is/image/DellContent/content/dam/'
-            . 'global-asset-library/products/enterprise_servers/poweredge/'
-            . 'r740xd/dellemc_per740xd_24x25_bezel_2_lf.psd?wid=500&fmt=png-alpha',
+            . 'images/products/servers/poweredge/r740/'
+            . 'dellemc-per740-24x25-bezel-lcd-2-above-ff-bold-reflection.psd?fmt=png-alpha',
+        'PowerEdge R740xd' => 'https://i.dell.com/is/image/DellContent//content/dam/'
+            . 'images/products/servers/poweredge/r740xd/dellemc-per740xd-24x25-bezel-2-lf.psd'
+            . '?fmt=pjpg&pscan=auto&scl=1&hei=402&wid=1236&qlt=100,1&resMode=sharp2&size=1236,402&chrss=full',
         'PowerEdge R940' => 'https://i.dell.com/is/image/DellContent/content/dam/'
-            . 'global-asset-library/products/enterprise_servers/poweredge/'
-            . 'r940/dellemc_per940_24x2_5_bezel_lcd_lf.psd?wid=500&fmt=png-alpha',
-
+            . 'images/products/servers/poweredge/r940/dellemc-per940-24x2-5-bezel-lcd-lf.psd'
+            . '?fmt=png-alpha&pscan=auto&scl=1&hei=402&wid=993&qlt=100,1&resMode=sharp2&size=993,402&chrss=full',
         'PowerEdge R750' => 'https://i.dell.com/is/image/DellContent/content/dam/'
             . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
             . 'r_series/r750/global_spi/ng/enterprise-servers-poweredge-r750-lf-bestof-500-ng.psd?fmt=png-alpha',
         'PowerEdge R6515' => 'https://i.dell.com/is/image/DellContent/content/dam/'
-            . 'global-asset-library/products/enterprise_servers/poweredge/'
-            . 'r6515/dellemc_per6515_10x25_emc-lcd-bezel_lf.psd?wid=500&fmt=png-alpha',
+            . 'images/products/servers/poweredge/r6515/dellemc-per6515-10x25-emc-lcd-bezel-lf.psd'
+            . '?fmt=pjpg&pscan=auto&scl=1&hei=402&wid=2117&qlt=100,1&resMode=sharp2&size=2117,402&chrss=full',
         'PowerEdge R7515' => 'https://i.dell.com/is/image/DellContent/content/dam/'
             . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
             . 'c6525/global_spi/ng/enterprise-server-poweredge-r7515-lf-bestof-500-ng.psd?fmt=png-alpha',

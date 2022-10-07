@@ -25,6 +25,7 @@ place.
 * FIX: fixed formatting for values between 1000 and 1024, 1.02E+3 GiB vs 1.00 TiB (#367)
 * FIX: guest disk usage percentage value visualisation (#411)
 * FIX: image URLs for ProLiant Gen9 servers have been fixed (#426)
+* FIX: image URLS for some DELL server have been fixed/improved (#432)
 * FIX: search and sorting has been fixed for the vCenter overview (#419)
 * FIX: no transparency for dropdown menus (#429)
 
