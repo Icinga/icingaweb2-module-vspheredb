@@ -222,6 +222,7 @@ class InfluxDbConnectionForm extends Form
             $version = $this->remoteRequest('influxdb.discoverVersion', [
                 'baseUrl' => $baseUrl,
             ]);
+            $version = ltrim($version, 'v');
             if ($this->versionIsFine($version)) {
                 $this->checkedNow = true;
                 $this->setCheckedApiVersionFor($baseUrl, $version);
