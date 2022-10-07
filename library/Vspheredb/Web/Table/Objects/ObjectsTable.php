@@ -30,9 +30,28 @@ abstract class ObjectsTable extends BaseTable
         return $this;
     }
 
-    public function filterVCenter(VCenter $vCenter)
+    public function filterVCenter(VCenter $vCenter): self
     {
-        $this->getQuery()->where('o.vcenter_uuid = ?', $vCenter->getUuid());
+        return $this->filterVCenterUuids([$vCenter->getUuid()]);
+    }
+
+    public function filterVCenterUuids(array $uuids): self
+    {
+        if (empty($uuids)) {
+            $this->getQuery()->where('1 = 0');
+            return $this;
+        }
+
+        if ($this instanceof VCenterSummaryTable) {
+            $column = 'vc.instance_uuid';
+        } else {
+            $column = 'o.vcenter_uuid';
+        }
+        if (count($uuids) === 1) {
+            $this->getQuery()->where("$column = ?", array_shift($uuids));
+        } else {
+            $this->getQuery()->where("$column IN (?)", $uuids);
+        }
 
         return $this;
     }
