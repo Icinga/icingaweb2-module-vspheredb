@@ -9,6 +9,7 @@ use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 use RuntimeException;
 use Zend_Db_Select as ZfSelect;
 use Zend_Db_Select_Exception;
@@ -184,15 +185,18 @@ class Summaries extends BaseHtmlElement
 
     protected function addSummaryLinks($column, $variants)
     {
+        $span = Html::tag('div', ['class' => 'state-group']);
         foreach ($variants as $value) {
-            $this->add($this->createSummaryLink($value, $column));
+            $span->add($this->createSummaryLink($value, $column));
         }
+
+        $this->add($span);
     }
 
     protected function assemble()
     {
         $this->setSeparator(' ');
-        $this->add([Icon::create('ok'), $this->translate('Status')]);
+        $this->add([Icon::create('ok'), $this->translate('Status') . ': ']);
         $this->addSummaryLinks('overall_status', [
             'red',
             'yellow',
@@ -200,7 +204,7 @@ class Summaries extends BaseHtmlElement
             'green'
         ]);
         if ($this->wantsPowerState) {
-            $this->add([Icon::create('off'), $this->translate('Power')]);
+            $this->add([Icon::create('off'), $this->translate('Power') . ': ']);
             $this->addSummaryLinks('runtime_power_state', [
                 'poweredon',
                 'poweredoff',

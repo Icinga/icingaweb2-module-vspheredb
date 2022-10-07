@@ -613,10 +613,20 @@ table {
   }
 }
 
+h1 div.object-summaries {
+  font-size: 0.75em;
+}
 div.object-summaries {
-  border-radius: 0.5em;
-  padding: 0.25em 0.25em 0.25em 0.25em;
+  margin: 0 1em 0 0;
+  display: inline-block;
+  padding: 0;
   vertical-align: middle;
+  line-height: 2em;
+  .state-group {
+    display: inline-block;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+  }
 
   i {
     vertical-align: top;
@@ -628,15 +638,24 @@ div.object-summaries {
     min-width: 2em;
     font-weight: bold;
     text-align: center;
-    margin: 0.2em;
     height: 2em;
     border: 0.2em solid transparent;
-    line-height: 2em;
+    line-height: 1.8em; // height - border/2
     overflow: hidden;
     padding-left: 0.4em;
     padding-right: 0.4em;
     vertical-align: middle;
-    border-radius: 1em;
+    margin-left: 1px;
+    color: @white;
+    // border-radius: 1em;
+    &:first-of-type {
+      border-top-left-radius: 1em;
+      border-bottom-left-radius: 1em;
+    }
+    &:last-of-type {
+      border-top-right-radius: 1em;
+      border-bottom-right-radius: 1em;
+    }
     &:focus {
       outline: none;
     }
@@ -650,34 +669,29 @@ div.object-summaries {
   }
 
   a.red, a.poweredoff, a.suspended {
-    color: @text-color-inverted;
     background-color: @color-critical;
   }
 
   a.yellow, a.standby {
-    color: @text-color-inverted;
     background-color: @color-warning;
   }
 
   a.green, a.poweredon {
-    color: @text-color-inverted;
     background-color: @color-ok;
   }
 
   a.unknown {
-    color: @text-color-inverted;
     background-color: @color-unknown;
   }
 
   a.gray {
-    color: @text-color-inverted;
     background-color: @gray;
   }
 }
 
 table {
   a.state {
-    color: @text-color;
+    color: white;
     display: inline-block;
     min-width: 2em;
     font-weight: bold;
@@ -685,7 +699,7 @@ table {
     margin: 0.2em;
     height: 2em;
     border: 0.2em solid transparent;
-    line-height: 2em;
+    line-height: 1.8em; // 2em - border / 2
     overflow: hidden;
     padding-left: 0.4em;
     padding-right: 0.4em;
