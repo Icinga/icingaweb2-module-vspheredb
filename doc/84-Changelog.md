@@ -26,6 +26,7 @@ place.
 * FIX: guest disk usage percentage value visualisation (#411)
 * FIX: image URLs for ProLiant Gen9 servers have been fixed (#426)
 * FIX: search and sorting has been fixed for the vCenter overview (#419)
+* FIX: no transparency for dropdown menus (#429)
 
 ### Monitoring Rules
 * FEATURE: the configuration tree now highlights nodes with rules (#369)
