@@ -63,7 +63,10 @@ place.
 * FIX: fixed compatibility with vSphere 5.5, caused by Custom Fields in v1.4 (#377)
 
 ### InfluxDB
+* FEATURE: line protocol body is now being sent in compressed mode (#388)
+* FEATURE: a special header for debugging purposes is being sent (#431)
 * FIX: connections configured as "autodetect" used to fail silently (#386)
+* FIX: v2 API support has been fixed, no more need to configure a v1 user (#387)
 
 ### Integrations
 * FEATURE: Director Import Source now ships ManagedObject-references (#383, #384)
