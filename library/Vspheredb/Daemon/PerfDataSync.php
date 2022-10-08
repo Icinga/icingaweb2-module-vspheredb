@@ -101,8 +101,8 @@ class PerfDataSync implements DaemonTask
             return resolve();
         }
         return $loader->then(function (?ChunkedInfluxDbWriter $writer) {
-            $this->stopRunningInfluxDbInstances();
             $this->loadingWriterConfig = false;
+            $this->stopRunningInfluxDbInstances();
             if (! $writer) {
                 return;
             }
@@ -129,9 +129,8 @@ class PerfDataSync implements DaemonTask
     protected function initialize()
     {
         $this->syncCounterInfo()->then(function () {
-            $this->loadWriterConfig()->always(function () {
-                $this->scheduleTasks();
-            });
+            $this->loadWriterConfig();
+            $this->scheduleTasks();
         }, function ($e) {
             $this->logger->error($e->getMessage());
         });
@@ -220,13 +219,6 @@ class PerfDataSync implements DaemonTask
             $this->loadWriterConfig()->then(function () {
                 if ($this->influxDbWriter) {
                     $this->sync(18);
-                }
-            });
-        });
-        $this->loop->futureTick(function () {
-            $this->loadWriterConfig()->then(function () {
-                if ($this->influxDbWriter) {
-                    $this->sync(18); // Used to be 180 (= 1hour, reduced to fix problems with slow systems)
                 }
             });
         });
