@@ -77,7 +77,8 @@ place.
 * FIX: Monitoring module integration, when configured with Custom Vars (#381)
 
 ### Internals
-* FEATURES: SOAP-mapped classes support dynamic properties for PHP 8.2 (#430)
+* FEATURE: SOAP-mapped classes support dynamic properties for PHP 8.2 (#430)
+* FEATURE: Guest Disk information is being kept for powered off VMs (#434)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our

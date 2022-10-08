@@ -19,6 +19,7 @@ class VmDiskUsageSyncStore extends SyncStore
         $dbObjects = $class::loadAllForVCenter($vCenter);
 
         $seen = [];
+        $skipUuids = [];
         foreach ($result as $object) {
             $object = (object) $object;
             if ($object->obj instanceof ManagedObjectReference) {
@@ -27,7 +28,8 @@ class VmDiskUsageSyncStore extends SyncStore
                 $uuid = $vCenter->makeBinaryGlobalMoRefUuid(ManagedObjectReference::fromSerialization($object->obj));
             }
             if (! property_exists($object->{'guest.disk'}, 'GuestDiskInfo')) {
-                // Should we preserve them? Flag outdated?
+                $skipUuids[] = $uuid;
+                // Preserve former disks. Should we flag them as outdated?
                 continue;
             }
             $root = null;
@@ -89,6 +91,15 @@ class VmDiskUsageSyncStore extends SyncStore
                         'capacity'     => $info->capacity,
                         'free_space'   => $info->freeSpace,
                     ], $connection);
+                }
+            }
+        }
+        if (! empty($skipUuids)) {
+            $length = strlen($skipUuids[0]); // 16, it's a UUID
+            $map = array_combine($skipUuids, $skipUuids);
+            foreach ($dbObjects as $idx => $object) {
+                if (isset($map[substr($idx, 0, $length)])) {
+                    unset($dbObjects[$idx]);
                 }
             }
         }
