@@ -64,7 +64,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
         $this->storeSyncObjects($connection->getDbAdapter(), $dbObjects, $seen, $stats);
     }
 
-    public static function fetchOutdatedVms(VCenter $vCenter, $lastRefreshSecondsAgo = 1800, $cntMax = 50)
+    public static function fetchOutdatedVms(VCenter $vCenter, $lastRefreshSecondsAgo = 1800, $cntMax = null)
     {
         $db = $vCenter->getDb();
         $vCenterUuid = $vCenter->get('uuid');
@@ -89,7 +89,10 @@ class VmDatastoreUsageSyncStore extends SyncStore
         )->where(
             'vdu.ts_updated < ?',
             $tsExpiredMs
-        )->order('vdu.ts_updated ASC')->group('o.uuid')->limit($cntMax);
+        )->order('vdu.ts_updated ASC')->group('o.uuid');
+        if ($cntMax) {
+            $query->limit($cntMax);
+        }
 
         return $db->fetchPairs($query);
     }
