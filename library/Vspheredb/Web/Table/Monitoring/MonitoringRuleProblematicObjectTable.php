@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
 use Icinga\Module\Vspheredb\Monitoring\MonitoringRuleLookup;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
+use ipl\Html\HtmlString;
 use Ramsey\Uuid\Uuid;
 
 class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
@@ -54,11 +55,18 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
             }
         }
 
+        $link = Link::create($label, $url, [
+            'uuid' => Uuid::fromBytes($row->uuid)->toString()
+        ]);
+        $output = $result->getOutput();
+        $output = explode(PHP_EOL, $output);
+        $output[0] = $output[0] . ': ' . 'LINK!TO!OBJECT';
+        $output = CheckPluginHelper::colorizeOutput(implode(PHP_EOL, $output))->render();
+        $output = preg_replace('/LINK!TO!OBJECT/', $link->render(), $output);
+        $output = new HtmlString($output);
+
         return [[
-            Link::create($label, $url, [
-                'uuid' => Uuid::fromBytes($row->uuid)->toString()
-            ]),
-            Html::tag('pre', ['class' => 'logOutput'], CheckPluginHelper::colorizeOutput($result->getOutput()))
+            Html::tag('pre', ['class' => 'logOutput'], $output)
         ]];
     }
 
@@ -66,17 +74,15 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
     {
         $objectTable = MonitoringRuleLookup::getTableForObjectType($this->objectType);
         $db = $this->db();
-        return $db->select()->from(
-            ['p' => 'monitoring_rule_problem'],
-            [
-                'uuid' => 'o.uuid',
-                'rule_name'  => 'p.rule_name',
-            ]
-        )
+        return $db->select()->from(['p' => 'monitoring_rule_problem'], [
+            'uuid'      => 'o.uuid',
+            'rule_name' => 'p.rule_name',
+        ])
         ->where('o.vcenter_uuid = ?', DbUtil::quoteBinaryCompat($this->vCenter->get('uuid'), $db))
         ->where('p.rule_name = ?', sprintf('%s/%s', $this->ruleSet, $this->rule))
         ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
         ->join(['ot' => $objectTable], 'o.uuid = ot.uuid', [])
+        ->order('p.current_state DESC')
         ->order('o.object_name');
     }
 }
