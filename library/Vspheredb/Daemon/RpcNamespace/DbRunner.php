@@ -191,7 +191,7 @@ class DbRunner
         try {
             $this->requireSyncStoreForVCenterInstance($vCenterId, $storeClass)
                 ->store($result, $objectClass, $stats);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error(sprintf(
                 'Task %s failed. %s: %s (%d)',
                 $taskLabel,
@@ -207,9 +207,14 @@ class DbRunner
 
     public function refreshMonitoringRuleProblemsRequest()
     {
-        $p = new PersistedRuleProblems($this->connection);
-        $p->refresh();
-        return true;
+        try {
+            $p = new PersistedRuleProblems($this->connection);
+            $p->refresh();
+            return true;
+        } catch (\Throwable $e) {
+            $this->logger->error('Refreshing Rule Problems failed: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
