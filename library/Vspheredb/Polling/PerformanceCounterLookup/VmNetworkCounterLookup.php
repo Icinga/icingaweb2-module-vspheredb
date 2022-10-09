@@ -9,7 +9,7 @@ class VmNetworkCounterLookup extends DefaultCounterLookup
     protected $objectKey = 'vm_moref';
     protected $instanceKey = 'interface_hardware_key';
     protected $tagColumns = [
-        'vm_uuid'                => 'LOWER(HEX(o.uuid))',
+        'vm_uuid'                => 'o.uuid',
         'vm_moref'               => 'o.moref',
         'vm_name'                => 'o.object_name',
         'vm_guest_host_name'     => "COALESCE(vm.guest_host_name, '(null)')",
