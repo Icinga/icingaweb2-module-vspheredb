@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class QueryParams
@@ -13,12 +14,12 @@ class QueryParams
         $this->params = $params;
     }
 
-    public static function fromRequest(ServerRequestInterface $request)
+    public static function fromRequest(ServerRequestInterface $request): QueryParams
     {
         return new static($request->getQueryParams());
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         return \array_key_exists($key, $this->params);
     }
@@ -37,7 +38,7 @@ class QueryParams
         if ($this->has($key)) {
             return $this->params[$key];
         } else {
-            throw new \InvalidArgumentException("Parameter '$key' is required");
+            throw new InvalidArgumentException("Parameter '$key' is required");
         }
     }
 }
