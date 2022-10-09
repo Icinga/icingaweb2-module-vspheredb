@@ -63,6 +63,7 @@ class MonitoringController extends Controller
     public function indexAction()
     {
         $this->addTitle($this->translate('Monitoring Rules'));
+        $this->setAutorefreshInterval(60);
         $table = new MonitoringRuleProblemTable($this->db()->getDbAdapter());
         $table->renderTo($this);
     }
@@ -71,6 +72,7 @@ class MonitoringController extends Controller
     {
         $this->addSingleTab($this->translate('Current Problems'));
         $vCenter = $this->requireVCenter();
+        $this->setAutorefreshInterval(60);
         $objectType = $this->params->getRequired('objectType');
         $ruleSet = $this->params->getRequired('ruleSet');
         $rule = $this->params->getRequired('rule');
