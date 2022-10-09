@@ -12,7 +12,7 @@ class SwitchesController extends ObjectsController
 {
     public function indexAction()
     {
-        $this->handleTabs();
+        $this->addSingleTab($this->translate('Switches'));
         $this->setAutorefreshInterval(15);
         $table = new SwitchesTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
