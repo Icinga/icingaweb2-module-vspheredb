@@ -242,6 +242,7 @@ class VmsTable extends ObjectsTable
             'object_name'         => 'o.object_name',
             'overall_status'      => 'o.overall_status',
             'runtime_power_state' => 'vm.runtime_power_state',
+            'template'            => 'vm.template',
             'uuid'                => 'o.uuid',
         ])->setRenderer(function ($row) {
             if (in_array('overall_status', $this->getChosenColumnNames())) {
@@ -250,10 +251,14 @@ class VmsTable extends ObjectsTable
                 $statusRenderer = $this->overallStatusRenderer();
                 $result = [$statusRenderer($row)];
             }
+            $name = $row->object_name;
+            if ($row->template === 'y') {
+                $name = [$name, Html::tag('i', ' (' . $this->translate('Template') . ')')];
+            }
             if ($this->baseUrl === null) {
-                $result[] = $row->object_name;
+                $result[] = $name;
             } else {
-                $result[] = Link::create($row->object_name, $this->baseUrl, ['uuid' => Uuid::fromBytes($row->uuid)->toString()]);
+                $result[] = Link::create($name, $this->baseUrl, ['uuid' => Uuid::fromBytes($row->uuid)->toString()]);
             }
 
             return $result;
