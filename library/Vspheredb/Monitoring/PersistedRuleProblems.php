@@ -23,6 +23,8 @@ class PersistedRuleProblems
 
     protected $currentState;
 
+    protected $checked;
+
     public function __construct(Db $db)
     {
         $this->db = $db;
@@ -45,8 +47,12 @@ class PersistedRuleProblems
 
         VmQuickStats::preloadAll($this->db);
         // TODO: Preload Disk Usage and Snapshots
-        $vms = VirtualMachine::loadAll($this->db, null, 'uuid');
+        $vmQuery = $this->db->getDbAdapter()->select()->from('virtual_machine')->where('template = ?', 'n');
+        $vms = VirtualMachine::loadAll($this->db, $vmQuery, 'uuid');
         foreach ($vms as $vm) {
+            if ($vm->get('template') === 'y') {
+                continue;
+            }
             if ($uuid = $vm->get('runtime_host_uuid')) {
                 if (isset($hosts[$uuid])) {
                     $vm->setRuntimeHost($hosts[$uuid]);
@@ -146,14 +152,16 @@ class PersistedRuleProblems
             }
         }
         $db->commit();
+        $this->checked = $checked;
     }
 
     protected function dropObsoleteRows()
     {
         $db = $this->db->getDbAdapter();
         $db->beginTransaction();
-        $checked = [];
-        $current = &$this->currentState;        foreach ($current as $uuid => $names) {
+        $checked = &$this->checked;
+        $current = &$this->currentState;
+        foreach ($current as $uuid => $names) {
             foreach ($names as $name => $state) {
                 if (! isset($checked[$uuid][$name])) {
                     $where = $db->quoteInto('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $db))
