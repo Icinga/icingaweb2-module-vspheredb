@@ -7,6 +7,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
+use Ramsey\Uuid\Uuid;
 
 class DatastoreTable extends ObjectsTable
 {
@@ -43,7 +44,7 @@ class DatastoreTable extends ObjectsTable
                 $result[] = Link::create(
                     $row->object_name,
                     'vspheredb/datastore',
-                    ['uuid' => bin2hex($row->uuid)],
+                    ['uuid' => Uuid::fromBytes($row->uuid)->toString()],
                     ['title' => $title]
                 );
 

@@ -4,11 +4,13 @@ namespace Icinga\Module\Vspheredb\Web\Table\Monitoring;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
 use Icinga\Module\Vspheredb\Monitoring\MonitoringRuleLookup;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 
 class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
 {
@@ -54,7 +56,7 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
 
         return [[
             Link::create($label, $url, [
-                'uuid' => bin2hex($row->uuid)
+                'uuid' => Uuid::fromBytes($row->uuid)->toString()
             ]),
             Html::tag('pre', ['class' => 'logOutput'], CheckPluginHelper::colorizeOutput($result->getOutput()))
         ]];
@@ -71,7 +73,7 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
                 'rule_name'  => 'p.rule_name',
             ]
         )
-        ->where('o.vcenter_uuid = ?', $this->vCenter)
+        ->where('o.vcenter_uuid = ?', DbUtil::quoteBinaryCompat($this->vCenter->get('uuid'), $db))
         ->where('p.rule_name = ?', sprintf('%s/%s', $this->ruleSet, $this->rule))
         ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
         ->join(['ot' => $objectTable], 'o.uuid = ot.uuid', [])

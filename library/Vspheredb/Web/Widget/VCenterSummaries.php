@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
@@ -159,7 +160,7 @@ class VCenterSummaries extends BaseHtmlElement
         if ((int) $counters->total === 0) {
             return;
         }
-        $url = Url::fromPath($url)->with('vcenter', bin2hex($this->vCenter->getUuid()));
+        $url = Url::fromPath($url)->with('vcenter', Util::niceUuid($this->vCenter->getUuid()));
         $state = $this->getWorstState($counters);
         $title = Html::tag('h3', [
             Link::create($title, $url),

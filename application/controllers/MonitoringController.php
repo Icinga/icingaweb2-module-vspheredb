@@ -19,6 +19,7 @@ use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemTable;
 use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
 class MonitoringController extends Controller
@@ -69,7 +70,7 @@ class MonitoringController extends Controller
     public function problemsAction()
     {
         $this->addSingleTab($this->translate('Current Problems'));
-        $vCenter = hex2bin($this->params->getRequired('vcenter'));
+        $vCenter = $this->requireVCenter();
         $objectType = $this->params->getRequired('objectType');
         $ruleSet = $this->params->getRequired('ruleSet');
         $rule = $this->params->getRequired('rule');
@@ -161,9 +162,9 @@ class MonitoringController extends Controller
             $binaryUuid = '';
             $title = sprintf($this->translate('Global Monitoring Rules for %s'), $objectTypeLabel);
         } else {
-            $binaryUuid = hex2bin($uuid);
-            if (strlen($binaryUuid) === 16) {
-                $vCenter = VCenter::load($binaryUuid, $db);
+            $binaryUuid = Uuid::fromString($uuid)->getBytes();
+            if (VCenter::exists($binaryUuid, $db)) {
+                $vCenter = VCenter::loadWithUuid($binaryUuid, $db);
                 $title = sprintf(
                     $this->translate('vCenter Monitoring Rules for %s: %s'),
                     $objectTypeLabel,

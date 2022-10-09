@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Format;
 
@@ -67,7 +68,7 @@ class GroupedvmsTable extends ObjectsTable
                     $groupName,
                     'vspheredb/vms',
                     [
-                        'computeCluster' => bin2hex($this->parentUuids[0]),
+                        'computeCluster' => Util::niceUuid($this->parentUuids[0]),
                         'q' => $groupName . '-*', // TODO: allow wildcard for object_name?
                     ],
                     ['data-base-target' => '_next']

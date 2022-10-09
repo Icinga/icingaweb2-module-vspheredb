@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\MonitoringIntegration\MonitoredObjectFinder;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\CpuAbsoluteUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use ipl\Html\Html;
@@ -95,7 +96,7 @@ class DetailviewExtension extends DetailviewExtensionHook
         return Link::create(
             sprintf($label, $vObject->object()->get('object_name')),
             $url,
-            ['uuid' => bin2hex($vObject->uuid), 'monitoringObject' => $object->name]
+            ['uuid' => Util::niceUuid($vObject->uuid), 'monitoringObject' => $object->name]
         );
     }
 }

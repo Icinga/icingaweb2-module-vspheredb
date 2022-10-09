@@ -4,10 +4,12 @@ namespace Icinga\Module\Vspheredb\Web\Controller;
 
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\Html;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
+use Ramsey\Uuid\Uuid;
 
 class ObjectsController extends Controller
 {
@@ -60,7 +62,7 @@ class ObjectsController extends Controller
     {
         $parent = $this->params->get('uuid');
         if ($parent !== null) {
-            $parent = hex2bin($parent);
+            $parent = Uuid::fromString($parent)->getBytes();
         }
 
         if ($parent) {
@@ -126,7 +128,7 @@ class ObjectsController extends Controller
                 $path->add(' > ');
             }
             $path->add(Link::create($name, $url, [
-                'uuid'            => bin2hex($uuid),
+                'uuid'            => Util::niceUuid($uuid),
                 'showDescendants' => true,
             ]));
         }

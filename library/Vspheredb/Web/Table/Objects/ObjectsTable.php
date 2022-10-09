@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
+use Ramsey\Uuid\Uuid;
 
 abstract class ObjectsTable extends BaseTable
 {
@@ -91,7 +92,7 @@ abstract class ObjectsTable extends BaseTable
                 $result[] = Link::create(
                     $row->object_name,
                     $this->baseUrl,
-                    ['uuid' => bin2hex($row->uuid)]
+                    ['uuid' => Uuid::fromBytes($row->uuid)->toString()]
                 );
             }
 

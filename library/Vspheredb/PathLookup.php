@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb;
 use gipfl\IcingaWeb2\Link;
 use gipfl\ZfDb\Adapter\Adapter;
 use Icinga\Module\Vspheredb\Db\DbUtil;
+use Ramsey\Uuid\Uuid;
 
 class PathLookup
 {
@@ -38,7 +39,7 @@ class PathLookup
             return Link::create(
                 $row->object_name,
                 $this->getBaseUrlByType($row->object_type),
-                ['uuid' => bin2hex($uuid)],
+                ['uuid' => Uuid::fromBytes($uuid)->toString()],
                 ['data-base-target' => '_next']
             );
         } else {
@@ -46,7 +47,7 @@ class PathLookup
         }
     }
 
-    protected function getBaseUrlByType($type)
+    protected function getBaseUrlByType($type): string
     {
         switch ($type) {
             case 'Datastore':
@@ -65,7 +66,7 @@ class PathLookup
         }
     }
 
-    public function getObjectName($uuid)
+    public function getObjectName($uuid): string
     {
         $query = $this->db->select()
             ->from(['o' => 'object'], 'object_name')
@@ -74,7 +75,7 @@ class PathLookup
         return $this->db->fetchOne($query);
     }
 
-    public function getObjectNames($uuids)
+    public function getObjectNames($uuids): array
     {
         if (empty($uuids)) {
             return [];
@@ -88,12 +89,12 @@ class PathLookup
         return $this->db->fetchPairs($query);
     }
 
-    public function listFoldersBelongingTo($uuid)
+    public function listFoldersBelongingTo($uuid): array
     {
         return array_merge($this->listChildFoldersFor($uuid), [$uuid]);
     }
 
-    public function listChildFoldersFor($uuid)
+    public function listChildFoldersFor($uuid): array
     {
         $folders = [];
         $puuid = $uuid;
@@ -107,7 +108,7 @@ class PathLookup
         return $folders;
     }
 
-    protected function fetchChildFolderListFor($uuid)
+    protected function fetchChildFolderListFor($uuid): array
     {
         $query = $this->db->select()->from('object', 'uuid')
             ->where('parent_uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db))
@@ -116,7 +117,7 @@ class PathLookup
         return $this->db->fetchCol($query);
     }
 
-    public function listPathTo($uuid, $includeSelf = true)
+    public function listPathTo($uuid, $includeSelf = true): array
     {
         if ($includeSelf) {
             $parents = [$uuid];
@@ -132,7 +133,7 @@ class PathLookup
         return $parents;
     }
 
-    public function fetchParentForId($uuid)
+    public function fetchParentForId($uuid): ?string
     {
         $query = $this->db->select()
             ->from('object', 'parent_uuid')

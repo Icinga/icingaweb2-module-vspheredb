@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
@@ -131,7 +132,7 @@ class OverviewTree extends BaseHtmlElement
                     $tree->cnt_host > 0
                         ? 'vspheredb/hosts'
                         : ($tree->cnt_ds > 0 ? 'vspheredb/datastores' : 'vspheredb/vms'),
-                    array('uuid' => bin2hex($tree->uuid)),
+                    Util::uuidParams($tree->uuid),
                     $attributes
                 ));
             } else {

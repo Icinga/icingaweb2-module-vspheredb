@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use Icinga\Module\Vspheredb\Util;
+
 class ComputeClusterHostSummaryTable extends HostSummaryTable
 {
     protected $baseUrl = 'vspheredb/compute-cluster';
@@ -19,6 +21,6 @@ class ComputeClusterHostSummaryTable extends HostSummaryTable
 
     protected function getFilterParams($row)
     {
-        return ['uuid' => bin2hex($row->uuid)];
+        return Util::uuidParams($row->uuid);
     }
 }

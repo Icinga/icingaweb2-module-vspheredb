@@ -6,6 +6,7 @@ use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use Ramsey\Uuid\Uuid;
 
 class ManagedObjectReferenceSyncStore extends SyncStore
 {
@@ -37,7 +38,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
                     $moRef->_,
                     $name,
                     $fetched[$uuid],
-                    bin2hex($uuid)
+                    Uuid::fromBytes($uuid)->toString()
                 ));
                 return;
             }

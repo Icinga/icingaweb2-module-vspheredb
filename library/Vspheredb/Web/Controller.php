@@ -39,10 +39,9 @@ class Controller extends CompatController
         return $this->db;
     }
 
-    protected function requireVCenter($paramName = 'vcenter')
+    protected function requireVCenter($paramName = 'vcenter'): VCenter
     {
-        $hexUuid = $this->params->getRequired($paramName);
-        return VCenter::loadWithHexUuid($hexUuid, $this->db());
+        return VCenter::loadWithUuid($this->params->getRequired($paramName), $this->db());
     }
 
     protected function redirectToConfiguration()

@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Vspheredb\Util;
 
 class VirtualMachine extends BaseDbObject
 {
@@ -141,8 +142,8 @@ class VirtualMachine extends BaseDbObject
         if ($host->get('uuid') !== $this->get('runtime_host_uuid')) {
             throw new \InvalidArgumentException(sprintf(
                 'Cannot set runtime host with UUID %s, expected %s',
-                bin2hex($host->get('uuid')),
-                bin2hex($this->get('runtime_host_uuid'))
+                Util::niceUuid($host->get('uuid')),
+                Util::niceUuid($this->get('runtime_host_uuid'))
             ));
         }
 

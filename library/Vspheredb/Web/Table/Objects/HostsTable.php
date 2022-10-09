@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 use gipfl\IcingaWeb2\Link;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\BiosInfo;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
@@ -71,7 +72,7 @@ class HostsTable extends ObjectsTable
                             $row->$column,
                             'vspheredb/host/vms',
                             [
-                                'uuid'           => bin2hex($row->uuid),
+                                'uuid'           => Util::niceUuid($row->uuid),
                                 'overall_status' => $state
                             ],
                             ['class' => ['state', $state]]

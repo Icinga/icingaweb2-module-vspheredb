@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb;
 
 use DateTime;
+use Ramsey\Uuid\Uuid;
 
 class Util
 {
@@ -38,5 +39,15 @@ class Util
     public static function makeDateTime($timestamp)
     {
         return gmdate('Y-m-d\TH:i:s\Z', $timestamp);
+    }
+
+    public static function niceUuid(string $binaryString): string
+    {
+        return Uuid::fromBytes($binaryString)->toString();
+    }
+
+    public static function uuidParams(string $binaryString): array
+    {
+        return ['uuid' => static::niceUuid($binaryString)];
     }
 }

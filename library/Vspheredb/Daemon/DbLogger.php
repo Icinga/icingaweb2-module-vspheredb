@@ -9,6 +9,7 @@ use gipfl\Log\LogWriterWithContext;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
 use Psr\Log\LoggerAwareTrait;
+use Ramsey\Uuid\Uuid;
 use SplStack;
 
 class DbLogger implements LogWriterWithContext, EventEmitterInterface
@@ -93,7 +94,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
             if (strlen($uuid) === 16) {
                 $params['vcenter_uuid'] = $context['vcenter_uuid'];
             } else {
-                $params['vcenter_uuid'] = hex2bin($context['vcenter_uuid']);
+                $params['vcenter_uuid'] = Uuid::fromString($context['vcenter_uuid'])->getBytes();
             }
         }
 

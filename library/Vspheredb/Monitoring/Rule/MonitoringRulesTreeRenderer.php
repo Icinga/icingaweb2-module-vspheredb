@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Monitoring\Rule;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -64,9 +65,10 @@ class MonitoringRulesTreeRenderer extends BaseHtmlElement
 
     protected function createLink($label, $uuid = null, $attributes = []): Link
     {
-        $params = [];
-        if ($uuid !== null) {
-            $params['uuid'] = bin2hex($uuid);
+        if ($uuid === null) {
+            $params = [];
+        } else {
+            $params = Util::uuidParams($uuid);
         }
 
         return Link::create($label, $this->url, $params, $attributes);

@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 
 class HostVmsInfoTable extends NameValueTable
@@ -34,7 +35,7 @@ class HostVmsInfoTable extends NameValueTable
             $this->translate('Vms') => Link::create(
                 $host->countVms(),
                 'vspheredb/host/vms',
-                ['uuid' => bin2hex($uuid)]
+                Util::uuidParams($uuid)
             ),
         ]);
     }

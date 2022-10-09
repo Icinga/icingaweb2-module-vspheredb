@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Util;
 
 class VmsWithDuplicateProperty extends ZfQueryBasedTable
 {
@@ -62,7 +63,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/vm',
-            ['uuid' => bin2hex($row->uuid)]
+            Util::uuidParams($row->uuid)
         );
 
         $value = $row->{$this->property};

@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Icon;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
 use gipfl\IcingaWeb2\Link;
@@ -60,7 +61,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/vm',
-            ['uuid' => bin2hex($row->uuid)],
+            Util::uuidParams($row->uuid),
             ['title' => sprintf(
                 $this->translate('Virtual Machine: %s'),
                 $row->object_name

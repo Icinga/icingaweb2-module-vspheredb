@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterConnectionStatusIcon;
@@ -356,6 +357,6 @@ class VCenterSummaryTable extends ObjectsTable
 
     protected function getFilterParams($row)
     {
-        return ['vcenter' => bin2hex($row->uuid)];
+        return ['vcenter' => Util::niceUuid($row->uuid)];
     }
 }

@@ -37,7 +37,7 @@ class ComputeClusterController extends Controller
      */
     protected function addComputeCluster()
     {
-        $computeCluster = ComputeCluster::load(hex2bin($this->params->getRequired('uuid')), $this->db());
+        $computeCluster = ComputeCluster::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->controls()->add(new ComputeClusterHeader($computeCluster));
         $this->setTitle($computeCluster->get('object_name'));
         $this->handleTabs($computeCluster);

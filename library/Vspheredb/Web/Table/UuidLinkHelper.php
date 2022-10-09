@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\DeferredText;
 
 trait UuidLinkHelper
@@ -31,7 +32,7 @@ trait UuidLinkHelper
             return Link::create(
                 $this->getUuidProperty($uuid, 'object_name'),
                 $url,
-                ['uuid' => bin2hex($uuid)],
+                Util::uuidParams($uuid),
                 ['class' => [
                     'ManagedObject',
                     $this->getUuidProperty($uuid, 'object_type'),

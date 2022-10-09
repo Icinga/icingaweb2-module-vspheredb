@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Util\Format;
 use ipl\Html\Html;
@@ -34,7 +35,7 @@ class StoragePodTable extends ObjectsTable
                         Html::tag('small', $dsCount)
                     ],
                     'vspheredb/datastores',
-                    ['uuid' => bin2hex($row->uuid)]
+                    Util::uuidParams($row->uuid)
                 );
             }),
             $this->createColumn('free_space', $this->translate('Free'), 'sp.free_space')

@@ -8,6 +8,7 @@ use gipfl\Web\Table\NameValueTable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\Link\VCenterLink;
 use Icinga\Module\Vspheredb\Web\Widget\Renderer\PathToObjectRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
@@ -45,7 +46,7 @@ class HostVirtualizationInfoTable extends NameValueTable
             $this->translate('Vms') => Link::create(
                 $host->countVms(),
                 'vspheredb/host/vms',
-                ['uuid' => bin2hex($uuid)]
+                Util::uuidParams($uuid)
             ),
             $this->translate('HA State')    => $host->get('das_host_state'),
             $this->translate('Hypervisor')  => $host->get('product_full_name'),

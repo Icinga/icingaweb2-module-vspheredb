@@ -7,6 +7,7 @@ use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
@@ -63,7 +64,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $caption = Link::create(
             $row->object_name,
             'vspheredb/datastore',
-            ['uuid' => bin2hex($row->uuid)],
+            Util::uuidParams($row->uuid),
             ['title' => sprintf(
                 $this->translate('Datastore: %s'),
                 $row->object_name

@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Form;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Util;
 
 class FilterHostParentForm extends Form
 {
@@ -116,7 +117,7 @@ class FilterHostParentForm extends Form
 
         $enum = [];
         foreach ($db->fetchPairs($query) as $k => $v) {
-            $enum[bin2hex($k)] = $v;
+            $enum[Util::niceUuid($k)] = $v;
         }
 
         return $enum;

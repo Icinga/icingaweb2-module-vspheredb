@@ -96,8 +96,7 @@ class VmController extends Controller
      */
     protected function addVm()
     {
-        /** @var VirtualMachine $vm */
-        $vm = VirtualMachine::load(hex2bin($this->params->getRequired('uuid')), $this->db());
+        $vm = VirtualMachine::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->controls()->add(new VmHeader($vm, VmQuickStats::loadFor($vm)));
         $this->controls()->addAttributes(['class' => 'controls-with-object-header']);
         $this->setTitle($vm->object()->get('object_name'));

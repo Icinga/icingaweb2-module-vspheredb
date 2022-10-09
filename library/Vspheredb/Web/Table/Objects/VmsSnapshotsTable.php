@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Vspheredb\Util;
 
 class VmsSnapshotsTable extends ObjectsTable
 {
@@ -38,7 +39,7 @@ class VmsSnapshotsTable extends ObjectsTable
                 return Link::create(
                     $name,
                     $this->baseUrl,
-                    ['uuid' => bin2hex($row->uuid)]
+                    Util::uuidParams($row->uuid)
                 );
             }),
             $this->createColumn('cnt', $this->translate('Snapshots'), 'COUNT(*)'),

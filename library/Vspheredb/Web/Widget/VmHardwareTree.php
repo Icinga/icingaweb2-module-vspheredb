@@ -7,6 +7,7 @@ use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -189,7 +190,7 @@ class VmHardwareTree extends BaseHtmlElement
         );
 
         if (false === $info) {
-            return sprintf('Port group %s not found', bin2hex($uuid));
+            return sprintf('Port group %s not found', Util::niceUuid($uuid));
         }
 
         return sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics);
@@ -198,7 +199,7 @@ class VmHardwareTree extends BaseHtmlElement
         return Link::create(
             sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics),
             'vspheredb/portgroup',
-            ['uuid' => bin2hex($info->uuid)]
+            Util::uuidParams($info->uuid)
         );
     }
 

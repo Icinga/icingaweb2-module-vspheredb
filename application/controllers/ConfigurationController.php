@@ -15,6 +15,7 @@ use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Widget\Config\ProposeMigrations;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 
 class ConfigurationController extends Controller
 {
@@ -190,7 +191,9 @@ class ConfigurationController extends Controller
         $this->addTitle($this->translate('Monitoring Integration'));
         $form = new MonitoringConnectionForm($this->db());
         if ($res) {
-            $res->vcenter = \bin2hex($res->vcenter_uuid);
+            if ($res->vcenter_uuid !== null) {
+                $res->vcenter = Uuid::fromBytes($res->vcenter_uuid)->toString();
+            }
             $form->populate((array) $res);
         }
         $form->handleRequest($this->getServerRequest());

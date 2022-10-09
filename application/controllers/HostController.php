@@ -110,7 +110,7 @@ class HostController extends Controller
      */
     protected function addHost()
     {
-        $host = HostSystem::load(hex2bin($this->params->getRequired('uuid')), $this->db());
+        $host = HostSystem::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $quickStats = HostQuickStats::loadFor($host);
         $this->controls()->add($this->hostHeader = new HostHeader($host, $quickStats));
         $this->setTitle($host->object()->get('object_name'));

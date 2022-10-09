@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Web\Table\Objects\ComputeClusterHostSummaryTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\GroupedvmsTable;
 use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
+use Ramsey\Uuid\Uuid;
 
 class ResourcesController extends ObjectsController
 {
@@ -19,7 +20,7 @@ class ResourcesController extends ObjectsController
     public function clustersAction()
     {
         if ($vCenterUuid = $this->params->get('vcenter')) {
-            $vCenter = VCenter::loadWithHexUuid($vCenterUuid, $this->db());
+            $vCenter = VCenter::loadWithUuid($vCenterUuid, $this->db());
             $this->tabs(new VCenterTabs($vCenter))->activate('clusters');
         } else {
             $this->addSingleTab('Compute Resources');
@@ -55,10 +56,10 @@ class ResourcesController extends ObjectsController
         $this->setAutorefreshInterval(15);
         $table = new ComputeClusterHostSummaryTable($this->db(), $this->url());
         if ($vCenterUuid = $this->params->get('vcenter')) {
-            $table->filterVCenter(VCenter::loadWithHexUuid($vCenterUuid, $this->db()));
+            $table->filterVCenter(VCenter::loadWithUuid($vCenterUuid, $this->db()));
         }
         if ($uuid = $this->params->get('uuid')) {
-            $table->filterParentUuids([hex2bin($uuid)]);
+            $table->filterParentUuids([Uuid::fromString($uuid)->getBytes()]);
         }
         $this->actions()->add(Link::create(
             $this->translate('Chart'),

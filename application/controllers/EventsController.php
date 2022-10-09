@@ -12,6 +12,7 @@ use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Widget\CalendarMonthSummary;
 use Icinga\Module\Vspheredb\Web\Widget\VMotionHeatmap;
 use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 
 class EventsController extends Controller
 {
@@ -88,7 +89,7 @@ class EventsController extends Controller
         $heatMap = new VMotionHeatmap($this->db(), 'vspheredb/events');
         $heatMap->filterEventType($form->getElement('type')->getValue());
         if ($parent = $form->getElement('parent')->getValue()) {
-            $heatMap->filterParent(hex2bin($parent));
+            $heatMap->filterParent(Uuid::fromString($parent)->getBytes());
         }
         $events = $heatMap->getEvents();
         if (empty($events)) {

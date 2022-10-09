@@ -14,6 +14,7 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use ipl\Html\FormElement\SubmitElement;
 use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 
 class MonitoringConnectionForm extends Form
 {
@@ -78,6 +79,7 @@ class MonitoringConnectionForm extends Form
             }
         } catch (\Exception $e) {
             $this->getElement('source_resource_name')->addMessage($e->getMessage());
+            return;
         }
         $idoOptions = $this->optionalEnum([
             'host_name'    => $this->translate('Hostname'),
@@ -167,8 +169,10 @@ class MonitoringConnectionForm extends Form
         $db = $this->db;
         $id = $this->getId();
         $vCenterUuid = $this->getValue('vcenter');
-        if ($vCenterUuid !== null) {
-            $values['vcenter_uuid'] = hex2bin($vCenterUuid);
+        if ($vCenterUuid === null) {
+            $values['vcenter_uuid'] = null;
+        } else {
+            $values['vcenter_uuid'] = Uuid::fromString($vCenterUuid)->getBytes();
         }
         if ($id) {
             $db->update(
@@ -218,7 +222,7 @@ class MonitoringConnectionForm extends Form
      * UNUSED
      * @return array
      */
-    protected function enumHostParents()
+    protected function enumHostParents(): array
     {
         $db = $this->db;
         $query = $db->select()->from(
@@ -233,15 +237,10 @@ class MonitoringConnectionForm extends Form
             []
         )->group('p.uuid')->order('p.object_name');
 
-        $enum = [];
-        foreach ($db->fetchPairs($query) as $k => $v) {
-            $enum[bin2hex($k)] = $v;
-        }
-
-        return $enum;
+        return $this->makeNiceUuidKeys($db->fetchPairs($query));
     }
 
-    protected function enumIdoResourceNames()
+    protected function enumIdoResourceNames(): array
     {
         $resources = [];
         foreach (Config::module('monitoring', 'backends') as $name => $config) {
@@ -257,24 +256,27 @@ class MonitoringConnectionForm extends Form
         return $resources;
     }
 
-    protected function enumVCenters()
+    protected function enumVCenters(): array
     {
-        return $this->db->fetchPairs(
-            $this->db->select()->from(
-                ['vc' => 'vcenter'],
-                [
-                    'uuid' => 'LOWER(HEX(vc.instance_uuid))',
-                    'host' => 'vcs.host',
-                ]
-            )->join(
-                ['vcs' => 'vcenter_server'],
-                'vcs.vcenter_id = vc.id',
-                []
-            )
-        );
+        return $this->makeNiceUuidKeys($this->db->fetchPairs(
+            $this->db->select()->from(['vc' => 'vcenter'], [
+                'uuid' => 'vc.instance_uuid',
+                'name' => 'vc.name',
+            ])->order('vc.name')
+        ));
     }
 
-    protected function optionalEnum($values)
+    protected function makeNiceUuidKeys(array $enum): array
+    {
+        $result = [];
+        foreach ($enum as $k => $v) {
+            $result[Uuid::fromBytes($k)->toString()] = $v;
+        }
+
+        return $result;
+    }
+
+    protected function optionalEnum($values): array
     {
         return [
             null => $this->translate('- please choose -'),

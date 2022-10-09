@@ -19,10 +19,8 @@ class SwitchController extends ObjectsController
     {
         $this->setAutorefreshInterval(15);
         $table = new PortGroupsTable($this->db(), $this->url());
-        $switch = DistributedVirtualSwitch::load(hex2bin(
-            $this->params->getRequired('uuid')
-        ), $this->db());
-            $table->filterSwitch($switch);
+        $switch = DistributedVirtualSwitch::loadWithUuid($this->params->getRequired('uuid'), $this->db());
+        $table->filterSwitch($switch);
         $this->addSingleTab($this->translate('Switch'));
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());

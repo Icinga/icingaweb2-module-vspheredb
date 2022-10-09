@@ -10,6 +10,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Addon\NetBackup;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
+use Icinga\Module\Vspheredb\Util;
 
 class NetBackupRunDetails extends NameValueTable
 {
@@ -63,9 +64,8 @@ class NetBackupRunDetails extends NameValueTable
             $vm = $lookup->findOneBy('VirtualMachine', [
                 'guest_host_name' => $name
             ]);
-            return Link::create($name, 'vspheredb/vm', [
-                'uuid' => \bin2hex($vm->get('uuid'))
-            ]);
+
+            return Link::create($name, 'vspheredb/vm', Util::uuidParams($vm->get('uuid')));
         } catch (NotFoundError $e) {
             return $name;
         }

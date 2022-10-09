@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
+use Icinga\Module\Vspheredb\Util;
 use InvalidArgumentException;
 use ipl\Html\Html;
 
@@ -49,8 +50,7 @@ class PathToObjectRenderer
             $parts[] = Link::create(
                 $name,
                 $baseUrl,
-                // TODO: nice UUID
-                ['uuid' => bin2hex($parentUuid)],
+                Util::uuidParams($parentUuid),
                 ['data-base-target' => '_main']
             );
         }

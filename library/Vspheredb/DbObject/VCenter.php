@@ -84,9 +84,15 @@ class VCenter extends BaseDbObject
         return $this->get('instance_uuid');
     }
 
-    public static function loadWithHexUuid($uuid, Db $db)
+    public static function loadWithUuid(string $uuid, Db $connection)
     {
-        return static::load(\hex2bin(\str_replace('-', '', $uuid)), $db);
+        if (strlen($uuid) === 16) {
+            $uuid = Uuid::fromBytes($uuid);
+        } else {
+            $uuid = Uuid::fromString($uuid);
+        }
+
+        return static::load($uuid->getBytes(), $connection);
     }
 
     /**

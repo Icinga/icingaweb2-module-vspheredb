@@ -11,6 +11,8 @@ use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\Renderer\GuestToolsVersionRenderer;
 use Icinga\Module\Vspheredb\Format;
+use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 
 class VmsTable extends ObjectsTable
 {
@@ -251,11 +253,7 @@ class VmsTable extends ObjectsTable
             if ($this->baseUrl === null) {
                 $result[] = $row->object_name;
             } else {
-                $result[] = Link::create(
-                    $row->object_name,
-                    $this->baseUrl,
-                    ['uuid' => bin2hex($row->uuid)]
-                );
+                $result[] = Link::create($row->object_name, $this->baseUrl, ['uuid' => Uuid::fromBytes($row->uuid)->toString()]);
             }
 
             return $result;

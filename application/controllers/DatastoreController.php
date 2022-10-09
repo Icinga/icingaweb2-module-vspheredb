@@ -13,6 +13,7 @@ use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Util\Format;
 use ipl\Html\Html;
+use Ramsey\Uuid\Uuid;
 
 class DatastoreController extends Controller
 {
@@ -24,16 +25,14 @@ class DatastoreController extends Controller
      */
     public function indexAction()
     {
-        $uuid = hex2bin($this->params->getRequired('uuid'));
         $ds = $this->addDatastore();
-
         $lookup = new PathLookup($this->db()->getDbAdapter());
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
-        foreach ($lookup->getObjectNames($lookup->listPathTo($uuid, false)) as $parentUuid => $name) {
+        foreach ($lookup->getObjectNames($lookup->listPathTo($ds->get('uuid'), false)) as $parentUuid => $name) {
             $path->add(Link::create(
                 $name,
                 'vspheredb/datastores',
-                ['uuid' => bin2hex($parentUuid)],
+                ['uuid' => Uuid::fromBytes($parentUuid)->toString()],
                 ['data-base-target' => '_main']
             ));
         }
@@ -86,7 +85,7 @@ class DatastoreController extends Controller
      */
     protected function addDatastore()
     {
-        $ds = Datastore::load(hex2bin($this->params->getRequired('uuid')), $this->db());
+        $ds = Datastore::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->addTitle($ds->object()->get('object_name'));
         $this->handleTabs();
 

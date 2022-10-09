@@ -28,6 +28,23 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
 
     protected $dateTimeProperties = [];
 
+    /**
+     * @param string $uuid
+     * @param Db $connection
+     * @return static
+     * @throws \Icinga\Exception\NotFoundError
+     */
+    public static function loadWithUuid(string $uuid, Db $connection)
+    {
+        if (strlen($uuid) === 16) {
+            $uuid = Uuid::fromBytes($uuid);
+        } else {
+            $uuid = Uuid::fromString($uuid);
+        }
+
+        return static::load($uuid->getBytes(), $connection);
+    }
+
     public function isObjectReference($property)
     {
         return $property === 'parent' || in_array($property, $this->objectReferences);
@@ -104,7 +121,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
             if ($this->isBooleanProperty($key)) {
                 $value = DbProperty::dbToBoolean($value);
             } elseif ($this->isObjectReference($key)) {
-                $value = '0x' . bin2hex($value);
+                $value = Uuid::fromBytes($value)->toString();
             } elseif ($key === 'uuid' || substr($key, -5) === '_uuid') { // Hint: SHOULD be keys or references
                 if (strlen($value) === 16) {
                     $value = Uuid::fromBytes($value)->toString();
@@ -119,7 +136,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
             $serialized[$key] = $value;
         }
 
-        return $serialized;
+        return (object) $serialized;
     }
 
     public static function fromSerialization($any)
@@ -161,8 +178,8 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         if ($object->get('uuid') !== $this->get('uuid')) {
             throw new \InvalidArgumentException(sprintf(
                 'Cannot set ManagedObject UUID %s, expected %s',
-                bin2hex($object->get('uuid')),
-                bin2hex($this->get('uuid'))
+                Uuid::fromBytes($object->get('uuid'))->toString(),
+                Uuid::fromBytes($this->get('uuid'))->toString()
             ));
         }
 

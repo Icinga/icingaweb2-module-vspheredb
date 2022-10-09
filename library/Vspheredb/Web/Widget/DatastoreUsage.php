@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
@@ -164,7 +165,7 @@ class DatastoreUsage extends BaseHtmlElement
     {
         if ($vmUuid) {
             $url = $this->baseUrl;
-            $urlParams = ['uuid' => bin2hex($vmUuid)];
+            $urlParams = Util::uuidParams($vmUuid);
         } else {
             $url = '#';
             $urlParams = null;

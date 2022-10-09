@@ -19,6 +19,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\EventHistory\VmRecentMigrationHistory;
+use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\IcingaHostStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\Link\Html5UiLink;
 use Icinga\Module\Vspheredb\Web\Widget\Link\KnowledgeBaseLink;
@@ -146,7 +147,7 @@ class VmEssentialInfoTable extends NameValueTable
                 Link::create(
                     $this->translate('VMotion attempt(s)'),
                     'vspheredb/vm/events',
-                    ['uuid' => bin2hex($uuid)]
+                    Util::uuidParams($uuid)
                 )
             )
         );

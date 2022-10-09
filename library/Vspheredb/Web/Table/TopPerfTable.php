@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\Html;
 use ipl\Html\Table;
 
@@ -15,13 +16,13 @@ class TopPerfTable extends Table
 
     public function __construct($title, $rows, $format, $link)
     {
-        $this->header()->add(Table::tr([
+        $this->getHeader()->add(Table::tr([
             Table::th($title),
             Table::th('5x5min')->addAttributes(['style' => 'width: 6em']),
             Table::th('Last 5min')->addAttributes(['style' => 'width: 10em'])
         ]));
         foreach ($rows as $row) {
-            $this->body()->add(Table::row([
+            $this->getBody()->add(Table::row([
                 $this->$link($row),
                 $this->makeSparkLine($row),
                 $format ? $this->$format($row->value_last) : $row->value_last,
@@ -39,7 +40,7 @@ class TopPerfTable extends Table
         return Link::create(
             $name,
             'vspheredb/vm',
-            ['uuid' => bin2hex($row->object_uuid)]
+            Util::uuidParams($row->object_uuid)
         );
     }
 
@@ -48,7 +49,7 @@ class TopPerfTable extends Table
         return Link::create(
             $row->object_name,
             'vspheredb/top/vms',
-            ['parent_uuid' => bin2hex($row->object_uuid)]
+            ['parent_uuid' => Util::niceUuid($row->object_uuid)]
         );
     }
 

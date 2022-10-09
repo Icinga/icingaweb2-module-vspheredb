@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Monitoring;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\Html;
 
 class MonitoringRuleProblemTable extends ZfQueryBasedTable
@@ -47,10 +48,10 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable
         $row->object_rule_name = [Html::tag('span', [
             'style' => 'width: 8em; display: inline-block'
         ], $states), Link::create($row->object_rule_name, 'vspheredb/monitoring/problems', [
-            'vcenter' => bin2hex($row->vcenter_uuid),
+            'vcenter'    => Util::niceUuid($row->vcenter_uuid),
             'objectType' => $objectType,
-            'ruleSet' => $ruleSet,
-            'rule' => $rule,
+            'ruleSet'    => $ruleSet,
+            'rule'       => $rule,
         ])];
         unset($row->vcenter_uuid);
 
