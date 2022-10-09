@@ -69,6 +69,7 @@ place.
 ### InfluxDB
 * FEATURE: line protocol body is now being sent in compressed mode (#388)
 * FEATURE: a special header for debugging purposes is being sent (#431)
+* FEATURE: Host Network performance counters are now shipped (#436)
 * FIX: connections configured as "autodetect" used to fail silently (#386)
 * FIX: v2 API support has been fixed, no more need to configure a v1 user (#387)
 

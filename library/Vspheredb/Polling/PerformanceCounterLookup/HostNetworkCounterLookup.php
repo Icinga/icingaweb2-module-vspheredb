@@ -10,9 +10,11 @@ class HostNetworkCounterLookup extends DefaultCounterLookup
     protected $instanceKey = 'device_label';
 
     protected $tagColumns = [
+        'host_uuid'    => 'o.uuid',
+        'sysinfo_uuid' => 'hs.sysinfo_uuid',
         'host_moref'   => 'o.moref',
         'host_name'    => 'o.object_name',
-        'pnic_key'     => 'hpn.nic_key',
+        // 'pnic_key'     => 'hpn.nic_key', -> key-vim.host.PhysicalNic-vmnic0, ugly
         'device_label' => 'hpn.device',
     ];
 

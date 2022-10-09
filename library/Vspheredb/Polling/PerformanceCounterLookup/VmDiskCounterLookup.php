@@ -10,7 +10,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
     protected $instanceKey = 'disk_hardware_key';
 
     protected $tagColumns = [
-        'vm_uuid' => 'LOWER(HEX(o.uuid))',
+        'vm_uuid' => 'o.uuid',
         'vm_name' => 'o.object_name',
         'vm_guest_host_name' => 'vm.guest_host_name',
         'vm_moref' => 'o.moref',
