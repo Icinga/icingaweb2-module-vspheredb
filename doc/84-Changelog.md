@@ -85,6 +85,7 @@ place. This is the first version providing a (full) German translation.
 ### Internals
 * FEATURE: SOAP-mapped classes support dynamic properties for PHP 8.2 (#430)
 * FEATURE: Guest Disk information is being kept for powered off VMs (#434)
+* FEATURE: tags are now fetched (but not used) for Uplink hints (#218)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our

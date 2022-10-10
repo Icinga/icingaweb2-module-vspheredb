@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
+use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
@@ -27,6 +28,12 @@ class ManagedObjectReferenceSyncStore extends SyncStore
             $obj = (object) $obj; // Not needed after serialization / unserialization
             $moRef = $obj->obj;
             $name = $obj->name;
+            $tags = [];
+            if (isset($obj->tag->Tag)) {
+                foreach ($obj->tag->Tag as $tag) {
+                    $tags[] = $tag->key;
+                }
+            }
             if (! isset($obj->overallStatus)) {
                 $obj->overallStatus = 'gray';
             }
@@ -51,6 +58,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
                 $object->set('object_name', $name);
                 $object->set('object_type', $moRef->type);
                 $object->set('overall_status', $obj->overallStatus);
+                $object->set('tags', JsonString::encode($tags));
             } else {
                 $objects[$uuid] = ManagedObject::create([
                     'uuid'           => $uuid,
@@ -59,6 +67,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
                     'object_name'    => $name,
                     'object_type'    => $moRef->type,
                     'overall_status' => $obj->overallStatus,
+                    'tags'           => JsonString::encode($tags),
                 ], $connection);
             }
             if (property_exists($obj, 'parent')) {

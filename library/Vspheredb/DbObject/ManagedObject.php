@@ -23,6 +23,7 @@ class ManagedObject extends VspheredbDbObject
         'overall_status' => null,
         'level'          => null,
         'parent_uuid'    => null,
+        'tags'           => null,
     ];
 
     /** @var ManagedObject */
@@ -53,6 +54,9 @@ class ManagedObject extends VspheredbDbObject
         if (null !== $this->parent) {
             $this->parent->store();
             $this->set('parent_uuid', $this->parent->get('uuid'));
+        }
+        if ($this->get('tags') === null) {
+            $this->set('tags', '[]');
         }
 
         $this->set('level', $this->calculateLevel());

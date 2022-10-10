@@ -170,6 +170,7 @@ CREATE TABLE object (
   ) NOT NULL,
   level TINYINT UNSIGNED NOT NULL,
   parent_uuid VARBINARY(16) DEFAULT NULL,
+  tags TEXT NOT NULL,
   PRIMARY KEY(uuid),
   UNIQUE KEY vcenter_moref (vcenter_uuid, moref),
   INDEX object_type (object_type),
@@ -942,4 +943,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (51, NOW());
+VALUES (52, NOW());
