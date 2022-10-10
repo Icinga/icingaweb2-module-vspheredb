@@ -88,11 +88,11 @@ class MonitoringController extends Controller
             'class' => 'overview-chapter'
         ]);
         $this->content()->add([
-            Hint::info(Html::sprintf(sprintf($this->translate(
+            Hint::info(Html::sprintf($this->translate(
                 'The Icinga Module for vSphere%s ships a lot of data, state and sensor values.'
                 . ' If you want to define related Icinga Service checks for Alarming reasons,'
                 . ' Monitoring Rules are %s.'
-            ), '®'), Html::tag('strong', $this->translate('the way to go')))),
+            ), '®', Html::tag('strong', $this->translate('the way to go')))),
             Hint::info(Html::sprintf($this->translate(
                 'Instead of checking every single Disk, just define rules (and exemptions'
                 . ' from those) for %s.'
