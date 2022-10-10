@@ -15,11 +15,12 @@ class PhperrorController extends Controller
             'label' => $this->translate('Error'),
             'url'   => $this->getRequest()->getUrl()
         ))->activate('error');
+        $requiredVersion = '7.1.x';
         $msg = $this->translate(
-            "PHP version 5.6.x is required for vSphereDB, you're running %s."
+            "PHP version %s is required for vSphereDB, you're running %s."
         );
         $this->view->title = $this->translate('Unsatisfied dependencies');
-        $this->view->message = sprintf($msg, PHP_VERSION);
+        $this->view->message = sprintf($msg, $requiredVersion, PHP_VERSION);
     }
 
     public function dependenciesAction()
