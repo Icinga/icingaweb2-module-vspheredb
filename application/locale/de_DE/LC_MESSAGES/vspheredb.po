@@ -1,0 +1,2643 @@
+# Icinga Module for VMware - vSphereDB.
+# Copyright (C) 2022 Icinga GmbH
+# This file is distributed under the same license as vSphereDB Module.
+# Thomas Gelf <thomas@gelf.net>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vSphereDB Module (master)\n"
+"Report-Msgid-Bugs-To: https://github.com/Icinga/icingaweb2-module-vspheredb/issues\n"
+"POT-Creation-Date: 2022-10-10 21:29+0000\n"
+"PO-Revision-Date: 2022-10-11 00:30+0200\n"
+"Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Basepath: .\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: library/Vspheredb/Web/Widget/CpuAbsoluteUsage.php:27
+#, php-format
+msgid "%d CPUs"
+msgstr "%d CPUs"
+
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:221
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:240
+#, php-format
+msgid "%d Hosts"
+msgstr "%d Hosts"
+
+#: library/Vspheredb/Web/Table/Object/HostHardwareInfoTable.php:37
+#, php-format
+msgid "%d Packages, %d Cores, %d Threads"
+msgstr "%d Module, %d Kerne, %d Threads"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:145
+#, php-format
+msgid "%s %s took place during the last 7 days"
+msgstr "%s %s fanden während der letzten 7 Tage statt"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:185
+#, php-format
+msgid "%s (detected %s)"
+msgstr "%s (%s erkannt)"
+
+#: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:29
+#, php-format
+msgid "%s datastores"
+msgstr "%s Datenspeicher"
+
+#: application/controllers/EventsController.php:102
+#, php-format
+msgid "%s events, max %s per day"
+msgstr "%s Ereignisse, maximal %s pro Tag"
+
+#: library/Vspheredb/Web/Widget/UsageBar.php:91
+#, php-format
+msgid "%s used"
+msgstr "%s benutzt"
+
+#: application/controllers/SwitchesController.php:20
+msgid "(Distributed) Virtual Switches"
+msgstr "(Verteilte) virtuelle Switches"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:116
+msgid "(keep as stored)"
+msgstr "(gespeichertes behalten)"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:100
+msgid "- any -"
+msgstr "- jedes -"
+
+#: library/Vspheredb/Web/Form/FilterHostParentForm.php:57
+msgid "- filter by event type -"
+msgstr "- nach Ereignistyp filtern -"
+
+#: library/Vspheredb/Web/Form/FilterHostParentForm.php:70
+msgid "- filter by parent -"
+msgstr "- nach Elternknoten filtern -"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:85
+#: library/Vspheredb/Web/Form/LogLevelForm.php:56
+#: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:76
+#: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:95
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:127
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:282
+#: library/Vspheredb/Web/Form/Element/VCenterSelection.php:27
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:75
+msgid "- please choose -"
+msgstr "- bitte wählen -"
+
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:220
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:239
+msgid "1 Host"
+msgstr "1 Host"
+
+#: application/controllers/VcenterController.php:126
+msgid "A new Connection has successfully been created"
+msgstr "Eine neue Verbindung wurde erfolgreich erstellt"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:36
+msgid "API Type"
+msgstr "API-Typ"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:40
+#: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:53
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:37
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:54
+msgid "API Version"
+msgstr "API-Version"
+
+#: library/Vspheredb/Daemon/ConnectionState.php:143
+#, php-format
+msgid "API connection with %s is failing"
+msgstr "API-Verbindung mit %s schlägt fehl"
+
+#: library/Vspheredb/Daemon/ConnectionState.php:128
+#, php-format
+msgid "API connection with %s is fine"
+msgstr "API-Verbindung mit %s ist in Ordnung"
+
+#: library/Vspheredb/Web/Widget/MemoryUsage.php:33
+msgid "Active"
+msgstr "Aktiv"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:143
+msgid "Active Memory"
+msgstr "Aktiver Speicher"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/ActiveMemoryUsageRuleDefinition.php:21
+msgid "Active Memory Usage"
+msgstr "Auslastung Aktiver Speicher"
+
+#: application/controllers/PerfdataController.php:50
+#: application/controllers/ConfigurationController.php:87
+#: application/controllers/ConfigurationController.php:143
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: application/controllers/VcentersController.php:50
+msgid "Add Connection"
+msgstr "Verbindung hinzufügen"
+
+#: application/controllers/PerfdataController.php:82
+msgid "Add Consumer"
+msgstr "Verbraucher hinzufügen"
+
+#: library/Vspheredb/Web/Table/Object/VmExtraInfoTable.php:25
+msgid "Additional Information"
+msgstr "Zusätzliche Informationen"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:87
+msgid "Address"
+msgstr "Adresse"
+
+#: application/controllers/AlarmsController.php:78
+#: application/controllers/EventsController.php:164
+#: application/controllers/VmController.php:130
+msgid "Alarms"
+msgstr "Alarmierungen"
+
+#: library/Vspheredb/Web/Widget/ToggleFlagList.php:125
+#: library/Vspheredb/Web/Widget/AdditionalTableActions.php:127
+msgid "All"
+msgstr "Alle"
+
+#: library/Vspheredb/Monitoring/Rule/MonitoringRulesTree.php:44
+#: library/Vspheredb/Monitoring/Rule/MonitoringRulesTree.php:71
+msgid "All vCenters"
+msgstr "Alle vCenter"
+
+#: configuration.php:7
+msgid "Allow to configure vCenter connections"
+msgstr "Erlauben, vCenter-Verbindungen zu konfigurieren"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:91
+msgid "Annotation"
+msgstr "Anmerkungen"
+
+#: application/controllers/AnomaliesController.php:14
+msgid "Anomalies"
+msgstr "Anomalien"
+
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:25
+msgid "Application Protection"
+msgstr "Anwendungsschutz"
+
+#: library/Vspheredb/Web/Form/ApplyMigrationsForm.php:31
+#, php-format
+msgid "Apply %d pending schema migrations"
+msgstr "%d ausstehende Migrationen anwenden"
+
+#: library/Vspheredb/Web/Form/ApplyMigrationsForm.php:28
+msgid "Apply a pending schema migration"
+msgstr "Eine ausstehende Migration anwenden"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/DiskUsageRuleDefinition.php:115
+msgid "Apply to specific disks only"
+msgstr "Nur für bestimmte Platten anwenden"
+
+#: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:41
+msgid "Arbitrary unique name for this Performance Data Consumer"
+msgstr "Beliebiger eindeutiger Name für diesen Leistungsdatenverbraucher"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:50
+msgid "Attempt to establish a connection to your InfluxDB instance"
+msgstr "Versuche eine Verbindung zur InfluxDB-Instanz herzustellen"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:60
+msgid "Autodetect"
+msgstr "Automatisch erkennen"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:179
+#, php-format
+msgid "Autodetect: %s API, Version is %s"
+msgstr "Automatisch erkannt: API %s, Version ist %s"
+
+#: application/controllers/PerfdataController.php:31
+msgid "Available Performance Counters"
+msgstr "Verfügbare Leistungsindikatoren"
+
+#: library/Vspheredb/PerformanceData/IcingaRrd/RrdImg.php:44
+#, php-format
+msgid "Average Number %s Reads / %s Writes"
+msgstr "Durchschnittliche Anzahl %s Lese- / %s Schreiboperationen"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:32
+msgid "BIOS Release Date"
+msgstr "BIOS-Veröffentlichungsdatum"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:128
+msgid "BIOS UUID"
+msgstr "BIOS-UUID"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:31
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:52
+msgid "BIOS Version"
+msgstr "BIOS-Version"
+
+#: library/Vspheredb/Web/Form/FormElementStealer.php:47
+#: application/controllers/VcenterController.php:63
+msgid "Back"
+msgstr "Zurück"
+
+#: application/controllers/MonitoringController.php:52
+msgid "Back to overview"
+msgstr "Zurück zur Übersicht"
+
+#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:26
+#: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:53
+msgid "Backup folder"
+msgstr "Datensicherungsverzeichnis"
+
+#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:25
+#: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:47
+msgid "Backup host"
+msgstr "Datensicherungsserver"
+
+#: library/Vspheredb/Web/Widget/Vm/BackupToolInfo.php:31
+msgid "Backup-Tools"
+msgstr "Datensicherungswerkzeuge"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:154
+msgid "Balloon"
+msgstr "Blase"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:45
+msgid "Base URL"
+msgstr "Basis-URL"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:76
+msgid "Better state wins"
+msgstr "Besserer Zustand gewinnt"
+
+#: application/controllers/AnomaliesController.php:15
+msgid "Bios UUID"
+msgstr "Bios-UUID"
+
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:136
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:147
+#: library/Vspheredb/Web/Table/Object/HostHardwareInfoTable.php:35
+msgid "CPU"
+msgstr "Prozessor"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:59
+msgid "CPU Cores"
+msgstr "Prozessorkerne"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:43
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:133
+#: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:31
+msgid "CPU Usage"
+msgstr "Prozessornutzung"
+
+#: library/Vspheredb/Web/Table/Object/VmExtraInfoTable.php:44
+msgid "CPUs"
+msgstr "Prozessoren"
+
+#: application/controllers/AlarmsController.php:22
+#: application/controllers/EventsController.php:28
+msgid "Calendar"
+msgstr "Kalender"
+
+#: library/Vspheredb/Web/Widget/CalendarMonthSummary.php:206
+#, php-format
+msgid "Calendar Week %d"
+msgstr "Kalenderwoche %d"
+
+#: library/Vspheredb/Web/Form/DisableServerForm.php:34
+#: library/Vspheredb/Web/Form/EnableServerForm.php:34
+#: library/Vspheredb/Web/Form/LogLevelForm.php:53
+#: library/Vspheredb/Web/Form/RestartDaemonForm.php:35
+#: library/Vspheredb/Web/Form/DeleteVCenterForm.php:54
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:37
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:154
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:181
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:165
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:192
+#: library/Vspheredb/Web/Widget/UsageBar.php:96
+#: application/controllers/DatastoreController.php:51
+msgid "Capacity"
+msgstr "Kapazität"
+
+#: application/controllers/ResourcesController.php:65
+msgid "Chart"
+msgstr "Diagramm"
+
+#: application/controllers/MonitoringController.php:109
+#, php-format
+msgid "Check our %s for instructions of how to set them up"
+msgstr ""
+"Überprüfe unsere %s-Anleitungen, um mehr über die Einrichtung zu erfahren"
+
+#: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:97
+#, php-format
+msgid "Choose one of your configured %s"
+msgstr "Wähle eines deiner konfigurierten %s"
+
+#: library/Vspheredb/Web/Form/LogLevelForm.php:50
+msgid "Click to change the current Daemon Log Level"
+msgstr "Klicken, um den aktuellen Protokollierungsschwellwert festzulegen"
+
+#: library/Vspheredb/Web/Widget/ToggleFlagList.php:111
+msgid "Click to hide"
+msgstr "Zum Verbergen klicken"
+
+#: library/Vspheredb/Web/Widget/Documentation.php:44
+#, php-format
+msgid "Click to read our documentation: %s"
+msgstr "Klicken, um unsere Dokumentation zu lesen: %s"
+
+#: library/Vspheredb/Web/Form/RestartDaemonForm.php:32
+msgid "Click to restart the vSphereDB background daemon"
+msgstr "Klicken, um den vSphereDB-Hintergrunddienst neu zu starten"
+
+#: library/Vspheredb/Web/Widget/ToggleFlagList.php:116
+msgid "Click to show"
+msgstr "Zum Anzeigen klicken"
+
+#: library/Vspheredb/Web/Table/ControlSocketConnectionsTable.php:69
+msgid "Client PID"
+msgstr "Client-PID"
+
+#: library/Vspheredb/Web/Tabs/VCenterTabs.php:32
+msgid "Clusters"
+msgstr "Cluster"
+
+#: library/Vspheredb/Web/Table/Objects/ComputeClusterHostSummaryTable.php:19
+#: application/controllers/ComputeClusterController.php:56
+#: application/controllers/ResourcesController.php:45
+#: application/controllers/ResourcesController.php:72
+msgid "Compute Cluster"
+msgstr "Rechencluster"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:91
+msgid "Compute Resource"
+msgstr "Rechenressourcen"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/ComputeResourceUsageRuleSet.php:15
+msgid "Compute Resource Usage"
+msgstr "Auslastung der Rechenressourcen"
+
+#: configuration.php:41
+#: application/controllers/MonitoringController.php:37
+#: application/controllers/ConfigurationController.php:40
+msgid "Configuration"
+msgstr "Konfiguration"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/ConfigurationPolicyRuleSet.php:13
+msgid "Configuration Policy"
+msgstr "Konfigurationsrichtlinie"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:127
+msgid "Configuration has been stored"
+msgstr "Die Konfiguration wurde gespeichert"
+
+#: library/Vspheredb/Daemon/ConnectionState.php:123
+#, php-format
+msgid "Connections to %s have been disabled"
+msgstr "Verbindungen zu %s wurden deaktiviert"
+
+#: library/Vspheredb/Daemon/ConnectionState.php:118
+#, php-format
+msgid "Connections to %s have been enabled, but none is currently active"
+msgstr "Verbindungen zu %s wurden aktiviert, gegenwärtig ist aber keine aktiv"
+
+#: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:94
+#: application/controllers/PerfdataController.php:85
+msgid "Consumer"
+msgstr "Verbraucher"
+
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:159
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:170
+msgid "Cores"
+msgstr "Kerne"
+
+#: library/Vspheredb/Web/Tabs/VCenterTabs.php:36
+msgid "Counters"
+msgstr "Indikatoren"
+
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:158
+#: library/Vspheredb/Web/Form/FormElementStealer.php:38
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:164
+#: application/controllers/ConfigurationController.php:168
+#: application/controllers/ConfigurationController.php:186
+msgid "Create"
+msgstr "Erstellen"
+
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:128
+msgid "Create a new Database"
+msgstr "Eine neue Datenbank anlegen"
+
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:159
+msgid "Create a new InfluxDB database"
+msgstr "Eine neue InfluxDB-Datenbank anlegen"
+
+#: application/controllers/VcenterController.php:117
+msgid "Create a new vCenter/ESXi-Connection"
+msgstr "Eine neue vCenter-ESXi-Verbindung anlegen"
+
+#: library/Vspheredb/Web/Form/ApplyMigrationsForm.php:37
+msgid "Create schema"
+msgstr "Schema erstellen"
+
+#: application/controllers/MonitoringController.php:73
+msgid "Current Problems"
+msgstr "Aktuelle Probleme"
+
+#: application/controllers/DaemonController.php:157
+msgid "Currently there are no requests pending"
+msgstr "Es gibt gegenwärtig keine laufenden Anfragen"
+
+#: library/Vspheredb/Web/Widget/CustomValueDetails.php:38
+msgid "Custom Values"
+msgstr "Benutzerdefinierte Werte"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:88
+msgid "Custom Variables"
+msgstr "Benutzerdefinierte Variablen"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:84
+msgid "DB Resource"
+msgstr "DB-Ressource"
+
+#: library/Vspheredb/Web/Tabs/MainTabs.php:57
+msgid "Daemon"
+msgstr "Dienst"
+
+#: application/controllers/VcentersController.php:91
+msgid "Daemon Status"
+msgstr "Zustand des Dienstes"
+
+#: application/controllers/RpcServerUpdateHelper.php:20
+msgid "Daemon configuration has NOT been refreshed"
+msgstr "Dienstkonfiguration wurde NICHT aktualisiert"
+
+#: application/controllers/RpcServerUpdateHelper.php:18
+msgid "Daemon configuration has been refreshed"
+msgstr "Dienstkonfiguration wurde aktualisiert"
+
+#: application/controllers/RpcServerUpdateHelper.php:23
+msgid "Daemon configuration refresh FAILED: "
+msgstr "Aktualisierung der Dienstkonfiguration FEHLGESCHLAGEN: "
+
+#: application/controllers/DaemonController.php:87
+msgid "Daemon is either not running or not connected to the Database"
+msgstr "Dienst läuft nicht oder ist nicht mit der Datenbank verbunden"
+
+#: application/controllers/VcentersController.php:150
+msgid "Daemon is not running"
+msgstr "Dienst läuft nicht"
+
+#: application/controllers/DaemonController.php:40
+msgid "Damon Log Output"
+msgstr "Ausgabe Dienstprotokollierung"
+
+#: application/controllers/DaemonController.php:32
+msgid "Damon Processes"
+msgstr "Prozesse des Dienstes"
+
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:34
+msgid "Data Mover"
+msgstr "Data Mover"
+
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:31
+msgid "Data Transmitted"
+msgstr "Daten übertragen"
+
+#: application/controllers/MonitoringController.php:181
+#, php-format
+msgid "DataCenter Monitoring Rules for %s: %s (%s)"
+msgstr "Rechenzentrumsüberwachungsregeln für %s: %s (%s)"
+
+#: library/Vspheredb/Web/Table/VmDatastoresTable.php:37
+msgid "DataStore Usage"
+msgstr "Datenspeicherauslastung"
+
+#: library/Vspheredb/Web/Tabs/ConfigTabs.php:54
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:139
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:147
+msgid "Database"
+msgstr "Datenbank"
+
+#: application/controllers/DatacenterController.php:16
+#, php-format
+msgid "Datacenter: %s"
+msgstr "Rechenzentrum: %s"
+
+#: application/controllers/DatacentersController.php:15
+#: application/controllers/DatacentersController.php:19
+msgid "Datacenters"
+msgstr "Rechenzentren"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:92
+#: library/Vspheredb/Web/Table/VmDatastoresTable.php:54
+#: application/controllers/DatastoreController.php:99
+msgid "Datastore"
+msgstr "Datenspeicher"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/DatastoreHealthRuleSet.php:13
+msgid "Datastore Health"
+msgstr "Datenspeichergesundheit"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/DatastoreUsageRuleDefinition.php:22
+msgid "Datastore Usage"
+msgstr "Datenspeicherauslastung"
+
+#: library/Vspheredb/Web/Table/VmDatastoresTable.php:69
+#, php-format
+msgid "Datastore: %s"
+msgstr "Datenspeicher: %s"
+
+#: configuration.php:28
+#: library/Vspheredb/Web/Controller/ObjectsController.php:174
+#: application/controllers/DatastoresController.php:19
+#: application/controllers/DatastoresController.php:29
+#: application/controllers/OverviewController.php:21
+#: application/controllers/MonitoringController.php:46
+#: application/controllers/MonitoringController.php:105
+#: application/controllers/MonitoringController.php:230
+msgid "Datastores"
+msgstr "Datenspeicher"
+
+#: application/controllers/PerfdataController.php:83
+msgid "Define a new Performance Data Consumer"
+msgstr "Definiere einen neuen Leistungsdatenverbraucher"
+
+#: application/controllers/MonitoringController.php:102
+#, php-format
+msgid "Define rules for %s, %s and %s"
+msgstr "Definiere Regeln für %s, %s und %s"
+
+#: application/controllers/MonitoringController.php:107
+msgid "Defining Check Commands"
+msgstr "Definiere Checkkommandos"
+
+#: application/controllers/MonitoringController.php:100
+msgid "Defining Rules"
+msgstr "Definiere Regeln"
+
+#: library/Vspheredb/Web/Form/FormElementStealer.php:57
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:168
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:146
+#: library/Vspheredb/Web/Form/DeleteVCenterForm.php:52
+msgid "Delete"
+msgstr "Löschen"
+
+#: library/Vspheredb/Web/Form/DeleteVCenterForm.php:45
+msgid "Delete this vCenter"
+msgstr "Lösche dieses vCenter"
+
+#: library/Vspheredb/Web/Form/DeleteVCenterForm.php:47
+msgid ""
+"Deleting a vCenter means removing related information from the vSphereDB "
+"database. Apart from historic data (alerts, events) this step is reversible "
+"by simply redefining a Server Connection to this vCenter or ESXi Host."
+msgstr ""
+"Ein vCenter zu löschen bedeutet, zugehörige Informationen aus der vSphereDB-"
+"Datenkbank zu entfernen. Abgesehen von historischen Daten (Alarmierungen, "
+"Ereignisse) ist dieser Schritt durch die Definition einer neuen "
+"Serververbundung zu diesem vCenter oder ESXi-Host umkehrbar."
+
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:152
+#: library/Vspheredb/Web/Widget/ServiceTagRenderer.php:47
+msgid "Dell Support Page"
+msgstr "Hilfestellungsseite von Dell"
+
+#: library/Vspheredb/Web/Table/HostPciDevicesTable.php:28
+msgid "Device (Vendor)"
+msgstr "Gerät (Hersteller)"
+
+#: library/Vspheredb/Web/Form/DisableServerForm.php:32
+msgid "Disable"
+msgstr "Deaktivieren"
+
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:59
+msgid "Disk"
+msgstr "Platte"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/DiskHealthRuleSet.php:14
+msgid "Disk Health"
+msgstr "Plattenzustand"
+
+#: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:32
+msgid "Disk Path"
+msgstr "Pfad zur Platte"
+
+#: library/Vspheredb/PerformanceData/IcingaRrd/RrdImg.php:34
+#, php-format
+msgid "Disk Seeks: %s small / %s medium / %s large"
+msgstr "Plattenpositionierungen: %s klein / %s mittlere / %s große"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/DiskUsageRuleDefinition.php:28
+#: application/controllers/VmsController.php:36
+#: application/controllers/VmsController.php:89
+msgid "Disk Usage"
+msgstr "Plattenauslastung"
+
+#: library/Vspheredb/Web/Table/VmDisksTable.php:39
+msgid "Disks"
+msgstr "Platten"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:86
+msgid "Display Name"
+msgstr "Angezeigter Name"
+
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:274
+msgid "Do nothing"
+msgstr "Nichts tun"
+
+#: application/controllers/MonitoringController.php:111
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: library/Vspheredb/Web/Widget/AdditionalTableActions.php:54
+msgid "Download as JSON"
+msgstr "Als JSON herunterladen"
+
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:32
+msgid "Duration"
+msgstr "Dauer"
+
+#: library/Vspheredb/ProvidedHook/Monitoring/DetailviewExtension.php:87
+#, php-format
+msgid "ESXi Host: %s"
+msgstr "ESXi Host: %s"
+
+#: application/controllers/VcenterController.php:38
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: library/Vspheredb/Web/Form/EnableServerForm.php:32
+msgid "Enable"
+msgstr "Aktivieren"
+
+#: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:44
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:71
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:264
+msgid "Enabled"
+msgstr "Aktiv"
+
+#: application/controllers/PhperrorController.php:15
+#: application/controllers/PhperrorController.php:34
+msgid "Error"
+msgstr "Fehler"
+
+#: application/controllers/EventsController.php:86
+msgid "Event HeatMap"
+msgstr "Ereignis-Heatmap"
+
+#: application/controllers/EventsController.php:55
+msgid "Event History"
+msgstr "Ereignisverlauf"
+
+#: application/controllers/AlarmsController.php:74
+#: application/controllers/DatastoreController.php:103
+#: application/controllers/EventsController.php:161
+#: application/controllers/HostController.php:150
+#: application/controllers/VmController.php:126
+msgid "Events"
+msgstr "Ereignisse"
+
+#: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:28
+msgid "Excluded"
+msgstr "Ausgeschlossen"
+
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:68
+msgid "Failed to load related host"
+msgstr "Zugehöriger Host konnte nicht geladen werden"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:143
+msgid "File content"
+msgstr "Dateiinhalt"
+
+#: application/controllers/MonitoringController.php:188
+#, php-format
+msgid "Folder Monitoring Rules for %s: %s (%s)"
+msgstr "Verzeichnisüberwachungsregeln für %s: %s (%s)"
+
+#: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:41
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:60
+#: application/controllers/DatastoreController.php:52
+msgid "Free"
+msgstr "Frei"
+
+#: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:45
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:64
+msgid "Free (%)"
+msgstr "Frei (%)"
+
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:94
+#, php-format
+msgid "Free CPU: %s"
+msgstr "Prozessor frei: %s"
+
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:100
+#, php-format
+msgid "Free Memory: %s"
+msgstr "Freier Speicher: %s"
+
+#: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:33
+msgid "Free Space"
+msgstr "Freier Platz"
+
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:61
+msgid "Free space"
+msgstr "Freier Platz"
+
+#: application/controllers/MonitoringController.php:165
+#, php-format
+msgid "Global Monitoring Rules for %s"
+msgstr "Globale Überwachungsregeln für %s"
+
+#: application/controllers/ConfigurationController.php:107
+msgid "Got no connection information. Is the Damon running?"
+msgstr "Keine Verbindungsinformationen erhalten. Läuft der Dienst?"
+
+#: library/Vspheredb/Web/Widget/OverallStatusRenderer.php:41
+msgid "Gray - status is unknown"
+msgstr "Grau - Status ist unbekannt"
+
+#: library/Vspheredb/Web/Widget/OverallStatusRenderer.php:42
+msgid "Green - everything is fine"
+msgstr "Grün - alles ist in Ordnung"
+
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:52
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:56
+msgid "Guest Disk Usage"
+msgstr "Plattenauslastung Gast"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:119
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:126
+msgid "Guest Hostname"
+msgstr "Gast-Hostname"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:128
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:120
+msgid "Guest IP"
+msgstr "Gast-IP"
+
+#: application/controllers/AnomaliesController.php:18
+msgid "Guest IP address"
+msgstr "Gast-IP-Adresse"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:121
+msgid "Guest OS"
+msgstr "Gastbetriebssystem"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:110
+msgid "Guest Tools"
+msgstr "Gastwerkzeuge"
+
+#: library/Vspheredb/Web/Widget/GuestToolsStatusRenderer.php:22
+msgid "Guest Tools are NOT installed"
+msgstr "Gastwerkzeuge sind NICHT installiert"
+
+#: library/Vspheredb/Web/Widget/GuestToolsStatusRenderer.php:27
+msgid "Guest Tools are NOT running"
+msgstr "Gastwerkzeuge laufen NICHT"
+
+#: library/Vspheredb/Web/Widget/GuestToolsStatusRenderer.php:32
+msgid "Guest Tools are outdated"
+msgstr "Gastwerkzeuge sind veraltet"
+
+#: library/Vspheredb/Web/Widget/GuestToolsStatusRenderer.php:37
+msgid "Guest Tools are up to date and running"
+msgstr "Gastwerkzeuge sind aktuell und laufen"
+
+#: library/Vspheredb/Web/Widget/GuestToolsStatusRenderer.php:43
+msgid "Guest Tools status is now known"
+msgstr "Zustand der Gastwerkzeuge ist unbekannt"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:122
+msgid "Guest Utilities"
+msgstr "Gastwerkzeuge"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/GuestUtilitiesRuleDefinition.php:29
+msgid "Guest Utilities Policy"
+msgstr "Richtlinie für Gastwerkzeuge"
+
+#: application/controllers/AnomaliesController.php:17
+msgid "Guest host name"
+msgstr "Gast-Hostname"
+
+#: library/Vspheredb/Web/Table/Objects/VmsSnapshotsTable.php:28
+msgid "Guest hostname"
+msgstr "Gast-Hostname"
+
+#: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:51
+msgid "HA State"
+msgstr "HA-Status"
+
+#: library/Vspheredb/Web/Table/HostHbaTable.php:31
+#, php-format
+msgid "HBA (%s)"
+msgstr "HBA (%s)"
+
+#: library/Vspheredb/Web/Table/Object/HostHardwareInfoTable.php:53
+msgid "HBAs"
+msgstr "HBAs"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:62
+msgid "HTTP (this is plaintext!)"
+msgstr "HTTP (das ist Klartext)"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:128
+msgid "HTTP proxy"
+msgstr "HTTP-Proxy"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:61
+msgid "HTTPS (strongly recommended)"
+msgstr "HTTPS (dringend empfohlen)"
+
+#: application/controllers/VmController.php:64
+#: application/controllers/VmController.php:122
+msgid "Hardware"
+msgstr "Hardware"
+
+#: library/Vspheredb/Web/Table/Object/HostHardwareInfoTable.php:32
+msgid "Hardware Information"
+msgstr "Hardwareinformationen"
+
+#: application/controllers/SingleObjectMonitoring.php:76
+msgid "Hide Inspection"
+msgstr "Einsichtnahme verbergen"
+
+#: library/Vspheredb/Web/Widget/AdditionalTableActions.php:65
+msgid "Hide SQL"
+msgstr "SQL verbergen"
+
+#: configuration.php:38
+#: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:60
+msgid "History"
+msgstr "Verlauf"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:126
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:73
+#: library/Vspheredb/Web/Widget/MemoryUsage.php:35
+msgid "Host"
+msgstr "Host"
+
+#: library/Vspheredb/Web/Table/MonitoredObjectMappingTable.php:42
+msgid "Host Mapping"
+msgstr "Hostzuordnung"
+
+#: library/Vspheredb/Web/Table/Objects/GroupedvmsTable.php:109
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:148
+msgid "Host Memory"
+msgstr "Hostspeicher"
+
+#: library/Vspheredb/Web/Widget/MemoryUsage.php:50
+msgid "Host Memory: used %s of %s (%.2F%%)"
+msgstr "Arbeitsspeicher Host: %s von %s benutzt (%.2F%%)"
+
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:75
+msgid "Host Resources"
+msgstr "Hostressourcen"
+
+#: application/controllers/HostController.php:131
+msgid "Host System"
+msgstr "Hostsystem"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:96
+msgid "Host System Property"
+msgstr "Hostsystemeigenschaften"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:89
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:90
+#: application/controllers/MonitoringController.php:103
+#: application/controllers/MonitoringController.php:226
+msgid "Host Systems"
+msgstr "Hostsysteme"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:85
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:101
+msgid "Hostname"
+msgstr "Hostname"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:140
+msgid "Hostname, IP or <host>:<port>"
+msgstr "Hostname, IP-Adresse oder <host>:<port>"
+
+#: configuration.php:25
+#: library/Vspheredb/Web/Table/Objects/SwitchesTable.php:28
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:103
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:114
+#: library/Vspheredb/Web/Controller/ObjectsController.php:170
+#: application/controllers/OverviewController.php:24
+#: application/controllers/HostsController.php:19
+#: application/controllers/HostsController.php:29
+#: application/controllers/MonitoringController.php:40
+msgid "Hosts"
+msgstr "Hosts"
+
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:110
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:121
+msgid "Hosts Status"
+msgstr "Zustand Hosts"
+
+#: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:52
+msgid "Hypervisor"
+msgstr "Hypervisor"
+
+#: library/Vspheredb/Web/Table/HostPciDevicesTable.php:27
+#: library/Vspheredb/Web/Table/PerformanceCounterTable.php:58
+msgid "ID"
+msgstr "ID"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:48
+msgid "IDO"
+msgstr "IDO"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:60
+msgid "IDO Resource"
+msgstr "IDO-Ressource"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:104
+msgid "IP Address"
+msgstr "IP-Adresse"
+
+#: application/controllers/MonitoringController.php:114
+msgid "Icinga vSphereDB Check Commands"
+msgstr "Icinga vSphereDB Checkkommandos"
+
+#: application/controllers/PhperrorController.php:40
+msgid ""
+"Icinga vSphereDb depends on the following modules, please install/upgrade as "
+"required"
+msgstr ""
+"Icinga vSphereDB hängt von den folgenden Modulen ab, bitte wo erforderlich "
+"entsprechend installieren oder aktualisieren"
+
+#: application/controllers/SingleObjectMonitoring.php:57
+#, php-format
+msgid ""
+"If you want to get Alarms for this object, you can configure related Icinga "
+"Service (or Host) Checks: %s Doing so can be automated via an Icinga "
+"Director Import Source"
+msgstr ""
+"Um Alarmierungen für dieses Objekt zu erhalten, können zugehörige Icinga-"
+"Service- (oder Host-)checks definiert werden: %s. Mittels Importquelle im "
+"Icinga Director lässt sich dies automatisieren"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/DiskUsageRuleDefinition.php:119
+msgid "Ignore specific disks"
+msgstr "Bestimmte Platten ignorieren"
+
+#: library/Vspheredb/Web/Table/PerfDataConsumerTable.php:30
+#: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:74
+msgid "Implementation"
+msgstr "Implementierung"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:148
+msgid "In case your proxy requires authentication, please configure this here"
+msgstr ""
+"Falls der Proxy eine Authentifizierung benötigt, dies bitte hier "
+"konfigurieren"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:123
+msgid ""
+"In case your vCenter is only reachable through a proxy, please choose it's "
+"protocol right here"
+msgstr ""
+"Falls das vCenter lediglich über einen Proxy erreichbar ist, bitte das "
+"entsprechende Protokoll auswählen"
+
+#: library/Vspheredb/Web/Table/ControlSocketConnectionsTable.php:47
+msgid "Incoming connection"
+msgstr "Eingehende Verbindung"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:57
+msgid "InfluxDB API version, autodetect should work fine"
+msgstr "InfluxDB-API-Version, die automatische Erkennung sollte ausreichen"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:46
+msgid "InfluxDB base URL, like http://influxdb.example.com:8086"
+msgstr "InfluxDB Basis-URL, z.B. http://influxdb.example.com:8086"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:27
+msgid "Info"
+msgstr "Information"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:45
+msgid "Information"
+msgstr "Information"
+
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:91
+#, php-format
+msgid "Information is outdated, last update took place %s"
+msgstr "Information ist veraltet, die letzte Aktualisierung fand %s statt"
+
+#: library/Vspheredb/Daemon/ConnectionState.php:138
+#, php-format
+msgid "Initializing API connection with %s"
+msgstr "API-Verbindungen mit %s initialisieren"
+
+#: application/controllers/SingleObjectMonitoring.php:83
+msgid "Inspect"
+msgstr "Einsichtnahme"
+
+#: library/Vspheredb/Web/Table/Dependency/DependencyInfoTable.php:39
+msgid "Installed"
+msgstr "Installiert"
+
+#: library/Vspheredb/Web/Table/Object/VmExtraInfoTable.php:43
+#: application/controllers/AnomaliesController.php:16
+msgid "Instance UUID"
+msgstr "Instanz-UUID"
+
+#: application/controllers/MonitoringController.php:97
+#, php-format
+msgid ""
+"Instead of checking every single Disk, just define rules (and exemptions "
+"from those) for %s."
+msgstr ""
+"Anstatt jede einzelne Platte zu überprüfen, lassen sich Regeln (und "
+"Ausnahmen von selbigen) für %s definieren."
+
+#: library/Vspheredb/Web/Table/Objects/NetworkAdaptersTable.php:56
+msgid "Interface"
+msgstr "Schnittstelle"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:45
+msgid ""
+"It is strongly suggested to access the API through your vCenter. Usually "
+"this is just a fully qualified domain name (and should match it's "
+"certificate. Alternatively, an IP address is fine. Please use <host>:<port> "
+"in case you're not using default HTTP(s) ports"
+msgstr ""
+"Es wird dringend angeraten, die API über das vCenter anzusprechen. Für "
+"gewöhnlich ist das ein voll qualifizierter Hostname (und sollte dem "
+"konfigurierten Zertifikat entsprechen). Alternativ kann auch eine IP-Adresse "
+"angegeben werden. Falls kein Standard-HTTP(S)-Port benutzt wird, bitte die "
+"Form <host>:<ip> benutzen"
+
+#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:23
+#: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:35
+#: library/Vspheredb/Web/Widget/Addon/Veeam11BackupRunDetails.php:22
+msgid "Job name"
+msgstr "Jobname"
+
+#: library/Vspheredb/Web/Table/PerformanceCounterTable.php:35
+msgid "Key"
+msgstr "Schlüssel"
+
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:30
+#: library/Vspheredb/Web/Widget/Addon/VRangerBackupRunDetails.php:23
+#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:24
+#: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:41
+msgid "Last Run Time"
+msgstr "Letzte Ausführung"
+
+#: library/Vspheredb/Web/Widget/Addon/Veeam11BackupRunDetails.php:23
+msgid "Last backup"
+msgstr "Letzte Datensicherung"
+
+#: library/Vspheredb/PerformanceData/IcingaRrd/RrdImg.php:53
+#, php-format
+msgid "Latency %s Read / %s Write"
+msgstr "Latenz %s lesend / %s schreibend"
+
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:50
+msgid "Link is down"
+msgstr "Link ist down"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:43
+msgid "Locale Build"
+msgstr "Lokalisierungsbuild"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:44
+msgid "Locale Version"
+msgstr "Lokalisierungsversion"
+
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:34
+msgid "Location"
+msgstr "Standort"
+
+#: application/controllers/DaemonController.php:54
+msgid "Log level"
+msgstr "Protokollierungsschwellwert"
+
+#: library/Vspheredb/Web/Table/VmNetworkAdapterTable.php:89
+msgid "MAC Address"
+msgstr "MAC-Adresse"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:117
+msgid ""
+"Map monitored hosts to Virtual Machines belonging to your VMware environment"
+msgstr ""
+"Überwachte Hosts zu der VMware-Umgebung zugehörigen virtuellen Maschinen "
+"zuweisen"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:92
+msgid ""
+"Map monitored hosts to physical Host Systems belonging to your VMware "
+"environment"
+msgstr ""
+"Überwachte Hosts zu der VMware-Umgebung zugehörigen physischen Hostsystemen "
+"zuweisen"
+
+#: library/Vspheredb/Web/Table/Objects/SwitchesTable.php:30
+msgid "Max Ports"
+msgstr "Maximale Ports"
+
+#: library/Vspheredb/Web/Table/Objects/GroupedvmsTable.php:99
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:103
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:138
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:165
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:176
+#: library/Vspheredb/Web/Table/Object/HostHardwareInfoTable.php:49
+msgid "Memory"
+msgstr "Speicher"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:51
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:159
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageRuleDefinition.php:27
+msgid "Memory Usage"
+msgstr "Speicherauslastung"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:132
+msgid "Might be disconnected"
+msgstr "Könnte getrennt sein"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:143
+msgid "Migrations"
+msgstr "Migrationen"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:30
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:47
+msgid "Model"
+msgstr "Modell"
+
+#: application/controllers/ConfigurationController.php:179
+msgid "Modify"
+msgstr "Ändern"
+
+#: library/Vspheredb/Web/Table/Dependency/DependencyInfoTable.php:37
+msgid "Module name"
+msgstr "Modulname"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:108
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:132
+msgid "Monitored Host Property"
+msgstr "Eigenschaft des überwachten Hosts"
+
+#: application/controllers/VcentersController.php:67
+msgid "Monitored vCenters"
+msgstr "Überwachte vCenter"
+
+#: library/Vspheredb/Web/Tabs/ConfigTabs.php:48
+#: library/Vspheredb/Web/Widget/HostMonitoringInfo.php:42
+#: application/controllers/DatastoreController.php:107
+#: application/controllers/MonitoringController.php:34
+#: application/controllers/MonitoringController.php:152
+#: application/controllers/HostController.php:154
+#: application/controllers/VmController.php:134
+msgid "Monitoring"
+msgstr "Überwachung"
+
+#: application/controllers/ConfigurationController.php:151
+#: application/controllers/ConfigurationController.php:191
+msgid "Monitoring Integration"
+msgstr "Monitoring-Integration"
+
+#: configuration.php:34
+#: application/controllers/MonitoringController.php:65
+#: application/controllers/MonitoringController.php:86
+msgid "Monitoring Rules"
+msgstr "Überwachungsregeln"
+
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:55
+msgid "Multiple Hosts"
+msgstr "Mehrere Hosts"
+
+#: library/Vspheredb/Web/Table/PerformanceCounterTable.php:45
+#: library/Vspheredb/Web/Table/VmsWithDuplicateProperty.php:40
+#: library/Vspheredb/Web/Table/PerfDataConsumerTable.php:20
+#: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:18
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:19
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:241
+#: library/Vspheredb/Web/Table/Objects/ObjectsTable.php:78
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:26
+#: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:39
+#: library/Vspheredb/Web/Form/VCenterForm.php:27
+msgid "Name"
+msgstr "Name"
+
+#: library/Vspheredb/Web/Table/VmNetworkAdapterTable.php:32
+msgid "Network"
+msgstr "Netzwerk"
+
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:31
+#, php-format
+msgid "Network Interfaces (%s)"
+msgstr "Netzwerkschnittstellen (%s)"
+
+#: application/controllers/OverviewController.php:30
+msgid "Networks"
+msgstr "Netzwerke"
+
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:154
+msgid "New Database"
+msgstr "Neue Datenbank"
+
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:155
+msgid "New InfluxDB database name"
+msgstr "Neuer InfluxDB-Datenbankname"
+
+#: application/controllers/ConfigurationController.php:169
+msgid "New Monitoring Integration"
+msgstr "Neue Monitoring-Integration"
+
+#: library/Vspheredb/Web/Table/Objects/VmsSnapshotsTable.php:50
+msgid "Newest"
+msgstr "Neueste"
+
+#: library/Vspheredb/Web/Form/FormElementStealer.php:68
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:68
+msgid "Next"
+msgstr "Weiter"
+
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:58
+msgid "No"
+msgstr "Nein"
+
+#: application/controllers/VcenterController.php:131
+msgid "No action taken, object has not been modified"
+msgstr "Keine Aktion vorgenommen, das Objekt wurde nicht verändert"
+
+#: application/controllers/VcenterController.php:72
+msgid "No action taken, vCenter has not been modified"
+msgstr "Keine Aktion vorgenommen, das vCenter wurde nicht geändert"
+
+#: application/controllers/MonitoringController.php:204
+msgid "No change has been applied"
+msgstr "Keine Änderungen wurden angewandt"
+
+#: library/Vspheredb/Web/Widget/CustomValueDetails.php:54
+msgid "No custom values have been defined"
+msgstr "Keine benutzerdefinierten Werte wurden definiert"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:92
+msgid ""
+"No database resource has been configured yet. Please choose a resource to "
+"complete your config"
+msgstr ""
+"Bisher wurde keine Datenbankressource konfiguriert. Bitte eine Ressource "
+"auswählen, um die Konfiguration zu vervollständigen"
+
+#: application/controllers/EventsController.php:59
+#: application/controllers/EventsController.php:96
+msgid "No events found"
+msgstr "Keine Ereignisse gefunden"
+
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:51
+msgid "No guest disk found. Please check guest utilities"
+msgstr "Keine Gastplatten gefunden. Bitte Gastwerkzeuge überprüfen"
+
+#: application/controllers/ConfigurationController.php:161
+msgid "No integration has been configured"
+msgstr "Bisher wurde keine Integration konfiguriert"
+
+#: library/Vspheredb/Web/Widget/Vm/BackupToolInfo.php:46
+msgid "No known backup tool has been used for this VM"
+msgstr "Kein bekanntes Datensicherungswerkzeug wurde für diese VM benutzt"
+
+#: library/Vspheredb/Web/Widget/Link/MobLink.php:58
+#: library/Vspheredb/Web/Widget/Link/VmrcLink.php:55
+msgid "No related vServer has been configured"
+msgstr "Kein zugehöriges vCenter wurde konfiguriert"
+
+#: library/Vspheredb/Web/Table/VmSnapshotTable.php:39
+msgid "No snapshots have been created for this VM"
+msgstr "Keine Schnappschüsse wurden für diese VM erstellt"
+
+#: application/controllers/VcentersController.php:85
+#, php-format
+msgid "No vCenter available. You might want to check your %s or your %s"
+msgstr "Kein vCenter verfügbar. %s oder %s zu überprüfen könnte helfen"
+
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:273
+msgid "Not configured / Inherited"
+msgstr "Nicht konfiguriert / geerbt"
+
+#: application/controllers/PerfdataController.php:90
+msgid "Not found"
+msgstr "Nicht gefunden"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:35
+msgid "OS Type"
+msgstr "Betriebssystemtyp"
+
+#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblematicObjectTable.php:40
+msgid "Object"
+msgstr "Objekt"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:102
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:127
+msgid "Object Name"
+msgstr "Objektname"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/ObjectStateRuleSet.php:14
+msgid "Object State Policy"
+msgstr "Richtlinie Objekt-Status"
+
+#: application/controllers/VcenterController.php:52
+msgid "Object Summaries"
+msgstr "Objektübersicht"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:87
+msgid "Object Type"
+msgstr "Objekttyp"
+
+#: library/Vspheredb/Web/Table/Objects/VmsSnapshotsTable.php:46
+msgid "Oldest"
+msgstr "Älteste"
+
+#: library/Vspheredb/Web/Table/VmDatastoresTable.php:57
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:54
+msgid "On Datastore"
+msgstr "Auf Datenspeicher"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/GuestUtilitiesRuleDefinition.php:108
+msgid "On version 2147483647"
+msgstr "Auf Version 2147483647"
+
+#: library/Vspheredb/Hint/ConnectionStateDetails.php:29
+msgid ""
+"One or more of the virtual machine configuration files are inaccessible. For "
+"example, this can be due to transient disk failures. In this case, no "
+"configuration can be returned for a virtual machine"
+msgstr ""
+"Eine oder mehrere Konfigurationsdateien für die virtuelle Maschine sind "
+"unzugänglich. Das kann z.B. flüchtigen Plattenfehlern geschuldet sein. In "
+"diesem Fall kann keine Konfiguration für einen virtuelle Maschine "
+"zurückgeliefert werden"
+
+#: library/Vspheredb/Web/Widget/Link/VmrcLink.php:46
+msgid "Open VMware Remote Console (VMRC)"
+msgstr "Öffne die VMware Remote Console (VMRC)"
+
+#: library/Vspheredb/Web/Widget/Link/MobLink.php:97
+msgid "Open the Managed Object Browser (MOB)"
+msgstr "Öffne den Managed Object Browser (MOB)"
+
+#: library/Vspheredb/Web/Widget/Link/Html5UiLink.php:53
+msgid "Open the VMware HTML 5 UI"
+msgstr "Öffne die VMware HTML5-Oberfläche"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:206
+msgid "Organisation"
+msgstr "Unternahmen"
+
+#: library/Vspheredb/Web/Table/ControlSocketConnectionsTable.php:49
+msgid "Outgoing connection"
+msgstr "Ausgehende Verbingung"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/VMwareObjectStateRuleDefinition.php:26
+msgid "Overall VMware Object State"
+msgstr "Allgemeiner VMware Objektzustand"
+
+#: application/controllers/HostController.php:146
+msgid "PCI Devices"
+msgstr "PCI-Geräte"
+
+#: application/controllers/PhperrorController.php:20
+#, php-format
+msgid "PHP version %s is required for vSphereDB, you're running %s."
+msgstr "PHP-Version %s ist für vSphereDB erforderlich, hier läuft %s."
+
+#: library/Vspheredb/PerformanceData/IcingaRrd/RrdImg.php:22
+#, php-format
+msgid "Packets (%s / %s Unicast, %s BCast, %s MCast, %s Dropped)"
+msgstr "Pakete (%s / %s Unicast, %s BCast, %s MCast, %s verworfen)"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:110
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:115
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:198
+msgid "Password"
+msgstr "Kennwort"
+
+#: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:45
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:77
+#: application/controllers/DatastoreController.php:50
+msgid "Path"
+msgstr "Pfad"
+
+#: library/Vspheredb/Web/Widget/IcingaHostStatusRenderer.php:31
+msgid "Pending - this host has never been checked"
+msgstr "Ausstehend - dieser Host wurde noch nie überprüft"
+
+#: application/controllers/DaemonController.php:38
+msgid "Pending HTTP Requests"
+msgstr "Ausstehende HTTP-Anfragen"
+
+#: library/Vspheredb/Web/Form/ApplyMigrationsForm.php:48
+msgid "Pending database schema migrations have successfully been applied"
+msgstr "Ausstehende Datenbankmigrationen wurden erfolgreich angewandt"
+
+#: library/Vspheredb/Web/Tabs/ConfigTabs.php:42
+msgid "Performance Data"
+msgstr "Leistungsdaten"
+
+#: application/controllers/PerfdataController.php:72
+msgid "Performance Data Consumer has been created"
+msgstr "Leistungsdatenverbraucher wurde erstellt"
+
+#: application/controllers/PerfdataController.php:67
+msgid "Performance Data Consumer has been removed"
+msgstr "Leistungsdatenverbraucher wurde entfernt"
+
+#: application/controllers/PerfdataController.php:74
+msgid "Performance Data Consumer has been updated"
+msgstr "Leistungsdatenverbraucher wurde aktualisiert"
+
+#: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:98
+#: application/controllers/PerfdataController.php:49
+msgid "Performance Data Consumers"
+msgstr "Leistungsdatenverbraucher"
+
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:126
+msgid "Please choose"
+msgstr "Bitte wählen"
+
+#: application/controllers/SingleObjectMonitoring.php:46
+#, php-format
+msgid "Please click %s to configure related Monitoring Rules"
+msgstr "Bitte %s klicken, um zugehörige Überwachungsregeln zu konfigurieren"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:99
+#, php-format
+msgid "Please click %s to create new MySQL/MariaDB resource"
+msgstr "Bitte %s klicken, um eine neue MySQL/MariaDB-Ressource zu erstellen"
+
+#: application/controllers/PerfdataController.php:56
+msgid "Please create your first Performance Data Consumer"
+msgstr "Bitte erstelle einen ersten Leistungsdatenverbraucher"
+
+#: application/controllers/ConfigurationController.php:119
+msgid "Please define your first Server Connection"
+msgstr "Bitte definiere eine erste Serververbindung"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:70
+msgid ""
+"Please make sure that your database exists and your user has been granted "
+"enough permissions"
+msgstr ""
+"Bitte sicherstellen, dass die Datenbank existiert, und dass dem Benutzer "
+"ausreichende Berechtigungen gewährt wurden"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:144
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:148
+msgid "Please provide the uptime in days"
+msgstr "Bitte die Uptime in Tagen angeben"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:136
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:140
+msgid "Please provide the uptime in seconds"
+msgstr "Bitte die Uptime in Sekunden angeben"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/GuestUtilitiesRuleDefinition.php:110
+#, php-format
+msgid "Please read %s"
+msgstr "Bitte %s lesen"
+
+#: library/Vspheredb/Web/Table/Objects/NetworkAdaptersTable.php:54
+msgid "Port"
+msgstr "Port"
+
+#: library/Vspheredb/Web/Table/VmNetworkAdapterTable.php:56
+#, php-format
+msgid "Port %s"
+msgstr "Port %s"
+
+#: application/controllers/PortgroupController.php:24
+msgid "Port Group"
+msgstr "Portgruppen"
+
+#: library/Vspheredb/Web/Table/Objects/SwitchesTable.php:29
+#: library/Vspheredb/Web/Table/Objects/PortGroupsTable.php:75
+msgid "Ports"
+msgstr "Ports"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:26
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:101
+#: library/Vspheredb/Web/Widget/Summaries.php:207
+msgid "Power"
+msgstr "Strom"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:32
+msgid "Power State"
+msgstr "Betriebszustand"
+
+#: library/Vspheredb/Web/Widget/PowerStateRenderer.php:31
+msgid "Power state is unknown (disconnected?)"
+msgstr "Betriebszustand ist unbekannt (getrennt?)"
+
+#: library/Vspheredb/Web/Widget/PowerStateRenderer.php:28
+msgid "Powered off"
+msgstr "Abgeschaltet"
+
+#: library/Vspheredb/Web/Widget/PowerStateRenderer.php:27
+msgid "Powered on"
+msgstr "Angeschaltet"
+
+#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemTable.php:18
+msgid "Problems / Monitoring Rule"
+msgstr "Probleme / Überwachungsregeln"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:40
+msgid "Product Line"
+msgstr "Produktlinie"
+
+#: application/controllers/ResourcesController.php:86
+msgid "Projects on this Compute Resource"
+msgstr "Projekte auf dieser Rechenressource"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:110
+msgid "Property of the Host System (as known by Icinga)"
+msgstr "Eigenschaft des Hostsystems (wie es Icinga bekannt ist)"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:98
+msgid "Property of the Host System (known by the vSphereDB module)"
+msgstr "Eigenschaft des Hostsystems (dem vSphereDB-Modul bekannt)"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:134
+msgid "Property of the Virtual Machine (as known by Icinga)"
+msgstr "Eigenschaft der virtuellen Maschine (wie sie Icinga bekannt ist)"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:123
+msgid "Property of the Virtual Machine (known by the vSphereDB module)"
+msgstr "Eigenschaft der virtuellen Maschine (dem vSphereDB-Modul bekannt)"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:56
+msgid "Protocol"
+msgstr "Protokoll"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:121
+msgid "Proxy"
+msgstr "Proxy"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:138
+msgid "Proxy Address"
+msgstr "Proxy-Adresse"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:156
+msgid "Proxy Password"
+msgstr "Proxy-Kennwort"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:146
+msgid "Proxy Username"
+msgstr "Proxy-Benutzer"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:147
+msgid "Raise CRITICAL for uptime greater than"
+msgstr "KRITISCH melden für Uptime größer als"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:139
+msgid "Raise CRITICAL for uptime less than"
+msgstr "KRITISCH melden für Uptime weniger als"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/SnapshotsRuleDefinition.php:90
+msgid "Raise Critical for snapshots older than X days"
+msgstr "Kritisch melden für Schnappschüsse älter als X Tage"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/GuestUtilitiesRuleDefinition.php:119
+msgid "Raise Critical for versions lower than"
+msgstr "Kritisch melden für Versionen niedriger als"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/SnapshotsRuleDefinition.php:82
+msgid "Raise Critical if more than X snapshots"
+msgstr "Kritisch melden für mehr als X Schnappschüsse"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:93
+msgid "Raise Critical with less then X MBytes free"
+msgstr "Kritisch melden mit weniger als X MBytes frei"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:85
+#: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:97
+msgid "Raise Critical with less then X percent free"
+msgstr "Kritisch melden mit weniger als X Prozent frei"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:143
+msgid "Raise WARNING for uptime greater than"
+msgstr "WARNUNG melden für Uptime größer als"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:135
+msgid "Raise WARNING for uptime less than"
+msgstr "WARNUNG melden für Uptime weniger als"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/SnapshotsRuleDefinition.php:86
+msgid "Raise Warning for snapshots older than X days"
+msgstr "Warnung melden für Schnappschüsse älter als X Tage"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/GuestUtilitiesRuleDefinition.php:115
+msgid "Raise Warning for versions lower than"
+msgstr "Warnung melden für Versionen niedriger als"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/SnapshotsRuleDefinition.php:78
+msgid "Raise Warning if more than X snapshots"
+msgstr "Warnung melden für mehr als X Schnappschüsse"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:89
+msgid "Raise Warning with less then X MBytes free"
+msgstr "Warnung melden mit weniger als X MBytes frei"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:81
+#: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:93
+msgid "Raise Warning with less then X percent free"
+msgstr "Warnung melden mit weniger als X Prozent frei"
+
+#: library/Vspheredb/Web/Form/DeleteVCenterForm.php:53
+msgid "Really Delete"
+msgstr "Wirklich löschen"
+
+#: library/Vspheredb/Web/Form/DisableServerForm.php:33
+msgid "Really disable"
+msgstr "Wirklich deaktivieren"
+
+#: library/Vspheredb/Web/Form/EnableServerForm.php:33
+msgid "Really enable"
+msgstr "Wirklich aktivieren"
+
+#: library/Vspheredb/Web/Widget/OverallStatusRenderer.php:44
+msgid "Red - there is a problem"
+msgstr "Rot - es gibt ein Problem"
+
+#: library/Vspheredb/Web/Form/VCenterForm.php:34
+msgid "Rename"
+msgstr "Umbenennen"
+
+#: library/Vspheredb/Web/Form/VCenterForm.php:25
+msgid "Rename this vCenter"
+msgstr "Dieses vCenter umbenennen"
+
+#: library/Vspheredb/Web/Widget/Addon/VRangerBackupRunDetails.php:25
+#: library/Vspheredb/Web/Widget/Addon/Veeam11BackupRunDetails.php:25
+msgid "Repository"
+msgstr "Verwahrungsort"
+
+#: library/Vspheredb/Web/Table/Dependency/DependencyInfoTable.php:38
+msgid "Required"
+msgstr "Erforderlich"
+
+#: library/Vspheredb/Web/Widget/ToggleFlagList.php:144
+#: library/Vspheredb/Web/Widget/AdditionalTableActions.php:89
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:76
+msgid "Resource Pool"
+msgstr "Ressourcenpool"
+
+#: application/controllers/ResourcepoolsController.php:15
+#: application/controllers/ResourcepoolsController.php:19
+msgid "Resource Pools"
+msgstr "Ressourcenpools"
+
+#: library/Vspheredb/Web/Form/RestartDaemonForm.php:31
+msgid "Restart"
+msgstr "Neustart"
+
+#: configuration.php:12
+msgid ""
+"Restrict Access to specific vCenters only. Please specify a comma-separated "
+"list of case-sensitive vCenter names. Wildcard-matching (with *) is allowed"
+msgstr ""
+"Zugriff auf spezifische vCenter einschränken. Bitte eine komma-getrennte "
+"Liste von von vCenter-Namen unter Beachtung der Groß- und Kleinschreibung. "
+"Mustersuche mit Platzhaltern (mit *) ist erlaubt"
+
+#: library/Vspheredb/Web/Widget/Addon/VRangerBackupRunDetails.php:22
+msgid "Result"
+msgstr "Ergebnis"
+
+#: library/Vspheredb/Web/Table/PerformanceCounterTable.php:57
+msgid "Rollup"
+msgstr "Rollup"
+
+#: application/controllers/MonitoringController.php:159
+msgid "Rules"
+msgstr "Regeln"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:129
+msgid "SOCKS5 proxy"
+msgstr "SOCKS5-Proxy"
+
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:24
+msgid "Schedule"
+msgstr "Zeitplan"
+
+#: application/controllers/MonitoringController.php:57
+msgid ""
+"Select any folder (or the root node) to define (and override) Monitoring "
+"Rules for all related child nodes"
+msgstr ""
+"Wähle ein Verzeichnis (oder den Wurzelknoten) um Überwachungsregeln für alle "
+"zugehörigen Kindknoten zu definieren (und zu überschreiben)"
+
+#: application/controllers/HostController.php:142
+msgid "Sensors"
+msgstr "Sensoren"
+
+#: library/Vspheredb/Web/Table/VsphereApiConnectionTable.php:11
+#: library/Vspheredb/Web/Table/Objects/VCenterServersTable.php:74
+msgid "Server"
+msgstr "Server"
+
+#: application/controllers/VcentersController.php:87
+msgid "Server Connections"
+msgstr "Serververbindungen"
+
+#: library/Vspheredb/Web/Tabs/ConfigTabs.php:38
+msgid "Servers"
+msgstr "Server"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:36
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:51
+msgid "Service Tag"
+msgstr "Service-Tag"
+
+#: library/Vspheredb/Web/Form/LogLevelForm.php:52
+msgid "Set"
+msgstr "Set"
+
+#: application/controllers/MonitoringController.php:206
+#, php-format
+msgid "Settings for %s have been modified"
+msgstr "Einstellungen für %s wurden geändert"
+
+#: application/controllers/MonitoringController.php:211
+#, php-format
+msgid "Settings for %s have been removed"
+msgstr "Einstellungen für %s wurden entfernt"
+
+#: application/controllers/MonitoringController.php:209
+#, php-format
+msgid "Settings for %s have been stored"
+msgstr "Einstellungen für %s wurden gespeichert"
+
+#: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:71
+msgid "Ship Performance Data"
+msgstr "Leistungsindikatoren ausliefern"
+
+#: library/Vspheredb/Web/Widget/Link/MobLink.php:79
+#, php-format
+msgid "Show \"%s\" in the Managed Object Browser (MOB)"
+msgstr "Zeige \"%s\" im Managed Object Browser (MOB)"
+
+#: library/Vspheredb/Web/Widget/AdditionalTableActions.php:70
+msgid "Show SQL"
+msgstr "SQL anzeigen"
+
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:60
+#: library/Vspheredb/Web/Table/VmDatastoresTable.php:55
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:52
+#: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:50
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:78
+msgid "Size"
+msgstr "Größe"
+
+#: application/controllers/DatastoreController.php:57
+msgid "Sizing"
+msgstr "Dimensionierung"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:114
+msgid "Skip Templates"
+msgstr "Templates überspringen"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:110
+msgid "Skip powered off VMs"
+msgstr "Abgeschaltete VMs überspringen"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/SnapshotsRuleDefinition.php:24
+msgid "Snapshot Policy"
+msgstr "Schnappschussrichtlinie"
+
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:35
+msgid "Snapshot Type"
+msgstr "Schnappschusstyp"
+
+#: library/Vspheredb/Web/Table/VmSnapshotTable.php:42
+#: library/Vspheredb/Web/Table/Objects/VmsSnapshotsTable.php:45
+#: application/controllers/VmsController.php:42
+#: application/controllers/VmsController.php:71
+msgid "Snapshots"
+msgstr "Schnappschüsse"
+
+#: library/Vspheredb/Web/Table/ControlSocketConnectionsTable.php:67
+msgid "Socket"
+msgstr "Socket"
+
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:217
+msgid "Software"
+msgstr "Software"
+
+#: library/Vspheredb/Web/Table/MonitoredObjectMappingTable.php:26
+msgid "Source"
+msgstr "Quelle"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:46
+msgid "Source Type"
+msgstr "Quellentyp"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:113
+msgid "Spectre / Meltdown"
+msgstr "Spectre / Meltdown"
+
+#: library/Vspheredb/Web/Widget/PowerStateRenderer.php:30
+msgid "Standby"
+msgstr "Bereitschaft"
+
+#: library/Vspheredb/Web/Table/VsphereApiConnectionTable.php:12
+msgid "State"
+msgstr "Status"
+
+#: library/Vspheredb/Web/Table/PerformanceCounterTable.php:56
+msgid "Stats"
+msgstr "Statistiken"
+
+#: library/Vspheredb/Web/Table/VmDatastoresTable.php:53
+#: library/Vspheredb/Web/Table/Objects/VCenterServersTable.php:96
+#: library/Vspheredb/Web/Table/Objects/ObjectsTable.php:71
+#: library/Vspheredb/Web/Widget/Summaries.php:199
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:29
+#: application/controllers/DatastoreController.php:49
+msgid "Status"
+msgstr "Status"
+
+#: library/Vspheredb/Daemon/ConnectionState.php:148
+#, php-format
+msgid "Stopping API connection with %s"
+msgstr "Stoppe API-Verbindungen mit %s"
+
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:202
+msgid "Storage"
+msgstr "Speicherung"
+
+#: application/controllers/StoragepodsController.php:15
+#: application/controllers/StoragepodsController.php:20
+msgid "Storage Pods"
+msgstr "Speicherbehälter"
+
+#: library/Vspheredb/Web/Form/FormElementStealer.php:38
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:164
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:140
+#: application/controllers/MonitoringController.php:218
+msgid "Store"
+msgstr "Speichern"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:31
+msgid "Store configuration"
+msgstr "Konfiguration speichern"
+
+#: application/controllers/ConfigurationController.php:194
+msgid "Stored"
+msgstr "Gespeichert"
+
+#: library/Vspheredb/Web/Widget/PowerStateRenderer.php:29
+msgid "Suspended"
+msgstr "Suspendiert"
+
+#: application/controllers/SwitchController.php:24
+msgid "Switch"
+msgstr "Switch"
+
+#: application/controllers/SwitchesController.php:15
+msgid "Switches"
+msgstr "Switches"
+
+#: library/Vspheredb/Web/Widget/VCenterSyncInfo.php:41
+#, php-format
+msgid ""
+"Sync for %s is running as PID %s by user %s on %s, last refresh happened %s"
+msgstr ""
+"Synchronisierung für %s läuft als PID %s mittels Benutzer %s auf %s, die "
+"letzte Aktualisierung erfolgte %s"
+
+#: library/Vspheredb/Web/Widget/VCenterSyncInfo.php:58
+msgid "Sync has never been running"
+msgstr "Synchronisierung lief noch nie"
+
+#: library/Vspheredb/Web/Widget/VCenterSyncInfo.php:51
+#, php-format
+msgid "Sync is not running. Last refresh occured %s by %s on %s"
+msgstr ""
+"Synchronisierung läuft nicht. Letzte Aktualisierung erfolgte %s von %s auf %s"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:103
+msgid "System (BIOS) UUID"
+msgstr "System(BIOS)-UUID"
+
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:41
+msgid "System Information"
+msgstr "Systeminformation"
+
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:54
+msgid "System UUID"
+msgstr "System-UUID"
+
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:64
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:134
+msgid "System booted recently"
+msgstr "System startete kürzlich neu"
+
+#: library/Vspheredb/Web/Controller/ObjectsController.php:46
+#: application/controllers/VmsController.php:65
+#: application/controllers/VmsController.php:95
+#: application/controllers/AlarmsController.php:52
+#: application/controllers/EventsController.php:77
+msgid "Table"
+msgstr "Tabelle"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:256
+msgid "Template"
+msgstr "Vorlage"
+
+#: application/controllers/VcenterController.php:125
+msgid "The Connection has successfully been stored"
+msgstr "Die Verbindung wurde erfolgreich gespeichert"
+
+#: application/controllers/MonitoringController.php:92
+#, php-format
+msgid ""
+"The Icinga Module for vSphere%s ships a lot of data, state and sensor "
+"values. If you want to define related Icinga Service checks for Alarming "
+"reasons, Monitoring Rules are %s."
+msgstr ""
+"Das Icinga-Modul für vSphere%s liefert eine Menge an Daten, Status und "
+"Sensorwerten. Wenn zugehörige Icinga-Servicechecks zu Alarmierungszwecken "
+"definiert werden sollten sind Überwachungsregeln %s."
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:36
+msgid "The PHP SOAP extension (php-soap) is not installed/enabled"
+msgstr "Die PHP SOAP-Erweiterung (php-soap) ist nicht installiert/aktiviert"
+
+#: library/Vspheredb/Web/Widget/Config/ProposeMigrations.php:128
+msgid ""
+"The chosen Database resource already contains tables. You might want to "
+"continue with this DB resource, but we strongly suggest to use an empty "
+"dedicated DB for this module."
+msgstr ""
+"Die gewählte Datenbankressource enthält bereits Tabellen. Es kann gewünscht "
+"sein, mit dieser DB-Ressource fortzufahren, aber wir empfehlen eindringlich "
+"eine leere dedizierte DB für dieses Modul."
+
+#: library/Vspheredb/Web/Widget/Config/ProposeMigrations.php:121
+msgid ""
+"The chosen Database resource contains related tables, but the schema is not "
+"complete. In case you tried a pre-release version of this module please drop "
+"this database and start with a fresh new one."
+msgstr ""
+"Die gewählte Datenbankressource enthält zugehörige Tabellen, aber das Schema "
+"ist unvollständig. Falls eine Pre-Release-Version dieses Moduls installiert "
+"war, bitte diese Datenbank löschen und mit einer frischen neu beginnen."
+
+#: library/Vspheredb/Web/Widget/Config/ProposeMigrations.php:100
+msgid ""
+"The configured DB doesn't have the required has schema. Please ask an "
+"Administrator to fix the configuration."
+msgstr ""
+"Die konfigurierte Datenbank enthält nicht das erforderliche Schema. Bitte "
+"einen Administrator, das zu korrigieren."
+
+#: application/controllers/VcenterController.php:139
+msgid "The connection has been deleted"
+msgstr "Die Verbindung wurde gelöscht"
+
+#: application/controllers/ConfigurationController.php:54
+msgid ""
+"The database has no vSphereDB schema. Waiting for the Background Daemon to "
+"initialize the database"
+msgstr ""
+"Die Datenbank enthält kein vSphereDB schema. Warte darauf, dass der "
+"Hintergrunddienst die Datenbank initialisiert"
+
+#: application/controllers/ConfigurationController.php:62
+msgid ""
+"The database has pending DB migrations. Please restart the Background daemon "
+"to apply them"
+msgstr ""
+"Die Datenbank hat ausstehende DB-Migrationen. Bitte den Hintergrunddienst "
+"neu starten, um diese anzuwenden"
+
+#: library/Vspheredb/Hint/ConnectionStateDetails.php:22
+msgid "The server has access to the virtual machine"
+msgstr "Der Server hat Zugriff auf die virtuelle Maschine"
+
+#: library/Vspheredb/Hint/ConnectionStateDetails.php:25
+msgid ""
+"The server is currently disconnected from the virtual machine, since its "
+"host is disconnected"
+msgstr ""
+"Der Server ist aktuell von der virtuellen Maschine getrennt, weil das "
+"zugehörige Hostsystem getrennt ist"
+
+#: application/controllers/VcenterController.php:98
+msgid "The vCenter has successfully been removed"
+msgstr "Das vCenter wurde erfolgreich entfernt"
+
+#: application/controllers/VcenterController.php:71
+msgid "The vCenter has successfully been stored"
+msgstr "Das vCenter wurde erfolgreich gespeichert"
+
+#: application/controllers/DaemonController.php:231
+msgid "The vSphereDB Daemon is currently not polling any vCenter"
+msgstr "Der vSphereDB-Dienst befragt aktuell keine vCenter"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:34
+msgid ""
+"The vSphereDB module can hook into the Icinga monitoring module. This allows "
+"to show context information related to your Virtualization infrastructure "
+"next to each monitored Host."
+msgstr ""
+"Das vSphereDB-Modul kann sich in das Icinga Monitoringmodul einklinken. Das "
+"erlaubt es, zur Virtualisierungsinfrastruktur gehörige Kontextinformation zu "
+"jedem überwachten Host anzuzeigen."
+
+#: library/Vspheredb/Hint/ConnectionStateDetails.php:35
+msgid ""
+"The virtual machine configuration format is invalid. Thus, it is accessible "
+"on disk, but corrupted in a way that does not allow the server to read the "
+"content. In this case, no configuration can be returned for a virtual "
+"machine."
+msgstr ""
+"Das Konfigurationsformat der virtuellen Maschine ist ungültig. Somit ist es "
+"zwar auf der Platte zugänglich, aber auf eine Art und Weise korrumpiert, die "
+"es verhindert, dass der Server dessen Inhalt lesen kann. In diesem Fall "
+"können keine Konfigurationsinformationen für eine virtuelle Maschine "
+"ermittelt werden."
+
+#: library/Vspheredb/Hint/ConnectionStateDetails.php:41
+msgid ""
+"The virtual machine is no longer registered on the host it is associated "
+"with. For example, a virtual machine that is unregistered or deleted "
+"directly on a host managed by VirtualCenter shows up in this state."
+msgstr ""
+"Die virtuelle Maschine ist nicht mehr auf dem Hostsystem mit dem sie "
+"verbunden ist registriert. Eine virtuelle Maschine, welche direkt auf einem "
+"Hostsystem abgemeldet oder gelöscht wird, während sie eigentlich vom "
+"VirtualCenter verwaltet wird, kann in diesem Zustand aufscheinen."
+
+#: library/Vspheredb/Web/Widget/Config/ProposeMigrations.php:113
+msgid "There are pending Database Schema Migrations. Please apply them now!"
+msgstr ""
+"Es gibt ausstehende Datenbankschema-Migrationen. Bitte wende diese jetzt an!"
+
+#: library/Vspheredb/Web/Widget/Config/ProposeMigrations.php:94
+msgid ""
+"There are pending Database Schema Migrations. Please ask an Administrator to "
+"apply them now!"
+msgstr ""
+"Es gibt ausstehende Datenbankschema-Migrationen. Bitte einen Administrator, "
+"diese jetzt anzuwenden!"
+
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:87
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:162
+msgid "There is no configured connection for this vCenter"
+msgstr "Für dieses vCenter gibt es keine konfigurierte Verbindung"
+
+#: library/Vspheredb/Daemon/ConnectionState.php:158
+msgid "There is no configured server for this vCenter"
+msgstr "Es gibt keine konfigurierten Server für dieses vCenter"
+
+#: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:115
+#, php-format
+msgid "There is no such DB/Bucket: \"%s\""
+msgstr "Es gibt keine solche DB/Bucket: \"%s\""
+
+#: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:91
+#, php-format
+msgid "There is no such PerfdataConsumer: %s"
+msgstr "Es gibt keinen solchen Leistungsdatenverbraucher: %s"
+
+#: application/controllers/PerfdataController.php:92
+#, php-format
+msgid "There is no such Performance Data Consumer: %s"
+msgstr "Es gibt keinen solchen Leistungsdatenverbraucher: %s"
+
+#: library/Vspheredb/Web/Form/ApplyMigrationsForm.php:36
+msgid "There is no vSphereDB schema in this database"
+msgstr "Es gibt kein vSphereDB-Schema in dieser Datenbank"
+
+#: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:29
+msgid "This VM has been excluded from Backup"
+msgstr "Diese VM wurde von der Datensicherung ausgenommen"
+
+#: library/Vspheredb/Web/Widget/VmHeader.php:40
+#: library/Vspheredb/Web/Widget/VmHeader.php:44
+msgid "This is a template"
+msgstr "Das ist eine Vorlage"
+
+#: library/Vspheredb/Web/Widget/IcingaHostStatusRenderer.php:29
+msgid "This system is down"
+msgstr "Das System ist down"
+
+#: library/Vspheredb/Web/Widget/IcingaHostStatusRenderer.php:28
+msgid "This system is up"
+msgstr "Das System ist up"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:73
+msgid "Threshold/State Precedence"
+msgstr "Schwellwert/Status Vorrang"
+
+#: library/Vspheredb/PerformanceData/IcingaRrd/RrdImg.php:13
+#, php-format
+msgid "Throughput (bits/s, %s RX / %s TX)"
+msgstr "Durchsatz (bits/s %s RX / %s TX)"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:210
+msgid "Token"
+msgstr "Token"
+
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:45
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:88
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:116
+msgid "Tools Version"
+msgstr "Werkzeugversion"
+
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:137
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:141
+msgid "Total"
+msgstr "Gesamt"
+
+#: library/Vspheredb/Web/Controller/ObjectsController.php:55
+msgid "Tree"
+msgstr "Baum"
+
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:276
+msgid "Trigger a Critical state"
+msgstr "Einen kritischen Zustand auslösen"
+
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:275
+msgid "Trigger a Warning state"
+msgstr "Einen Zustand der Warnung auslösen"
+
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:277
+msgid "Trigger an Unknown state"
+msgstr "Einen unbekannten Zustand auslösen"
+
+#: library/Vspheredb/Daemon/ConnectionState.php:133
+#, php-format
+msgid "Trying to log in to %s"
+msgstr "Versuche an %s anzumelden"
+
+#: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:33
+#: library/Vspheredb/Web/Widget/Addon/VRangerBackupRunDetails.php:24
+msgid "Type"
+msgstr "Typ"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:33
+#: library/Vspheredb/Web/Table/Object/VmExtraInfoTable.php:42
+msgid "UUID"
+msgstr "UUID"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:233
+#: library/Vspheredb/Web/Widget/HostMonitoringInfo.php:94
+#, php-format
+msgid "Unable to check monitoring state: %s"
+msgstr "Überwachungsstatus kann nicht überprüft werden: %s"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:134
+#, php-format
+msgid ""
+"Unable to store the configuration to \"%s\". Please check file permissions "
+"or manually store the content shown below"
+msgstr ""
+"Konfigurationsinformationen können nicht nach \"%s\" gespeichert werden. "
+"Bitte Dateiberechtigungen prüfen, oder nachfolgenden Inhalt manuell darin "
+"abspeichern"
+
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:69
+#: application/controllers/DatastoreController.php:56
+msgid "Uncommitted"
+msgstr "Ungebunden"
+
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:73
+msgid "Uncommitted (%)"
+msgstr "Ungebunden (%)"
+
+#: library/Vspheredb/Web/Table/PerformanceCounterTable.php:55
+msgid "Unit"
+msgstr "Einheit"
+
+#: library/Vspheredb/Web/Widget/DatastoreUsage.php:148
+msgid "Unknown / not used by any visible Virtual Machine"
+msgstr ""
+"Unbekannt / nicht von irgend einer sichtbaren virtuellen Maschine benutzt"
+
+#: library/Vspheredb/Web/Widget/IcingaHostStatusRenderer.php:30
+msgid "Unreachable - another device might be responsible for this outage"
+msgstr ""
+"Nicht erreichbar - ein anderes Gerät könnte für diesen Ausfall "
+"verantwortlich sein"
+
+#: application/controllers/PhperrorController.php:22
+#: application/controllers/PhperrorController.php:37
+msgid "Unsatisfied dependencies"
+msgstr "Unerfüllte Abhängigkeiten"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:128
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:164
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:53
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:129
+msgid "Uptime"
+msgstr "Uptime"
+
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:62
+#: library/Vspheredb/Web/Table/VmDatastoresTable.php:56
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:53
+#: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:54
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:85
+#: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:41
+msgid "Usage"
+msgstr "Auslastung"
+
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:148
+#: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:177
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:159
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:188
+#: application/controllers/DatastoreController.php:53
+msgid "Used"
+msgstr "Benutzt"
+
+#: library/Vspheredb/Web/Widget/UsageBar.php:82
+msgid "Used: %s of %s (%.2F%%)"
+msgstr "Benutzt: %s von %s (%.2F%%)"
+
+#: library/Vspheredb/Web/Table/ControlSocketConnectionsTable.php:68
+msgid "User"
+msgstr "Benutzer"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:101
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:195
+msgid "Username"
+msgstr "Benutzername"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:98
+#: library/Vspheredb/Web/Table/VsphereApiConnectionTable.php:10
+#: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:355
+#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemTable.php:17
+msgid "VCenter"
+msgstr "vCenter"
+
+#: library/Vspheredb/Web/Widget/VCenterSyncInfo.php:34
+#, php-format
+msgid "VCenter %s"
+msgstr "vCenter %s"
+
+#: application/controllers/VcentersController.php:41
+msgid "VCenters"
+msgstr "vCenter"
+
+#: library/Vspheredb/Web/Table/Objects/PortGroupsTable.php:49
+msgid "VLAN"
+msgstr "VLAN"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:94
+msgid "VM CPUs"
+msgstr "VM-CPUs"
+
+#: library/Vspheredb/Web/Table/MonitoredObjectMappingTable.php:56
+msgid "VM Mapping"
+msgstr "VM-Zuordnung"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:61
+msgid "VM Status"
+msgstr "VM-Status"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/VMwareObjectStateRuleDefinition.php:67
+msgid "VM might be unreachable"
+msgstr "VM könnte nicht erreichbar sein"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:148
+msgid "VMotion attempt(s)"
+msgstr "VMotion-Versuch(e)"
+
+#: library/Vspheredb/Web/Table/Objects/ResourcePoolsTable.php:14
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:82
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:111
+#: application/controllers/OverviewController.php:27
+msgid "VMs"
+msgstr "VMs"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:107
+msgid "VMs Memory"
+msgstr "VMs Speicher"
+
+#: application/controllers/DaemonController.php:36
+msgid "VMware API Connections"
+msgstr "VMware API-Verbindungen"
+
+#: library/Vspheredb/Web/Widget/Addon/Veeam11BackupRunDetails.php:24
+msgid "Veeam server"
+msgstr "Veeam Server"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:29
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:39
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:46
+msgid "Vendor"
+msgstr "Hersteller"
+
+#: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:49
+msgid "Verify"
+msgstr "Überprüfen"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:90
+msgid "Verify Host"
+msgstr "Host überprüfen"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:81
+msgid "Verify Peer"
+msgstr "Peer überprüfen"
+
+#: library/Vspheredb/Web/Table/Object/VmExtraInfoTable.php:45
+msgid "Version"
+msgstr "Version"
+
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:90
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:51
+#: library/Vspheredb/Web/Controller/ObjectsController.php:166
+#: application/controllers/VmController.php:118
+msgid "Virtual Machine"
+msgstr "Virtuelle Maschine"
+
+#: application/controllers/VmsController.php:80
+msgid "Virtual Machine Guest Disks"
+msgstr "Gast-Platten der virtuellen Maschine"
+
+#: application/controllers/PortgroupController.php:27
+msgid "Virtual Machine Network Adapters"
+msgstr "Netzwerkadapter der virtuellen Maschine"
+
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:121
+msgid "Virtual Machine Property"
+msgstr "Eigenschaft der virtuellen Maschine"
+
+#: library/Vspheredb/ProvidedHook/Monitoring/DetailviewExtension.php:90
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:66
+#, php-format
+msgid "Virtual Machine: %s"
+msgstr "Virtuelle Maschine: %s"
+
+#: configuration.php:22
+#: library/Vspheredb/Web/Table/Object/HostVmsInfoTable.php:22
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:115
+#: application/controllers/VmsController.php:27
+#: application/controllers/VmsController.php:53
+#: application/controllers/MonitoringController.php:43
+#: application/controllers/MonitoringController.php:104
+#: application/controllers/MonitoringController.php:228
+msgid "Virtual Machines"
+msgstr "Virtuelle Maschinen"
+
+#: application/controllers/HostController.php:136
+#, php-format
+msgid "Virtual Machines (%d)"
+msgstr "Virtuelle Maschinen (%d)"
+
+#: application/controllers/VmsController.php:104
+msgid "Virtual Machines with Snapshots"
+msgstr "Virtuelle Maschinen mit Schnappschüssen"
+
+#: application/controllers/SwitchController.php:27
+msgid "Virtual Port Groups"
+msgstr "Virtuelle Portgruppen"
+
+#: configuration.php:18
+msgid "Virtualization (VMware)"
+msgstr "Virtualisierung (VMware)"
+
+#: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:39
+msgid "Virtualization Information"
+msgstr "Virtualisierungsinformationen"
+
+#: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:46
+#: library/Vspheredb/Web/Table/Object/HostVmsInfoTable.php:35
+msgid "Vms"
+msgstr "VMs"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/VMwareObjectStateRuleDefinition.php:66
+msgid "When VMware shows GRAY"
+msgstr "Wenn VMware Grau anzeigt"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/VMwareObjectStateRuleDefinition.php:70
+msgid "When VMware shows RED"
+msgstr "Wenn VMware ROT anzeigt"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/VMwareObjectStateRuleDefinition.php:63
+msgid "When VMware shows YELLOW"
+msgstr "Wenn VMware GELB anzeigt"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/GuestUtilitiesRuleDefinition.php:105
+msgid "When installed, but not running"
+msgstr "Wenn installiert, aber nicht am Laufen"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/GuestUtilitiesRuleDefinition.php:102
+msgid "When not installed"
+msgstr "Wenn nicht installiert"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:125
+msgid "When powered off"
+msgstr "Wenn abgeschaltet"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:128
+msgid "When suspended"
+msgstr "Wenn suspendiert"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/GuestUtilitiesRuleDefinition.php:99
+msgid "When the vCenter says \"outdated\""
+msgstr "Wenn das vCenter \"veraltet\" sagt"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:131
+msgid "When unknown"
+msgstr "Wenn unbekannt"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:73
+msgid "Whether the background daemon should actively poll this node."
+msgstr "Ob der Hintergrunddienst diesen Knoten aktiv befragen soll."
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:58
+msgid "Whether to use encryption when talking to your vCenter"
+msgstr ""
+"Ob Verschlüsselung benutzt werden soll, wenn mit dem vCenter kommuniziert "
+"wird"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:83
+msgid ""
+"Whether we should check that our peer's certificate has been signed by a "
+"trusted CA. This is strongly recommended."
+msgstr ""
+"Ob überprüft werden soll, dass unser Peer-Zertifikat von einer "
+"vertrauenswürdigen CA signiert wurde. Dies wird eindringlich empfohlen."
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:92
+msgid "Whether we should check that the certificate matches theconfigured host"
+msgstr ""
+"Ob überprüft werden soll, dass unser Peer-Zertifikat dem konfigurierten Host "
+"entspricht"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:103
+msgid "Will be used for SOAP authentication against your vCenter"
+msgstr "Wird für SOAP-Authentifizierung gegen das vCenter benutzt"
+
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:77
+msgid "Worse state wins"
+msgstr "Schlechtester Zustand gewinnt"
+
+#: library/Vspheredb/Web/Widget/OverallStatusRenderer.php:43
+msgid "Yellow - there are warnings"
+msgstr "Gelb - es gibt Warnungen"
+
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:58
+msgid "Yes"
+msgstr "Ja"
+
+#: library/Vspheredb/Web/Form/RestartDaemonForm.php:34
+msgid "Yes, please restart"
+msgstr "Ja, bitte neustarten"
+
+#: library/Vspheredb/Web/Form/VCenterForm.php:29
+msgid ""
+"You might want to change the display name of your vCenter. This defaults to "
+"the first related Server host name."
+msgstr ""
+"Es kann gewünscht sein, den Anzeigenamen des vCenters zu ändern. Als "
+"Standardwert entspricht das dem Hostnamen des ersten zugehörigen Servers."
+
+#: application/controllers/MonitoringController.php:99
+msgid "all of them"
+msgstr "alle von denen"
+
+#: library/Vspheredb/Web/Controller/ObjectsController.php:28
+msgid "back"
+msgstr "zurück"
+
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:163
+msgid "default"
+msgstr "Standard"
+
+#: library/Vspheredb/Web/Table/Dependency/DependencyInfoTable.php:57
+msgid "disabled"
+msgstr "deaktiviert"
+
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:63
+#: library/Vspheredb/Web/Table/HostHbaTable.php:53
+msgid "driver"
+msgstr "Treiber"
+
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:56
+msgid "full duplex"
+msgstr "Vollduplex"
+
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:57
+msgid "half duplex"
+msgstr "Halbduplex"
+
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:101
+#: application/controllers/SingleObjectMonitoring.php:47
+msgid "here"
+msgstr "hier"
+
+#: library/Vspheredb/Monitoring/PlainSettingsRenderer.php:23
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:162
+#, php-format
+msgid "inherited from %s"
+msgstr "geerbt von %s"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:41
+msgid "license Product Name"
+msgstr "Lizenz Produktname"
+
+#: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:42
+msgid "license Product Version"
+msgstr "Lizenz Produktversion"
+
+#: library/Vspheredb/Web/Table/Dependency/DependencyInfoTable.php:60
+msgid "missing"
+msgstr "fehlend"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:219
+#: library/Vspheredb/Web/Table/Dependency/DependencyInfoTable.php:65
+#: library/Vspheredb/Web/Widget/HostMonitoringInfo.php:82
+msgid "more"
+msgstr "mehr"
+
+#: library/Vspheredb/Monitoring/Rule/RuleForm.php:117
+msgid "new instance"
+msgstr "neue Instanz"
+
+#: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:186
+#, php-format
+msgid "read %s for details"
+msgstr "für Details %s lesen"
+
+#: application/controllers/MonitoringController.php:95
+msgid "the way to go"
+msgstr "das Mittel der Wahl"
+
+#: library/Vspheredb/Web/Form/LogLevelForm.php:49
+msgid "unspecified"
+msgstr "nicht spezifiziert"
+
+#: library/Vspheredb/Web/Table/Objects/GroupedvmsTable.php:93
+msgid "vCPU Count"
+msgstr "Anzahl vCPUs"
+
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:98
+msgid "vCPU/pCPU"
+msgstr "vCPU/pCPU"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:130
+msgid "vCPUs"
+msgstr "vCPUs"
+
+#: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:44
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:78
+#: library/Vspheredb/Web/Tabs/VCenterTabs.php:28
+#: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:40
+msgid "vCenter"
+msgstr "vCenter"
+
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:43
+msgid "vCenter (or ESX) host"
+msgstr "vCenter (oder ESX) Host"
+
+#: application/controllers/MonitoringController.php:171
+#, php-format
+msgid "vCenter Monitoring Rules for %s: %s"
+msgstr "vCenter Überwachungsregeln für %s: %s"
+
+#: application/controllers/VcenterController.php:111
+msgid "vCenter Server"
+msgstr "vCenter-Server"
+
+#: application/controllers/ConfigurationController.php:86
+msgid "vCenter Servers"
+msgstr "vCenter-Server"
+
+#: library/Vspheredb/Web/Tabs/MainTabs.php:47
+msgid "vCenters"
+msgstr "vCenter"
+
+#: library/Vspheredb/Web/OverviewTree.php:38
+msgid "vSphere"
+msgstr "vSphere"
+
+#: application/controllers/DaemonController.php:29
+msgid "vSphereDB Daemon Status"
+msgstr "Zustand des vSphereDB-Dienstes"
+
+#: application/controllers/ConfigurationController.php:33
+msgid "vSphereDB Database Configuration"
+msgstr "vSphereDB Datenbankkonfiguration"

@@ -10,7 +10,7 @@ related improvements. Thank your for all the input and also for some sponsored
 development days, which made this possible.
 
 Many improvements related to our Check Plugins (and their configuration) took
-place.
+place. This is the first version providing a (full) German translation.
 
 ### UI
 * FEATURE: connection health icons now show more details (#400)
@@ -19,6 +19,7 @@ place.
 * FEATURE: CPU usage look has been improved (#427)
 * FEATURE: overall and power state look better now (#433)
 * FEATURE: Virtual Machines table distinguishes Templates (#437)
+* FEATURE: German translation for 100% of all translatable strings (#438)
 * FIX: links pointing to the VMware HTML5 UI have now work on v6.7 and v7.x (#209)
 * FIX: issues with dark/light mode in Icinga Web have been addressed (#355)
 * FIX: Monitoring Rules documentation link was missing (#360)
