@@ -17,16 +17,13 @@ class VmRecentMigrationHistory
         $this->db = $vm->getConnection()->getDbAdapter();
     }
 
-    public function countWeeklyMigrationAttempts()
+    public function countWeeklyMigrationAttempts(): int
     {
         $query = $this->db->select()
             ->from('vm_event_history', 'COUNT(*)')
             ->where('vm_uuid = ?', DbUtil::quoteBinaryCompat($this->vm->get('uuid'), $this->db))
-            ->where('ts_event_ms > ?', (time() - 86400 * 4) * 1000)
-            ->where('event_type IN (?)', [
-                'VmBeingMigratedEvent',
-                'VmBeingHotMigratedEvent'
-            ]);
+            ->where('ts_event_ms > ?', (time() - 86400 * 7) * 1000)
+            ->where('event_type = ?', 'VmEmigratingEvent');
 
         return (int) $this->db->fetchOne($query);
     }
