@@ -20,6 +20,7 @@ place. This is the first version providing a (full) German translation.
 * FEATURE: overall and power state look better now (#433)
 * FEATURE: Virtual Machines table distinguishes Templates (#437)
 * FEATURE: German translation for 100% of all translatable strings (#438)
+* FEATURE: mobile version UI has been improved (#440)
 * FIX: links pointing to the VMware HTML5 UI have now work on v6.7 and v7.x (#209)
 * FIX: issues with dark/light mode in Icinga Web have been addressed (#355)
 * FIX: Monitoring Rules documentation link was missing (#360)
