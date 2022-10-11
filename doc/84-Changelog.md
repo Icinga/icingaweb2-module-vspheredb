@@ -1,8 +1,8 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-v1.5.0 (unreleased)
--------------------
+v1.5.0
+------
 
 Our Monitoring Rules, which have been introduced with v1.4.0, got a lot of
 interest and feedback. Apart from little fixes, this release brings many small
@@ -12,15 +12,34 @@ development days, which made this possible.
 Many improvements related to our Check Plugins (and their configuration) took
 place. This is the first version providing a (full) German translation.
 
+### Upgrading
+
+Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
 ### UI
 * FEATURE: connection health icons now show more details (#400)
+
+![API Connection State Info](screenshot/84_changelog/v1.5.0/84-15-01_api-connection-state-info.png)
+
 * FEATURE: the daemon can now be restarted from the web UI (#406)
 * FEATURE: use alpha channel images for HPE servers, where available (#425)
+
+![Vendor Images with Alpha Channel](screenshot/84_changelog/v1.5.0/84-15-02_vender-hp-alphachannel.png)
+
 * FEATURE: CPU usage look has been improved (#427)
 * FEATURE: overall and power state look better now (#433)
+
+![Improved Summary badges](screenshot/84_changelog/v1.5.0/84-15-03_improved_summary_badges.png)
+
 * FEATURE: Virtual Machines table distinguishes Templates (#437)
 * FEATURE: German translation for 100% of all translatable strings (#438)
+
+![German Translation](screenshot/84_changelog/v1.5.0/84-15-04_German-Translation.png)
+
 * FEATURE: mobile version UI has been improved (#440)
+
+![Mobile UI](screenshot/84_changelog/v1.5.0/84-15-05_Mobile-UI.png)
+
 * FEATURE: vendor images can now be cropped (#441)
 * FIX: links pointing to the VMware HTML5 UI have now work on v6.7 and v7.x (#209)
 * FIX: issues with dark/light mode in Icinga Web have been addressed (#355)
@@ -31,6 +50,9 @@ place. This is the first version providing a (full) German translation.
 * FIX: guest disk usage percentage value visualisation (#411)
 * FIX: image URLs for ProLiant Gen9 servers have been fixed (#426)
 * FIX: image URLS for some DELL server have been fixed/improved (#432)
+
+![Vendor Image sample - DELL](screenshot/84_changelog/v1.5.0/84-15-06_vendor-image-dell.png)
+
 * FIX: search and sorting has been fixed for the vCenter overview (#419)
 * FIX: no transparency for dropdown menus (#429)
 * FIX: number of recent vMotion attempts has been fixed (#439)
@@ -40,26 +62,46 @@ place. This is the first version providing a (full) German translation.
 ### Permissions and Restrictions
 * FEATURE: it's now possible to restrict access to specific vCenters only (#410)
 
+![vCenter restrictions](screenshot/84_changelog/v1.5.0/84-15-07_vcenter-restrictions.png)
+
 ### Monitoring Rules
 * FEATURE: the configuration tree now highlights nodes with rules (#369)
 * FEATURE: now also Host Systems and Datastores have a Monitoring tab (#395)
 * FEATURE: the UI now reflects all Check Command details (#398)
+
+![UI reflects Check Command details](screenshot/84_changelog/v1.5.0/84-15-10_ui-reflects-check-command-details.png)
+
 * FEATURE: improved Rule set naming (#402)
 * FEATURE: it's now possible to define memory usage rules (#405)
 * FEATURE: current state now links to the related configuration page (#420)
 * FEATURE: CPU usage based rules have been implemented (#409)
+
+![CPU usage rules](screenshot/84_changelog/v1.5.0/84-15-08_CPU-usage-rules.png)
+
 * FEATURE: thresholds for Datastore usage are now available (#423)
 * FEATURE: there is now a problem overview for Monitoring Rules (#413)
+
+![Rule problems overview](screenshot/84_changelog/v1.5.0/84-15-09_rule-problems-overview.png)
+
 * FIX: Monitoring Rule inheritance had some bugs (#363)
 * FIX: Rules for different types on the same folder (DC only) conflicted (#365)
 
 ### Check Plugins
 * FEATURE: a new vSphereDB daemon health check has been introduced (#245, #400)
+
+![Health Check](screenshot/84_changelog/v1.5.0/84-15-11_health-check.png)
+
 * FEATURE: check for single vCenter connections has been reintroduced (#300, #401)
 * FEATURE: Monitoring Rule checks now support Rule Set and Rule filters (#396)
 * FEATURE: provide an --inspect parameter for Monitoring Rule checks (#397)
+
+![Inspect Check Command](screenshot/84_changelog/v1.5.0/84-15-12_inspect-check-command.png)
+
 * FEATURE: health check now checks whether the schema is up-to-date (#403)
 * FEATURE: daemon keep-alive in the database is being checked (#404)
+
+![Daemon Keep-alive Check](screenshot/84_changelog/v1.5.0/84-15-13_daemon-keepalive-check.png)
+
 * FEATURE: single object check commands now support --uuid (#415)
 
 ### Background Daemon
@@ -73,6 +115,9 @@ place. This is the first version providing a (full) German translation.
 
 ### vSphere API
 * FEATURE: Host Bus Adapters are now synchronized (#380)
+
+![Host Bus Adapters](screenshot/84_changelog/v1.5.0/84-15-14_host-bus-adapters.png)
+
 * FIX: fixed compatibility with vSphere 5.5, caused by Custom Fields in v1.4 (#377)
 
 ### InfluxDB
@@ -82,12 +127,17 @@ place. This is the first version providing a (full) German translation.
 * FIX: connections configured as "autodetect" used to fail silently (#386)
 * FIX: v2 API support has been fixed, no more need to configure a v1 user (#387)
 
+![InfluxDB connection settings](screenshot/84_changelog/v1.5.0/84-15-15_influxdb-connection-settings.png)
+
 ### Integrations
 * FEATURE: Director Import Source now ships ManagedObject-references (#383, #384)
 * FEATURE: Director Import provides SysInfo/BIOS-UUIDs (#385)
 * FEATURE: Director Import ships object UUIDs (#414)
 * FEATURE: Director Import allows to ignore powered off VMs and ships power state (#393)
 * FEATURE: Director Import ignores templates per default, can be configured (#443)
+
+![Director Import skips templates](screenshot/84_changelog/v1.5.0/84-15-16_director-import-skips-templates.png)
+
 * FIX: Monitoring module integration, when configured with Custom Vars (#381)
 
 ### Internals
