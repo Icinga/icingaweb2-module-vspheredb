@@ -98,13 +98,21 @@ class HostSystemInfoTable extends NameValueTable
     protected function renderVendorModel($vendor, $model)
     {
         if ($url = $this->findVendorModel($vendor, $model)) {
+            if (is_array($url)) {
+                if (isset($url['css'])) {
+                    $css = $url['css'];
+                }
+                $url = $url['url'];
+            } else {
+                $css = null;
+            }
             $baseUrl = parse_url($url, PHP_URL_HOST);
             $img = Html::tag('img', [
                 'src' => $url,
                 'referrerpolicy' => 'no-referrer',
                 'alt'   => $model,
                 'title' => "$model - ",
-                'style' => 'max-width: 100%'
+                'style' => 'max-width: 100%' . ($css ? "; $css" : '')
             ]);
 
             return [$model, Html::tag('br'), Html::tag('br'), $img, Html::tag('br'), Html::tag('div', [
