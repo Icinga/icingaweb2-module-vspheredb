@@ -18,6 +18,7 @@ class ComputeCluster extends BaseDbObject
         'overall_status' => null,
         'level'          => null,
         'parent_uuid'    => null,
+        'tags'           => null,
     ];
 
     protected $propertyMap = [
