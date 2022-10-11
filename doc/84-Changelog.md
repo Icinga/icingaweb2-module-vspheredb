@@ -5,12 +5,22 @@ v1.5.0
 ------
 
 Our Monitoring Rules, which have been introduced with v1.4.0, got a lot of
-interest and feedback. Apart from little fixes, this release brings many small
-related improvements. Thank your for all the input and also for some sponsored
-development days, which made this possible.
+interest and feedback. Apart from little fixes, this release brings many related
+improvements. Thank your for all the good input, and also for some sponsored
+development days, which made this release possible.
 
-Many improvements related to our Check Plugins (and their configuration) took
-place. This is the first version providing a (full) German translation.
+The UI now reflects our Check Command details. They can be configured divided
+by section or rule, and available options and used thresholds can be inspected.
+A global overview shows all current problems triggered by your configured rules
+and thresholds.
+
+InfluxDB-related issues have been fixed, and some more counters are now being
+shipped. More details about background daemon internals are visible in the UI,
+and you  can now restart the daemon with just two clicks.
+
+The Icinga Director Import Source got new fields and filtering features. With
+this release, you can restrict your users to specific vCenters only. Last but
+not least, this is the first version providing a (full) German translation.
 
 ### Upgrading
 
