@@ -448,9 +448,9 @@ class EventHistoryTable extends ZfQueryBasedTable
             '%s %s',
             Icon::create('endtime'),
             Link::create(
-                $this->getUuidName($row->datastore_uuid),
+                $this->getUuidName($row->destination_datastore_uuid),
                 'vspheredb/datastore',
-                ['uuid' => Util::niceUuid($row->datastore_uuid)]
+                ['uuid' => Util::niceUuid($row->destination_datastore_uuid)]
             )
         );
     }
@@ -465,9 +465,9 @@ class EventHistoryTable extends ZfQueryBasedTable
             '%s %s',
             Icon::create('starttime'),
             Link::create(
-                $this->getUuidName($row->destination_datastore_uuid),
+                $this->getUuidName($row->_datastore_uuid),
                 'vspheredb/datastore',
-                ['uuid' => Util::niceUuid($row->destination_datastore_uuid)]
+                ['uuid' => Util::niceUuid($row->datastore_uuid)]
             )
         );
     }
