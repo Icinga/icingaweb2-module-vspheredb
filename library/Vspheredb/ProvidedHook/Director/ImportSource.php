@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\ProvidedHook\Director;
 
 use gipfl\Json\JsonString;
+use Icinga\Module\Director\Forms\ImportSourceForm;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vspheredb\Db;
@@ -35,18 +36,20 @@ class ImportSource extends ImportSourceHook
     ];
 
     protected $vmColumns = [
-        'object_name'       => 'o.object_name',
-        'moref'             => 'o.moref',
-        'uuid'              => 'o.uuid',
-        'vcenter_name'      => 'vc.name',
-        'guest_ip_address'  => 'vm.guest_ip_address',
-        'hardware_numcpu'   => 'vm.hardware_numcpu',
-        'hardware_memorymb' => 'vm.hardware_memorymb',
-        'guest_id'          => 'vm.guest_id',
-        'bios_uuid'         => 'vm.bios_uuid',
-        'guest_full_name'   => 'vm.guest_full_name',
-        'guest_host_name'   => 'vm.guest_host_name',
-        'custom_values'     => 'vm.custom_values',
+        'object_name'         => 'o.object_name',
+        'moref'               => 'o.moref',
+        'uuid'                => 'o.uuid',
+        'vcenter_name'        => 'vc.name',
+        'guest_ip_address'    => 'vm.guest_ip_address',
+        'hardware_numcpu'     => 'vm.hardware_numcpu',
+        'hardware_memorymb'   => 'vm.hardware_memorymb',
+        'guest_id'            => 'vm.guest_id',
+        'bios_uuid'           => 'vm.bios_uuid',
+        'guest_full_name'     => 'vm.guest_full_name',
+        'guest_host_name'     => 'vm.guest_host_name',
+        'runtime_power_state' => 'vm.runtime_power_state',
+        'template'            => 'vm.template',
+        'custom_values'       => 'vm.custom_values',
     ];
 
     protected $computeResourceColumns = [
@@ -79,22 +82,35 @@ class ImportSource extends ImportSourceHook
 
     public static function addSettingsFormFields(QuickForm $form)
     {
+        assert($form instanceof ImportSourceForm);
         $form->addElement('select', 'object_type', [
-            'label' => $form->translate('Object Type'),
+            'label' => mt('vspheredb', 'Object Type'),
             'multiOptions' => $form->optionalEnum([
-                'host_system'      => $form->translate('Host Systems'),
-                'virtual_machine'  => $form->translate('Virtual Machine'),
-                'compute_resource' => $form->translate('Compute Resource'),
-                'datastore'        => $form->translate('Datastore'),
+                'host_system'      => mt('vspheredb', 'Host Systems'),
+                'virtual_machine'  => mt('vspheredb', 'Virtual Machine'),
+                'compute_resource' => mt('vspheredb', 'Compute Resource'),
+                'datastore'        => mt('vspheredb', 'Datastore'),
             ]),
+            'class'    => 'autosubmit',
             'required' => true
         ]);
         $form->addElement('select', 'vcenter_uuid', [
-            'label' => $form->translate('VCenter'),
+            'label' => mt('vspheredb', 'vCenter'),
             'multiOptions' => [
-                null => $form->translate('- any -')
+                null => mt('vspheredb', '- any -')
             ] + self::enumVCenters(),
         ]);
+        $type = $form->getSentOrObjectSetting('object_type');
+        if ($type === 'virtual_machine') {
+            $form->addBoolean('skip_powered_off', [
+                'label' => mt('vspheredb', 'Skip powered off VMs'),
+                'value' => 'n',
+            ]);
+            $form->addBoolean('skip_templates', [
+                'label' => mt('vspheredb', 'Skip Templates'),
+                'value' => 'y',
+            ]);
+        }
     }
 
     protected static function enumVCenters(): array
@@ -160,6 +176,9 @@ class ImportSource extends ImportSourceHook
                 if ($row->custom_values !== null) {
                     $row->custom_values = JsonString::decode($row->custom_values);
                 }
+                if ($objectType === 'virtual_machine') {
+                    $row->template = $row->template === 'y';
+                }
             }
         }
 
@@ -168,11 +187,19 @@ class ImportSource extends ImportSourceHook
 
     protected function prepareVmQuery(ZfDb $db)
     {
-        return $db->select()->from(['o' => 'object'], $this->vmColumns)->join(
+        $query = $db->select()->from(['o' => 'object'], $this->vmColumns)->join(
             ['vm' => 'virtual_machine'],
             'o.uuid = vm.uuid',
             []
         )->order('o.object_name')->order('o.uuid');
+        if ($this->getSetting('skip_templates', 'y')) {
+            $query->where('template = ?', 'n');
+        }
+        if ($this->getSetting('skip_powered_off', 'n')) {
+            $query->where('runtime_power_state != ?', 'poweredOff');
+        }
+
+        return $query;
     }
 
     protected function prepareHostsQuery(ZfDb $db)

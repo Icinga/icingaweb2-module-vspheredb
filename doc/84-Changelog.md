@@ -86,6 +86,8 @@ place. This is the first version providing a (full) German translation.
 * FEATURE: Director Import Source now ships ManagedObject-references (#383, #384)
 * FEATURE: Director Import provides SysInfo/BIOS-UUIDs (#385)
 * FEATURE: Director Import ships object UUIDs (#414)
+* FEATURE: Director Import allows to ignore powered off VMs and ships power state (#393)
+* FEATURE: Director Import ignores templates per default, can be configured (#443)
 * FIX: Monitoring module integration, when configured with Custom Vars (#381)
 
 ### Internals
