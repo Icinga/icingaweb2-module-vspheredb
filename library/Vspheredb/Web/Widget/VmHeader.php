@@ -6,10 +6,10 @@ use gipfl\IcingaWeb2\Icon;
 use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlDocument;
 
-class VmHeader extends HtmlDocument
+class VmHeader extends BaseHtmlElement
 {
     use TranslationHelper;
 
@@ -18,6 +18,12 @@ class VmHeader extends HtmlDocument
 
     /** @var VmQuickStats */
     protected $quickStats;
+
+    protected $tag = 'div';
+
+    protected $defaultAttributes = [
+        'class' => 'vm-header'
+    ];
 
     public function __construct(VirtualMachine $vm, VmQuickStats $quickStats)
     {

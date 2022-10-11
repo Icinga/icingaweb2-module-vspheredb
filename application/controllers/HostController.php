@@ -114,6 +114,7 @@ class HostController extends Controller
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($host->get('vcenter_uuid'));
         $quickStats = HostQuickStats::loadFor($host);
         $this->controls()->add($this->hostHeader = new HostHeader($host, $quickStats));
+        $this->controls()->addAttributes(['class' => 'controls-with-object-header']);
         $this->setTitle($host->object()->get('object_name'));
         $this->handleTabs($host);
 
