@@ -1158,10 +1158,15 @@ div.summary-countlet {
   text-align: center;
   display: inline-block;
   height: 10em;
+  overflow: hidden;
   color: @text-color-inverted;
   h3 {
     font-size: 1.6em;
     margin: 1em 0 0.5em 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 1.6em;
+    display: block;
   }
   .badge {
     font-size: 1.5em;
