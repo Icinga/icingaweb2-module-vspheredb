@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
+use Icinga\Module\Vspheredb\Auth\RestrictionHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
@@ -13,6 +14,12 @@ class OverviewTree extends BaseHtmlElement
 {
     use TranslationHelper;
 
+    /** @var Db */
+    protected $db;
+
+    /** @var RestrictionHelper */
+    protected $restrictionHelper;
+
     protected $tag = 'ul';
 
     protected $defaultAttributes = [
@@ -20,14 +27,13 @@ class OverviewTree extends BaseHtmlElement
         'data-base-target' => '_next',
     ];
 
-    protected $db;
-
     protected $typeFilter;
 
-    public function __construct(Db $db, $typeFilter = null)
+    public function __construct(Db $db, RestrictionHelper $restrictionHelper, $typeFilter = null)
     {
         $this->db = $db;
         $this->typeFilter = $typeFilter;
+        $this->restrictionHelper = $restrictionHelper;
     }
 
     public function renderContent()
@@ -69,31 +75,56 @@ class OverviewTree extends BaseHtmlElement
 
     protected function fetchTree()
     {
-        $hostCnt = "SELECT COUNT(*) as cnt, parent_uuid"
-            . " FROM object WHERE object_type = 'HostSystem'"
-            . " GROUP BY parent_uuid";
-        $vmCnt = "SELECT COUNT(*) as cnt, parent_uuid"
-            . " FROM object WHERE object_type = 'VirtualMachine'"
-            . " GROUP BY parent_uuid";
-        $dsCnt = "SELECT COUNT(*) as cnt, parent_uuid"
-            . " FROM object WHERE object_type = 'Datastore'"
-            . " GROUP BY parent_uuid";
-        $networkCnt = "SELECT COUNT(*) as cnt, parent_uuid"
-            . " FROM object WHERE object_type = 'DistributedVirtualSwitch'"
-            . " GROUP BY parent_uuid";
-        $main = "SELECT o.*, po.object_type AS parent_object_type FROM object o"
-            . ' LEFT JOIN object po ON po.uuid = o.parent_uuid'
-            . " WHERE o.object_type NOT IN ('VirtualMachine', 'HostSystem', 'Datastore')";
+        $db = $this->db->getDbAdapter();
+        $hostCnt = $db->select()->from('object', [
+            'cnt'         => 'COUNT(*)',
+            'parent_uuid' => 'parent_uuid'
+        ])->where('object_type = ?', 'HostSystem')->group('parent_uuid');
+        $vmCnt = $db->select()->from('object', [
+            'cnt'         => 'COUNT(*)',
+            'parent_uuid' => 'parent_uuid'
+        ])->where('object_type = ?', 'VirtualMachine')->group('parent_uuid');
+        $dsCnt = $db->select()->from('object', [
+            'cnt'         => 'COUNT(*)',
+            'parent_uuid' => 'parent_uuid'
+        ])->where('object_type = ?', 'Datastore')->group('parent_uuid');
+        $networkCnt = $db->select()->from('object', [
+            'cnt'         => 'COUNT(*)',
+            'parent_uuid' => 'parent_uuid'
+        ])->where('object_type = ?', 'DistributedVirtualSwitch')->group('parent_uuid');
 
-        $sql = "SELECT f.*, hc.cnt AS cnt_host, vc.cnt AS cnt_vm, dc.cnt AS cnt_ds, nc.cnt AS cnt_network"
-             . " FROM ($main) f"
-             . " LEFT JOIN ($vmCnt) vc ON vc.parent_uuid = f.uuid"
-             . " LEFT JOIN ($hostCnt) hc ON hc.parent_uuid = f.uuid"
-             . " LEFT JOIN ($dsCnt) dc ON dc.parent_uuid = f.uuid"
-             . " LEFT JOIN ($networkCnt) nc ON dc.parent_uuid = f.uuid"
-             . " ORDER BY f.level ASC, f.object_name";
+        $main = $db->select()
+            ->from(['o' => 'object'], [
+                'o.*',
+                'parent_object_type' => 'po.object_type',
+            ])
+            ->joinLeft(['po' => 'object'], 'po.uuid = o.parent_uuid', [])
+            ->where(' o.object_type NOT IN (?)', [
+                'VirtualMachine',
+                'HostSystem',
+                'Datastore'
+            ]);
+        $this->restrictionHelper->filterQuery($hostCnt);
+        $this->restrictionHelper->filterQuery($vmCnt);
+        $this->restrictionHelper->filterQuery($dsCnt);
+        $this->restrictionHelper->filterQuery($networkCnt);
+        $this->restrictionHelper->filterQuery($main, 'o.vcenter_uuid');
+        $query = $db->select()
+            ->from(['f' => $main], [
+                'f.*',
+                'cnt_host'    => 'hc.cnt',
+                'cnt_vm'      => 'vc.cnt',
+                'cnt_ds'      => 'dc.cnt',
+                'cnt_network' => 'nc.cnt',
+            ])
+            ->joinLeft(['vc' => $vmCnt], 'vc.parent_uuid = f.uuid', [])
+            ->joinLeft(['hc' => $hostCnt], 'hc.parent_uuid = f.uuid', [])
+            ->joinLeft(['dc' => $dsCnt], 'dc.parent_uuid = f.uuid', [])
+            ->joinLeft(['nc' => $networkCnt], 'nc.parent_uuid = f.uuid', [])
+            ->order('f.level ASC')
+            ->order('f.object_name');
 
-        return $this->db->getDbAdapter()->fetchAll($sql);
+        return $this->db->getDbAdapter()->fetchAll($query);
     }
 
     protected function dumpTree($tree, $level = 0)

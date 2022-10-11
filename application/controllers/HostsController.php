@@ -17,7 +17,7 @@ class HostsController extends ObjectsController
         $this->addTreeViewToggle();
         if ($this->params->get('render') === 'tree') {
             $this->addTitle($this->translate('Hosts'));
-            $this->content()->add(new OverviewTree($this->db(), 'host'));
+            $this->content()->add(new OverviewTree($this->db(), $this->getRestrictionHelper(), 'host'));
 
             return;
         }

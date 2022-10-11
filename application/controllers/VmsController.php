@@ -25,7 +25,7 @@ class VmsController extends ObjectsController
         $this->addTreeViewToggle();
         if ($this->params->get('render') === 'tree') {
             $this->addTitle($this->translate('Virtual Machines'));
-            $this->content()->add(new OverviewTree($this->db(), 'vm'));
+            $this->content()->add(new OverviewTree($this->db(), $this->getRestrictionHelper(), 'vm'));
 
             return;
         }

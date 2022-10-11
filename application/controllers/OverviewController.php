@@ -12,7 +12,7 @@ class OverviewController extends ObjectsController
         $type = $this->params->getRequired('type');
         $this->activateTab($type)
              ->addTitle('vSphere Overview')
-             ->content()->add(new OverviewTree($this->db(), $type));
+             ->content()->add(new OverviewTree($this->db(), $this->getRestrictionHelper(), $type));
     }
 
     protected function activateTab($name)

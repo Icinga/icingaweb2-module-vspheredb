@@ -17,7 +17,7 @@ class DatastoresController extends ObjectsController
         $this->addTreeViewToggle();
         if ($this->params->get('render') === 'tree') {
             $this->addTitle($this->translate('Datastores'));
-            $this->content()->add(new OverviewTree($this->db(), 'datastore'));
+            $this->content()->add(new OverviewTree($this->db(), $this->getRestrictionHelper(), 'datastore'));
 
             return;
         }

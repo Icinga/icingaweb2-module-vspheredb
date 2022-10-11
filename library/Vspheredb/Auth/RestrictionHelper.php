@@ -7,6 +7,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use Ramsey\Uuid\Uuid;
 
@@ -32,6 +33,19 @@ class RestrictionHelper
     {
         if ($this->restrictedVCenterUuids) {
             $table->filterVCenterUuids($this->restrictedVCenterUuids);
+        }
+    }
+
+    public function filterQuery($query, $vCenterColumn = 'vcenter_uuid')
+    {
+        $uuids = $this->restrictedVCenterUuids;
+        if ($uuids === null) {
+            return;
+        }
+        if (count($uuids) === 1) {
+            $query->where("$vCenterColumn = ?", DbUtil::quoteBinaryCompat(array_shift($uuids), $this->db));
+        } else {
+            $query->where("$vCenterColumn IN (?)", DbUtil::quoteBinaryCompat($uuids, $this->db));
         }
     }
 
