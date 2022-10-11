@@ -112,7 +112,7 @@ class HostSystemInfoTable extends NameValueTable
                 'referrerpolicy' => 'no-referrer',
                 'alt'   => $model,
                 'title' => "$model - ",
-                'style' => 'max-width: 100%' . ($css ? "; $css" : '')
+                'style' => 'max-width: 100%; max-height: 16em' . ($css ? "; $css" : '')
             ]);
 
             return [$model, Html::tag('br'), Html::tag('br'), $img, Html::tag('br'), Html::tag('div', [
