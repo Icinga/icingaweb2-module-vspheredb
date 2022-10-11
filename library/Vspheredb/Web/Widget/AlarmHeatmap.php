@@ -3,30 +3,26 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use Icinga\Module\Vspheredb\Db;
+use Zend_Db_Select as ZfSelect;
 
-class AlarmHeatmap extends EventHeatmapCalendars
+class AlarmHeatmap
 {
     /** @var \Zend_Db_Adapter_Abstract */
     protected $db;
 
     protected $query;
 
-    public function __construct(Db $connection, $baseUrl)
+    public function __construct(Db $connection)
     {
-        $this->setBaseUrl($baseUrl);
         $this->db = $connection->getDbAdapter();
     }
 
-    public function getQuery()
+    public function getEvents(): array
     {
-        if ($this->query === null) {
-            $this->query = $this->prepareQuery();
-        }
-
-        return $this->query;
+        return $this->db->fetchPairs($this->getQuery());
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): ZfSelect
     {
         $maxDays = 400;
         return $this->db->select()->from('alarm_history', [
@@ -36,8 +32,12 @@ class AlarmHeatmap extends EventHeatmapCalendars
         ])->where('ts_event_ms > ?', time() * 1000 - 86400 * $maxDays * 1000)->group('day');
     }
 
-    public function getEvents()
+    protected function getQuery(): ZfSelect
     {
-        return $this->db->fetchPairs($this->getQuery());
+        if ($this->query === null) {
+            $this->query = $this->prepareQuery();
+        }
+
+        return $this->query;
     }
 }

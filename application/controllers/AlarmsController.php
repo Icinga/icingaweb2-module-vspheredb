@@ -3,10 +3,12 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Url;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Widget\AlarmHeatmap;
+use Icinga\Module\Vspheredb\Web\Widget\CalendarForEvents;
 
 class AlarmsController extends Controller
 {
@@ -57,8 +59,12 @@ class AlarmsController extends Controller
                 'data-base-target' => '_main',
             ]
         ));
-        $this->addTitle('Alarm Heatmap');
-        $this->content()->add(new AlarmHeatmap($this->db(), 'vspheredb/alarms'));
+        $this->addTitle($this->translate('Alarm Heatmap'));
+        $heatMap = new AlarmHeatmap($this->db());
+        $baseUrl = Url::fromPath('vspheredb/alarms')->setParams(
+            $this->url()->getParams()
+        );
+        $this->content()->add(new CalendarForEvents($heatMap, $baseUrl, [255, 0, 0]));
     }
 
     protected function handleTabs()

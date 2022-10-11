@@ -3,52 +3,45 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use Icinga\Module\Vspheredb\Db;
+use Zend_Db_Select as ZfSelect;
 
-class VMotionHeatmap extends EventHeatmapCalendars
+class VMotionHeatmap
 {
+    /** @var \Zend_Db_Adapter_Abstract */
     protected $db;
 
     protected $query;
 
     protected $eventType;
 
-    public function __construct(Db $connection, $baseUrl)
+    public function __construct(Db $connection)
     {
-        $this->setBaseUrl($baseUrl);
         $this->db = $connection->getDbAdapter();
     }
 
-    public function getQuery()
+    public function getEvents(): array
     {
-        if ($this->query === null) {
-            $this->query = $this->prepareQuery();
-        }
-
-        return $this->query;
+        return $this->db->fetchPairs($this->getQuery());
     }
 
-    public function filterEventType($type)
+    public function filterEventType($type): self
     {
         $this->eventType = $type;
 
         return $this;
     }
 
-    public function filterParent($uuid)
+    public function filterParent($uuid): self
     {
-        $this->getQuery()->join(
-            ['h' => 'object'],
-            $this->db->quoteInto(
-                'h.uuid = veh.host_uuid AND h.parent_uuid = ?',
-                $uuid
-            ),
-            []
-        );
+        $this->getQuery()->join(['h' => 'object'], $this->db->quoteInto(
+            'h.uuid = veh.host_uuid AND h.parent_uuid = ?',
+            $uuid
+        ), []);
 
         return $this;
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): ZfSelect
     {
         $maxDays = 400;
         $query = $this->db->select()->from(['veh' => 'vm_event_history'], [
@@ -67,8 +60,12 @@ class VMotionHeatmap extends EventHeatmapCalendars
         return $query;
     }
 
-    public function getEvents()
+    protected function getQuery(): ZfSelect
     {
-        return $this->db->fetchPairs($this->getQuery());
+        if ($this->query === null) {
+            $this->query = $this->prepareQuery();
+        }
+
+        return $this->query;
     }
 }

@@ -9,9 +9,8 @@ use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Form\FilterHostParentForm;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Widget\CalendarMonthSummary;
+use Icinga\Module\Vspheredb\Web\Widget\CalendarForEvents;
 use Icinga\Module\Vspheredb\Web\Widget\VMotionHeatmap;
-use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 
 class EventsController extends Controller
@@ -86,66 +85,15 @@ class EventsController extends Controller
         $this->addTitle($this->translate('Event HeatMap'));
 
         $form = $this->addFilterForm();
-        $heatMap = new VMotionHeatmap($this->db(), 'vspheredb/events');
+        $heatMap = new VMotionHeatmap($this->db());
         $heatMap->filterEventType($form->getElement('type')->getValue());
         if ($parent = $form->getElement('parent')->getValue()) {
             $heatMap->filterParent(Uuid::fromString($parent)->getBytes());
         }
-        $events = $heatMap->getEvents();
-        if (empty($events)) {
-            $this->content()->add(Hint::warning($this->translate('No events found')));
-            $maxPerDay = $total = 0;
-        } else {
-            $maxPerDay = max($events);
-            $total = array_sum($events);
-            $this->content()->add(Hint::ok(
-                $this->translate('%s events, max %s per day'),
-                $total,
-                $maxPerDay
-            ));
-        }
-
-        $eventsPerMonth = [];
-        foreach ($events as $day => $count) {
-            $month = substr($day, 0, 7);
-            $eventsPerMonth[$month][$day] = $count;
-        }
-        $div = Html::tag('div', [
-            'class' => 'event-heatmap-calendars',
-        ]);
         $baseUrl = Url::fromPath('vspheredb/events')->setParams(
             $this->url()->getParams()
         );
-
-        $months = $this->prepareMonthList();
-        $colors = $form->getColors();
-        foreach (array_reverse($months) as $yearMonth) {
-            $year = (int) substr($yearMonth, 0, 4);
-            $month = (int) substr($yearMonth, -2);
-            $cal = new CalendarMonthSummary($year, $month);
-            $cal->setRgb($colors[0], $colors[1], $colors[2])
-                ->markNow()
-                ->forceMax($maxPerDay);
-            if (isset($eventsPerMonth[$yearMonth])) {
-                $cal->addEvents($eventsPerMonth[$yearMonth], $baseUrl);
-            }
-
-            $div->add($cal);
-        }
-
-        $this->content()->add($div);
-    }
-
-    protected function prepareMonthList()
-    {
-        $today = date('Y-m-15');
-        $months = [substr($today, 0, 7)];
-        for ($i = 1; $i < 12; $i++) {
-            $today = date('Y-m-d', strtotime("$today -1 month"));
-            $months[] = substr($today, 0, 7);
-        }
-
-        return array_reverse($months);
+        $this->content()->add(new CalendarForEvents($heatMap, $baseUrl, $form->getColors()));
     }
 
     protected function handleTabs()

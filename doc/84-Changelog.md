@@ -33,6 +33,7 @@ place. This is the first version providing a (full) German translation.
 * FIX: search and sorting has been fixed for the vCenter overview (#419)
 * FIX: no transparency for dropdown menus (#429)
 * FIX: number of recent vMotion attempts has been fixed (#439)
+* FIX: Alarm calendar has been using an outdated visualization (#303)
 
 ### Monitoring Rules
 * FEATURE: the configuration tree now highlights nodes with rules (#369)
