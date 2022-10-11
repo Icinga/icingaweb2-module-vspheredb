@@ -89,7 +89,7 @@ class MonitoringController extends Controller
         ]);
         $this->content()->add([
             Hint::info(Html::sprintf($this->translate(
-                'The Icinga Module for vSphere%s ships a lot of data, state and sensor values.'
+                'The Icinga vSphere%s Integration ships a lot of data, state and sensor values.'
                 . ' If you want to define related Icinga Service checks for Alarming reasons,'
                 . ' Monitoring Rules are %s.'
             ), '®', Html::tag('strong', $this->translate('the way to go')))),

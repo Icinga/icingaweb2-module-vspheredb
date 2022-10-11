@@ -1,5 +1,5 @@
-Icinga Module for vSphere®
-==========================
+Icinga vSphere® Integration
+===========================
 
 The easiest way to monitor a VMware vSphere environment. Configure a connection
 to your *VMware vCenter®* or *VMware ESXi™* host and you're ready to go. This
