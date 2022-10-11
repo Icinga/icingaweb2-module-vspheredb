@@ -12,7 +12,7 @@ class CalendarForEvents extends HtmlDocument
 {
     use TranslationHelper;
 
-    /** @var EventHeatmapCalendars */
+    /** @var VMotionHeatmap|AlarmHeatmap */
     protected $calendars;
 
     /** @var Url */
@@ -21,7 +21,7 @@ class CalendarForEvents extends HtmlDocument
     /** @var int[] [r, g, b] */
     protected $colors;
 
-    public function __construct(EventHeatmapCalendars $calendars, Url $baseUrl, array $colors)
+    public function __construct($calendars, Url $baseUrl, array $colors)
     {
         $this->calendars = $calendars;
         $this->baseUrl = $baseUrl;
