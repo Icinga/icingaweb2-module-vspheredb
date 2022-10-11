@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: vSphereDB Module (master)\n"
 "Report-Msgid-Bugs-To: https://github.com/Icinga/icingaweb2-module-vspheredb/issues\n"
-"POT-Creation-Date: 2022-10-10 21:29+0000\n"
-"PO-Revision-Date: 2022-10-11 00:30+0200\n"
+"POT-Creation-Date: 2022-10-10 23:05+0000\n"
+"PO-Revision-Date: 2022-10-11 01:15+0200\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -335,7 +335,7 @@ msgstr "Diagramm"
 #, php-format
 msgid "Check our %s for instructions of how to set them up"
 msgstr ""
-"Überprüfe unsere %s-Anleitungen, um mehr über die Einrichtung zu erfahren"
+"Riskiere einen Blick in unsere %s für Anleitungen zur Einrichtung derselben"
 
 #: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:97
 #, php-format
@@ -1155,13 +1155,13 @@ msgstr "Maximale Ports"
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:176
 #: library/Vspheredb/Web/Table/Object/HostHardwareInfoTable.php:49
 msgid "Memory"
-msgstr "Speicher"
+msgstr "Arbeitsspeicher"
 
 #: library/Vspheredb/Web/Table/Objects/HostsTable.php:51
 #: library/Vspheredb/Web/Table/Objects/VmsTable.php:159
 #: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageRuleDefinition.php:27
 msgid "Memory Usage"
-msgstr "Speicherauslastung"
+msgstr "Arbeitsspeicherauslastung"
 
 #: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:132
 msgid "Might be disconnected"
