@@ -82,7 +82,13 @@
         },
 
         keyDown: function (ev) {
-            if ((ev.keyCode > 31 || ev.keyCode === 8)  && ! (ev.ctrlKey || ev.altKey)) {
+            // 34, 33 -> ignore PGUP/DOWN
+            // 38, 40 -> ignore arrow UP/DOWN
+            if ((ev.keyCode > 31 || ev.keyCode === 8)
+                && ev.keyCode !== 38 && ev.keyCode !== 40
+                && ev.keyCode !== 33 && ev.keyCode !== 34
+                && ! (ev.ctrlKey || ev.altKey)
+            ) {
                 $(ev.currentTarget).find('input.search').first().focus();
             }
         },
