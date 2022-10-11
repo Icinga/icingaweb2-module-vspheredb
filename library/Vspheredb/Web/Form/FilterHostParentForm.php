@@ -79,7 +79,7 @@ class FilterHostParentForm extends Form
         // Overriding ipl method, would otherwise render a "success" paragraph
     }
 
-    public function getColors()
+    public function getColors(): array
     {
         $colors = [
             'VmPoweredOffEvent' => [255, 0, 0],
