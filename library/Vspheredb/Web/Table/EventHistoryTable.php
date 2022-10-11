@@ -14,11 +14,13 @@ use Icinga\Module\Vspheredb\Util;
 use ipl\Html\DeferredText;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlString;
+use ipl\Html\Text;
 
 class EventHistoryTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
-        'class' => 'common-table',
+        'class' => ['common-table', 'event-history-table'],
         'data-base-target' => '_next',
     ];
 
@@ -90,20 +92,17 @@ class EventHistoryTable extends ZfQueryBasedTable
                 $content[] = sprintf('User: %s', $row->user_name);
             }
         } elseif (in_array($row->event_type, $this->otherKnownEvents)) {
-            $content[] = $row->full_message;
+            $content[] = new HtmlString(nl2br(new Text($row->full_message)));
         }
         $tr = $this::row([
             $content,
             DateFormatter::formatTime($row->ts_event_ms / 1000)
         ]);
 
-        // TODO:
-        // 'VmBeingClonedEvent',
-        // 'VmBeingClonedNoFolderEvent',
-        // 'VmClonedEvent',
-        // 'VmCloneFailedEvent'
         switch ($row->event_type) {
             case 'VmFailedMigrateEvent':
+            case 'VmBeingClonedNoFolderEvent':
+            case 'VmCloneFailedEvent':
                 $tr->addAttributes([
                     'class' => 'state migration-failed',
                 ]);
@@ -152,6 +151,8 @@ class EventHistoryTable extends ZfQueryBasedTable
                 ]);
                 break;
             case 'VmReconfiguredEvent':
+            case 'VmClonedEvent':
+            case 'VmBeingClonedEvent':
                 $tr->addAttributes([
                     'class' => 'event reconfigured',
                 ]);
