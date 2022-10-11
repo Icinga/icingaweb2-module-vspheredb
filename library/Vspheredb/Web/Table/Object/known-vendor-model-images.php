@@ -53,7 +53,7 @@ return [
         'ProLiant DL360 Gen10'              => 'https://assets.ext.hpe.com/is/image/hpedam/s00005869?$zoom$#.png',
         'ProLiant DL380 Gen10'              => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00009709?$zoom$#.png',
-            'css' => 'clip-path: inset(34% 0 30% 0); margin: -25% -0 -20% -0;',
+            'css' => 'clip-path: inset(34% 0 30% 0); margin: -18% -0 -12% -0;',
         ],
         'ProLiant DL380 Gen10 Plus'         => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00009868?$zoom$#.png',
