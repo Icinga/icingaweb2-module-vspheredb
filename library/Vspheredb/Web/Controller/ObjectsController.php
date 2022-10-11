@@ -87,8 +87,9 @@ class ObjectsController extends Controller
 
     protected function eventuallyFilterByVCenter(ObjectsTable $table)
     {
-        if ($hex = $this->params->get('vcenter')) {
-            $table->filterVCenter(VCenter::loadWithHexUuid($hex, $this->db()));
+        $this->getRestrictionHelper()->restrictObjectsTable($table);
+        if ($uuid = $this->params->get('vcenter')) {
+            $table->filterVCenter(VCenter::loadWithUuid($uuid, $this->db()));
         }
     }
 

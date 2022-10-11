@@ -97,6 +97,7 @@ class VmController extends Controller
     protected function addVm()
     {
         $vm = VirtualMachine::loadWithUuid($this->params->getRequired('uuid'), $this->db());
+        $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($vm->get('vcenter_uuid'));
         $this->controls()->add(new VmHeader($vm, VmQuickStats::loadFor($vm)));
         $this->controls()->addAttributes(['class' => 'controls-with-object-header']);
         $this->setTitle($vm->object()->get('object_name'));

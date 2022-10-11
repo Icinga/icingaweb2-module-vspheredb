@@ -7,6 +7,11 @@ use Icinga\Module\Vspheredb\Web\Table\TopPerfTable;
 
 class TopController extends Controller
 {
+    public function init()
+    {
+        $this->assertPermission('vspheredb/admin');
+    }
+
     public function vmsAction()
     {
         $this->setAutorefreshInterval(10);

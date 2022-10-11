@@ -17,6 +17,7 @@ class EventsController extends Controller
 {
     public function init()
     {
+        $this->assertPermission('vspheredb/admin');
         parent::init();
         $this->handleTabs();
     }

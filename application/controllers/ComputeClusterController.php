@@ -38,6 +38,7 @@ class ComputeClusterController extends Controller
     protected function addComputeCluster()
     {
         $computeCluster = ComputeCluster::loadWithUuid($this->params->getRequired('uuid'), $this->db());
+        $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($computeCluster->get('vcenter_uuid'));
         $this->controls()->add(new ComputeClusterHeader($computeCluster));
         $this->setTitle($computeCluster->get('object_name'));
         $this->handleTabs($computeCluster);

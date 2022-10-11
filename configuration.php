@@ -6,6 +6,14 @@ $this->providePermission(
     'vspheredb/admin',
     $this->translate('Allow to configure vCenter connections')
 );
+$this->provideRestriction(
+    'vspheredb/vcenters',
+    $this->translate(
+        'Restrict Access to specific vCenters only. Please specify a'
+        . ' comma-separated list of case-sensitive vCenter names.'
+        . ' Wildcard-matching (with *) is allowed'
+    )
+);
 
 $section = $this->menuSection(N_('Virtualization (VMware)'))
     ->setIcon('cloud')
@@ -29,6 +37,7 @@ $section->add(N_('Monitoring Rules'))
     ->setPriority(45);
 $section->add(N_('History'))
     ->setUrl('vspheredb/events/heatmap')
+    ->setPermission('vspheredb/admin')
     ->setPriority(49);
 $section->add(N_('Configuration'))
     ->setUrl('vspheredb/configuration/servers')

@@ -111,6 +111,7 @@ class HostController extends Controller
     protected function addHost()
     {
         $host = HostSystem::loadWithUuid($this->params->getRequired('uuid'), $this->db());
+        $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($host->get('vcenter_uuid'));
         $quickStats = HostQuickStats::loadFor($host);
         $this->controls()->add($this->hostHeader = new HostHeader($host, $quickStats));
         $this->setTitle($host->object()->get('object_name'));

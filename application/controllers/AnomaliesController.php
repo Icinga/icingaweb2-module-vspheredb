@@ -11,6 +11,7 @@ class AnomaliesController extends Controller
     // TODO: Overbooked datastores
     public function indexAction()
     {
+        $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('Anomalies'));
         $this->addTable('bios_uuid', $this->translate('Bios UUID'));
         $this->addTable('instance_uuid', $this->translate('Instance UUID'));

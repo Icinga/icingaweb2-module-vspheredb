@@ -24,6 +24,11 @@ class PerfdataController extends Controller
 {
     use AsyncControllerHelper;
 
+    public function init()
+    {
+        $this->assertPermission('vspheredb/admin');
+    }
+
     public function countersAction()
     {
         $vCenter = $this->requireVCenter();

@@ -36,6 +36,9 @@ place. This is the first version providing a (full) German translation.
 * FIX: number of recent vMotion attempts has been fixed (#439)
 * FIX: Alarm calendar has been using an outdated visualization (#303)
 
+### Permissions and Restrictions
+* FEATURE: it's now possible to restrict access to specific vCenters only (#410)
+
 ### Monitoring Rules
 * FEATURE: the configuration tree now highlights nodes with rules (#369)
 * FEATURE: now also Host Systems and Datastores have a Monitoring tab (#395)

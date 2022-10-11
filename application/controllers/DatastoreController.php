@@ -86,6 +86,7 @@ class DatastoreController extends Controller
     protected function addDatastore()
     {
         $ds = Datastore::loadWithUuid($this->params->getRequired('uuid'), $this->db());
+        $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($ds->get('vcenter_uuid'));
         $this->addTitle($ds->object()->get('object_name'));
         $this->handleTabs();
 
