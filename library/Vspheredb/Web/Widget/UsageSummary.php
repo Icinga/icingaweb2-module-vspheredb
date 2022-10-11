@@ -2,12 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use gipfl\IcingaWeb2\Url;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
 class UsageSummary extends BaseHtmlElement
 {
+    use TranslationHelper;
+
     protected $tag = 'div';
 
     protected $defaultAttributes = [
@@ -18,23 +22,33 @@ class UsageSummary extends BaseHtmlElement
     {
         $attr = ['class' => 'usage-detail'];
         $attrBox =  ['class' => 'usage-dashlet'];
+        $mb = 1024 * 1024;
         $this->add(Html::tag('div', ['style' => 'width: 100%'], [
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(Format::mhz($usate->usedMhz))),
-                new CpuUsage($usate->usedMhz, $usate->totalMhz),
+                Html::tag('span', $this->translate('Total') . ': ' . Format::mhz($usate->totalMhz)),
+                (new CpuUsage($usate->usedMhz, $usate->totalMhz))->showLabels(false),
+                $this->translate('CPU'),
             ]),
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(Format::mBytes($usate->usedMb))),
-                new MemoryUsage($usate->usedMb, $usate->totalMb),
+                Html::tag('span', $this->translate('Total') . ': ' . Format::mBytes($usate->totalMb)),
+                (new MemoryUsage($usate->usedMb, $usate->totalMb))->showLabels(false),
+                $this->translate('Memory'),
             ]),
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(
-                    Format::mBytes(($usate->dsCapacity - $usate->dsFreeSpace) / (1024 * 1024))
+                    Format::mBytes(($usate->dsCapacity - $usate->dsFreeSpace) / $mb)
                 )),
-                new MemoryUsage(
-                    ($usate->dsCapacity - $usate->dsFreeSpace) / (1024 * 1024),
-                    $usate->dsCapacity / (1024 * 1024)
-                )
+                Html::tag(
+                    'span',
+                    $this->translate('Total') . ': ' . Format::mBytes($usate->dsCapacity / $mb)
+                ),
+                (new MemoryUsage(
+                    ($usate->dsCapacity - $usate->dsFreeSpace) / $mb,
+                    $usate->dsCapacity / $mb
+                ))->showLabels(false),
+                $this->translate('Storage')
             ]),
         ]));
     }
