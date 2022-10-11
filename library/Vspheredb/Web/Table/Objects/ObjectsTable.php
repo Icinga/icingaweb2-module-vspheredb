@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
@@ -43,15 +44,16 @@ abstract class ObjectsTable extends BaseTable
             return $this;
         }
 
+        $db = $this->db();
         if ($this instanceof VCenterSummaryTable) {
             $column = 'vc.instance_uuid';
         } else {
             $column = 'o.vcenter_uuid';
         }
         if (count($uuids) === 1) {
-            $this->getQuery()->where("$column = ?", array_shift($uuids));
+            $this->getQuery()->where("$column = ?", DbUtil::quoteBinaryCompat(array_shift($uuids), $db));
         } else {
-            $this->getQuery()->where("$column IN (?)", $uuids);
+            $this->getQuery()->where("$column IN (?)", DbUtil::quoteBinaryCompat($uuids, $db));
         }
 
         return $this;
