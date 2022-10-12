@@ -1,5 +1,5 @@
 Name: vSphereDB
-Version: 1.5.0
+Version: master
 Depends: ipl (>=0.5.0), incubator (>=0.19.0), reactbundle (>=0.8.0)
 Description: Icinga vSphere® Integration
  This module replicates your most important vCenter configuration items. It
