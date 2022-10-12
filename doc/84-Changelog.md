@@ -1,6 +1,12 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.6.0 (unreleased)
+-------------------
+
+### Background Daemon
+* FIX: do not crash when accessing /proc/<pid> is restricted (#444)
+
 v1.5.0
 ------
 

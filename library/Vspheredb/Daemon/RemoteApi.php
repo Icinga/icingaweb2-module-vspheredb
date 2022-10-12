@@ -100,7 +100,16 @@ class RemoteApi implements EventEmitterInterface
             $jsonRpc = new JsonRpcConnection(new StreamWrapper($connection));
             $jsonRpc->setLogger($this->logger);
 
-            $peer = UnixSocketInspection::getPeer($connection);
+            try {
+                $peer = UnixSocketInspection::getPeer($connection);
+            } catch (Exception $e) {
+                $jsonRpc->setHandler(new FailingPacketHandler(Error::forException($e)));
+                $this->loop->addTimer(3, function () use ($connection) {
+                    $connection->close();
+                });
+                return;
+            }
+
             if (!$this->isAllowed($peer)) {
                 $jsonRpc->setHandler(new FailingPacketHandler(new Error(Error::METHOD_NOT_FOUND, sprintf(
                     '%s is not allowed to control this socket',
