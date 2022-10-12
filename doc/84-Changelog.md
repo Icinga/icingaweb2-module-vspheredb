@@ -6,6 +6,7 @@ v1.6.0 (unreleased)
 
 ### Background Daemon
 * FIX: do not crash when accessing /proc/<pid> is restricted (#444)
+* FIX: checking last event key was too slow (#445)
 
 v1.5.0
 ------

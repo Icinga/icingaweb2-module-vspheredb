@@ -677,6 +677,7 @@ CREATE TABLE alarm_history (
   full_message MEDIUMTEXT DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX time_idx (ts_event_ms),
+  INDEX vcenter_event_key_idx (vcenter_uuid, event_key),
   INDEX vcenter_time_idx (vcenter_uuid, ts_event_ms),
   INDEX search_type_idx (event_type, ts_event_ms),
   INDEX search_entity_idx (entity_uuid, ts_event_ms)
@@ -728,6 +729,7 @@ CREATE TABLE vm_event_history (
   config_changes MEDIUMTEXT DEFAULT NULL,
   PRIMARY KEY (id),
   INDEX time_idx (ts_event_ms),
+  INDEX vcenter_event_key_idx (vcenter_uuid, event_key),
   INDEX vcenter_time_idx (vcenter_uuid, ts_event_ms),
   INDEX search_type_idx (event_type, ts_event_ms),
   INDEX search_host_idx (host_uuid, ts_event_ms),
@@ -943,4 +945,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (52, NOW());
+VALUES (53, NOW());
