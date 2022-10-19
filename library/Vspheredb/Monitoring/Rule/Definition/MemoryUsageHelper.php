@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
 use gipfl\Translation\StaticTranslator;
+use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\CheckPluginState as State;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
@@ -18,8 +19,16 @@ class MemoryUsageHelper
         int      $capacity,
         ?string  $instanceName = null
     ): SingleCheckResult {
-        $percentFree = $free / $capacity * 100;
         $state = new State();
+        if ($capacity === 0) {
+            $state->raiseState(CheckPluginState::UNKNOWN);
+            return new SingleCheckResult($state, sprintf(
+                '%s free, but got ZERO capacity',
+                Format::bytes($free, Format::STANDARD_IEC)
+            ));
+        }
+
+        $percentFree = $free / $capacity * 100;
         $output = sprintf(
             '%s out of %s (%.2F%%) free',
             Format::bytes($free, Format::STANDARD_IEC),

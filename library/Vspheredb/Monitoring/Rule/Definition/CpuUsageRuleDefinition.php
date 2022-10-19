@@ -58,9 +58,21 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
                 $mhzSingleCpu = 2000;
             }
         }
+        $state = new CheckPluginState();
         $mhzUsed = $quickStats->get('overall_cpu_usage');
         $mhzCapacity = $mhzSingleCpu * $cpuCount;
         $mhzFree = $mhzCapacity - $mhzUsed;
+        if ($mhzCapacity === 0) {
+            $state->raiseState(CheckPluginState::UNKNOWN);
+            return [
+                new SingleCheckResult($state, sprintf(
+                    '%s used, but got ZERO capacity (%d CPUs, %s per CPU)',
+                    Format::mhz($mhzUsed),
+                    $cpuCount,
+                    Format::mhz($mhzSingleCpu)
+                ))
+            ];
+        }
 
         $percentFree = $mhzFree / $mhzCapacity * 100;
         $output = sprintf(
@@ -71,7 +83,6 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
             $percentFree
         );
 
-        $state = new CheckPluginState();
         $min = $settings->get('warning_if_less_than_percent_free');
         if ($min && ($percentFree < (float) $min)) {
             $state->raiseState(CheckPluginState::WARNING);

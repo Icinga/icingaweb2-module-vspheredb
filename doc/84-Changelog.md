@@ -8,6 +8,9 @@ v1.6.0 (unreleased)
 * FIX: do not crash when accessing /proc/<pid> is restricted (#444)
 * FIX: checking last event key was too slow (#445)
 
+### Monitoring Rules
+* FIX: add safety checks and give UNKNOWN for ZERO capacity (#446)
+
 v1.5.0
 ------
 
