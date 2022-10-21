@@ -101,6 +101,8 @@ class HostSystemInfoTable extends NameValueTable
             if (is_array($url)) {
                 if (isset($url['css'])) {
                     $css = $url['css'];
+                } else {
+                    $css = null;
                 }
                 $url = $url['url'];
             } else {
