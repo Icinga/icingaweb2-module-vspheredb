@@ -33,7 +33,6 @@ $section->add(N_('Datastores'))
 //     ->setPriority(45);
 $section->add(N_('Monitoring Rules'))
     ->setUrl('vspheredb/monitoring')
-    ->setPermission('vspheredb/admin')
     ->setPriority(45);
 $section->add(N_('History'))
     ->setUrl('vspheredb/events/heatmap')

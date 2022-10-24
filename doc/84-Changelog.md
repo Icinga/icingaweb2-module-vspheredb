@@ -9,6 +9,8 @@ v1.6.0 (unreleased)
 * FIX: checking last event key was too slow (#445)
 
 ### Monitoring Rules
+* FEATURE: grant read-only access w/o admin permissions (#451)
+* FEATURE: vCenter restrictions/filters have been implemented (#452)
 * FIX: add safety checks and give UNKNOWN for ZERO capacity (#446)
 
 v1.5.0

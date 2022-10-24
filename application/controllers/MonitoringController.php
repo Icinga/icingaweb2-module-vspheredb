@@ -26,26 +26,30 @@ class MonitoringController extends Controller
 {
     public function init()
     {
-        $this->assertPermission('vspheredb/admin');
         parent::init();
         $action = $this->getRequest()->getActionName();
         if (preg_match('/tree$/', $action) || $action === 'index' || $action === 'configuration') {
-            $this->tabs()->add('index', [
+            $tabs = $this->tabs();
+            $tabs->add('index', [
                 'label' => $this->translate('Monitoring'),
                 'url' => 'vspheredb/monitoring'
-            ])->add('configuration', [
-                'label' => $this->translate('Configuration'),
-                'url' => 'vspheredb/monitoring/configuration'
-            ])->add('hosttree', [
-                'label' => $this->translate('Hosts'),
-                'url' => 'vspheredb/monitoring/hosttree'
-            ])->add('vmtree', [
-                'label' => $this->translate('Virtual Machines'),
-                'url' => 'vspheredb/monitoring/vmtree'
-            ])->add('datastoretree', [
-                'label' => $this->translate('Datastores'),
-                'url' => 'vspheredb/monitoring/datastoretree'
-            ])->activate($action);
+            ]);
+            if ($this->hasPermission('vspheredb/admin')) {
+                $tabs->add('configuration', [
+                    'label' => $this->translate('Configuration'),
+                    'url' => 'vspheredb/monitoring/configuration'
+                ])->add('hosttree', [
+                    'label' => $this->translate('Hosts'),
+                    'url' => 'vspheredb/monitoring/hosttree'
+                ])->add('vmtree', [
+                    'label' => $this->translate('Virtual Machines'),
+                    'url' => 'vspheredb/monitoring/vmtree'
+                ])->add('datastoretree', [
+                    'label' => $this->translate('Datastores'),
+                    'url' => 'vspheredb/monitoring/datastoretree'
+                ]);
+            }
+            $tabs->activate($action);
         }
         if (preg_match('/tree$/', $action)) {
             $this->actions()->add(
@@ -65,6 +69,7 @@ class MonitoringController extends Controller
         $this->addTitle($this->translate('Monitoring Rules'));
         $this->setAutorefreshInterval(60);
         $table = new MonitoringRuleProblemTable($this->db()->getDbAdapter());
+        $this->getRestrictionHelper()->restrictTable($table);
         $table->renderTo($this);
     }
 
@@ -72,6 +77,7 @@ class MonitoringController extends Controller
     {
         $this->addSingleTab($this->translate('Current Problems'));
         $vCenter = $this->requireVCenter();
+        $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($vCenter->get('instance_uuid'));
         $this->setAutorefreshInterval(60);
         $objectType = $this->params->getRequired('objectType');
         $ruleSet = $this->params->getRequired('ruleSet');
@@ -83,6 +89,7 @@ class MonitoringController extends Controller
 
     public function configurationAction()
     {
+        $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring Rules'));
         $this->content()->addAttributes([
             'class' => 'overview-chapter'
@@ -149,6 +156,7 @@ class MonitoringController extends Controller
 
     public function showTree($chosenType)
     {
+        $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring'));
         $tree = new MonitoringRulesTree($this->db(), $chosenType);
         $this->content()->add(new MonitoringRulesTreeRenderer($tree, "vspheredb/monitoring/${chosenType}rules"));
@@ -156,6 +164,7 @@ class MonitoringController extends Controller
 
     public function showType($chosenType)
     {
+        $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('Rules'));
         $uuid = $this->params->get('uuid');
         $db = $this->db();

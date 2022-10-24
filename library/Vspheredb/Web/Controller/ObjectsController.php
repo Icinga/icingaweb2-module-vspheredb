@@ -87,7 +87,7 @@ class ObjectsController extends Controller
 
     protected function eventuallyFilterByVCenter(ObjectsTable $table)
     {
-        $this->getRestrictionHelper()->restrictObjectsTable($table);
+        $this->getRestrictionHelper()->restrictTable($table);
         if ($uuid = $this->params->get('vcenter')) {
             $table->filterVCenter(VCenter::loadWithUuid($uuid, $this->db()));
         }

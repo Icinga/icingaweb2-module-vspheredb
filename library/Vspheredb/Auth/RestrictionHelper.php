@@ -8,7 +8,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbUtil;
-use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
+use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Ramsey\Uuid\Uuid;
 
 class RestrictionHelper
@@ -29,7 +29,7 @@ class RestrictionHelper
         $this->loadRestrictedVCenterList();
     }
 
-    public function restrictObjectsTable(ObjectsTable $table)
+    public function restrictTable(TableWithVCenterFilter $table)
     {
         if ($this->restrictedVCenterUuids) {
             $table->filterVCenterUuids($this->restrictedVCenterUuids);

@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Web\Table\Monitoring;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use Icinga\Module\Vspheredb\Db\DbUtil;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
+use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use ipl\Html\Html;
 
-class MonitoringRuleProblemTable extends ZfQueryBasedTable
+class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithVCenterFilter
 {
     protected $formerVCenter = null;
 
@@ -56,6 +59,29 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable
         unset($row->vcenter_uuid);
 
         return (array) $row;
+    }
+
+    public function filterVCenter(VCenter $vCenter): self
+    {
+        return $this->filterVCenterUuids([$vCenter->getUuid()]);
+    }
+
+    public function filterVCenterUuids(array $uuids): self
+    {
+        if (empty($uuids)) {
+            $this->getQuery()->where('1 = 0');
+            return $this;
+        }
+
+        $db = $this->db();
+        $query = $this->getQuery();
+        if (count($uuids) === 1) {
+            $query->where("vc.instance_uuid = ?", DbUtil::quoteBinaryCompat(array_shift($uuids), $db));
+        } else {
+            $query->where("vc.instance_uuid IN (?)", DbUtil::quoteBinaryCompat($uuids, $db));
+        }
+
+        return $this;
     }
 
     protected function prepareQuery()
