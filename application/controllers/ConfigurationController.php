@@ -126,10 +126,10 @@ class ConfigurationController extends Controller
     {
         $connectionsByServer = [];
         foreach ((array) $connections as $id => $connection) {
-            if (isset($connectionsByServer[$connection->server_id])) {
-                $connectionsByServer[$connection->server_id][$id] = $connection;
+            if (isset($connectionsByServer[$connection->serverId])) {
+                $connectionsByServer[$connection->serverId][$id] = $connection;
             } else {
-                $connectionsByServer[$connection->server_id] = [$id => $connection];
+                $connectionsByServer[$connection->serverId] = [$id => $connection];
             }
         }
 
