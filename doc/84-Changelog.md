@@ -13,6 +13,9 @@ v1.6.0 (unreleased)
 * FEATURE: vCenter restrictions/filters have been implemented (#452)
 * FIX: add safety checks and give UNKNOWN for ZERO capacity (#446)
 
+### Integrations
+* FEATURE: Director Import Source now ships UUIDs for Datastores (#468)
+
 v1.5.0
 ------
 

@@ -69,6 +69,7 @@ class ImportSource extends ImportSourceHook
 
     protected $datastoreColumns = [
         'object_name'          => 'o.object_name',
+        'uuid'                 => 'o.uuid',
         'vcenter_name'         => 'vc.name',
         'maintenance_mode'     => 'ds.maintenance_mode',
         'capacity'             => 'ds.capacity',
