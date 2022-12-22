@@ -90,7 +90,7 @@ return [
         'ProLiant DL380 Gen9' => [
             'url' => 'https://techlibrary.hpe.com/docs/enterprise/servers/DL380Gen9/'
             . 'DL380Gen9-setup/system_setup_overview/222457.png',
-            'css' => 'clip-path: inset(20% 0 15% 0); margin: -15% -0 -10% -0;',
+            'css' => 'clip-path: inset(20% 0 15% 0); margin: -10% -0 -7% -0;',
         ],
         'ProLiant BL460c Gen9' => 'https://techlibrary.hpe.com/docs/enterprise/servers/BL460cGen9/'
             . 'BL460cGen9-setup/de/system_setup_overview/189999.png'
