@@ -8,6 +8,9 @@ v1.6.0 (unreleased)
 * FIX: do not crash when accessing /proc/<pid> is restricted (#444)
 * FIX: checking last event key was too slow (#445)
 
+### UI
+* FEATURE: some vendor images for Cisco UCS have been linked (#472)
+
 ### Monitoring Rules
 * FEATURE: grant read-only access w/o admin permissions (#451)
 * FEATURE: vCenter restrictions/filters have been implemented (#452)

@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'Cisco Systems Inc' => [
+        'UCSB-B200-M4' => 'https://www.cisco.com/content/dam/en/us/products/servers-unified-computing/'
+            . 'ucs-b200-m4-blade-server/product-large.jpg',
+        'UCSB-B200-M5' => 'https://www.cisco.com/c/dam/en/us/products/collateral/servers-unified-computing/'
+            . 'ucs-b-series-blade-servers/datasheet-c78-739296.docx/_jcr_content/renditions/datasheet-c78-739296_0.png',
+        'UCSC-C240-M4S' => 'https://www.cisco.com/c/dam/en/us/support/docs/SWTG/ProductImages/'
+            . 'servers-unified-computing-ucs-c240-m4-rack-server.jpg',
+        'UCSC-C240-M4S2' => 'https://www.cisco.com/c/dam/en/us/support/docs/SWTG/ProductImages/'
+            . 'servers-unified-computing-ucs-c240-m4-rack-server.jpg',
+        'UCSC-C480-M5' => 'https://www.cisco.com/c/dam/en/us/products/collateral/servers-unified-computing/'
+            . 'ucs-c-series-rack-servers/datasheet-c78-739291.docx/_jcr_content/renditions/datasheet-c78-739291_0.png',
+    ],
     'Dell Inc.' => [
         'PowerEdge R610' => 'https://i.dell.com/is/image/DellContent/content/dam/'
             . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
