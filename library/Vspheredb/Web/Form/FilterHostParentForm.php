@@ -11,6 +11,9 @@ class FilterHostParentForm extends Form
 {
     use TranslationHelper;
 
+    protected $useFormName = false;
+    protected $useCsrf = false;
+
     protected $db;
 
     public function __construct(Db $connection)
