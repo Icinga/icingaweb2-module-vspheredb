@@ -34,7 +34,7 @@ class PerfdataController extends Controller
         $vCenter = $this->requireVCenter();
         $this->tabs(new VCenterTabs($vCenter))->activate('perfcounters');
         $this->addTitle($this->translate('Available Performance Counters'));
-        $form = new FilterVCenterForm($this->db());
+        $form = new FilterVCenterForm($this->db(), $this->Auth());
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
         $uuid = $form->getHexUuid();

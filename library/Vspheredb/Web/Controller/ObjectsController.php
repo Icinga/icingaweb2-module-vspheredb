@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Controller;
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
+use Icinga\Module\Vspheredb\Web\Form\FilterVCenterForm;
 use ipl\Html\Html;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -17,6 +18,7 @@ class ObjectsController extends Controller
 
     /** @var PathLookup */
     protected $pathLookup;
+    protected $vCenterFilterForm;
 
     protected function linkBackToOverview($type)
     {
@@ -88,9 +90,24 @@ class ObjectsController extends Controller
     protected function eventuallyFilterByVCenter(ObjectsTable $table)
     {
         $this->getRestrictionHelper()->restrictTable($table);
+        $this->getVCenterFilterForm();
+
         if ($uuid = $this->params->get('vcenter')) {
             $table->filterVCenter(VCenter::loadWithUuid($uuid, $this->db()));
         }
+    }
+
+    protected function getVCenterFilterForm(): FilterVCenterForm
+    {
+        if ($this->vCenterFilterForm === null) {
+            $form = new FilterVCenterForm($this->db(), $this->Auth());
+            $form->allowAllVCenters();
+            $form->getAttributes()->add('style', 'float: right');
+            $form->handleRequest($this->getServerRequest());
+            $this->vCenterFilterForm = $form;
+        }
+
+        return $this->vCenterFilterForm;
     }
 
     protected function showTable(ObjectsTable $table, $url, $defaultTitle = null)
@@ -98,6 +115,7 @@ class ObjectsController extends Controller
         $this->eventuallyFilterByParent($table, $url, $defaultTitle);
         $this->eventuallyFilterByVCenter($table);
         $this->renderTableWithCount($table, $defaultTitle);
+        $this->controls()->prepend($this->getVCenterFilterForm());
 
         return $this;
     }

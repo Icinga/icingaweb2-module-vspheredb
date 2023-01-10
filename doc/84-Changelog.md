@@ -12,6 +12,7 @@ v1.6.0 (unreleased)
 * FEATURE: some vendor images for Cisco UCS have been linked (#472)
 * FEATURE: Tags are now shown together with Custom Values (#478)
 * FEATURE: overview tables now offer a "vCenter / ESXi" column (#480)
+* FEATURE: overview tables allow to switch vCenter (#481)
 
 ### Monitoring Rules
 * FEATURE: grant read-only access w/o admin permissions (#451)

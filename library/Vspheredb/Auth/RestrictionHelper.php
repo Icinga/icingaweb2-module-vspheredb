@@ -51,19 +51,24 @@ class RestrictionHelper
 
     public function assertAccessToVCenterUuidIsGranted($uuid)
     {
+        if (! $this->allowsVCenter($uuid)) {
+            throw new NotFoundError('Not found');
+        }
+    }
+
+    public function allowsVCenter($uuid): bool
+    {
         if ($this->restrictedVCenterUuids === null) {
-            return;
+            return true;
         }
         if (strlen($uuid) !== 16) {
             $uuid = Uuid::fromString($uuid)->getBytes();
         }
 
-        if (! in_array($uuid, $this->restrictedVCenterUuids)) {
-            throw new NotFoundError('Not found');
-        }
+        return in_array($uuid, $this->restrictedVCenterUuids);
     }
 
-    protected function loadRestrictedVCenterList()
+    public function loadRestrictedVCenterList()
     {
         $uuids = null;
         $restrictions = $this->auth->getRestrictions('vspheredb/vcenters');
