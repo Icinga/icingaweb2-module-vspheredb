@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Table\NameValueTable;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Web\Controller;
@@ -29,6 +30,7 @@ class DatastoreController extends Controller
         $lookup = new PathLookup($this->db()->getDbAdapter());
         $path = Html::tag('span', ['class' => 'dc-path'])->setSeparator(' > ');
         foreach ($lookup->getObjectNames($lookup->listPathTo($ds->get('uuid'), false)) as $parentUuid => $name) {
+            $name = Anonymizer::anonymizeString($name);
             $path->add(Link::create(
                 $name,
                 'vspheredb/datastores',
@@ -86,6 +88,7 @@ class DatastoreController extends Controller
     protected function addDatastore()
     {
         $ds = Datastore::loadWithUuid($this->params->getRequired('uuid'), $this->db());
+        $ds->object()->set('object_name', Anonymizer::anonymizeString($ds->object()->get('object_name')));
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($ds->get('vcenter_uuid'));
         $this->addTitle($ds->object()->get('object_name'));
         $this->handleTabs();

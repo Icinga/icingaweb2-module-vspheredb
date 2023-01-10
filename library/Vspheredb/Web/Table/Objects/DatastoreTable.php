@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
@@ -26,6 +27,7 @@ class DatastoreTable extends ObjectsTable
                 'free_space_percent'   => '(ds.free_space / ds.capacity) * 100',
                 'uncommitted_percent'  => '(ds.uncommitted / ds.capacity) * 100',
             ])->setRenderer(function ($row) {
+                $row->object_name = Anonymizer::anonymizeString($row->object_name);
                 if (in_array('overall_status', $this->getChosenColumnNames())) {
                     $result = [];
                 } else {

@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
@@ -62,7 +63,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
             Html::tag('strong', $row->device),
             $this->translate('driver'),
             $row->driver,
-            isset($row->mac_address) ? $row->mac_address . ', ' : '',
+            isset($row->mac_address) ? Anonymizer::shuffleString($row->mac_address) . ', ' : '',
             $speedInfo
         );
     }

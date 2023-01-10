@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -54,6 +55,7 @@ class VmLocationInfoTable extends NameValueTable
         } else {
             try {
                 $host = HostSystem::load($hostUuid, $connection);
+                $host->object()->set('object_name', Anonymizer::anonymizeString($host->object()->get('object_name')));
                 $quickStats = HostQuickStats::loadFor($host);
                 $hostInfo = [
                     $lookup->linkToObject($hostUuid),

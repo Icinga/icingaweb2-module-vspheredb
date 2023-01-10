@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use gipfl\Translation\TranslationHelper;
@@ -84,6 +85,7 @@ class DatastoreUsage extends BaseHtmlElement
         $others = 0;
         $limit = 10000; // Impossible limit for now.
         foreach ($result as $row) {
+            $row->object_name = Anonymizer::anonymizeString($row->object_name);
             $cnt++;
             if ($cnt < $limit) {
                 $shown += $row->committed + $row->uncommitted;

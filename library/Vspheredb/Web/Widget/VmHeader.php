@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Icon;
 use gipfl\Translation\TranslationHelper;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use ipl\Html\BaseHtmlElement;
@@ -37,6 +38,10 @@ class VmHeader extends BaseHtmlElement
     protected function assemble()
     {
         $vm = $this->vm;
+        $vm->object()->set('object_name', Anonymizer::anonymizeString($vm->object()->get('object_name')));
+        if ($guestName = $vm->get('guest_host_name')) {
+            $vm->set('guest_host_name', Anonymizer::anonymizeString($guestName));
+        }
         $powerState = $vm->get('runtime_power_state');
         $renderer = new PowerStateRenderer();
         if ($vm->get('template') === 'y') {

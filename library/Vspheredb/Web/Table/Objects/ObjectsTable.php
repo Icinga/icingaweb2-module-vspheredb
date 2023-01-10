@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
@@ -83,6 +84,7 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter
             'overall_status' => 'o.overall_status',
             'uuid'           => 'o.uuid',
         ])->setRenderer(function ($row) {
+            $row->object_name = Anonymizer::anonymizeString($row->object_name);
             if (in_array('overall_status', $this->getChosenColumnNames())) {
                 $result = [];
             } else {

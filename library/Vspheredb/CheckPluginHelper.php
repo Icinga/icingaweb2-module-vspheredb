@@ -5,7 +5,7 @@ namespace Icinga\Module\Vspheredb;
 use Exception;
 use gipfl\Cli\Screen;
 use Icinga\Module\Vspheredb\Clicommands\Command;
-use Icinga\Module\Vspheredb\Daemon\ConnectionState;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use InvalidArgumentException;
 use React\Promise\PromiseInterface;
 
@@ -217,7 +217,7 @@ trait CheckPluginHelper
     {
         $messages = $this->getMessages();
         if (! empty($messages)) {
-            echo implode("\n", $messages) . "\n";
+            echo Anonymizer::anonymizeString(implode("\n", $messages) . "\n");
         }
         $this->loop()->addTimer(0.01, function () {
             $this->loop()->stop();

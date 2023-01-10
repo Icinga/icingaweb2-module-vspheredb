@@ -34,6 +34,9 @@ class ServiceTagRenderer extends Html
 
     protected function linkToDellSupport($serviceTag)
     {
+        if ($serviceTag === null) {
+            return null;
+        }
         $urlPattern = 'http://www.dell.com/support/home/product-support/servicetag/%s/drivers';
 
         $url = sprintf(

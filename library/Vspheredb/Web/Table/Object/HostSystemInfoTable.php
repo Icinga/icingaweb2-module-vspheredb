@@ -7,6 +7,7 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -51,7 +52,7 @@ class HostSystemInfoTable extends NameValueTable
             $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
             $this->translate('BIOS Version') => new BiosInfo($host),
             $this->translate('Uptime')       => $this->showUptime($this->quickStats->get('uptime')),
-            $this->translate('System UUID')  => Html::tag('pre', $host->get('sysinfo_uuid')),
+            $this->translate('System UUID')  => Html::tag('pre', Anonymizer::shuffleString($host->get('sysinfo_uuid'))),
         ]);
     }
 
@@ -72,10 +73,13 @@ class HostSystemInfoTable extends NameValueTable
      */
     protected function getFormattedServiceTag(HostSystem $host)
     {
+        if ($tag = $host->get('service_tag')) {
+            $tag = Anonymizer::shuffleString($tag);
+        }
         if ($this->host->get('sysinfo_vendor') === 'Dell Inc.') {
-            return $this->linkToDellSupport($host->get('service_tag'));
+            return $this->linkToDellSupport($tag);
         } else {
-            return $host->get('service_tag');
+            return $tag;
         }
     }
 

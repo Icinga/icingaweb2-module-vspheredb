@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Daemon;
 
 use gipfl\Translation\StaticTranslator;
 use gipfl\ZfDb\Adapter\Adapter;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Monitoring\Health\ApiConnectionInfo;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
@@ -85,9 +86,11 @@ class ConnectionState
         $t = StaticTranslator::get();
         $state = $info->getState();
         $label = $info->serverName;
+        $label = Anonymizer::anonymizeString($label);
         $lastError = $info->apiConnection ? $info->apiConnection->lastErrorMessage : null;
         if ($lastError) {
             $lastError = ": $lastError";
+            $lastError = Anonymizer::anonymizeString($lastError);
         }
         switch ($state) {
             case 'unknown':

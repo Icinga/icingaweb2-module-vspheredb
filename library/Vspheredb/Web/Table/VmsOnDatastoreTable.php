@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Icon;
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
@@ -57,6 +58,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
 
     public function renderRow($row)
     {
+        $row->object_name = Anonymizer::anonymizeString($row->object_name);
         $size = $row->committed + $row->uncommitted;
         $caption = Link::create(
             $row->object_name,

@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Widget\Renderer;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -48,7 +49,7 @@ class PathToObjectRenderer
                 $parts[] = ' > ';
             }
             $parts[] = Link::create(
-                $name,
+                Anonymizer::anonymizeString($name),
                 $baseUrl,
                 Util::uuidParams($parentUuid),
                 ['data-base-target' => '_main']

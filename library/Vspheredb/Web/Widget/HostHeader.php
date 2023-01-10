@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use ipl\Html\BaseHtmlElement;
@@ -51,6 +52,7 @@ class HostHeader extends BaseHtmlElement
     protected function assemble()
     {
         $host = $this->host;
+        $host->object()->set('object_name', Anonymizer::anonymizeString($host->object()->get('object_name')));
 
         $cpu = new CpuAbsoluteUsage(
             $this->quickStats->get('overall_cpu_usage'),
