@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use gipfl\IcingaWeb2\Icon;
+use gipfl\Json\JsonString;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
@@ -13,6 +15,7 @@ use Icinga\Module\Vspheredb\DbObject\CustomValues;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use InvalidArgumentException;
+use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 
 class CustomValueDetails extends HtmlDocument
@@ -35,25 +38,32 @@ class CustomValueDetails extends HtmlDocument
     protected function assemble()
     {
         $object = $this->object;
-        $this->prepend(new SubTitle($this->translate('Custom Values'), 'tags'));
+        $this->prepend(new SubTitle($this->translate('Custom Values and Tags'), 'tags'));
         $values = $object->customValues();
         $this->stripBackupToolCustomValues($values);
         $demoMode = false;
         if ($demoMode) {
-            $this->add(NameValueTable::create([
+            $values = CustomValues::create([
                 'Contact Persons'   => 'John Wayne, Donald Duck',
                 'Application'       => 'WebSphere Application Server',
                 'Installation Date' => '2020-01-02',
                 'Cost Center'       => '48145',
                 'Department'        => 'Web Shop',
-            ]));
-            return;
+            ]);
         }
-
-        if ($values->isEmpty()) {
+        $tags = JsonString::decode($object->object()->get('tags'));
+        if ($values->isEmpty() && empty($tags)) {
             $this->add($this->translate('No custom values have been defined'));
         } else {
-            $this->add(NameValueTable::create($values->toArray()));
+            $table = NameValueTable::create($values->toArray());
+            if (! empty($tags)) {
+                $table->addNameValueRow([
+                    Icon::create('tag'),
+                    ' ',
+                    $this->translate('Tags')
+                ], Html::tag('ul', Html::wrapEach($tags, 'li')));
+            }
+            $this->add($table);
         }
     }
 

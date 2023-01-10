@@ -34,6 +34,11 @@ class CustomValues implements JsonSerializable
         unset($this->values[$key]);
     }
 
+    public function set($key, $value)
+    {
+        $this->values[$key] = $value;
+    }
+
     public function get($key, $default = null)
     {
         if ($this->has($key)) {
