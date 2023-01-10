@@ -15,6 +15,8 @@ v1.6.0 (unreleased)
 * FEATURE: grant read-only access w/o admin permissions (#451)
 * FEATURE: vCenter restrictions/filters have been implemented (#452)
 * FIX: add safety checks and give UNKNOWN for ZERO capacity (#446)
+* FIX: restoring defaults for main node removed main node of all types (#470)
+* FIX: root node modifications affected all object types (#475)
 
 ### Integrations
 * FEATURE: Director Import Source now ships UUIDs for Datastores (#468)

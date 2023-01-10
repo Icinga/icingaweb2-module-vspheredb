@@ -97,7 +97,7 @@ class MonitoringRuleSet
             if ($this->settings->jsonSerialize() !== $existing->getSettings()->jsonSerialize()) {
                 $rowCount = $db->update(MonitoringRuleSet::TABLE, [
                     'settings' => JsonString::encode($this->settings)
-                ], $db->quoteInto('object_uuid = ?', $connection->quoteBinary($this->binaryUuid)));
+                ], $this->createWhere($connection));
                 $this->fromDb = true;
 
                 return $rowCount > 0;
@@ -123,7 +123,7 @@ class MonitoringRuleSet
         if ($existing) {
             $rowCount = $db->delete(
                 MonitoringRuleSet::TABLE,
-                $db->quoteInto('object_uuid = ?', $connection->quoteBinary($this->binaryUuid))
+                $this->createWhere($connection)
             );
             $this->fromDb = false;
 
@@ -131,6 +131,13 @@ class MonitoringRuleSet
         }
 
         return false;
+    }
+
+    protected function createWhere(Db $connection): string
+    {
+        $db = $connection->getDbAdapter();
+        return $db->quoteInto('object_uuid = ?', $connection->quoteBinary($this->binaryUuid))
+        . $db->quoteInto(' AND object_folder = ?', $this->objectFolder);
     }
 
     public function isEnabled(): bool
