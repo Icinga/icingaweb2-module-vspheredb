@@ -28,6 +28,7 @@ class HostsTable extends ObjectsTable
             $this->createObjectNameColumn(),
             $this->createColumn('sysinfo_vendor', $this->translate('Vendor'), 'h.sysinfo_vendor'),
             $this->createColumn('sysinfo_model', $this->translate('Model'), 'h.sysinfo_model'),
+            $this->createColumn('vcenter_name', $this->translate('vCenter / ESXi'), 'vc.name'),
             $this->createColumn('bios_version', $this->translate('BIOS Version'), 'h.bios_version'),
             $this->createColumn('bios_release_date', $this->translate('BIOS Release Date'), 'h.bios_release_date')
                 ->setRenderer(function ($row) {
@@ -172,10 +173,14 @@ class HostsTable extends ObjectsTable
     {
         $columns = $this->getRequiredDbColumns();
         $wantsVms = false;
+        $wantsVCenter = false;
         foreach ($columns as $column) {
             if (preg_match('/^\(?vms\./', $column)) {
                 $wantsVms = true;
                 break;
+            }
+            if (substr($column, 0, 3) === 'vc.') {
+                $wantsVCenter = true;
             }
         }
 
@@ -196,6 +201,13 @@ class HostsTable extends ObjectsTable
             $query->joinLeft(
                 ['vms' => $this->createVmSubQuery()],
                 'vms.runtime_host_uuid = h.uuid',
+                []
+            );
+        }
+        if ($wantsVCenter) {
+            $query->join(
+                ['vc' => 'vcenter'],
+                'vc.instance_uuid = h.vcenter_uuid',
                 []
             );
         }

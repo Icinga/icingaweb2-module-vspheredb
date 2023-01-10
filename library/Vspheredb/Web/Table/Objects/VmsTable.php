@@ -38,12 +38,16 @@ class VmsTable extends ObjectsTable
         $columns = $this->getRequiredDbColumns();
         $wantsHosts = false;
         $wantsStats = false;
+        $wantsVCenter = false;
         foreach ($columns as $column) {
             if (substr($column, 0, 2) === 'h.') {
                 $wantsHosts = true;
             }
             if (substr($column, 0, 4) === 'vqs.') {
                 $wantsStats = true;
+            }
+            if (substr($column, 0, 3) === 'vc.') {
+                $wantsVCenter = true;
             }
         }
 
@@ -60,6 +64,14 @@ class VmsTable extends ObjectsTable
             $query->join(
                 ['vqs' => 'vm_quick_stats'],
                 'vqs.uuid = vm.uuid',
+                []
+            );
+        }
+
+        if ($wantsVCenter) {
+            $query->join(
+                ['vc' => 'vcenter'],
+                'vc.instance_uuid = vm.vcenter_uuid',
                 []
             );
         }
@@ -125,6 +137,7 @@ class VmsTable extends ObjectsTable
             ),
 
             $this->createColumn('host_name', $this->translate('Host'), 'h.host_name'),
+            $this->createColumn('vcenter_name', $this->translate('vCenter / ESXi'), 'vc.name'),
 
             $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vm.guest_ip_address'),
 

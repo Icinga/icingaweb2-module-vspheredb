@@ -52,6 +52,7 @@ class DatastoreTable extends ObjectsTable
 
                 return $result;
             }),
+            $this->createColumn('vcenter_name', $this->translate('vCenter / ESXi'), 'vc.name'),
             $this->createColumn(
                 'multiple_host_access',
                 $this->translate('Multiple Hosts'),
@@ -137,14 +138,18 @@ class DatastoreTable extends ObjectsTable
 
     public function prepareQuery()
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['ds' => 'datastore'],
-            'o.uuid = ds.uuid',
-            []
-        )->group('o.uuid');
+        $wantsVCenter = false;
+        $columns = $this->getRequiredDbColumns();
+        $query = $this->db()->select()
+            ->from(['o' => 'object'], $columns)
+            ->join(['ds' => 'datastore'], 'o.uuid = ds.uuid', [])
+            ->group('o.uuid');
+
+        foreach ($columns as $column) {
+            if (substr($column, 0, 3) === 'vc.') {
+                $wantsVCenter = true;
+            }
+        }
 
         if ($this->hasColumn('cnt_vms')) {
             $vduQuery = $this->db()->select()->from('vm_datastore_usage', [
@@ -154,6 +159,13 @@ class DatastoreTable extends ObjectsTable
             $query->joinLeft(
                 ['vdu' => $vduQuery],
                 'vdu.ds_uuid = o.uuid',
+                []
+            );
+        }
+        if ($wantsVCenter) {
+            $query->join(
+                ['vc' => 'vcenter'],
+                'vc.instance_uuid = ds.vcenter_uuid',
                 []
             );
         }
