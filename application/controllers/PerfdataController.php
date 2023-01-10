@@ -36,7 +36,7 @@ class PerfdataController extends Controller
         $this->addTitle($this->translate('Available Performance Counters'));
         $form = new FilterVCenterForm($this->db());
         $form->handleRequest($this->getServerRequest());
-        $this->content()->add(Html::tag('div', ['class' => 'icinga-module module-director'], $form));
+        $this->content()->add($form);
         $uuid = $form->getHexUuid();
         if ($uuid === null) {
             return;
