@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 use gipfl\IcingaWeb2\Img;
 use gipfl\IcingaWeb2\Link;
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\GuestToolsStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
@@ -251,7 +252,7 @@ class VmsTable extends ObjectsTable
                 $statusRenderer = $this->overallStatusRenderer();
                 $result = [$statusRenderer($row)];
             }
-            $name = $row->object_name;
+            $name = Anonymizer::anonymizeString($row->object_name);
             if ($row->template === 'y') {
                 $name = [$name, Html::tag('i', ' (' . $this->translate('Template') . ')')];
             }
