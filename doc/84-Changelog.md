@@ -21,6 +21,7 @@ v1.6.0 (unreleased)
 
 ### Integrations
 * FEATURE: Director Import Source now ships UUIDs for Datastores (#468)
+* FEATURE: Director Import Source now ships Tags (#479)
 * FEATURE: Provides a Hook for anonymization (demo) purposes (#477)
 
 v1.5.0

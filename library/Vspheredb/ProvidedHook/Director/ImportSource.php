@@ -33,6 +33,7 @@ class ImportSource extends ImportSourceHook
         'hardware_cpu_cores'      => 'h.hardware_cpu_cores',
         'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
         'custom_values'           => 'h.custom_values',
+        'tags'                    => 'o.tags',
     ];
 
     protected $vmColumns = [
@@ -50,6 +51,7 @@ class ImportSource extends ImportSourceHook
         'runtime_power_state' => 'vm.runtime_power_state',
         'template'            => 'vm.template',
         'custom_values'       => 'vm.custom_values',
+        'tags'                => 'o.tags',
     ];
 
     protected $computeResourceColumns = [
@@ -65,6 +67,7 @@ class ImportSource extends ImportSourceHook
         'hosts'                    => 'cr.hosts',
         'total_cpu_mhz'            => 'cr.total_cpu_mhz',
         'total_memory_size_mb'     => 'cr.total_memory_size_mb',
+        'tags'                     => 'o.tags',
     ];
 
     protected $datastoreColumns = [
@@ -74,6 +77,7 @@ class ImportSource extends ImportSourceHook
         'maintenance_mode'     => 'ds.maintenance_mode',
         'capacity'             => 'ds.capacity',
         'multiple_host_access' => 'ds.multiple_host_access',
+        'tags'                 => 'o.tags',
     ];
 
     public function getName()
@@ -171,16 +175,17 @@ class ImportSource extends ImportSourceHook
             return [];
         }
 
-        if (in_array($objectType, ['host_system', 'virtual_machine'])) {
-            foreach ($result as $row) {
-                $row->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
+        foreach ($result as $row) {
+            $row->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
+            if (in_array($objectType, ['host_system', 'virtual_machine'])) {
                 if ($row->custom_values !== null) {
                     $row->custom_values = JsonString::decode($row->custom_values);
                 }
-                if ($objectType === 'virtual_machine') {
-                    $row->template = $row->template === 'y';
-                }
             }
+            if ($objectType === 'virtual_machine') {
+                $row->template = $row->template === 'y';
+            }
+            $row->tags = JsonString::decode($row->tags);
         }
 
         return $result;
