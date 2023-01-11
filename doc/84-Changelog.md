@@ -14,6 +14,7 @@ v1.6.0 (unreleased)
 * FEATURE: overview tables now offer a "vCenter / ESXi" column (#480)
 * FEATURE: overview tables allow to switch vCenter (#481)
 * FIX: locale-dependent memory capacity issue has been fixed (#458)
+* FIX: enabling/disabling connections now happens instantly (#487)
 
 ### Monitoring Rules
 * FEATURE: grant read-only access w/o admin permissions (#451)

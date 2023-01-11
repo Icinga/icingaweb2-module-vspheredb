@@ -17,7 +17,9 @@ class RpcNamespaceVsphere
     }
 
     /**
-     * @param ServerSet $servers
+     * Hint: Full qualified reference is necessary for RPC type check
+     *
+     * @param \Icinga\Module\Vspheredb\Polling\ServerSet $servers
      * @return bool
      */
     public function setServersRequest(ServerSet $servers): bool
