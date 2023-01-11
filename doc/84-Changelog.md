@@ -21,6 +21,9 @@ v1.6.0 (unreleased)
 * FIX: restoring defaults for main node removed main node of all types (#470)
 * FIX: root node modifications affected all object types (#475)
 
+### InfluxDB
+* FEATURE: Host and VM CPU and Memory information is now being shipped (#473)
+
 ### Integrations
 * FEATURE: Director Import Source now ships UUIDs for Datastores (#468)
 * FEATURE: Director Import Source now ships Tags (#479)

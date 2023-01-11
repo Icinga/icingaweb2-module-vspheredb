@@ -12,13 +12,19 @@ use Icinga\Module\Vspheredb\PerformanceData\InfluxConnectionForVcenterLoader;
 use Icinga\Module\Vspheredb\PerformanceData\MetricCSVToInfluxDataPoint;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\CounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\CounterMap;
+use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\HostCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\HostNetworkCounterLookup;
+use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmDiskCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmNetworkCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceQuerySpecHelper;
+use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostCpuPerformanceSet;
+use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostMemoryPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostNetworkPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\PerformanceSet;
+use Icinga\Module\Vspheredb\Polling\PerformanceSet\VmCpuPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\VmDiskPerformanceSet;
+use Icinga\Module\Vspheredb\Polling\PerformanceSet\VmMemoryPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\VmNetworkPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\SyncStore\PerfCounterInfoSyncStore;
 use Icinga\Module\Vspheredb\Polling\VsphereApi;
@@ -29,6 +35,8 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
+use stdClass;
+use Throwable;
 use function React\Promise\resolve;
 
 class PerfDataSync implements DaemonTask
@@ -186,15 +194,19 @@ class PerfDataSync implements DaemonTask
         }
 
         $this->queryPerf($spec)->then(function ($result) use ($set, $counterMap, $tags) {
-            $cntDataPoints = 0;
-            foreach ($result as $r) {
-                foreach (MetricCSVToInfluxDataPoint::map($set->getName(), $r, $counterMap, $tags) as $dataPoint) {
-                    $this->influxDbWriter->enqueue($dataPoint);
-                    $cntDataPoints++;
+            try {
+                $cntDataPoints = 0;
+                foreach ($result as $r) {
+                    foreach (MetricCSVToInfluxDataPoint::map($set->getName(), $r, $counterMap, $tags) as $dataPoint) {
+                        $this->influxDbWriter->enqueue($dataPoint);
+                        $cntDataPoints++;
+                    }
                 }
-            }
-            if ($cntDataPoints) {
-                $this->logger->info("Enqueued $cntDataPoints data points for " . $set->getName());
+                if ($cntDataPoints) {
+                    $this->logger->info("Enqueued $cntDataPoints data points for " . $set->getName());
+                }
+            } catch (Throwable $e) {
+                $this->logger->error($e->getMessage());
             }
         }, function (Exception $e) {
             $this->logger->error($e->getMessage());
@@ -205,6 +217,18 @@ class PerfDataSync implements DaemonTask
     {
         $db = $this->vCenter->getConnection()->getDbAdapter();
         $uuid = Uuid::fromBytes($this->vCenter->getUuid());
+
+        $counterLookup = new VmCounterLookup($db);
+        $set = new VmCpuPerformanceSet();
+        $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
+        $set = new VmMemoryPerformanceSet();
+        $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
+
+        $counterLookup = new HostCounterLookup($db);
+        $set = new HostCpuPerformanceSet();
+        $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
+        $set = new HostMemoryPerformanceSet();
+        $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
 
         $counterLookup = new VmNetworkCounterLookup($db);
         $set = new VmNetworkPerformanceSet();
@@ -224,7 +248,11 @@ class PerfDataSync implements DaemonTask
         $this->timers[] = $this->loop->addPeriodicTimer(120, function () {
             $this->loadWriterConfig()->then(function () {
                 if ($this->influxDbWriter) {
-                    $this->sync(18);
+                    try {
+                        $this->sync(18);
+                    } catch (Throwable $e) {
+                        $this->logger->error($e->getMessage());
+                    }
                 }
             });
         });
@@ -248,7 +276,7 @@ class PerfDataSync implements DaemonTask
             $this->logger
         );
         $stats = new SyncStats('Performance Counter Info');
-        $store->store($result, \stdClass::class, $stats);
+        $store->store($result, stdClass::class, $stats);
         $this->logger->info($stats->getLogMessage());
     }
 }

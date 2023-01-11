@@ -20,6 +20,8 @@ abstract class DefaultCounterLookup implements CounterLookup
 
     protected $instanceKey;
 
+    protected $staticInstanceKey;
+
     /**
      * @param Adapter|\Zend_Db_Adapter_Abstract $db
      */
@@ -28,13 +30,32 @@ abstract class DefaultCounterLookup implements CounterLookup
         $this->db = $db;
     }
 
+    public function hasInstanceKey(): bool
+    {
+        return $this->instanceKey !== null;
+    }
+
     public function fetchTags(UuidInterface $vCenterUuid = null): array
     {
         $result = [];
         $query = $this->prepareBaseQuery($vCenterUuid)->columns($this->getTagColumns());
+        $objectKey = $this->getObjectKey();
+        if ($this->hasInstanceKey()) {
+            $hasInstanceKey = true;
+            $instanceKey = $this->getInstanceKey();
+        } else {
+            $hasInstanceKey = false;
+            $instanceKey = $this->staticInstanceKey;
+        }
         foreach ($this->db->fetchAll($query) as $row) {
             $this->convertResultRowUuidsToText($row);
-            $result[$row->{$this->getObjectKey()} . '/' . $row->{$this->getInstanceKey()}] = (array) $row;
+            if ($hasInstanceKey) {
+                $result[$row->$objectKey . '/' . $row->$instanceKey] = (array) $row;
+            } elseif ($instanceKey === null) {
+                $result[$row->$objectKey] = (array) $row;
+            } else {
+                $result[$row->$objectKey . '/' . $instanceKey] = (array) $row;
+            }
         }
 
         return $result;
@@ -42,7 +63,11 @@ abstract class DefaultCounterLookup implements CounterLookup
 
     public function fetchRequiredMetricInstances(UuidInterface $vCenterUuid = null): array
     {
-        return static::explodeInstances($this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid)));
+        if ($this->hasInstanceKey()) {
+            return static::explodeInstances($this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid)));
+        } else {
+            return $this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid));
+        }
     }
 
     abstract protected function prepareBaseQuery(UuidInterface $vCenterUuid);
@@ -54,7 +79,7 @@ abstract class DefaultCounterLookup implements CounterLookup
         $result = [];
 
         foreach ($queryResult as $key => $value) {
-            $result[$key] = preg_split('/,/', $value);
+            $result[$key] = explode(',', $value);
         }
 
         return $result;
