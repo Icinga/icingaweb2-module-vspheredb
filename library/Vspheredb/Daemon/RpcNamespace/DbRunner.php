@@ -62,10 +62,7 @@ class DbRunner
         $this->loop->addPeriodicTimer(90, function () {
             if ($this->connection) {
                 try {
-                    $start = microtime(true);
                     $this->refreshMonitoringRuleProblemsRequest();
-                    $duration = microtime(true) - $start;
-                    $this->logger->debug(sprintf('Refreshing Monitoring Rule problems took %.2Fs', $duration));
                 } catch (\Throwable $e) {
                     $this->logger->error($e->getMessage());
                 }
@@ -208,9 +205,23 @@ class DbRunner
 
     public function refreshMonitoringRuleProblemsRequest()
     {
+        if ($this->connection === null) {
+            $this->logger->warning('Not refreshing Rule problems, DB is not ready');
+            return false;
+        }
+
+        if (Db::migrationsForDb($this->connection)->hasPendingMigrations()) {
+            $this->logger->warning('Not refreshing Rule problems, DB is not ready');
+            return false;
+        }
+
         try {
+            $start = microtime(true);
             $p = new PersistedRuleProblems($this->connection);
             $p->refresh();
+            $duration = microtime(true) - $start;
+            $this->logger->debug(sprintf('Refreshing Monitoring Rule problems took %.2Fs', $duration));
+
             return true;
         } catch (\Throwable $e) {
             $this->logger->error('Refreshing Rule Problems failed: ' . $e->getMessage());

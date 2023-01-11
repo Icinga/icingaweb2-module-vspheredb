@@ -17,6 +17,7 @@ v1.6.0 (unreleased)
 ### Monitoring Rules
 * FEATURE: grant read-only access w/o admin permissions (#451)
 * FEATURE: vCenter restrictions/filters have been implemented (#452)
+* FEATURE: rule changes now trigger an immediate overview recalculation (#482)
 * FEATURE: there is now a history tracking state changes (#483)
 * FIX: flapping issues (mostly for Host Problems) have been addressed (#453)
 * FIX: add safety checks and give UNKNOWN for ZERO capacity (#446)

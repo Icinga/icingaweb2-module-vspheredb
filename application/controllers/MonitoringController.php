@@ -24,6 +24,8 @@ use RuntimeException;
 
 class MonitoringController extends Controller
 {
+    use AsyncControllerHelper;
+
     public function init()
     {
         parent::init();
@@ -67,7 +69,7 @@ class MonitoringController extends Controller
     public function indexAction()
     {
         $this->addTitle($this->translate('Monitoring Rules'));
-        $this->setAutorefreshInterval(60);
+        $this->setAutorefreshInterval(20);
         $table = new MonitoringRuleProblemTable($this->db()->getDbAdapter());
         $this->getRestrictionHelper()->restrictTable($table);
         $table->renderTo($this);
@@ -78,7 +80,7 @@ class MonitoringController extends Controller
         $this->addSingleTab($this->translate('Current Problems'));
         $vCenter = $this->requireVCenter();
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($vCenter->get('instance_uuid'));
-        $this->setAutorefreshInterval(60);
+        $this->setAutorefreshInterval(20);
         $objectType = $this->params->getRequired('objectType');
         $ruleSet = $this->params->getRequired('ruleSet');
         $rule = $this->params->getRequired('rule');
@@ -211,6 +213,26 @@ class MonitoringController extends Controller
         $form->on(RuleForm::ON_SUCCESS, function (RuleForm $form) use ($title) {
             if ($form->hasNotBeenModified()) {
                 Notification::info($this->translate('No change has been applied'));
+                $this->redirectNow($this->url());
+            }
+
+            try {
+                if ($this->syncRpcCall('db.refreshMonitoringRuleProblems')) {
+                    Notification::success($this->translate('Current Problems have been recalculated'));
+                } else {
+                    Notification::info($this->translate(
+                        'Current problems have NOT been recalculated, they will be applied with a short delay'
+                    ));
+                }
+            } catch (\Exception $e) {
+                Notification::info(
+                    $this->translate(
+                        'Error when triggering problem recalculation, changes will be applied with a short delay'
+                    ) . ': ' . $e->getMessage()
+                );
+            }
+            if ($form->hasNotBeenModified()) {
+                Notification::info($this->translate('No change has been applied'));
             } elseif ($form->hasBeenModified()) {
                 Notification::success(sprintf($this->translate('Settings for %s have been modified'), $title));
             }
@@ -219,7 +241,7 @@ class MonitoringController extends Controller
             } elseif ($form->hasBeenDeleted()) {
                 Notification::success(sprintf($this->translate('Settings for %s have been removed'), $title));
             }
-            // $this->redirectNow($this->url());
+            $this->redirectNow($this->url());
         });
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
