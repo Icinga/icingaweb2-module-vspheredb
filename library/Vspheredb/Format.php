@@ -22,6 +22,7 @@ class Format
         // Problem: %.3G is 0.978 for $value = 1001 / 1024, but we want to see 0.98
         $output = sprintf('%.3G', $result);
         if (preg_match('/^0[,.]/', $output)) {
+            $output = str_replace(',', '.', $output);
             $output = sprintf('%.3G', round((float) $output, 2));
         }
 
