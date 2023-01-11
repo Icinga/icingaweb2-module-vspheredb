@@ -100,7 +100,6 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
                 'cnt_warning' => "SUM(CASE WHEN p.current_state = 'WARNING' THEN 1 ELSE 0 END)",
             ]
         )
-            ->where('p.rule_name LIKE ?', '%/%')
         ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
         ->join(['vc' => 'vcenter'], 'o.vcenter_uuid = vc.instance_uuid', [])
             ->group('vc.name')

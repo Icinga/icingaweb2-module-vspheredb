@@ -195,9 +195,8 @@ class CheckRunner
                 foreach ($rule->checkObject($object, $ruleSettings) as $result) {
                     $ruleResult->addResult($result);
                 }
-                $results[$set::getIdentifier() . '/' . $rule::getIdentifier()] = $ruleResult->getState()->getName();
+                $results[$set::getIdentifier() . '/' . $rule::getIdentifier()] = $ruleResult;
             }
-            $results[$set::getIdentifier()] = $ruleSetResult->getState()->getName();
         }
 
         return $results;

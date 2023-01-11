@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring;
 
+use Exception;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
@@ -13,10 +14,12 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRuleSet;
 use Icinga\Module\Vspheredb\Util;
+use Throwable;
 
 class PersistedRuleProblems
 {
     protected const TABLE = 'monitoring_rule_problem';
+    protected const HISTORY_TABLE = 'monitoring_rule_problem_history';
 
     /** @var Db */
     protected $db;
@@ -32,6 +35,7 @@ class PersistedRuleProblems
 
     public function refresh()
     {
+        $this->checked = [];
         $this->currentState = $this->fetchCurrentProblems();
         MonitoringRuleSet::preloadAll($this->db);
         $objects = ManagedObject::loadAll($this->db, null, 'uuid');
@@ -73,6 +77,7 @@ class PersistedRuleProblems
         MonitoringRuleSet::clearPreloadCache();
         VmQuickStats::clearPreloadCache();
         $this->dropObsoleteRows();
+        $this->checked = null;
         $this->currentState = null;
     }
 
@@ -118,14 +123,50 @@ class PersistedRuleProblems
         foreach ($objects as $object) {
             $results[$object->get('uuid')] = $runner->checkForDb($object);
         }
+
         $db->beginTransaction();
+        try {
+            $checked = $this->processCheckedObjects($results);
+            $db->commit();
+            $this->rememberCheckedObjects($checked);
+        } catch (Throwable $e) {
+            try {
+                $db->rollBack();
+            } catch (Exception $e) {
+                // Nothing to do here
+            }
+
+            throw $e;
+        }
+    }
+
+    protected function rememberCheckedObjects($checked)
+    {
+        foreach ($checked as $uuid => $names) {
+            foreach ($names as $name => $true) {
+                $this->checked[$uuid][$name] = $true;
+            }
+        }
+    }
+
+    /**
+     * @param array<string,array<string,CheckResultSet>> $results
+     * @return array
+     * @throws \Zend_Db_Adapter_Exception
+     */
+    protected function processCheckedObjects(array $results): array
+    {
+        $db = $this->db->getDbAdapter();
         $checked = [];
         $current = &$this->currentState;
         foreach ($results as $uuid => $objectResults) {
-            foreach ($objectResults as $name => $state) {
+            foreach ($objectResults as $name => $resultSet) {
+                $now = Util::currentTimestamp();
+                $state = $resultSet->getState()->getName();
                 $checked[$uuid][$name] = true;
                 if (isset($current[$uuid][$name])) {
-                    $formerState = $current[$uuid][$name];
+                    $formerRow = $current[$uuid][$name];
+                    $formerState = $formerRow->current_state;
                     if ($formerState === $state) {
                         continue;
                     }
@@ -136,23 +177,39 @@ class PersistedRuleProblems
                     } else {
                         $db->update(self::TABLE, [
                             'current_state' => $state,
-                            'ts_changed_ms' => Util::currentTimestamp(),
+                            'ts_changed_ms' => $now,
                         ], $where);
                     }
+                    $db->insert(self::HISTORY_TABLE, [
+                        'uuid'           => $uuid,
+                        'current_state'  => $state,
+                        'former_state'   => $formerState,
+                        'rule_name'      => $name,
+                        'ts_changed_ms'  => $now,
+                        'output'         => $resultSet->getOutput(),
+                    ]);
                 } elseif ($state !== CheckPluginState::NAME_OK) {
                     $db->insert(self::TABLE, [
                         'uuid'           => $uuid,
                         'current_state'  => $state,
                         'rule_name'      => $name,
-                        'ts_created_ms'  => Util::currentTimestamp(),
-                        'ts_changed_ms' => Util::currentTimestamp(),
+                        'ts_created_ms'  => $now,
+                        'ts_changed_ms'  => $now,
                     ]);
                     // emit new problem
+                    $db->insert(self::HISTORY_TABLE, [
+                        'uuid'           => $uuid,
+                        'current_state'  => $state,
+                        'former_state'   => CheckPluginState::NAME_OK, // null?
+                        'rule_name'      => $name,
+                        'ts_changed_ms'  => $now,
+                        'output'         => $resultSet->getOutput(),
+                    ]);
                 }
             }
         }
-        $db->commit();
-        $this->checked = $checked;
+
+        return $checked;
     }
 
     protected function dropObsoleteRows()
@@ -161,15 +218,34 @@ class PersistedRuleProblems
         $db->beginTransaction();
         $checked = &$this->checked;
         $current = &$this->currentState;
-        foreach ($current as $uuid => $names) {
-            foreach ($names as $name => $state) {
-                if (! isset($checked[$uuid][$name])) {
-                    $where = $db->quoteInto('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $db))
-                        . $db->quoteInto(' AND rule_name = ?', $name);
-                    $db->delete(self::TABLE, $where);
+        $now = Util::currentTimestamp();
+        try {
+            foreach ($current as $uuid => $names) {
+                foreach ($names as $name => $row) {
+                    if (! isset($checked[$uuid][$name])) {
+                        $where = $db->quoteInto('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $db))
+                            . $db->quoteInto(' AND rule_name = ?', $name);
+                        $db->delete(self::TABLE, $where);
+                        $db->insert(self::HISTORY_TABLE, [
+                            'uuid'           => $uuid,
+                            'current_state'  => CheckPluginState::NAME_OK,
+                            'former_state'   => $row->current_state,
+                            'rule_name'      => $name,
+                            'ts_changed_ms'  => $now,
+                            'output'         => null,
+                        ]);
+                    }
                 }
             }
+            $db->commit();
+        } catch (Throwable $e) {
+            try {
+                $db->rollBack();
+            } catch (Exception $e) {
+                // Nothing to do here
+            }
+
+            throw $e;
         }
-        $db->commit();
     }
 }
