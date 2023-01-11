@@ -30,7 +30,7 @@ class DbCommand extends Command
             try {
                 Process::setTitle('Icinga::vSphereDB::DB::idle');
                 $handler = new NamespacedPacketHandler();
-                $handler->registerNamespace('vspheredb', new DbRunner($this->logger, $this->loop()));
+                $handler->registerNamespace('db', new DbRunner($this->logger, $this->loop()));
                 $rpc = $this->prepareJsonRpc($this->loop(), $handler);
                 $this->logger->addWriter(new JsonRpcConnectionWriter($rpc));
             } catch (Exception $e) {

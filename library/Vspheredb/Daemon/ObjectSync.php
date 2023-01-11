@@ -226,7 +226,7 @@ class ObjectSync implements DaemonTask
                 return resolve();
             }
 
-            return $this->dbRunner->request('vspheredb.processSyncTaskResult', [
+            return $this->dbRunner->request('db.processSyncTaskResult', [
                 'vCenterId'   => (int) $this->vCenter->get('id'),
                 'result'      => $result,
                 'taskLabel'   => $task->getLabel(),
@@ -252,7 +252,7 @@ class ObjectSync implements DaemonTask
 
     protected function prepareEventPolling()
     {
-        return $this->dbRunner->request('vspheredb.getLastEventTimeStamp', [
+        return $this->dbRunner->request('db.getLastEventTimeStamp', [
             'vCenterId' => $this->vCenter->get('id')
         ])->then(function ($lastTimestamp) {
             $this->api->setLastEventTimestamp($lastTimestamp);
@@ -271,7 +271,7 @@ class ObjectSync implements DaemonTask
                 return resolve();
             }
 
-            return $this->dbRunner->request('vspheredb.setCustomFieldsMap', [
+            return $this->dbRunner->request('db.setCustomFieldsMap', [
                 'vCenterId' => $this->vCenter->get('id'),
                 'map'       => $manager->requireMap(),
             ]);

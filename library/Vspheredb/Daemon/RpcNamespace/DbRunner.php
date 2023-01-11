@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Daemon\RpcNamespace;
 
+use Exception;
 use gipfl\Cli\Process;
 use Icinga\Data\ConfigObject;
 use Icinga\Module\Vspheredb\Application\MemoryLimit;
@@ -53,7 +54,7 @@ class DbRunner
             if ($this->connection) {
                 try {
                     $this->requireCleanup()->runRegular();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->logger->error($e->getMessage());
                 }
             }
@@ -75,7 +76,7 @@ class DbRunner
     /**
      * @param object $config
      * @return ExtendedPromiseInterface
-     * @throws \Exception
+     * @throws Exception
      */
     public function setDbConfigRequest($config)
     {
@@ -91,18 +92,18 @@ class DbRunner
                     try {
                         $this->requireCleanup()->runForStartup();
                         $this->setProcessReadyTitle();
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Process::setTitle('Icinga::vSphereDB::DB::failing');
                         $deferred->reject($e);
                     }
                     $deferred->resolve();
-                }, function (\Exception $e) use ($deferred) {
+                }, function (Exception $e) use ($deferred) {
                     $deferred->reject($e);
                 });
             });
 
             return $deferred->promise();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Process::setTitle('Icinga::vSphereDB::DB::failing');
             throw $e;
         }
@@ -259,7 +260,7 @@ class DbRunner
         $this->logger->debug('Connecting to DB');
         try {
             $this->disconnect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Ignore disconnection errors
         }
         $this->connection = new Db(new ConfigObject((array) $config));
@@ -297,7 +298,7 @@ class DbRunner
                 $this->logger->warning('Database has no schema, will be created');
             }
             $hasMigrations = $migrations->hasPendingMigrations();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return reject($e);
         }
         $deferred = new Deferred();
@@ -307,7 +308,7 @@ class DbRunner
             $this->loop->futureTick(function () use ($migrations, $deferred) {
                 try {
                     $migrations->applyPendingMigrations();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $deferred->reject($e);
                 }
                 $this->logger->notice('DB schema is ready');

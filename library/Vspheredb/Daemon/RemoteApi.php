@@ -14,6 +14,7 @@ use gipfl\Protocol\JsonRpc\JsonRpcConnection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use gipfl\Socket\UnixSocketInspection;
 use gipfl\Socket\UnixSocketPeer;
+use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceDbProxy;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceProcess;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceCurl;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceInfluxDb;
@@ -42,10 +43,12 @@ class RemoteApi implements EventEmitterInterface
 
     /** @var ApiConnectionHandler */
     protected $apiConnectionHandler;
-    /**
-     * @var CurlAsync
-     */
+
+    /** @var CurlAsync */
     protected $curl;
+
+    /** @var RpcNamespaceDbProxy */
+    protected $rpcNamespaceRpcProxy;
 
     public function __construct(
         ApiConnectionHandler $apiConnectionHandler,
@@ -57,12 +60,18 @@ class RemoteApi implements EventEmitterInterface
         $this->logger = $logger;
         $this->loop = $loop;
         $this->curl = $curl;
+        $this->rpcNamespaceRpcProxy = new RpcNamespaceDbProxy('db.');
     }
 
     public function run($socketPath, LoopInterface $loop)
     {
         $this->loop = $loop;
         $this->initializeControlSocket($socketPath);
+    }
+
+    public function setDbProcessRunner(?DbProcessRunner $dbProcessRunner)
+    {
+        $this->rpcNamespaceRpcProxy->setDbProcessRunner($dbProcessRunner);
     }
 
     protected function initializeControlSocket($path)
@@ -129,6 +138,7 @@ class RemoteApi implements EventEmitterInterface
             $handler->registerNamespace('vsphere', new RpcNamespaceVsphere($this->apiConnectionHandler));
             $handler->registerNamespace('influxdb', new RpcNamespaceInfluxDb($this->curl, $this->loop, $this->logger));
             $handler->registerNamespace('curl', new RpcNamespaceCurl($this->curl));
+            $handler->registerNamespace('db', $this->rpcNamespaceRpcProxy);
             if ($this->logger instanceof Logger) {
                 $handler->registerNamespace('logger', new RpcNamespaceLogger($this->logger));
             }

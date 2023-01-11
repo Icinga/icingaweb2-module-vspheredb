@@ -295,6 +295,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         });
         $dbRunner->run($this->loop)->then(function () use ($dbRunner) {
             $this->dbRunner = $dbRunner;
+            if ($this->remoteApi) {
+                $this->remoteApi->setDbProcessRunner($dbRunner);
+            }
             $this->loop->futureTick(function () {
                 $this->setDbState(self::STATE_IDLE);
             });
@@ -306,6 +309,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         if ($this->dbRunner) {
             $this->dbRunner->stop();
             $this->dbRunner = null;
+            if ($this->remoteApi) {
+                $this->remoteApi->setDbProcessRunner(null);
+            }
         }
     }
 
@@ -428,6 +434,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->curl = $curl;
         $this->apiConnectionHandler = $connection = new ApiConnectionHandler($curl, $logger);
         $this->remoteApi = new RemoteApi($connection, $curl, $loop, $logger);
+        if ($this->dbRunner) {
+            $this->remoteApi->setDbProcessRunner($this->dbRunner);
+        }
         StreamUtil::forwardEvents($this->remoteApi, $this, [RpcNamespaceProcess::ON_RESTART]);
         $connection->on(
             ApiConnectionHandler::ON_INITIALIZED_SERVER,
@@ -519,14 +528,14 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             return resolve();
         }
         if ($this->dbConfig === null) {
-            return $this->dbRunner->request('vspheredb.clearDbConfig')->then(function () {
+            return $this->dbRunner->request('db.clearDbConfig')->then(function () {
                 $this->setDbState(self::STATE_STOPPED);
             }, function (Exception $e) {
                 $this->logger->error('[db] clearing DB config failed: ' . $e->getMessage());
                 $this->setDbState(self::STATE_FAILED);
             });
         } else {
-            return $this->dbRunner->request('vspheredb.setDbConfig', [
+            return $this->dbRunner->request('db.setDbConfig', [
                 'config' => $this->dbConfig
             ]);
         }
