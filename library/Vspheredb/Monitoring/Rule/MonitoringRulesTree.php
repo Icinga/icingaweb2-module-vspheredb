@@ -49,18 +49,19 @@ class MonitoringRulesTree
 
     public function listParentUuidsFor($uuid): array
     {
-        if ($this->allNodes === null) {
-            $this->fetchTree();
-        }
-
         if ($uuid === MonitoringRuleSet::NO_OBJECT) {
             return [];
         }
 
-        $parents = [MonitoringRuleSet::NO_OBJECT];
+        if ($this->allNodes === null) {
+            $this->fetchTree();
+        }
+
+        $parents = [];
         while (isset($this->allNodes[$uuid]->parent)) {
             $parents[] = $uuid = $this->allNodes[$uuid]->parent->uuid;
         }
+        $parents[] = MonitoringRuleSet::NO_OBJECT;
 
         return $parents;
     }

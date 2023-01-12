@@ -66,6 +66,7 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 * FIX: root node modifications affected all object types (#475)
 * FIX: checks failing completely should not affect others (#465)
 * FIX: uptime check triggered false positives w/o threshold on top level (#447)
+* FIX: inheritance order for Monitoring Rule tree (#491)
 
 ### InfluxDB
 * FEATURE: Host and VM CPU and Memory information is now being shipped (#473)
