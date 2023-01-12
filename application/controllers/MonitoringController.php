@@ -14,8 +14,11 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTreeRenderer;
 use Icinga\Module\Vspheredb\Monitoring\Rule\RuleForm;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Form\FilterVCenterForm;
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblematicObjectTable;
+use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemTable;
+use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
@@ -26,15 +29,20 @@ class MonitoringController extends Controller
 {
     use AsyncControllerHelper;
 
+    protected $vCenterFilterForm;
+
     public function init()
     {
         parent::init();
         $action = $this->getRequest()->getActionName();
-        if (preg_match('/tree$/', $action) || $action === 'index' || $action === 'configuration') {
+        if (preg_match('/tree$/', $action) || in_array($action, ['index', 'configuration', 'history'])) {
             $tabs = $this->tabs();
             $tabs->add('index', [
                 'label' => $this->translate('Monitoring'),
                 'url' => 'vspheredb/monitoring'
+            ])->add('history', [
+                'label' => $this->translate('History'),
+                'url' => 'vspheredb/monitoring/history'
             ]);
             if ($this->hasPermission('vspheredb/admin')) {
                 $tabs->add('configuration', [
@@ -71,7 +79,7 @@ class MonitoringController extends Controller
         $this->addTitle($this->translate('Monitoring Rules'));
         $this->setAutorefreshInterval(20);
         $table = new MonitoringRuleProblemTable($this->db()->getDbAdapter());
-        $this->getRestrictionHelper()->restrictTable($table);
+        $this->filterByVCenterIfRequired($table);
         $table->renderTo($this);
     }
 
@@ -86,6 +94,15 @@ class MonitoringController extends Controller
         $rule = $this->params->getRequired('rule');
         $this->addTitle(sprintf('%s / %s (%s)', $ruleSet, $rule, $objectType));
         $table = new MonitoringRuleProblematicObjectTable($this->db(), $vCenter, $objectType, $ruleSet, $rule);
+        $table->renderTo($this);
+    }
+
+    public function historyAction()
+    {
+        $this->addTitle($this->translate('Monitoring Rules - Problem History'));
+        $this->setAutorefreshInterval(20);
+        $table = new MonitoringRuleProblemHistoryTable($this->db()->getDbAdapter());
+        $this->filterByVCenterIfRequired($table);
         $table->renderTo($this);
     }
 
@@ -262,5 +279,30 @@ class MonitoringController extends Controller
         }
 
         throw new RuntimeException("Unexpected object type: '$type'");
+    }
+
+    // Duplicated from ObjectsController
+    protected function filterByVCenterIfRequired(TableWithVCenterFilter $table)
+    {
+        $this->getRestrictionHelper()->restrictTable($table);
+        $this->controls()->prepend($this->getVCenterFilterForm());
+
+        if ($uuid = $this->params->get('vcenter')) {
+            $table->filterVCenter(VCenter::loadWithUuid($uuid, $this->db()));
+        }
+    }
+
+    // Duplicated from ObjectsController
+    protected function getVCenterFilterForm(): FilterVCenterForm
+    {
+        if ($this->vCenterFilterForm === null) {
+            $form = new FilterVCenterForm($this->db(), $this->Auth());
+            $form->allowAllVCenters();
+            $form->getAttributes()->add('style', 'float: right');
+            $form->handleRequest($this->getServerRequest());
+            $this->vCenterFilterForm = $form;
+        }
+
+        return $this->vCenterFilterForm;
     }
 }
