@@ -190,14 +190,14 @@ CREATE TABLE object (
 CREATE TABLE compute_resource (
   uuid VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
-  effective_cpu_mhz INT UNSIGNED NOT NULL,
-  effective_memory_size_mb BIGINT(20) UNSIGNED NOT NULL,
-  cpu_cores SMALLINT UNSIGNED NOT NULL,
-  cpu_threads SMALLINT UNSIGNED NOT NULL,
-  effective_hosts MEDIUMINT UNSIGNED NOT NULL,
-  hosts MEDIUMINT UNSIGNED NOT NULL,
-  total_memory_size_mb BIGINT(10) UNSIGNED NOT NULL,
-  total_cpu_mhz INT UNSIGNED NOT NULL,
+  effective_cpu_mhz INT UNSIGNED NULL DEFAULT NULL,
+  effective_memory_size_mb BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+  cpu_cores SMALLINT UNSIGNED NULL DEFAULT NULL,
+  cpu_threads SMALLINT UNSIGNED NULL DEFAULT NULL,
+  effective_hosts MEDIUMINT UNSIGNED NULL DEFAULT NULL,
+  hosts MEDIUMINT UNSIGNED NULL DEFAULT NULL,
+  total_memory_size_mb BIGINT(10) UNSIGNED NULL DEFAULT NULL,
+  total_cpu_mhz INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY(uuid),
   UNIQUE INDEX vcenter_uuid_uuid (vcenter_uuid, uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
@@ -965,4 +965,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (56, NOW());
+VALUES (57, NOW());
