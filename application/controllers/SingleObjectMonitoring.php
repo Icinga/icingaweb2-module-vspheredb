@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
+use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
@@ -15,6 +16,11 @@ trait SingleObjectMonitoring
 {
     protected function showMonitoringDetails(BaseDbObject $object)
     {
+        $history = $this->params->get('history');
+        if ($history) {
+            $this->showMonitoringHistory($object);
+            return;
+        }
         $inspect = $this->params->get('inspect');
         $runner = new CheckRunner($this->db());
         if ($inspect) {
@@ -22,6 +28,7 @@ trait SingleObjectMonitoring
         }
         $result = $runner->check($object);
         $this->content()->add($this->createMonitoringHint($object, $inspect));
+        $this->actions()->add($this->createMonitoringHistoryLink(false));
         $this->actions()->add($this->createMonitoringInspectionLink($inspect));
         $this->content()->add(Html::tag('pre', [
             'class' => 'logOutput',
@@ -30,6 +37,15 @@ trait SingleObjectMonitoring
         if ($this->Auth()->hasPermission('vspheredb/admin')) {
             $this->showRuleConfigurationHint($object);
         }
+    }
+
+    protected function showMonitoringHistory(BaseDbObject $object)
+    {
+        $this->setAutorefreshInterval(20);
+        $table = new MonitoringRuleProblemHistoryTable($this->db()->getDbAdapter());
+        $table->filterEntityUuid($object->get('uuid'));
+        $this->actions()->add($this->createMonitoringHistoryLink(true));
+        $table->renderTo($this);
     }
 
     protected function showRuleConfigurationHint(BaseDbObject $object)
@@ -89,6 +105,25 @@ trait SingleObjectMonitoring
                 $this->url()->with('inspect', true),
                 null,
                 ['class' => 'icon-services']
+            );
+        }
+    }
+
+    protected function createMonitoringHistoryLink(?bool $inspect = null): Link
+    {
+        if ($inspect) {
+            return Link::create(
+                $this->translate('Show current state'),
+                $this->url()->without('history'),
+                null,
+                ['class' => 'icon-left-big']
+            );
+        } else {
+            return Link::create(
+                $this->translate('Show history'),
+                $this->url()->with('history', true),
+                null,
+                ['class' => 'icon-history']
             );
         }
     }
