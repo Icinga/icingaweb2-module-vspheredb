@@ -28,6 +28,7 @@ v1.6.0 (unreleased)
 * FIX: add safety checks and give UNKNOWN for ZERO capacity (#446)
 * FIX: restoring defaults for main node removed main node of all types (#470)
 * FIX: root node modifications affected all object types (#475)
+* FIX: checks failing completely should not affect others (#465)
 
 ### InfluxDB
 * FEATURE: Host and VM CPU and Memory information is now being shipped (#473)

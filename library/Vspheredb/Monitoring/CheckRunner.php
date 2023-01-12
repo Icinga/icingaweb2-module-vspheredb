@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring;
 
+use Exception;
 use gipfl\Cli\Screen;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
@@ -137,7 +138,14 @@ class CheckRunner
                 if ($this->inspect) {
                     $ruleResult->prependOutput($this->light(rtrim(PlainSettingsRenderer::render($ruleSettings))));
                 }
-                foreach ($rule->checkObject($object, $ruleSettings) as $result) {
+                try {
+                    $results = $rule->checkObject($object, $ruleSettings);
+                } catch (Exception $e) {
+                    $results = [
+                        new SingleCheckResult(new CheckPluginState(CheckPluginState::UNKNOWN), $e->getMessage())
+                    ];
+                }
+                foreach ($results as $result) {
                     $ruleResult->addResult($result);
                 }
             }
