@@ -15,6 +15,7 @@ v1.6.0 (unreleased)
 * FEATURE: overview tables allow to switch vCenter (#481)
 * FIX: locale-dependent memory capacity issue has been fixed (#458)
 * FIX: enabling/disabling connections now happens instantly (#487)
+* FIX: HTML5 UI link now also works for v6.7, worked for 7.x only (#471)
 
 ### Monitoring Rules
 * FEATURE: grant read-only access w/o admin permissions (#451)

@@ -17,8 +17,8 @@ class Html5UiLink extends BaseHtmlElement
 {
     use TranslationHelper;
 
-    const QUERYSTRING_V7 = '/ui/#?extensionId=%s&objectId=%s&navigator=%s';
-    const V6_QUERYSTRING = [
+    const QUERYSTRING = '/ui/#?extensionId=%s&objectId=%s&navigator=%s';
+    const QUERYSTRING_LEGACY = [
         HostSystem::class     => '/ui/#/host/%s',
         VirtualMachine::class => '/ui/#/host/vms/%s',
     ];
@@ -28,11 +28,11 @@ class Html5UiLink extends BaseHtmlElement
     ];
 
     // left-hand tree view:
-    const V7_NAVIGATOR = [
+    const NAVIGATOR = [
         HostSystem::class     => 'vsphere.core.viTree.hostsAndClustersView',
         VirtualMachine::class => 'vsphere.core.viTree.vmsAndTemplatesView',
     ];
-    const V7_EXTENSION = [
+    const EXTENSION = [
         // Choose main detail view:
         //  $extension = 'vsphere.core.vm.monitor'; // Shows 'Monitor' Tab
         // $extension = 'vsphere.core.inventory.serverObjectViewsExtension';
@@ -57,10 +57,10 @@ class Html5UiLink extends BaseHtmlElement
     protected static function prepareUrl(VCenter $vCenter, BaseDbObject $object)
     {
         $url = self::prepareBaseUrl($vCenter);
-        if (self::isV7($vCenter)) {
-            $url .= self::linkV7($object, $vCenter);
+        if (self::isLegacy($vCenter)) {
+            $url .= self::linkLegacy($object);
         } else {
-            $url .= self::linkV6($object);
+            $url .= self::linkHtml5Ui($object, $vCenter);
         }
 
         return $url;
@@ -71,23 +71,23 @@ class Html5UiLink extends BaseHtmlElement
         return 'https://' . $vCenter->getFirstServer(false)->get('host');
     }
 
-    protected static function isV7(VCenter $vCenter)
+    protected static function isLegacy(VCenter $vCenter)
     {
-        return version_compare($vCenter->get('version'), '7.0.0', '>=');
+        return version_compare($vCenter->get('version'), '6.7.0', '<');
     }
 
-    protected static function linkV6(BaseDbObject $object)
+    protected static function linkLegacy(BaseDbObject $object)
     {
-        return sprintf(self::pick(self::V6_QUERYSTRING, $object), rawurlencode($object->object()->get('moref')));
+        return sprintf(self::pick(self::QUERYSTRING_LEGACY, $object), rawurlencode($object->object()->get('moref')));
     }
 
-    protected static function linkV7(BaseDbObject $object, VCenter $vCenter)
+    protected static function linkHtml5Ui(BaseDbObject $object, VCenter $vCenter)
     {
         return sprintf(
-            self::QUERYSTRING_V7,
-            rawurlencode(self::pick(self::V7_EXTENSION, $object)),
+            self::QUERYSTRING,
+            rawurlencode(self::pick(self::EXTENSION, $object)),
             rawurlencode(self::prepareV7ObjectId($vCenter, $object)),
-            rawurlencode(self::pick(self::V7_NAVIGATOR, $object))
+            rawurlencode(self::pick(self::NAVIGATOR, $object))
         );
     }
 
