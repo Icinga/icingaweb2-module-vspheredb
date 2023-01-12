@@ -67,29 +67,66 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
                 assert($object instanceof VirtualMachine);
                 $stats = VmQuickStats::loadFor($object);
             }
-            $results[] = new SingleCheckResult($uptimeState, sprintf(
-                'System booted %s ago',
-                DateFormatter::formatDuration($stats->get('uptime'))
-            ));
-            $minUptime = $settings->get('warning_for_uptime_less_than_seconds');
-            if ($stats->get('uptime') < $minUptime) {
-                $uptimeState->raiseState(CheckPluginState::WARNING);
+            $uptime = $stats->get('uptime');
+            $output = sprintf('System booted %s ago', DateFormatter::formatDuration($uptime));
+
+            $problemInfos = [];
+            $info = null;
+
+            foreach ([
+                'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING,
+                'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL,
+            ] as $setting => $errorState) {
+                $min = $settings->get($setting);
+                if ($min) {
+                    $this->checkMin($uptimeState, $uptime, $min, $errorState, $info);
+                }
             }
-            $minUptime = $settings->get('critical_for_uptime_less_than_seconds');
-            if ($stats->get('uptime') < $minUptime) {
-                $uptimeState->raiseState(CheckPluginState::CRITICAL);
+
+            if ($info) {
+                $problemInfos[] = $info;
+                $info = null;
             }
-            $maxUptime = $settings->get('warning_for_uptime_greater_than_days');
-            if ($stats->get('uptime') > $maxUptime * 86400) {
-                $uptimeState->raiseState(CheckPluginState::WARNING);
+            foreach ([
+                 'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING,
+                 'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL,
+             ] as $setting => $errorState) {
+                $min = $settings->get($setting);
+                if ($min) {
+                    $this->checkMax($uptimeState, $uptime, $min * 86400, $errorState, $info);
+                }
             }
-            $maxUptime = $settings->get('critical_for_uptime_greater_than_days');
-            if ($stats->get('uptime') > $maxUptime * 86400) {
-                $uptimeState->raiseState(CheckPluginState::CRITICAL);
+
+            if ($info) {
+                $problemInfos[] = $info;
             }
+            if (! empty($problemInfos)) {
+                $output .= ' (' . implode(', ', $problemInfos) . ')';
+            }
+            $results[] = new SingleCheckResult($uptimeState, $output);
         }
 
         return $results;
+    }
+
+    protected function checkMax(CheckPluginState $uptimeState, $value, $threshold, $errorState, &$info)
+    {
+        if ($threshold) {
+            if ($value >= $threshold) {
+                $uptimeState->raiseState($errorState);
+                $info = sprintf('>= %s ago', DateFormatter::formatDuration($threshold));
+            }
+        }
+    }
+
+    protected function checkMin(CheckPluginState $uptimeState, $value, $threshold, $errorState, &$info)
+    {
+        if ($threshold) {
+            if ($value < $threshold) {
+                $uptimeState->raiseState($errorState);
+                $info = sprintf('less than %s ago', DateFormatter::formatDuration($threshold));
+            }
+        }
     }
 
     protected function getStatusMessageForPowerState($state, $what): string

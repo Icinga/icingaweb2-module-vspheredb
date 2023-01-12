@@ -56,11 +56,16 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 
 ![Single Object Monitoring History](screenshot/84_changelog/v1.6.0/84-16-07_Single-Object-Monitoring-History.png)
 
+* FEATURE: uptime monitoring shows configured thresholds with output (#490)
+
+![Power State Threshold in Check Output](screenshot/84_changelog/v1.6.0/84-16-08_Power-State-Threshold-in-Check-Output.png)
+
 * FIX: flapping issues (mostly for Host Problems) have been addressed (#453)
 * FIX: add safety checks and give UNKNOWN for ZERO capacity (#446)
 * FIX: restoring defaults for main node removed main node of all types (#470)
 * FIX: root node modifications affected all object types (#475)
 * FIX: checks failing completely should not affect others (#465)
+* FIX: uptime check triggered false positives w/o threshold on top level (#447)
 
 ### InfluxDB
 * FEATURE: Host and VM CPU and Memory information is now being shipped (#473)
