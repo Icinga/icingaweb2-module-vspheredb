@@ -146,7 +146,7 @@ class DaemonController extends Controller
                 $table->add(Table::row([
                     $connection->url,
                     isset($connection->request_header) ? Html::tag('a', [
-                        'title' => $connection->request_header
+                        'title' => preg_replace('/^(Cookie:).*$/im', '\1 ***', $connection->request_header)
                     ], preg_replace('/\n.+/s', '', $connection->request_header)) : '-',
                     \Icinga\Util\Format::seconds(floor($connection->total_time))
                 ]));
