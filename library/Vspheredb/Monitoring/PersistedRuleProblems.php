@@ -77,6 +77,7 @@ class PersistedRuleProblems
         MonitoringRuleSet::clearPreloadCache();
         VmQuickStats::clearPreloadCache();
         $this->dropObsoleteRows();
+        $this->deleteOutdatedHistoryRows();
         $this->checked = null;
         $this->currentState = null;
     }
@@ -247,5 +248,12 @@ class PersistedRuleProblems
 
             throw $e;
         }
+    }
+
+    protected function deleteOutdatedHistoryRows()
+    {
+        $db = $this->db->getDbAdapter();
+        $expiration = 86400 * 90;
+        $db->delete(self::TABLE, $db->quoteInto('ts_changed_ms < ?', (time() - $expiration) * 1000));
     }
 }
