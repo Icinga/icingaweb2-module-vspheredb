@@ -33,8 +33,8 @@ class AlarmsController extends Controller
         $day = $this->params->shift('day');
 
         $table = new AlarmHistoryTable($this->db());
-        $dayStamp = strtotime($day);
         if ($day) {
+            $dayStamp = strtotime($day);
             $this->addTitle('Alarm History on %s', DateFormatter::formatDate($dayStamp));
             $table->getQuery()->where(
                 'ts_event_ms >= ?',
