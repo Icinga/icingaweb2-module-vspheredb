@@ -4,6 +4,19 @@
 v1.6.0 (unreleased)
 -------------------
 
+This release brings performance improvements, ships new metrics to InfluxDB
+and some vendor images for Cisco UCS. Restricted users now have access to more
+views, all overview tables can now be filtered by vCenter.
+
+Monitoring Rule problems are now tracking their very own problem history, and
+Rule changes take effect immediately. Bugs related to the configuration tree
+have been addressed. vSphere Tags are being collected since v1.5, and are now
+being shown in the UI and exported to the Icinga Director.
+
+### Upgrading
+
+Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
 ### Background Daemon
 * FIX: do not crash when accessing /proc/<pid> is restricted (#444)
 * FIX: checking last event key was too slow (#445)
@@ -11,9 +24,21 @@ v1.6.0 (unreleased)
 
 ### UI
 * FEATURE: some vendor images for Cisco UCS have been linked (#472)
+
+![Cisco UCS](screenshot/84_changelog/v1.6.0/84-16-01_cisco-UCS.png)
+
 * FEATURE: Tags are now shown together with Custom Values (#478)
+
+![Custom Tags](screenshot/84_changelog/v1.6.0/84-16-02_Custom-Tags.png)
+
 * FEATURE: overview tables now offer a "vCenter / ESXi" column (#480)
+
+![vCenter/ESXi column](screenshot/84_changelog/v1.6.0/84-16-03_vCenter-Column.png)
+
 * FEATURE: overview tables allow to switch vCenter (#481)
+
+![vCenter Filter](screenshot/84_changelog/v1.6.0/84-16-04_vCenter-filter.png)
+
 * FIX: locale-dependent memory capacity issue has been fixed (#458)
 * FIX: enabling/disabling connections now happens instantly (#487)
 * FIX: HTML5 UI link now also works for v6.7, worked for 7.x only (#471)
@@ -24,7 +49,13 @@ v1.6.0 (unreleased)
 * FEATURE: rule changes now trigger an immediate overview recalculation (#482)
 * FEATURE: history is being cleaned up after 3 months (#484)
 * FEATURE: there is now a history tracking state changes (#483, #488)
+
+![Monitoring Rule History](screenshot/84_changelog/v1.6.0/84-16-05_Monitoring-Rule-History.png)
+
 * FEATURE: history can be shown for single objects too (#489)
+
+![Single Object Monitoring History](screenshot/84_changelog/v1.6.0/84-16-07_Single-Object-Monitoring-History.png)
+
 * FIX: flapping issues (mostly for Host Problems) have been addressed (#453)
 * FIX: add safety checks and give UNKNOWN for ZERO capacity (#446)
 * FIX: restoring defaults for main node removed main node of all types (#470)
@@ -33,6 +64,8 @@ v1.6.0 (unreleased)
 
 ### InfluxDB
 * FEATURE: Host and VM CPU and Memory information is now being shipped (#473)
+
+![InfluxDB Metrics](screenshot/84_changelog/v1.6.0/84-16-06_InfluxDB-Metrics.png)
 
 ### Integrations
 * FEATURE: Director Import Source now ships UUIDs for Datastores (#468)
