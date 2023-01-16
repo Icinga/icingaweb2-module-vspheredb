@@ -21,6 +21,7 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 * FIX: do not crash when accessing /proc/<pid> is restricted (#444)
 * FIX: checking last event key was too slow (#445)
 * FIX: support inaccessible Compute Resources with NULL values (#467)
+* FIX: we no longer call RefreshStorageInfo() to not generate tasks (#495)
 
 ### UI
 * FEATURE: some vendor images for Cisco UCS have been linked (#472)

@@ -155,7 +155,8 @@ class ObjectSync implements DaemonTask
             $this->runTasks($this->slowTasks);
         });
         $this->timers[] = $this->loop->addPeriodicTimer(300, function () {
-            $this->refreshOutdatedDatastores();
+            // Disabled for now, VMware-admins do not want to see tasks
+            // $this->refreshOutdatedDatastores();
         });
         $this->timers[] = $this->loop->addPeriodicTimer(2, function () {
             $this->runTasks([VmEventHistorySyncTask::class]);
