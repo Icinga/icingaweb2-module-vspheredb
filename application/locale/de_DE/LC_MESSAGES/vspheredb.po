@@ -1,4 +1,4 @@
-# Icinga Module for VMware - vSphereDB.
+# Icinga vSphere® Integration.
 # Copyright (C) 2022 Icinga GmbH
 # This file is distributed under the same license as vSphereDB Module.
 # Thomas Gelf <thomas@gelf.net>, 2022.
@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: vSphereDB Module (master)\n"
 "Report-Msgid-Bugs-To: https://github.com/Icinga/icingaweb2-module-vspheredb/issues\n"
-"POT-Creation-Date: 2022-10-10 23:05+0000\n"
-"PO-Revision-Date: 2022-10-11 01:15+0200\n"
+"POT-Creation-Date: 2023-01-16 09:50+0000\n"
+"PO-Revision-Date: 2023-01-16 11:00+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -41,6 +41,7 @@ msgstr "%d Module, %d Kerne, %d Threads"
 msgid "%s %s took place during the last 7 days"
 msgstr "%s %s fanden während der letzten 7 Tage statt"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:178
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:185
 #, php-format
 msgid "%s (detected %s)"
@@ -51,15 +52,25 @@ msgstr "%s (%s erkannt)"
 msgid "%s datastores"
 msgstr "%s Datenspeicher"
 
-#: application/controllers/EventsController.php:102
+#: library/Vspheredb/Web/Widget/CalendarForEvents.php:41
 #, php-format
 msgid "%s events, max %s per day"
 msgstr "%s Ereignisse, maximal %s pro Tag"
+
+#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemHistoryTable.php:56
+#, php-format
+msgid "%s on %s"
+msgstr "%s auf %s"
 
 #: library/Vspheredb/Web/Widget/UsageBar.php:91
 #, php-format
 msgid "%s used"
 msgstr "%s benutzt"
+
+#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemHistoryTable.php:39
+#, php-format
+msgid "( former state: [%s] )"
+msgstr "( vorheriger Zustand: [%s] )"
 
 #: application/controllers/SwitchesController.php:20
 msgid "(Distributed) Virtual Switches"
@@ -69,26 +80,25 @@ msgstr "(Verteilte) virtuelle Switches"
 msgid "(keep as stored)"
 msgstr "(gespeichertes behalten)"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:100
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:105
 msgid "- any -"
 msgstr "- jedes -"
 
-#: library/Vspheredb/Web/Form/FilterHostParentForm.php:57
+#: library/Vspheredb/Web/Form/FilterHostParentForm.php:60
 msgid "- filter by event type -"
 msgstr "- nach Ereignistyp filtern -"
 
-#: library/Vspheredb/Web/Form/FilterHostParentForm.php:70
+#: library/Vspheredb/Web/Form/FilterHostParentForm.php:73
 msgid "- filter by parent -"
 msgstr "- nach Elternknoten filtern -"
 
-#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:85
 #: library/Vspheredb/Web/Form/LogLevelForm.php:56
-#: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:76
-#: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:95
-#: library/Vspheredb/Web/Form/VCenterServerForm.php:127
 #: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:282
-#: library/Vspheredb/Web/Form/Element/VCenterSelection.php:27
-#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:75
+#: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:76
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:127
+#: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:95
+#: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:85
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:84
 msgid "- please choose -"
 msgstr "- bitte wählen -"
 
@@ -105,19 +115,20 @@ msgstr "Eine neue Verbindung wurde erfolgreich erstellt"
 msgid "API Type"
 msgstr "API-Typ"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:40
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:41
 #: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:53
 #: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:37
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:47
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:54
 msgid "API Version"
 msgstr "API-Version"
 
-#: library/Vspheredb/Daemon/ConnectionState.php:143
+#: library/Vspheredb/Daemon/ConnectionState.php:123
 #, php-format
 msgid "API connection with %s is failing"
 msgstr "API-Verbindung mit %s schlägt fehl"
 
-#: library/Vspheredb/Daemon/ConnectionState.php:128
+#: library/Vspheredb/Daemon/ConnectionState.php:108
 #, php-format
 msgid "API connection with %s is fine"
 msgstr "API-Verbindung mit %s ist in Ordnung"
@@ -126,7 +137,7 @@ msgstr "API-Verbindung mit %s ist in Ordnung"
 msgid "Active"
 msgstr "Aktiv"
 
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:143
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:157
 msgid "Active Memory"
 msgstr "Aktiver Speicher"
 
@@ -134,9 +145,9 @@ msgstr "Aktiver Speicher"
 msgid "Active Memory Usage"
 msgstr "Auslastung Aktiver Speicher"
 
-#: application/controllers/PerfdataController.php:50
 #: application/controllers/ConfigurationController.php:87
 #: application/controllers/ConfigurationController.php:143
+#: application/controllers/PerfdataController.php:55
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -144,7 +155,7 @@ msgstr "Hinzufügen"
 msgid "Add Connection"
 msgstr "Verbindung hinzufügen"
 
-#: application/controllers/PerfdataController.php:82
+#: application/controllers/PerfdataController.php:87
 msgid "Add Consumer"
 msgstr "Verbraucher hinzufügen"
 
@@ -156,19 +167,24 @@ msgstr "Zusätzliche Informationen"
 msgid "Address"
 msgstr "Adresse"
 
-#: application/controllers/AlarmsController.php:78
-#: application/controllers/EventsController.php:164
-#: application/controllers/VmController.php:130
+#: application/controllers/AlarmsController.php:63
+msgid "Alarm Heatmap"
+msgstr "Alarm-Heatmap"
+
+#: application/controllers/EventsController.php:113
+#: application/controllers/AlarmsController.php:85
+#: application/controllers/VmController.php:131
 msgid "Alarms"
 msgstr "Alarmierungen"
 
-#: library/Vspheredb/Web/Widget/ToggleFlagList.php:125
 #: library/Vspheredb/Web/Widget/AdditionalTableActions.php:127
+#: library/Vspheredb/Web/Widget/ToggleFlagList.php:125
 msgid "All"
 msgstr "Alle"
 
+#: library/Vspheredb/Web/Form/Element/VCenterSelection.php:32
 #: library/Vspheredb/Monitoring/Rule/MonitoringRulesTree.php:44
-#: library/Vspheredb/Monitoring/Rule/MonitoringRulesTree.php:71
+#: library/Vspheredb/Monitoring/Rule/MonitoringRulesTree.php:72
 msgid "All vCenters"
 msgstr "Alle vCenter"
 
@@ -180,7 +196,7 @@ msgstr "Erlauben, vCenter-Verbindungen zu konfigurieren"
 msgid "Annotation"
 msgstr "Anmerkungen"
 
-#: application/controllers/AnomaliesController.php:14
+#: application/controllers/AnomaliesController.php:15
 msgid "Anomalies"
 msgstr "Anomalien"
 
@@ -205,20 +221,23 @@ msgstr "Nur für bestimmte Platten anwenden"
 msgid "Arbitrary unique name for this Performance Data Consumer"
 msgstr "Beliebiger eindeutiger Name für diesen Leistungsdatenverbraucher"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:43
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:50
 msgid "Attempt to establish a connection to your InfluxDB instance"
 msgstr "Versuche eine Verbindung zur InfluxDB-Instanz herzustellen"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:53
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:60
 msgid "Autodetect"
 msgstr "Automatisch erkennen"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:172
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:179
 #, php-format
 msgid "Autodetect: %s API, Version is %s"
 msgstr "Automatisch erkannt: API %s, Version ist %s"
 
-#: application/controllers/PerfdataController.php:31
+#: application/controllers/PerfdataController.php:36
 msgid "Available Performance Counters"
 msgstr "Verfügbare Leistungsindikatoren"
 
@@ -227,7 +246,7 @@ msgstr "Verfügbare Leistungsindikatoren"
 msgid "Average Number %s Reads / %s Writes"
 msgstr "Durchschnittliche Anzahl %s Lese- / %s Schreiboperationen"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:32
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:33
 msgid "BIOS Release Date"
 msgstr "BIOS-Veröffentlichungsdatum"
 
@@ -235,8 +254,8 @@ msgstr "BIOS-Veröffentlichungsdatum"
 msgid "BIOS UUID"
 msgstr "BIOS-UUID"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:31
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:52
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:32
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:53
 msgid "BIOS Version"
 msgstr "BIOS-Version"
 
@@ -245,17 +264,17 @@ msgstr "BIOS-Version"
 msgid "Back"
 msgstr "Zurück"
 
-#: application/controllers/MonitoringController.php:52
+#: application/controllers/MonitoringController.php:66
 msgid "Back to overview"
 msgstr "Zurück zur Übersicht"
 
-#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:26
 #: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:53
+#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:26
 msgid "Backup folder"
 msgstr "Datensicherungsverzeichnis"
 
-#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:25
 #: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:47
+#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:25
 msgid "Backup host"
 msgstr "Datensicherungsserver"
 
@@ -263,34 +282,36 @@ msgstr "Datensicherungsserver"
 msgid "Backup-Tools"
 msgstr "Datensicherungswerkzeuge"
 
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:154
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:168
 msgid "Balloon"
 msgstr "Blase"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:38
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:45
 msgid "Base URL"
 msgstr "Basis-URL"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:76
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:85
 msgid "Better state wins"
 msgstr "Besserer Zustand gewinnt"
 
-#: application/controllers/AnomaliesController.php:15
+#: application/controllers/AnomaliesController.php:16
 msgid "Bios UUID"
 msgstr "Bios-UUID"
 
 #: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:136
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:147
 #: library/Vspheredb/Web/Table/Object/HostHardwareInfoTable.php:35
+#: library/Vspheredb/Web/Widget/UsageSummary.php:31
 msgid "CPU"
 msgstr "Prozessor"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:59
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:60
 msgid "CPU Cores"
 msgstr "Prozessorkerne"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:43
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:133
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:147
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:44
 #: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:31
 msgid "CPU Usage"
 msgstr "Prozessornutzung"
@@ -299,8 +320,8 @@ msgstr "Prozessornutzung"
 msgid "CPUs"
 msgstr "Prozessoren"
 
-#: application/controllers/AlarmsController.php:22
 #: application/controllers/EventsController.php:28
+#: application/controllers/AlarmsController.php:25
 msgid "Calendar"
 msgstr "Kalender"
 
@@ -309,21 +330,21 @@ msgstr "Kalender"
 msgid "Calendar Week %d"
 msgstr "Kalenderwoche %d"
 
-#: library/Vspheredb/Web/Form/DisableServerForm.php:34
-#: library/Vspheredb/Web/Form/EnableServerForm.php:34
 #: library/Vspheredb/Web/Form/LogLevelForm.php:53
 #: library/Vspheredb/Web/Form/RestartDaemonForm.php:35
 #: library/Vspheredb/Web/Form/DeleteVCenterForm.php:54
+#: library/Vspheredb/Web/Form/DisableServerForm.php:34
+#: library/Vspheredb/Web/Form/EnableServerForm.php:34
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:37
 #: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:154
 #: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:181
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:165
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:192
+#: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:37
 #: library/Vspheredb/Web/Widget/UsageBar.php:96
-#: application/controllers/DatastoreController.php:51
+#: application/controllers/DatastoreController.php:53
 msgid "Capacity"
 msgstr "Kapazität"
 
@@ -331,7 +352,7 @@ msgstr "Kapazität"
 msgid "Chart"
 msgstr "Diagramm"
 
-#: application/controllers/MonitoringController.php:109
+#: application/controllers/MonitoringController.php:135
 #, php-format
 msgid "Check our %s for instructions of how to set them up"
 msgstr ""
@@ -372,13 +393,13 @@ msgid "Clusters"
 msgstr "Cluster"
 
 #: library/Vspheredb/Web/Table/Objects/ComputeClusterHostSummaryTable.php:19
-#: application/controllers/ComputeClusterController.php:56
 #: application/controllers/ResourcesController.php:45
 #: application/controllers/ResourcesController.php:72
+#: application/controllers/ComputeClusterController.php:57
 msgid "Compute Cluster"
 msgstr "Rechencluster"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:91
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:96
 msgid "Compute Resource"
 msgstr "Rechenressourcen"
 
@@ -387,8 +408,8 @@ msgid "Compute Resource Usage"
 msgstr "Auslastung der Rechenressourcen"
 
 #: configuration.php:41
-#: application/controllers/MonitoringController.php:37
 #: application/controllers/ConfigurationController.php:40
+#: application/controllers/MonitoringController.php:49
 msgid "Configuration"
 msgstr "Konfiguration"
 
@@ -400,18 +421,18 @@ msgstr "Konfigurationsrichtlinie"
 msgid "Configuration has been stored"
 msgstr "Die Konfiguration wurde gespeichert"
 
-#: library/Vspheredb/Daemon/ConnectionState.php:123
+#: library/Vspheredb/Daemon/ConnectionState.php:103
 #, php-format
 msgid "Connections to %s have been disabled"
 msgstr "Verbindungen zu %s wurden deaktiviert"
 
-#: library/Vspheredb/Daemon/ConnectionState.php:118
+#: library/Vspheredb/Daemon/ConnectionState.php:98
 #, php-format
 msgid "Connections to %s have been enabled, but none is currently active"
 msgstr "Verbindungen zu %s wurden aktiviert, gegenwärtig ist aber keine aktiv"
 
 #: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:94
-#: application/controllers/PerfdataController.php:85
+#: application/controllers/PerfdataController.php:90
 msgid "Consumer"
 msgstr "Verbraucher"
 
@@ -424,9 +445,9 @@ msgstr "Kerne"
 msgid "Counters"
 msgstr "Indikatoren"
 
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:164
 #: library/Vspheredb/Web/Form/ChooseInfluxDatabaseForm.php:158
 #: library/Vspheredb/Web/Form/FormElementStealer.php:38
-#: library/Vspheredb/Web/Form/VCenterServerForm.php:164
 #: application/controllers/ConfigurationController.php:168
 #: application/controllers/ConfigurationController.php:186
 msgid "Create"
@@ -448,17 +469,29 @@ msgstr "Eine neue vCenter-ESXi-Verbindung anlegen"
 msgid "Create schema"
 msgstr "Schema erstellen"
 
-#: application/controllers/MonitoringController.php:73
+#: application/controllers/MonitoringController.php:88
 msgid "Current Problems"
 msgstr "Aktuelle Probleme"
+
+#: application/controllers/MonitoringController.php:238
+msgid "Current Problems have been recalculated"
+msgstr "Aktuelle Probleme wurden neu berechnet"
+
+#: application/controllers/MonitoringController.php:241
+msgid ""
+"Current problems have NOT been recalculated, they will be applied with a "
+"short delay"
+msgstr ""
+"Aktuelle Probleme wurden NICHT neu berechnet, sie werden mit kurzer "
+"Verzögerung angewandt werden"
 
 #: application/controllers/DaemonController.php:157
 msgid "Currently there are no requests pending"
 msgstr "Es gibt gegenwärtig keine laufenden Anfragen"
 
-#: library/Vspheredb/Web/Widget/CustomValueDetails.php:38
-msgid "Custom Values"
-msgstr "Benutzerdefinierte Werte"
+#: library/Vspheredb/Web/Widget/CustomValueDetails.php:41
+msgid "Custom Values and Tags"
+msgstr "Benutzerdefinierte Werte und Tags"
 
 #: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:88
 msgid "Custom Variables"
@@ -512,7 +545,7 @@ msgstr "Data Mover"
 msgid "Data Transmitted"
 msgstr "Daten übertragen"
 
-#: application/controllers/MonitoringController.php:181
+#: application/controllers/MonitoringController.php:209
 #, php-format
 msgid "DataCenter Monitoring Rules for %s: %s (%s)"
 msgstr "Rechenzentrumsüberwachungsregeln für %s: %s (%s)"
@@ -537,9 +570,9 @@ msgstr "Rechenzentrum: %s"
 msgid "Datacenters"
 msgstr "Rechenzentren"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:92
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:97
 #: library/Vspheredb/Web/Table/VmDatastoresTable.php:54
-#: application/controllers/DatastoreController.php:99
+#: application/controllers/DatastoreController.php:103
 msgid "Datastore"
 msgstr "Datenspeicher"
 
@@ -557,37 +590,37 @@ msgid "Datastore: %s"
 msgstr "Datenspeicher: %s"
 
 #: configuration.php:28
-#: library/Vspheredb/Web/Controller/ObjectsController.php:174
+#: library/Vspheredb/Web/Controller/ObjectsController.php:175
+#: application/controllers/OverviewController.php:21
+#: application/controllers/MonitoringController.php:58
+#: application/controllers/MonitoringController.php:131
+#: application/controllers/MonitoringController.php:278
 #: application/controllers/DatastoresController.php:19
 #: application/controllers/DatastoresController.php:29
-#: application/controllers/OverviewController.php:21
-#: application/controllers/MonitoringController.php:46
-#: application/controllers/MonitoringController.php:105
-#: application/controllers/MonitoringController.php:230
 msgid "Datastores"
 msgstr "Datenspeicher"
 
-#: application/controllers/PerfdataController.php:83
+#: application/controllers/PerfdataController.php:88
 msgid "Define a new Performance Data Consumer"
 msgstr "Definiere einen neuen Leistungsdatenverbraucher"
 
-#: application/controllers/MonitoringController.php:102
+#: application/controllers/MonitoringController.php:128
 #, php-format
 msgid "Define rules for %s, %s and %s"
 msgstr "Definiere Regeln für %s, %s und %s"
 
-#: application/controllers/MonitoringController.php:107
+#: application/controllers/MonitoringController.php:133
 msgid "Defining Check Commands"
 msgstr "Definiere Checkkommandos"
 
-#: application/controllers/MonitoringController.php:100
+#: application/controllers/MonitoringController.php:126
 msgid "Defining Rules"
 msgstr "Definiere Regeln"
 
-#: library/Vspheredb/Web/Form/FormElementStealer.php:57
-#: library/Vspheredb/Web/Form/VCenterServerForm.php:168
 #: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:146
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:168
 #: library/Vspheredb/Web/Form/DeleteVCenterForm.php:52
+#: library/Vspheredb/Web/Form/FormElementStealer.php:57
 msgid "Delete"
 msgstr "Löschen"
 
@@ -606,8 +639,8 @@ msgstr ""
 "Ereignisse) ist dieser Schritt durch die Definition einer neuen "
 "Serververbundung zu diesem vCenter oder ESXi-Host umkehrbar."
 
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:152
-#: library/Vspheredb/Web/Widget/ServiceTagRenderer.php:47
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:166
+#: library/Vspheredb/Web/Widget/ServiceTagRenderer.php:50
 msgid "Dell Support Page"
 msgstr "Hilfestellungsseite von Dell"
 
@@ -654,7 +687,7 @@ msgstr "Angezeigter Name"
 msgid "Do nothing"
 msgstr "Nichts tun"
 
-#: application/controllers/MonitoringController.php:111
+#: application/controllers/MonitoringController.php:137
 msgid "Documentation"
 msgstr "Dokumentation"
 
@@ -690,6 +723,14 @@ msgstr "Aktiv"
 msgid "Error"
 msgstr "Fehler"
 
+#: application/controllers/MonitoringController.php:247
+msgid ""
+"Error when triggering problem recalculation, changes will be applied with a "
+"short delay"
+msgstr ""
+"Beim Ausführen der Problem-Neuberechnung ist ein Fehler aufgetreten, die "
+"Änderungen werden mit kurzer Verzögerung angewandt"
+
 #: application/controllers/EventsController.php:86
 msgid "Event HeatMap"
 msgstr "Ereignis-Heatmap"
@@ -698,11 +739,11 @@ msgstr "Ereignis-Heatmap"
 msgid "Event History"
 msgstr "Ereignisverlauf"
 
-#: application/controllers/AlarmsController.php:74
-#: application/controllers/DatastoreController.php:103
-#: application/controllers/EventsController.php:161
-#: application/controllers/HostController.php:150
-#: application/controllers/VmController.php:126
+#: application/controllers/EventsController.php:110
+#: application/controllers/HostController.php:151
+#: application/controllers/DatastoreController.php:107
+#: application/controllers/AlarmsController.php:81
+#: application/controllers/VmController.php:127
 msgid "Events"
 msgstr "Ereignisse"
 
@@ -710,7 +751,7 @@ msgstr "Ereignisse"
 msgid "Excluded"
 msgstr "Ausgeschlossen"
 
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:68
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:70
 msgid "Failed to load related host"
 msgstr "Zugehöriger Host konnte nicht geladen werden"
 
@@ -718,28 +759,28 @@ msgstr "Zugehöriger Host konnte nicht geladen werden"
 msgid "File content"
 msgstr "Dateiinhalt"
 
-#: application/controllers/MonitoringController.php:188
+#: application/controllers/MonitoringController.php:216
 #, php-format
 msgid "Folder Monitoring Rules for %s: %s (%s)"
 msgstr "Verzeichnisüberwachungsregeln für %s: %s (%s)"
 
 #: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:41
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:60
-#: application/controllers/DatastoreController.php:52
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:63
+#: application/controllers/DatastoreController.php:54
 msgid "Free"
 msgstr "Frei"
 
 #: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:45
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:64
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:67
 msgid "Free (%)"
 msgstr "Frei (%)"
 
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:94
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:96
 #, php-format
 msgid "Free CPU: %s"
 msgstr "Prozessor frei: %s"
 
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:100
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:102
 #, php-format
 msgid "Free Memory: %s"
 msgstr "Freier Speicher: %s"
@@ -752,7 +793,7 @@ msgstr "Freier Platz"
 msgid "Free space"
 msgstr "Freier Platz"
 
-#: application/controllers/MonitoringController.php:165
+#: application/controllers/MonitoringController.php:193
 #, php-format
 msgid "Global Monitoring Rules for %s"
 msgstr "Globale Überwachungsregeln für %s"
@@ -779,12 +820,12 @@ msgstr "Plattenauslastung Gast"
 msgid "Guest Hostname"
 msgstr "Gast-Hostname"
 
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:128
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:142
 #: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:120
 msgid "Guest IP"
 msgstr "Gast-IP"
 
-#: application/controllers/AnomaliesController.php:18
+#: application/controllers/AnomaliesController.php:19
 msgid "Guest IP address"
 msgstr "Gast-IP-Adresse"
 
@@ -792,7 +833,7 @@ msgstr "Gast-IP-Adresse"
 msgid "Guest OS"
 msgstr "Gastbetriebssystem"
 
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:110
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:123
 msgid "Guest Tools"
 msgstr "Gastwerkzeuge"
 
@@ -824,7 +865,7 @@ msgstr "Gastwerkzeuge"
 msgid "Guest Utilities Policy"
 msgstr "Richtlinie für Gastwerkzeuge"
 
-#: application/controllers/AnomaliesController.php:17
+#: application/controllers/AnomaliesController.php:18
 msgid "Guest host name"
 msgstr "Gast-Hostname"
 
@@ -858,7 +899,7 @@ msgid "HTTPS (strongly recommended)"
 msgstr "HTTPS (dringend empfohlen)"
 
 #: application/controllers/VmController.php:64
-#: application/controllers/VmController.php:122
+#: application/controllers/VmController.php:123
 msgid "Hardware"
 msgstr "Hardware"
 
@@ -866,7 +907,7 @@ msgstr "Hardware"
 msgid "Hardware Information"
 msgstr "Hardwareinformationen"
 
-#: application/controllers/SingleObjectMonitoring.php:76
+#: application/controllers/SingleObjectMonitoring.php:97
 msgid "Hide Inspection"
 msgstr "Einsichtnahme verbergen"
 
@@ -874,13 +915,14 @@ msgstr "Einsichtnahme verbergen"
 msgid "Hide SQL"
 msgstr "SQL verbergen"
 
-#: configuration.php:38
+#: configuration.php:37
 #: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:60
+#: application/controllers/MonitoringController.php:44
 msgid "History"
 msgstr "Verlauf"
 
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:126
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:73
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:139
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:75
 #: library/Vspheredb/Web/Widget/MemoryUsage.php:35
 msgid "Host"
 msgstr "Host"
@@ -890,7 +932,7 @@ msgid "Host Mapping"
 msgstr "Hostzuordnung"
 
 #: library/Vspheredb/Web/Table/Objects/GroupedvmsTable.php:109
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:148
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:162
 msgid "Host Memory"
 msgstr "Hostspeicher"
 
@@ -898,11 +940,11 @@ msgstr "Hostspeicher"
 msgid "Host Memory: used %s of %s (%.2F%%)"
 msgstr "Arbeitsspeicher Host: %s von %s benutzt (%.2F%%)"
 
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:75
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:77
 msgid "Host Resources"
 msgstr "Hostressourcen"
 
-#: application/controllers/HostController.php:131
+#: application/controllers/HostController.php:132
 msgid "Host System"
 msgstr "Hostsystem"
 
@@ -910,10 +952,10 @@ msgstr "Hostsystem"
 msgid "Host System Property"
 msgstr "Hostsystemeigenschaften"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:89
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:94
 #: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:90
-#: application/controllers/MonitoringController.php:103
-#: application/controllers/MonitoringController.php:226
+#: application/controllers/MonitoringController.php:129
+#: application/controllers/MonitoringController.php:274
 msgid "Host Systems"
 msgstr "Hostsysteme"
 
@@ -930,11 +972,11 @@ msgstr "Hostname, IP-Adresse oder <host>:<port>"
 #: library/Vspheredb/Web/Table/Objects/SwitchesTable.php:28
 #: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:103
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:114
-#: library/Vspheredb/Web/Controller/ObjectsController.php:170
-#: application/controllers/OverviewController.php:24
+#: library/Vspheredb/Web/Controller/ObjectsController.php:171
 #: application/controllers/HostsController.php:19
 #: application/controllers/HostsController.php:29
-#: application/controllers/MonitoringController.php:40
+#: application/controllers/OverviewController.php:24
+#: application/controllers/MonitoringController.php:52
 msgid "Hosts"
 msgstr "Hosts"
 
@@ -964,7 +1006,7 @@ msgstr "IDO-Ressource"
 msgid "IP Address"
 msgstr "IP-Adresse"
 
-#: application/controllers/MonitoringController.php:114
+#: application/controllers/MonitoringController.php:140
 msgid "Icinga vSphereDB Check Commands"
 msgstr "Icinga vSphereDB Checkkommandos"
 
@@ -976,7 +1018,7 @@ msgstr ""
 "Icinga vSphereDB hängt von den folgenden Modulen ab, bitte wo erforderlich "
 "entsprechend installieren oder aktualisieren"
 
-#: application/controllers/SingleObjectMonitoring.php:57
+#: application/controllers/SingleObjectMonitoring.php:78
 #, php-format
 msgid ""
 "If you want to get Alarms for this object, you can configure related Icinga "
@@ -1014,10 +1056,12 @@ msgstr ""
 msgid "Incoming connection"
 msgstr "Eingehende Verbindung"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:50
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:57
 msgid "InfluxDB API version, autodetect should work fine"
 msgstr "InfluxDB-API-Version, die automatische Erkennung sollte ausreichen"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:39
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:46
 msgid "InfluxDB base URL, like http://influxdb.example.com:8086"
 msgstr "InfluxDB Basis-URL, z.B. http://influxdb.example.com:8086"
@@ -1030,17 +1074,17 @@ msgstr "Information"
 msgid "Information"
 msgstr "Information"
 
-#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:91
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:93
 #, php-format
 msgid "Information is outdated, last update took place %s"
 msgstr "Information ist veraltet, die letzte Aktualisierung fand %s statt"
 
-#: library/Vspheredb/Daemon/ConnectionState.php:138
+#: library/Vspheredb/Daemon/ConnectionState.php:118
 #, php-format
 msgid "Initializing API connection with %s"
 msgstr "API-Verbindungen mit %s initialisieren"
 
-#: application/controllers/SingleObjectMonitoring.php:83
+#: application/controllers/SingleObjectMonitoring.php:104
 msgid "Inspect"
 msgstr "Einsichtnahme"
 
@@ -1049,11 +1093,11 @@ msgid "Installed"
 msgstr "Installiert"
 
 #: library/Vspheredb/Web/Table/Object/VmExtraInfoTable.php:43
-#: application/controllers/AnomaliesController.php:16
+#: application/controllers/AnomaliesController.php:17
 msgid "Instance UUID"
 msgstr "Instanz-UUID"
 
-#: application/controllers/MonitoringController.php:97
+#: application/controllers/MonitoringController.php:123
 #, php-format
 msgid ""
 "Instead of checking every single Disk, just define rules (and exemptions "
@@ -1079,8 +1123,8 @@ msgstr ""
 "angegeben werden. Falls kein Standard-HTTP(S)-Port benutzt wird, bitte die "
 "Form <host>:<ip> benutzen"
 
-#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:23
 #: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:35
+#: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:23
 #: library/Vspheredb/Web/Widget/Addon/Veeam11BackupRunDetails.php:22
 msgid "Job name"
 msgstr "Jobname"
@@ -1090,9 +1134,9 @@ msgid "Key"
 msgstr "Schlüssel"
 
 #: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:30
+#: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:41
 #: library/Vspheredb/Web/Widget/Addon/VRangerBackupRunDetails.php:23
 #: library/Vspheredb/Web/Widget/Addon/VeeamBackupRunDetails.php:24
-#: library/Vspheredb/Web/Widget/Addon/NetBackupRunDetails.php:41
 msgid "Last Run Time"
 msgstr "Letzte Ausführung"
 
@@ -1105,7 +1149,7 @@ msgstr "Letzte Datensicherung"
 msgid "Latency %s Read / %s Write"
 msgstr "Latenz %s lesend / %s schreibend"
 
-#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:50
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:51
 msgid "Link is down"
 msgstr "Link ist down"
 
@@ -1117,7 +1161,7 @@ msgstr "Lokalisierungsbuild"
 msgid "Locale Version"
 msgstr "Lokalisierungsversion"
 
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:34
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:35
 msgid "Location"
 msgstr "Standort"
 
@@ -1149,21 +1193,22 @@ msgid "Max Ports"
 msgstr "Maximale Ports"
 
 #: library/Vspheredb/Web/Table/Objects/GroupedvmsTable.php:99
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:103
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:138
 #: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:165
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:176
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:152
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:104
 #: library/Vspheredb/Web/Table/Object/HostHardwareInfoTable.php:49
+#: library/Vspheredb/Web/Widget/UsageSummary.php:37
 msgid "Memory"
 msgstr "Arbeitsspeicher"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:51
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:159
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:173
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:52
 #: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageRuleDefinition.php:27
 msgid "Memory Usage"
 msgstr "Arbeitsspeicherauslastung"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:132
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:169
 msgid "Might be disconnected"
 msgstr "Könnte getrennt sein"
 
@@ -1172,7 +1217,7 @@ msgid "Migrations"
 msgstr "Migrationen"
 
 #: library/Vspheredb/Web/Table/Objects/HostsTable.php:30
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:47
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:48
 msgid "Model"
 msgstr "Modell"
 
@@ -1195,11 +1240,11 @@ msgstr "Überwachte vCenter"
 
 #: library/Vspheredb/Web/Tabs/ConfigTabs.php:48
 #: library/Vspheredb/Web/Widget/HostMonitoringInfo.php:42
-#: application/controllers/DatastoreController.php:107
-#: application/controllers/MonitoringController.php:34
-#: application/controllers/MonitoringController.php:152
-#: application/controllers/HostController.php:154
-#: application/controllers/VmController.php:134
+#: application/controllers/HostController.php:155
+#: application/controllers/DatastoreController.php:111
+#: application/controllers/MonitoringController.php:41
+#: application/controllers/MonitoringController.php:179
+#: application/controllers/VmController.php:135
 msgid "Monitoring"
 msgstr "Überwachung"
 
@@ -1208,23 +1253,31 @@ msgstr "Überwachung"
 msgid "Monitoring Integration"
 msgstr "Monitoring-Integration"
 
+#: application/controllers/ConfigurationController.php:195
+msgid "Monitoring Integration has been stored"
+msgstr "Monitoring-Integration wurde gespeichert"
+
 #: configuration.php:34
-#: application/controllers/MonitoringController.php:65
-#: application/controllers/MonitoringController.php:86
+#: application/controllers/MonitoringController.php:79
+#: application/controllers/MonitoringController.php:112
 msgid "Monitoring Rules"
 msgstr "Überwachungsregeln"
 
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:55
+#: application/controllers/MonitoringController.php:102
+msgid "Monitoring Rules - Problem History"
+msgstr "Überwachungsregeln - Problemverlauf"
+
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:58
 msgid "Multiple Hosts"
 msgstr "Mehrere Hosts"
 
+#: library/Vspheredb/Web/Table/PerfDataConsumerTable.php:20
 #: library/Vspheredb/Web/Table/PerformanceCounterTable.php:45
 #: library/Vspheredb/Web/Table/VmsWithDuplicateProperty.php:40
-#: library/Vspheredb/Web/Table/PerfDataConsumerTable.php:20
 #: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:18
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:19
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:241
-#: library/Vspheredb/Web/Table/Objects/ObjectsTable.php:78
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:255
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:20
+#: library/Vspheredb/Web/Table/Objects/ObjectsTable.php:82
 #: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:26
 #: library/Vspheredb/Web/Form/PerfdataConsumerForm.php:39
 #: library/Vspheredb/Web/Form/VCenterForm.php:27
@@ -1235,7 +1288,7 @@ msgstr "Name"
 msgid "Network"
 msgstr "Netzwerk"
 
-#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:31
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:32
 #, php-format
 msgid "Network Interfaces (%s)"
 msgstr "Netzwerkschnittstellen (%s)"
@@ -1260,12 +1313,12 @@ msgstr "Neue Monitoring-Integration"
 msgid "Newest"
 msgstr "Neueste"
 
-#: library/Vspheredb/Web/Form/FormElementStealer.php:68
 #: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:68
+#: library/Vspheredb/Web/Form/FormElementStealer.php:68
 msgid "Next"
 msgstr "Weiter"
 
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:58
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:61
 msgid "No"
 msgstr "Nein"
 
@@ -1277,11 +1330,12 @@ msgstr "Keine Aktion vorgenommen, das Objekt wurde nicht verändert"
 msgid "No action taken, vCenter has not been modified"
 msgstr "Keine Aktion vorgenommen, das vCenter wurde nicht geändert"
 
-#: application/controllers/MonitoringController.php:204
+#: application/controllers/MonitoringController.php:232
+#: application/controllers/MonitoringController.php:252
 msgid "No change has been applied"
 msgstr "Keine Änderungen wurden angewandt"
 
-#: library/Vspheredb/Web/Widget/CustomValueDetails.php:54
+#: library/Vspheredb/Web/Widget/CustomValueDetails.php:56
 msgid "No custom values have been defined"
 msgstr "Keine benutzerdefinierten Werte wurden definiert"
 
@@ -1293,8 +1347,8 @@ msgstr ""
 "Bisher wurde keine Datenbankressource konfiguriert. Bitte eine Ressource "
 "auswählen, um die Konfiguration zu vervollständigen"
 
+#: library/Vspheredb/Web/Widget/CalendarForEvents.php:35
 #: application/controllers/EventsController.php:59
-#: application/controllers/EventsController.php:96
 msgid "No events found"
 msgstr "Keine Ereignisse gefunden"
 
@@ -1328,7 +1382,7 @@ msgstr "Kein vCenter verfügbar. %s oder %s zu überprüfen könnte helfen"
 msgid "Not configured / Inherited"
 msgstr "Nicht konfiguriert / geerbt"
 
-#: application/controllers/PerfdataController.php:90
+#: application/controllers/PerfdataController.php:95
 msgid "Not found"
 msgstr "Nicht gefunden"
 
@@ -1353,7 +1407,7 @@ msgstr "Richtlinie Objekt-Status"
 msgid "Object Summaries"
 msgstr "Objektübersicht"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:87
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:92
 msgid "Object Type"
 msgstr "Objekttyp"
 
@@ -1362,7 +1416,7 @@ msgid "Oldest"
 msgstr "Älteste"
 
 #: library/Vspheredb/Web/Table/VmDatastoresTable.php:57
-#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:54
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:55
 msgid "On Datastore"
 msgstr "Auf Datenspeicher"
 
@@ -1393,6 +1447,7 @@ msgstr "Öffne den Managed Object Browser (MOB)"
 msgid "Open the VMware HTML 5 UI"
 msgstr "Öffne die VMware HTML5-Oberfläche"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:199
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:206
 msgid "Organisation"
 msgstr "Unternahmen"
@@ -1405,7 +1460,7 @@ msgstr "Ausgehende Verbingung"
 msgid "Overall VMware Object State"
 msgstr "Allgemeiner VMware Objektzustand"
 
-#: application/controllers/HostController.php:146
+#: application/controllers/HostController.php:147
 msgid "PCI Devices"
 msgstr "PCI-Geräte"
 
@@ -1421,13 +1476,14 @@ msgstr "Pakete (%s / %s Unicast, %s BCast, %s MCast, %s verworfen)"
 
 #: library/Vspheredb/Web/Form/VCenterServerForm.php:110
 #: library/Vspheredb/Web/Form/VCenterServerForm.php:115
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:191
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:198
 msgid "Password"
 msgstr "Kennwort"
 
 #: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:45
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:77
-#: application/controllers/DatastoreController.php:50
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:79
+#: application/controllers/DatastoreController.php:52
 msgid "Path"
 msgstr "Pfad"
 
@@ -1447,20 +1503,20 @@ msgstr "Ausstehende Datenbankmigrationen wurden erfolgreich angewandt"
 msgid "Performance Data"
 msgstr "Leistungsdaten"
 
-#: application/controllers/PerfdataController.php:72
+#: application/controllers/PerfdataController.php:77
 msgid "Performance Data Consumer has been created"
 msgstr "Leistungsdatenverbraucher wurde erstellt"
 
-#: application/controllers/PerfdataController.php:67
+#: application/controllers/PerfdataController.php:72
 msgid "Performance Data Consumer has been removed"
 msgstr "Leistungsdatenverbraucher wurde entfernt"
 
-#: application/controllers/PerfdataController.php:74
+#: application/controllers/PerfdataController.php:79
 msgid "Performance Data Consumer has been updated"
 msgstr "Leistungsdatenverbraucher wurde aktualisiert"
 
 #: library/Vspheredb/Web/Form/VCenterShipMetricsForm.php:98
-#: application/controllers/PerfdataController.php:49
+#: application/controllers/PerfdataController.php:54
 msgid "Performance Data Consumers"
 msgstr "Leistungsdatenverbraucher"
 
@@ -1468,7 +1524,7 @@ msgstr "Leistungsdatenverbraucher"
 msgid "Please choose"
 msgstr "Bitte wählen"
 
-#: application/controllers/SingleObjectMonitoring.php:46
+#: application/controllers/SingleObjectMonitoring.php:68
 #, php-format
 msgid "Please click %s to configure related Monitoring Rules"
 msgstr "Bitte %s klicken, um zugehörige Überwachungsregeln zu konfigurieren"
@@ -1478,7 +1534,7 @@ msgstr "Bitte %s klicken, um zugehörige Überwachungsregeln zu konfigurieren"
 msgid "Please click %s to create new MySQL/MariaDB resource"
 msgstr "Bitte %s klicken, um eine neue MySQL/MariaDB-Ressource zu erstellen"
 
-#: application/controllers/PerfdataController.php:56
+#: application/controllers/PerfdataController.php:61
 msgid "Please create your first Performance Data Consumer"
 msgstr "Bitte erstelle einen ersten Leistungsdatenverbraucher"
 
@@ -1494,13 +1550,13 @@ msgstr ""
 "Bitte sicherstellen, dass die Datenbank existiert, und dass dem Benutzer "
 "ausreichende Berechtigungen gewährt wurden"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:144
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:148
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:181
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:185
 msgid "Please provide the uptime in days"
 msgstr "Bitte die Uptime in Tagen angeben"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:136
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:140
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:173
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:177
 msgid "Please provide the uptime in seconds"
 msgstr "Bitte die Uptime in Sekunden angeben"
 
@@ -1527,8 +1583,8 @@ msgstr "Portgruppen"
 msgid "Ports"
 msgstr "Ports"
 
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:114
 #: library/Vspheredb/Web/Table/Objects/HostsTable.php:26
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:101
 #: library/Vspheredb/Web/Widget/Summaries.php:207
 msgid "Power"
 msgstr "Strom"
@@ -1549,7 +1605,7 @@ msgstr "Abgeschaltet"
 msgid "Powered on"
 msgstr "Angeschaltet"
 
-#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemTable.php:18
+#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemTable.php:21
 msgid "Problems / Monitoring Rule"
 msgstr "Probleme / Überwachungsregeln"
 
@@ -1597,11 +1653,11 @@ msgstr "Proxy-Kennwort"
 msgid "Proxy Username"
 msgstr "Proxy-Benutzer"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:147
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:184
 msgid "Raise CRITICAL for uptime greater than"
 msgstr "KRITISCH melden für Uptime größer als"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:139
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:176
 msgid "Raise CRITICAL for uptime less than"
 msgstr "KRITISCH melden für Uptime weniger als"
 
@@ -1617,20 +1673,20 @@ msgstr "Kritisch melden für Versionen niedriger als"
 msgid "Raise Critical if more than X snapshots"
 msgstr "Kritisch melden für mehr als X Schnappschüsse"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:93
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:102
 msgid "Raise Critical with less then X MBytes free"
 msgstr "Kritisch melden mit weniger als X MBytes frei"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:85
-#: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:97
+#: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:108
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:94
 msgid "Raise Critical with less then X percent free"
 msgstr "Kritisch melden mit weniger als X Prozent frei"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:143
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:180
 msgid "Raise WARNING for uptime greater than"
 msgstr "WARNUNG melden für Uptime größer als"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:135
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:172
 msgid "Raise WARNING for uptime less than"
 msgstr "WARNUNG melden für Uptime weniger als"
 
@@ -1646,12 +1702,12 @@ msgstr "Warnung melden für Versionen niedriger als"
 msgid "Raise Warning if more than X snapshots"
 msgstr "Warnung melden für mehr als X Schnappschüsse"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:89
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:98
 msgid "Raise Warning with less then X MBytes free"
 msgstr "Warnung melden mit weniger als X MBytes frei"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:81
-#: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:93
+#: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:104
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:90
 msgid "Raise Warning with less then X percent free"
 msgstr "Warnung melden mit weniger als X Prozent frei"
 
@@ -1688,12 +1744,12 @@ msgstr "Verwahrungsort"
 msgid "Required"
 msgstr "Erforderlich"
 
-#: library/Vspheredb/Web/Widget/ToggleFlagList.php:144
 #: library/Vspheredb/Web/Widget/AdditionalTableActions.php:89
+#: library/Vspheredb/Web/Widget/ToggleFlagList.php:144
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:76
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:78
 msgid "Resource Pool"
 msgstr "Ressourcenpool"
 
@@ -1723,7 +1779,7 @@ msgstr "Ergebnis"
 msgid "Rollup"
 msgstr "Rollup"
 
-#: application/controllers/MonitoringController.php:159
+#: application/controllers/MonitoringController.php:187
 msgid "Rules"
 msgstr "Regeln"
 
@@ -1735,7 +1791,7 @@ msgstr "SOCKS5-Proxy"
 msgid "Schedule"
 msgstr "Zeitplan"
 
-#: application/controllers/MonitoringController.php:57
+#: application/controllers/MonitoringController.php:71
 msgid ""
 "Select any folder (or the root node) to define (and override) Monitoring "
 "Rules for all related child nodes"
@@ -1743,7 +1799,7 @@ msgstr ""
 "Wähle ein Verzeichnis (oder den Wurzelknoten) um Überwachungsregeln für alle "
 "zugehörigen Kindknoten zu definieren (und zu überschreiben)"
 
-#: application/controllers/HostController.php:142
+#: application/controllers/HostController.php:143
 msgid "Sensors"
 msgstr "Sensoren"
 
@@ -1760,8 +1816,8 @@ msgstr "Serververbindungen"
 msgid "Servers"
 msgstr "Server"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:36
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:51
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:37
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:52
 msgid "Service Tag"
 msgstr "Service-Tag"
 
@@ -1769,17 +1825,17 @@ msgstr "Service-Tag"
 msgid "Set"
 msgstr "Set"
 
-#: application/controllers/MonitoringController.php:206
+#: application/controllers/MonitoringController.php:254
 #, php-format
 msgid "Settings for %s have been modified"
 msgstr "Einstellungen für %s wurden geändert"
 
-#: application/controllers/MonitoringController.php:211
+#: application/controllers/MonitoringController.php:259
 #, php-format
 msgid "Settings for %s have been removed"
 msgstr "Einstellungen für %s wurden entfernt"
 
-#: application/controllers/MonitoringController.php:209
+#: application/controllers/MonitoringController.php:257
 #, php-format
 msgid "Settings for %s have been stored"
 msgstr "Einstellungen für %s wurden gespeichert"
@@ -1797,23 +1853,31 @@ msgstr "Zeige \"%s\" im Managed Object Browser (MOB)"
 msgid "Show SQL"
 msgstr "SQL anzeigen"
 
-#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:60
+#: application/controllers/SingleObjectMonitoring.php:116
+msgid "Show current state"
+msgstr "Aktuellen Zustand anzeigen"
+
+#: application/controllers/SingleObjectMonitoring.php:123
+msgid "Show history"
+msgstr "Verlauf anzeigen"
+
 #: library/Vspheredb/Web/Table/VmDatastoresTable.php:55
-#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:52
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:60
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:53
 #: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:50
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:78
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:81
 msgid "Size"
 msgstr "Größe"
 
-#: application/controllers/DatastoreController.php:57
+#: application/controllers/DatastoreController.php:59
 msgid "Sizing"
 msgstr "Dimensionierung"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:114
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:115
 msgid "Skip Templates"
 msgstr "Templates überspringen"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:110
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:111
 msgid "Skip powered off VMs"
 msgstr "Abgeschaltete VMs überspringen"
 
@@ -1848,7 +1912,7 @@ msgstr "Quelle"
 msgid "Source Type"
 msgstr "Quellentyp"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:113
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:114
 msgid "Spectre / Meltdown"
 msgstr "Spectre / Meltdown"
 
@@ -1866,19 +1930,20 @@ msgstr "Statistiken"
 
 #: library/Vspheredb/Web/Table/VmDatastoresTable.php:53
 #: library/Vspheredb/Web/Table/Objects/VCenterServersTable.php:96
-#: library/Vspheredb/Web/Table/Objects/ObjectsTable.php:71
+#: library/Vspheredb/Web/Table/Objects/ObjectsTable.php:75
 #: library/Vspheredb/Web/Widget/Summaries.php:199
 #: library/Vspheredb/Web/Widget/Addon/IbmSpectrumProtectBackupRunDetails.php:29
-#: application/controllers/DatastoreController.php:49
+#: application/controllers/DatastoreController.php:51
 msgid "Status"
 msgstr "Status"
 
-#: library/Vspheredb/Daemon/ConnectionState.php:148
+#: library/Vspheredb/Daemon/ConnectionState.php:128
 #, php-format
 msgid "Stopping API connection with %s"
 msgstr "Stoppe API-Verbindungen mit %s"
 
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:202
+#: library/Vspheredb/Web/Widget/UsageSummary.php:51
 msgid "Storage"
 msgstr "Speicherung"
 
@@ -1887,20 +1952,16 @@ msgstr "Speicherung"
 msgid "Storage Pods"
 msgstr "Speicherbehälter"
 
-#: library/Vspheredb/Web/Form/FormElementStealer.php:38
-#: library/Vspheredb/Web/Form/VCenterServerForm.php:164
 #: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:140
-#: application/controllers/MonitoringController.php:218
+#: library/Vspheredb/Web/Form/VCenterServerForm.php:164
+#: library/Vspheredb/Web/Form/FormElementStealer.php:38
+#: application/controllers/MonitoringController.php:266
 msgid "Store"
 msgstr "Speichern"
 
 #: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:31
 msgid "Store configuration"
 msgstr "Konfiguration speichern"
-
-#: application/controllers/ConfigurationController.php:194
-msgid "Stored"
-msgstr "Gespeichert"
 
 #: library/Vspheredb/Web/Widget/PowerStateRenderer.php:29
 msgid "Suspended"
@@ -1936,28 +1997,32 @@ msgstr ""
 msgid "System (BIOS) UUID"
 msgstr "System(BIOS)-UUID"
 
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:41
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:42
 msgid "System Information"
 msgstr "Systeminformation"
 
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:54
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:55
 msgid "System UUID"
 msgstr "System-UUID"
 
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:64
 #: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:134
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:65
 msgid "System booted recently"
 msgstr "System startete kürzlich neu"
 
-#: library/Vspheredb/Web/Controller/ObjectsController.php:46
+#: library/Vspheredb/Web/Controller/ObjectsController.php:45
+#: application/controllers/EventsController.php:77
 #: application/controllers/VmsController.php:65
 #: application/controllers/VmsController.php:95
-#: application/controllers/AlarmsController.php:52
-#: application/controllers/EventsController.php:77
+#: application/controllers/AlarmsController.php:55
 msgid "Table"
 msgstr "Tabelle"
 
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:256
+#: library/Vspheredb/Web/Widget/CustomValueDetails.php:63
+msgid "Tags"
+msgstr "Tags"
+
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:270
 msgid "Template"
 msgstr "Vorlage"
 
@@ -1965,14 +2030,14 @@ msgstr "Vorlage"
 msgid "The Connection has successfully been stored"
 msgstr "Die Verbindung wurde erfolgreich gespeichert"
 
-#: application/controllers/MonitoringController.php:92
+#: application/controllers/MonitoringController.php:118
 #, php-format
 msgid ""
-"The Icinga Module for vSphere%s ships a lot of data, state and sensor "
+"The Icinga vSphere%s Integration ships a lot of data, state and sensor "
 "values. If you want to define related Icinga Service checks for Alarming "
 "reasons, Monitoring Rules are %s."
 msgstr ""
-"Das Icinga-Modul für vSphere%s liefert eine Menge an Daten, Status und "
+"Die Icinga vSphere%s-Integration liefert eine Menge an Daten, Status und "
 "Sensorwerten. Wenn zugehörige Icinga-Servicechecks zu Alarmierungszwecken "
 "definiert werden sollten sind Überwachungsregeln %s."
 
@@ -2099,12 +2164,12 @@ msgstr ""
 "Es gibt ausstehende Datenbankschema-Migrationen. Bitte einen Administrator, "
 "diese jetzt anzuwenden!"
 
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:87
 #: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:162
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:91
 msgid "There is no configured connection for this vCenter"
 msgstr "Für dieses vCenter gibt es keine konfigurierte Verbindung"
 
-#: library/Vspheredb/Daemon/ConnectionState.php:158
+#: library/Vspheredb/Daemon/ConnectionState.php:138
 msgid "There is no configured server for this vCenter"
 msgstr "Es gibt keine konfigurierten Server für dieses vCenter"
 
@@ -2118,7 +2183,7 @@ msgstr "Es gibt keine solche DB/Bucket: \"%s\""
 msgid "There is no such PerfdataConsumer: %s"
 msgstr "Es gibt keinen solchen Leistungsdatenverbraucher: %s"
 
-#: application/controllers/PerfdataController.php:92
+#: application/controllers/PerfdataController.php:97
 #, php-format
 msgid "There is no such Performance Data Consumer: %s"
 msgstr "Es gibt keinen solchen Leistungsdatenverbraucher: %s"
@@ -2131,8 +2196,8 @@ msgstr "Es gibt kein vSphereDB-Schema in dieser Datenbank"
 msgid "This VM has been excluded from Backup"
 msgstr "Diese VM wurde von der Datensicherung ausgenommen"
 
-#: library/Vspheredb/Web/Widget/VmHeader.php:40
-#: library/Vspheredb/Web/Widget/VmHeader.php:44
+#: library/Vspheredb/Web/Widget/VmHeader.php:51
+#: library/Vspheredb/Web/Widget/VmHeader.php:55
 msgid "This is a template"
 msgstr "Das ist eine Vorlage"
 
@@ -2144,7 +2209,7 @@ msgstr "Das System ist down"
 msgid "This system is up"
 msgstr "Das System ist up"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:73
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:82
 msgid "Threshold/State Precedence"
 msgstr "Schwellwert/Status Vorrang"
 
@@ -2153,25 +2218,29 @@ msgstr "Schwellwert/Status Vorrang"
 msgid "Throughput (bits/s, %s RX / %s TX)"
 msgstr "Durchsatz (bits/s %s RX / %s TX)"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:203
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:210
 msgid "Token"
 msgstr "Token"
 
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:45
 #: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:88
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:46
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:116
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:129
 msgid "Tools Version"
 msgstr "Werkzeugversion"
 
 #: library/Vspheredb/Web/Table/VmDiskUsageTable.php:137
 #: library/Vspheredb/Web/Table/VmDiskUsageTable.php:141
+#: library/Vspheredb/Web/Widget/UsageSummary.php:29
+#: library/Vspheredb/Web/Widget/UsageSummary.php:35
+#: library/Vspheredb/Web/Widget/UsageSummary.php:45
 msgid "Total"
 msgstr "Gesamt"
 
-#: library/Vspheredb/Web/Controller/ObjectsController.php:55
+#: library/Vspheredb/Web/Controller/ObjectsController.php:54
 msgid "Tree"
 msgstr "Baum"
 
@@ -2187,7 +2256,7 @@ msgstr "Einen Zustand der Warnung auslösen"
 msgid "Trigger an Unknown state"
 msgstr "Einen unbekannten Zustand auslösen"
 
-#: library/Vspheredb/Daemon/ConnectionState.php:133
+#: library/Vspheredb/Daemon/ConnectionState.php:113
 #, php-format
 msgid "Trying to log in to %s"
 msgstr "Versuche an %s anzumelden"
@@ -2218,12 +2287,12 @@ msgstr ""
 "Bitte Dateiberechtigungen prüfen, oder nachfolgenden Inhalt manuell darin "
 "abspeichern"
 
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:69
-#: application/controllers/DatastoreController.php:56
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:72
+#: application/controllers/DatastoreController.php:58
 msgid "Uncommitted"
 msgstr "Ungebunden"
 
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:73
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:76
 msgid "Uncommitted (%)"
 msgstr "Ungebunden (%)"
 
@@ -2231,7 +2300,7 @@ msgstr "Ungebunden (%)"
 msgid "Unit"
 msgstr "Einheit"
 
-#: library/Vspheredb/Web/Widget/DatastoreUsage.php:148
+#: library/Vspheredb/Web/Widget/DatastoreUsage.php:150
 msgid "Unknown / not used by any visible Virtual Machine"
 msgstr ""
 "Unbekannt / nicht von irgend einer sichtbaren virtuellen Maschine benutzt"
@@ -2247,19 +2316,19 @@ msgstr ""
 msgid "Unsatisfied dependencies"
 msgstr "Unerfüllte Abhängigkeiten"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:128
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:164
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:53
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:178
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:129
 #: library/Vspheredb/Web/Table/Object/VmEssentialInfoTable.php:129
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:54
 msgid "Uptime"
 msgstr "Uptime"
 
-#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:62
 #: library/Vspheredb/Web/Table/VmDatastoresTable.php:56
-#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:53
+#: library/Vspheredb/Web/Table/VmDiskUsageTable.php:62
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:54
 #: library/Vspheredb/Web/Table/Objects/StoragePodTable.php:54
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:85
 #: library/Vspheredb/Web/Table/Objects/VmsGuestDiskUsageTable.php:41
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:88
 msgid "Usage"
 msgstr "Auslastung"
 
@@ -2267,7 +2336,7 @@ msgstr "Auslastung"
 #: library/Vspheredb/Web/Table/Objects/HostSummaryTable.php:177
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:159
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:188
-#: application/controllers/DatastoreController.php:53
+#: application/controllers/DatastoreController.php:55
 msgid "Used"
 msgstr "Benutzt"
 
@@ -2280,14 +2349,14 @@ msgid "User"
 msgstr "Benutzer"
 
 #: library/Vspheredb/Web/Form/VCenterServerForm.php:101
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:188
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:195
 msgid "Username"
 msgstr "Benutzername"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:98
 #: library/Vspheredb/Web/Table/VsphereApiConnectionTable.php:10
 #: library/Vspheredb/Web/Table/Objects/VCenterSummaryTable.php:355
-#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemTable.php:17
+#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemTable.php:20
 msgid "VCenter"
 msgstr "vCenter"
 
@@ -2304,7 +2373,7 @@ msgstr "vCenter"
 msgid "VLAN"
 msgstr "VLAN"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:94
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:95
 msgid "VM CPUs"
 msgstr "VM-CPUs"
 
@@ -2312,7 +2381,7 @@ msgstr "VM-CPUs"
 msgid "VM Mapping"
 msgstr "VM-Zuordnung"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:61
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:62
 msgid "VM Status"
 msgstr "VM-Status"
 
@@ -2325,13 +2394,13 @@ msgid "VMotion attempt(s)"
 msgstr "VMotion-Versuch(e)"
 
 #: library/Vspheredb/Web/Table/Objects/ResourcePoolsTable.php:14
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:82
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:111
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:85
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:112
 #: application/controllers/OverviewController.php:27
 msgid "VMs"
 msgstr "VMs"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:107
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:108
 msgid "VMs Memory"
 msgstr "VMs Speicher"
 
@@ -2345,10 +2414,11 @@ msgstr "Veeam Server"
 
 #: library/Vspheredb/Web/Table/Objects/HostsTable.php:29
 #: library/Vspheredb/Web/Table/Object/VCenterInfoTable.php:39
-#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:46
+#: library/Vspheredb/Web/Table/Object/HostSystemInfoTable.php:47
 msgid "Vendor"
 msgstr "Hersteller"
 
+#: library/Vspheredb/Web/Form/IcingaMetricsConnectionForm.php:42
 #: library/Vspheredb/Web/Form/InfluxDbConnectionForm.php:49
 msgid "Verify"
 msgstr "Überprüfen"
@@ -2365,10 +2435,10 @@ msgstr "Peer überprüfen"
 msgid "Version"
 msgstr "Version"
 
-#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:90
-#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:51
-#: library/Vspheredb/Web/Controller/ObjectsController.php:166
-#: application/controllers/VmController.php:118
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:95
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:52
+#: library/Vspheredb/Web/Controller/ObjectsController.php:167
+#: application/controllers/VmController.php:119
 msgid "Virtual Machine"
 msgstr "Virtuelle Maschine"
 
@@ -2385,7 +2455,7 @@ msgid "Virtual Machine Property"
 msgstr "Eigenschaft der virtuellen Maschine"
 
 #: library/Vspheredb/ProvidedHook/Monitoring/DetailviewExtension.php:90
-#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:66
+#: library/Vspheredb/Web/Table/VmsOnDatastoreTable.php:68
 #, php-format
 msgid "Virtual Machine: %s"
 msgstr "Virtuelle Maschine: %s"
@@ -2395,13 +2465,13 @@ msgstr "Virtuelle Maschine: %s"
 #: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:115
 #: application/controllers/VmsController.php:27
 #: application/controllers/VmsController.php:53
-#: application/controllers/MonitoringController.php:43
-#: application/controllers/MonitoringController.php:104
-#: application/controllers/MonitoringController.php:228
+#: application/controllers/MonitoringController.php:55
+#: application/controllers/MonitoringController.php:130
+#: application/controllers/MonitoringController.php:276
 msgid "Virtual Machines"
 msgstr "Virtuelle Maschinen"
 
-#: application/controllers/HostController.php:136
+#: application/controllers/HostController.php:137
 #, php-format
 msgid "Virtual Machines (%d)"
 msgstr "Virtuelle Maschinen (%d)"
@@ -2447,11 +2517,11 @@ msgstr "Wenn installiert, aber nicht am Laufen"
 msgid "When not installed"
 msgstr "Wenn nicht installiert"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:125
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:162
 msgid "When powered off"
 msgstr "Wenn abgeschaltet"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:128
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:165
 msgid "When suspended"
 msgstr "Wenn suspendiert"
 
@@ -2459,7 +2529,7 @@ msgstr "Wenn suspendiert"
 msgid "When the vCenter says \"outdated\""
 msgstr "Wenn das vCenter \"veraltet\" sagt"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:131
+#: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:168
 msgid "When unknown"
 msgstr "Wenn unbekannt"
 
@@ -2491,7 +2561,7 @@ msgstr ""
 msgid "Will be used for SOAP authentication against your vCenter"
 msgstr "Wird für SOAP-Authentifizierung gegen das vCenter benutzt"
 
-#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:77
+#: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:86
 msgid "Worse state wins"
 msgstr "Schlechtester Zustand gewinnt"
 
@@ -2499,7 +2569,7 @@ msgstr "Schlechtester Zustand gewinnt"
 msgid "Yellow - there are warnings"
 msgstr "Gelb - es gibt Warnungen"
 
-#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:58
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:61
 msgid "Yes"
 msgstr "Ja"
 
@@ -2515,11 +2585,15 @@ msgstr ""
 "Es kann gewünscht sein, den Anzeigenamen des vCenters zu ändern. Als "
 "Standardwert entspricht das dem Hostnamen des ersten zugehörigen Servers."
 
-#: application/controllers/MonitoringController.php:99
+#: library/Vspheredb/Web/Table/Monitoring/MonitoringRuleProblemHistoryTable.php:42
+msgid "[OK] Check has no longer been executed"
+msgstr "[OK] Check wurde nicht länger ausgeführt"
+
+#: application/controllers/MonitoringController.php:125
 msgid "all of them"
 msgstr "alle von denen"
 
-#: library/Vspheredb/Web/Controller/ObjectsController.php:28
+#: library/Vspheredb/Web/Controller/ObjectsController.php:27
 msgid "back"
 msgstr "zurück"
 
@@ -2531,21 +2605,21 @@ msgstr "Standard"
 msgid "disabled"
 msgstr "deaktiviert"
 
-#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:63
 #: library/Vspheredb/Web/Table/HostHbaTable.php:53
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:64
 msgid "driver"
 msgstr "Treiber"
 
-#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:56
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:57
 msgid "full duplex"
 msgstr "Vollduplex"
 
-#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:57
+#: library/Vspheredb/Web/Table/HostPhysicalNicTable.php:58
 msgid "half duplex"
 msgstr "Halbduplex"
 
 #: library/Vspheredb/Web/Form/ChooseDbResourceForm.php:101
-#: application/controllers/SingleObjectMonitoring.php:47
+#: application/controllers/SingleObjectMonitoring.php:69
 msgid "here"
 msgstr "hier"
 
@@ -2582,7 +2656,7 @@ msgstr "neue Instanz"
 msgid "read %s for details"
 msgstr "für Details %s lesen"
 
-#: application/controllers/MonitoringController.php:95
+#: application/controllers/MonitoringController.php:121
 msgid "the way to go"
 msgstr "das Mittel der Wahl"
 
@@ -2594,16 +2668,17 @@ msgstr "nicht spezifiziert"
 msgid "vCPU Count"
 msgstr "Anzahl vCPUs"
 
-#: library/Vspheredb/Web/Table/Objects/HostsTable.php:98
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:99
 msgid "vCPU/pCPU"
 msgstr "vCPU/pCPU"
 
-#: library/Vspheredb/Web/Table/Objects/VmsTable.php:130
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:144
 msgid "vCPUs"
 msgstr "vCPUs"
 
+#: library/Vspheredb/ProvidedHook/Director/ImportSource.php:103
 #: library/Vspheredb/Web/Table/Object/HostVirtualizationInfoTable.php:44
-#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:78
+#: library/Vspheredb/Web/Table/Object/VmLocationInfoTable.php:80
 #: library/Vspheredb/Web/Tabs/VCenterTabs.php:28
 #: library/Vspheredb/Web/Form/MonitoringConnectionForm.php:40
 msgid "vCenter"
@@ -2613,7 +2688,13 @@ msgstr "vCenter"
 msgid "vCenter (or ESX) host"
 msgstr "vCenter (oder ESX) Host"
 
-#: application/controllers/MonitoringController.php:171
+#: library/Vspheredb/Web/Table/Objects/VmsTable.php:140
+#: library/Vspheredb/Web/Table/Objects/DatastoreTable.php:55
+#: library/Vspheredb/Web/Table/Objects/HostsTable.php:31
+msgid "vCenter / ESXi"
+msgstr "vCenter / ESXi"
+
+#: application/controllers/MonitoringController.php:199
 #, php-format
 msgid "vCenter Monitoring Rules for %s: %s"
 msgstr "vCenter Überwachungsregeln für %s: %s"
@@ -2630,7 +2711,7 @@ msgstr "vCenter-Server"
 msgid "vCenters"
 msgstr "vCenter"
 
-#: library/Vspheredb/Web/OverviewTree.php:38
+#: library/Vspheredb/Web/OverviewTree.php:44
 msgid "vSphere"
 msgstr "vSphere"
 
@@ -2641,3 +2722,6 @@ msgstr "Zustand des vSphereDB-Dienstes"
 #: application/controllers/ConfigurationController.php:33
 msgid "vSphereDB Database Configuration"
 msgstr "vSphereDB Datenbankkonfiguration"
+
+#~ msgid "Stored"
+#~ msgstr "Gespeichert"
