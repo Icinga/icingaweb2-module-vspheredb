@@ -29,7 +29,8 @@ class CurlOptions
         }
         $options = [
             CURLOPT_HTTPHEADER => [
-                "Host: $host",
+                // Host header disabled for now, see #496
+                // "Host: $host",
                 'Expect:',
                 'User-Agent: Icinga-vSphereDB/1.6',
             ]

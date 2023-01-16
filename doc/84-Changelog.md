@@ -22,6 +22,7 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 * FIX: checking last event key was too slow (#445)
 * FIX: support inaccessible Compute Resources with NULL values (#467)
 * FIX: we no longer call RefreshStorageInfo() to not generate tasks (#495)
+* FIX: issue with specific libcurl versions and proxies (#496)
 
 ### UI
 * FEATURE: some vendor images for Cisco UCS have been linked (#472)
