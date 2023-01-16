@@ -14,9 +14,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * Legacy note: In hosts where HostMultipathStateInfo is not defined or does not exist on the HostStorageDeviceInfo
  * object, only native multipathing exists. That means for these hosts, the MultipathInfo object contains the complete
  * set of LUNs and paths on the LUNs available on the host.
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class HostMultipathInfo extends DynamicData
 {
     /**

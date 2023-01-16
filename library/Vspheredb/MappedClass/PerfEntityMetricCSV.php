@@ -5,9 +5,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
-/**
- * #[AllowDynamicProperties]
- */
+#[\AllowDynamicProperties]
 class PerfEntityMetricCSV implements JsonSerialization
 {
     /** @var ManagedObjectReference */

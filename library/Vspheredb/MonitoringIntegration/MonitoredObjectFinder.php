@@ -86,7 +86,7 @@ class MonitoredObjectFinder
             $filter[$filterPrefix . '.vcenter_uuid'] = $row->vcenter_uuid;
         }
         $monPrefix = $prefix === 'vm' ? 'vm_host' : 'host';
-        $monProperty = $row->{"monitoring_${monPrefix}_property"};
+        $monProperty = $row->{"monitoring_{$monPrefix}_property"};
         if ($monProperty === null) {
             return null;
         }
@@ -106,7 +106,7 @@ class MonitoredObjectFinder
         if ($value === null) {
             return null;
         }
-        $filter[$row->{"${prefix}_property"}] = $value;
+        $filter[$row->{"{$prefix}_property"}] = $value;
 
         return $filter;
     }

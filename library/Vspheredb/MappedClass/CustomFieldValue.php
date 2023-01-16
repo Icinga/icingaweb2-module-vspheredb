@@ -2,9 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
-/**
- * #[AllowDynamicProperties]
- */
+#[\AllowDynamicProperties]
 class CustomFieldValue
 {
     /** @var int CustomField ID - references CustomFieldDefs in CustomFieldsManager */

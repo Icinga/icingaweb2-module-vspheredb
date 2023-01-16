@@ -212,7 +212,7 @@ class MonitoringConnectionForm extends Form
 
         $result = [];
         foreach ($vars as $name => $count) {
-            $result["vars.$name"] = "vars.$name (${count}x)";
+            $result["vars.$name"] = "vars.$name ({$count}x)";
         }
 
         return $result;

@@ -2,9 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
-/**
- * #[AllowDynamicProperties]
- */
+#[\AllowDynamicProperties]
 class HostNetworkInfo
 {
     /** @var boolean */

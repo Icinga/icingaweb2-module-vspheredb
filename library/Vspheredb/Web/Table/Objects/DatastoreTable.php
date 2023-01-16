@@ -114,7 +114,7 @@ class DatastoreTable extends ObjectsTable
     protected function formatBytesPercent($row, $name)
     {
         $bytes = $row->$name;
-        $percent = $row->{"${name}_percent"};
+        $percent = $row->{"{$name}_percent"};
         return sprintf(
             '%s (%s)',
             Format::bytes($bytes, Format::STANDARD_IEC),

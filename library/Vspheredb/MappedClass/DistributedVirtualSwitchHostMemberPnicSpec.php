@@ -4,9 +4,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 /**
  * Specification for an individual physical NIC
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class DistributedVirtualSwitchHostMemberPnicSpec
 {
     /**

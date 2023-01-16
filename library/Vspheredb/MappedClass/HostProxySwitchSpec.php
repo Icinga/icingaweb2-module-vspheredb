@@ -5,9 +5,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 /**
  * This data object type describes the HostProxySwitch specification representing
  * the properties on a HostProxySwitch that can be configured once the object exists
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class HostProxySwitchSpec
 {
     /**

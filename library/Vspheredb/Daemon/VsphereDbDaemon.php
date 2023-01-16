@@ -207,7 +207,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                     $this->logger->error('Failed. Will try to reconnect to the Database');
                     $this->eventuallyDisconnectFromDb();
                     $delay = $this->delayOnFailed;
-                    $this->logger->warning("Failed. Reconnecting in ${delay}s");
+                    $this->logger->warning("Failed. Reconnecting in {$delay}s");
                     $this->loop->addTimer($delay, function () {
                         if ($this->getLocalDbState() === self::STATE_FAILED) {
                             $this->setLocalDbState(self::STATE_STARTING);

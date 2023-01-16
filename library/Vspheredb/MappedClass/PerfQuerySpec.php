@@ -4,9 +4,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 
-/**
- * #[AllowDynamicProperties]
- */
+#[\AllowDynamicProperties]
 class PerfQuerySpec
 {
     /** @var ManagedObject */

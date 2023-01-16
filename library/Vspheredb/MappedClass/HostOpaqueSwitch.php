@@ -5,9 +5,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 /**
  * The OpaqueSwitch contains basic information about virtual switches that are
  * managed by a management plane outside of vSphere.
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class HostOpaqueSwitch
 {
     /**

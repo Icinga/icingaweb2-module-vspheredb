@@ -4,9 +4,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 /**
  * Parameters for alarm creation
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class AlarmSpec
 {
     /** @var AlarmAction Action to perform when the alarm is triggered */

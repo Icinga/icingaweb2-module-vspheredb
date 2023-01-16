@@ -4,9 +4,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 /**
  * This option specifies a time range used to filter event history
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class EventFilterSpecByTime
 {
     /**

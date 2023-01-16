@@ -17,9 +17,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * the "name" field indicates recursion to the derived object by name.
  *
  * Names are meaningful only within the same FilterSpec.
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class SelectionSpec
 {
     /** @var ?string Name of the selection specification */

@@ -37,9 +37,8 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  * The slaves are responsible for reporting state updates to the master and
  * restarting VMs as required. All FDMs provide the VM/Application Health
  * Monitoring Service.
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class ClusterDasFdmHostState implements JsonSerialization
 {
     /**

@@ -8,9 +8,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * different from a port group in that the port group represents the
  * configuration aspects of the network connection. The Port object provides
  * runtime statistics.
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class HostPortGroupPort
 {
     /**

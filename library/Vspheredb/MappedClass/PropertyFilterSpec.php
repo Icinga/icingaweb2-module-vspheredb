@@ -8,9 +8,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * A filter can specify part of a single managed object, or parts of multiple
  * related managed objects in an inventory hierarchy - for example, to collect
  * updates from all virtual machines in a given folder.
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class PropertyFilterSpec
 {
     /**

@@ -5,9 +5,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 /**
  * This data object type describes the PortGroup specification representing the
  * properties on a PortGroup that can be configured
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class HostPortGroupSpec
 {
     /**

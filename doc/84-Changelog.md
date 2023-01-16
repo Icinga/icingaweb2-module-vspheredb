@@ -78,6 +78,14 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 * FEATURE: Director Import Source now ships Tags (#479)
 * FEATURE: Provides a Hook for anonymization (demo) purposes (#477)
 
+### Internals
+* FEATURE/FIX: PHP v8.2 is now supported (#494)
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/14?closed=1)
+
+
 v1.5.0
 ------
 

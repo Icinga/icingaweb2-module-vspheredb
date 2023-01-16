@@ -2,9 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
-/**
- * #[AllowDynamicProperties]
- */
+#[\AllowDynamicProperties]
 class MissingProperty
 {
     /** @var SytemError|SecurityError These are the known allowed LocalizedMethodFault types */

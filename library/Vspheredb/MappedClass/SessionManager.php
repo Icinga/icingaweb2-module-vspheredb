@@ -8,9 +8,8 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * This managed object type includes methods for logging on and logging off
  * clients, determining which clients are currently logged on, and forcing
  * clients to log off.
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class SessionManager
 {
     /**

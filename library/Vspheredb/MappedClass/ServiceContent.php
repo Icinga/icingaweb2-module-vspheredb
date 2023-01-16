@@ -15,9 +15,8 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  *
  * For this reason, use the method RetrieveServiceContent to retrieve the
  * ServiceContent object.
- *
- * #[AllowDynamicProperties]
  */
+#[\AllowDynamicProperties]
 class ServiceContent
 {
     /** @var AboutInfo */

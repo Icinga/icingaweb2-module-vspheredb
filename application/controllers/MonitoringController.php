@@ -178,7 +178,7 @@ class MonitoringController extends Controller
         $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring'));
         $tree = new MonitoringRulesTree($this->db(), $chosenType);
-        $this->content()->add(new MonitoringRulesTreeRenderer($tree, "vspheredb/monitoring/${chosenType}rules"));
+        $this->content()->add(new MonitoringRulesTreeRenderer($tree, "vspheredb/monitoring/{$chosenType}rules"));
     }
 
     public function showType($chosenType)
