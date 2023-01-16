@@ -1,8 +1,8 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-v1.6.0 (unreleased)
--------------------
+v1.6.0
+------
 
 This release brings performance improvements, ships new metrics to InfluxDB
 and some vendor images for Cisco UCS. Restricted users now have access to more
