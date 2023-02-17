@@ -101,11 +101,11 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
     {
         return [
             'warning_if_less_than_percent_free' => ['number', [
-                'label' => $this->translate('Raise Warning with less then X percent free'),
+                'label' => $this->translate('Raise Warning with less than X percent free'),
                 'placeholder' => '30',
             ]],
             'critical_if_less_than_percent_free' => ['number', [
-                'label' => $this->translate('Raise Critical with less then X percent free'),
+                'label' => $this->translate('Raise Critical with less than X percent free'),
                 'placeholder' => '10',
             ]],
         ];
