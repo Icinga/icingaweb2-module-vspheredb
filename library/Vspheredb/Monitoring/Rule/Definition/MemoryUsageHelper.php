@@ -87,19 +87,19 @@ class MemoryUsageHelper
                 ],
             ]],
             'warning_if_less_than_percent_free' => ['number', [
-                'label' => $t->translate('Raise Warning with less then X percent free'),
+                'label' => $t->translate('Raise Warning with less than X percent free'),
                 'placeholder' => '5',
             ]],
             'critical_if_less_than_percent_free' => ['number', [
-                'label' => $t->translate('Raise Critical with less then X percent free'),
+                'label' => $t->translate('Raise Critical with less than X percent free'),
                 'placeholder' => '2',
             ]],
             'warning_if_less_than_mbytes_free' => ['number', [
-                'label' => $t->translate('Raise Warning with less then X MBytes free'),
+                'label' => $t->translate('Raise Warning with less than X MBytes free'),
                 'placeholder' => '500',
             ]],
             'critical_if_less_than_mbytes_free' => ['number', [
-                'label' => $t->translate('Raise Critical with less then X MBytes free'),
+                'label' => $t->translate('Raise Critical with less than X MBytes free'),
                 'placeholder' => '100',
             ]],
         ];

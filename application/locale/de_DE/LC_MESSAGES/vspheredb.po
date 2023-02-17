@@ -1674,12 +1674,12 @@ msgid "Raise Critical if more than X snapshots"
 msgstr "Kritisch melden für mehr als X Schnappschüsse"
 
 #: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:102
-msgid "Raise Critical with less then X MBytes free"
+msgid "Raise Critical with less than X MBytes free"
 msgstr "Kritisch melden mit weniger als X MBytes frei"
 
 #: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:108
 #: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:94
-msgid "Raise Critical with less then X percent free"
+msgid "Raise Critical with less than X percent free"
 msgstr "Kritisch melden mit weniger als X Prozent frei"
 
 #: library/Vspheredb/Monitoring/Rule/Definition/PowerStateRuleDefinition.php:180
@@ -1703,12 +1703,12 @@ msgid "Raise Warning if more than X snapshots"
 msgstr "Warnung melden für mehr als X Schnappschüsse"
 
 #: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:98
-msgid "Raise Warning with less then X MBytes free"
+msgid "Raise Warning with less than X MBytes free"
 msgstr "Warnung melden mit weniger als X MBytes frei"
 
 #: library/Vspheredb/Monitoring/Rule/Definition/CpuUsageRuleDefinition.php:104
 #: library/Vspheredb/Monitoring/Rule/Definition/MemoryUsageHelper.php:90
-msgid "Raise Warning with less then X percent free"
+msgid "Raise Warning with less than X percent free"
 msgstr "Warnung melden mit weniger als X Prozent frei"
 
 #: library/Vspheredb/Web/Form/DeleteVCenterForm.php:53
