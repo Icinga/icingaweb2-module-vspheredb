@@ -150,6 +150,9 @@ class CheckRunner
                 }
             }
         }
+        if ($final === null) {
+            throw new RuntimeException('No check has been executed');
+        }
 
         return $final;
     }
