@@ -7,6 +7,7 @@ v1.7.0 (unreleased)
 ### Monitoring Rules
 * FEATURE: CLI check command allows `--rule Set/Rule` and `--rule Set/*` (#506)
 * FEATURE: MonitoringRule data type Hook for the Icinga Director (#502)
+* FEATURE: monitoring tab shows check command proposal with UUID, not name (#508)
 * FIX: meaningful error in case no check has been executed (#507)
 
 ![84-17-01_monitoring_rule_set_director_hook.png](screenshot%2F84_changelog%2Fv1.7.0%2F84-17-01_monitoring_rule_set_director_hook.png)

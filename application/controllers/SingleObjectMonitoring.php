@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
 use ipl\Html\Text;
+use Ramsey\Uuid\Uuid;
 
 trait SingleObjectMonitoring
 {
@@ -82,9 +83,9 @@ trait SingleObjectMonitoring
             Html::tag('pre', [
                 'class' => 'logOutput'
             ], sprintf(
-                'icingacli vspheredb check %s --name %s%s',
+                'icingacli vspheredb check %s --uuid %s%s',
                 CheckRunner::getCheckTypeForObject($object),
-                escapeshellarg($object->object()->get('object_name')),
+                Uuid::fromBytes($object->get('uuid'))->toString(),
                 $inspect ? ' --inspect' : ''
             ))
         ));
