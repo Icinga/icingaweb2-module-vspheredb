@@ -103,7 +103,7 @@ class CheckCommand extends Command
      *
      * USAGE
      *
-     * icingacli vspheredb check host [--name <name>|--uuid <uuid>]
+     * icingacli vspheredb check host [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
      */
     public function hostAction()
     {
@@ -142,7 +142,7 @@ class CheckCommand extends Command
      *
      * USAGE
      *
-     * icingacli vspheredb check vm [--name <name>|--uuid <uuid>]
+     * icingacli vspheredb check vm [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
      */
     public function vmAction()
     {
@@ -186,7 +186,7 @@ class CheckCommand extends Command
      *
      * USAGE
      *
-     * icingacli vspheredb check datastore [--name <name>|--uuid <uuid>]
+     * icingacli vspheredb check datastore [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
      */
     public function datastoreAction()
     {
@@ -229,6 +229,11 @@ class CheckCommand extends Command
         }
         if ($rule = $this->params->get(CheckRunner::RULE_NAME_PARAMETER)) {
             self::assertString($rule, '--' . CheckRunner::RULE_NAME_PARAMETER);
+            if ($section === null && ($pos = strpos($rule, '/'))) {
+                $section = substr($rule, 0, $pos);
+                $runner->setRuleSetName($section);
+                $rule = substr($rule, $pos + 1);
+            }
             $runner->setRuleName($rule);
         }
         if ($this->params->get('inspect')) {

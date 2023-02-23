@@ -1,6 +1,17 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.7.0 (unreleased)
+-------------------
+
+### Monitoring Rules
+* FEATURE: CLI check command allows `--rule Set/Rule` and `--rule Set/*` (#506)
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/15?closed=1)
+
+
 v1.6.0
 ------
 
