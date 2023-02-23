@@ -234,7 +234,9 @@ class CheckCommand extends Command
                 $runner->setRuleSetName($section);
                 $rule = substr($rule, $pos + 1);
             }
-            $runner->setRuleName($rule);
+            if ($rule !== '*') {
+                $runner->setRuleName($rule);
+            }
         }
         if ($this->params->get('inspect')) {
             $runner->enableInspection();
