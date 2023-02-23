@@ -87,8 +87,8 @@ class CheckRunner
             }
             if ($this->inspect) {
                 $labelPostfix = $this->light(sprintf(
-                    ' (--%s %s)',
-                    self::RULESET_NAME_PARAMETER,
+                    ' (--%s %s/*)',
+                    self::RULE_NAME_PARAMETER,
                     $set::getIdentifier()
                 ));
             } else {
@@ -123,8 +123,9 @@ class CheckRunner
                 $ruleSettings = $settings->withRemovedPrefix(Settings::prefix($set, $rule));
                 if ($this->inspect) {
                     $labelPostfix = $this->light(sprintf(
-                        ' (--%s %s)',
+                        ' (--%s %s/%s)',
                         self::RULE_NAME_PARAMETER,
+                        $set::getIdentifier(),
                         $rule::getIdentifier()
                     ));
                 } else {
