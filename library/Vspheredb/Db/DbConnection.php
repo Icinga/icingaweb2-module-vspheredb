@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Db;
 
 use Icinga\Data\Db\DbConnection as IcingaDbConnection;
-use Icinga\Module\Director\Db\DbUtil;
 use RuntimeException;
 use Zend_Db_Expr;
 use function array_map;
