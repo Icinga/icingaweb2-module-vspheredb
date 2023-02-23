@@ -16,7 +16,10 @@ class DataTypeMonitoringRule extends DataTypeHook
         $options = [];
         foreach ($registry->getSets() as $set) {
             $current = [];
-            $current[$set::getIdentifier() . '/*'] = $form->translate('(full rule set)');//'* => ' . sprintf($form->translate('All rules in %s'), $set->getLabel());
+            $current[$set::getIdentifier() . '/*'] = sprintf(
+                '* ' . $form->translate('(full rule set: %s)'),
+                $set->getLabel()
+            );
             foreach ($set->getRules() as $rule) {
                 $current[$set::getIdentifier() . '/' . $rule::getIdentifier()] = $rule->getLabel();
             }
