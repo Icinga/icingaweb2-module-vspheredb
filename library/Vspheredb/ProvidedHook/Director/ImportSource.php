@@ -198,10 +198,10 @@ class ImportSource extends ImportSourceHook
             'o.uuid = vm.uuid',
             []
         )->order('o.object_name')->order('o.uuid');
-        if ($this->getSetting('skip_templates', 'y')) {
+        if ($this->getSetting('skip_templates', 'y') === 'y') {
             $query->where('template = ?', 'n');
         }
-        if ($this->getSetting('skip_powered_off', 'n')) {
+        if ($this->getSetting('skip_powered_off', 'n') === 'y') {
             $query->where('runtime_power_state != ?', 'poweredOff');
         }
 
