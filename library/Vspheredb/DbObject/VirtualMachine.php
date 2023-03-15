@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use gipfl\Json\JsonString;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Util;
 
@@ -45,6 +46,8 @@ class VirtualMachine extends BaseDbObject
         'boot_order'                 => null,
         'cpu_hot_add_enabled'        => null,
         'memory_hot_add_enabled'     => null,
+        'guest_ip_addresses'         => null,
+        'guest_ip_stack'             => null,
     ];
 
     protected $objectReferences = [
@@ -87,6 +90,8 @@ class VirtualMachine extends BaseDbObject
         'guest.guestFullName'        => 'guest_full_name',
         'guest.hostName'             => 'guest_host_name',
         'guest.ipAddress'            => 'guest_ip_address',
+        'guest.net'                  => 'net',
+        'guest.ipStack'              => 'guestIpStack',
         'config.bootOptions'         => 'bootOptions',
         'config.cpuHotAddEnabled'    => 'cpu_hot_add_enabled',
         'config.memoryHotAddEnabled' => 'memory_hot_add_enabled',
@@ -166,6 +171,152 @@ class VirtualMachine extends BaseDbObject
         }
 
         return $this->reallySet('paused', $value);
+    }
+
+    /**
+     * Example:
+     *
+     * 'GuestNicInfo' => [{
+     *     'connected' => true,
+     *     'deviceConfigId' => 4000,
+     *     'dnsConfig' => NULL,
+     *     'ipAddress' => [
+     *          '192.2.0.4',
+     *          'fe80::20c:223f:fe72:93ca',
+     *     ],
+     *     'ipConfig' => {
+     *       'dynamicProperty' => NULL,
+     *       'dynamicType' => NULL,
+     *       'ipAddress' => [{
+     *          'dynamicProperty' => NULL,
+     *          'dynamicType' => NULL,
+     *          'ipAddress' => '192.2.0.4',
+     *          'prefixLength' => 24,
+     *          'state' => 'preferred',
+     *       }, {
+     *          'dynamicProperty' => NULL,
+     *          'dynamicType' => NULL,
+     *          'ipAddress' => 'fe80::20c:223f:fe72:93ca',
+     *          'prefixLength' => 64,
+     *          'state' => 'unknown',
+     *       }]
+     *      },
+     *     'macAddress' => '00:02:92:3c:29:73',
+     *     'netBIOSConfig' => NULL,
+     *     'network' => 'Demo LAN',
+     *  }]
+     */
+    public function setNet($value)
+    {
+        if ($value === null || ! isset($value->GuestNicInfo)) {
+            $this->set('guest_ip_addresses', null);
+            return;
+        }
+        $addresses = [];
+        foreach ($value->GuestNicInfo as $nic) {
+            $key = $nic->deviceConfigId; // matches hardware_key
+            if (! isset($addresses[$key])) {
+                $addresses[$key] = (object) [
+                    'connected' => $nic->connected,
+                    'network'   => $nic->network,
+                    'addresses' => [],
+                ];
+            }
+
+            foreach ($nic->ipConfig->ipAddress as $config) {
+                $addresses[$key]->addresses[] = (object) [
+                    'address'      => $config->ipAddress,
+                    'prefixLength' => $config->prefixLength,
+                    'state'        => $config->state,
+                ];
+            }
+        }
+
+        $this->set('guest_ip_addresses', JsonString::encode((object) $addresses));
+    }
+
+    public function setGuestIpStack($value)
+    {
+        if ($value === null) {
+            $this->set('guest_ip_stack', null);
+        } else {
+            if (isset($value->GuestStackInfo)) {
+                $value = $value->GuestStackInfo;
+                foreach ($value as &$stack) {
+                    unset($stack->dynamicProperty);
+                    unset($stack->dynamicType);
+                    unset($stack->ipRouteConfig->dynamicProperty);
+                    unset($stack->ipRouteConfig->dynamicType);
+                    foreach ($stack->ipRouteConfig->ipRoute as $route) {
+                        unset($route->dynamicProperty);
+                        unset($route->dynamicType);
+                        unset($route->gateway->dynamicProperty);
+                        unset($route->gateway->dynamicType);
+                    }
+                }
+                $this->set('guest_ip_stack', JsonString::encode($value));
+            } else {
+                $this->set('guest_ip_stack', null); // -> {}
+            }
+        }
+    }
+
+    /**
+     * Example:
+     * [{
+     *   "dnsConfig": {
+     *     "dhcp": false,
+     *     "domainName": "",
+     *     "hostName": "whatever.example.com",
+     *     "ipAddress": ["192.0.2.1"],
+     *     "searchDomain": []
+     *   },
+     *   "ipRouteConfig": {
+     *     "ipRoute":[{
+     *       "network": "0.0.0.0",
+     *       "prefixLength": 0,
+     *       "gateway": {
+     *         "ipAddress": "192.0.2.254",
+     *         "device": "0"
+     *       }
+     *     }, {
+     *       "network": "192.0.2.0",
+     *       "prefixLength": 24,
+     *       "gateway": {"device": "0"}
+     *     }, {
+     *       "network": "fe80::",
+     *       "prefixLength": 64,
+     *       "gateway": {"device":"0"}
+     *     }, {
+     *         "network": "fe80::20c:fe2f:19f6:5b34",
+     *         "prefixLength": 128,
+     *         "gateway": {"device": "0"}
+     *     }, {
+     *       "network": "ff00::",
+     *       "prefixLength": 8,
+     *       "gateway": {"device": "0"}
+     *     }]
+     *   }
+     * }]
+     */
+    public function guestIpStack(): ?array
+    {
+        $value = $this->get('guest_ip_stack');
+        if ($value === null) {
+            return null;
+        }
+
+        return JsonString::decode($value);
+    }
+
+    public function guestIpAddresses(): \stdClass
+    {
+        $value = $this->get('guest_ip_addresses');
+        if ($value === null) {
+            return (object) [];
+        }
+
+        return JsonString::decode($value);
     }
 
     /**

@@ -11,7 +11,12 @@ v1.7.0 (unreleased)
 * FEATURE: --inspect no proposes the new `--rule Set/*` parameter style (#509)
 * FIX: meaningful error in case no check has been executed (#507)
 
-![84-17-01_monitoring_rule_set_director_hook.png](screenshot%2F84_changelog%2Fv1.7.0%2F84-17-01_monitoring_rule_set_director_hook.png)
+![84-17-01_monitoring_rule_set_director_hook.png](screenshot/84_changelog/v1.7.0/84-17-01_monitoring_rule_set_director_hook.png)
+
+### UI
+* FEATURE: Guest IP stack is now being fetched and visualized (#119)
+
+![84-17-02_guest_ip_stack.png](screenshot/84_changelog/v1.7.0/84-17-02_guest_ip_stack.png)
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our

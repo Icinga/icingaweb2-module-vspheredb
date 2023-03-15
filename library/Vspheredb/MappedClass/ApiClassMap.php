@@ -225,6 +225,9 @@ class ApiClassMap
             'HostRdmaHba'                             => HostRdmaHba::class,
             'HostSerialAttachedHba'                   => HostSerialAttachedHba::class,
             'HostTcpHba'                              => HostTcpHba::class,
+
+            'GuestNicInfo'                            => GuestNicInfo::class,
+            'NetDnsConfigInfo'                        => NetDnsConfigInfo::class,
         ];
 
         return $map;

@@ -23,6 +23,7 @@ use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\Vm\BackupToolInfo;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
+use Icinga\Module\Vspheredb\Web\Widget\VmRouteConfigTable;
 
 class VmController extends Controller
 {
@@ -45,6 +46,7 @@ class VmController extends Controller
             new VmLocationInfoTable($vm, $vCenter),
             new CustomValueDetails($vm),
             new VmNetworkAdapterTable($vm),
+            new VmRouteConfigTable($vm),
             new VmDatastoresTable($vm),
             new VmDisksTable($vm),
             new VmDiskUsageTable($vm),

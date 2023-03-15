@@ -24,12 +24,17 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
     protected $moref;
 
     protected $withPerfImages = false;
+    /**
+     * @var array
+     */
+    protected $ipAddresses;
 
     public function __construct(VirtualMachine $vm)
     {
         $this->vm = $vm;
         $this->moref = $this->vm->object()->get('moref');
         $this->prepend(new SubTitle($this->translate('Network'), 'sitemap'));
+        $this->ipAddresses = $vm->guestIpAddresses();
         parent::__construct($vm->getConnection());
     }
 
@@ -51,7 +56,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
     protected function linkToPortGroup($row)
     {
         if ($row->port_key === null) {
-            return '-'; // TODO: explain
+            return ''; // TODO: explain (no portgroup -> ESXi?)
         } elseif ($row->portgroup_uuid === null) {
             return \sprintf($this->translate('Port %s'), $row->port_key);
         } else {
@@ -73,10 +78,38 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
 
     protected function formatSimple($row)
     {
+        $ipInfo = $this->ipAddresses->{$row->hardware_key} ?? null;
+        if ($ipInfo) {
+            $mainIpInfo = Html::sprintf(
+                '%s: %s%s%s: %s%s',
+                $this->translate('Connected'),
+                $ipInfo->connected ? 'YES' : Html::tag('span', ['class' => 'critical'], $this->translate('no')),
+                Html::tag('br'),
+                $this->translate('Network'),
+                $ipInfo->network,
+                Html::tag('br')
+            );
+            $aIpInfo = [];
+            foreach ($ipInfo->addresses as $address) {
+                $aIpInfo[] = sprintf('%s/%s (%s)', $address->address, $address->prefixLength, $address->state);
+            }
+            if (empty($aIpInfo)) {
+                $aIpInfo = '';
+            } else {
+                $aIpInfo = implode(', ', $aIpInfo);
+            }
+        } else {
+            $mainIpInfo = '';
+            $aIpInfo = '';
+        }
         return Html::sprintf(
-            '%s (%s), %s',
+            '%s (%s)%s %s%s%s %s',
             Html::tag('strong', $row->label),
             $row->mac_address,
+            Html::tag('br'),
+            $mainIpInfo,
+            $aIpInfo,
+            $aIpInfo === '' ? '' : Html::tag('br'),
             $this->linkToPortGroup($row)
         );
     }

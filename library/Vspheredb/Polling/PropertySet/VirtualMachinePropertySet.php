@@ -36,6 +36,8 @@ class VirtualMachinePropertySet implements PropertySet
                 'guest.guestFullName',
                 'guest.hostName',
                 'guest.ipAddress',
+                'guest.net',
+                'guest.ipStack', // -> gives dnsConfig (missing in guest.net?) and ipRouteConfig
                 'config.bootOptions',
                 'config.cpuHotAddEnabled',
                 'config.memoryHotAddEnabled',

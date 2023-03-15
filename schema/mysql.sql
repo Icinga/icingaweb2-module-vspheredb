@@ -427,6 +427,8 @@ CREATE TABLE virtual_machine (
   ) NOT NULL,
   boot_network_protocol ENUM('ipv4', 'ipv6') DEFAULT NULL,
   boot_order VARCHAR(128) DEFAULT NULL,
+  guest_ip_addresses TEXT DEFAULT NULL,
+  guest_ip_stack TEXT DEFAULT NULL,
   custom_values TEXT DEFAULT NULL,
   annotation TEXT DEFAULT NULL,
   PRIMARY KEY(uuid)
@@ -965,4 +967,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (57, NOW());
+VALUES (58, NOW());
