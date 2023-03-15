@@ -15,6 +15,7 @@ v1.7.0 (unreleased)
 
 ### UI
 * FEATURE: Guest IP stack is now being fetched and visualized (#119)
+* FIX: Events filtered by day and parent are now shown (#510)
 
 ![84-17-02_guest_ip_stack.png](screenshot/84_changelog/v1.7.0/84-17-02_guest_ip_stack.png)
 

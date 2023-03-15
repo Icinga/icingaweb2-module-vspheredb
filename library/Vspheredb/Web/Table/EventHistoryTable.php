@@ -16,6 +16,8 @@ use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
 use ipl\Html\Text;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class EventHistoryTable extends ZfQueryBasedTable
 {
@@ -66,7 +68,7 @@ class EventHistoryTable extends ZfQueryBasedTable
     /** @var string */
     protected $eventType;
 
-    /** @var string */
+    /** @var ?UuidInterface */
     protected $parent;
 
     public function renderRow($row)
@@ -214,7 +216,7 @@ class EventHistoryTable extends ZfQueryBasedTable
     public function filterParent($uuid)
     {
         if ($uuid !== null && strlen($uuid)) {
-            $this->parent = $uuid;
+            $this->parent = Uuid::fromString($uuid);
         }
 
         return $this;
@@ -286,11 +288,9 @@ class EventHistoryTable extends ZfQueryBasedTable
 
         if ($this->parent !== null) {
             $query->join(
-                ['h' => 'object'],
-                $this->db()->quoteInto(
-                    'h.uuid = vh.host_uuid AND h.parent_uuid = UNHEX(?)',
-                    $this->parent
-                ),
+                ['o' => 'object'],
+                '(o.uuid = vh.vm_uuid OR o.uuid = vh.host_uuid OR o.uuid = vh.datastore_uuid)'
+                . ' AND o.parent_uuid = ' . DbUtil::quoteBinaryCompat($this->parent->getBytes(), $this->db()),
                 []
             );
         }
