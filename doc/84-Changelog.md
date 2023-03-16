@@ -19,6 +19,9 @@ v1.7.0 (unreleased)
 
 ![84-17-02_guest_ip_stack.png](screenshot/84_changelog/v1.7.0/84-17-02_guest_ip_stack.png)
 
+### Integrations
+* FEATURE: Director Import Source now provides all Guest IP addresses (#449)
+
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/15?closed=1)

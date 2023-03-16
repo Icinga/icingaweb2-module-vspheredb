@@ -51,6 +51,7 @@ class ImportSource extends ImportSourceHook
         'runtime_power_state' => 'vm.runtime_power_state',
         'template'            => 'vm.template',
         'custom_values'       => 'vm.custom_values',
+        'guest_ip_addresses'  => 'vm.guest_ip_addresses',
         'tags'                => 'o.tags',
     ];
 
@@ -184,6 +185,17 @@ class ImportSource extends ImportSourceHook
             }
             if ($objectType === 'virtual_machine') {
                 $row->template = $row->template === 'y';
+                if ($row->guest_ip_addresses !== null) {
+                    $addresses = [];
+                    foreach ((array) JsonString::decode($row->guest_ip_addresses) as $if) {
+                        foreach ($if->addresses as $info) {
+                            if ($info->state !== 'unknown') {
+                                $addresses[] = $info->address . '/' . $info->prefixLength;
+                            }
+                        }
+                    }
+                    $row->guest_ip_addresses = $addresses;
+                }
             }
             $row->tags = JsonString::decode($row->tags);
         }
