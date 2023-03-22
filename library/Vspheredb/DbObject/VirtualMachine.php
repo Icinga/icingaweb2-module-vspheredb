@@ -223,12 +223,14 @@ class VirtualMachine extends BaseDbObject
                 ];
             }
 
-            foreach ($nic->ipConfig->ipAddress as $config) {
-                $addresses[$key]->addresses[] = (object) [
-                    'address'      => $config->ipAddress,
-                    'prefixLength' => $config->prefixLength,
-                    'state'        => $config->state,
-                ];
+            if (isset($nic->ipConfig->ipAddress)) {
+                foreach ($nic->ipConfig->ipAddress as $config) {
+                    $addresses[$key]->addresses[] = (object) [
+                        'address'      => $config->ipAddress,
+                        'prefixLength' => $config->prefixLength,
+                        'state'        => $config->state,
+                    ];
+                }
             }
         }
 
@@ -247,11 +249,13 @@ class VirtualMachine extends BaseDbObject
                     unset($stack->dynamicType);
                     unset($stack->ipRouteConfig->dynamicProperty);
                     unset($stack->ipRouteConfig->dynamicType);
-                    foreach ($stack->ipRouteConfig->ipRoute as $route) {
-                        unset($route->dynamicProperty);
-                        unset($route->dynamicType);
-                        unset($route->gateway->dynamicProperty);
-                        unset($route->gateway->dynamicType);
+                    if (isset($stack->ipRouteConfig->ipRoute)) {
+                        foreach ($stack->ipRouteConfig->ipRoute as $route) {
+                            unset($route->dynamicProperty);
+                            unset($route->dynamicType);
+                            unset($route->gateway->dynamicProperty);
+                            unset($route->gateway->dynamicType);
+                        }
                     }
                 }
                 $this->set('guest_ip_stack', JsonString::encode($value));
