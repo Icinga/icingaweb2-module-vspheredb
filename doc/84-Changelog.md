@@ -1,8 +1,21 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-v1.7.0 (unreleased)
--------------------
+v1.7.0
+------
+
+This release provides full Guest IP stack information (addresses, routes), and
+provides all guest IPs in CIDR notation to the Icinga Director. To simplify
+configuration in the Director, a dedicated Rule "Data Type" is provided, which
+makes it easier to pick the right Rule Set (or Rule) for your related Service
+Sets.
+
+Some little bug has been fixed, notably the one that prohibited exporting
+stopped VMs since v1.6.0.
+
+### Upgrading
+
+Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
 
 ### Monitoring Rules
 * FEATURE: CLI check command allows `--rule Set/Rule` and `--rule Set/*` (#506)
