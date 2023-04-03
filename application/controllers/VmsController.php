@@ -50,9 +50,18 @@ class VmsController extends ObjectsController
         $table = new VmsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
+        if ($this->params->get('format') === 'json' || $this->getRequest()->isApiRequest()) {
+            $this->downloadTable($table, $this->translate('Virtual Machines'));
+            return;
+        }
         $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machines'));
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
+    }
+
+    public function exportAction()
+    {
+        $this->sendExport('virtual_machine');
     }
 
     public function diskusageAction()

@@ -26,8 +26,17 @@ class DatastoresController extends ObjectsController
         $table = new DatastoreTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
+        if ($this->params->get('format') === 'json' || $this->getRequest()->isApiRequest()) {
+            $this->downloadTable($table, $this->translate('Datastores'));
+            return;
+        }
         $this->showTable($table, 'vspheredb/datastores', $this->translate('Datastores'));
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
+    }
+
+    public function exportAction()
+    {
+        $this->sendExport('datastore');
     }
 }

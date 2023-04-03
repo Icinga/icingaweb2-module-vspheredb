@@ -4,6 +4,12 @@
 v1.8.0 (unreleased)
 -------------------
 
+### UI
+* FEATURE: two different download links for our main tables (#511)
+
+### REST API
+* Hosts, VirtualMachines and DataStores can now be exported via REST API (#511)
+
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/16?closed=1)

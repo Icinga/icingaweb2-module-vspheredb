@@ -34,9 +34,9 @@ class AdditionalTableActions
     public function appendTo(HtmlDocument $parent)
     {
         $links = [];
-        if (false && $this->hasPermission('vspheredb/admin')) {
-            // TODO: not yet
-            // $links[] = $this->createDownloadJsonLink();
+        if ($this->hasPermission('vspheredb/export') && $this->urlAllowsExport($this->url)) {
+            $links[] = $this->createDownloadJsonLink();
+            $links[] = $this->createExportJsonLink();
         }
         if ($this->hasPermission('vspheredb/showsql')) {
             $links[] = $this->createShowSqlToggle();
@@ -48,7 +48,7 @@ class AdditionalTableActions
         return $this;
     }
 
-    protected function createDownloadJsonLink()
+    protected function createDownloadJsonLink(): Link
     {
         return Link::create(
             $this->translate('Download as JSON'),
@@ -56,6 +56,27 @@ class AdditionalTableActions
             null,
             ['target' => '_blank']
         );
+    }
+
+    protected function createExportJsonLink(): Link
+    {
+        $url = clone($this->url);
+        $url->setPath($url->getPath() . '/export');
+        return Link::create(
+            $this->translate('Export (JSON, predefined)'),
+            $url,
+            null,
+            ['target' => '_blank']
+        );
+    }
+
+    protected function urlAllowsExport(Url $url): bool
+    {
+        return in_array($url->getPath(), [
+            'vspheredb/vms',
+            'vspheredb/hosts',
+            'vspheredb/datastores',
+        ]);
     }
 
     protected function createShowSqlToggle()

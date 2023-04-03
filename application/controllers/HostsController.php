@@ -26,6 +26,10 @@ class HostsController extends ObjectsController
         $table = new HostsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
+        if ($this->params->get('format') === 'json' || $this->getRequest()->isApiRequest()) {
+            $this->downloadTable($table, $this->translate('Host Systems'));
+            return;
+        }
         $this->showTable($table, 'vspheredb/hosts', $this->translate('Hosts'));
         // Hint: handleSortUrl MUST be done AFTER showTable, otherwise
         //       eventuallyFilter and similar will not be applied
@@ -34,5 +38,10 @@ class HostsController extends ObjectsController
         //       CHECK THIS!
         $summaries = new Summaries($table, $this->db(), $this->url());
         $this->content()->prepend($summaries);
+    }
+
+    public function exportAction()
+    {
+        $this->sendExport('host_system');
     }
 }

@@ -8,6 +8,9 @@ use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbUtil;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
+use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Adapter_Abstract as ZfDb;
 use function array_keys;
@@ -18,7 +21,7 @@ use function in_array;
  *
  * This is where we provide an Import Source for the Icinga Director
  */
-class ImportSource extends ImportSourceHook
+class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, TableWithParentFilter
 {
     protected $hostColumns = [
         'object_name'             => 'o.object_name',
@@ -80,6 +83,11 @@ class ImportSource extends ImportSourceHook
         'multiple_host_access' => 'ds.multiple_host_access',
         'tags'                 => 'o.tags',
     ];
+
+    /** @var ?array */
+    protected $parentFilterUuids = null;
+    /** @var ?array */
+    protected $vCenterFilterUuids = null;
 
     public function getName()
     {
@@ -168,6 +176,8 @@ class ImportSource extends ImportSourceHook
             default:
                 return [];
         }
+        $this->applyOptionalVCenterFilter($db, $query);
+        $this->applyOptionalParentFilter($query);
         $result = $db->fetchAll(
             $this->eventuallyFilterVCenter($this->joinVCenter($query))
         );
@@ -177,30 +187,35 @@ class ImportSource extends ImportSourceHook
         }
 
         foreach ($result as $row) {
-            $row->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
-            if (in_array($objectType, ['host_system', 'virtual_machine'])) {
-                if ($row->custom_values !== null) {
-                    $row->custom_values = JsonString::decode($row->custom_values);
-                }
-            }
-            if ($objectType === 'virtual_machine') {
-                $row->template = $row->template === 'y';
-                if ($row->guest_ip_addresses !== null) {
-                    $addresses = [];
-                    foreach ((array) JsonString::decode($row->guest_ip_addresses) as $if) {
-                        foreach ($if->addresses as $info) {
-                            if ($info->state !== 'unknown') {
-                                $addresses[] = $info->address . '/' . $info->prefixLength;
-                            }
-                        }
-                    }
-                    $row->guest_ip_addresses = $addresses;
-                }
-            }
-            $row->tags = JsonString::decode($row->tags);
+            static::convertDbRowToJsonData($row);
         }
 
         return $result;
+    }
+
+    public static function convertDbRowToJsonData($row)
+    {
+        $row->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
+        if (isset($row->custom_values)) {
+            $row->custom_values = JsonString::decode($row->custom_values);
+        }
+        if (isset($row->template)) {
+            $row->template = $row->template === 'y';
+        }
+        if (isset($row->guest_ip_addresses)) {
+            $addresses = [];
+            foreach ((array) JsonString::decode($row->guest_ip_addresses) as $if) {
+                foreach ($if->addresses as $info) {
+                    if ($info->state !== 'unknown') {
+                        $addresses[] = $info->address . '/' . $info->prefixLength;
+                    }
+                }
+            }
+            $row->guest_ip_addresses = $addresses;
+        }
+        if (isset($row->tags)) {
+            $row->tags = JsonString::decode($row->tags);
+        }
     }
 
     protected function prepareVmQuery(ZfDb $db)
@@ -297,5 +312,49 @@ class ImportSource extends ImportSourceHook
     public static function getDefaultKeyColumnName(): ?string
     {
         return 'object_name';
+    }
+
+    public function filterVCenter(VCenter $vCenter): self
+    {
+        return $this->filterVCenterUuids([$vCenter->getUuid()]);
+    }
+
+    public function filterVCenterUuids(?array $uuids): self
+    {
+        $this->vCenterFilterUuids = $uuids;
+        return $this;
+    }
+
+    public function filterParentUuids(?array $uuids)
+    {
+        $this->parentFilterUuids = $uuids;
+    }
+
+    protected function applyOptionalParentFilter($query)
+    {
+        if ($this->parentFilterUuids === null) {
+            return;
+        }
+
+        $query->where('o.parent_uuid IN (?)', $this->parentFilterUuids);
+    }
+
+    protected function applyOptionalVCenterFilter(ZfDb $db, $query)
+    {
+        $uuids = $this->vCenterFilterUuids;
+        if ($uuids === null) {
+            return;
+        }
+        if (empty($uuids)) {
+            $query->where('1 = 0');
+            return;
+        }
+
+        $column = 'vc.instance_uuid';
+        if (count($uuids) === 1) {
+            $query->where("$column = ?", DbUtil::quoteBinaryCompat(array_shift($uuids), $db));
+        } else {
+            $query->where("$column IN (?)", DbUtil::quoteBinaryCompat($uuids, $db));
+        }
     }
 }

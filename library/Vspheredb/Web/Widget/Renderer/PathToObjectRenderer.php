@@ -51,7 +51,7 @@ class PathToObjectRenderer
             $parts[] = Link::create(
                 Anonymizer::anonymizeString($name),
                 $baseUrl,
-                Util::uuidParams($parentUuid),
+                ['parent' => Util::niceUuid($parentUuid), 'showDescendants' => true],
                 ['data-base-target' => '_main']
             );
         }

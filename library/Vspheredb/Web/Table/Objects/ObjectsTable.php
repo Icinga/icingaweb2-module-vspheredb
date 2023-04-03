@@ -7,11 +7,12 @@ use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
+use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Ramsey\Uuid\Uuid;
 
-abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter
+abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter, TableWithParentFilter
 {
     protected $searchColumns = [
         'object_name',
