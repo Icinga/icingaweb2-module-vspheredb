@@ -7,6 +7,8 @@ v1.8.0 (unreleased)
 ### UI
 * FEATURE: two different download links for our main tables (#511)
 
+![86-18-01_json_export.png](screenshot/84_changelog/v1.8.0/86-18-01_json_export.png)
+
 ### REST API
 * Hosts, VirtualMachines and DataStores can now be exported via REST API (#511)
 
