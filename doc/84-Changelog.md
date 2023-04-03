@@ -9,6 +9,8 @@ v1.8.0 (unreleased)
 
 ![86-18-01_json_export.png](screenshot/84_changelog/v1.8.0/86-18-01_json_export.png)
 
+* FIX: vCenter filter is now preserved across main table tabs (#516)
+
 ### REST API
 * Hosts, VirtualMachines and DataStores can now be exported via REST API (#511)
 

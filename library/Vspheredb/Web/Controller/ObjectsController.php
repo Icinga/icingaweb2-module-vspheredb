@@ -215,14 +215,13 @@ class ObjectsController extends Controller
         ->activate($action);
     }
 
-    protected function getParentParamsToPreserve()
+    protected function getParentParamsToPreserve(): array
     {
         $urlParams = [];
-        if (null !== ($showDescendants = $this->url()->getParam('showDescendants'))) {
-            $urlParams['showDescendants'] = $showDescendants;
-        }
-        if (null !== ($uuid = $this->url()->getParam('uuid'))) {
-            $urlParams['uuid'] = $uuid;
+        foreach (['showDescendants', 'uuid', 'parent', 'vcenter'] as $param) {
+            if (null !== ($value = $this->url()->getParam($param))) {
+                $urlParams[$param] = $value;
+            }
         }
 
         return $urlParams;
