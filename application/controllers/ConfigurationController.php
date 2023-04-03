@@ -12,7 +12,6 @@ use Icinga\Module\Vspheredb\Web\Table\MonitoredObjectMappingTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\ConfigTabs;
 use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Widget\Config\ProposeMigrations;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
