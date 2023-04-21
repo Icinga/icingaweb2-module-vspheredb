@@ -39,6 +39,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
         'custom_values'           => 'h.custom_values',
         'tags'                    => 'o.tags',
+        'path'                    => '(NULL)',
     ];
 
     protected $vmColumns = [
@@ -59,6 +60,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'custom_values'       => 'vm.custom_values',
         'guest_ip_addresses'  => 'vm.guest_ip_addresses',
         'tags'                => 'o.tags',
+        'path'                => '(NULL)',
     ];
 
     protected $computeResourceColumns = [
@@ -76,6 +78,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'total_cpu_mhz'            => 'cr.total_cpu_mhz',
         'total_memory_size_mb'     => 'cr.total_memory_size_mb',
         'tags'                     => 'o.tags',
+        'path'                     => '(NULL)',
     ];
 
     protected $datastoreColumns = [
@@ -87,6 +90,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'capacity'             => 'ds.capacity',
         'multiple_host_access' => 'ds.multiple_host_access',
         'tags'                 => 'o.tags',
+        'path'                 => '(NULL)',
     ];
 
     /** @var ?array */
