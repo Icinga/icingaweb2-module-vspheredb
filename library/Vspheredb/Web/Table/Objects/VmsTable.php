@@ -39,6 +39,8 @@ class VmsTable extends ObjectsTable
         $wantsHosts = false;
         $wantsStats = false;
         $wantsVCenter = false;
+        $wantsDisks = false;
+        $wantsDataStores = false;
         foreach ($columns as $column) {
             if (substr($column, 0, 2) === 'h.') {
                 $wantsHosts = true;
@@ -48,6 +50,12 @@ class VmsTable extends ObjectsTable
             }
             if (substr($column, 0, 3) === 'vc.') {
                 $wantsVCenter = true;
+            }
+            if (substr($column, 0, 4) === 'vmd.') {
+                $wantsDisks = true;
+            }
+            if (substr($column, 0, 4) === 'vdu.') {
+                $wantsDataStores = true;
             }
         }
 
@@ -83,6 +91,22 @@ class VmsTable extends ObjectsTable
                 []
             );
         }
+        if ($wantsDataStores) {
+            $sub = $this->db()->select()->from('vm_datastore_usage', [
+                'vm_uuid' => 'vm_uuid',
+                'datastore_capacity' => 'SUM(committed + uncommitted)',
+                'datastore_usage' => 'SUM(committed)',
+            ])->group('vm_uuid');
+            $query->joinLeft(['vdu' => $sub], 'vdu.vm_uuid = o.uuid', []);
+        }
+        if ($wantsDisks) {
+            $sub = $this->db()->select()->from('vm_disk', [
+                'vm_uuid' => 'vm_uuid',
+                'disk_capacity' => 'SUM(capacity)',
+            ])->group('vm_uuid');
+            $query->joinLeft(['vmd' => $sub], 'vmd.vm_uuid = o.uuid', []);
+        }
+
         if ($this->parentUuids) {
             $query->where('o.parent_uuid IN (?)', $this->parentUuids);
         }
@@ -174,6 +198,21 @@ class VmsTable extends ObjectsTable
                 ->setRenderer($memoryRenderer)
                 ->setSortExpression('(vqs.guest_memory_usage_mb / vm.hardware_memorymb)')
                 ->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('disk_capacity', $this->translate('Disks'), 'vmd.disk_capacity')
+                ->setRenderer(function ($row) {
+                    return Format::bytes($row->disk_capacity ?: 0);
+                })->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('datastore_capacity', $this->translate('Datastore'), 'vdu.datastore_capacity')
+                ->setRenderer(function ($row) {
+                    return Format::bytes($row->datastore_capacity ?: 0);
+                })->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('datastore_usage', $this->translate('DS Usage'), 'vdu.datastore_usage')
+                ->setRenderer(function ($row) {
+                    return Format::bytes($row->datastore_usage ?: 0);
+                })->setDefaultSortDirection('DESC'),
 
             $this->createColumn('uptime', $this->translate('Uptime'), [
                 'uptime' => 'vqs.uptime',

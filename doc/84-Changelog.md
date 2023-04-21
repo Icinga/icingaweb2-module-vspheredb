@@ -7,7 +7,11 @@ v1.8.0 (unreleased)
 ### UI
 * FEATURE: two different download links for our main tables (#511)
 
-![86-18-01_json_export.png](screenshot/84_changelog/v1.8.0/86-18-01_json_export.png)
+![JSON Export](screenshot/84_changelog/v1.8.0/84-18-01_json_export.png)
+
+* FEATURE: VMs table now provides Disk- and Storage-related aggregations (#521)
+
+![Storage Columns](screenshot/84_changelog/v1.8.0/84-18-02_storage-columns.png)
 
 * FIX: vCenter filter is now preserved across main table tabs (#516)
 
