@@ -1,24 +1,34 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
-v1.8.0 (unreleased)
--------------------
+v1.7.1
+------
+
+This release ships JSON export functionality via Download link and REST API for
+all main object tables. New Storage- and Disk-related aggregation columns have
+been added to the VirtualMachines table. Director Import Source (and JSON exports)
+now ship an object path array, reflecting your VMware tree structure. When
+toggling main object table tabs, vCenter filters are now being preserved.
+
+### Upgrading
+
+Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
 
 ### UI
 * FEATURE: two different download links for our main tables (#511)
 
-![JSON Export](screenshot/84_changelog/v1.8.0/84-18-01_json_export.png)
+![JSON Export](screenshot/84_changelog/v1.7.1/84-171-01_json_export.png)
 
 * FEATURE: VMs table now provides Disk- and Storage-related aggregations (#521)
 
-![Storage Columns](screenshot/84_changelog/v1.8.0/84-18-02_storage-columns.png)
+![Storage Columns](screenshot/84_changelog/v1.7.1/84-171-02_storage-columns.png)
 
 * FIX: vCenter filter is now preserved across main table tabs (#516)
 
 ### Integrations
 * FEATURE: Director Import Source now ships an object path array (#255)
 
-![Path Export](screenshot/84_changelog/v1.8.0/84-18-03_path_export.png)
+![Path Export](screenshot/84_changelog/v1.7.1/84-171-03_path_export.png)
 
 ### REST API
 * Hosts, VirtualMachines and DataStores can now be exported via REST API (#511)
