@@ -15,6 +15,11 @@ v1.8.0 (unreleased)
 
 * FIX: vCenter filter is now preserved across main table tabs (#516)
 
+### Integrations
+* FEATURE: Director Import Source now ships an object path array (#255)
+
+![Path Export](screenshot/84_changelog/v1.8.0/84-18-03_path_export.png)
+
 ### REST API
 * Hosts, VirtualMachines and DataStores can now be exported via REST API (#511)
 

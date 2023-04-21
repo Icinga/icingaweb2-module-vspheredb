@@ -7,14 +7,15 @@ use Icinga\Module\Director\Forms\ImportSourceForm;
 use Icinga\Module\Director\Hook\ImportSourceHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\BulkPathLookup;
 use Icinga\Module\Vspheredb\Db\DbUtil;
+use Icinga\Module\Vspheredb\Db\QueryHelper;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Adapter_Abstract as ZfDb;
 use function array_keys;
-use function in_array;
 
 /**
  * Class ImportSource
@@ -26,6 +27,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
     protected $hostColumns = [
         'object_name'             => 'o.object_name',
         'uuid'                    => 'o.uuid',
+        'parent_uuid'             => 'o.parent_uuid',
         'vcenter_name'            => 'vc.name',
         'sysinfo_vendor'          => 'h.sysinfo_vendor',
         'sysinfo_model'           => 'h.sysinfo_model',
@@ -43,6 +45,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'object_name'         => 'o.object_name',
         'moref'               => 'o.moref',
         'uuid'                => 'o.uuid',
+        'parent_uuid'         => 'o.parent_uuid',
         'vcenter_name'        => 'vc.name',
         'guest_ip_address'    => 'vm.guest_ip_address',
         'hardware_numcpu'     => 'vm.hardware_numcpu',
@@ -62,6 +65,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'object_name'              => 'o.object_name',
         'object_type'              => 'o.object_type',
         'uuid'                     => 'o.uuid',
+        'parent_uuid'              => 'o.parent_uuid',
         'vcenter_name'             => 'vc.name',
         'effective_cpu_mhz'        => 'cr.effective_cpu_mhz',
         'effective_memory_size_mb' => 'cr.effective_memory_size_mb',
@@ -77,6 +81,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
     protected $datastoreColumns = [
         'object_name'          => 'o.object_name',
         'uuid'                 => 'o.uuid',
+        'parent_uuid'          => 'o.parent_uuid',
         'vcenter_name'         => 'vc.name',
         'maintenance_mode'     => 'ds.maintenance_mode',
         'capacity'             => 'ds.capacity',
@@ -159,6 +164,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
     {
         $connection = Db::newConfiguredInstance();
         $db = $connection->getDbAdapter();
+        $pathLookup = new BulkPathLookup($connection);
         $objectType = $this->getSetting('object_type');
         switch ($objectType) {
             case 'host_system':
@@ -176,7 +182,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
             default:
                 return [];
         }
-        $this->applyOptionalVCenterFilter($db, $query);
+        QueryHelper::applyOptionalVCenterFilter($db, $query, 'vc.instance_uuid', $this->vCenterFilterUuids);
         $this->applyOptionalParentFilter($query);
         $result = $db->fetchAll(
             $this->eventuallyFilterVCenter($this->joinVCenter($query))
@@ -187,6 +193,8 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         }
 
         foreach ($result as $row) {
+            $row->path = array_values($pathLookup->getParents($row->parent_uuid));
+            unset($row->parent_uuid);
             static::convertDbRowToJsonData($row);
         }
 
@@ -337,24 +345,5 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         }
 
         $query->where('o.parent_uuid IN (?)', $this->parentFilterUuids);
-    }
-
-    protected function applyOptionalVCenterFilter(ZfDb $db, $query)
-    {
-        $uuids = $this->vCenterFilterUuids;
-        if ($uuids === null) {
-            return;
-        }
-        if (empty($uuids)) {
-            $query->where('1 = 0');
-            return;
-        }
-
-        $column = 'vc.instance_uuid';
-        if (count($uuids) === 1) {
-            $query->where("$column = ?", DbUtil::quoteBinaryCompat(array_shift($uuids), $db));
-        } else {
-            $query->where("$column IN (?)", DbUtil::quoteBinaryCompat($uuids, $db));
-        }
     }
 }
