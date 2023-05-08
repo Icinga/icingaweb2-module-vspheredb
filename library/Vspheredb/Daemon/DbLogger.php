@@ -57,7 +57,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
             return;
         }
         $timestamp = Util::currentTimestamp();
-        if ($timestamp === $this->lastTs) {
+        while ($timestamp <= $this->lastTs) {
             $timestamp++;
         }
         $this->lastTs = $timestamp;
