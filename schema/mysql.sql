@@ -123,18 +123,6 @@ CREATE TABLE vcenter_session (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
-CREATE TABLE vcenter_event_history_collector (
-  session_id VARBINARY(20) NOT NULL,
-  -- session[52dd54f1-28a1-4b84-6bd4-fc45fd9f3b78]52fc6d14-1c07-ffcd-107c-7132b2d263b0"
-  ref_string VARCHAR(128) NOT NULL,
-  ts_created BIGINT(20) NOT NULL,
-  CONSTRAINT server_session
-    FOREIGN KEY ehc_session (session_id)
-    REFERENCES vcenter_session (session_id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
-
 CREATE TABLE object (
   uuid VARBINARY(16) NOT NULL, -- uuid5(vcenter_uuid, moref)
   vcenter_uuid VARBINARY(16) NOT NULL,
@@ -968,4 +956,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (59, NOW());
+VALUES (60, NOW());
