@@ -1,6 +1,14 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.8.0
+------
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/17?closed=1)
+
+
 v1.7.1
 ------
 
