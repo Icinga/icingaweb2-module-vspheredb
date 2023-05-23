@@ -8,6 +8,8 @@ v1.8.0
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/17?closed=1)
 
+### UI
+* FEATURE: Cisco UCS C40-M6S Rack Server and B200-M6 Blade vendor images (#525)
 
 v1.7.1
 ------

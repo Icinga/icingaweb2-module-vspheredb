@@ -6,12 +6,16 @@ return [
             . 'ucs-b200-m4-blade-server/product-large.jpg',
         'UCSB-B200-M5' => 'https://www.cisco.com/c/dam/en/us/products/collateral/servers-unified-computing/'
             . 'ucs-b-series-blade-servers/datasheet-c78-739296.docx/_jcr_content/renditions/datasheet-c78-739296_0.png',
+        'UCSB-B200-M6' => 'https://www.cisco.com/content/dam/en/us/products/collateral/servers-unified-computing/'
+            . 'ucs-c-series-rack-servers/images/cisco-ucs-b200-m6-blade-server.png',
         'UCSC-C240-M4S' => 'https://www.cisco.com/c/dam/en/us/support/docs/SWTG/ProductImages/'
             . 'servers-unified-computing-ucs-c240-m4-rack-server.jpg',
         'UCSC-C240-M4S2' => 'https://www.cisco.com/c/dam/en/us/support/docs/SWTG/ProductImages/'
             . 'servers-unified-computing-ucs-c240-m4-rack-server.jpg',
         'UCSC-C480-M5' => 'https://www.cisco.com/c/dam/en/us/products/collateral/servers-unified-computing/'
             . 'ucs-c-series-rack-servers/datasheet-c78-739291.docx/_jcr_content/renditions/datasheet-c78-739291_0.png',
+        'UCSC-C240-M6S' => 'https://www.cisco.com/content/dam/en/us/products/collateral/servers-unified-computing/'
+            . 'ucs-c-series-rack-servers/images/cisco-ucs-c240-m6-rack-server.png',
     ],
     'Dell Inc.' => [
         'PowerEdge R610' => 'https://i.dell.com/is/image/DellContent/content/dam/'
