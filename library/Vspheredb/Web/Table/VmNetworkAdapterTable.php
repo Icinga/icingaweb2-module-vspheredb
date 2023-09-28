@@ -91,7 +91,12 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
             );
             $aIpInfo = [];
             foreach ($ipInfo->addresses as $address) {
-                $aIpInfo[] = sprintf('%s/%s (%s)', $address->address, $address->prefixLength, $address->state);
+                // Explicit check for isset, as WP had a workaround skipping the property
+                if (! isset($address->state) || $address->state === null) {
+                    $aIpInfo[] = sprintf('%s/%s', $address->address, $address->prefixLength);
+                } else {
+                    $aIpInfo[] = sprintf('%s/%s (%s)', $address->address, $address->prefixLength, $address->state);
+                }
             }
             if (empty($aIpInfo)) {
                 $aIpInfo = '';
