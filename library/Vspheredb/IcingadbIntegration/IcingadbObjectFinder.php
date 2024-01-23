@@ -95,7 +95,7 @@ class IcingadbObjectFinder
             $varName = substr($monProperty, 5);
             $var = $object->customvar->filter(Filter::equal('name', $varName))->first();
             if ($var != null) {
-                $value = trim($var->value,'"');
+                $value = trim($var->value, '"');
             } else {
                 $value = null;
             }
@@ -114,7 +114,9 @@ class IcingadbObjectFinder
     protected function fetchConnections()
     {
         return $this->db->getDbAdapter()->fetchAll(
-            $this->db->getDbAdapter()->select()->from('monitoring_connection')->where('source_type = ?','icingadb')->order('priority DESC')
+            $this->db->getDbAdapter()->select()->from('monitoring_connection')
+                ->where('source_type = ?', 'icingadb')
+                ->order('priority DESC')
         );
     }
 }

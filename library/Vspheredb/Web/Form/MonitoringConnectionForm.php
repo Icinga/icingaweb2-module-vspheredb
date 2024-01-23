@@ -55,13 +55,13 @@ class MonitoringConnectionForm extends Form
         if (! $sourceType) {
             return;
         }
-        if($sourceType === 'ido'){
+        if ($sourceType === 'ido') {
             $this->addElement('select', 'source_resource_name', [
                 'label'   => $this->translate('IDO Resource'),
                 'options' => $this->optionalEnum($this->enumIdoResourceNames()),
                 'class'   => 'autosubmit',
             ]);
-        }elseif($sourceType === 'icingadb'){
+        } elseif ($sourceType === 'icingadb') {
             $this->addElement('select', 'source_resource_name', [
                 'label'   => $this->translate('Icingadb Resource'),
                 'options' => $this->optionalEnum($this->enumIcingadbResourceNames()),
@@ -75,7 +75,7 @@ class MonitoringConnectionForm extends Form
             ]);
             return;
         }
-        if($sourceType === 'ido'){
+        if ($sourceType === 'ido') {
             try {
                 $resource = ResourceFactory::create($resourceName);
                 if ($resource instanceof DbConnection) {
@@ -93,7 +93,7 @@ class MonitoringConnectionForm extends Form
                     'display_name' => $this->translate('Display Name'),
                     'address'      => $this->translate('Address'),
                 ] + [$this->translate('Custom Variables') => $idoVars]);
-        }elseif($sourceType === 'icingadb'){
+        } elseif ($sourceType === 'icingadb') {
             try {
                 $resource = ResourceFactory::create($resourceName);
                 if ($resource instanceof DbConnection) {
@@ -315,7 +315,7 @@ class MonitoringConnectionForm extends Form
     protected function enumIcingadbResourceNames(): array
     {
         $resources = [];
-        $resourceName = Config::module('icingadb')->get('icingadb','resource');
+        $resourceName = Config::module('icingadb')->get('icingadb', 'resource');
         $resources[$resourceName] = $resourceName;
 
         return $resources;

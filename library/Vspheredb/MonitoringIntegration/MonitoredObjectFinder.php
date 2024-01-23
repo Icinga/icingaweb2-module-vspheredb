@@ -114,7 +114,9 @@ class MonitoredObjectFinder
     protected function fetchConnections()
     {
         return $this->db->getDbAdapter()->fetchAll(
-            $this->db->getDbAdapter()->select()->from('monitoring_connection')->where('source_type = ?','ido')->order('priority DESC')
+            $this->db->getDbAdapter()->select()->from('monitoring_connection')
+                ->where('source_type = ?', 'ido')
+                ->order('priority DESC')
         );
     }
 }

@@ -18,11 +18,9 @@ $this->provideHook('vspheredb/PerfDataConsumer', PerfDataConsumerInfluxDb::class
 
 
 
-if (Module::exists('monitoring')  ) {
+if (Module::exists('monitoring')) {
     $this->provideHook('monitoring/DetailviewExtension');
-
 }
-if (Module::exists('icingadb')  ) {
+if (Module::exists('icingadb')) {
     $this->provideHook('icingadb/HostDetailExtension');
-
 }
