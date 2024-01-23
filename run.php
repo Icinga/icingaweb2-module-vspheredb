@@ -1,5 +1,6 @@
 <?php
 
+use Icinga\Application\Modules\Module;
 use Icinga\Module\Vspheredb\Application\DependencyChecker;
 use Icinga\Module\Vspheredb\ProvidedHook\Director\DataTypeMonitoringRule;
 use Icinga\Module\Vspheredb\ProvidedHook\Vspheredb\PerfDataConsumerInfluxDb;
@@ -14,4 +15,14 @@ if (! $checker->satisfiesDependencies($this)) {
 $this->provideHook('director/ImportSource');
 $this->provideHook('director/DataType', DataTypeMonitoringRule::class);
 $this->provideHook('vspheredb/PerfDataConsumer', PerfDataConsumerInfluxDb::class);
-$this->provideHook('monitoring/DetailviewExtension');
+
+
+
+if (Module::exists('monitoring')  ) {
+    $this->provideHook('monitoring/DetailviewExtension');
+
+}
+if (Module::exists('icingadb')  ) {
+    $this->provideHook('icingadb/HostDetailExtension');
+
+}

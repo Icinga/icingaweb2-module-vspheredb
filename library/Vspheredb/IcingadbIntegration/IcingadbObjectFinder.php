@@ -1,17 +1,17 @@
 <?php
 
-namespace Icinga\Module\Vspheredb\MonitoringIntegration;
+namespace Icinga\Module\Vspheredb\IcingadbIntegration;
 
 use Icinga\Exception\InvalidPropertyException;
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Object\MonitoredObject;
+use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use ipl\Stdlib\Filter;
 
-class MonitoredObjectFinder
+class IcingadbObjectFinder
 {
     /** @var Db */
     protected $db;
@@ -28,10 +28,10 @@ class MonitoredObjectFinder
     }
 
     /**
-     * @param MonitoredObject $object
+     * @param Host $object
      * @return HostSystem|VirtualMachine|null
      */
-    public function find(MonitoredObject $object)
+    public function find(Host $object)
     {
         if (! $object instanceof Host) {
             return null;
@@ -73,12 +73,12 @@ class MonitoredObjectFinder
     }
 
     /**
-     * @param MonitoredObject $object
+     * @param Host $object
      * @param string $prefix
      * @param \stdClass $row
      * @return array|null
      */
-    protected function filterFromRow(MonitoredObject $object, $prefix, $row)
+    protected function filterFromRow(Host $object, $prefix, $row)
     {
         $filter = [];
         $filterPrefix = $prefix === 'vm' ? 'virtual_machine' : 'host_system';
@@ -93,9 +93,9 @@ class MonitoredObjectFinder
 
         if (preg_match('/^vars./', $monProperty)) {
             $varName = substr($monProperty, 5);
-            $vars = $object->customvars;
-            if (isset($vars[$varName])) {
-                $value = $vars[$varName];
+            $var = $object->customvar->filter(Filter::equal('name', $varName))->first();
+            if ($var != null) {
+                $value = trim($var->value,'"');
             } else {
                 $value = null;
             }
@@ -114,7 +114,7 @@ class MonitoredObjectFinder
     protected function fetchConnections()
     {
         return $this->db->getDbAdapter()->fetchAll(
-            $this->db->getDbAdapter()->select()->from('monitoring_connection')->where('source_type = ?','ido')->order('priority DESC')
+            $this->db->getDbAdapter()->select()->from('monitoring_connection')->where('source_type = ?','icingadb')->order('priority DESC')
         );
     }
 }
