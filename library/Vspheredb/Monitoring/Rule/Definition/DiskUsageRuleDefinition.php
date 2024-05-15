@@ -113,11 +113,11 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
         return [
             'disk_path_filter' => ['text', [
                 'label' => $this->translate('Apply to specific disks only'),
-                'placeholder' => 'e.g. C:, /var/*, C:|D:|E:',
+                'placeholder' => 'e.g. C:\\, /var/*, C:\\|D:\\|E:\\',
             ]],
             'disk_path_ignore' => ['text', [
                 'label' => $this->translate('Ignore specific disks'),
-                'placeholder' => 'e.g. C:, */volume-subpaths/*|/var/lib/kubelet/*',
+                'placeholder' => 'e.g. C:\\, */volume-subpaths/*|/var/lib/kubelet/*',
             ]],
         ] + MemoryUsageHelper::getParameters();
     }
