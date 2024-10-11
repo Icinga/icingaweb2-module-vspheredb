@@ -363,7 +363,7 @@ CREATE TABLE virtual_machine (
   uuid  VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
   hardware_memorymb INT UNSIGNED NULL DEFAULT NULL,
-  hardware_numcpu TINYINT UNSIGNED NULL DEFAULT NULL,
+  hardware_numcpu SMALLINT UNSIGNED NULL DEFAULT NULL,
   hardware_numcorespersocket TINYINT UNSIGNED NULL DEFAULT 1,
   template ENUM('y', 'n') NULL DEFAULT NULL, -- TODO: drop and skip templates? Or separate table?
   instance_uuid VARCHAR(64) DEFAULT NULL,   -- 5004890e-8edd-fe5f-d116-d5704b2043e4
@@ -956,4 +956,4 @@ CREATE TABLE counter_300x5 (
 
 INSERT INTO vspheredb_schema_migration
   (schema_version, migration_time)
-VALUES (60, NOW());
+VALUES (61, NOW());
