@@ -91,7 +91,7 @@ CREATE TABLE vspheredb_daemonlog (
     'emergency'
   ) NOT NULL,
   message MEDIUMTEXT NOT NULL,
-  PRIMARY KEY (instance_uuid, ts_create),
+--  PRIMARY KEY (instance_uuid, ts_create),
   INDEX idx_time (ts_create)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 

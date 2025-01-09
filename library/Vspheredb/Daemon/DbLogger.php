@@ -31,8 +31,6 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
 
     protected $pid;
 
-    protected $lastTs = null;
-
     public function __construct($instanceUuid, $fqdn, $pid)
     {
         $this->instance = $instanceUuid;
@@ -57,10 +55,6 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
             return;
         }
         $timestamp = Util::currentTimestamp();
-        while ($timestamp <= $this->lastTs) {
-            $timestamp++;
-        }
-        $this->lastTs = $timestamp;
 
         if ($this->db === null) {
             $this->queue->push([
@@ -85,7 +79,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
             'instance_uuid' => $this->instance,
             'ts_create'     => $timestamp,
             'pid'           => $this->pid,
-            'fqdn'         => $this->fqdn,
+            'fqdn'          => $this->fqdn,
             'level'         => $level,
             'message'       => $message,
         ];
