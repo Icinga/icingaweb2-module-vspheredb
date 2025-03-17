@@ -72,7 +72,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                     $end = $start + $duration;
 
                     return Html::tag('div', [
-                        'style' => 'position: relative'
+                        'class' => 'position-relative'
                     ], Html::tag('div', [
                         'class' => 'inline-perf-container'
                     ], Img::create('rrd/img', [

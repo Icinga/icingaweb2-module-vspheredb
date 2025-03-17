@@ -47,7 +47,7 @@ class VCenterSummaryTable extends ObjectsTable
         }
 
         $icons = Html::tag('span', [
-            'style' => 'float: right'
+            'class' => 'float-right'
         ]);
         $vcenterId = $row->vcenter_id;
         if (isset($this->connections[$vcenterId])) {
@@ -74,6 +74,7 @@ class VCenterSummaryTable extends ObjectsTable
     protected function initialize()
     {
         $this->setAttribute('data-base-target', '_self');
+        $this->addAttributes(['class' => 'vcenter-summary-table']);
         $this->addAvailableColumns([
             $this->createGroupingColumn(),
         ]);
@@ -113,7 +114,7 @@ class VCenterSummaryTable extends ObjectsTable
         $this->addAvailableColumns([
             $this->createColumn('hosts_cnt', $this->translate('Hosts'), 'SUM(hosts_cnt)')
                 ->setRenderer(function ($row) {
-                    return Html::tag('td', ['style' => 'text-align: right'], $row->hosts_cnt);
+                    return Html::tag('td', ['class' => 'text-right'], $row->hosts_cnt);
                 })
                 ->setDefaultSortDirection('DESC'),
             $this->createColumn(
@@ -169,7 +170,7 @@ class VCenterSummaryTable extends ObjectsTable
             })->setDefaultSortDirection('DESC'),
             $this->createColumn('hardware_cpu_cores', $this->translate('Cores'), 'SUM(h.hardware_cpu_cores)')
                 ->setRenderer(function ($row) {
-                    return Html::tag('td', ['style' => 'text-align: right'], $row->hardware_cpu_cores);
+                    return Html::tag('td', ['class' => 'text-right'], $row->hardware_cpu_cores);
                 })
                 ->setDefaultSortDirection('DESC'),
 

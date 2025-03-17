@@ -185,18 +185,33 @@ class DatastoreUsage extends BaseHtmlElement
             $url,
             $urlParams,
             [
-                'style' => sprintf('width: %.3F%%; ', $percent),
                 'title' => $title
             ]
         );
 
         $link->addAttributes($attributes);
 
+        Util::addCSPValidStyleToElement(
+            'datastore-usage-width',
+            [
+                "width" => sprintf('%.3F%%; ', $percent)
+            ],
+            $link
+        );
+
         if ($vmUuid) {
             $alpha = (20 + (crc32(sha1((string) $vmUuid . $this->uuid)) % 60)) / 100;
-            $color = sprintf('rgba(70, 128, 255, %.2F);', $alpha);
-            $link->getAttributes()->add('style', "background-color: $color");
+            $color = sprintf('rgba(70, 128, 255, %.2F)', $alpha);
+
             $this->diskLinks[$vmUuid] = $link;
+
+            Util::addCSPValidStyleToElement(
+                'datastore-usage-bg-color',
+                [
+                    "background-color" => "$color !important"
+                ],
+                $link
+            );
         }
         $this->add($link);
 

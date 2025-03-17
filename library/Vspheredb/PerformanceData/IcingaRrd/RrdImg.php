@@ -76,7 +76,7 @@ class RrdImg
         $attrs = [
             'height' => $height,
             'width'  => $width,
-            'style'  => 'float: right;'
+            'style'  => 'float: right;' # FIXME CSP
             // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
         ];
 
@@ -88,7 +88,7 @@ class RrdImg
     protected static function colorLegend($color)
     {
         return Html::tag('div', [
-            'style' => "    border: 1px solid rgba(0, 0, 0, 0.3); background-color: $color;"
+            'style' => "    border: 1px solid rgba(0, 0, 0, 0.3); background-color: $color;" # FIXME CSP
                 . ' width: 0.8em; height: 0.8em; margin: 0.1em; display: inline-block; vertical-align: middle;'
         ]);
     }
@@ -96,10 +96,10 @@ class RrdImg
     protected static function wrapImage($title, $moref, $device, $template)
     {
         return Html::tag('div', [
-            'style' => 'display: inline-block; margin-left: 1em;' // TODO, CSS. disk was 1em, net 2em
+            'style' => 'display: inline-block; margin-left: 1em;' // TODO, CSS. disk was 1em, net 2em FIXME CSP
         ], [
             Html::tag('strong', [
-                'style' => 'display: block; padding-left: 3em'
+                'style' => 'display: block; padding-left: 3em' # FIXME CSP
             ], $title),
             static::prepareImg($moref, $device, $template),
         ]);

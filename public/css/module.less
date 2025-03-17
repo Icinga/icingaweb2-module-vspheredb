@@ -32,6 +32,7 @@ div.section {
   margin-right: 1%;
   float: left;
   min-width: 42em;
+
   > h2 {
     border-bottom: 1px solid @gray-light;
   }
@@ -46,9 +47,11 @@ table.day-time-table {
     padding-top: 0;
     padding-bottom: 0;
   }
+
   tbody {
     margin-bottom: 0.5em;
   }
+
   tbody td:last-of-type {
     text-align: right;
   }
@@ -60,10 +63,12 @@ table.sensors-table {
     line-height: 3em;
     vertical-align: bottom;
   }
+
   .table-header-day {
     text-align: left;
   }
 }
+
 div.sensor-summaries {
   display: inline-block;
   float: right
@@ -72,6 +77,7 @@ div.sensor-summaries {
 a.ManagedObject {
   padding-left: 0.5em;
 }
+
 a.ManagedObject::before {
   font-family: 'ifont';
   // icon-help:
@@ -133,6 +139,7 @@ i.icon {
   &.red::before, &.DOWN::before {
     color: @color-critical;
   }
+
   &.poweredOff::before, &.suspended::before {
     color: @text-color;
   }
@@ -162,6 +169,7 @@ h1 i.icon {
   &:first-of-type {
     margin-left: 1em;
   }
+
   &.state::before {
     font-size: 0.75em;
     width: 1.5em;
@@ -207,6 +215,7 @@ th.table-header-day {
 
 .host-info h2, .vm-info h2 {
   margin-top: 1.5em;
+
   &:first-of-type {
     margin-top: 0.5em;
   }
@@ -226,10 +235,12 @@ div.event-heatmap-calendars > table.calendar {
   display: inline-block;
   margin-right: 1em;
   vertical-align: top;
+
   caption {
     font-weight: bold;
     text-align: center;
   }
+
   th, td {
     text-align: center;
   }
@@ -251,6 +262,10 @@ div.event-heatmap-calendars > table.calendar {
     display: block;
     border-radius: 0.2em;
     color: @text-color;
+
+    &.color-white {
+      color: white;
+    }
   }
 
   td.today a {
@@ -282,10 +297,12 @@ div.event-heatmap-calendars > table.calendar {
   table.gipfl-name-value-table th {
     width: 8em;
   }
+
   div.section {
     min-width: 30em;
   }
 }
+
 /** Action Bar **/
 div.action-bar a, div.action-bar form i {
   color: @icinga-blue;
@@ -299,6 +316,7 @@ div.action-bar {
   > * {
     vertical-align: middle;
   }
+
   .pagination-control {
     float: none;
     clear: none;
@@ -340,12 +358,16 @@ div.action-bar ul {
 
   li {
     list-style-type: none;
-    a { display: block; }
+
+    a {
+      display: block;
+    }
   }
 }
 
 div.action-bar > ul {
   display: inline-block;
+
   > li {
     display: inline-block;
   }
@@ -380,21 +402,26 @@ div.action-bar > ul > li:hover ul {
   display: block;
   z-index: 2;
 }
+
 div.action-bar > ul > li > a {
   padding: 0.2em 0.5em;
 }
+
 div.action-bar > ul > li:hover {
   background-color: @icinga-blue;
+
   & > a {
     color: @text-color;
     text-decoration: none;
   }
 }
+
 /** END of dropdown in action bar **/
 
 table.common-table th {
   vertical-align: middle;
   white-space: nowrap;
+
   > ul > li {
     line-height: normal;
   }
@@ -408,6 +435,7 @@ table.common-table th {
 /** BEGIN of dropdown in table header **/
 table.common-table th {
   position: relative;
+
   ul {
     font-weight: normal;
     padding: 0;
@@ -415,7 +443,10 @@ table.common-table th {
 
     li {
       list-style-type: none;
-      a { display: block; }
+
+      a {
+        display: block;
+      }
     }
   }
 
@@ -424,6 +455,7 @@ table.common-table th {
     margin-left: 1em;
     right: 0;
     position: absolute;
+
     > li {
       display: inline-block;
     }
@@ -452,6 +484,7 @@ table.common-table th {
 
       &:hover {
         text-decoration: underline;
+
         &:before {
           text-decoration: none;
         }
@@ -466,13 +499,16 @@ table.common-table th {
   > ul > li:hover ul {
     display: block;
   }
+
   > ul > li > a {
     padding: 0.2em 0.5em;
   }
+
   > ul > li:hover {
     background-color: @menu-flyout-bg-color;
     border-top-left-radius: 0.1em;
     border-top-right-radius: 0.1em;
+
     & > a {
       color: @menu-flyout-color;
       text-decoration: none;
@@ -492,12 +528,15 @@ table.common-table th {
   outline: 0;
   background-repeat: no-repeat;
   background-position: 0.8em 0.4em;
+
   &.configured {
     font-weight: bold;
   }
+
   &.active {
     color: @icinga-blue;
   }
+
   &:hover {
     text-decoration: underline;
   }
@@ -505,6 +544,7 @@ table.common-table th {
 
 ul.tree li > .handle {
   background-image: none;
+
   &:before {
     content: '\e806';
     font-family: 'ifont';
@@ -514,12 +554,15 @@ ul.tree li > .handle {
     margin-top: 0.9em;
   }
 }
+
 ul.tree li.collapsed > .handle {
   background-image: none;
+
   &:before {
     content: '\e805';
   }
 }
+
 /** Tree custom **/
 
 .tree li a.red::before {
@@ -544,6 +587,7 @@ table {
 
   tr.poweredOn td:first-child, tr.poweredOff td:first-child, tr.datastore td:first-child {
     padding-left: 2em;
+
     &::before {
       font-family: 'ifont';
       // icon-help:
@@ -576,9 +620,11 @@ table {
   tr.datastore td:first-child::before {
     color: @color-ok;
   }
+
   tr.yellow td:first-child::before {
     color: @color-warning;
   }
+
   tr.red td:first-child::before {
     color: @color-critical;
   }
@@ -587,12 +633,14 @@ table {
 h1 div.object-summaries {
   font-size: 0.75em;
 }
+
 div.object-summaries {
   margin: 0 1em 0 0;
   display: inline-block;
   padding: 0;
   vertical-align: middle;
   line-height: 2em;
+
   .state-group {
     display: inline-block;
     margin-left: 0.5em;
@@ -604,6 +652,7 @@ div.object-summaries {
     font-size: 1.5em;
     margin-left: 0.5em;
   }
+
   a {
     display: inline-block;
     min-width: 2em;
@@ -623,17 +672,21 @@ div.object-summaries {
       border-top-left-radius: 1em;
       border-bottom-left-radius: 1em;
     }
+
     &:last-of-type {
       border-top-right-radius: 1em;
       border-bottom-right-radius: 1em;
     }
+
     &:focus {
       outline: none;
     }
+
     &:hover {
       text-decoration: none;
-      box-shadow: inset 0 0 4em 4em rgba(255,255,255,0.3);
+      box-shadow: inset 0 0 4em 4em rgba(255, 255, 255, 0.3);
     }
+
     &.chosen {
       border-color: @text-color;
     }
@@ -676,13 +729,16 @@ table {
     padding-right: 0.4em;
     vertical-align: middle;
     border-radius: 1em;
+
     &:focus {
       outline: none;
     }
+
     &:hover {
       text-decoration: none;
-      box-shadow: inset 0 0 4em 4em rgba(255,255,255,0.3);
+      box-shadow: inset 0 0 4em 4em rgba(255, 255, 255, 0.3);
     }
+
     &.chosen {
       border-color: @text-color;
     }
@@ -717,6 +773,7 @@ div.health {
   &.red {
     border-color: @color-critical;
   }
+
   &.green {
     border-color: @color-ok;
   }
@@ -725,6 +782,7 @@ div.health {
 /** Various **/
 tr.state td:first-child, tr.event td:first-child {
   padding-left: 2em;
+
   &::before {
     font-family: 'ifont';
     // icon-help:
@@ -834,19 +892,22 @@ div.resource-usage {
     background-color: @gray-lighter;
     height: 1em;
     border-radius: 0.3em;
-    -webkit-box-shadow: inset 0 0 2px 0 rgba(0,0,0,0.3);
-    -moz-box-shadow: inset 0 0 2px 0 rgba(0,0,0,0.3);
-    box-shadow: inset 0 0 2px 0 rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 0 2px 0 rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0 0 2px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 2px 0 rgba(0, 0, 0, 0.3);
     overflow: hidden;
+
     > .usage {
       height: 100%;
       display: inline-block;
       float: left;
     }
   }
+
   > .usage-used {
     float: left;
   }
+
   > .usage-capacity {
     float: right;
   }
@@ -857,6 +918,7 @@ div.resource-usage {
     .usage-used {
       width: 100%;
     }
+
     .usage-capacity {
       float: left;
     }
@@ -865,11 +927,13 @@ div.resource-usage {
 
 div.controls div.resource-usage {
   padding-left: 7em;
+
   .usage-used {
     font-size: 0.9em;
     display: inline;
     width: auto;
   }
+
   > .usage-capacity {
     font-size: 0.9em;
     float: right;
@@ -889,6 +953,7 @@ div.controls select {
       display: inline;
       width: auto;
     }
+
     > .usage-capacity {
       float: right;
     }
@@ -897,9 +962,11 @@ div.controls select {
 
 div.resource-info-small div.resource-usage {
   display: inline-block;
+
   .usage-used, .usage-capacity {
     display: none;
   }
+
   .usage-bar {
     min-width: unset;
     height: 1.5em;
@@ -922,9 +989,9 @@ div.disk-usage {
   margin-bottom: 0.5em;
   min-height: 0.5em;
   border-radius: 0.3em;
-  -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
-  -moz-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
-  box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.3);
+  -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 
   span {
@@ -941,14 +1008,16 @@ div.disk-usage {
     text-decoration: none;
     outline: none;
     overflow: visible;
-    line-height:1em;
+    line-height: 1em;
     // min-width: 0.3em;
     margin: 0;
     padding: 0;
+
     &:hover, &.same-link-hovered {
       text-decoration: none;
       background-color: rgb(70, 128, 255) !important;
     }
+
     &.unknown:hover {
       background-color: @gray-light;
     }
@@ -956,6 +1025,7 @@ div.disk-usage {
     &.free {
       background-color: @color-ok;
     }
+
     &.free:hover {
       background-color: inherit !important;
     }
@@ -972,6 +1042,7 @@ div.disk-usage {
   &.compact {
     margin: 0;
     height: 0.8em;
+
     a {
       height: 0.8em;
     }
@@ -1001,6 +1072,7 @@ div.disk-usage {
 
 ul.tree li > .handle {
   background-image: none;
+
   &:before {
     content: '\e806';
     font-family: 'ifont';
@@ -1010,15 +1082,19 @@ ul.tree li > .handle {
     margin-top: 0.9em;
   }
 }
+
 ul.tree li.collapsed > .handle {
   background-image: none;
+
   &:before {
     content: '\e805';
   }
 }
+
 .tree li a {
   padding-left: 1em;
 }
+
 /* End of tree */
 
 /** From Director pre.logfile, modified */
@@ -1031,7 +1107,7 @@ div.logWindow {
 }
 
 pre.logOutput {
-  position : relative;
+  position: relative;
   background-color: transparent;
   bottom: 0;
   padding: 0.5em 1em;
@@ -1082,10 +1158,12 @@ div.vm-template {
   margin-right: 1em;
   color: @text-color;
   padding: 0.2em 0;
+
   i.state {
     &:before {
       color: @text-color;
     }
+
     font-size: 2.2em;
   }
 }
@@ -1106,41 +1184,51 @@ div.host-header, div.vm-header {
   background-color: @color-ok;
   color: @text-color;
   margin-right: 1em;
+
   &.warning {
     background-color: @color-warning-handled;
     color: @text-color-inverted;
   }
+
   &.critical {
     background-color: @color-critical-handled;
   }
+
   &.off {
     background-color: @gray;
     color: @text-color;
     padding: 0.2em 0;
+
     i.state {
       &:before {
         color: @text-color;
       }
+
       font-size: 2.2em;
     }
   }
+
   span {
     margin: 0;
     padding: 0;
     line-height: 1em;
   }
+
   .cpu-count {
     font-size: 0.6em;
     line-height: 1em;
   }
+
   .cpu-consumption {
     font-size: 2em;
     display: block;
   }
+
   .cpu-unit {
     font-size: 1em;
   }
 }
+
 div.controls .cpu {
   float: left;
 }
@@ -1160,6 +1248,7 @@ div.controls .cpu {
       height: auto;
       margin: 0.5em 1em;
     }
+
     background-color: rgba(255, 255, 255, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.3);
     z-index: 100;
@@ -1179,6 +1268,7 @@ div.summary-countlet {
   height: 10em;
   overflow: hidden;
   color: @text-color-inverted;
+
   h3 {
     font-size: 1.6em;
     margin: 1em 0 0.5em 0;
@@ -1187,23 +1277,28 @@ div.summary-countlet {
     height: 1.6em;
     display: block;
   }
+
   .badge {
     font-size: 1.5em;
     margin-right: 0.5em;
     border: 1px solid @text-color-inverted;
   }
+
   &.state-red {
     background-image: linear-gradient(115deg, fade(@color-critical, 95%), fade(@color-critical, 70%));
     border: 1px solid @color-critical;
   }
+
   &.state-green {
     background-image: linear-gradient(115deg, fade(@color-ok, 95%), fade(@color-ok, 70%));
     border: 1px solid @color-ok;
   }
+
   &.state-yellow {
     background-image: linear-gradient(115deg, fade(@color-warning, 95%), fade(@color-warning, 70%));
     border: 1px solid @color-warning;
   }
+
   &.state-gray {
     background-image: linear-gradient(115deg, fade(@gray, 95%), fade(@gray, 70%));
     border: 1px solid @gray;
@@ -1236,11 +1331,20 @@ div.summary-countlet {
 
 table.table-vcenter-servers {
   max-width: 60em;
+
   th:last-of-type {
     padding-right: 2em;
     text-align: right;
   }
+
   td:last-of-type {
+    text-align: right;
+  }
+
+  td.connection {
+    min-width: 10em;
+    width: 20%;
+    font-style: normal;
     text-align: right;
   }
 }
@@ -1248,6 +1352,7 @@ table.table-vcenter-servers {
 
 div.usage-summary-widget {
   text-align: center;
+
   div.usage-dashlet {
     text-align: center;
     vertical-align: top;
@@ -1256,6 +1361,7 @@ div.usage-summary-widget {
     margin-right: 1%;
     overflow: hidden;
     display: inline-block;
+
     .unit {
       font-size: 0.6em;
       font-weight: normal;
@@ -1272,12 +1378,14 @@ div.usage-summary-widget {
   > .monitoring-integration-details {
     width: 36em;
     position: relative;
+
     > div.resource-usage {
       width: 29em;
       display: inline-block;
       vertical-align: top;
     }
   }
+
   .cpu {
     margin-left: 1em;
     margin-right: 1em;
@@ -1297,12 +1405,15 @@ form.ruleform {
 
   dt {
     text-align: right;
+
     label {
       font-weight: normal;
     }
+
     max-width: unset;
     width: 60%;
   }
+
   dd {
     max-width: unset;
     width: 40%;
@@ -1313,6 +1424,7 @@ form.ruleform {
   h2 {
     margin-top: 2em;
   }
+
   p {
     max-width: 60em;
   }
@@ -1326,12 +1438,15 @@ table.object-rules-check-table {
   th {
     text-align: left;
   }
+
   td {
     vertical-align: top;
   }
+
   pre {
     margin-top: 0.5em;
   }
+
   .badge {
     width: 8em;
     margin-right: 1em;
@@ -1340,16 +1455,19 @@ table.object-rules-check-table {
 
 .check-result {
   font-family: "Liberation Mono", "Lucida Console", Courier, monospace;
+
   &::before {
     font-family: "Liberation Mono", "Lucida Console", Courier, monospace;
     content: '[';
     color: @text-color;
   }
+
   &::after {
     font-family: "Liberation Mono", "Lucida Console", Courier, monospace;
     content: ']';
     color: @text-color;
   }
+
   &.state-critical {
     color: @color-critical;
   }
@@ -1375,9 +1493,124 @@ form.gipfl-form {
       dt label::after {
         display: none;
       }
+
       dt label {
         text-decoration: underline;
       }
     }
   }
+}
+
+table.vms-on-datastore {
+  td {
+    &.vm {
+      overflow: hidden;
+      display: inline-block;
+      height: 2em;
+      min-width: 8em;
+    }
+    &.size {
+      white-space: pre;
+    }
+    &.usage, &.on-datastore {
+      width: 25%;
+    }
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+
+.float-right {
+  float: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.width-full {
+  width: 100%;
+}
+
+.color-red {
+  color: red;
+}
+
+.color-white {
+  color: white;
+}
+
+table .perf-row {
+  vertical-align: top;
+  min-width: 15em;
+}
+
+.width-25 {
+  width: 25%;
+}
+
+.white-space-pre {
+  white-space: pre;
+}
+
+.height-auto {
+  height: auto;
+}
+
+td.vm-datastore-caption {
+  overflow: hidden;
+  display: inline-block;
+  height: 2em;
+  min-width: 8em;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.width-40 {
+  width: 40%;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.font-size-1-15em {
+  font-size: 1.15em;
+}
+
+img.vendor-img {
+  max-width: 100%; max-height: 16em
+}
+
+.vendor-model-hpe-proliant-dl380-gen10 {
+  clip-path: inset(34% 0 30% 0);
+  margin: -18% -0 -12% -0;
+}
+
+.vendor-model-hpe-proliant-dl560-gen10 {
+  clip-path: inset(44% 0 30% 0);
+  margin: -30% -0 -20% -0;
+}
+
+.vendor-model-hpe-proliant-dl580-gen10 {
+  clip-path: inset(24% 0 20% 0);
+  margin: -20% -0 -15% -0;
+}
+
+.vendor-model-hp-proliant-dl380-gen9 {
+  clip-path: inset(20% 0 15% 0);
+  margin: -10% -0 -7% -0;
+}
+
+.monitoring-rules-problems-counter {
+  width: 8em;
+  display: inline-block
+}
+
+.width-10 {
+  width: 10%;
 }

@@ -33,7 +33,7 @@ class VmRouteConfigTable extends HtmlDocument
                     $this->translate('Network'),
                     $this->translate('Gateway')
                 ], [
-                    'style' => 'text-align: left'
+                    'class' => 'text-left'
                 ], 'th'));
                 if (! isset($stack->ipRouteConfig->ipRoute)) {
                     continue;

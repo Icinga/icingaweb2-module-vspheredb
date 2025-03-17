@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\Translation\TranslationHelper;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
@@ -42,14 +43,21 @@ class UsageBar extends BaseHtmlElement
             $color = $this->colors[$color];
         }
 
-        return Html::tag('div', [
+        $usage = Html::tag('div', [
             'class' => 'usage',
-            'style' => sprintf(
-                "background-color: $color; width: %0.3F%%;",
-                $percent * 100
-            ),
             'title' => $title
         ]);
+
+        Util::addCSPValidStyleToElement(
+            'usage-bar',
+            [
+                "background-color" => $color,
+                "width" => sprintf("%0.3F%%", $percent * 100),
+            ],
+            $usage
+        );
+
+        return $usage;
     }
 
     public function setFormatter($callback)

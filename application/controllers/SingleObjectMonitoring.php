@@ -32,8 +32,7 @@ trait SingleObjectMonitoring
         $this->actions()->add($this->createMonitoringHistoryLink(false));
         $this->actions()->add($this->createMonitoringInspectionLink($inspect));
         $this->content()->add(Html::tag('pre', [
-            'class' => 'logOutput',
-            'style' => 'font-size: 1.15em'
+            'class' => 'logOutput font-size-1-15em',
         ], CheckPluginHelper::colorizeOutput($result->getOutput())));
         if ($this->Auth()->hasPermission('vspheredb/admin')) {
             $this->showRuleConfigurationHint($object);

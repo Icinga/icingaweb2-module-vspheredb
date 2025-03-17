@@ -33,6 +33,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
     public static function create(Datastore $datastore)
     {
         $tbl = new static($datastore->getConnection());
+        $tbl->addAttributes(["class" => "vms-on-datastore"]);
         return $tbl->setDatastore($datastore);
     }
 
@@ -79,11 +80,10 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         $dsUsage->addDiskFromDbRow($row);
 
         $tr = $this::tr([
-            // TODO: move to CSS
-            $this::td($caption, ['style' => 'overflow: hidden; display: inline-block; height: 2em; min-width: 8em;']),
-            $this::td(Format::bytes($size, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
-            $this::td($usage, ['style' => 'width: 25%;']),
-            $this::td($dsUsage, ['style' => 'width: 25%;'])
+            $this::td($caption, ['class' => 'vm']),
+            $this::td(Format::bytes($size), ['class' => 'size']),
+            $this::td($usage, ['class' => 'width-25']),
+            $this::td($dsUsage, ['class' => 'width-25'])
         ]);
         if (time() - 3600 > ($row->ts_updated / 1000)) {
             $caption->add([

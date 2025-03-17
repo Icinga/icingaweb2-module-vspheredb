@@ -23,7 +23,7 @@ class UsageSummary extends BaseHtmlElement
         $attr = ['class' => 'usage-detail'];
         $attrBox =  ['class' => 'usage-dashlet'];
         $mb = 1024 * 1024;
-        $this->add(Html::tag('div', ['style' => 'width: 100%'], [
+        $this->add(Html::tag('div', ['class' => 'width-full'], [
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(Format::mhz($usate->usedMhz))),
                 Html::tag('span', $this->translate('Total') . ': ' . Format::mhz($usate->totalMhz)),

@@ -49,7 +49,7 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
         $ruleSet = array_shift($parts);
         $rule = array_shift($parts);
         $row->object_rule_name = [Html::tag('span', [
-            'style' => 'width: 8em; display: inline-block'
+            'class' => 'monitoring-rules-problems-counter'
         ], $states), Link::create($row->object_rule_name, 'vspheredb/monitoring/problems', [
             'vcenter'    => Util::niceUuid($row->vcenter_uuid),
             'objectType' => $objectType,
