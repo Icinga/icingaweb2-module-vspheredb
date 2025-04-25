@@ -6,6 +6,7 @@ use gipfl\Json\JsonSerialization;
 use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use InvalidArgumentException;
+
 use function array_key_exists;
 
 class ServerInfo implements JsonSerialization

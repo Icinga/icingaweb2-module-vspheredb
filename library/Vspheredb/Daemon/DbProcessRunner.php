@@ -15,6 +15,7 @@ use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Stream\Util;
 use RuntimeException;
+
 use function React\Promise\Timer\timeout;
 
 class DbProcessRunner implements EventEmitterInterface

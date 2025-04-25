@@ -7,6 +7,7 @@ use gipfl\Web\Form\Feature\NextConfirmCancel;
 use gipfl\Web\InlineForm;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use React\EventLoop\LoopInterface;
+
 use function Clue\React\Block\await;
 
 class RestartDaemonForm extends InlineForm

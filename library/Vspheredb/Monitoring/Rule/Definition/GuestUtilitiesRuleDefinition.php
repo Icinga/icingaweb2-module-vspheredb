@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
 use ipl\Html\Html;
+
 use function preg_match;
 use function sprintf;
 
@@ -48,10 +49,12 @@ class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
         if ($version === '2147483647') {
             $versionInfo = "v$version";
             $state->raiseState(Trigger::getMonitoringState($settings->get('version_2147483647')));
-        } elseif ($version !== null && (
+        } elseif (
+            $version !== null && (
             preg_match('/^([89])(\d{1})(\d{2})$/', $version, $m)
             || preg_match('/^(1\d)(\d{1})(\d{2})$/', $version, $m)
-        )) {
+            )
+        ) {
             $version = sprintf('%d.%d.%d', $m[1], $m[2], $m[3]);
             $versionInfo = "v$version";
             $required = $settings->get('warning_if_less_than');

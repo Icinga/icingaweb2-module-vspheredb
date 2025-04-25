@@ -12,9 +12,11 @@ trait RpcServerUpdateHelper
         /** @var ConfigurationController $this */
         try {
             $connection = $this->db();
-            if ($this->syncRpcCall('vsphere.setServers', [
+            if (
+                $this->syncRpcCall('vsphere.setServers', [
                 'servers' => ServerSet::fromServers(VCenterServer::loadEnabledServers($connection))
-            ])) {
+                ])
+            ) {
                 return $this->translate('Daemon configuration has been refreshed');
             } else {
                 return $this->translate('Daemon configuration has NOT been refreshed');

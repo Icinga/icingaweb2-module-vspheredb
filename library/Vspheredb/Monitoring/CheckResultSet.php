@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Monitoring;
 
 class CheckResultSet implements CheckResultInterface
 {
-    const NUMERATION_PREFIX = ' \\_ ';
+    public const NUMERATION_PREFIX = ' \\_ ';
 
     /** @var string */
     protected $name;

@@ -7,6 +7,7 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
+
 use function in_array;
 
 abstract class MonitoringRuleDefinition

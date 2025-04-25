@@ -6,7 +6,6 @@ use Icinga\Module\Vspheredb\Db\DbObject;
 
 class MappingHelper
 {
-
     /**
      * Recursively extract a value from a nested structure
      *

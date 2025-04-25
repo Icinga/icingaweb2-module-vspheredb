@@ -17,7 +17,7 @@ class ConfigWatch
 {
     use EventEmitterTrait;
 
-    const ON_CONFIG = 'dbConfig';
+    public const ON_CONFIG = 'dbConfig';
 
     /** @var string */
     protected $configFile;

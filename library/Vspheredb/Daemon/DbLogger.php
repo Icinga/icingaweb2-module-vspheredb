@@ -17,9 +17,9 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
     use EventEmitterTrait;
     use LoggerAwareTrait;
 
-    const ERROR_PREFIX = 'DbLogger failed: ';
+    public const ERROR_PREFIX = 'DbLogger failed: ';
 
-    const ERROR_PREFIX_LENGTH = 17;
+    public const ERROR_PREFIX_LENGTH = 17;
 
     protected $instance;
 

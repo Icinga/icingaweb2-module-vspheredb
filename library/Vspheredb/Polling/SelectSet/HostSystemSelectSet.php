@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\MappedClass\TraversalSpec;
 
 class HostSystemSelectSet implements SelectSet
 {
-    const TRAVERSE_COMPUTE_RESOURCES = 'TraverseComputeResource';
+    public const TRAVERSE_COMPUTE_RESOURCES = 'TraverseComputeResource';
 
     /**
      * @return TraversalSpec[]

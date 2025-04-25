@@ -22,7 +22,7 @@ abstract class MonitoringRuleSetDefinition
         if ($this->rules === null) {
             $this->rules = [];
             foreach (static::getRuleClasses() as $class) {
-                $this->rules[] = new $class;
+                $this->rules[] = new $class();
             }
         }
 

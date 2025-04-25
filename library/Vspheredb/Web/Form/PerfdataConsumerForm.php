@@ -13,10 +13,10 @@ use React\EventLoop\LoopInterface;
 
 class PerfdataConsumerForm extends ObjectForm
 {
-    const ON_DELETE = 'delete';
-
     use FormElementStealer;
     use TranslationHelper;
+
+    public const ON_DELETE = 'delete';
 
     protected $class = PerfdataConsumer::class;
 
@@ -93,7 +93,7 @@ class PerfdataConsumerForm extends ObjectForm
             ));
             return;
         }
-        $instance = new $class;
+        $instance = new $class();
         $instance->setLoop($this->loop);
         $this->addFormElementsFrom($instance->getConfigurationForm($this->client));
     }

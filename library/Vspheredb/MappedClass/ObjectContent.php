@@ -82,7 +82,7 @@ class ObjectContent
     public function toNewObject()
     {
         $class = ApiClassMap::requireTypeMap($this->obj->type);
-        $obj = new $class;
+        $obj = new $class();
         if ($this->propSet) {
             $obj->obj = $this->obj;
             foreach ($this->propSet as $dynamicProperty) {

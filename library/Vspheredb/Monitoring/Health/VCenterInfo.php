@@ -28,7 +28,7 @@ class VCenterInfo
 
     public static function fromDbRow($row): VCenterInfo
     {
-        $self = new static;
+        $self = new static();
         $self->id = (int) $row->id;
         $self->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
         $self->software = \sprintf(

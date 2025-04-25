@@ -20,15 +20,15 @@ class ApiConnection implements EventEmitterInterface
     use EventEmitterTrait;
     use StateMachine;
 
-    const ON_READY = 'ready';
-    const ON_ERROR = 'error';
+    public const ON_READY = 'ready';
+    public const ON_ERROR = 'error';
 
-    const STATE_STOPPED = 'stopped';
-    const STATE_STOPPING = 'stopping';
-    const STATE_INIT = 'initializing';
-    const STATE_LOGIN = 'login';
-    const STATE_CONNECTED = 'connected';
-    const STATE_FAILING = 'failing';
+    public const STATE_STOPPED = 'stopped';
+    public const STATE_STOPPING = 'stopping';
+    public const STATE_INIT = 'initializing';
+    public const STATE_LOGIN = 'login';
+    public const STATE_CONNECTED = 'connected';
+    public const STATE_FAILING = 'failing';
 
     /** @var CurlAsync */
     protected $curl;

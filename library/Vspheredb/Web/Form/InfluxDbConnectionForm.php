@@ -8,13 +8,14 @@ use gipfl\Web\Form\Element\TextWithActionButton;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use ipl\Html\FormElement\SelectElement;
 use React\EventLoop\LoopInterface;
+
 use function Clue\React\Block\await;
 
 class InfluxDbConnectionForm extends Form
 {
     use TranslationHelper;
 
-    const INFLUXDB_MIN_SUPPORTED_VERSION = '1.6.0';
+    public const INFLUXDB_MIN_SUPPORTED_VERSION = '1.6.0';
 
     /** @var LoopInterface */
     protected $loop;
@@ -88,12 +89,14 @@ class InfluxDbConnectionForm extends Form
             return;
         }
         try {
-            if ($this->tryCredentials(
-                $this->getValue('base_url'),
-                $this->getValue('apiVersion'),
-                $username,
-                $this->getValue('password')
-            )) {
+            if (
+                $this->tryCredentials(
+                    $this->getValue('base_url'),
+                    $this->getValue('apiVersion'),
+                    $username,
+                    $this->getValue('password')
+                )
+            ) {
                 $this->getElement('password')->getAttributes()->add('class', 'validated');
             }
         } catch (\Exception $e) {
@@ -186,7 +189,7 @@ class InfluxDbConnectionForm extends Form
             $apiVersion,
             $detectedVersion
         ));
-       // $element->setValue($apiVersion);
+        // $element->setValue($apiVersion);
     }
 
     protected function addV1Credentials()

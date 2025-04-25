@@ -30,7 +30,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
 
     public static function initialize(LoopInterface $loop, $settings = [])
     {
-        return (new static)->setLoop($loop)->setSettings($settings);
+        return (new static())->setLoop($loop)->setSettings($settings);
     }
 
     public function setLoop(LoopInterface $loop)

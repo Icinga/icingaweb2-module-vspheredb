@@ -19,7 +19,7 @@ class VCenterConnectionStatusIcon
             case 'disabled':
                 return Icon::create('cancel', ['title' => $title]);
             case ApiConnection::STATE_CONNECTED:
-                return Icon::create('ok', ['class' => 'green','title' => $title]);
+                return Icon::create('ok', ['class' => 'green', 'title' => $title]);
             case ApiConnection::STATE_LOGIN:
             case ApiConnection::STATE_INIT:
                 return Icon::create('spinner', ['class' => 'yellow', 'title' => $title]);

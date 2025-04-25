@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\MappedClass\PerfMetricId;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use InvalidArgumentException;
+
 use function array_combine;
 use function count;
 use function explode;
@@ -17,10 +18,10 @@ use function implode;
 class MetricCSVToInfluxDataPoint
 {
     public static function map(
-        string              $measurementName,
+        string $measurementName,
         PerfEntityMetricCSV $metric,
-        array               $countersMap,
-        array               $tags
+        array $countersMap,
+        array $tags
     ): Generator {
         $object = $metric->entity;
         $dates = static::parseDates($metric);
@@ -28,10 +29,12 @@ class MetricCSVToInfluxDataPoint
         foreach ($metric->value as $series) {
             $key = static::makeKey($object, $series->id);
             $metric = $countersMap[$series->id->counterId];
-            foreach (array_combine(
-                $dates,
-                explode(',', $series->value)
-            ) as $time => $value) {
+            foreach (
+                array_combine(
+                    $dates,
+                    explode(',', $series->value)
+                ) as $time => $value
+            ) {
                 $result[$time][$key][$metric] = $value === '' ? null : (int) $value;
             }
         }

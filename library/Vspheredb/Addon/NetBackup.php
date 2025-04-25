@@ -7,12 +7,12 @@ use Icinga\Module\Vspheredb\Web\Widget\Addon\NetBackupRunDetails;
 
 class NetBackup extends SimpleBackupTool
 {
-    const PREFIX = 'Veritas NetBackup: ';
+    public const PREFIX = 'Veritas NetBackup: ';
 
     // NB is Veritas NetBackup
-    const CV_LAST_BACKUP = 'NB_LAST_BACKUP';
+    public const CV_LAST_BACKUP = 'NB_LAST_BACKUP';
 
-    const CV_EXCLUDE = 'NB_EXCLUDE_FROM_BACKUP';
+    public const CV_EXCLUDE = 'NB_EXCLUDE_FROM_BACKUP';
 
     protected $customValues = [
         self::CV_LAST_BACKUP,

@@ -7,7 +7,7 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\SyncStore;
 
 abstract class SyncTask
 {
-    const UNSPECIFIED = 'unspecified';
+    public const UNSPECIFIED = 'unspecified';
 
     /** @var string */
     protected $label = self::UNSPECIFIED;

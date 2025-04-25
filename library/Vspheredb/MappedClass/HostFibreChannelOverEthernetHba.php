@@ -10,7 +10,6 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  */
 class HostFibreChannelOverEthernetHba extends HostFibreChannelHba
 {
-
     /** @var boolean True if this host bus adapter is a software based FCoE initiator */
     public $isSoftwareFcoe;
 

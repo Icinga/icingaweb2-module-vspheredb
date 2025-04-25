@@ -101,7 +101,7 @@ class ClusterDasFdmHostState implements JsonSerialization
 
     public static function fromSerialization($any)
     {
-        $self = new static;
+        $self = new static();
         $self->state = $any->state;
         $self->stateReporter = $any->stateReporter;
 

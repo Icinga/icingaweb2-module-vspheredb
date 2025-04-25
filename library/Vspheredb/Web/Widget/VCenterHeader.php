@@ -22,7 +22,7 @@ class VCenterHeader extends HtmlDocument
         $title = Html::tag('h1', [
             $vCenter->get('name'),
             ' ',
-            Html::tag('small', '(' . $vCenter->getFullName()  . ')'),
+            Html::tag('small', '(' . $vCenter->getFullName() . ')'),
         ]);
         $this->add([
             $title,

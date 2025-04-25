@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+
 use function rawurlencode;
 use function sprintf;
 

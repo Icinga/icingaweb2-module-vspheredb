@@ -87,7 +87,7 @@ class SoapClient
                     }
                     $status = $response->getStatusCode();
 
-                    if ($status > 199 && $status<= 299) {
+                    if ($status > 199 && $status <= 299) {
                         throw new \Exception($response->getReasonPhrase());
                     }
 

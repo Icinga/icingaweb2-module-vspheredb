@@ -7,6 +7,7 @@ use gipfl\Protocol\NetString\StreamWrapper;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\UnixConnector;
+
 use function React\Promise\resolve;
 
 class RemoteClient

@@ -10,23 +10,23 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 class ObjectType
 {
     // No enum, not yet.
-    const HOST_SYSTEM = 'host';
-    const VIRTUAL_MACHINE = 'vm';
-    const DATASTORE = 'datastore';
+    public const HOST_SYSTEM = 'host';
+    public const VIRTUAL_MACHINE = 'vm';
+    public const DATASTORE = 'datastore';
 
-    const TYPES = [
+    public const TYPES = [
         self::HOST_SYSTEM,
         self::VIRTUAL_MACHINE,
         self::DATASTORE,
     ];
 
-    const TYPE_CLASSES = [
+    public const TYPE_CLASSES = [
         self::HOST_SYSTEM => HostSystem::class,
         self::VIRTUAL_MACHINE => VirtualMachine::class,
         self::DATASTORE => Datastore::class,
     ];
 
-    const DB_CLASS_TYPE = [
+    public const DB_CLASS_TYPE = [
         HostSystem::class     => self::HOST_SYSTEM,
         VirtualMachine::class => self::VIRTUAL_MACHINE,
         Datastore::class      => self::DATASTORE,

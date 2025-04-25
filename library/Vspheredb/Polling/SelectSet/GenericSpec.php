@@ -7,11 +7,11 @@ use Icinga\Module\Vspheredb\MappedClass\TraversalSpec;
 
 abstract class GenericSpec
 {
-    const TRAVERSE_FOLDER = 'TraverseFolder';
-    const TRAVERSE_DC_HOST_SYSTEMS = 'DatacenterHosts';
-    const TRAVERSE_DC_VIRTUAL_MACHINES = 'DatacenterVirtualMachines';
-    const TRAVERSE_DC_DATA_STORES = 'DatacenterDataStores';
-    const TRAVERSE_DC_NETWORKS = 'DatacenterNetworks';
+    public const TRAVERSE_FOLDER = 'TraverseFolder';
+    public const TRAVERSE_DC_HOST_SYSTEMS = 'DatacenterHosts';
+    public const TRAVERSE_DC_VIRTUAL_MACHINES = 'DatacenterVirtualMachines';
+    public const TRAVERSE_DC_DATA_STORES = 'DatacenterDataStores';
+    public const TRAVERSE_DC_NETWORKS = 'DatacenterNetworks';
 
     /**
      * @param string[] $specReferences

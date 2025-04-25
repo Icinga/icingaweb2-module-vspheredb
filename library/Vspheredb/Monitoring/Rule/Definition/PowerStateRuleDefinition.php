@@ -73,10 +73,12 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
             $problemInfos = [];
             $info = null;
 
-            foreach ([
+            foreach (
+                [
                 'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING,
                 'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL,
-            ] as $setting => $errorState) {
+                ] as $setting => $errorState
+            ) {
                 $min = $settings->get($setting);
                 if ($min) {
                     $this->checkMin($uptimeState, $uptime, $min, $errorState, $info);
@@ -87,10 +89,12 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
                 $problemInfos[] = $info;
                 $info = null;
             }
-            foreach ([
+            foreach (
+                [
                  'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING,
                  'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL,
-             ] as $setting => $errorState) {
+                ] as $setting => $errorState
+            ) {
                 $min = $settings->get($setting);
                 if ($min) {
                     $this->checkMax($uptimeState, $uptime, $min * 86400, $errorState, $info);

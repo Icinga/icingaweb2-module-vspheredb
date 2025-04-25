@@ -69,7 +69,7 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
             return $string === $filterString;
         }
 
-        $parts = array();
+        $parts = [];
         foreach (preg_split('~\*~', $filterString) as $part) {
             $parts[] = preg_quote($part, '/');
         }
