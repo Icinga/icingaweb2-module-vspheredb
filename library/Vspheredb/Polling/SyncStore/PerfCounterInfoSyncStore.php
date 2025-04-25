@@ -68,8 +68,8 @@ class PerfCounterInfoSyncStore extends SyncStore
                 'summary'          => $info->nameInfo->summary,
                 'rollup_type'      => (string) $info->rollupType,
                 'stats_type'       => (string) $info->statsType,
-                'level'            => isset($info->level) ? $info->level : 0, // ESXi? Check docs!
-                'per_device_level' => isset($info->perDeviceLevel) ? $info->perDeviceLevel : 0,
+                'level'            => $info->level ?? 0, // ESXi? Check docs!
+                'per_device_level' => $info->perDeviceLevel ?? 0,
             ];
             $counters[] = $counter;
         }
