@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use ipl\Html\BaseHtmlElement;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
+
 use function rawurlencode;
 use function sprintf;
 
@@ -17,22 +18,22 @@ class Html5UiLink extends BaseHtmlElement
 {
     use TranslationHelper;
 
-    const QUERYSTRING = '/ui/#?extensionId=%s&objectId=%s&navigator=%s';
-    const QUERYSTRING_LEGACY = [
+    public const QUERYSTRING = '/ui/#?extensionId=%s&objectId=%s&navigator=%s';
+    public const QUERYSTRING_LEGACY = [
         HostSystem::class     => '/ui/#/host/%s',
         VirtualMachine::class => '/ui/#/host/vms/%s',
     ];
-    const OBJECT_TYPES = [
+    public const OBJECT_TYPES = [
         HostSystem::class     => 'HostSystem',
         VirtualMachine::class => 'VirtualMachine',
     ];
 
     // left-hand tree view:
-    const NAVIGATOR = [
+    public const NAVIGATOR = [
         HostSystem::class     => 'vsphere.core.viTree.hostsAndClustersView',
         VirtualMachine::class => 'vsphere.core.viTree.vmsAndTemplatesView',
     ];
-    const EXTENSION = [
+    public const EXTENSION = [
         // Choose main detail view:
         //  $extension = 'vsphere.core.vm.monitor'; // Shows 'Monitor' Tab
         // $extension = 'vsphere.core.inventory.serverObjectViewsExtension';

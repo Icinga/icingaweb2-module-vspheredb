@@ -7,7 +7,7 @@ namespace Icinga\Module\Vspheredb;
  */
 class Configuration
 {
-    const DEFAULT_SOCKET = '/run/icinga-vspheredb/vspheredb.sock';
+    public const DEFAULT_SOCKET = '/run/icinga-vspheredb/vspheredb.sock';
 
     private static $controlSocket;
 

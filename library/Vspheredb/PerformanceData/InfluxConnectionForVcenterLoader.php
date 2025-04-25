@@ -14,6 +14,7 @@ use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
 use React\EventLoop\LoopInterface;
 use React\Promise\ExtendedPromiseInterface;
+
 use function React\Promise\resolve;
 
 class InfluxConnectionForVcenterLoader

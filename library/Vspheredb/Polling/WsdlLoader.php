@@ -11,6 +11,7 @@ use React\Promise\Deferred;
 use React\Promise\ExtendedPromiseInterface;
 use SoapClient;
 use SoapFault;
+
 use function file_exists;
 use function file_put_contents;
 use function React\Promise\reject;
@@ -151,7 +152,7 @@ class WsdlLoader
                     ->get($this->url($file), [], CurlOptions::forServerInfo($this->serverInfo))
                     ->then(function (ResponseInterface $response) use ($file) {
                         $status = $response->getStatusCode();
-                        if ($status > 199 && $status<= 299) {
+                        if ($status > 199 && $status <= 299) {
                             $this->processFileResult($response, $file);
                         } else {
                             $this->processFileFailure(new Exception($response->getReasonPhrase()), $file);

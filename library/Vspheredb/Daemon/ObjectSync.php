@@ -33,6 +33,7 @@ use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
 use React\Promise\ExtendedPromiseInterface;
+
 use function React\Promise\resolve;
 
 class ObjectSync implements DaemonTask
@@ -189,7 +190,7 @@ class ObjectSync implements DaemonTask
     protected function runTasks(array $tasks)
     {
         foreach ($tasks as $task) {
-            $this->runTask(new $task);
+            $this->runTask(new $task());
         }
     }
 

@@ -11,10 +11,10 @@ class PhperrorController extends Controller
 {
     public function errorAction()
     {
-        $this->getTabs()->add('error', array(
+        $this->getTabs()->add('error', [
             'label' => $this->translate('Error'),
             'url'   => $this->getRequest()->getUrl()
-        ))->activate('error');
+        ])->activate('error');
         $requiredVersion = '7.1.x';
         $msg = $this->translate(
             "PHP version %s is required for vSphereDB, you're running %s."

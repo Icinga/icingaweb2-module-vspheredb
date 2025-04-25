@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\MappedClass\SelectionSpec;
 
 class FullSelectSet implements SelectSet
 {
-    const TRAVERSE_CR1 = 'TraverseCR1';
-    const TRAVERSE_CR2 = 'TraverseCR2';
-    const TRAVERSE_RP1 = 'TraverseRP1';
-    const TRAVERSE_RP2 = 'TraverseRP2';
-    const TRAVERSE_STORAGE_POD = 'TraverseStoragePod';
+    public const TRAVERSE_CR1 = 'TraverseCR1';
+    public const TRAVERSE_CR2 = 'TraverseCR2';
+    public const TRAVERSE_RP1 = 'TraverseRP1';
+    public const TRAVERSE_RP2 = 'TraverseRP2';
+    public const TRAVERSE_STORAGE_POD = 'TraverseStoragePod';
 
     /**
      * @return SelectionSpec[]

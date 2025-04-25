@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Db;
 use Icinga\Data\Db\DbConnection as IcingaDbConnection;
 use RuntimeException;
 use Zend_Db_Expr;
+
 use function array_map;
 use function bin2hex;
 use function is_array;
@@ -42,8 +43,8 @@ class DbConnection extends IcingaDbConnection
     {
         $db = $this->getDbAdapter();
         $query = $db->select()->from(
-            array('e' => 'pg_extension'),
-            array('cnt' => 'COUNT(*)')
+            ['e' => 'pg_extension'],
+            ['cnt' => 'COUNT(*)']
         )->where('extname = ?', $name);
 
         return (int) $db->fetchOne($query) === 1;

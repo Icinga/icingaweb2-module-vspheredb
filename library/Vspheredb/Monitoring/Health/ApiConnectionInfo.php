@@ -100,10 +100,10 @@ class ApiConnectionInfo implements JsonSerialization
     }
 
     protected function __construct(
-        string  $state,
-        string  $server,
-        int     $serverId,
-        int     $vCenterId,
+        string $state,
+        string $server,
+        int $serverId,
+        int $vCenterId,
         ?string $lastErrorMessage = null
     ) {
         if (!isset(self::STATE_MAP[$state])) {

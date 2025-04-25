@@ -19,7 +19,7 @@ class PerfEntityMetricCSV implements JsonSerialization
 
     public static function fromSerialization($any)
     {
-        $self = new static;
+        $self = new static();
         $self->entity = ManagedObjectReference::fromSerialization($any->entity);
         $self->sampleInfoCSV = $any->sampleInfoCSV;
         foreach ($any->value as $value) {

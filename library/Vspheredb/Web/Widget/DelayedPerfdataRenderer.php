@@ -141,7 +141,8 @@ class DelayedPerfdataRenderer
             $this->perf = $this->fetchPerf();
         }
 
-        if (array_key_exists($name, $this->perf)
+        if (
+            array_key_exists($name, $this->perf)
             && array_key_exists($instance, $this->perf[$name])
             && array_key_exists($counter, $this->perf[$name][$instance])
         ) {

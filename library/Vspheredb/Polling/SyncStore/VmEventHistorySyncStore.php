@@ -35,7 +35,8 @@ class VmEventHistorySyncStore extends SyncStore
                 if (! method_exists($event, 'getTimestampMs')) {
                     throw new RuntimeException('This is not a known event: ' . var_export($event, 1));
                 }
-                if ($this->lastEventKey
+                if (
+                    $this->lastEventKey
                     && $event->getTimestampMs() <= $this->lastEventTimestamp
                     && $event->key <= $this->lastEventKey
                 ) {

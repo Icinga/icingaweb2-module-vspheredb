@@ -9,6 +9,7 @@ use gipfl\InfluxDb\InfluxDbConnectionV1;
 use gipfl\InfluxDb\InfluxDbConnectionV2;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
+
 use function React\Promise\resolve;
 
 class RpcNamespaceInfluxDb

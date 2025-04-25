@@ -8,8 +8,8 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleSetDefiniti
 
 class MonitoringRuleSet
 {
-    const TABLE = 'monitoring_rule_set';
-    const NO_OBJECT = '';
+    public const TABLE = 'monitoring_rule_set';
+    public const NO_OBJECT = '';
 
     /** @var string */
     protected $binaryUuid;

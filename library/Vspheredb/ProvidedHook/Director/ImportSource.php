@@ -15,6 +15,7 @@ use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Adapter_Abstract as ZfDb;
+
 use function array_keys;
 
 /**
@@ -312,10 +313,10 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         $params = func_get_args();
         array_shift($params);
 
-        return call_user_func_array(array(
+        return call_user_func_array([
             $this->getManagedObjectClass(),
             $method
-        ), $params);
+        ], $params);
     }
 
     /**

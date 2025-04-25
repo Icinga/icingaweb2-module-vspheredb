@@ -91,10 +91,12 @@ class ConfigurationController extends Controller
             $connections = $this->mapServerConnectionsToId($this->syncRpcCall('vsphere.getApiConnections'));
             foreach ($connections as $conns) {
                 foreach ($conns as $conn) {
-                    if (in_array($conn->state, [
+                    if (
+                        in_array($conn->state, [
                         ApiConnection::STATE_INIT,
                         ApiConnection::STATE_LOGIN,
-                    ])) {
+                        ])
+                    ) {
                         $this->setAutorefreshInterval(5);
                     }
                 }

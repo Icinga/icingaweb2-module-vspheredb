@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Psr\Log\LoggerInterface;
+
 use function React\Promise\all;
 use function React\Promise\resolve;
 

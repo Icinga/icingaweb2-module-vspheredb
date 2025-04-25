@@ -10,7 +10,7 @@ use Ramsey\Uuid\UuidInterface;
 
 class Settings extends SettingsDataType
 {
-    const KEY_SEPARATOR = '/';
+    public const KEY_SEPARATOR = '/';
     public const KEY_ENABLED = '_enabled';
 
     public function isDisabled(?RuleSet $set = null, ?Rule $rule = null): bool

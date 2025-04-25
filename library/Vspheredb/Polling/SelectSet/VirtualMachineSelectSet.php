@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Polling\SelectSet;
 
 class VirtualMachineSelectSet implements SelectSet
 {
-    const TRAVERSE_VIRTUAL_APP = 'TraverseVirtualApp';
+    public const TRAVERSE_VIRTUAL_APP = 'TraverseVirtualApp';
 
     public static function create()
     {

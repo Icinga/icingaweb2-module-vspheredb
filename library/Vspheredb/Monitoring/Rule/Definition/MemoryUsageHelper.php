@@ -15,9 +15,9 @@ class MemoryUsageHelper
 
     public static function prepareState(
         Settings $settings,
-        int      $free,
-        int      $capacity,
-        ?string  $instanceName = null
+        int $free,
+        int $capacity,
+        ?string $instanceName = null
     ): SingleCheckResult {
         $state = new State();
         if ($capacity === 0) {

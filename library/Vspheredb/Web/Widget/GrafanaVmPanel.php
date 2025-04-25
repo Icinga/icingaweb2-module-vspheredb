@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+
 use function RingCentral\Psr7\build_query;
 
 /**

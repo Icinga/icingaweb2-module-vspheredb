@@ -53,12 +53,12 @@ abstract class DbObject
     /**
      * Object properties
      */
-    protected $properties = array();
+    protected $properties = [];
 
     /**
      * Property names that have been modified since object creation
      */
-    protected $modifiedProperties = array();
+    protected $modifiedProperties = [];
 
     /**
      * Unique key name, could be primary
@@ -80,7 +80,8 @@ abstract class DbObject
      */
     protected function __construct()
     {
-        if ($this->table === null
+        if (
+            $this->table === null
             || $this->keyName === null
             || $this->defaultProperties === null
         ) {
@@ -311,7 +312,8 @@ abstract class DbObject
             ));
         }
 
-        if ((is_numeric($value) || is_string($value))
+        if (
+            (is_numeric($value) || is_string($value))
             && (string) $value === (string) $this->get($key)
         ) {
             return $this;
@@ -414,7 +416,7 @@ abstract class DbObject
     public function getProperties()
     {
         //return $this->properties;
-        $res = array();
+        $res = [];
         foreach ($this->listProperties() as $key) {
             $res[$key] = $this->get($key);
         }
@@ -439,7 +441,7 @@ abstract class DbObject
      */
     public function getModifiedProperties()
     {
-        $props = array();
+        $props = [];
         foreach (array_keys($this->modifiedProperties) as $key) {
             if ($key === $this->autoincKeyName) {
                 if ($this->protectAutoinc) {
@@ -507,7 +509,7 @@ abstract class DbObject
 
     public function getKeyParams()
     {
-        $params = array();
+        $params = [];
         $key = $this->getKeyName();
         if (is_array($key)) {
             foreach ($key as $k) {
@@ -532,7 +534,7 @@ abstract class DbObject
     public function getId()
     {
         if (is_array($this->keyName)) {
-            $id = array();
+            $id = [];
             foreach ($this->keyName as $key) {
                 if (isset($this->properties[$key])) {
                     $id[$key] = $this->properties[$key];
@@ -659,7 +661,7 @@ abstract class DbObject
         $this->loadedFromDb = true;
         $this->loadedProperties = $this->properties;
         $this->hasBeenModified = false;
-        $this->modifiedProperties = array();
+        $this->modifiedProperties = [];
         $this->onLoadFromDb();
         return $this;
     }
@@ -834,7 +836,7 @@ abstract class DbObject
             ));
         }
 
-        $this->modifiedProperties = array();
+        $this->modifiedProperties = [];
         $this->hasBeenModified = false;
         $this->loadedProperties = $this->properties;
         $this->onStore();
@@ -910,7 +912,7 @@ abstract class DbObject
         $key = $this->getKeyName();
 
         if (is_array($key) && ! empty($key)) {
-            $where = array();
+            $where = [];
             foreach ($key as $k) {
                 if ($this->hasBeenLoadedFromDb()) {
                     if ($this->loadedProperties[$k] === null) {
@@ -1038,7 +1040,7 @@ abstract class DbObject
      *
      * @return static
      */
-    public static function create($properties = array(), DbConnection $connection = null)
+    public static function create($properties = [], DbConnection $connection = null)
     {
         $obj = new static();
         if ($connection !== null) {
@@ -1064,7 +1066,7 @@ abstract class DbObject
          */
         $id = (int) $id;
 
-        $obj = new static;
+        $obj = new static();
         $obj->setConnection($connection)
             ->set($obj->autoincKeyName, $id)
             ->loadFromDb();
@@ -1080,7 +1082,7 @@ abstract class DbObject
      */
     public static function load($id, DbConnection $connection)
     {
-        $obj = new static;
+        $obj = new static();
         $obj->setConnection($connection)->setKey($id)->loadFromDb();
 
         return $obj;
@@ -1095,11 +1097,11 @@ abstract class DbObject
      */
     public static function loadAll(DbConnection $connection, $query = null, $keyColumn = null)
     {
-        $objects = array();
+        $objects = [];
         $db = $connection->getDbAdapter();
 
         if ($query === null) {
-            $dummy = new static;
+            $dummy = new static();
             $select = $db->select()->from($dummy->table);
         } else {
             $select = $query;
@@ -1108,7 +1110,7 @@ abstract class DbObject
 
         foreach ($rows as $row) {
             /** @var DbObject $obj */
-            $obj = new static;
+            $obj = new static();
             $obj->setConnection($connection)->setDbProperties($row);
             if ($keyColumn === null) {
                 $objects[] = $obj;
@@ -1127,7 +1129,7 @@ abstract class DbObject
      */
     public static function exists($id, DbConnection $connection)
     {
-        $obj = new static;
+        $obj = new static();
         $obj->setConnection($connection)->setKey($id);
         return $obj->existsInDb();
     }

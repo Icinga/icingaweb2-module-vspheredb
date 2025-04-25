@@ -8,6 +8,7 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use ipl\Html\Html;
+
 use function preg_replace;
 use function rawurlencode;
 

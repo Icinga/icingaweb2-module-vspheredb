@@ -8,9 +8,9 @@ use RuntimeException;
 
 class IbmSpectrumProtect implements BackupTool
 {
-    const OPEN_TAG = '<Last Backup (IBM Spectrum Protect)>';
+    public const OPEN_TAG = '<Last Backup (IBM Spectrum Protect)>';
 
-    const CLOSE_TAG = '</Last Backup>';
+    public const CLOSE_TAG = '</Last Backup>';
 
     protected $lastAttributes;
 
@@ -155,11 +155,13 @@ class IbmSpectrumProtect implements BackupTool
 
     public static function parseDuration($value)
     {
-        if (preg_match(
-            '/^(\d{2}):(\d{2}):(\d{2})$/',
-            static::parseString($value),
-            $match
-        )) {
+        if (
+            preg_match(
+                '/^(\d{2}):(\d{2}):(\d{2})$/',
+                static::parseString($value),
+                $match
+            )
+        ) {
             return intval($match[1]) * 3600
                 + intval($match[2]) * 60
                 + intval($match[3]);

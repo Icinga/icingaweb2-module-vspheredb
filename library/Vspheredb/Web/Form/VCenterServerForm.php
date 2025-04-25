@@ -13,7 +13,7 @@ class VCenterServerForm extends Form
 {
     use TranslationHelper;
 
-    const UNCHANGED_PASSWORD = '__UNCHANGED__';
+    public const UNCHANGED_PASSWORD = '__UNCHANGED__';
 
     protected $objectClassName = VCenterServer::class;
 

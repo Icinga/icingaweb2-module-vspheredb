@@ -98,7 +98,7 @@ abstract class KnownEvent implements JsonSerialization
     public static function fromSerialization($any)
     {
         $class = $any->__class;
-        $self = new $class;
+        $self = new $class();
         foreach (unserialize($any->properties) as $key => $value) {
             $self->$key = $value;
         }

@@ -10,7 +10,7 @@ class MonitoringRulesTree
 {
     use TranslationHelper;
 
-    const ROOT_OBJECT_TYPE = 'root';
+    public const ROOT_OBJECT_TYPE = 'root';
 
     /** @var Db */
     protected $db;

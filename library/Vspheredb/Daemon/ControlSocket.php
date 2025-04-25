@@ -7,6 +7,7 @@ use Evenement\EventEmitterTrait;
 use React\EventLoop\LoopInterface;
 use React\Socket\UnixServer;
 use React\Stream\Util;
+
 use function file_exists;
 use function umask;
 use function unlink;
@@ -41,7 +42,7 @@ class ControlSocket implements EventEmitterInterface
         $old = umask(0000);
         $server = new UnixServer('unix://' . $this->path, $this->loop);
         umask($old);
-        Util::forwardEvents($server, $this, ['connection' ,'error']);
+        Util::forwardEvents($server, $this, ['connection', 'error']);
         $this->server = $server;
     }
 

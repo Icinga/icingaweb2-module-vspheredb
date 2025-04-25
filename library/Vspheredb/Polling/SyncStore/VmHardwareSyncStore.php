@@ -51,7 +51,8 @@ class VmHardwareSyncStore extends SyncStore
                         ], $connection);
                     }
                     $disks[$idx]->setMapped($device, $vCenter);
-                } elseif (property_exists($device, 'macAddress')
+                } elseif (
+                    property_exists($device, 'macAddress')
                     && property_exists($device, 'addressType')
                 ) {
                     if (! array_key_exists($idx, $nics)) {

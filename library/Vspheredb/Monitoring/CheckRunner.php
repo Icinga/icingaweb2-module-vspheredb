@@ -18,8 +18,8 @@ use RuntimeException;
 
 class CheckRunner
 {
-    const RULESET_NAME_PARAMETER = 'ruleset';
-    const RULE_NAME_PARAMETER = 'rule';
+    public const RULESET_NAME_PARAMETER = 'ruleset';
+    public const RULE_NAME_PARAMETER = 'rule';
 
     /** @var Db */
     protected $db;
@@ -168,9 +168,9 @@ class CheckRunner
     }
 
     protected function getSettingsForObject(
-        BaseDbObject    $object,
+        BaseDbObject $object,
         RuleSetRegistry $registry,
-        string          $type
+        string $type
     ): InheritedSettings {
         $tree = $this->preloadedTrees[$type] ?? new MonitoringRulesTree($this->db, $type);
         $settings = $tree->getInheritedSettingsFor($object);

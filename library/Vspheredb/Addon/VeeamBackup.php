@@ -8,7 +8,7 @@ use RuntimeException;
 
 class VeeamBackup extends SimpleBackupTool
 {
-    const PREFIX = 'Veeam Backup: ';
+    public const PREFIX = 'Veeam Backup: ';
 
     public function getName()
     {

@@ -26,6 +26,7 @@ use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
 use React\Stream\Util;
+
 use function posix_getegid;
 
 class RemoteApi implements EventEmitterInterface
@@ -53,8 +54,8 @@ class RemoteApi implements EventEmitterInterface
     public function __construct(
         ApiConnectionHandler $apiConnectionHandler,
         CurlAsync $curl,
-        LoopInterface        $loop,
-        LoggerInterface      $logger
+        LoopInterface $loop,
+        LoggerInterface $logger
     ) {
         $this->apiConnectionHandler = $apiConnectionHandler;
         $this->logger = $logger;

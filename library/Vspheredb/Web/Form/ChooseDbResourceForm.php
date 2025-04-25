@@ -32,8 +32,10 @@ class ChooseDbResourceForm extends Form
 
         $this->addResourceConfigElements();
 
-        if (!$this->config()->get('db', 'resource')
-            || ($this->config()->get('db', 'resource') !== $this->getResourceName())) {
+        if (
+            !$this->config()->get('db', 'resource')
+            || ($this->config()->get('db', 'resource') !== $this->getResourceName())
+        ) {
             return;
         }
 
@@ -44,7 +46,8 @@ class ChooseDbResourceForm extends Form
         if ($resourceName = $this->getResourceName()) {
             try {
                 $resourceConfig = ResourceFactory::getResourceConfig($resourceName);
-                if (! isset($resourceConfig->charset)
+                if (
+                    ! isset($resourceConfig->charset)
                     || $resourceConfig->charset !== 'utf8mb4'
                 ) {
                     $this->getElement('resource')
@@ -79,13 +82,13 @@ class ChooseDbResourceForm extends Form
         $config = $this->config();
         $resources = $this->enumResources();
 
-        $this->addElement('select', 'resource', array(
+        $this->addElement('select', 'resource', [
             'required'      => true,
             'label'         => $this->translate('DB Resource'),
             'multiOptions'  => [null => $this->translate('- please choose -')] + $resources,
             'class'         => 'autosubmit',
             'value'         => $config->get('db', 'resource')
-        ));
+        ]);
 
         if (!$this->getResourceName()) {
             $this->add(Hint::info($this->translate(
@@ -163,8 +166,10 @@ class ChooseDbResourceForm extends Form
             }
         }
 
-        if ($this->getSubmitLabel() === $this->createDbLabel
-            || $this->getSubmitLabel() === $this->migrateDbLabel) {
+        if (
+            $this->getSubmitLabel() === $this->createDbLabel
+            || $this->getSubmitLabel() === $this->migrateDbLabel
+        ) {
             $this->migrations()->applyPendingMigrations();
         }
     }
