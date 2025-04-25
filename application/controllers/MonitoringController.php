@@ -19,7 +19,6 @@ use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblematicObject
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemTable;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
-use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
@@ -39,24 +38,24 @@ class MonitoringController extends Controller
             $tabs = $this->tabs();
             $tabs->add('index', [
                 'label' => $this->translate('Monitoring'),
-                'url' => 'vspheredb/monitoring'
+                'url'   => 'vspheredb/monitoring'
             ])->add('history', [
                 'label' => $this->translate('History'),
-                'url' => 'vspheredb/monitoring/history'
+                'url'   => 'vspheredb/monitoring/history'
             ]);
             if ($this->hasPermission('vspheredb/admin')) {
                 $tabs->add('configuration', [
                     'label' => $this->translate('Configuration'),
-                    'url' => 'vspheredb/monitoring/configuration'
+                    'url'   => 'vspheredb/monitoring/configuration'
                 ])->add('hosttree', [
                     'label' => $this->translate('Hosts'),
-                    'url' => 'vspheredb/monitoring/hosttree'
+                    'url'   => 'vspheredb/monitoring/hosttree'
                 ])->add('vmtree', [
                     'label' => $this->translate('Virtual Machines'),
-                    'url' => 'vspheredb/monitoring/vmtree'
+                    'url'   => 'vspheredb/monitoring/vmtree'
                 ])->add('datastoretree', [
                     'label' => $this->translate('Datastores'),
-                    'url' => 'vspheredb/monitoring/datastoretree'
+                    'url'   => 'vspheredb/monitoring/datastoretree'
                 ]);
             }
             $tabs->activate($action);
@@ -133,11 +132,17 @@ class MonitoringController extends Controller
             Html::tag('h2', $this->translate('Defining Check Commands')),
             Html::tag('p', Html::sprintf(
                 $this->translate('Check our %s for instructions of how to set them up'),
-                Documentation::link(
+                Html::tag(
+                    'a',
+                    [
+                        'href'   =>
+                            'https://icinga.com/docs/icinga-vsphere-integration/latest/doc/32-Monitoring_Rules/',
+                        'class'  => 'icon-book',
+                        'title'  =>
+                            $this->translate('Click to read our documentation: Icinga vSphereDB Check Commands'),
+                        'target' => '_blank'
+                    ],
                     $this->translate('Documentation'),
-                    'vspheredb',
-                    '32-Monitoring_Rules',
-                    $this->translate('Icinga vSphereDB Check Commands')
                 )
             ))
         ]);
