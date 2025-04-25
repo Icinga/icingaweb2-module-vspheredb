@@ -1,3 +1,5 @@
+DELETE FROM vspheredb_daemonlog;
+
 ALTER TABLE vspheredb_daemonlog
   ADD PRIMARY KEY (instance_uuid, ts_create);
 
