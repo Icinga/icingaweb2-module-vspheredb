@@ -5,7 +5,7 @@ Requirements
 ------------
 
 * Icinga Web 2 (&gt;= 2.8)
-* PHP (&gt;= 7.1 or 8.x - 64bit only)
+* PHP (&gt;= 7.4 or 8.x - 64bit only)
 * php-soap
 * php-pcntl (might already be built into your PHP binary)
 * php-posix (on RHEL/CentOS this is php-process, or rh-php7x-php-process)
