@@ -6,37 +6,37 @@ use InvalidArgumentException;
 
 class CheckPluginState
 {
-    const OK = 0;
-    const WARNING = 1;
-    const CRITICAL = 2;
-    const UNKNOWN = 3;
+    public const OK = 0;
+    public const WARNING = 1;
+    public const CRITICAL = 2;
+    public const UNKNOWN = 3;
 
-    const NAME_OK = 'OK';
-    const NAME_WARNING = 'WARNING';
-    const NAME_CRITICAL = 'CRITICAL';
-    const NAME_UNKNOWN = 'UNKNOWN';
+    public const NAME_OK = 'OK';
+    public const NAME_WARNING = 'WARNING';
+    public const NAME_CRITICAL = 'CRITICAL';
+    public const NAME_UNKNOWN = 'UNKNOWN';
 
-    const SORT_MAP = [
+    public const SORT_MAP = [
         self::OK       => 0,
         self::WARNING  => 1,
         self::UNKNOWN  => 2,
         self::CRITICAL => 3
     ];
 
-    const NAME_STATE_MAP = [
+    public const NAME_STATE_MAP = [
         self::NAME_OK       => self::OK,
         self::NAME_WARNING  => self::WARNING,
         self::NAME_CRITICAL => self::CRITICAL,
         self::NAME_UNKNOWN  => self::UNKNOWN,
     ];
-    const STATE_NAME_MAP = [
+    public const STATE_NAME_MAP = [
         self::OK       => self::NAME_OK,
         self::WARNING  => self::NAME_WARNING,
         self::CRITICAL => self::NAME_CRITICAL,
         self::UNKNOWN  => self::NAME_UNKNOWN,
     ];
 
-    const STATE_COLORS = [
+    public const STATE_COLORS = [
         self::OK      => 'green',
         self::WARNING => 'brown',
         self::CRITICAL => 'red',

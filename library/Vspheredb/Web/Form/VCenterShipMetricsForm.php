@@ -16,10 +16,10 @@ use React\EventLoop\LoopInterface;
 
 class VCenterShipMetricsForm extends ObjectForm
 {
-    const ON_DELETE = 'delete';
-
     use FormElementStealer;
     use TranslationHelper;
+
+    public const ON_DELETE = 'delete';
 
     protected $class = PerfdataSubscription::class;
 

@@ -1,0 +1,92 @@
+name: PHP
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+#env:
+#  PHP_CS_FIXER_IGNORE_ENV: 1
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: [ '7.4', '8.1', '8.2', '8.3', '8.4' ]
+
+    name: Static analysis for version ${{ matrix.php-version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+#          tools: parallel-lint, php-cs-fixer
+          tools: parallel-lint, phpcs
+
+      - name: Setup dependencies
+        run: |
+          git clone --depth 1 https://github.com/Icinga/icingaweb2.git vendor/icingaweb2
+          git clone --depth 1 -b snapshot/nightly https://github.com/Icinga/icinga-php-library.git vendor/icinga-php-library
+          git clone --depth 1 -b snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
+
+      - name: composer install
+        run: |
+          if [ -f composer.json ]; then
+            composer install --no-progress --no-suggest --prefer-dist
+          fi
+
+      - name: Lint
+        run: parallel-lint --exclude vendor .
+
+#      - name: Code Style
+#        run: |
+#          cat <<'EOF' >.php-cs-fixer.dist.php
+#          <?php
+#
+#          declare(strict_types=1);
+#
+#          use PhpCsFixer\Config;
+#          use PhpCsFixer\Finder;
+#
+#          return (new Config())
+#              ->setRules([
+#                  '@PSR12' => true
+#              ])
+#              ->setFinder((new Finder())
+#                  ->exclude(['vendor'])
+#                  ->in(__DIR__)
+#              );
+#          EOF
+#
+#          php-cs-fixer fix --dry-run --diff
+
+      - name: Code Style
+        run: |
+          cat <<'EOF' >phpcs.xml
+          <?xml version="1.0"?>
+          <ruleset name="PSR12">
+              <!-- Test all PHP files except those in vendor/ -->
+              <file>./</file>
+              <arg name="extensions" value="php"/>
+              <exclude-pattern>vendor/*</exclude-pattern>
+          
+              <arg name="report-width" value="auto"/>
+              <arg name="report-full"/>
+              <arg name="report-gitblame"/>
+              <arg name="report-summary"/>
+              <arg name="encoding" value="UTF-8"/>
+          
+              <rule ref="PSR12"/>
+          </ruleset>
+          EOF
+
+          phpcs -wps --colors

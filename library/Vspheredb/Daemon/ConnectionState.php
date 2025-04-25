@@ -60,14 +60,16 @@ class ConnectionState
     {
         $db = $this->db;
         $result = [];
-        foreach ($db->fetchAll(
-            $db->select()->from('vcenter_server', [
+        foreach (
+            $db->fetchAll(
+                $db->select()->from('vcenter_server', [
                 'id',
                 'vcenter_id',
                 'host',
                 'enabled'
-            ])
-        ) as $server) {
+                ])
+            ) as $server
+        ) {
             if (! isset($result[$server->vcenter_id])) {
                 $result[$server->vcenter_id] = [];
             }

@@ -315,7 +315,7 @@ class VCenterSummaryTable extends ObjectsTable
     protected function prepareDatastoreQuery()
     {
         return $this->db()->select()->from(
-        // TODO: Join object?
+            // TODO: Join object?
             ['ds' => 'datastore'],
             [
                 'vcenter_uuid'   => 'ds.vcenter_uuid',

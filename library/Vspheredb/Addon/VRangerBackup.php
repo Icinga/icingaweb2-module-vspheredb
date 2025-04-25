@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Addon\VRangerBackupRunDetails;
 
 class VRangerBackup extends SimpleBackupTool
 {
-    const PREFIX = 'vRanger Backup & Replication:';
+    public const PREFIX = 'vRanger Backup & Replication:';
 
     protected $lastAttributes;
 

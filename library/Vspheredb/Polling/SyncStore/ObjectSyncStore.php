@@ -13,7 +13,7 @@ class ObjectSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    const CUSTOM_VALUE_KEY = 'summary.customValue';
+    public const CUSTOM_VALUE_KEY = 'summary.customValue';
 
     /** @var ?array */
     protected $customFieldsMap;

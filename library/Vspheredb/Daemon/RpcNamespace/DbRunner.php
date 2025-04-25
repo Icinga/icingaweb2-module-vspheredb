@@ -19,6 +19,7 @@ use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\ExtendedPromiseInterface;
 use RuntimeException;
+
 use function React\Promise\reject;
 use function React\Promise\resolve;
 

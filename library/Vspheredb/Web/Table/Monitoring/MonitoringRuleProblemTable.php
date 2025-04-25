@@ -108,6 +108,6 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
             ->order('vc.name')
             ->order('o.object_type')
             ->order('p.rule_name')
-            ;
+        ;
     }
 }

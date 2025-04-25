@@ -16,9 +16,9 @@ use Psr\Http\Message\RequestInterface;
 
 class VCenterServersTable extends BaseTable implements EventEmitterInterface
 {
-    const ON_FORM_ACTION = 'formAction';
-
     use EventEmitterTrait;
+
+    public const ON_FORM_ACTION = 'formAction';
 
     protected $request;
 

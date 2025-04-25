@@ -54,7 +54,7 @@ class ConnectionStateDetails
     protected static function instance()
     {
         if (static::$instance === null) {
-            static::$instance = new static;
+            static::$instance = new static();
         }
 
         return static::$instance;

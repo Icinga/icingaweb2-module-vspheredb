@@ -152,7 +152,7 @@ class VmHardwareTree extends BaseHtmlElement
 
         $parts[] = $nic->mac_address;
         if ($device->summary !== $device->label) {
-             // $parts[] = $device->summary;
+            // $parts[] = $device->summary;
         }
 
         $desc = $desc . ': ' . implode(', ', $parts);

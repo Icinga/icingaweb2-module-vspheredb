@@ -6,17 +6,17 @@ use Icinga\Exception\ProgrammingError;
 
 class Severity
 {
-    protected static $colorToStateMap = array(
+    protected static $colorToStateMap = [
         'green'  => 'Normal',
         'yellow' => 'Warning',
         'red'    => 'Alert',
-    );
+    ];
 
-    protected static $stateToColorMap = array(
+    protected static $stateToColorMap = [
         'Normal'  => 'green',
         'Warning' => 'yellow',
         'Alert'   => 'red',
-    );
+    ];
 
     public static function colorToSeverity($color)
     {

@@ -39,10 +39,12 @@ class MemoryLimit
             switch ($m[2]) {
                 case 'G':
                     $val *= 1024;
-                // Intentional fall-through
+                    // Intentional fall-through
+                    // no break
                 case 'M':
                     $val *= 1024;
-                // Intentional fall-through
+                    // Intentional fall-through
+                    // no break
                 case 'K':
                     $val *= 1024;
             }

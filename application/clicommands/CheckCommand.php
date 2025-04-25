@@ -18,6 +18,7 @@ use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Monitoring\Health\VCenterInfo;
 use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
+
 use function React\Promise\resolve;
 
 /**
@@ -305,7 +306,7 @@ class CheckCommand extends Command
         $screen = Screen::factory();
         $pattern = '/\[(OK|WARNING|CRITICAL|UNKNOWN)]\s/';
         return preg_replace_callback($pattern, function ($match) use ($screen) {
-            return '[' .$screen->colorize($match[1], (new CheckPluginState($match[1]))->getColor()) . '] ';
+            return '[' . $screen->colorize($match[1], (new CheckPluginState($match[1]))->getColor()) . '] ';
         }, $string);
     }
 

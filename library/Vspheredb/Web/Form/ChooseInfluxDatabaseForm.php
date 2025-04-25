@@ -11,6 +11,7 @@ use Icinga\Web\Notification;
 use ipl\Html\FormElement\BaseFormElement;
 use ipl\Html\FormElement\SelectElement;
 use React\EventLoop\LoopInterface;
+
 use function Clue\React\Block\await;
 
 class ChooseInfluxDatabaseForm extends Form

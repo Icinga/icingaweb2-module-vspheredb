@@ -32,6 +32,7 @@ use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\ExtendedPromiseInterface;
 use React\Promise\PromiseInterface;
+
 use function React\Promise\reject;
 use function React\Promise\resolve;
 
@@ -149,7 +150,7 @@ class VsphereApi
                 }
                 $message = 'Dropping outdated Cookies, logging in again';
                 if (! $e instanceof NoSessionForCookieError) {
-                    $message .= '. Unknown Error: '. get_class($e) . ' ' .  $e->getMessage();
+                    $message .= '. Unknown Error: ' . get_class($e) . ' ' . $e->getMessage();
                 }
                 $this->logger->notice($message);
                 $this->cookieStore->forgetCookies();

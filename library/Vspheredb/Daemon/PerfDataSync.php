@@ -37,6 +37,7 @@ use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
 use stdClass;
 use Throwable;
+
 use function React\Promise\resolve;
 
 class PerfDataSync implements DaemonTask

@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Polling\SelectSet;
 
 class DatastoreSelectSet implements SelectSet
 {
-    const TRAVERSE_STORAGE_POD = 'TraverseStoragePod';
+    public const TRAVERSE_STORAGE_POD = 'TraverseStoragePod';
 
     public static function create()
     {

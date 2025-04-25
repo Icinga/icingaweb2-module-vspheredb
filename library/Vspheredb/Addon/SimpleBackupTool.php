@@ -8,7 +8,7 @@ use RuntimeException;
 
 abstract class SimpleBackupTool implements BackupTool
 {
-    const PREFIX = 'no-such-prefix';
+    public const PREFIX = 'no-such-prefix';
 
     protected $lastAttributes;
 

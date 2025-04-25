@@ -19,13 +19,13 @@ use Ramsey\Uuid\UuidInterface;
 
 class RuleForm extends Form
 {
-    const NEXT_UUID = '00000000-0000-0000-0000-000000000000';
-    const RESULT_CREATED    = 'created';
-    const RESULT_MODIFIED   = 'modified';
-    const RESULT_UNMODIFIED = 'unmodified';
-    const RESULT_DELETED    = 'deleted';
-
     use TranslationHelper;
+
+    public const NEXT_UUID = '00000000-0000-0000-0000-000000000000';
+    public const RESULT_CREATED    = 'created';
+    public const RESULT_MODIFIED   = 'modified';
+    public const RESULT_UNMODIFIED = 'unmodified';
+    public const RESULT_DELETED    = 'deleted';
 
     /** @var string */
     protected $objectType;

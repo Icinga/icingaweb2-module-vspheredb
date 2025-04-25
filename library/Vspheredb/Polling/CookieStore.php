@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Polling;
 
 use Psr\Log\LoggerInterface;
+
 use function file;
 use function file_exists;
 use function file_put_contents;

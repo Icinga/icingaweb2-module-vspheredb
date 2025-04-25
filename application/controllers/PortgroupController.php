@@ -20,7 +20,7 @@ class PortgroupController extends ObjectsController
         $this->setAutorefreshInterval(15);
         $table = new NetworkAdaptersTable($this->db(), $this->url());
         $portGroup = DistributedVirtualPortgroup::loadWithUuid($this->params->getRequired('uuid'), $this->db());
-            $table->filterPortGroup($portGroup);
+        $table->filterPortGroup($portGroup);
         $this->addSingleTab($this->translate('Port Group'));
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());

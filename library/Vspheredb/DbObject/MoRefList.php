@@ -6,9 +6,9 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 abstract class MoRefList
 {
-    const LIST_TABLE_NAME = 'unconfigured_table_name';
+    public const LIST_TABLE_NAME = 'unconfigured_table_name';
 
-    const MEMBER_TABLE_NAME = 'unconfigured_table_name_object';
+    public const MEMBER_TABLE_NAME = 'unconfigured_table_name_object';
 
     /**
      * @param VCenter $vCenter
