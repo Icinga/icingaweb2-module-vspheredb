@@ -32,7 +32,7 @@ class FullSelectSet implements SelectSet
                 self::TRAVERSE_STORAGE_POD,
             ]),
             GenericSpec::traverse(self::TRAVERSE_STORAGE_POD, 'StoragePod', 'childEntity'),
-            GenericSpec::traverse(self::TRAVERSE_CR1, 'Folder', 'childEntity', [
+            GenericSpec::traverse(self::TRAVERSE_CR1, 'ComputeResource', 'resourcePool', [
                 // A ComputeResource object can be followed either by a ResourcePool
                 // or a HostSystem. There is no need to traverse a HostSystem, but
                 // there are two different ResourcePool TraversalSpecs to cover, so
