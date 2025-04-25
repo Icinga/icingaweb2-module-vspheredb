@@ -144,7 +144,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         $initialize->promise()->then(function ($initialized) use ($server) {
             /** @var AboutInfo $content */
             /** @var UuidInterface $uuid */
-            list($about, $uuid) = $initialized;
+            [$about, $uuid] = $initialized;
             $this->emit(self::ON_INITIALIZED_SERVER, [$server, $about, $uuid]);
         }, function (Exception $e) use ($serverId) {
             unset($this->initializations[$serverId]);

@@ -108,7 +108,7 @@ class SpectreMelddownBiosInfo extends BaseHtmlElement
             return;
         }
         $result = null;
-        list($series, $model) = preg_split('/\s/', $model, 2);
+        [$series, $model] = preg_split('/\s/', $model, 2);
         if ($vendor === 'Dell Inc.') {
             $result = $this->showDell($series, $model, $version, $date);
         } elseif ($vendor === 'HP') {
