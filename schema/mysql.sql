@@ -164,6 +164,7 @@ CREATE TABLE object (
   UNIQUE KEY vcenter_moref (vcenter_uuid, moref),
   INDEX object_type (object_type),
   INDEX object_name (object_name(64)),
+  INDEX vcenter_uuid (vcenter_uuid),
   CONSTRAINT object_parent
     FOREIGN KEY parent (parent_uuid)
     REFERENCES object (uuid)
@@ -230,6 +231,8 @@ CREATE TABLE host_system (
     'uninitialized'
   ) DEFAULT NULL,
   custom_values TEXT DEFAULT NULL,
+  INDEX host_name (host_name),
+  INDEX vcenter_uuid (vcenter_uuid),
   PRIMARY KEY(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
@@ -248,7 +251,8 @@ CREATE TABLE host_pci_device (
   vendor_name VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   sub_vendor_id SMALLINT NOT NULL, -- short
   parent_bridge VARCHAR(64) DEFAULT NULL,
-  PRIMARY KEY(host_uuid, id)
+  PRIMARY KEY(host_uuid, id),
+  INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_sensor (
@@ -270,7 +274,8 @@ CREATE TABLE host_sensor (
   -- fan, power, system, temperature, voltage, other,
   -- Battery, Cable/Interconnect, Chassis, Management Subsystem Health,
   -- Memory, Processors, Software Components, Storage, System, Watchdog
-  PRIMARY KEY(host_uuid, name)
+  PRIMARY KEY(host_uuid, name),
+  INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE host_physical_nic (
@@ -420,7 +425,9 @@ CREATE TABLE virtual_machine (
   guest_ip_stack TEXT DEFAULT NULL,
   custom_values TEXT DEFAULT NULL,
   annotation TEXT DEFAULT NULL,
-  PRIMARY KEY(uuid)
+  PRIMARY KEY(uuid),
+  INDEX template (template),
+  INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_list (
@@ -498,7 +505,8 @@ CREATE TABLE datastore (
   --     'nfs',
   --     'cifs'
   -- ) NOT NULL,
-  PRIMARY KEY(uuid)
+  PRIMARY KEY(uuid),
+  INDEX vcenter_uuid (vcenter_uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE vm_snapshot (
