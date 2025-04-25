@@ -14,7 +14,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
         'vm_name' => 'o.object_name',
         'vm_guest_host_name' => 'vm.guest_host_name',
         'vm_moref' => 'o.moref',
-        'disk_hardware_key' => "(CASE WHEN vmhw.label LIKE 'IDE %' THEN 'ide' ELSE 'scsi' END"
+        'disk_hardware_key' => "(CASE WHEN vmhc.label LIKE 'IDE %' THEN 'ide' WHEN vmhc.label LIKE 'NVME %' then 'nvme' ELSE 'scsi' END"
             . " || vmhc.bus_number || ':' || vmhw.unit_number)",
         'disk_hardware_label' => 'vmhw.label',
     ];
@@ -24,7 +24,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
                 'o.moref',
-                "GROUP_CONCAT(CASE WHEN vmhw.label LIKE 'IDE %' THEN 'ide' ELSE 'scsi' END"
+                "GROUP_CONCAT(CASE WHEN vmhc.label LIKE 'IDE %' THEN 'ide' WHEN vmhc.label LIKE 'NVME %' then 'nvme' ELSE 'scsi' END"
                 . " || vmhc.bus_number || ':' || vmhw.unit_number SEPARATOR ',')",
             ])
             ->group('vm.uuid');
@@ -45,7 +45,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
                 'vmhw.vm_uuid = vmhc.vm_uuid AND vmhw.controller_key = vmhc.hardware_key',
                 []
             )
-            ->where("vmhc.label LIKE 'SCSI controller %' OR vmhc.label LIKE 'IDE %'")
+            ->where("vmhc.label LIKE 'SCSI controller %' OR vmhc.label LIKE 'IDE %' OR vmhc.label LIKE 'NVME %'")
             ->order('vm.runtime_host_uuid')
             ->order('vmd.hardware_key');
 
