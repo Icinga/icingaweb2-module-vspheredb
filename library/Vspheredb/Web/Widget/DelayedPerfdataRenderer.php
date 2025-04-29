@@ -17,6 +17,12 @@ class DelayedPerfdataRenderer
         527 => 'net.bytesRx',
         171 => 'virtualDisk.numberReadAveraged',
         172 => 'virtualDisk.numberWriteAveraged',
+        124   => 'disk.usage.none',
+        125   => 'disk.usage.average',
+        126   => 'disk.usage.minimum',
+        127   => 'disk.usage.maximum',
+        240   => 'disk.used.latest',
+        244   => 'disk.deltaused.latest',
     ];
 
     /** @var \Zend_Db_Adapter_Abstract */
