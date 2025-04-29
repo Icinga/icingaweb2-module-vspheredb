@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
@@ -11,8 +12,7 @@ class SimpleUsageBar extends BaseHtmlElement
 
     protected $defaultAttributes = [
         'class' => 'disk-usage compact',
-        'data-base-target' => '_next',
-        'style' => 'display: inline-block'
+        'data-base-target' => '_next'
     ];
 
     /** @var int */
@@ -33,14 +33,24 @@ class SimpleUsageBar extends BaseHtmlElement
 
     protected function assemble()
     {
-        $usedPercent = $this->used / $this->total;
-        $this->add(Html::tag('span', [
+
+        $usageBarElement = Html::tag('span', [
             'href' => '#',
-            'style' => sprintf(
-                'display: block; width: %0.3F%%; background-color: rgba(70, 128, 255, 0.75); height: 100%%;',
-                $usedPercent * 100
-            ),
             'title' => $this->title
-        ]));
+        ]);
+
+        $usedPercent = $this->used / $this->total;
+        Util::addCSPValidStyleToElement(
+            'simple-usage-bar',
+            [
+                "width" => sprintf("%0.3F%%", $usedPercent * 100),
+                "display" => "block !important",
+                "background-color" => "rgba(70, 128, 255, 0.75)",
+                "height" => "100%"
+            ],
+            $usageBarElement
+        );
+
+        $this->add($usageBarElement);
     }
 }

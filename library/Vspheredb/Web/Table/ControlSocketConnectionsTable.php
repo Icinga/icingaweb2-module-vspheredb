@@ -55,7 +55,7 @@ class ControlSocketConnectionsTable extends ArrayTable
             $row->pid
         ]);
         if ($row->pid === $this->myPid) {
-            $tr->addAttributes(['style' => 'font-weight: bold;']);
+            $tr->addAttributes(['class' => 'font-bold']);
         }
 
         return $tr;

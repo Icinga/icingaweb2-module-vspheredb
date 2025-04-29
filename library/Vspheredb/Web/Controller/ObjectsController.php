@@ -111,7 +111,7 @@ class ObjectsController extends Controller
         if ($this->vCenterFilterForm === null) {
             $form = new FilterVCenterForm($this->db(), $this->Auth());
             $form->allowAllVCenters();
-            $form->getAttributes()->add('style', 'float: right');
+            $form->getAttributes()->add('class', 'float-right');
             $form->handleRequest($this->getServerRequest());
             $this->vCenterFilterForm = $form;
         }

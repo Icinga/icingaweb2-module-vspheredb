@@ -52,7 +52,7 @@ class SpectreMelddownBiosInfo extends BaseHtmlElement
             if ($info->bios_version) {
                 if (version_compare($info->bios_version, $version, '>')) {
                     return [
-                        Html::tag('span', ['style' => 'color: red'], $strVersion),
+                        Html::tag('span', ['class' => 'color-red'], $strVersion),
                         ' (Spectre/meltdown requires ',
                         Html::tag('a', ['target' => '_blank', 'href' => $info->bios_link], $info->bios_version),
                         ')'
@@ -78,7 +78,7 @@ class SpectreMelddownBiosInfo extends BaseHtmlElement
             if ($info->bios_version) {
                 if (version_compare($info->bios_version, $version, '>')) {
                     return [
-                        Html::tag('span', ['style' => 'color: red'], $strVersion),
+                        Html::tag('span', ['class' => 'color-red'], $strVersion),
                         ' (Spectre/meltdown requires ',
                         Html::tag('a', ['target' => '_blank', 'href' => $info->bios_link], $info->bios_version),
                         ')'
