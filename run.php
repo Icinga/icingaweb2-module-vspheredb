@@ -16,11 +16,10 @@ $this->provideHook('director/ImportSource');
 $this->provideHook('director/DataType', DataTypeMonitoringRule::class);
 $this->provideHook('vspheredb/PerfDataConsumer', PerfDataConsumerInfluxDb::class);
 
-
+if (Module::exists('icingadb')) {
+    $this->provideHook('icingadb/HostDetailExtension');
+}
 
 if (Module::exists('monitoring')) {
     $this->provideHook('monitoring/DetailviewExtension');
-}
-if (Module::exists('icingadb')) {
-    $this->provideHook('icingadb/HostDetailExtension');
 }
