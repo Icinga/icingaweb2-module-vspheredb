@@ -45,9 +45,9 @@ class MonitoringConnectionForm extends Form
         $this->addElement('select', 'source_type', [
             'label'   => $this->translate('Source Type'),
             'options' => $this->optionalEnum([
-                'ido'         => $this->translate('IDO'),
+                'ido' => $this->translate('IDO'),
                 // 'icinga2-api' => $this->translate('Icinga 2 API'),
-                'icingadb'    => $this->translate('IcingaDB'),
+                'icingadb' => $this->translate('Icinga DB')
             ]),
             'class' => 'autosubmit',
         ]);
@@ -55,17 +55,18 @@ class MonitoringConnectionForm extends Form
         if (! $sourceType) {
             return;
         }
-        if ($sourceType === 'ido') {
+
+        if ($sourceType === 'icingadb') {
+            $this->addElement('select', 'source_resource_name', [
+                'label'   => $this->translate('Icinga DB Resource'),
+                'options' => $this->optionalEnum($this->enumIcingadbResourceNames()),
+                'class'   => 'autosubmit'
+            ]);
+        } else {
             $this->addElement('select', 'source_resource_name', [
                 'label'   => $this->translate('IDO Resource'),
                 'options' => $this->optionalEnum($this->enumIdoResourceNames()),
-                'class'   => 'autosubmit',
-            ]);
-        } elseif ($sourceType === 'icingadb') {
-            $this->addElement('select', 'source_resource_name', [
-                'label'   => $this->translate('Icingadb Resource'),
-                'options' => $this->optionalEnum($this->enumIcingadbResourceNames()),
-                'class'   => 'autosubmit',
+                'class'   => 'autosubmit'
             ]);
         }
         $resourceName = $this->getElement('source_resource_name')->getValue();
@@ -75,25 +76,9 @@ class MonitoringConnectionForm extends Form
             ]);
             return;
         }
-        if ($sourceType === 'ido') {
-            try {
-                $resource = ResourceFactory::create($resourceName);
-                if ($resource instanceof DbConnection) {
-                    $idoVars = $this->enumIdoCustomVars($resource);
-                } else {
-                    throw new InvalidArgumentException("Resource '$resourceName' is not a DbConnection");
-                }
-            } catch (\Exception $e) {
-                $this->getElement('source_resource_name')->addMessage($e->getMessage());
-                return;
-            }
 
-            $varOptions = $this->optionalEnum([
-                    'host_name'    => $this->translate('Hostname'),
-                    'display_name' => $this->translate('Display Name'),
-                    'address'      => $this->translate('Address'),
-                ] + [$this->translate('Custom Variables') => $idoVars]);
-        } elseif ($sourceType === 'icingadb') {
+
+        if ($sourceType === 'icingadb') {
             try {
                 $resource = ResourceFactory::create($resourceName);
                 if ($resource instanceof DbConnection) {
@@ -107,14 +92,30 @@ class MonitoringConnectionForm extends Form
             }
 
             $varOptions = $this->optionalEnum([
-                    'name'    => $this->translate('Hostname'),
-                    'display_name' => $this->translate('Display Name'),
-                    'address'      => $this->translate('Address v4'),
-                    'address6'      => $this->translate('Address v6'),
-                ] + [$this->translate('Custom Variables') => $icingadbVars]);
+                'name'         => $this->translate('Hostname'),
+                'display_name' => $this->translate('Display Name'),
+                'address'      => $this->translate('Address v4'),
+                'address6'     => $this->translate('Address v6'),
+            ] + [$this->translate('Custom Variables') => $icingadbVars]);
+        } else {
+            try {
+                $resource = ResourceFactory::create($resourceName);
+                if ($resource instanceof DbConnection) {
+                    $idoVars = $this->enumIdoCustomVars($resource);
+                } else {
+                    throw new InvalidArgumentException("Resource '$resourceName' is not a DbConnection");
+                }
+            } catch (\Exception $e) {
+                $this->getElement('source_resource_name')->addMessage($e->getMessage());
+                return;
+            }
+
+            $varOptions = $this->optionalEnum([
+                'host_name'    => $this->translate('Hostname'),
+                'display_name' => $this->translate('Display Name'),
+                'address'      => $this->translate('Address'),
+            ] + [$this->translate('Custom Variables') => $idoVars]);
         }
-
-
 
         $this->add(Html::tag('h2', $this->translate('Host Systems')));
         $this->add(Html::tag('p', $this->translate(
@@ -297,6 +298,13 @@ class MonitoringConnectionForm extends Form
         return $this->makeNiceUuidKeys($db->fetchPairs($query));
     }
 
+    protected function enumIcingadbResourceNames(): array
+    {
+        $resource = Config::module('icingadb')->get('icingadb', 'resource');
+
+        return [$resource => $resource];
+    }
+
     protected function enumIdoResourceNames(): array
     {
         $resources = [];
@@ -312,14 +320,7 @@ class MonitoringConnectionForm extends Form
 
         return $resources;
     }
-    protected function enumIcingadbResourceNames(): array
-    {
-        $resources = [];
-        $resourceName = Config::module('icingadb')->get('icingadb', 'resource');
-        $resources[$resourceName] = $resourceName;
 
-        return $resources;
-    }
     protected function enumVCenters(): array
     {
         return $this->makeNiceUuidKeys($this->db->fetchPairs(
