@@ -144,6 +144,8 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
                 return "$what power state is unknown, might be disconnected";
             case 'poweredOn':
                 return "$what is powered on";
+            case 'standBy':
+                return "$what is in standby";
         }
 
         throw new InvalidArgumentException("'$state' is not a known power state");
