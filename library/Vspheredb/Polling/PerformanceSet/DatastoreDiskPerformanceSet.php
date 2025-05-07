@@ -9,6 +9,7 @@ class DatastoreDiskPerformanceSet extends DefaultPerformanceSet
     protected $countersGroup = 'disk';
     protected $counters = [
         'capacity',
+        'usage',
         'used',
         'provisioned',
         'deltaused',

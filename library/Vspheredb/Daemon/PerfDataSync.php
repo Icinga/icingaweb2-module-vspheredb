@@ -12,12 +12,14 @@ use Icinga\Module\Vspheredb\PerformanceData\InfluxConnectionForVcenterLoader;
 use Icinga\Module\Vspheredb\PerformanceData\MetricCSVToInfluxDataPoint;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\CounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\CounterMap;
+use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\DatastoreDiskCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\HostCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\HostNetworkCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmDiskCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmNetworkCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceQuerySpecHelper;
+use Icinga\Module\Vspheredb\Polling\PerformanceSet\DatastoreDiskPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostCpuPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostMemoryPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostNetworkPerformanceSet;
@@ -37,7 +39,6 @@ use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
 use stdClass;
 use Throwable;
-
 use function React\Promise\resolve;
 
 class PerfDataSync implements DaemonTask
@@ -242,6 +243,11 @@ class PerfDataSync implements DaemonTask
         $counterLookup = new HostNetworkCounterLookup($db);
         $set = new HostNetworkPerformanceSet();
         $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
+
+        $counterLookup = new DatastoreDiskCounterLookup($db);
+        $set = new DatastoreDiskPerformanceSet();
+        $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
+
     }
 
     protected function scheduleTasks()
