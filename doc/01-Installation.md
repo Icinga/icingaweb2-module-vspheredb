@@ -44,6 +44,15 @@ Please make sure that you choose `utf8mb4` as an encoding.
 Installation
 ------------
 
+### SELinux notice
+
+When installing the module on a system with SELinux enabled,
+execute the following command to assign the appropriate context to the module's daemon socket directory:
+
+```shell
+semanage fcontext -a -t icingaweb2_rw_content_t '/run/icinga-vspheredb(/.*)?'
+```
+
 ### Module installation (or upgrade)
 
 This script downloads the [latest version](https://github.com/Icinga/icingaweb2-module-vspheredb/releases)
