@@ -87,11 +87,10 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $renderStatus = $this->renderStatus;
         $tr = $this::tr([
             $this::td($renderStatus($row->overall_status)),
-            // TODO: move to CSS
-            $this::td($caption, ['style' => 'overflow: hidden; display: inline-block; height: 2em; min-width: 8em;']),
-            $this::td(Format::bytes($size, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
-            $this::td($usage, ['style' => 'width: 25%;']),
-            $this::td($dsUsage, ['style' => 'width: 25%;'])
+            $this::td($caption, ['class' => 'vm-datastore-caption']),
+            $this::td(Format::bytes($size, Format::STANDARD_IEC), ['class' => 'white-space-pre']),
+            $this::td($usage, ['class' => 'width-25']),
+            $this::td($dsUsage, ['class' => 'width-25'])
         ]);
 
         return $tr;

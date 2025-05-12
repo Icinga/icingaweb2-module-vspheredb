@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\Format\LocalTimeFormat;
+use Icinga\Module\Vspheredb\Util;
 use ipl\Html\HtmlElement;
 use gipfl\IcingaWeb2\Link;
 use ipl\Html\Table;
@@ -85,16 +86,18 @@ class CalendarMonthSummary extends Table
             $link = Link::create($text, $baseUrl->with('day', $day));
             $alpha = $count / $max;
 
+            $style = ['background-color' => sprintf('rgba(%s, %.2F)', $this->color, $alpha)];
             if ($alpha > 0.4) {
-                $link->addAttributes(['style' => 'color: white;']);
+                $style['color'] = 'white !important';
             }
+            Util::addCSPValidStyleToElement(
+                'calendar-month-summary-bg-color',
+                $style,
+                $link
+            );
+
             $link->addAttributes([
                 'title' => sprintf('%d events', $count),
-                'style' => sprintf(
-                    'background-color: rgba(%s, %.2F);',
-                    $this->color,
-                    $alpha
-                )
             ]);
 
             $this->getDay($day)->setContent($link);

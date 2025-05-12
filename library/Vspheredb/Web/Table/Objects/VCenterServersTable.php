@@ -80,7 +80,7 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
                 'vcenter'  => 'vc.name',
             ]))->setRenderer(function ($row) {
                 $td = Html::tag('td', [
-                    'style' => 'width: 40%'
+                    'class' => 'width-40'
                 ]);
 
                 $td->add(Link::create(
@@ -111,7 +111,7 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
                 $form->handleRequest($this->request);
                 $form->ensureAssembled();
                 $td = Html::tag('td', [
-                    'style' => 'min-width: 10em; width: 20%; font-style: normal; text-align: right'
+                    'class' => 'connection'
                 ], $form);
                 if ($this->serverConnections !== null) {
                     $td->add([' ', $this->getConnectionStatusIcon($row->id, $row->enabled === 'y'), ' ']);

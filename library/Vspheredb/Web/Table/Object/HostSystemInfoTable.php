@@ -103,14 +103,14 @@ class HostSystemInfoTable extends NameValueTable
     {
         if ($url = $this->findVendorModel($vendor, $model)) {
             if (is_array($url)) {
-                if (isset($url['css'])) {
-                    $css = $url['css'];
+                if (isset($url['class'])) {
+                    $vendorSpecificClass = $url['class'];
                 } else {
-                    $css = null;
+                    $vendorSpecificClass = '';
                 }
                 $url = $url['url'];
             } else {
-                $css = null;
+                $vendorSpecificClass = '';
             }
             $baseUrl = parse_url($url, PHP_URL_HOST);
             $img = Html::tag('img', [
@@ -118,11 +118,11 @@ class HostSystemInfoTable extends NameValueTable
                 'referrerpolicy' => 'no-referrer',
                 'alt'   => $model,
                 'title' => "$model - ",
-                'style' => 'max-width: 100%; max-height: 16em' . ($css ? "; $css" : '')
+                'class' => 'vendor-img ' . $vendorSpecificClass,
             ]);
 
             return [$model, Html::tag('br'), Html::tag('br'), $img, Html::tag('br'), Html::tag('div', [
-                'style' => 'text-align: right',
+                'class' => 'text-right',
             ], "© $vendor (https://$baseUrl)")];
         }
 

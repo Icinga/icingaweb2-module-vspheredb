@@ -70,7 +70,7 @@ class VmDisksTable extends ZfQueryBasedTable
                     $device,
                     Html::tag('br'),
                     Format::bytes($row->capacity),
-                ], ['style' => 'vertical-align: top; min-width: 15em;']),
+                ], ['class' => 'perf-row']),
                 $this->prepareImgColumn($device)
             ]);
         } else {

@@ -80,13 +80,12 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             . sprintf(' (%0.3f%%)', ($row->free_space / $row->capacity) * 100);
 
         $tr = $this::tr([
-            // TODO: move to CSS
             $this::td($caption, [
                 'title' => $caption
             ]),
-            $this::td(Format::bytes($row->capacity, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
-            $this::td($free, ['style' => 'width: 25%;']),
-            $this::td($this->makeDisk($row), ['style' => 'width: 25%;'])
+            $this::td(Format::bytes($row->capacity, Format::STANDARD_IEC), ['class' => 'white-space-pre']),
+            $this::td($free, ['class' => 'width-25']),
+            $this::td($this->makeDisk($row), ['class' => 'width-25'])
         ]);
 
         $this->totalSize += $row->capacity;
@@ -116,7 +115,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
                 ]),
                 [
                     'colspan' => 4,
-                    'style' => 'height: auto'
+                    'class' => 'height-auto'
                 ]
             ));
         }
@@ -135,13 +134,13 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             . sprintf(' (%0.3f%%)', ($this->totalFree / $this->totalSize) * 100);
         $this->getFooter()->add($this::tr([
             $this::th(Html::tag('strong', null, $this->translate('Total'))),
-            $this::th(Format::bytes($this->totalSize, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
-            $this::th($free, ['style' => 'width: 25%;']),
+            $this::th(Format::bytes($this->totalSize, Format::STANDARD_IEC), ['class' => 'white-space-pre']),
+            $this::th($free, ['class' => 'width-25;']),
             $this::th($this->makeDisk((object) [
                 'disk_path' => $this->translate('Total'),
                 'capacity'  => $this->totalSize,
                 'free_space' => $this->totalFree
-            ]), ['style' => 'width: 25%;'])
+            ]), ['class' => 'width-25'])
         ]));
     }
 
