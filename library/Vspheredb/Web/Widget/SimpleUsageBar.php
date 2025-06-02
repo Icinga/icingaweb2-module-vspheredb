@@ -4,15 +4,15 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Web\Compat\StyleWithNonce;
 
 class SimpleUsageBar extends BaseHtmlElement
 {
     protected $tag = 'div';
 
     protected $defaultAttributes = [
-        'class' => 'disk-usage compact',
-        'data-base-target' => '_next',
-        'style' => 'display: inline-block'
+        'class' => 'simple-usage-bar disk-usage compact',
+        'data-base-target' => '_next'
     ];
 
     /** @var int */
@@ -34,13 +34,17 @@ class SimpleUsageBar extends BaseHtmlElement
     protected function assemble()
     {
         $usedPercent = $this->used / $this->total;
-        $this->add(Html::tag('span', [
+
+        $bar = Html::tag('span', [
             'href' => '#',
-            'style' => sprintf(
-                'display: block; width: %0.3F%%; background-color: rgba(70, 128, 255, 0.75); height: 100%%;',
-                $usedPercent * 100
-            ),
+            'class' => 'simple-usage-bar-bar',
             'title' => $this->title
-        ]));
+        ]);
+
+        $style = (new StyleWithNonce())
+            ->setModule('vspheredb')
+            ->addFor($bar, ['width' => sprintf('%0.3F%%', $usedPercent * 100)]);
+
+        $this->add([$bar, $style]);
     }
 }

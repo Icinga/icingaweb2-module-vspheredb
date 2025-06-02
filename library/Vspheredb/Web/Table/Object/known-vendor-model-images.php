@@ -69,7 +69,7 @@ return [
         'ProLiant DL360 Gen10'              => 'https://assets.ext.hpe.com/is/image/hpedam/s00005869?$zoom$#.png',
         'ProLiant DL380 Gen10'              => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00009709?$zoom$#.png',
-            'css' => 'clip-path: inset(34% 0 30% 0); margin: -18% -0 -12% -0;',
+            'class' => 'vendor-model-hpe-proliant-dl380-gen10',
         ],
         'ProLiant DL380 Gen10 Plus'         => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00009868?$zoom$#.png',
@@ -77,11 +77,11 @@ return [
         'ProLiant DL385 Gen10 Plus'         => 'https://assets.ext.hpe.com/is/image/hpedam/s00009923?$zoom$#.png',
         'ProLiant DL560 Gen10'              => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00002844?$zoom$#.png',
-            'css' => 'clip-path: inset(44% 0 30% 0); margin: -30% -0 -20% -0;',
+            'class' => 'vendor-model-hpe-proliant-dl560-gen10',
         ],
         'ProLiant DL580 Gen10'              => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00005353?$zoom$#.png',
-            'css' => 'clip-path: inset(24% 0 20% 0); margin: -20% -0 -15% -0;',
+            'class' => 'vendor-model-hpe-proliant-dl580-gen10',
         ],
 
         'Synergy 480 Gen10'                 => 'https://assets.ext.hpe.com/is/image/hpedam/s00002866?$zoom$#.png',
@@ -106,7 +106,7 @@ return [
         'ProLiant DL380 Gen9' => [
             'url' => 'https://techlibrary.hpe.com/docs/enterprise/servers/DL380Gen9/'
             . 'DL380Gen9-setup/system_setup_overview/222457.png',
-            'css' => 'clip-path: inset(20% 0 15% 0); margin: -10% -0 -7% -0;',
+            'class' => 'vendor-model-hp-proliant-dl380-gen9',
         ],
         'ProLiant BL460c Gen9' => 'https://techlibrary.hpe.com/docs/enterprise/servers/BL460cGen9/'
             . 'BL460cGen9-setup/de/system_setup_overview/189999.png'

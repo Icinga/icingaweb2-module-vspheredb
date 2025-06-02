@@ -2,17 +2,29 @@
 
 namespace Icinga\Module\Vspheredb\PerformanceData\IcingaRrd;
 
-use ipl\Html\Html;
 use gipfl\IcingaWeb2\Img;
+use ipl\Html\Html;
 
 class RrdImg
 {
+    protected const COLOR_RED = 'red'; // #FF5555
+
+    protected const COLOR_GREEN = 'green'; // #57985B
+
+    protected const COLOR_CYAN = 'cyan'; // #0095BF
+
+    protected const COLOR_MAGENTA = 'magenta'; // #EE55FF
+
+    protected const COLOR_ORANGE = 'orange'; // #FF9933
+
+    protected const COLOR_YELLOW = 'yellow'; // #FFED58
+
     public static function vmIfTraffic($moref, $device)
     {
         return static::wrapImage(Html::sprintf(
             mt('vspheredb', 'Throughput (bits/s, %s RX / %s TX)'),
-            static::colorLegend('#57985B'),
-            static::colorLegend('#0095BF')
+            static::colorLegend(static::COLOR_GREEN),
+            static::colorLegend(static::COLOR_CYAN)
         ), $moref, "iface$device", 'vSphereDB-vmIfTraffic');
     }
 
@@ -20,11 +32,11 @@ class RrdImg
     {
         return static::wrapImage(Html::sprintf(
             mt('vspheredb', 'Packets (%s / %s Unicast, %s BCast, %s MCast, %s Dropped)'),
-            static::colorLegend('#57985B'),
-            static::colorLegend('#0095BF'),
-            static::colorLegend('#EE55FF'),
-            static::colorLegend('#FF9933'),
-            static::colorLegend('#FF5555')
+            static::colorLegend(static::COLOR_GREEN),
+            static::colorLegend(static::COLOR_CYAN),
+            static::colorLegend(static::COLOR_MAGENTA),
+            static::colorLegend(static::COLOR_ORANGE),
+            static::colorLegend(static::COLOR_RED)
         ), $moref, "iface$device", 'vSphereDB-vmIfPackets');
     }
 
@@ -32,9 +44,9 @@ class RrdImg
     {
         return static::wrapImage(Html::sprintf(
             mt('vspheredb', 'Disk Seeks: %s small / %s medium / %s large'),
-            static::colorLegend('#57985B'),
-            static::colorLegend('#FFED58'),
-            static::colorLegend('#FFBF58')
+            static::colorLegend(static::COLOR_GREEN),
+            static::colorLegend(static::COLOR_YELLOW),
+            static::colorLegend(static::COLOR_YELLOW)
         ), $moref, "disk$device", 'vSphereDB-vmDiskSeeks');
     }
 
@@ -42,8 +54,8 @@ class RrdImg
     {
         return static::wrapImage(Html::sprintf(
             mt('vspheredb', 'Average Number %s Reads / %s Writes'),
-            static::colorLegend('#57985B'),
-            static::colorLegend('#0095BF')
+            static::colorLegend(static::COLOR_GREEN),
+            static::colorLegend(static::COLOR_CYAN)
         ), $moref, "disk$device", 'vSphereDB-vmDiskReadWrites');
     }
 
@@ -51,8 +63,8 @@ class RrdImg
     {
         return static::wrapImage(Html::sprintf(
             mt('vspheredb', 'Latency %s Read / %s Write'),
-            static::colorLegend('#57985B'),
-            static::colorLegend('#0095BF')
+            static::colorLegend(static::COLOR_GREEN),
+            static::colorLegend(static::COLOR_CYAN)
         ), $moref, "disk$device", 'vSphereDB-vmDiskTotalLatency');
     }
 
@@ -73,34 +85,20 @@ class RrdImg
             'start'    => $start,
             'end'      => $end,
         ];
-        $attrs = [
-            'height' => $height,
-            'width'  => $width,
-            'style'  => 'float: right;'
-            // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
-        ];
 
-        return Img::create('rrd/img', $params + [
-            'template' => $template,
-        ], $attrs);
+        return Img::create('rrd/img', $params + ['template' => $template], ['class' => 'rrd-image']);
     }
 
     protected static function colorLegend($color)
     {
-        return Html::tag('div', [
-            'style' => "    border: 1px solid rgba(0, 0, 0, 0.3); background-color: $color;"
-                . ' width: 0.8em; height: 0.8em; margin: 0.1em; display: inline-block; vertical-align: middle;'
-        ]);
+        return Html::tag('div', ['class' => 'color-square color-' . $color]);
     }
 
     protected static function wrapImage($title, $moref, $device, $template)
     {
-        return Html::tag('div', [
-            'style' => 'display: inline-block; margin-left: 1em;' // TODO, CSS. disk was 1em, net 2em
-        ], [
-            Html::tag('strong', [
-                'style' => 'display: block; padding-left: 3em'
-            ], $title),
+        // TODO, CSS. disk was 1em, net 2em
+        return Html::tag('div', ['class' => 'rrd-image-legend'], [
+            Html::tag('strong', $title),
             static::prepareImg($moref, $device, $template),
         ]);
     }

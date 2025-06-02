@@ -9,8 +9,6 @@ use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
-use ipl\Html\HtmlString;
-use ipl\Html\Text;
 use Ramsey\Uuid\Uuid;
 
 trait SingleObjectMonitoring
@@ -32,8 +30,7 @@ trait SingleObjectMonitoring
         $this->actions()->add($this->createMonitoringHistoryLink(false));
         $this->actions()->add($this->createMonitoringInspectionLink($inspect));
         $this->content()->add(Html::tag('pre', [
-            'class' => 'logOutput',
-            'style' => 'font-size: 1.15em'
+            'class' => 'logOutput monitoring-output'
         ], CheckPluginHelper::colorizeOutput($result->getOutput())));
         if ($this->Auth()->hasPermission('vspheredb/admin')) {
             $this->showRuleConfigurationHint($object);
