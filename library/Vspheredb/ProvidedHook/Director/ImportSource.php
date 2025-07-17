@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\BulkPathLookup;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\Db\QueryHelper;
+use Icinga\Module\Vspheredb\Db\TagLookup;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
@@ -39,7 +40,8 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'hardware_cpu_cores'      => 'h.hardware_cpu_cores',
         'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
         'custom_values'           => 'h.custom_values',
-        'tags'                    => 'o.tags',
+        'tags'                    => '(NULL)',
+        'internal_tags'           => 'o.tags',
         'path'                    => '(NULL)',
     ];
 
@@ -60,7 +62,8 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'template'            => 'vm.template',
         'custom_values'       => 'vm.custom_values',
         'guest_ip_addresses'  => 'vm.guest_ip_addresses',
-        'tags'                => 'o.tags',
+        'tags'                => '(NULL)',
+        'internal_tags'       => 'o.tags',
         'path'                => '(NULL)',
     ];
 
@@ -78,7 +81,8 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'hosts'                    => 'cr.hosts',
         'total_cpu_mhz'            => 'cr.total_cpu_mhz',
         'total_memory_size_mb'     => 'cr.total_memory_size_mb',
-        'tags'                     => 'o.tags',
+        'tags'                     => '(NULL)',
+        'internal_tags'            => 'o.tags',
         'path'                     => '(NULL)',
     ];
 
@@ -90,7 +94,8 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'maintenance_mode'     => 'ds.maintenance_mode',
         'capacity'             => 'ds.capacity',
         'multiple_host_access' => 'ds.multiple_host_access',
-        'tags'                 => 'o.tags',
+        'tags'                 => '(NULL)',
+        'internal_tags'        => 'o.tags',
         'path'                 => '(NULL)',
     ];
 
@@ -170,6 +175,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         $connection = Db::newConfiguredInstance();
         $db = $connection->getDbAdapter();
         $pathLookup = new BulkPathLookup($connection);
+        $tagLookup = new TagLookup($connection);
         $objectType = $this->getSetting('object_type');
         switch ($objectType) {
             case 'host_system':
@@ -199,6 +205,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
 
         foreach ($result as $row) {
             $row->path = array_values($pathLookup->getParents($row->parent_uuid));
+            $row->tags = $tagLookup->getTags($row->uuid);
             unset($row->parent_uuid);
             static::convertDbRowToJsonData($row);
         }
@@ -226,8 +233,8 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
             }
             $row->guest_ip_addresses = $addresses;
         }
-        if (isset($row->tags)) {
-            $row->tags = JsonString::decode($row->tags);
+        if (isset($row->internal_tags)) {
+            $row->internal_tags = JsonString::decode($row->internal_tags);
         }
     }
 
