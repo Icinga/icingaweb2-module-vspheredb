@@ -6,6 +6,7 @@ use Exception;
 use gipfl\SimpleDaemon\DaemonTask;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\MappedClass\CustomFieldsManager;
+use Icinga\Module\Vspheredb\Polling\RestApi;
 use Icinga\Module\Vspheredb\Polling\SyncStore\VmDatastoreUsageSyncStore;
 use Icinga\Module\Vspheredb\Polling\SyncTask\ComputeResourceSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\DatastoreSyncTask;
@@ -17,9 +18,13 @@ use Icinga\Module\Vspheredb\Polling\SyncTask\HostSensorSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\HostSystemSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\HostVirtualNicSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\ManagedObjectReferenceSyncTask;
+use Icinga\Module\Vspheredb\Polling\SyncTask\RestApiTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\StandaloneTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\StoragePodSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\SyncTask;
+use Icinga\Module\Vspheredb\Polling\SyncTask\TaggingCategorySyncTask;
+use Icinga\Module\Vspheredb\Polling\SyncTask\TaggingObjectTagSyncTask;
+use Icinga\Module\Vspheredb\Polling\SyncTask\TaggingTagSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VirtualMachineSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmDatastoreUsageSyncTask;
 use Icinga\Module\Vspheredb\Polling\SyncTask\VmDiskUsageSyncTask;
@@ -76,6 +81,12 @@ class ObjectSync implements DaemonTask
         VmHardwareSyncTask::class,
     ];
 
+    protected $taggingTasks = [
+        TaggingTagSyncTask::class,
+        TaggingObjectTagSyncTask::class,
+        TaggingCategorySyncTask::class,
+    ];
+
     /** @var TimerInterface[]  */
     protected $timers = [];
 
@@ -87,13 +98,22 @@ class ObjectSync implements DaemonTask
     /** @var DbProcessRunner */
     protected $dbRunner;
 
-    public function __construct(VCenter $vCenter, VsphereApi $api, DbProcessRunner $dbRunner, LoggerInterface $logger)
-    {
+    /** @var RestApi */
+    protected $restApi;
+
+    public function __construct(
+        VCenter $vCenter,
+        VsphereApi $api,
+        RestApi $restApi,
+        DbProcessRunner $dbRunner,
+        LoggerInterface $logger
+    ) {
         $this->vCenter = $vCenter;
         if ($vCenter->isHostAgent()) {
             $this->removeVCenterOnlyTasks();
         }
         $this->api = $api;
+        $this->restApi = $restApi;
         $this->logger = $logger;
         $this->dbRunner = $dbRunner;
     }
@@ -162,6 +182,11 @@ class ObjectSync implements DaemonTask
         $this->timers[] = $this->loop->addPeriodicTimer(2, function () {
             $this->runTasks([VmEventHistorySyncTask::class]);
         });
+        $this->timers[] = $this->loop->addPeriodicTimer(400, function () {
+            $this->restApi->requireSession()->then(function () {
+                $this->runTasks($this->taggingTasks);
+            });
+        });
     }
 
     protected function refreshOutdatedDatastores()
@@ -197,6 +222,9 @@ class ObjectSync implements DaemonTask
     protected function runAllTasks()
     {
         $this->runTasks(array_merge($this->fastTasks, $this->normalTasks, $this->slowTasks));
+        $this->restApi->requireSession()->then(function () {
+            $this->runTasks($this->taggingTasks);
+        });
     }
 
     protected function runTask(SyncTask $task)
@@ -211,6 +239,8 @@ class ObjectSync implements DaemonTask
 
         if ($task instanceof StandaloneTask) {
             $instance = $task->run($this->api, $this->logger);
+        } elseif ($task instanceof RestApiTask) {
+            $instance = $task->run($this->restApi);
         } else {
             $instance = $this->api->fetchBySelectAndPropertySetClass(
                 $task->getSelectSetClass(),

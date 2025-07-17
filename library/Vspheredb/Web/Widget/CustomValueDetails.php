@@ -2,8 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use gipfl\IcingaWeb2\Icon;
-use gipfl\Json\JsonString;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
@@ -15,7 +13,6 @@ use Icinga\Module\Vspheredb\DbObject\CustomValues;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use InvalidArgumentException;
-use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 
 class CustomValueDetails extends HtmlDocument
@@ -38,7 +35,7 @@ class CustomValueDetails extends HtmlDocument
     protected function assemble()
     {
         $object = $this->object;
-        $this->prepend(new SubTitle($this->translate('Custom Values and Tags'), 'tags'));
+        $this->prepend(new SubTitle($this->translate('Custom Values'), 'th-list'));
         $values = $object->customValues();
         $this->stripBackupToolCustomValues($values);
         $demoMode = false;
@@ -51,18 +48,10 @@ class CustomValueDetails extends HtmlDocument
                 'Department'        => 'Web Shop',
             ]);
         }
-        $tags = JsonString::decode($object->object()->get('tags'));
-        if ($values->isEmpty() && empty($tags)) {
+        if ($values->isEmpty()) {
             $this->add($this->translate('No custom values have been defined'));
         } else {
             $table = NameValueTable::create($values->toArray());
-            if (! empty($tags)) {
-                $table->addNameValueRow([
-                    Icon::create('tag'),
-                    ' ',
-                    $this->translate('Tags')
-                ], Html::tag('ul', Html::wrapEach($tags, 'li')));
-            }
             $this->add($table);
         }
     }

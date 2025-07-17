@@ -1115,7 +1115,15 @@ abstract class DbObject
             if ($keyColumn === null) {
                 $objects[] = $obj;
             } else {
-                $objects[$row->$keyColumn] = $obj;
+                if (is_array($keyColumn)) {
+                    $key = '';
+                    foreach ($keyColumn as $part) {
+                        $key .= $obj->get($part);
+                    }
+                } else {
+                    $key = $row->$keyColumn;
+                }
+                $objects[$key] = $obj;
             }
         }
 

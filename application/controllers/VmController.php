@@ -20,6 +20,7 @@ use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
 use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use Icinga\Module\Vspheredb\Web\Widget\TaggingDetails;
 use Icinga\Module\Vspheredb\Web\Widget\Vm\BackupToolInfo;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
@@ -45,6 +46,7 @@ class VmController extends Controller
             new VmEssentialInfoTable($vm),
             new VmLocationInfoTable($vm, $vCenter),
             new CustomValueDetails($vm),
+            new TaggingDetails($vm),
             new VmNetworkAdapterTable($vm),
             new VmRouteConfigTable($vm),
             new VmDatastoresTable($vm),

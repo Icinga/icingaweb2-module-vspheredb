@@ -6,6 +6,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @method Db getConnection()
@@ -153,13 +154,21 @@ class VCenter extends BaseDbObject
      * @param ManagedObjectReference|\stdClass $moRef
      * @return string
      */
-    public function makeBinaryGlobalMoRefUuid($moRef)
+    public function makeBinaryGlobalMoRefUuid($moRef): string
+    {
+        return $this->makeBinaryGlobalMoRefUuidObject($moRef)->getBytes();
+    }
+
+    /**
+     * @param ManagedObjectReference|\stdClass $moRef
+     */
+    public function makeBinaryGlobalMoRefUuidObject($moRef): UuidInterface
     {
         if ($moRef instanceof \stdClass) {
             $moRef = ManagedObjectReference::fromSerialization($moRef);
         }
 
-        return Uuid::uuid5(Uuid::fromBytes($this->get('uuid')), $moRef->_)->getBytes();
+        return Uuid::uuid5(Uuid::fromBytes($this->get('uuid')), $moRef->_);
     }
 
     /**
