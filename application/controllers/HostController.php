@@ -23,6 +23,7 @@ use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
 use Icinga\Module\Vspheredb\Web\Widget\HostHeader;
 use Icinga\Module\Vspheredb\Web\Widget\HostMonitoringInfo;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
+use Icinga\Module\Vspheredb\Web\Widget\TaggingDetails;
 
 class HostController extends Controller
 {
@@ -45,6 +46,7 @@ class HostController extends Controller
             new HostSystemInfoTable($host, $quickStats, $vCenter),
             new HostVirtualizationInfoTable($host),
             new CustomValueDetails($host),
+            new TaggingDetails($host),
             new HostHardwareInfoTable($host, $quickStats),
             new HostMonitoringInfo($host),
             new HostPhysicalNicTable($host),

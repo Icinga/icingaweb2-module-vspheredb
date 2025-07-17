@@ -11,6 +11,14 @@ a::before, a:hover::before {
   text-decoration: none;
 }
 
+span.hover-hint {
+  &::after {
+    content: ' \e847';
+    font-family: 'ifont';
+  }
+  cursor: help;
+}
+
 span.error {
   color: @color-critical;
 }
