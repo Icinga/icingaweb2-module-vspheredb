@@ -27,6 +27,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\MappedClass\AboutInfo;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
 use Icinga\Module\Vspheredb\Polling\ApiConnectionHandler;
+use Icinga\Module\Vspheredb\Polling\RestApi;
 use Icinga\Module\Vspheredb\Polling\ServerInfo;
 use Icinga\Module\Vspheredb\Polling\ServerSet;
 use Icinga\Module\Vspheredb\Util;
@@ -405,8 +406,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $logger->info('connection is ready');
 
         try {
+            $restApi = new RestApi($serverInfo, $vCenter, $this->curl, $logger);
             $this->launchTasksForConnection($connection, [
-                new ObjectSync($vCenter, $connection->getApi(), $this->dbRunner, $logger),
+                new ObjectSync($vCenter, $connection->getApi(), $restApi, $this->dbRunner, $logger),
                 new PerfDataSync($vCenter, $connection->getApi(), $this->curl, $this->loop, $logger),
             ]);
         } catch (Exception $e) {
