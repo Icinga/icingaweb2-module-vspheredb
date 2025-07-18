@@ -80,6 +80,11 @@ trait StateMachine
     public function setState($state)
     {
         $fromState = $this->getState();
+        if ($fromState === $state && $state === self::STATE_FAILING) {
+            // Still failing. Should not be triggered twice, but might happen
+            return;
+        }
+
         if ($this->canTransit($fromState, $state)) {
             $this->currentState = $state;
             $this->runStateTransition($fromState, $state);
