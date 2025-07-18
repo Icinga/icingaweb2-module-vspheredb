@@ -17,7 +17,7 @@ use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
-use React\Promise\ExtendedPromiseInterface;
+use React\Promise\PromiseInterface;
 use RuntimeException;
 
 use function React\Promise\reject;
@@ -73,7 +73,7 @@ class DbRunner
 
     /**
      * @param object $config
-     * @return ExtendedPromiseInterface
+     * @return PromiseInterface
      * @throws Exception
      */
     public function setDbConfigRequest($config)
@@ -94,7 +94,7 @@ class DbRunner
                         Process::setTitle('Icinga::vSphereDB::DB::failing');
                         $deferred->reject($e);
                     }
-                    $deferred->resolve();
+                    $deferred->resolve(null);
                 }, function (Exception $e) use ($deferred) {
                     $deferred->reject($e);
                 });
@@ -324,7 +324,7 @@ class DbRunner
                     $deferred->reject($e);
                 }
                 $this->logger->notice('DB schema is ready');
-                $deferred->resolve();
+                $deferred->resolve(null);
             });
         } else {
             return resolve();

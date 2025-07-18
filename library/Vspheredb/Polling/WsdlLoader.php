@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
-use React\Promise\ExtendedPromiseInterface;
+use React\Promise\PromiseInterface;
 use SoapClient;
 use SoapFault;
 
@@ -53,7 +53,7 @@ class WsdlLoader
 
     protected $baseUrl;
 
-    /** @var ExtendedPromiseInterface[] */
+    /** @var PromiseInterface[] */
     protected $pending = [];
 
     /** @var ?Deferred */
@@ -176,7 +176,7 @@ class WsdlLoader
             $this->loop->futureTick(function () use ($deferred) {
                 try {
                     new SoapClient($this->getInitialFilename());
-                    $deferred->resolve();
+                    $deferred->resolve(null);
                 } catch (SoapFault $e) {
                     $this->flushWsdlCache();
                     $deferred->reject($e);

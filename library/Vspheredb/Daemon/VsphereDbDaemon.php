@@ -637,7 +637,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }, function (Exception $e) {
             $this->logger->error('[configwatch] Sending DB Config failed: ' . $e->getMessage());
             $this->setDbState(self::STATE_FAILED);
-        })->done();
+        });
     }
 
     protected function stopConfigWatch()

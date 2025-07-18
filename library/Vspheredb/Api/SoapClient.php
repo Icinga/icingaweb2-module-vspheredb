@@ -10,7 +10,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use React\Promise\ExtendedPromiseInterface;
+use React\Promise\PromiseInterface;
 use SoapFault;
 
 /**
@@ -59,9 +59,9 @@ class SoapClient
     /**
      * @param string $method
      * @param mixed[] $args
-     * @return ExtendedPromiseInterface
+     * @return PromiseInterface<ResponseInterface>
      */
-    public function call($method, $args)
+    public function call($method, $args): PromiseInterface
     {
         $request = $this->addCookiesToRequest(
             $this->encoder->encode($method, $args),

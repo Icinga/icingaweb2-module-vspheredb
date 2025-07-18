@@ -40,7 +40,7 @@ class CheckCommand extends Command
             $migrations = Db::migrationsForDb($this->db());
             if (! $migrations->hasSchema()) {
                 $this->addProblem('CRITICAL', 'Database has no vSphereDB schema');
-                return resolve();
+                return resolve(null);
             }
             if ($migrations->hasPendingMigrations()) {
                 $this->addProblem('WARNING', 'There are pending database schema migrations');

@@ -37,8 +37,9 @@ use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
-use React\Promise\ExtendedPromiseInterface;
+use React\Promise\PromiseInterface;
 
+use function React\Promise\reject;
 use function React\Promise\resolve;
 
 class ObjectSync implements DaemonTask
@@ -90,7 +91,7 @@ class ObjectSync implements DaemonTask
     /** @var TimerInterface[]  */
     protected $timers = [];
 
-    /** @var ExtendedPromiseInterface[] */
+    /** @var PromiseInterface[] */
     protected $runningTasks = [];
 
     protected $ready = false;
@@ -275,7 +276,9 @@ class ObjectSync implements DaemonTask
             }, function (Exception $e) use ($idx) {
                 unset($this->runningTasks[$idx]);
                 $this->logger->error($e->getMessage());
-            })->done();
+
+                return reject($e);
+            });
         }, function (Exception $e) use ($idx, $label) {
             $this->logger->error("$label: " . $e->getMessage());
             unset($this->runningTasks[$idx]);

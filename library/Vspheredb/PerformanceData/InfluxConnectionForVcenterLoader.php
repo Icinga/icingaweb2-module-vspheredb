@@ -13,13 +13,16 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
 use React\EventLoop\LoopInterface;
-use React\Promise\ExtendedPromiseInterface;
+use React\Promise\PromiseInterface;
 
 use function React\Promise\resolve;
 
 class InfluxConnectionForVcenterLoader
 {
-    public static function load(VCenter $vCenter, CurlAsync $curl, LoopInterface $loop): ?ExtendedPromiseInterface
+    /**
+     * @return PromiseInterface<?ChunkedInfluxDbWriter>
+     */
+    public static function load(VCenter $vCenter, CurlAsync $curl, LoopInterface $loop): ?PromiseInterface
     {
         $db = $vCenter->getConnection()->getDbAdapter();
         $row = $db->fetchRow($db->select()->from([

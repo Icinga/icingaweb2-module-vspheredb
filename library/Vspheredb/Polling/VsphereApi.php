@@ -8,11 +8,13 @@ use gipfl\Curl\CurlAsync;
 use gipfl\Curl\RequestError;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Api\SoapClient;
+use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\Exception\NoSessionForCookieError;
 use Icinga\Module\Vspheredb\Exception\VmwareException;
 use Icinga\Module\Vspheredb\MappedClass\ApiClassMap;
 use Icinga\Module\Vspheredb\MappedClass\EventFilterSpec;
 use Icinga\Module\Vspheredb\MappedClass\EventFilterSpecByTime;
+use Icinga\Module\Vspheredb\MappedClass\ObjectContent;
 use Icinga\Module\Vspheredb\MappedClass\ObjectSpec;
 use Icinga\Module\Vspheredb\MappedClass\PropertyFilterSpec;
 use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
@@ -28,9 +30,9 @@ use Icinga\Module\Vspheredb\SafeCacheDir;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
-use React\Promise\ExtendedPromiseInterface;
 use React\Promise\PromiseInterface;
 
 use function React\Promise\reject;
@@ -94,9 +96,9 @@ class VsphereApi
      *
      * Required Privileges: System.Anonymous
      *
-     * @return ExtendedPromiseInterface <ServiceContent>
+     * @return PromiseInterface<ServiceContent>
      */
-    public function getServiceInstance()
+    public function getServiceInstance(): PromiseInterface
     {
         if ($this->serviceInstance === null) {
             $this->serviceInstance = $this->retrieveServiceContent();
@@ -106,9 +108,9 @@ class VsphereApi
     }
 
     /**
-     * @return ExtendedPromiseInterface|PromiseInterface <DateTime, Exception>
+     * @return PromiseInterface<DateTime>
      */
-    public function getCurrentTime()
+    public function getCurrentTime(): PromiseInterface
     {
         return $this->call($this->serviceInstanceRef, 'CurrentTime')->then(function ($result) {
             return new DateTime($result->returnval);
@@ -118,21 +120,24 @@ class VsphereApi
     /**
      * Really fetch the ServiceInstance
      *
-     * @return ExtendedPromiseInterface|PromiseInterface <ServiceContent, Exception>
+     * @return PromiseInterface<ServiceContent>
      * @see getServiceInstance()
      *
      */
-    public function retrieveServiceContent()
+    public function retrieveServiceContent(): PromiseInterface
     {
+        $this->logger->notice('Retrieve Service instance');
         return $this->call($this->serviceInstanceRef, 'RetrieveServiceContent')->then(function ($result) {
             return $result->returnval;
+        }, function () {
+            $this->logger->notice('WTF Retrieve Service instance');
         });
     }
 
     /**
-     * @return ExtendedPromiseInterface|PromiseInterface <UserSession>
+     * @return PromiseInterface<UserSession>
      */
-    public function eventuallyLogin()
+    public function eventuallyLogin(): PromiseInterface
     {
         if ($this->cookieStore->hasCookies()) {
             return $this->getCurrentSession()->then(function (UserSession $session) {
@@ -165,9 +170,9 @@ class VsphereApi
      * API login
      *
      * This will retrieve a session cookie and pass it with subsequent requests
-     * @return ExtendedPromiseInterface|PromiseInterface <UserSession>
+     * @return PromiseInterface<UserSession>
      */
-    public function login()
+    public function login(): PromiseInterface
     {
         $this->logger->debug(sprintf('Sending Login request to %s', $this->makeLocation()));
         return $this->callOnServiceInstanceObject('sessionManager', 'Login', [
@@ -181,7 +186,7 @@ class VsphereApi
     /**
      * Logout, destroy our session
      */
-    public function logout()
+    public function logout(): PromiseInterface
     {
         return $this->callOnServiceInstanceObject('sessionManager', 'Logout')->then(function () {
             $this->logger->notice('Logged out');
@@ -195,7 +200,7 @@ class VsphereApi
     /**
      * Eventually logout
      */
-    public function eventuallyLogout()
+    public function eventuallyLogout(): PromiseInterface
     {
         return $this->callOnServiceInstanceObject('sessionManager', 'Logout')->then(function () {
             $this->logger->notice('Logged out');
@@ -210,9 +215,9 @@ class VsphereApi
      * @param ManagedObjectReference $self
      * @param $method
      * @param array $arguments
-     * @return ExtendedPromiseInterface
+     * @return PromiseInterface
      */
-    public function call(ManagedObjectReference $self, $method, $arguments = [])
+    public function call(ManagedObjectReference $self, $method, $arguments = []): PromiseInterface
     {
         return $this->soapClient->call($method, [[
                 '_this' => $self
@@ -241,9 +246,9 @@ class VsphereApi
     /**
      * @param ManagedObjectReference $object
      * @param array|null $properties
-     * @return PromiseInterface < ?ManagedObject>
+     * @return PromiseInterface<?ManagedObject>
      */
-    public function requireSingleObjectProperties(ManagedObjectReference $object, $properties = null)
+    public function requireSingleObjectProperties(ManagedObjectReference $object, $properties = null): PromiseInterface
     {
         return $this->fetchSingleObject($object, $properties)->then(function ($resultObject) use ($object) {
             if ($resultObject) {
@@ -260,9 +265,9 @@ class VsphereApi
     /**
      * @param ManagedObjectReference $object
      * @param array|null $properties
-     * @return ExtendedPromiseInterface|PromiseInterface < ?ManagedObject>
+     * @return PromiseInterface<?ManagedObject>
      */
-    public function fetchSingleObject(ManagedObjectReference $object, $properties = null)
+    public function fetchSingleObject(ManagedObjectReference $object, $properties = null): PromiseInterface
     {
         return $this->retrieveProperties([$this->singleObjectSpecSet($object, $properties)])
             ->then(function (RetrieveResult $result) use ($object) {
@@ -296,9 +301,9 @@ class VsphereApi
     /**
      * @param ManagedObjectReference $object
      * @param array|null $properties
-     * @return ExtendedPromiseInterface|PromiseInterface < ?ObjectContent>
+     * @return PromiseInterface<?ObjectContent>
      */
-    public function fetchSingleObjectProperties(ManagedObjectReference $object, $properties = null)
+    public function fetchSingleObjectProperties(ManagedObjectReference $object, $properties = null): PromiseInterface
     {
         return $this->retrieveProperties([$this->singleObjectSpecSet($object, $properties)])
             ->then(function (RetrieveResult $result) use ($object) {
@@ -319,9 +324,9 @@ class VsphereApi
      * TODO: Can be used for mass requests once we deal with the token in the RetrieveResult
      *
      * @param PropertyFilterSpec[] $specSet
-     * @return ExtendedPromiseInterface|PromiseInterface <RetrieveResult>
+     * @return PromiseInterface<RetrieveResult>
      */
-    public function retrieveProperties(array $specSet)
+    public function retrieveProperties(array $specSet): PromiseInterface
     {
         return $this->getPropertyCollector()->then(function (ManagedObjectReference $collector) use ($specSet) {
             return $this->call($collector, 'RetrievePropertiesEx', [
@@ -362,9 +367,9 @@ class VsphereApi
     }
 
     /**
-     * @return PromiseInterface <ManagedObjectReference>
+     * @return PromiseInterface<ManagedObjectReference>
      */
-    public function getRootFolder()
+    public function getRootFolder(): PromiseInterface
     {
         return $this->getServiceInstance()->then(function (ServiceContent $serviceContent) {
             return $serviceContent->rootFolder;
@@ -373,9 +378,9 @@ class VsphereApi
 
     /**
      * Returns either the Instance UUID for a vCenter or the Host System UUID for an ESXi Host
-     * @return PromiseInterface <UuidInterface>
+     * @return PromiseInterface<UuidInterface>
      */
-    public function fetchUniqueId()
+    public function fetchUniqueId(): PromiseInterface
     {
         return $this->getServiceInstance()->then(function (ServiceContent $content) {
             if ($content->about->instanceUuid === null) {
@@ -424,12 +429,12 @@ class VsphereApi
 
                         return $this->fetchFullResult($result, $objects);
                     })->then(function () use ($deferred) {
-                        $deferred->resolve();
+                        $deferred->resolve(null);
                     });
             });
         } else {
             $this->loop->futureTick(function () use ($deferred) {
-                $deferred->resolve();
+                $deferred->resolve(null);
             });
         }
         return $deferred->promise();

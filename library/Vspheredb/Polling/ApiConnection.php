@@ -13,7 +13,7 @@ use Icinga\Module\Vspheredb\SafeCacheDir;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
-use React\Promise\ExtendedPromiseInterface;
+use React\Promise\PromiseInterface;
 
 class ApiConnection implements EventEmitterInterface
 {
@@ -51,10 +51,10 @@ class ApiConnection implements EventEmitterInterface
 
     protected $stopping;
 
-    /** @var ExtendedPromiseInterface */
+    /** @var PromiseInterface */
     protected $loginPromise;
 
-    /** @var ExtendedPromiseInterface */
+    /** @var PromiseInterface */
     protected $wsdlPromise;
 
     /** @var TimerInterface */
@@ -138,7 +138,7 @@ class ApiConnection implements EventEmitterInterface
     protected function runSessionChecker()
     {
         $this->sessionChecker = $this->loop->addPeriodicTimer(150, function () {
-            $this->getApi()->eventuallyLogin()->otherwise(function (Exception $e) {
+            $this->getApi()->eventuallyLogin()->then(null, function (Exception $e) {
                 $this->logError('Login failed: ' . $e->getMessage());
                 $this->loop->futureTick(function () {
                     $this->setState(self::STATE_FAILING);
