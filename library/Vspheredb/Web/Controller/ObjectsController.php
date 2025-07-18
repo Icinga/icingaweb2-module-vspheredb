@@ -5,15 +5,15 @@ namespace Icinga\Module\Vspheredb\Web\Controller;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\ProvidedHook\Director\ImportSource;
 use Icinga\Module\Vspheredb\Util;
+use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\FilterVCenterForm;
+use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use ipl\Html\Html;
-use Icinga\Module\Vspheredb\PathLookup;
-use Icinga\Module\Vspheredb\Web\Controller;
-use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use Ramsey\Uuid\Uuid;
 
 class ObjectsController extends Controller
@@ -111,7 +111,7 @@ class ObjectsController extends Controller
         if ($this->vCenterFilterForm === null) {
             $form = new FilterVCenterForm($this->db(), $this->Auth());
             $form->allowAllVCenters();
-            $form->getAttributes()->add('style', 'float: right');
+            $form->getAttributes()->add('class', 'vcenter-filter-form');
             $form->handleRequest($this->getServerRequest());
             $this->vCenterFilterForm = $form;
         }

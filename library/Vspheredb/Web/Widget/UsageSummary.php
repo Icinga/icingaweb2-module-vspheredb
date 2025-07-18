@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use gipfl\IcingaWeb2\Url;
 use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Format;
 use ipl\Html\BaseHtmlElement;
@@ -23,7 +22,7 @@ class UsageSummary extends BaseHtmlElement
         $attr = ['class' => 'usage-detail'];
         $attrBox =  ['class' => 'usage-dashlet'];
         $mb = 1024 * 1024;
-        $this->add(Html::tag('div', ['style' => 'width: 100%'], [
+        $this->add([
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(Format::mhz($usate->usedMhz))),
                 Html::tag('span', $this->translate('Total') . ': ' . Format::mhz($usate->totalMhz)),
@@ -50,7 +49,7 @@ class UsageSummary extends BaseHtmlElement
                 ))->showLabels(false),
                 $this->translate('Storage')
             ]),
-        ]));
+        ]);
     }
 
     protected function smallUnit($string)

@@ -2,13 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use gipfl\Format\LocalTimeFormat;
-use ipl\Html\HtmlElement;
-use gipfl\IcingaWeb2\Link;
-use ipl\Html\Table;
-use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Url;
 use gipfl\Calendar\Calendar;
+use gipfl\Format\LocalTimeFormat;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Url;
+use gipfl\Translation\TranslationHelper;
+use ipl\Html\HtmlElement;
+use ipl\Html\Table;
+use ipl\Web\Compat\StyleWithNonce;
 
 class CalendarMonthSummary extends Table
 {
@@ -86,18 +87,16 @@ class CalendarMonthSummary extends Table
             $alpha = $count / $max;
 
             if ($alpha > 0.4) {
-                $link->addAttributes(['style' => 'color: white;']);
+                $link->addAttributes(['class' => 'color-white']);
             }
-            $link->addAttributes([
-                'title' => sprintf('%d events', $count),
-                'style' => sprintf(
-                    'background-color: rgba(%s, %.2F);',
-                    $this->color,
-                    $alpha
-                )
-            ]);
 
-            $this->getDay($day)->setContent($link);
+            $style = (new StyleWithNonce())
+                ->setModule('vspheredb')
+                ->addFor($link, ['background-color' => sprintf('rgba(%s, %.2F)', $this->color, $alpha)]);
+
+            $link->addAttributes(['title' => sprintf('%d events', $count)]);
+
+            $this->getDay($day)->setContent([$link, $style]);
         }
 
         return $this;
@@ -157,6 +156,7 @@ class CalendarMonthSummary extends Table
 
     /**
      * @param $day
+     *
      * @return HtmlElement
      */
     protected function getDay($day)

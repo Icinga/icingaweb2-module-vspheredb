@@ -3,9 +3,9 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
-use Icinga\Module\Vspheredb\Format;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 
@@ -102,7 +102,7 @@ abstract class HostSummaryTable extends ObjectsTable
             $this->createGroupingColumn(),
             $this->createColumn('cnt_hosts', $this->translate('Hosts'), 'COUNT(*)')
                 ->setRenderer(function ($row) {
-                    return Html::tag('td', ['style' => 'text-align: right'], $row->cnt_hosts);
+                    return Html::tag('td', ['class' => 'text-right'], $row->cnt_hosts);
                 })
                 ->setDefaultSortDirection('DESC'),
             $this->createColumn(
@@ -158,7 +158,7 @@ abstract class HostSummaryTable extends ObjectsTable
             })->setDefaultSortDirection('DESC'),
             $this->createColumn('hardware_cpu_cores', $this->translate('Cores'), 'SUM(h.hardware_cpu_cores)')
                 ->setRenderer(function ($row) {
-                    return Html::tag('td', ['style' => 'text-align: right'], $row->hardware_cpu_cores);
+                    return Html::tag('td', ['class' => 'text-right'], $row->hardware_cpu_cores);
                 })
                 ->setDefaultSortDirection('DESC'),
 

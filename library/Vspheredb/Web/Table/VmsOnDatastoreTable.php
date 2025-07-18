@@ -3,14 +3,14 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Icon;
+use gipfl\IcingaWeb2\Link;
+use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
-use gipfl\IcingaWeb2\Link;
-use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 
 class VmsOnDatastoreTable extends ZfQueryBasedTable
 {
@@ -79,11 +79,10 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         $dsUsage->addDiskFromDbRow($row);
 
         $tr = $this::tr([
-            // TODO: move to CSS
-            $this::td($caption, ['style' => 'overflow: hidden; display: inline-block; height: 2em; min-width: 8em;']),
-            $this::td(Format::bytes($size, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
-            $this::td($usage, ['style' => 'width: 25%;']),
-            $this::td($dsUsage, ['style' => 'width: 25%;'])
+            $this::td($caption, ['class' => 'vm-on-datastore-caption']),
+            $this::td(Format::bytes($size), ['class' => 'vm-on-datastore-size']),
+            $this::td($usage, ['class' => 'vm-on-datastore-usage']),
+            $this::td($dsUsage, ['class' => 'vm-on-datastore-on-datastore'])
         ]);
         if (time() - 3600 > ($row->ts_updated / 1000)) {
             $caption->add([

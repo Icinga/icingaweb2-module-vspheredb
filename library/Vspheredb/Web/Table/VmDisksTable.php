@@ -5,7 +5,6 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
-use Icinga\Module\Vspheredb\Web\Widget\GrafanaVmPanel;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
@@ -70,7 +69,7 @@ class VmDisksTable extends ZfQueryBasedTable
                     $device,
                     Html::tag('br'),
                     Format::bytes($row->capacity),
-                ], ['style' => 'vertical-align: top; min-width: 15em;']),
+                ], ['class' => 'vm-disks-with-perf-image']),
                 $this->prepareImgColumn($device)
             ]);
         } else {

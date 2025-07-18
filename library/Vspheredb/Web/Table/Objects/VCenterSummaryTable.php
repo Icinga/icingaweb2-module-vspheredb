@@ -46,9 +46,7 @@ class VCenterSummaryTable extends ObjectsTable
             return null;
         }
 
-        $icons = Html::tag('span', [
-            'style' => 'float: right'
-        ]);
+        $icons = Html::tag('span', ['class' => 'vcenter-summary-icon']);
         $vcenterId = $row->vcenter_id;
         if (isset($this->connections[$vcenterId])) {
             foreach ($this->connections[$vcenterId] as $connection) {
@@ -113,7 +111,7 @@ class VCenterSummaryTable extends ObjectsTable
         $this->addAvailableColumns([
             $this->createColumn('hosts_cnt', $this->translate('Hosts'), 'SUM(hosts_cnt)')
                 ->setRenderer(function ($row) {
-                    return Html::tag('td', ['style' => 'text-align: right'], $row->hosts_cnt);
+                    return Html::tag('td', ['class' => 'text-right'], $row->hosts_cnt);
                 })
                 ->setDefaultSortDirection('DESC'),
             $this->createColumn(
@@ -169,7 +167,7 @@ class VCenterSummaryTable extends ObjectsTable
             })->setDefaultSortDirection('DESC'),
             $this->createColumn('hardware_cpu_cores', $this->translate('Cores'), 'SUM(h.hardware_cpu_cores)')
                 ->setRenderer(function ($row) {
-                    return Html::tag('td', ['style' => 'text-align: right'], $row->hardware_cpu_cores);
+                    return Html::tag('td', ['class' => 'text-right'], $row->hardware_cpu_cores);
                 })
                 ->setDefaultSortDirection('DESC'),
 

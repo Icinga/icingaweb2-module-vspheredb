@@ -71,21 +71,27 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                     $start = $end - $offset;
                     $end = $start + $duration;
 
-                    return Html::tag('div', [
-                        'style' => 'position: relative'
-                    ], Html::tag('div', [
-                        'class' => 'inline-perf-container'
-                    ], Img::create('rrd/img', [
-                        'file'     => $ci . '.rrd',
-                        'rnd'      => time(),
-                        'height'   => 24 * 6,
-                        'width'    => 80 * 6,
-                        'start'    => $start,
-                        'end'      => $end,
-                        'template' => 'vm_disk',
-                    ], [
-                        'class' => 'inline-perf-small'
-                    ])));
+                    return Html::tag(
+                        'div',
+                        ['class' => 'vm-disk-usage-history'],
+                        Html::tag(
+                            'div',
+                            ['class' => 'inline-perf-container'],
+                            Img::create(
+                                'rrd/img',
+                                [
+                                    'file'     => $ci . '.rrd',
+                                    'rnd'      => time(),
+                                    'height'   => 24 * 6,
+                                    'width'    => 80 * 6,
+                                    'start'    => $start,
+                                    'end'      => $end,
+                                    'template' => 'vm_disk',
+                                ],
+                                ['class' => 'inline-perf-small']
+                            )
+                        )
+                    );
                 })
             );
         }

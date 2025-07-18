@@ -2,13 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use Icinga\Module\Vspheredb\Data\Anonymizer;
-use Icinga\Module\Vspheredb\Util;
-use ipl\Html\BaseHtmlElement;
-use gipfl\Translation\TranslationHelper;
-use Icinga\Module\Vspheredb\DbObject\Datastore;
-use Icinga\Util\Format;
 use gipfl\IcingaWeb2\Link;
+use gipfl\Translation\TranslationHelper;
+use Icinga\Module\Vspheredb\Data\Anonymizer;
+use Icinga\Module\Vspheredb\DbObject\Datastore;
+use Icinga\Module\Vspheredb\Util;
+use Icinga\Util\Format;
+use ipl\Html\BaseHtmlElement;
+use ipl\Web\Compat\StyleWithNonce;
 
 class DatastoreUsage extends BaseHtmlElement
 {
@@ -180,25 +181,21 @@ class DatastoreUsage extends BaseHtmlElement
             $percent = $percent + 100 - $this->gotPercent;
         }
 
-        $link = Link::create(
-            '',
-            $url,
-            $urlParams,
-            [
-                'style' => sprintf('width: %.3F%%; ', $percent),
-                'title' => $title
-            ]
-        );
+        $link = Link::create('', $url, $urlParams, ['title' => $title]);
+
+        $style = (new StyleWithNonce())
+            ->setModule('vspheredb')
+            ->addFor($link, ['width' => sprintf('%.3F%%; ', $percent)]);
 
         $link->addAttributes($attributes);
 
         if ($vmUuid) {
             $alpha = (20 + (crc32(sha1((string) $vmUuid . $this->uuid)) % 60)) / 100;
             $color = sprintf('rgba(70, 128, 255, %.2F);', $alpha);
-            $link->getAttributes()->add('style', "background-color: $color");
+            $style->addFor($link, ['background-color' => $color]);
             $this->diskLinks[$vmUuid] = $link;
         }
-        $this->add($link);
+        $this->add([$link, $style]);
 
         return $this;
     }

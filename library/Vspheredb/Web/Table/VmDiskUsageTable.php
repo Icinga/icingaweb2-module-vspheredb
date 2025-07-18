@@ -76,17 +76,16 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $this->root = $row;
         }
 
-        $free = Format::bytes($row->free_space, Format::STANDARD_IEC)
+        $free = Format::bytes($row->free_space)
             . sprintf(' (%0.3f%%)', ($row->free_space / $row->capacity) * 100);
 
         $tr = $this::tr([
-            // TODO: move to CSS
             $this::td($caption, [
                 'title' => $caption
             ]),
-            $this::td(Format::bytes($row->capacity, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
-            $this::td($free, ['style' => 'width: 25%;']),
-            $this::td($this->makeDisk($row), ['style' => 'width: 25%;'])
+            $this::td(Format::bytes($row->capacity), ['class' => 'vm-disk-usage-capacity']),
+            $this::td($free, ['class' => 'vm-disk-usage-free']),
+            $this::td($this->makeDisk($row), ['class' => 'vm-disk-usage-usage'])
         ]);
 
         $this->totalSize += $row->capacity;
@@ -99,7 +98,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $ci = $ciName . ':' . $path;
             $now = time();
             $end = floor($now / 60) * 60;
-            $start = $end - 3600 * 4;
+//            $start = $end - 3600 * 4;
             $start = $end - 3600 * 24 * 14;
             $end = $start + 3600 * 24 * 4;
             $this->getBody()->add($tr);
@@ -116,7 +115,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
                 ]),
                 [
                     'colspan' => 4,
-                    'style' => 'height: auto'
+                    'class' => 'vm-disk-usage-history'
                 ]
             ));
         }
@@ -131,17 +130,16 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             return;
         }
 
-        $free = Format::bytes($this->totalFree, Format::STANDARD_IEC)
-            . sprintf(' (%0.3f%%)', ($this->totalFree / $this->totalSize) * 100);
+        $free = Format::bytes($this->totalFree) . sprintf(' (%0.3f%%)', ($this->totalFree / $this->totalSize) * 100);
         $this->getFooter()->add($this::tr([
             $this::th(Html::tag('strong', null, $this->translate('Total'))),
-            $this::th(Format::bytes($this->totalSize, Format::STANDARD_IEC), ['style' => 'white-space: pre;']),
-            $this::th($free, ['style' => 'width: 25%;']),
+            $this::th(Format::bytes($this->totalSize), ['class' => 'vm-disk-usage-capacity']),
+            $this::th($free, ['class' => 'vm-disk-usage-free']),
             $this::th($this->makeDisk((object) [
                 'disk_path' => $this->translate('Total'),
                 'capacity'  => $this->totalSize,
                 'free_space' => $this->totalFree
-            ]), ['style' => 'width: 25%;'])
+            ]), ['class' => 'vm-disk-usage-usage'])
         ]));
     }
 

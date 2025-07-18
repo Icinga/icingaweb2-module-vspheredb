@@ -4,9 +4,13 @@ namespace Icinga\Module\Vspheredb\Web;
 
 use Exception;
 use gipfl\IcingaWeb2\CompatController;
+use Icinga\Application\Config;
 use Icinga\Module\Vspheredb\Auth\RestrictionHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Icinga\Util\Csp;
+use Zend_Controller_Request_Abstract as ZfRequest;
+use Zend_Controller_Response_Abstract as ZfResponse;
 
 class Controller extends CompatController
 {
@@ -15,6 +19,18 @@ class Controller extends CompatController
 
     /** @var ?RestrictionHelper */
     private $restrictionHelper;
+
+    public function __construct(
+        ZfRequest $request,
+        ZfResponse $response,
+        array $invokeArgs = array()
+    ) {
+        parent::__construct($request, $response, $invokeArgs);
+
+        if (! $this->isXhr() && Config::app()->get('security', 'use_strict_csp', false)) {
+            Csp::createNonce();
+        }
+    }
 
     public function init()
     {
