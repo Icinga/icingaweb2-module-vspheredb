@@ -56,6 +56,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'hardware_memorymb'   => 'vm.hardware_memorymb',
         'guest_id'            => 'vm.guest_id',
         'bios_uuid'           => 'vm.bios_uuid',
+        'virtual_hardware_version' => 'vm.version', // vmx version, e.g vmx-19
         'guest_full_name'     => 'vm.guest_full_name',
         'guest_host_name'     => 'vm.guest_host_name',
         'runtime_power_state' => 'vm.runtime_power_state',
