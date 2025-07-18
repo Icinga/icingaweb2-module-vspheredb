@@ -23,7 +23,7 @@ class PerformanceCounterTable extends BaseTable
         // "(c.group_name || '.' || c.name)",
     ];
 
-    public function __construct($db, Url $url = null, VCenter $vCenter = null)
+    public function __construct($db, ?Url $url = null, ?VCenter $vCenter = null)
     {
         $this->vCenter = $vCenter;
         parent::__construct($db, $url);

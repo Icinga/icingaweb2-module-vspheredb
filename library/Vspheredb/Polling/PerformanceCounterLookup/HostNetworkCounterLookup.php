@@ -18,7 +18,7 @@ class HostNetworkCounterLookup extends DefaultCounterLookup
         'device_label' => 'hpn.device',
     ];
 
-    protected function prepareInstancesQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
@@ -30,7 +30,7 @@ class HostNetworkCounterLookup extends DefaultCounterLookup
             ->order('hpn.device');
     }
 
-    protected function prepareBaseQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['hs' => 'host_system'], 'o.uuid = hs.uuid', [])

@@ -37,7 +37,7 @@ abstract class BaseTable extends ZfQueryBasedTable
 
     protected $allowToCustomizeColumns = true;
 
-    public function __construct($db, Url $url = null)
+    public function __construct($db, ?Url $url = null)
     {
         parent::__construct($db);
         if ($url !== null) {

@@ -15,7 +15,7 @@ class HostCounterLookup extends DefaultCounterLookup
         'host_name'    => 'o.object_name',
     ];
 
-    protected function prepareInstancesQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
@@ -24,7 +24,7 @@ class HostCounterLookup extends DefaultCounterLookup
             ]);
     }
 
-    protected function prepareBaseQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['hs' => 'host_system'], 'o.uuid = hs.uuid', [])

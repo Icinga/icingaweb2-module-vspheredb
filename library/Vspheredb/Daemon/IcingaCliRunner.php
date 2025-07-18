@@ -24,7 +24,7 @@ class IcingaCliRunner
      * @param array|null $argv
      * @return IcingaCliRunner
      */
-    public static function forArgv(array $argv = null)
+    public static function forArgv(?array $argv = null)
     {
         if ($argv === null) {
             global $argv;

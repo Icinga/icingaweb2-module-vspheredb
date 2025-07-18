@@ -42,7 +42,7 @@ class SoapClient
         $wsdl,
         array $options = [],
         $curlOptions = [],
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     ) {
         $this->curl = $curl;
         $this->encoder = new ClientEncoder($wsdl, $options);

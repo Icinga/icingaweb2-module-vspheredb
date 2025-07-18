@@ -50,7 +50,7 @@ class PropertySpec
      * @param ?boolean $all
      * @return static
      */
-    public static function create($type, array $pathSet = null, $all = null)
+    public static function create($type, ?array $pathSet = null, $all = null)
     {
         $self = new static();
         $self->type = $type;

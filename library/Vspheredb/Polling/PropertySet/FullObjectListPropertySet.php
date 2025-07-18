@@ -30,7 +30,7 @@ class FullObjectListPropertySet implements PropertySet
      * @param ?string[] $pathSet
      * @return PropertySpec[]
      */
-    public static function propertySet(array $types, array $pathSet = null)
+    public static function propertySet(array $types, ?array $pathSet = null)
     {
         $propSet = [];
         foreach ($types as $type) {

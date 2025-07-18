@@ -15,7 +15,7 @@ class VmCounterLookup extends DefaultCounterLookup
         'vm_moref' => 'o.moref',
     ];
 
-    protected function prepareInstancesQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
@@ -24,7 +24,7 @@ class VmCounterLookup extends DefaultCounterLookup
             ]);
     }
 
-    protected function prepareBaseQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])

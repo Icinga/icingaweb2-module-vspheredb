@@ -35,7 +35,7 @@ class TraversalSpec extends SelectionSpec
      * @param ?boolean $skip
      * @return static
      */
-    public static function create($name, $type, $path, array $selectSet = null, $skip = null)
+    public static function create($name, $type, $path, ?array $selectSet = null, $skip = null)
     {
         $self = new static();
         $self->name = $name;

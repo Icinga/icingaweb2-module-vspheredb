@@ -30,7 +30,7 @@ class MonitoringRuleSet
 
     protected static $preloadCache = null;
 
-    public function __construct(string $binaryUuid, string $objectFolder, Settings $settings = null)
+    public function __construct(string $binaryUuid, string $objectFolder, ?Settings $settings = null)
     {
         $this->binaryUuid = $binaryUuid;
         if ($settings === null) {

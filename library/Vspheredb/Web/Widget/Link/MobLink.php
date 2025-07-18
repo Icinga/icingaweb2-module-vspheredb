@@ -24,7 +24,7 @@ class MobLink extends HtmlDocument
 
     protected $moRef;
 
-    public function __construct(VCenter $vCenter, BaseDbObject $object = null, $label = null)
+    public function __construct(VCenter $vCenter, ?BaseDbObject $object = null, $label = null)
     {
         $this->vCenter = $vCenter;
         if ($object) {

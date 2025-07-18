@@ -19,7 +19,7 @@ class VmNetworkCounterLookup extends DefaultCounterLookup
         // 'portgroup_name'  => 'pgo.object_name',
     ];
 
-    protected function prepareInstancesQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
@@ -31,7 +31,7 @@ class VmNetworkCounterLookup extends DefaultCounterLookup
             ->order('vna.hardware_key');
     }
 
-    protected function prepareBaseQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])

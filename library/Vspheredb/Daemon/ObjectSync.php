@@ -298,7 +298,7 @@ class ObjectSync implements DaemonTask
      */
     protected function prepareSyncResultHandler()
     {
-        return $this->api->fetchCustomFieldsManager()->then(function (CustomFieldsManager $manager = null) {
+        return $this->api->fetchCustomFieldsManager()->then(function (?CustomFieldsManager $manager = null) {
             if ($manager === null) {
                 return resolve();
             }

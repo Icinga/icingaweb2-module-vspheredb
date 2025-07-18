@@ -51,7 +51,7 @@ class ObjectSpec
      * @param ?boolean $skip
      * @return static
      */
-    public static function create(ManagedObjectReference $obj, array $selectSet = null, $skip = null)
+    public static function create(ManagedObjectReference $obj, ?array $selectSet = null, $skip = null)
     {
         $self = new static();
         $self->obj = $obj;

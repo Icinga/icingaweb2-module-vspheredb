@@ -10,7 +10,7 @@ interface CounterLookup
      * @param UuidInterface $vCenterUuid
      * @return array
      */
-    public function fetchTags(UuidInterface $vCenterUuid = null);
+    public function fetchTags(?UuidInterface $vCenterUuid = null);
 
     /**
      * Hint: instance = '*' -> all instances, instance = '' -> aggregated
@@ -18,5 +18,5 @@ interface CounterLookup
      * @param UuidInterface $vCenterUuid
      * @return array
      */
-    public function fetchRequiredMetricInstances(UuidInterface $vCenterUuid = null);
+    public function fetchRequiredMetricInstances(?UuidInterface $vCenterUuid = null);
 }

@@ -9,7 +9,7 @@ class CustomValues implements JsonSerializable
 {
     protected $values = [];
 
-    public static function create(array $values = null)
+    public static function create(?array $values = null)
     {
         return new static($values);
     }
@@ -59,7 +59,7 @@ class CustomValues implements JsonSerializable
         return $this->values;
     }
 
-    protected function __construct(array $values = null)
+    protected function __construct(?array $values = null)
     {
         if ($values === null) {
             return;

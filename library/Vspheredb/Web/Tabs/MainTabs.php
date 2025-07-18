@@ -18,7 +18,7 @@ class MainTabs extends Tabs
     /** @var Auth */
     protected $auth;
 
-    public function __construct(Auth $auth, Db $connection = null)
+    public function __construct(Auth $auth, ?Db $connection = null)
     {
         $this->connection = $connection;
         $this->auth = $auth;

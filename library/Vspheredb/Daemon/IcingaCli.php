@@ -19,7 +19,7 @@ class IcingaCli
     /** @var LoopInterface */
     protected $loop;
 
-    public function __construct(IcingaCliRunner $runner = null)
+    public function __construct(?IcingaCliRunner $runner = null)
     {
         if ($runner === null) {
             $runner = IcingaCliRunner::forArgv();

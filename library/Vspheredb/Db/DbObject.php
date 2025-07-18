@@ -756,7 +756,7 @@ abstract class DbObject
      * @return bool Whether storing succeeded
      * @throws DuplicateKeyException
      */
-    public function store(DbConnection $db = null)
+    public function store(?DbConnection $db = null)
     {
         if ($db !== null) {
             $this->setConnection($db);
@@ -1040,7 +1040,7 @@ abstract class DbObject
      *
      * @return static
      */
-    public static function create($properties = [], DbConnection $connection = null)
+    public static function create($properties = [], ?DbConnection $connection = null)
     {
         $obj = new static();
         if ($connection !== null) {

@@ -41,7 +41,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
         $this->queue = new SplStack();
     }
 
-    public function setDb(Db $db = null)
+    public function setDb(?Db $db = null)
     {
         if ($db === null) {
             $this->db = null;

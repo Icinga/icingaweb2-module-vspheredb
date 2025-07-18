@@ -19,7 +19,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
         'disk_hardware_label' => 'vmhw.label',
     ];
 
-    protected function prepareInstancesQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
@@ -30,7 +30,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
             ->group('vm.uuid');
     }
 
-    protected function prepareBaseQuery(UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])

@@ -64,7 +64,7 @@ abstract class GenericSpec
      * @param ?SelectionSpec[]|string[] $selectionSet
      * @return TraversalSpec
      */
-    public static function traverse($name, $type, $path, array $selectionSet = null)
+    public static function traverse($name, $type, $path, ?array $selectionSet = null)
     {
         if ($selectionSet) {
             foreach ($selectionSet as $key => $entry) {

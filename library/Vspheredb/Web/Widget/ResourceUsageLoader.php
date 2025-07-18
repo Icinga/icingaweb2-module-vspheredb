@@ -29,7 +29,7 @@ class ResourceUsageLoader
      * @param UuidInterface|null $vCenterUuid
      * @return $this
      */
-    public function filterVCenterUuid(UuidInterface $vCenterUuid = null)
+    public function filterVCenterUuid(?UuidInterface $vCenterUuid = null)
     {
         $this->vCenterUuid = $vCenterUuid;
 

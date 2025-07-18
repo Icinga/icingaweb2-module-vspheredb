@@ -14,7 +14,7 @@ class ConfigTabs extends Tabs
     /** @var Db|null  */
     protected $connection;
 
-    public function __construct(Db $connection = null)
+    public function __construct(?Db $connection = null)
     {
         $this->connection = $connection;
         // We are not a BaseElement, not yet

@@ -35,7 +35,7 @@ abstract class DefaultCounterLookup implements CounterLookup
         return $this->instanceKey !== null;
     }
 
-    public function fetchTags(UuidInterface $vCenterUuid = null): array
+    public function fetchTags(?UuidInterface $vCenterUuid = null): array
     {
         $result = [];
         $query = $this->prepareBaseQuery($vCenterUuid)->columns($this->getTagColumns());
@@ -61,7 +61,7 @@ abstract class DefaultCounterLookup implements CounterLookup
         return $result;
     }
 
-    public function fetchRequiredMetricInstances(UuidInterface $vCenterUuid = null): array
+    public function fetchRequiredMetricInstances(?UuidInterface $vCenterUuid = null): array
     {
         if ($this->hasInstanceKey()) {
             return static::explodeInstances($this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid)));
