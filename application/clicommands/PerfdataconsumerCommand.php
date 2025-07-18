@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
-use gipfl\Translation\TranslationHelper;
+use gipfl\Translation\StaticTranslator;
 use gipfl\Web\Form;
 use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Data\ResourceFactory;
@@ -46,7 +46,7 @@ class PerfdataconsumerCommand extends Command
 
     protected function submitForm($params)
     {
-        TranslationHelper::setNoTranslator();
+        StaticTranslator::setNoTranslator();
         $form = new PerfdataConsumerForm($this->loop(), $this->remoteClient(), $this->getStore());
         $form->disableCsrf()->doNotCheckFormName();
 
