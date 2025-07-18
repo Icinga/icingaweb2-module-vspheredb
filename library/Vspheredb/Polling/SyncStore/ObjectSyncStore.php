@@ -22,7 +22,7 @@ class ObjectSyncStore extends SyncStore
         $db,
         VCenter $vCenter,
         LoggerInterface $logger,
-        array $customFieldsMap = null
+        ?array $customFieldsMap = null
     ) {
         $this->customFieldsMap = $customFieldsMap;
         parent::__construct($db, $vCenter, $logger);
