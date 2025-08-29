@@ -122,8 +122,35 @@ class RestApi
      */
     public function fetchAllAssignments(): PromiseInterface
     {
-        // Hint -> tag_ids = [] seems to ship ALL assignments
-        return $this->taggingBatchLegacy('list-attached-objects-on-tags', ['tag_ids' => []]);
+        // Get all tags first
+        return $this->listTags()->then(function ($tagIds) {
+            if (empty($tagIds)) {
+                return [];
+            }
+
+            // get attachments for each tag
+            $batches = array_chunk($tagIds, 20);
+            $promises = [];
+
+            foreach ($batches as $batch) {
+                $promises[] = $this->taggingBatchLegacy('list-attached-objects-on-tags', [
+                    'tag_ids' => $batch
+                ]);
+            }
+
+            // Combine all results
+            return \React\Promise\all($promises)->then(function ($results) {
+                $combined = [];
+                foreach ($results as $batchResult) {
+                    if (is_array($batchResult)) {
+                        foreach ($batchResult as $key => $value) {
+                            $combined[$key] = $value;
+                        }
+                    }
+                }
+                return $combined;
+            });
+        });
     }
 
     /**
