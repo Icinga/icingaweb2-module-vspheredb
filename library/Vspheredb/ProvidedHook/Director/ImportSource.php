@@ -63,9 +63,12 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'template'            => 'vm.template',
         'custom_values'       => 'vm.custom_values',
         'guest_ip_addresses'  => 'vm.guest_ip_addresses',
+        'annotation'          => 'vm.annotation',
         'tags'                => '(NULL)',
         'internal_tags'       => 'o.tags',
         'path'                => '(NULL)',
+        'resource_pool'       => 'rp.object_name',
+        'runtime_host'        => 'rh.object_name',
     ];
 
     protected $computeResourceColumns = [
@@ -241,11 +244,11 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
 
     protected function prepareVmQuery(ZfDb $db)
     {
-        $query = $db->select()->from(['o' => 'object'], $this->vmColumns)->join(
-            ['vm' => 'virtual_machine'],
-            'o.uuid = vm.uuid',
-            []
-        )->order('o.object_name')->order('o.uuid');
+        $query = $db->select()->from(['o' => 'object'], $this->vmColumns)
+            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
+            ->joinLeft(['rp' => 'object'], 'vm.resource_pool_uuid = rp.uuid', [])
+            ->joinLeft(['rh' => 'object'], 'vm.runtime_host_uuid = rh.uuid', [])
+            ->order('o.object_name')->order('o.uuid');
         if ($this->getSetting('skip_templates', 'y') === 'y') {
             $query->where('template = ?', 'n');
         }
