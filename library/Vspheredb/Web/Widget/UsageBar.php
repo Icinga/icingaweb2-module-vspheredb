@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 use gipfl\Translation\TranslationHelper;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Web\Compat\StyleWithNonce;
 
 class UsageBar extends BaseHtmlElement
 {
@@ -42,14 +43,20 @@ class UsageBar extends BaseHtmlElement
             $color = $this->colors[$color];
         }
 
-        return Html::tag('div', [
+        $usage = Html::tag('div', [
             'class' => 'usage',
-            'style' => sprintf(
-                "background-color: $color; width: %0.3F%%;",
-                $percent * 100
-            ),
             'title' => $title
         ]);
+
+
+        $style = (new StyleWithNonce())
+            ->setModule('vspheredb')
+            ->addFor($usage, [
+                'width' => sprintf('%0.3F%%', $percent * 100),
+                'background-color' => $color,
+            ]);
+
+        return [$usage, $style];
     }
 
     public function setFormatter($callback)
