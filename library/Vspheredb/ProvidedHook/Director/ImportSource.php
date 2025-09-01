@@ -64,6 +64,8 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'custom_values'       => 'vm.custom_values',
         'guest_ip_addresses'  => 'vm.guest_ip_addresses',
         'annotation'          => 'vm.annotation',
+        // 'guest_ip_stack'      => 'vm.guest_ip_stack',
+        // 'runtime_host'        => 'rh.object_name',
         'tags'                => '(NULL)',
         'internal_tags'       => 'o.tags',
         'path'                => '(NULL)',
