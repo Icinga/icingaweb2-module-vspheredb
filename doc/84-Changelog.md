@@ -4,12 +4,45 @@
 v1.8.0
 ------
 
+This release introduces support for the REST-based Automation API. All main
+operations still work through SOAP via the /sdk path, but additional features
+(namely: tagging) are now able to issue REST-based request. The very same
+credentials are being used, and there is no need to tweak your configuration.
+
+The REST API asked for a dedicated session-handling, which takes place in an
+asynchronous mode through the very same polling process.
+
+### Upgrading
+
+Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
   [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/17?closed=1)
 
 ### UI
+* FEATURE: Hosts and VMs provide a dedicated UI section for Tags (#580)
+
+![Tags section](screenshot/84_changelog/v1.8.0/84-180-01_tags.png)
+
+* FEATURE: Additional information for special internal tags is being shown (#581)
+
+![Special internal tag: vCenter VM](screenshot/84_changelog/v1.8.0/84_180-02_special-tags.png)
+
 * FEATURE: Cisco UCS C40-M6S Rack Server and B200-M6 Blade vendor images (#525)
+
+### Database Schema
+* FIX: The schema now allows for VMs with more than 255 vCPUs (#555)
+
+### vSphere API
+* FEATURE: Implemented REST Automation API access (#578)
+
+### Background Daemon
+* FIX: Task Virtual Machines failed for IP addresses w/o state (#536)
+
+### Internals
+* FEATURE/FIX: PHP v7.4 is now the minimum require version (#572)
+* FEATURE/FIX: PHP v8.4 is now supported
 
 v1.7.1
 ------
