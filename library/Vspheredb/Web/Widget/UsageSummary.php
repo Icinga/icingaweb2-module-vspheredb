@@ -55,6 +55,9 @@ class UsageSummary extends BaseHtmlElement
     protected function smallUnit($string)
     {
         $parts = explode(' ', $string, 2);
+        if (count($parts) < 2) {
+            return [$parts[0], null];
+        }
         return [
             $parts[0],
             Html::tag('span', ['class' => 'unit'], $parts[1])
