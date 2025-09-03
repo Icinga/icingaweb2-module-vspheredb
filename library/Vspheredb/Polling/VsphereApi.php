@@ -126,11 +126,8 @@ class VsphereApi
      */
     public function retrieveServiceContent(): PromiseInterface
     {
-        $this->logger->notice('Retrieve Service instance');
         return $this->call($this->serviceInstanceRef, 'RetrieveServiceContent')->then(function ($result) {
             return $result->returnval;
-        }, function () {
-            $this->logger->notice('WTF Retrieve Service instance');
         });
     }
 
