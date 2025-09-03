@@ -276,7 +276,7 @@ class ObjectSync implements DaemonTask
                 return resolve();
             }, function (Exception $e) use ($idx) {
                 unset($this->runningTasks[$idx]);
-                $this->logger->error($e->getMessage());
+                $this->logger->error('Failed to process Task result: ' . $e->getMessage());
 
                 return reject($e);
             });
