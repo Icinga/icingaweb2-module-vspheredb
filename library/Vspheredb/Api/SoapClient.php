@@ -102,7 +102,7 @@ class SoapClient
 
     protected function getBodyPart(ResponseInterface $response)
     {
-        return str_replace(["\r", "\n"], ['\\r', '\\n'], substr($response->getBody(), 0, 500));
+        return str_replace(["\r", "\n"], ['\\r', '\\n'], substr($response->getBody(), 0, 800));
     }
 
     protected function addCookiesToRequest(RequestInterface $request, $soapFunctionName)
