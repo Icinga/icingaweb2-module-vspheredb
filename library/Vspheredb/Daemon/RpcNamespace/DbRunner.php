@@ -8,6 +8,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Module\Vspheredb\Application\MemoryLimit;
 use Icinga\Module\Vspheredb\Daemon\DbCleanup;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\VCenterCleanup;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Monitoring\PersistedRuleProblems;
 use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
@@ -35,6 +36,9 @@ class DbRunner
     protected $connection;
 
     protected $db;
+
+    /** @var ?DbCleanup */
+    protected $runningVcenterDeletion = null;
 
     /** @var LoopInterface */
     protected $loop;
@@ -228,6 +232,35 @@ class DbRunner
             $this->logger->error('Refreshing Rule Problems failed: ' . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * @param int $vCenterId
+     * @return bool
+     */
+    public function deleteVcenterRequest($vCenterId)
+    {
+        $this->logger->notice('Got db.deleteVcenter for id=' . $vCenterId);
+        if ($this->connection === null) {
+            throw new RuntimeException('Unable to remove vCenter, have no DB connection');
+        }
+        if ($this->runningVcenterDeletion !== null) {
+            throw new RuntimeException(
+                'Unable to remove vCenter, a cleanup is in progress'
+            );
+        }
+
+        Process::setTitle('Icinga::vSphereDB::DB::deleteVcenter ' . $vCenterId);
+        $this->runningVcenterDeletion = new VCenterCleanup($this->connection, $vCenterId);
+        $this->runningVcenterDeletion->run()->then(function () {
+            $this->runningVcenterDeletion = null;
+            $this->setProcessReadyTitle();
+        }, function (Exception $e) {
+            $this->runningVcenterDeletion = null;
+            $this->logger->error('db.deleteVcenter: ' . $e->getMessage());
+        });
+
+        return true;
     }
 
     /**

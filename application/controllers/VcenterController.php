@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\Storable\PerfdataSubscription;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Form\DeleteVCenterForm;
 use Icinga\Module\Vspheredb\Web\Form\VCenterForm;
 use Icinga\Module\Vspheredb\Web\Form\VCenterServerForm;
 use Icinga\Module\Vspheredb\Web\Form\VCenterShipMetricsForm;
@@ -88,6 +89,13 @@ class VcenterController extends Controller
         });
         $form->on(VCenterShipMetricsForm::ON_DELETE, function () {
             $this->redirectNow($this->getOriginalUrl());
+        });
+        $form->handleRequest($this->getServerRequest());
+        $this->content()->add($form);
+
+        $form = new DeleteVCenterForm($this->db(), $vCenter, $this->remoteClient(), $this->loop());
+        $form->on(DeleteVCenterForm::ON_SUCCESS, function () use ($vCenter) {
+            $this->redirectNow('vspheredb/vcenters');
         });
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
