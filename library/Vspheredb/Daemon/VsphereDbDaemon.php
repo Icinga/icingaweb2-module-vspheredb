@@ -77,9 +77,6 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     /** @var NotifySystemD|boolean */
     protected $systemd;
 
-    /** @var Logger */
-    protected $logger;
-
     /** @var DbLogger */
     protected $dbLogger;
 
