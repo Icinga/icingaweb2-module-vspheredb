@@ -3,9 +3,13 @@
 namespace Icinga\Module\Vspheredb\Api;
 
 use gipfl\Curl\CurlAsync;
+use gipfl\Json\JsonEncodeException;
+use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\Api\Protocol\ClientDecoder;
 use Icinga\Module\Vspheredb\Api\Protocol\ClientEncoder;
+use Icinga\Module\Vspheredb\MappedClass\Fault;
 use Icinga\Module\Vspheredb\Polling\CookieStore;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -82,6 +86,24 @@ class SoapClient
                                 $e->faultcode,
                                 $e->getMessage() . ': ' . $this->getBodyPart($response)
                             );
+                        }
+                        if (isset($e->detail)) {
+                            // detail: { InvalidPropertyFault: { (SoapVar)
+                            //    enc_type: 0
+                            //    enc_value: InvalidProperty { (MappedClass)
+                            //        name: "config.hardware.device.thinProvisioned"
+                            if (isset($e->detail->InvalidPropertyFault->enc_value)) {
+                                $envValue = $e->detail->InvalidPropertyFault->enc_value;
+                                if ($envValue instanceof Fault) {
+                                    throw new InvalidArgumentException($envValue->getMessage());
+                                }
+                            }
+
+                            // Hint: unfinished, this also triggers
+                            try {
+                                $this->logger->error('Unhandled SoapFault: ' . JsonString::encode($e->detail));
+                            } catch (JsonEncodeException $e) {
+                            }
                         }
                         throw $e;
                     }
