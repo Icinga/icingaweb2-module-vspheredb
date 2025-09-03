@@ -74,4 +74,9 @@ abstract class SyncTask
     {
         return $this->syncStoreClass;
     }
+
+    public function tweakResult($result)
+    {
+        return $result;
+    }
 }

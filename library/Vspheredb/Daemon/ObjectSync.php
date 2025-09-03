@@ -258,6 +258,7 @@ class ObjectSync implements DaemonTask
                 unset($this->runningTasks[$idx]);
                 return resolve();
             }
+            $task->tweakResult($result);
 
             return $this->dbRunner->request('db.processSyncTaskResult', [
                 'vCenterId'   => (int) $this->vCenter->get('id'),
