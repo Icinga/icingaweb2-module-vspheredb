@@ -7,6 +7,7 @@ use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
 use Icinga\Module\Vspheredb\Web\Widget\GrafanaVmPanel;
+use Icinga\Module\Vspheredb\Web\Widget\MacAddress;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
@@ -107,10 +108,11 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
             $mainIpInfo = '';
             $aIpInfo = '';
         }
+
         return Html::sprintf(
             '%s (%s)%s %s%s%s %s',
             Html::tag('strong', $row->label),
-            $row->mac_address,
+            MacAddress::showBinary($row->mac_address),
             Html::tag('br'),
             $mainIpInfo,
             $aIpInfo,
@@ -124,7 +126,8 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         return [
             Html::tag('strong', $row->label),
             Html::tag('br'),
-            $this->translate('MAC Address') . ': ' . $row->mac_address,
+            $this->translate('MAC Address') . ': ',
+            MacAddress::showBinary($row->mac_address),
             Html::tag('br'),
             $this->linkToPortGroup($row)
         ];

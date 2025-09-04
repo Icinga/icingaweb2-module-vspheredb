@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Format;
+use Icinga\Module\Vspheredb\Web\Widget\MacAddress;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 
@@ -59,11 +60,12 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
             );
         }
         return Html::sprintf(
-            '%s (%s: %s), %s%s',
+            '%s (%s: %s), %s%s%s',
             Html::tag('strong', $row->device),
             $this->translate('driver'),
             $row->driver,
-            isset($row->mac_address) ? Anonymizer::shuffleString($row->mac_address) . ', ' : '',
+            isset($row->mac_address) ? MacAddress::showBinary(Anonymizer::shuffleString($row->mac_address)) : '',
+            isset($row->mac_address) ? ', ' : '',
             $speedInfo
         );
     }
