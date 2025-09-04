@@ -49,7 +49,11 @@ class DeleteVCenterForm extends Form
         $this->add(Hint::warning($this->translate(
             'Deleting a vCenter means removing related information from the vSphereDB database.'
             . ' Apart from historic data (alerts, events) this step is reversible by simply'
-            . ' redefining a Server Connection to this vCenter or ESXi Host.'
+            . ' redefining a Server Connection to this vCenter or ESXi Host. During this step,'
+            . ' DB tables are rewritten on disk, to free up unused space. Please be patient,'
+            . ' this might take some time. In case you need to interrupt the operation for'
+            . ' whatever reason by stopping the vSphereDB Daemon or by killing a process on'
+            . ' your DB server: don\'t worry, you can trigger this operation once again.'
         )));
         (new NextConfirmCancel(
             NextConfirmCancel::buttonNext($this->translate('Delete')),
