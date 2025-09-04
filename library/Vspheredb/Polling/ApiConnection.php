@@ -102,6 +102,7 @@ class ApiConnection implements EventEmitterInterface
             }
             $this->setState(self::STATE_STOPPED);
         });
+        // TODO: do we need failing -> stopping?
         $this->onTransition(self::STATE_CONNECTED, self::STATE_STOPPING, function () {
             $this->stopping = true;
             $this->logger->debug('Logging out');
@@ -185,6 +186,7 @@ class ApiConnection implements EventEmitterInterface
     {
         $this->wsdlPromise = $this->fetchWsdl()
             ->then(function ($wsdlFile) {
+                // might be from cache
                 $this->wsdlFile = $wsdlFile;
                 $this->wsdlPromise = null;
                 $this->setState(self::STATE_LOGIN);
