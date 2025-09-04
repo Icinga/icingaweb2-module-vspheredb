@@ -102,6 +102,8 @@ class ObjectSync implements DaemonTask
     /** @var RestApi */
     protected $restApi;
 
+    protected $logTaskNames = false;
+
     public function __construct(
         VCenter $vCenter,
         VsphereApi $api,
@@ -198,7 +200,9 @@ class ObjectSync implements DaemonTask
             $this->logger->notice("Task '$label' is already running, skipping");
             return;
         }
-        // $this->logger->debug("Running Task '$label'");
+        if ($this->logTaskNames) {
+            $this->logger->debug("Running Task '$label'");
+        }
 
         $maxCount = 30;
         $total = count(VmDatastoreUsageSyncStore::fetchOutdatedVms($this->vCenter, 3600 * 6));
@@ -207,7 +211,10 @@ class ObjectSync implements DaemonTask
         if ($count > 0) {
             $this->logger->debug("Refreshing  '$label': $count out of $total VMs with outdated storage information");
             $this->runningTasks[$idx] = VmDatastoreUsageSyncStore::refreshOutdatedVms($this->api, $vms, $this->logger)
-                ->then(function () use ($idx) {
+                ->then(function () use ($idx, $label) {
+                    if ($this->logTaskNames) {
+                        $this->logger->debug("Task done '$label'");
+                    }
                     unset($this->runningTasks[$idx]);
                 });
         }
@@ -236,7 +243,9 @@ class ObjectSync implements DaemonTask
             $this->logger->notice("Task '$label' is already running, skipping");
             return;
         }
-        // $this->logger->debug("Running Task '$label'");
+        if ($this->logTaskNames) {
+            $this->logger->debug("Running Task '$label'");
+        }
 
         if ($task instanceof StandaloneTask) {
             $instance = $task->run($this->api, $this->logger);
@@ -249,7 +258,7 @@ class ObjectSync implements DaemonTask
             );
         }
 
-        $this->runningTasks[$idx] = $instance->then(function ($result) use ($task, $idx) {
+        $this->runningTasks[$idx] = $instance->then(function ($result) use ($task, $idx, $label) {
             if (! $this->ready) {
                 $this->logger->warning(sprintf(
                     "Not storing result for '%s', task has been stopped",
@@ -266,13 +275,16 @@ class ObjectSync implements DaemonTask
                 'taskLabel'   => $task->getLabel(),
                 'storeClass'  => $task->getSyncStoreClass(),
                 'objectClass' => $task->getObjectClass(),
-            ])->then(function ($stats) use ($idx) {
+            ])->then(function ($stats) use ($idx, $label) {
                 $stats = SyncStats::fromSerialization($stats);
                 if ($stats->hasChanges()) {
                     $this->logger->info($stats->getLogMessage());
                 }
 
                 unset($this->runningTasks[$idx]);
+                if ($this->logTaskNames) {
+                    $this->logger->debug("Task done '$label'");
+                }
                 return resolve();
             }, function (Exception $e) use ($idx) {
                 unset($this->runningTasks[$idx]);
