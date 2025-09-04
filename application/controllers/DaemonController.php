@@ -8,7 +8,6 @@ use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Web\Form\LogLevelForm;
 use Icinga\Module\Vspheredb\Web\Form\RestartDaemonForm;
-use Icinga\Module\Vspheredb\Web\Table\ControlSocketConnectionsTable;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\VsphereApiConnectionTable;
@@ -127,15 +126,6 @@ class DaemonController extends Controller
         }
 
         return $logWindow;
-    }
-
-    protected function prepareConnectionTable()
-    {
-        try {
-            return new ControlSocketConnectionsTable($this->syncRpcCall('connections.list'));
-        } catch (\Exception $exception) {
-            return Hint::error($exception->getMessage());
-        }
     }
 
     protected function prepareCurlInfoTable()
