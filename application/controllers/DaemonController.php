@@ -158,6 +158,61 @@ class DaemonController extends Controller
         } catch (\Exception $exception) {
             return Hint::error($exception->getMessage());
         }
+        /*
+            // Example data, in case we want to show more details:
+            [376] => stdClass Object
+                (
+                    [url] => https://192.0.10.2/sdk
+                    [content_type] =>
+                    [http_code] => 0
+                    [header_size] => 0
+                    [request_size] => 326
+                    [filetime] => -1
+                    [ssl_verify_result] => 0
+                    [redirect_count] => 0
+                    [total_time] => 598.93924
+                    [namelookup_time] => 0.000191
+                    [connect_time] => 0.000191
+                    [pretransfer_time] => 0.000807
+                    [size_upload] => 1493
+                    [size_download] => 0
+                    [speed_download] => 0
+                    [speed_upload] => 2
+                    [download_content_length] => -1
+                    [upload_content_length] => 1493
+                    [starttransfer_time] => 1.059101
+                    [redirect_time] => 0
+                    [redirect_url] =>
+                    [primary_ip] => 192.0.10.2
+                    [certinfo] => Array
+                        (
+                        )
+
+                    [primary_port] => 443
+                    [local_ip] => 192.0.2.12
+                    [local_port] => 44072
+                    [http_version] => 0
+                    [protocol] => 2
+                    [ssl_verifyresult] => 0
+                    [scheme] => HTTPS
+                    [appconnect_time_us] => 192
+                    [connect_time_us] => 191
+                    [namelookup_time_us] => 191
+                    [pretransfer_time_us] => 807
+                    [redirect_time_us] => 0
+                    [starttransfer_time_us] => 1059101
+                    [total_time_us] => 598939240
+                    [request_header] => POST /sdk HTTP/1.1
+                      Host: 192.0.10.2
+                      Accept: * / *
+                      Accept-Encoding: gzip
+                      User-Agent: Icinga-vSphereDB/1.8
+                      SOAPAction: urn:vim25/6.7.3
+                      Content-Type: text/xml; charset=utf-8
+                      Cookie: vmware_soap_session="8ebb1e8a87a1a1fff79e812c63d3081a1639c846"; Path=/; HttpOnly; Secure;
+                      Content-Length: 1493
+                      Expect: 100-continue
+        */
     }
 
     protected function prepareVsphereConnectionTable()
