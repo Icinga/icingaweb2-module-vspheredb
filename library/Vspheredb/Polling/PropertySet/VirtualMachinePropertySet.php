@@ -26,7 +26,9 @@ class VirtualMachinePropertySet implements PropertySet
                 'runtime.powerState',
                 'runtime.connectionState',
                 'runtime.onlineStandby',
-                'runtime.paused',
+                // paused is available since v6.0, disabled for now. We need to pass the ESXi/vCenter version,
+                // to ::create(), to be able to ship conditional PropertySets
+                // 'runtime.paused',
                 'guest.guestState',
                 'guest.toolsRunningStatus',
                 'guest.toolsVersion',

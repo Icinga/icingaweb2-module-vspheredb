@@ -80,7 +80,7 @@ class VirtualMachine extends BaseDbObject
         'runtime.powerState'         => 'runtime_power_state',
         'runtime.connectionState'    => 'connection_state',
         'runtime.onlineStandby'      => 'online_standby',
-        'runtime.paused'             => 'paused',
+        'runtime.paused'             => 'paused', // 6.0
         'guest.guestState'           => 'guest_state',
         'guest.toolsRunningStatus'   => 'guest_tools_running_status',
         'guest.toolsVersion'         => 'guest_tools_version',
