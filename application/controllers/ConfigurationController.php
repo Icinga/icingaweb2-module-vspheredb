@@ -191,6 +191,11 @@ class ConfigurationController extends Controller
 
         $this->addTitle($this->translate('Monitoring Integration'));
         $form = new MonitoringConnectionForm($this->db());
+        $form->on(MonitoringConnectionForm::ON_SUCCESS, function (MonitoringConnectionForm $form) {
+            // TODO: created, modified, nothing, %s
+            Notification::success($this->translate('Monitoring Integration has been stored'));
+            $this->redirectNow($this->url());
+        });
         if ($res) {
             if ($res->vcenter_uuid !== null) {
                 $res->vcenter = Uuid::fromBytes($res->vcenter_uuid)->toString();
