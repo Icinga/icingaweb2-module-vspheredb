@@ -116,6 +116,11 @@ That's it!
 FAQ
 ---
 
+### Which permissions are required for the VMware user?
+
+We usually need `System.Anonymous`, `System.Read` and `System.View`. The default
+`Read-only` role already includes them.
+
 ### Running without SystemD
 
 systemd is not a hard requirement, you can use any supervisor you want. The
