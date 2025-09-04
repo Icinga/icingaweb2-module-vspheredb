@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Polling\SyncTask;
 
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
+use Icinga\Module\Vspheredb\Polling\PropertySet\PropertySet;
 use Icinga\Module\Vspheredb\Polling\SyncStore\SyncStore;
 
 abstract class SyncTask
@@ -27,50 +28,44 @@ abstract class SyncTask
     /** @var string */
     protected $syncStoreClass = self::UNSPECIFIED;
 
-    /**
-     * @return string
-     */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * @return string
-     */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->tableName;
     }
 
     /**
-     * @return string|BaseDbObject IDE hint, it's a string
+     * @return class-string<BaseDbObject>
      */
-    public function getObjectClass()
+    public function getObjectClass(): string
     {
         return $this->objectClass;
     }
 
     /**
-     * @return string
+     * @return class-string
      */
-    public function getSelectSetClass()
+    public function getSelectSetClass(): string
     {
         return $this->selectSetClass;
     }
 
     /**
-     * @return string
+     * @return class-string<PropertySet>
      */
-    public function getPropertySetClass()
+    public function getPropertySetClass(): string
     {
         return $this->propertySetClass;
     }
 
     /**
-     * @return string|SyncStore IDE hint, it's a string
+     * @return class-string<SyncStore>
      */
-    public function getSyncStoreClass()
+    public function getSyncStoreClass(): string
     {
         return $this->syncStoreClass;
     }
