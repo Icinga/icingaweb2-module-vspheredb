@@ -8,9 +8,14 @@ This release introduces support for the REST-based Automation API. All main
 operations still work through SOAP via the /sdk path, but additional features
 (namely: tagging) are now able to issue REST-based request. The very same
 credentials are being used, and there is no need to tweak your configuration.
-
 The REST API asked for a dedicated session-handling, which takes place in an
 asynchronous mode through the very same polling process.
+
+We now support the IcingaDB, strict CSP in Icinga Web 2, many synchronization
+features and fixes have been implemented, the Director Import source has been
+extended multiple times, error handling has been improved in many ways, it is
+now possible to delete all data related to a specific vCenter, and our
+Monitoring Rules got some attention.
 
 ### Upgrading
 
@@ -30,12 +35,62 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 ![Special internal tag: vCenter VM](screenshot/84_changelog/v1.8.0/84_180-02_special-tags.png)
 
 * FEATURE: Cisco UCS C40-M6S Rack Server and B200-M6 Blade vendor images (#525)
+* FEATURE: It is now possible to delete all data related to a vCenter (#324)
+
+![Delete vCenter](screenshot/84_changelog/v1.8.0/84_180-04_delete-vcenter.png)
+
+* This also works for vCenter with no configured connection, and interrupting deletion
+  does not cause problems:
+
+![Unreferenced half-deleted vCenter](screenshot/84_changelog/v1.8.0/84_180-03_vcenter-unreferenced-half-deleted.png)
+
+### Monitoring Rules
+
+* FIX: "worst state wins"-logic for Memory Usage has been fixed (#540)
+* FIX: root node no longer overrides leaf folder nodes (#527)
+* FIX: protects against race conditions with vanished objects (#593)
+* FIX: deals with negative numbers (#522)
+* FIX: similar problem, with overclocked CPUs (#526)
+
+![Values for overclocked CPU](screenshot/84_changelog/v1.8.0/84_180-09_negative-values.png)
+
+* FEATURE: Snapshot policy now shows the name of the oldest snapshot (#519)
+
+![Monitoring Rule shows snapshot name](screenshot/84_changelog/v1.8.0/84_180-06_show-snapshot-name.png)
 
 ### Database Schema
 * FIX: The schema now allows for VMs with more than 255 vCPUs (#555)
 
 ### vSphere API
 * FEATURE: Implemented REST Automation API access (#578)
+* FEATURE: max parallel HTTP connections have been raised to 120
+* FEATURE: Custom Tags are now being synchronized (#579)
+* FIX: ResourcePool sync has been fixed (#571)
+* FIX: vApps are now synchronized correctly (#557)
+* FIX: VM sync for Vsphere/ESXi 5.5 now works again (#590)
+* FIX: dealing with special SOAP Faults has been improved (#589)
+* FIX: VM Sync when TPM devices are involved has been fixed (#588)
+* FIX: VM sync task failed in environments with nics w/o state (#563)
+
+### Integrations
+
+* FIX: NVME disk counters are now also being collected and sent to InfluxDB (#540)
+* FEATURE: Director Import Source now ships the resource pool name (#232)
+* FEATURE: Director Import Source now ships VM hardware version (#548)
+* FEATURE: Director Import Source provides tags and internal_tags (##582)
+* FEATURE: IcingaDB is now supported
+
+![IcingaDB Support](screenshot/84_changelog/v1.8.0/84_180-05_icingadb-support.png)
+
+* Enhanced MAC address details are being shown, when IMEdge is installed (#592)
+
+![Host System MAC Address details](screenshot/84_changelog/v1.8.0/84_180-07_show-mac-address-details.png)
+
+* Another sample, with VM Nics and random/local MAC addresses:
+
+![VM random MAC address](screenshot/84_changelog/v1.8.0/84_180-08_show-local-mac-address.png)
+
+* FEATURE: REST API access has been implemented (#578)
 
 ### Background Daemon
 * FIX: Task Virtual Machines failed for IP addresses w/o state (#536)
@@ -43,6 +98,8 @@ Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgra
 ### Internals
 * FEATURE/FIX: PHP v7.4 is now the minimum require version (#572)
 * FEATURE/FIX: PHP v8.4 is now supported
+* FEATURE/FIX: prepared support for react/promise 3.x (#584)
+* FEATURE: supports default Web 2 CSP policy (#576)
 
 v1.7.1
 ------
