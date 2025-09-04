@@ -9,6 +9,7 @@ use Icinga\Data\Db\DbConnection;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\QueryParams;
+use Icinga\Web\Notification;
 use InvalidArgumentException;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
@@ -21,11 +22,18 @@ class MonitoringConnectionForm extends Form
     use TranslationHelper;
 
     protected $db;
+    protected bool $hasBeenDeleted = false;
+    protected ?int $id = null;
 
     public function __construct(Db $connection)
     {
         $this->addElementLoader(__NAMESPACE__ . '\\Element');
         $this->db = $connection->getDbAdapter();
+    }
+
+    public function hasBeenDeleted(): bool
+    {
+        return $this->hasBeenDeleted;
     }
 
     protected function assemble()
@@ -184,13 +192,21 @@ class MonitoringConnectionForm extends Form
                     'monitoring_connection',
                     $this->db->quoteInto('id = ?', $id)
                 );
+                Notification::success($this->translate('Monitoring Integration has been deleted'));
+                $this->hasBeenDeleted = true;
             }
         }
     }
 
-    protected function getId()
+    public function getId(): ?int
     {
-        return QueryParams::fromRequest($this->getRequest())->get('id');
+        if ($this->id === null) {
+            if ($id = QueryParams::fromRequest($this->getRequest())->get('id')) {
+                $this->id = (int) $id;
+            }
+        }
+
+        return $this->id;
     }
 
     public function onSuccess()
@@ -210,13 +226,16 @@ class MonitoringConnectionForm extends Form
                 $values,
                 $db->quoteInto('id = ?', $id)
             );
+            Notification::success($this->translate('Monitoring Integration has been modified'));
         } else {
             $priority = (int) $db->fetchOne(
-                $db->select()->from('monitoring_connection', 'MAX(priority)')
-            ) + 1;
+                    $db->select()->from('monitoring_connection', 'MAX(priority)')
+                ) + 1;
             $db->insert('monitoring_connection', $values + [
-                'priority'     => $priority,
-            ]);
+                    'priority'     => $priority,
+                ]);
+            $this->id = (int) $db->lastInsertId();
+            Notification::success($this->translate('Monitoring Integration has been created'));
         }
     }
 
