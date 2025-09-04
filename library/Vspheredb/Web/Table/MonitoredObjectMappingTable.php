@@ -4,6 +4,8 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\Extension\ZfSortablePriority;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 
 class MonitoredObjectMappingTable extends BaseTable
 {
@@ -68,9 +70,23 @@ class MonitoredObjectMappingTable extends BaseTable
         ]);
     }
 
+    // cloned from ZfSortablePriority, added data-base-target
+    protected function xaddSortPriorityButtons(BaseHtmlElement $tr, $row)
+    {
+        $tr->add(
+            Html::tag(
+                'td',
+                ['data-base-target' => '_self'],
+                $this->createUpDownButtons($row->{$this->getKeyColumn()})
+            )
+        );
+
+        return $tr;
+    }
+
     public function renderRow($row)
     {
-        return $this->addSortPriorityButtons(
+        return $this->xaddSortPriorityButtons(
             parent::renderRow($row),
             $row
         );
