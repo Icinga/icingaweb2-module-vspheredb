@@ -85,6 +85,9 @@ class MonitoringRulesTree
         return isset($this->configList[$uuid]);
     }
 
+    /**
+     * @throws \Icinga\Exception\NotFoundError
+     */
     public function getInheritedSettingsFor(BaseDbObject $object): InheritedSettings
     {
         $uuid = $object->object()->get('parent_uuid');
