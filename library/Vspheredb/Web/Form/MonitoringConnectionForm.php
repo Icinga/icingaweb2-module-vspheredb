@@ -229,8 +229,8 @@ class MonitoringConnectionForm extends Form
             Notification::success($this->translate('Monitoring Integration has been modified'));
         } else {
             $priority = (int) $db->fetchOne(
-                    $db->select()->from('monitoring_connection', 'MAX(priority)')
-                ) + 1;
+                $db->select()->from('monitoring_connection', 'MAX(priority)')
+            ) + 1;
             $db->insert('monitoring_connection', $values + [
                     'priority'     => $priority,
                 ]);
