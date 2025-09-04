@@ -64,7 +64,17 @@ class SnapshotsRuleDefinition extends MonitoringRuleDefinition
             if ($min && $info->ts_oldest < (time() - $min * 86400)) {
                 $state->raiseState(CheckPluginState::CRITICAL);
             }
-            $output = sprintf('%d snapshot(s), oldest one from %s', $count, date('Y-m-d H:i', $info->ts_oldest));
+            $name = $db->fetchOne(
+                $db->select()->from('vm_snapshot', 'name')
+                    ->where('vm_snapshot.vm_uuid = ?', $object->getConnection()->quoteBinary($object->get('uuid')))
+                    ->where('FLOOR(ts_create / 1000) = ?', $info->ts_oldest)
+            );
+            $output = sprintf(
+                '%d snapshot(s), oldest one%s from %s',
+                $count,
+                is_string($name) && strlen($name) > 0 ? " ($name)" : '',
+                date('Y-m-d H:i', $info->ts_oldest)
+            );
         }
         return [
             new SingleCheckResult($state, $output)
