@@ -76,8 +76,9 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
 
         $percentFree = $mhzFree / $mhzCapacity * 100;
         $output = sprintf(
-            '%s out of %s used, %s (%.2F%%) free',
+            '%s (%.2F%%) out of %s used, %s (%.2F%%) free',
             Format::mhz($mhzUsed),
+            100 - $percentFree,
             Format::mhz($mhzCapacity),
             Format::mhz($mhzFree),
             $percentFree

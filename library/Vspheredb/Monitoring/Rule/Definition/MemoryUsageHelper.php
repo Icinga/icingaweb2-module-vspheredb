@@ -30,9 +30,11 @@ class MemoryUsageHelper
 
         $percentFree = $free / $capacity * 100;
         $output = sprintf(
-            '%s out of %s (%.2F%%) free',
-            Format::bytes($free, Format::STANDARD_IEC),
+            '%s (%.2F%%) out of %s used, %s (%.2F%%) free',
+            Format::bytes($capacity - $free, Format::STANDARD_IEC),
+            100 - $percentFree,
             Format::bytes($capacity, Format::STANDARD_IEC),
+            Format::bytes($free, Format::STANDARD_IEC),
             $percentFree
         );
         if ($instanceName) {

@@ -47,17 +47,24 @@ class Format
 
     public static function mhz($mhz): string
     {
+        if ($mhz === null) {
+            return '-';
+        }
+        $sign = $mhz < 0 ? '-' : '';
+        $mhz = abs($mhz);
         if ($mhz >= 1000000) {
-            return sprintf('%.3G THz', $mhz / 1000000);
+            return $sign . sprintf('%.3G THz', $mhz / 1000000);
         } elseif ($mhz >= 1000) {
-            return sprintf('%.3G GHz', $mhz / 1000);
+            return $sign . sprintf('%.3G GHz', $mhz / 1000);
         } else {
-            return sprintf('%.3G MHz', $mhz);
+            return $sign . sprintf('%.3G MHz', $mhz);
         }
     }
 
     public static function mhzWithSeparateUnit($mhz): array
     {
+        $sign = $mhz < 0 ? '-' : '';
+        $mhz = abs($mhz);
         if ($mhz > 1000000) {
             $unit = 'THz';
             $value = $mhz / 1000000;
@@ -69,6 +76,6 @@ class Format
             $value = $mhz;
         }
 
-        return [sprintf('%.3G', $value), $unit];
+        return [$sign . sprintf('%.3G', $value), $unit];
     }
 }
