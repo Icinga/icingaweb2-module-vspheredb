@@ -4,17 +4,14 @@
 Requirements
 ------------
 
-* Icinga Web 2 (&gt;= 2.8)
+* Icinga Web 2 (&gt;= 2.10)
 * PHP (&gt;= 7.4 or 8.x - 64bit only)
 * php-soap
 * php-pcntl (might already be built into your PHP binary)
 * php-posix (on RHEL/CentOS this is php-process, or rh-php7x-php-process)
 * MySQL (&gt;= 5.7) or MariaDB (&gt;= 10.3)
 * The following Icinga modules must be installed and enabled:
-  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>=0.20)
-  * If you are using Icinga Web &lt; 2.9.0, the following modules are also required
-    * [ipl](https://github.com/Icinga/icingaweb2-module-ipl) (>=0.5.0)
-    * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>=0.8.0)
+  * [incubator](https://github.com/Icinga/icingaweb2-module-incubator) (>=0.23)
 
 Once you got Icinga Web 2 up and running, all required dependencies should
 already be there. All, but `php-soap` and `php-posix`. They are available on
