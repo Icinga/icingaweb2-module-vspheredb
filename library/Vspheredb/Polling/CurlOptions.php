@@ -33,7 +33,7 @@ class CurlOptions
                 // Host header disabled for now, see #496
                 // "Host: $host",
                 'Expect:',
-                'User-Agent: Icinga-vSphereDB/1.6',
+                'User-Agent: Icinga-vSphereDB/1.8',
             ]
         ];
 

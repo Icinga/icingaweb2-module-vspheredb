@@ -58,7 +58,7 @@ existing module installation will be replaced, so this can be used for upgrades 
 
 ```shell
 # You can customize these settings, but we suggest to stick with our defaults:
-MODULE_VERSION="1.7.1"
+MODULE_VERSION="1.8.0"
 DAEMON_USER="icingavspheredb"
 DAEMON_GROUP="icingaweb2"
 ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"
