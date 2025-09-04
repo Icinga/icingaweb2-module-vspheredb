@@ -19,6 +19,7 @@ use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblematicObject
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemTable;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
+use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
@@ -132,17 +133,11 @@ class MonitoringController extends Controller
             Html::tag('h2', $this->translate('Defining Check Commands')),
             Html::tag('p', Html::sprintf(
                 $this->translate('Check our %s for instructions of how to set them up'),
-                Html::tag(
-                    'a',
-                    [
-                        'href'   =>
-                            'https://icinga.com/docs/icinga-vsphere-integration/latest/doc/32-Monitoring_Rules/',
-                        'class'  => 'icon-book',
-                        'title'  =>
-                            $this->translate('Click to read our documentation: Icinga vSphereDB Check Commands'),
-                        'target' => '_blank'
-                    ],
+                Documentation::link(
                     $this->translate('Documentation'),
+                    'vspheredb',
+                    '32-Monitoring_Rules',
+                    $this->translate('Icinga vSphereDB Check Commands')
                 )
             ))
         ]);
