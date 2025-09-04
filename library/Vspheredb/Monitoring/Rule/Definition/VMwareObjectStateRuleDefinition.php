@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\MonitoringStateTrigger;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
@@ -28,9 +29,14 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
 
     public function checkObject(BaseDbObject $object, Settings $settings): array
     {
-        $color = $object->object()->get('overall_status');
+        try {
+            $color = $object->object()->get('overall_status');
+            $message = $this->getStatusMessageForColor($color);
+        } catch (NotFoundError $e) {
+            $color = 'gray';
+            $message = 'Could not find the related Managed Object, please check my vCenter permissions';
+        }
         $state = MonitoringStateTrigger::getMonitoringState($settings->get("trigger_on_$color"));
-        $message = $this->getStatusMessageForColor($color);
 
         return [
             new SingleCheckResult($state, $message)

@@ -4,12 +4,15 @@ namespace Icinga\Module\Vspheredb\Monitoring;
 
 use Exception;
 use gipfl\Cli\Screen;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\ObjectStateRuleSet;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\VMwareObjectStateRuleDefinition;
 use Icinga\Module\Vspheredb\Monitoring\Rule\InheritedSettings;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
@@ -167,6 +170,9 @@ class CheckRunner
         }
     }
 
+    /**
+     * @throws NotFoundError
+     */
     protected function getSettingsForObject(
         BaseDbObject $object,
         RuleSetRegistry $registry,
@@ -181,13 +187,29 @@ class CheckRunner
 
     /**
      * @param BaseDbObject $object
-     * @return array<string, int>
+     * @return array<string, CheckResultSet>
      */
     public function checkForDb(BaseDbObject $object): array
     {
         $type = self::getCheckTypeForObject($object);
         $registry = $this->getRegistry();
-        $settings = $this->getSettingsForObject($object, $registry, $type);
+        try {
+            $settings = $this->getSettingsForObject($object, $registry, $type);
+        } catch (NotFoundError $e) {
+            // Fake Set with just a global state
+            $ruleSetResult = new CheckResultSet((new ObjectStateRuleSet())->getLabel());
+            $ruleResult = new CheckResultSet((new VMwareObjectStateRuleDefinition())->getLabel());
+            $ruleResult->addResult(new SingleCheckResult(
+                new CheckPluginState(CheckPluginState::UNKNOWN),
+                'Could not find the related Managed Object, please check my vCenter permissions'
+            ));
+            $ruleSetResult->addResult($ruleResult);
+
+            $results[ObjectStateRuleSet::getIdentifier() . '/' . VMwareObjectStateRuleDefinition::getIdentifier()]
+                = $ruleResult;
+
+            return $results;
+        }
         $results = [];
         foreach ($registry->getSets() as $set) {
             if ($settings->isDisabled($set)) {
