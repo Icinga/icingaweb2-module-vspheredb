@@ -12,12 +12,14 @@ use Icinga\Module\Vspheredb\PerformanceData\InfluxConnectionForVcenterLoader;
 use Icinga\Module\Vspheredb\PerformanceData\MetricCSVToInfluxDataPoint;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\CounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\CounterMap;
+use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\DatastoreCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\HostCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\HostNetworkCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmDiskCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup\VmNetworkCounterLookup;
 use Icinga\Module\Vspheredb\Polling\PerformanceQuerySpecHelper;
+use Icinga\Module\Vspheredb\Polling\PerformanceSet\DatastoreDiskPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostCpuPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostMemoryPerformanceSet;
 use Icinga\Module\Vspheredb\Polling\PerformanceSet\HostNetworkPerformanceSet;
@@ -241,6 +243,10 @@ class PerfDataSync implements DaemonTask
 
         $counterLookup = new HostNetworkCounterLookup($db);
         $set = new HostNetworkPerformanceSet();
+        $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
+
+        $counterLookup = new DatastoreCounterLookup($db);
+        $set = new DatastoreDiskPerformanceSet();
         $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
     }
 
