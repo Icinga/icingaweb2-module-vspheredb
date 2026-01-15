@@ -83,8 +83,8 @@ class MemoryUsageHelper
             'threshold_precedence' => ['select', [
                 'label' => $t->translate('Threshold/State Precedence'),
                 'options' => [
-                    null => $t->translate('- please choose -'),
-                    'best_wins'  => $t->translate('Better state wins'),
+                    '' => $t->translate('- please choose -'),
+                    'best_wins' => $t->translate('Better state wins'),
                     'worst_wins' => $t->translate('Worse state wins'),
                 ],
             ]],

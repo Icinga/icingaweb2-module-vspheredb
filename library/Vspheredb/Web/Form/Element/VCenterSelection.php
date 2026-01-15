@@ -28,9 +28,7 @@ class VCenterSelection extends SelectElement
         parent::__construct($name, $attributes);
         $enum = $this->enumVCenters();
         $this->addAttributes([
-            'options' => $required ? $enum : [
-                null => $this->translate('All vCenters'),
-            ] + $enum,
+            'options' => $required ? $enum : ['' => $this->translate('All vCenters'),] + $enum,
             'class' => 'autosubmit',
         ]);
     }

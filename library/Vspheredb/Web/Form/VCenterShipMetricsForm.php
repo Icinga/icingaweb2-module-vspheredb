@@ -92,7 +92,7 @@ class VCenterShipMetricsForm extends ObjectForm
         }
         $this->addElement('select', 'consumer', [
             'label' => $this->translate('Consumer'),
-            'options' => [null => $this->translate('- please choose -')] + $this->enumConsumers($consumers),
+            'options' => ['' => $this->translate('- please choose -')] + $this->enumConsumers($consumers),
             'description' => Html::sprintf(
                 $this->translate('Choose one of your configured %s'),
                 Link::create($this->translate('Performance Data Consumers'), 'vspheredb/perfdata/consumers')

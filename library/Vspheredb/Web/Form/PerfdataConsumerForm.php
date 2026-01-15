@@ -72,9 +72,7 @@ class PerfdataConsumerForm extends ObjectForm
         }
         $this->addElement('select', 'implementation', [
             'label'    => $this->translate('Implementation'),
-            'options'  => [
-                    null => $this->translate('- please choose -'),
-                ] + PerfDataConsumerHook::enum(),
+            'options'  => ['' => $this->translate('- please choose -')] + PerfDataConsumerHook::enum(),
             'required' => true,
             'class'    => 'autosubmit',
         ]);
