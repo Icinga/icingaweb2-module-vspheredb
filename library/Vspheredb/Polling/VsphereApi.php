@@ -204,7 +204,7 @@ class VsphereApi
             $this->cookieStore->forgetCookies();
         }, function () {
             $this->cookieStore->forgetCookies();
-            return resolve();
+            return resolve(null);
         });
     }
 
