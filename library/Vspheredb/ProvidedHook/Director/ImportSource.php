@@ -130,9 +130,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         ]);
         $form->addElement('select', 'vcenter_uuid', [
             'label' => mt('vspheredb', 'vCenter'),
-            'multiOptions' => [
-                null => mt('vspheredb', '- any -')
-            ] + self::enumVCenters(),
+            'multiOptions' => ['' => mt('vspheredb', '- any -')] + self::enumVCenters(),
         ]);
         $type = $form->getSentOrObjectSetting('object_type');
         if ($type === 'virtual_machine') {

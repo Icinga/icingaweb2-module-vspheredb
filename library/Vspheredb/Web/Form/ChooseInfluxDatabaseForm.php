@@ -124,7 +124,7 @@ class ChooseInfluxDatabaseForm extends Form
 
     protected function getDbOptions()
     {
-        return [null => $this->translate('Please choose')]
+        return ['' => $this->translate('Please choose')]
         + \array_combine($this->dbList, $this->dbList)
         + ['_new' => ' -> ' . $this->translate('Create a new Database')];
     }

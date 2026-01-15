@@ -58,7 +58,7 @@ class InfluxDbConnectionForm extends Form
                 'InfluxDB API version, autodetect should work fine'
             ),
             'options' => [
-                null => $this->translate('Autodetect'),
+                '' => $this->translate('Autodetect'),
                 'v1' => 'v1',
                 'v2' => 'v2',
             ],
