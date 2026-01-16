@@ -36,7 +36,7 @@ class CheckPlugin
                 }, function (Exception $e) {
                     var_dump('whut');
                     $this->addProblem('UNKNOWN', $e->getMessage());
-                })->always(function () {
+                })->finally(function () {
                     var_dump('Shut after res');
                     $this->shutdown();
                 });

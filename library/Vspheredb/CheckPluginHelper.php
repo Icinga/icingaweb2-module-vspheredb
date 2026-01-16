@@ -77,7 +77,7 @@ trait CheckPluginHelper
                 }, function (Exception $e) {
                     $this->addProblem('UNKNOWN', $e->getMessage());
                     $this->showOptionalTrace($e);
-                })->always(function () {
+                })->finally(function () {
                     $this->shutdown();
                 });
             } else {
