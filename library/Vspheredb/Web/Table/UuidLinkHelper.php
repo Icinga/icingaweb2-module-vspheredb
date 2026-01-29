@@ -106,6 +106,7 @@ trait UuidLinkHelper
                 ->where('uuid IN (?)', array_values($this->requiredUuids))
         );
 
+        /** @var object{uuid: string} $object */
         foreach ($objects as $object) {
             $this->fetchedUuids[$object->uuid] = $object;
         }

@@ -64,11 +64,17 @@ class OverviewTree extends BaseHtmlElement
                 // continue; // see #260
             }
             $item->children = [];
-            $all[$item->uuid] = $item;
-            if ($item->parent_uuid === null) {
-                $tree[$item->uuid] = $item;
+
+            /** @var string $uuid */
+            $uuid = $item->uuid;
+            /** @var ?string $parentUuid */
+            $parentUuid = $item->parent_uuid;
+
+            $all[$uuid] = $item;
+            if ($parentUuid === null) {
+                $tree[$uuid] = $item;
             } else {
-                $all[$item->parent_uuid]->children[$item->uuid] = $item;
+                $all[$parentUuid]->children[$uuid] = $item;
             }
         }
 

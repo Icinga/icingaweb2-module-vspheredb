@@ -56,6 +56,7 @@ class RuleSetRegistry implements JsonSerialization
     public function loadSet(string $class)
     {
         $set = new $class();
+        /** @var string $name */
         $name = $set::getIdentifier();
         if (isset($this->sets[$name])) {
             throw new RuntimeException("Cannot add set '$name' twice");

@@ -42,6 +42,7 @@ class CustomFieldsManager
                 $fields = [];
             }
             $this->map = [];
+            /** @var CustomFieldDef $field */
             foreach ($fields as $field) {
                 $this->map[$field->key] = $field->name;
             }

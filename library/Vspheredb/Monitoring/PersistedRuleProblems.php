@@ -57,11 +57,13 @@ class PersistedRuleProblems
             if ($vm->get('template') === 'y') {
                 continue;
             }
+            /** @var string $uuid */
             if ($uuid = $vm->get('runtime_host_uuid')) {
                 if (isset($hosts[$uuid])) {
                     $vm->setRuntimeHost($hosts[$uuid]);
                 }
             }
+            /** @var string $uuid */
             $uuid = $vm->get('uuid') ?? '';
             // Logic duplicates checkObjects, but this saves one iteration
             if (isset($objects[$uuid])) {
@@ -90,6 +92,7 @@ class PersistedRuleProblems
     protected function presetManagedObjects(array $objects, array $managedObjects)
     {
         foreach ($objects as $object) {
+            /** @var string $uuid */
             $uuid = $object->get('uuid') ?? '';
             if (isset($managedObjects[$uuid])) {
                 $object->setManagedObject($managedObjects[$uuid]);
@@ -102,6 +105,7 @@ class PersistedRuleProblems
         $db = $this->db->getDbAdapter();
         $all = [];
         $query = $db->select()->from(self::TABLE);
+        /** @var object{uuid: string, rule_name: string} $row */
         foreach ($db->fetchAll($query) as $row) {
             $all[$row->uuid][$row->rule_name] = $row;
         }

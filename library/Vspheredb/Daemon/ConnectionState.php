@@ -36,6 +36,7 @@ class ConnectionState
     public function getConnectionsByVCenter(): array
     {
         $connectionsByVCenter = $this->getConfiguredServersByVCenter();
+        /** @var ApiConnectionInfo $info */
         foreach ($this->daemonApiConnections as $info) {
             if (isset($connectionsByVCenter[$info->vCenterId])) {
                 if (isset($connectionsByVCenter[$info->vCenterId][$info->serverId])) {
@@ -70,11 +71,14 @@ class ConnectionState
                 ])
             ) as $server
         ) {
+            /** @var int|string $vCenterId */
             $vCenterId = $server->vcenter_id ?? '';
             if (! isset($result[$vCenterId])) {
                 $result[$vCenterId] = [];
             }
-            $result[$vCenterId][$server->id] =  new ServerConnectionInfo(
+            /** @var int $serverId */
+            $serverId = $server->id;
+            $result[$vCenterId][$serverId] =  new ServerConnectionInfo(
                 $server->host,
                 $server->enabled === 'y',
                 true

@@ -92,6 +92,7 @@ class VmQuickStats extends BaseDbObject
     {
         if ($object->hasBeenLoadedFromDb()) {
             $connection = $object->getConnection();
+            /** @var string $uuid */
             $uuid = $object->get('uuid') ?? '';
             if (self::$preloadCache === null) {
                 if (static::exists($uuid, $connection)) {

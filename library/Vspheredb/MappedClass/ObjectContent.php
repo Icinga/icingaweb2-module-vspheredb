@@ -100,6 +100,7 @@ class ObjectContent
             'obj' => $this->obj
         ];
         if ($this->propSet) {
+            /** @var DynamicProperty $dynamicProperty */
             foreach ($this->propSet as $dynamicProperty) {
                 $obj[$dynamicProperty->name] = $dynamicProperty->val;
             }

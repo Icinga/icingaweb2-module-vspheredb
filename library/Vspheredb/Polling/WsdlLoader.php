@@ -157,6 +157,7 @@ class WsdlLoader
         $this->pending = [];
         $curl = $this->curl;
         $dir = $this->cacheDir;
+        /** @var string $file */
         foreach ($this->requiredFiles as $file) {
             if (! file_exists("$dir/$file")) {
                 $this->logger->debug("Fetching $file");

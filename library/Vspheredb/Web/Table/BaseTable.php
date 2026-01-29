@@ -281,6 +281,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         }
 
         $query = $this->getQuery();
+        /** @var string $columnName */
         foreach ($columns as $columnName) {
             $space = strpos($columnName, ' ');
             if (false === $space) {

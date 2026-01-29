@@ -89,6 +89,7 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
         ])->where('vm_disk_usage.vm_uuid = ?', $object->getConnection()->quoteBinary($object->get('uuid'))));
 
         $instanceSettings = [];
+        /** @var string $key */
         foreach ($settings->listMainKeys() as $key) {
             $instanceSettings[$key] = $settings->withRemovedKey($key);
         }

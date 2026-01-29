@@ -84,6 +84,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
             ));
         }
 
+        /** @var string $parentName */
         foreach ($idToParent as $uuid => $parentName) {
             if (array_key_exists($parentName, $nameUuids)) {
                 $objects[$uuid]->setParent(

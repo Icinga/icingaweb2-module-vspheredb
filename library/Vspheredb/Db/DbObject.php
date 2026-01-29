@@ -526,6 +526,7 @@ abstract class DbObject
         $params = [];
         $key = $this->getKeyName();
         if (is_array($key)) {
+            /** @var string $k */
             foreach ($key as $k) {
                 $params[$k] = $this->get($k);
             }
@@ -549,6 +550,7 @@ abstract class DbObject
     {
         if (is_array($this->keyName)) {
             $id = [];
+            /** @var string $key */
             foreach ($this->keyName as $key) {
                 if (isset($this->properties[$key])) {
                     $id[$key] = $this->properties[$key];
@@ -898,6 +900,7 @@ abstract class DbObject
                     $this->table
                 ));
             }
+            /** @var string $k */
             foreach ($keyname as $k) {
                 if (! array_key_exists($k, $key)) {
                     // We allow for null in multicolumn keys:
@@ -938,6 +941,7 @@ abstract class DbObject
 
         if (is_array($key) && ! empty($key)) {
             $where = [];
+            /** @var string $k */
             foreach ($key as $k) {
                 if ($this->hasBeenLoadedFromDb()) {
                     if ($this->loadedProperties[$k] === null) {
@@ -985,6 +989,7 @@ abstract class DbObject
     {
         if (is_array($this->keyName)) {
             $id = [];
+            /** @var string $key */
             foreach ($this->keyName as $key) {
                 if (isset($this->properties[$key])) {
                     $id[$key] = $this->getReadableProperty($key);

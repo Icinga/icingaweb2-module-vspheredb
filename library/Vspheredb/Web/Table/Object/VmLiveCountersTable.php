@@ -133,6 +133,7 @@ class VmLiveCountersTable extends NameValueTable
         $rows = $db->fetchAll($query);
 
         $result = [];
+        /** @var object{instance: string, counter_key: int, value: string} $row */
         foreach ($rows as $row) {
             $result[$row->instance][$row->counter_key] = $row->value;
         }

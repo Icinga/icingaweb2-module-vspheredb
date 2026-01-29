@@ -689,6 +689,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     protected function getProcessInfo()
     {
         global $argv;
+        /** @var int $pid */
         $pid = $this->processInfo->pid;
         $info = (object) [$pid => (object) [
             'command' => implode(' ', $argv),
