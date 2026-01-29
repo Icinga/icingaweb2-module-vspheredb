@@ -22,6 +22,7 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
 
         $baseKey = $this->baseKey;
         $keyProperty = $this->keyProperty;
+        /** @var string $dbKeyProperty */
         $dbKeyProperty = $this->dbKeyProperty;
         $instanceClass = $this->instanceClass;
 

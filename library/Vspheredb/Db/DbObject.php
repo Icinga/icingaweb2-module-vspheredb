@@ -514,9 +514,9 @@ abstract class DbObject
     /**
      * Autoinc key name
      *
-     * @return string
+     * @return ?string
      */
-    public function getAutoincKeyName()
+    public function getAutoincKeyName(): ?string
     {
         return $this->autoincKeyName;
     }
@@ -548,10 +548,11 @@ abstract class DbObject
      */
     public function getId()
     {
-        if (is_array($this->keyName)) {
+        $keyName = $this->getKeyName();
+        if (is_array($keyName)) {
             $id = [];
             /** @var string $key */
-            foreach ($this->keyName as $key) {
+            foreach ($keyName as $key) {
                 if (isset($this->properties[$key])) {
                     $id[$key] = $this->properties[$key];
                 }
@@ -563,8 +564,8 @@ abstract class DbObject
 
             return $id;
         } else {
-            if (isset($this->properties[$this->keyName])) {
-                return $this->properties[$this->keyName];
+            if (isset($this->properties[$keyName])) {
+                return $this->properties[$keyName];
             }
         }
         return null;
@@ -577,16 +578,18 @@ abstract class DbObject
      */
     public function getAutoincId()
     {
-        if (isset($this->autoincKeyName) && isset($this->properties[$this->autoincKeyName])) {
-            return (int) $this->properties[$this->autoincKeyName];
+        $autoincKeyName = $this->getAutoincKeyName();
+        if ($autoincKeyName !== null && isset($this->properties[$autoincKeyName])) {
+            return (int) $this->properties[$autoincKeyName];
         }
         return null;
     }
 
     protected function forgetAutoincId()
     {
-        if (isset($this->properties[$this->autoincKeyName])) {
-            $this->properties[$this->autoincKeyName] = null;
+        $autoincKeyName = $this->getAutoincKeyName();
+        if ($autoincKeyName !== null && isset($this->properties[$autoincKeyName])) {
+            $this->properties[$autoincKeyName] = null;
         }
 
         return $this;
@@ -753,9 +756,10 @@ abstract class DbObject
     protected function insertIntoDb()
     {
         $properties = $this->getPropertiesForDb();
-        if ($this->autoincKeyName !== null) {
-            if ($this->protectAutoinc || $properties[$this->autoincKeyName] === null) {
-                unset($properties[$this->autoincKeyName]);
+        $autoincKeyName = $this->getAutoincKeyName();
+        if ($autoincKeyName !== null) {
+            if ($this->protectAutoinc || $properties[$autoincKeyName] === null) {
+                unset($properties[$autoincKeyName]);
             }
         }
         // TODO: Remove this!
@@ -817,11 +821,12 @@ abstract class DbObject
                     ));
                 }
             } else {
+                $autoincKeyName = $this->getAutoincKeyName();
                 if ($id && $this->existsInDb()) {
                     $logId = '"' . $this->getLogId() . '"';
 
                     if ($autoId = $this->getAutoincId()) {
-                        $logId .= sprintf(', %s=%s', $this->autoincKeyName, $autoId);
+                        $logId .= sprintf(', %s=%s', $autoincKeyName, $autoId);
                     }
                     throw new DuplicateKeyException(
                         'Trying to recreate %s (%s)',
@@ -831,14 +836,11 @@ abstract class DbObject
                 }
 
                 if ($this->insertIntoDb()) {
-                    if ($this->autoincKeyName && $this->getProperty($this->autoincKeyName) === null) {
+                    if ($autoincKeyName && $this->getProperty($autoincKeyName) === null) {
                         if ($this->connection->isPgsql()) {
-                            $this->properties[$this->autoincKeyName] = $this->db->lastInsertId(
-                                $table,
-                                $this->autoincKeyName
-                            );
+                            $this->properties[$autoincKeyName] = $this->db->lastInsertId($table, $autoincKeyName);
                         } else {
-                            $this->properties[$this->autoincKeyName] = $this->db->lastInsertId();
+                            $this->properties[$autoincKeyName] = $this->db->lastInsertId();
                         }
                     }
                     // $this->log(sprintf('New %s "%s" has been stored', $table, $id));

@@ -15,6 +15,14 @@ abstract class SimpleBackupTool implements BackupTool
     protected $customValues = [];
 
     /**
+     * @return string[]
+     */
+    protected function getCustomValues(): array
+    {
+        return $this->customValues;
+    }
+
+    /**
      * @param $annotation
      * @return bool
      */
@@ -40,7 +48,7 @@ abstract class SimpleBackupTool implements BackupTool
     protected function parseCustomValues(CustomValues $values)
     {
         $attributes = [];
-        foreach ($this->customValues as $name) {
+        foreach ($this->getCustomValues() as $name) {
             if ($values->has($name)) {
                 $attributes[$name] = $values->get($name);
             }
@@ -58,7 +66,7 @@ abstract class SimpleBackupTool implements BackupTool
     public function wants(VirtualMachine $vm)
     {
         $values = $vm->customValues();
-        foreach ($this->customValues as $name) {
+        foreach ($this->getCustomValues() as $name) {
             if ($values->has($name)) {
                 return true;
             }
@@ -141,14 +149,14 @@ abstract class SimpleBackupTool implements BackupTool
 
     public function stripCustomValues(CustomValues $values)
     {
-        foreach ($this->customValues as $name) {
+        foreach ($this->getCustomValues() as $name) {
             $values->remove($name);
         }
     }
 
     public function removeCustomValues(CustomValues $values)
     {
-        foreach ($this->customValues as $name) {
+        foreach ($this->getCustomValues() as $name) {
             $values->remove($name);
         }
     }
