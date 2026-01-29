@@ -577,7 +577,7 @@ abstract class DbObject
      */
     public function getAutoincId()
     {
-        if (isset($this->properties[$this->autoincKeyName])) {
+        if (isset($this->autoincKeyName) && isset($this->properties[$this->autoincKeyName])) {
             return (int) $this->properties[$this->autoincKeyName];
         }
         return null;
