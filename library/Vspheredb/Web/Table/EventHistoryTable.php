@@ -345,7 +345,7 @@ class EventHistoryTable extends ZfQueryBasedTable
      */
     protected function deferredObjectName(?string $uuid): DeferredText
     {
-        $this->requiredUuids[$uuid] = $uuid;
+        $this->requiredUuids[$uuid ?? ''] = $uuid;
 
         $content = new DeferredText(function () use ($uuid) {
             return $this->getUuidName($uuid);

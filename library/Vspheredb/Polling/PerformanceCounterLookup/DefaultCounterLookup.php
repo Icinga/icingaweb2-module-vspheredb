@@ -52,7 +52,7 @@ abstract class DefaultCounterLookup implements CounterLookup
             if ($hasInstanceKey) {
                 $result[$row->$objectKey . '/' . $row->$instanceKey] = (array) $row;
             } elseif ($instanceKey === null) {
-                $result[$row->$objectKey] = (array) $row;
+                $result[$row->$objectKey ?? ''] = (array) $row;
             } else {
                 $result[$row->$objectKey . '/' . $instanceKey] = (array) $row;
             }

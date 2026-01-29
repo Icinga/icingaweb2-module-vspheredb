@@ -62,7 +62,7 @@ class PersistedRuleProblems
                     $vm->setRuntimeHost($hosts[$uuid]);
                 }
             }
-            $uuid = $vm->get('uuid');
+            $uuid = $vm->get('uuid') ?? '';
             // Logic duplicates checkObjects, but this saves one iteration
             if (isset($objects[$uuid])) {
                 $vm->setManagedObject($objects[$uuid]);
@@ -90,7 +90,7 @@ class PersistedRuleProblems
     protected function presetManagedObjects(array $objects, array $managedObjects)
     {
         foreach ($objects as $object) {
-            $uuid = $object->get('uuid');
+            $uuid = $object->get('uuid') ?? '';
             if (isset($managedObjects[$uuid])) {
                 $object->setManagedObject($managedObjects[$uuid]);
             }
@@ -122,7 +122,7 @@ class PersistedRuleProblems
         $db = $this->db->getDbAdapter();
         $results = [];
         foreach ($objects as $object) {
-            $results[$object->get('uuid')] = $runner->checkForDb($object);
+            $results[$object->get('uuid') ?? ''] = $runner->checkForDb($object);
         }
 
         $db->beginTransaction();

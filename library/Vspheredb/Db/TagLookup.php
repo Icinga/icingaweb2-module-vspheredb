@@ -46,13 +46,14 @@ class TagLookup
                 continue;
             }
             $category = $this->categories[$categoryUuid];
+            $categoryName = $category->get('name') ?? '';
             if ($category->cardinalityIsSingle()) {
-                $result[$category->get('name')] = $tag->get('name');
+                $result[$categoryName] = $tag->get('name');
             } else {
-                if (isset($result[$category->get('name')])) {
-                    $result[$category->get('name')] = [$tag->get('name')];
+                if (isset($result[$categoryName])) {
+                    $result[$categoryName] = [$tag->get('name')];
                 } else {
-                    $result[$category->get('name')][] = $tag->get('name');
+                    $result[$categoryName][] = $tag->get('name');
                 }
             }
         }

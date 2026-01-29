@@ -69,7 +69,7 @@ class MonitoringRulesTree
 
         $parents = [];
         while (isset($this->allNodes[$uuid]->parent)) {
-            $parents[] = $uuid = $this->allNodes[$uuid]->parent->uuid;
+            $parents[] = $uuid = $this->allNodes[$uuid]->parent->uuid ?? '';
         }
         $parents[] = MonitoringRuleSet::NO_OBJECT;
 
@@ -177,15 +177,15 @@ class MonitoringRulesTree
         $all = [];
         $root = [];
         foreach ($vCenters as $folder) {
-            $uuid = $folder->uuid;
+            $uuid = $folder->uuid ?? '';
             $folder->children = [];
             $root[$uuid] = $folder;
             $all[$uuid] = &$root[$uuid];
             $root[$uuid] = &$all[$uuid];
         }
         foreach (array_merge($baseFolders, $allSubFolders) as $folder) {
-            $parent = $folder->parent_uuid;
-            $uuid = $folder->uuid;
+            $parent = $folder->parent_uuid ?? '';
+            $uuid = $folder->uuid ?? '';
             if (isset($all[$parent])) {
                 $folder->children = [];
                 $folder->parent = &$all[$parent];

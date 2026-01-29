@@ -70,10 +70,11 @@ class ConnectionState
                 ])
             ) as $server
         ) {
-            if (! isset($result[$server->vcenter_id])) {
-                $result[$server->vcenter_id] = [];
+            $vCenterId = $server->vcenter_id ?? '';
+            if (! isset($result[$vCenterId])) {
+                $result[$vCenterId] = [];
             }
-            $result[$server->vcenter_id][$server->id] =  new ServerConnectionInfo(
+            $result[$vCenterId][$server->id] =  new ServerConnectionInfo(
                 $server->host,
                 $server->enabled === 'y',
                 true

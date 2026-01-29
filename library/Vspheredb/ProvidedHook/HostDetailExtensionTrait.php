@@ -153,7 +153,7 @@ trait HostDetailExtensionTrait
                 if (! $value) {
                     continue;
                 }
-                $filter[$connection->{"{$prefix}_property"}] = $value;
+                $filter[$connection->{"{$prefix}_property"} ?? ''] = $value;
 
                 if ($connection->vcenter_uuid !== null) {
                     $filter["$filterPrefix.vcenter_uuid"] = $connection->vcenter_uuid;

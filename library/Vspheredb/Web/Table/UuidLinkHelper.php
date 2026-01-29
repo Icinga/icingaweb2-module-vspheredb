@@ -19,7 +19,7 @@ trait UuidLinkHelper
      */
     public function linkToUuid(?string $uuid): DeferredText
     {
-        $this->requiredUuids[$uuid] = $uuid;
+        $this->requiredUuids[$uuid ?? ''] = $uuid;
         $result = new DeferredText(function () use ($uuid) {
             if ($uuid === null) {
                 return null;

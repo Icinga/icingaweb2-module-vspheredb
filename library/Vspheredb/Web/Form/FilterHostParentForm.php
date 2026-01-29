@@ -93,12 +93,9 @@ class FilterHostParentForm extends Form
             'VmBeingCreatedEvent' => [119, 170, 255],
         ];
 
-        $type = $this->getElement('type')->getValue();
-        if (isset($colors[$type])) {
-            return $colors[$type];
-        } else {
-            return $colors['VmReconfiguredEvent'];
-        }
+        $type = $this->getElement('type')->getValue() ?? '';
+
+        return $colors[$type] ?? $colors['VmReconfiguredEvent'];
     }
 
     protected function enumHostParents()

@@ -128,6 +128,7 @@ class ApiConnectionHandler implements EventEmitterInterface
 
                 continue;
             }
+            $vCenterId = $vCenterId ?? '';
             if (!isset($vCenterCandidates[$vCenterId])) {
                 $vCenterCandidates[$vCenterId] = [];
             }

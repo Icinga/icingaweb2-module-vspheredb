@@ -105,7 +105,7 @@ class VCenterShipMetricsForm extends ObjectForm
             'value' => 'y'
         ]);
 
-        $value = $this->getValue('consumer');
+        $value = $this->getValue('consumer') ?? '';
         if (isset($consumers[$value])) {
             return $consumers[$value];
         }

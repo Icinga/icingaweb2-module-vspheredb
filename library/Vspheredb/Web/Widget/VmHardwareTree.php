@@ -99,7 +99,7 @@ class VmHardwareTree extends BaseHtmlElement
             if ($row->controller_key === null) {
                 $this->parents[$row->hardware_key] = $row;
             } else {
-                $this->children[$row->controller_key][$row->unit_number] = $row;
+                $this->children[$row->controller_key][$row->unit_number ?? ''] = $row;
             }
         }
     }
@@ -285,11 +285,12 @@ class VmHardwareTree extends BaseHtmlElement
             $li->add(Html::tag('span', ['class' => 'handle']));
         }
 
+        $controllerKey = $device->controller_key ?? '';
         if ($isDisk) {
-            $li->add($this->renderDisk($this->disks[$key], $device, $this->devices[$device->controller_key]));
+            $li->add($this->renderDisk($this->disks[$key], $device, $this->devices[$controllerKey]));
         } elseif ($isNic) {
             if (array_key_exists($key, $this->nics)) {
-                $li->add($this->renderNic($this->nics[$key], $device, $this->devices[$device->controller_key]));
+                $li->add($this->renderNic($this->nics[$key], $device, $this->devices[$controllerKey]));
             } else {
                 $li->add(Link::create($desc, '#', null, ['class' => $class, 'title' => 'No more details available']));
             }

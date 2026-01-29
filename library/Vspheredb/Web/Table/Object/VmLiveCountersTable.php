@@ -84,7 +84,7 @@ class VmLiveCountersTable extends NameValueTable
                     sprintf(
                         '%s (%s)',
                         $data->id->instance,
-                        $info[$data->id->counterId]
+                        $info[$data->id->counterId ?? '']
                     ),
                     [
                         Html::tag('span', [
@@ -98,7 +98,7 @@ class VmLiveCountersTable extends NameValueTable
                         Html::tag('span', [
                             'class' => 'sparkinfo'
                         ]),
-                        Html::tag('span', null, ' ' . $units[$data->id->counterId])
+                        Html::tag('span', null, ' ' . $units[$data->id->counterId ?? ''])
                     ]
                 );
             }
