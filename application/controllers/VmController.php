@@ -25,6 +25,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Vm\BackupToolInfo;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
 use Icinga\Module\Vspheredb\Web\Widget\VmRouteConfigTable;
+use ipl\Html\Attributes;
 
 class VmController extends Controller
 {
@@ -38,9 +39,7 @@ class VmController extends Controller
     public function indexAction(): void
     {
         $vm = $this->addVm();
-        $this->content()->addAttributes([
-            'class' => 'vm-info'
-        ]);
+        $this->content()->addAttributes(Attributes::create(['class' => 'vm-info']));
         $vCenter = VCenter::load($vm->get('vcenter_uuid'), $vm->getConnection());
         $this->addSections([
             new VmEssentialInfoTable($vm),
@@ -104,7 +103,7 @@ class VmController extends Controller
         $vm = VirtualMachine::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($vm->get('vcenter_uuid'));
         $this->controls()->add(new VmHeader($vm, VmQuickStats::loadFor($vm)));
-        $this->controls()->addAttributes(['class' => 'controls-with-object-header']);
+        $this->controls()->addAttributes(Attributes::create(['class' => 'controls-with-object-header']));
         $this->setTitle($vm->object()->get('object_name'));
         $this->handleTabs();
 

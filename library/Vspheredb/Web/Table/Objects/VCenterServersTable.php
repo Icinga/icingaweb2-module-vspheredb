@@ -12,6 +12,7 @@ use Icinga\Module\Vspheredb\Web\Form\DisableServerForm;
 use Icinga\Module\Vspheredb\Web\Form\EnableServerForm;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
+use ipl\Html\Attributes;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use Psr\Http\Message\ServerRequestInterface;
@@ -60,9 +61,7 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
 
     protected function initialize(): void
     {
-        $this->addAttributes([
-            'class' => 'table-vcenter-servers',
-        ]);
+        $this->addAttributes(Attributes::create(['class' => 'table-vcenter-servers']));
         $this->addAvailableColumns([
             (new SimpleColumn('server', $this->translate('Server'), [
                 'id'       => 'vcs.id',

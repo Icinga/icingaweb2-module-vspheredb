@@ -7,6 +7,7 @@ use gipfl\Format\LocalTimeFormat;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use gipfl\Translation\TranslationHelper;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 use ipl\Web\Compat\StyleWithNonce;
@@ -87,14 +88,14 @@ class CalendarMonthSummary extends Table
             $alpha = $count / $max;
 
             if ($alpha > 0.4) {
-                $link->addAttributes(['class' => 'color-white']);
+                $link->addAttributes(Attributes::create(['class' => 'color-white']));
             }
 
             $style = (new StyleWithNonce())
                 ->setModule('vspheredb')
                 ->addFor($link, ['background-color' => sprintf('rgba(%s, %.2F)', $this->color, $alpha)]);
 
-            $link->addAttributes(['title' => sprintf('%d events', $count)]);
+            $link->addAttributes(Attributes::create(['title' => sprintf('%d events', $count)]));
 
             $this->getDay($day)->setContent([$link, $style]);
         }
@@ -194,14 +195,14 @@ class CalendarMonthSummary extends Table
         $this->days[$day] = $td;
 
         if ($otherMonth) {
-            $td->addAttributes(['class' => 'other-month']);
+            $td->addAttributes(Attributes::create(['class' => 'other-month']));
         } elseif ($this->showGrayFuture && $day > $this->strToday) {
-            $td->addAttributes(['class' => 'future-day']);
+            $td->addAttributes(Attributes::create(['class' => 'future-day']));
         }
 
         // TODO: today VS strToday?!
         if ($day === $this->today) {
-            $td->addAttributes(['class' => 'today']);
+            $td->addAttributes(Attributes::create(['class' => 'today']));
         }
 
         return $td;

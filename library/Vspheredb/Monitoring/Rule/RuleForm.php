@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleSetDefiniti
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\MonitoringStateTrigger;
 use InvalidArgumentException;
+use ipl\Html\Attributes;
 use ipl\Html\FormElement\NumberElement;
 use ipl\Html\FormElement\SelectElement;
 use ipl\Html\FormElement\TextElement;
@@ -58,7 +59,7 @@ class RuleForm extends Form
         ?MonitoringRuleSet $loadedSet = null
     ) {
         $this->addPluginLoader('element', '\\Icinga\\Module\\Vspheredb\\Monitoring\\Rule\\Form\\Element', 'Element');
-        $this->addAttributes(['class' => 'ruleform']);
+        $this->addAttributes(Attributes::create(['class' => 'ruleform']));
         $this->objectType = $objectType;
         $this->db = $db;
         $this->binaryUuid = $binaryUuid;

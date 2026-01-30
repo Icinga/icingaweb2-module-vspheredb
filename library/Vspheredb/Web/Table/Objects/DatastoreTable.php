@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
+use ipl\Html\Attributes;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Select;
 
@@ -16,7 +17,7 @@ class DatastoreTable extends ObjectsTable
 {
     protected function initialize(): void
     {
-        $this->addAttributes(['class' => 'datastores-table']);
+        $this->addAttributes(Attributes::create(['class' => 'datastores-table']));
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
             $this->createColumn('object_name', $this->translate('Name'), [

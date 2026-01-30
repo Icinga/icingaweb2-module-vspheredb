@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -17,14 +18,14 @@ class CompactInOutSparkline extends BaseHtmlElement
         if ($in !== null) {
             $this->add(
                 $this->makeSparkLine($in)
-                    ->addAttributes(['class' => 'in'])
+                    ->addAttributes(Attributes::create(['class' => 'in']))
             );
         }
 
         if ($out !== null && $out !== '0,0,0,0,0') {
             $this->add(
                 $this->makeSparkLine($this->negateString($out))
-                    ->addAttributes(['class' => 'out'])
+                    ->addAttributes(Attributes::create(['class' => 'out']))
             );
         }
     }

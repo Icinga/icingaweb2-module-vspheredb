@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\Auth\RestrictionHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Util\Csp;
+use ipl\Html\Attributes;
 use Zend_Controller_Request_Abstract as ZfRequest;
 use Zend_Controller_Response_Abstract as ZfResponse;
 
@@ -33,9 +34,7 @@ class Controller extends CompatController
     {
         parent::init();
         if ($this->view->compact) {
-            $this->controls()->addAttributes([
-                'class' => 'show-compact'
-            ]);
+            $this->controls()->addAttributes(Attributes::create(['class' => 'show-compact']));
         }
     }
 
