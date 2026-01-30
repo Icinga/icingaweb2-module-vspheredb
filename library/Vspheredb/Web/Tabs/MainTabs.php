@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use ipl\I18n\Translation;
-use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
+use gipfl\IcingaWeb2\Widget\Tabs;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
+use ipl\I18n\Translation;
 
 class MainTabs extends Tabs
 {

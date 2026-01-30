@@ -2,15 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use ipl\Html\Html;
-use ipl\Html\HtmlDocument;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
-use ipl\I18n\Translation;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
+use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
+use ipl\I18n\Translation;
 
 class AdditionalTableActions
 {

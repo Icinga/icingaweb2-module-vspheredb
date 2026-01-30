@@ -2,13 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use ipl\I18n\Translation;
-use gipfl\Web\Form\Decorator\DdDtDecorator;
 use gipfl\ZfDbStore\Store;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
-use ipl\Html\FormElement\SubmitElement;
+use ipl\I18n\Translation;
 use React\EventLoop\LoopInterface;
 
 class PerfdataConsumerForm extends ObjectForm

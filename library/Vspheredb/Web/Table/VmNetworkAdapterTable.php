@@ -2,12 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
-use Icinga\Module\Vspheredb\Web\Widget\GrafanaVmPanel;
 use Icinga\Module\Vspheredb\Web\Widget\MacAddress;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\FormattedString;

@@ -12,7 +12,6 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\I18n\Translation;
-use Ramsey\Uuid\Uuid;
 
 class VmHardwareTree extends BaseHtmlElement
 {

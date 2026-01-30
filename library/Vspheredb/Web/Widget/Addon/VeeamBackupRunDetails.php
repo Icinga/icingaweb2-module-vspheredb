@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Widget\Addon;
 
 use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
 use ipl\I18n\Translation;

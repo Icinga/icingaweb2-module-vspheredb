@@ -3,10 +3,10 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use Icinga\Authentication\Auth;
-use Icinga\Module\Vspheredb\Web\OverviewTree;
-use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
+use Icinga\Module\Vspheredb\Web\OverviewTree;
 use Icinga\Module\Vspheredb\Web\Table\Objects\HostsTable;
+use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class HostsController extends ObjectsController

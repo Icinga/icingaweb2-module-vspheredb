@@ -12,7 +12,6 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
 use ipl\I18n\Translation;
-use Ramsey\Uuid\Uuid;
 use React\EventLoop\LoopInterface;
 
 use function React\Async\await;

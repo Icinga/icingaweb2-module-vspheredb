@@ -8,7 +8,6 @@ use Exception;
 use gipfl\Cli\Process;
 use gipfl\Curl\CurlAsync;
 use gipfl\LinuxHealth\Memory;
-use gipfl\Log\Logger;
 use gipfl\Log\PrefixLogger;
 use gipfl\ReactUtils\RetryUnless;
 use gipfl\SimpleDaemon\DaemonState;

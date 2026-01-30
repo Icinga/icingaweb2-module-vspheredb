@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use ipl\Html\DeferredText;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
+use ipl\Html\DeferredText;
 use Zend_Db_Adapter_Abstract;
 
 class DelayedPerfdataRenderer
