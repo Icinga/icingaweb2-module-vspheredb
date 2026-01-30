@@ -255,16 +255,12 @@ class RuleForm extends Form
 
     protected function normalizeBoolean(?string $value): ?bool
     {
-        switch ($value) {
-            case null:
-                return null;
-            case 'y':
-                return true;
-            case 'n':
-                return false;
-        }
-
-        throw new RuntimeException("'$value' is not a valid boolean value");
+        return match ($value) {
+            null    => null,
+            'y'     => true,
+            'n'     => false,
+            default => throw new RuntimeException("'$value' is not a valid boolean value")
+        };
     }
 
     protected function addEnabledSetting(string $prefix): void

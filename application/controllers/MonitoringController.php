@@ -286,16 +286,12 @@ class MonitoringController extends Controller
      */
     protected function getTypeLabelForObjectType(string $type): string
     {
-        switch ($type) {
-            case 'host':
-                return $this->translate('Host Systems');
-            case 'vm':
-                return $this->translate('Virtual Machines');
-            case 'datastore':
-                return $this->translate('Datastores');
-        }
-
-        throw new RuntimeException("Unexpected object type: '$type'");
+        return match ($type) {
+            'host'      => $this->translate('Host Systems'),
+            'vm'        => $this->translate('Virtual Machines'),
+            'datastore' => $this->translate('Datastores'),
+            default     => throw new RuntimeException("Unexpected object type: '$type'")
+        };
     }
 
     /**

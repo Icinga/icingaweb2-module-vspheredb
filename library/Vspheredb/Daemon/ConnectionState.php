@@ -108,6 +108,7 @@ class ConnectionState
             $lastError = ": $lastError";
             $lastError = Anonymizer::anonymizeString($lastError);
         }
+
         switch ($state) {
             case 'unknown':
                 return sprintf(
@@ -115,35 +116,17 @@ class ConnectionState
                     $label
                 ) . $lastError;
             case 'disabled':
-                return sprintf(
-                    $t->translate('Connections to %s have been disabled'),
-                    $label
-                );
+                return sprintf($t->translate('Connections to %s have been disabled'), $label);
             case ApiConnection::STATE_CONNECTED:
-                return sprintf(
-                    $t->translate('API connection with %s is fine'),
-                    $label
-                );
+                return sprintf($t->translate('API connection with %s is fine'), $label);
             case ApiConnection::STATE_LOGIN:
-                return sprintf(
-                    $t->translate('Trying to log in to %s'),
-                    $label
-                ) . $lastError;
+                return sprintf($t->translate('Trying to log in to %s'), $label) . $lastError;
             case ApiConnection::STATE_INIT:
-                return sprintf(
-                    $t->translate('Initializing API connection with %s'),
-                    $label
-                ) . $lastError;
+                return sprintf($t->translate('Initializing API connection with %s'), $label) . $lastError;
             case ApiConnection::STATE_FAILING:
-                return sprintf(
-                    $t->translate('API connection with %s is failing'),
-                    $label
-                ) . $lastError;
+                return sprintf($t->translate('API connection with %s is failing'), $label) . $lastError;
             case ApiConnection::STATE_STOPPING:
-                return sprintf(
-                    $t->translate('Stopping API connection with %s'),
-                    $label
-                ) . $lastError;
+                return sprintf($t->translate('Stopping API connection with %s'), $label) . $lastError;
             default:
                 return $t->translate("Unknown API connection state: $state") . $lastError;
         }

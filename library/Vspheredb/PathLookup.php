@@ -51,21 +51,14 @@ class PathLookup
 
     protected function getBaseUrlByType(string $type): string
     {
-        switch ($type) {
-            case 'Datastore':
-                return 'vspheredb/datastore';
-            case 'HostSystem':
-                return 'vspheredb/host';
-            case 'VirtualMachine':
-                return 'vspheredb/vm';
-            case 'ClusterComputeResource':
-            case 'ComputeResource':
-                return 'vspheredb/hosts';
-            case 'Datacenter':
-            case 'Folder':
-            default:
-                return 'vspheredb/vms';
-        }
+        return match ($type) {
+            'Datastore'       => 'vspheredb/datastore',
+            'HostSystem'      => 'vspheredb/host',
+            'VirtualMachine'  => 'vspheredb/vm',
+            'ClusterComputeResource',
+            'ComputeResource' => 'vspheredb/hosts',
+            default           => 'vspheredb/vms'
+        };
     }
 
     public function getObjectName(string $uuid): string
