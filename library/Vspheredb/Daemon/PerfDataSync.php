@@ -129,6 +129,7 @@ class PerfDataSync implements DaemonTask
         if (! $loader) {
             $this->stopRunningInfluxDbInstances();
             $this->loadingWriterConfig = false;
+
             return resolve(null);
         }
         return $loader->then(function (?ChunkedInfluxDbWriter $writer) {
@@ -185,6 +186,7 @@ class PerfDataSync implements DaemonTask
         ])->then(function ($result) {
             if (!isset($result->returnval)) {
                 $this->logger->warning('Got no returnval when fetching performance data');
+
                 return [];
             }
 
@@ -212,11 +214,13 @@ class PerfDataSync implements DaemonTask
         $counterMap = CounterMap::fetchCounters($db, $set, $vCenterUuid);
         if (empty($counterMap)) {
             $this->logger->notice('Got no counters, nothing to do');
+
             return;
         }
         $instances = $counterLookup->fetchRequiredMetricInstances($vCenterUuid);
         if (empty($instances)) {
             $this->logger->notice('Got no instances to fetch, nothing to do');
+
             return;
         }
         $spec = PerformanceQuerySpecHelper::prepareQuerySpec(
@@ -227,6 +231,7 @@ class PerfDataSync implements DaemonTask
         );
         if ($this->influxDbWriter === null) {
             $this->logger->notice('No more InfluxDB writer available, nothing to do');
+
             return;
         }
 
@@ -312,6 +317,7 @@ class PerfDataSync implements DaemonTask
             return $this->api->fetchSingleObject($content->perfManager);
         })->then(function ($result) {
             $this->storeCounterInfo($result);
+
             return resolve(null);
         });
     }

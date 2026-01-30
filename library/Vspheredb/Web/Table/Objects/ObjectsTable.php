@@ -45,6 +45,7 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter,
     {
         if (empty($uuids)) {
             $this->getQuery()->where('1 = 0');
+
             return $this;
         }
 

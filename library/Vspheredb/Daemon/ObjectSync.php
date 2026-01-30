@@ -152,6 +152,7 @@ class ObjectSync implements DaemonTask
     public function start(LoopInterface $loop): PromiseInterface
     {
         $this->loop = $loop;
+
         return $this->initialize();
     }
 

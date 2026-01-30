@@ -41,6 +41,7 @@ class FilterVCenterForm extends Form
     public function allowAllVCenters(bool $allow = true): static
     {
         $this->allowAllVCenters = $allow;
+
         return $this;
     }
 

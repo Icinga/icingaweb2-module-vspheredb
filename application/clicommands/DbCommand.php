@@ -57,6 +57,7 @@ class DbCommand extends Command
         $logger = new Logger();
         $this->eventuallyFilterLog($logger);
         IcingaLogger::replace($logger);
+
         return $logger;
     }
 

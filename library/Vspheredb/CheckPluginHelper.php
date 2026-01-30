@@ -230,6 +230,7 @@ trait CheckPluginHelper
         }
         $this->loop()->addTimer(0.01, function () {
             $this->loop()->stop();
+
             exit($this->getState());
         });
     }

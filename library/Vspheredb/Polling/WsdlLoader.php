@@ -151,6 +151,7 @@ class WsdlLoader
     {
         if ($this->deferred) {
             $this->logger->notice('Calling WsdlLoader::fetchFiles while already loading');
+
             return $this->deferred->promise();
         }
         $this->deferred = $deferred = new Deferred();

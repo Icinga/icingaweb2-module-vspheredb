@@ -106,6 +106,7 @@ class RpcNamespaceInfluxDb
         return $this->connect($baseUrl, $apiVersion, $username, $password)->then(function ($connection) use ($dbName) {
             /** @var InfluxDbConnection $connection */
             $this->logger->info("CREATING $dbName");
+
             return $connection->createDatabase($dbName);
         });
     }

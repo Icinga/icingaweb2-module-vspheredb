@@ -58,6 +58,7 @@ class HostPciDevice extends BaseDbObject
                         var_dump(is_int($properties->$key));
                         var_dump($properties->$key);
                         var_dump($properties);
+
                         exit;
                     }
                 } else {

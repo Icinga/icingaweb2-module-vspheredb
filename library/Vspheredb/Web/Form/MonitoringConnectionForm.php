@@ -85,6 +85,7 @@ class MonitoringConnectionForm extends Form
             $this->addElement('submit', 'submit', [
                 'label' => $this->translate('Next')
             ]);
+
             return;
         }
 
@@ -99,6 +100,7 @@ class MonitoringConnectionForm extends Form
                 }
             } catch (\Exception $e) {
                 $this->getElement('source_resource_name')->addMessage($e->getMessage());
+
                 return;
             }
 
@@ -118,6 +120,7 @@ class MonitoringConnectionForm extends Form
                 }
             } catch (\Exception $e) {
                 $this->getElement('source_resource_name')->addMessage($e->getMessage());
+
                 return;
             }
 

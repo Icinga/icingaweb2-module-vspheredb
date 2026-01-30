@@ -81,6 +81,7 @@ class ServerInfo implements JsonSerialization
     public function jsonSerialize(): \stdClass
     {
         ksort($this->properties);
+
         return (object) $this->properties;
     }
 

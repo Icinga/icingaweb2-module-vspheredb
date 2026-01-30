@@ -74,7 +74,9 @@ class DistributedVirtualSwitch extends BaseDbObject
     {
         var_dump('HOSTMEMBERS');
         var_dump($hostMembers);
+
         return;
+
         $newSum = $this->calculateMorefsChecksum($hostMembers);
         if ($this->get('hostmembers_checksum') !== $newSum) {
             $this->scheduleNewPortgroupRefs($hostMembers);
@@ -139,6 +141,7 @@ class DistributedVirtualSwitch extends BaseDbObject
         }
 
         sort($names);
+
         return sha1(implode('|', $names), true);
     }
 }

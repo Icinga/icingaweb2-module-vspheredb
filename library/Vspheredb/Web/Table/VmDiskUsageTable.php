@@ -54,6 +54,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         if (count($this) === 0) {
             $this->prepend($this->translate('No guest disk found. Please check guest utilities'));
             $this->prepend(new SubTitle($this->translate('Guest Disk Usage'), 'chart-pie'));
+
             return null;
         }
 

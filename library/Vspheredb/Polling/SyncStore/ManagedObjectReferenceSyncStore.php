@@ -47,6 +47,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
                     $fetched[$uuid],
                     Uuid::fromBytes($uuid)->toString()
                 ));
+
                 return;
             }
             $fetched[$uuid] = $name;
