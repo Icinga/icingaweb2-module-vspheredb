@@ -41,6 +41,7 @@ class VCenterSummaryTable extends ObjectsTable
     public function setConnections(array $connections): self
     {
         $this->connections = $connections;
+
         return $this;
     }
 
@@ -262,6 +263,7 @@ class VCenterSummaryTable extends ObjectsTable
         if (empty($result)) {
             return null;
         }
+
         return [
             Html::tag('br'),
             Html::tag('small', $result),

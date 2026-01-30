@@ -57,6 +57,7 @@ class ProposeMigrations extends HtmlDocument
     public function hasAppliedMigrations(): bool
     {
         $this->ensureAssembled();
+
         return $this->appliedMigrations;
     }
 
@@ -68,6 +69,7 @@ class ProposeMigrations extends HtmlDocument
     public function hasFailed(): bool
     {
         $this->ensureAssembled();
+
         return $this->failed;
     }
 

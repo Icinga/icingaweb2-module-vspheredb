@@ -57,6 +57,7 @@ class DatastoreUsage extends BaseHtmlElement
     public function setCapacity(int $capacity): static
     {
         $this->capacity = $capacity;
+
         return $this;
     }
 

@@ -146,6 +146,7 @@ class VirtualMachine extends BaseDbObject
     {
         if ($host === null) {
             $this->runtimeHost = null;
+
             return;
         }
 
@@ -220,6 +221,7 @@ class VirtualMachine extends BaseDbObject
     {
         if ($value === null || ! isset($value->GuestNicInfo)) {
             $this->set('guest_ip_addresses', null);
+
             return;
         }
         $addresses = [];

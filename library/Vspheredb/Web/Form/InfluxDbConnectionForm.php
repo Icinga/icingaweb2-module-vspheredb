@@ -230,12 +230,14 @@ class InfluxDbConnectionForm extends Form
                 $this->checkedNow = true;
                 $this->setCheckedApiVersionFor($baseUrl, $version);
                 $this->markUrlAsValidated();
+
                 return $version;
             } else {
                 throw new \Exception("Version $version is not supported");
             }
         } catch (\Exception $e) {
             $this->triggerElementError('base_url', $e->getMessage());
+
             return false;
         }
     }

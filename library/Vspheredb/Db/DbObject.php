@@ -222,6 +222,7 @@ abstract class DbObject
         }
 
         $this->assertPropertyExists($property);
+
         return $this->properties[$property];
     }
 
@@ -276,6 +277,7 @@ abstract class DbObject
         if (method_exists($this, $func)) {
             return true;
         }
+
         return false;
     }
 
@@ -473,6 +475,7 @@ abstract class DbObject
 
             $props[$key] = $this->properties[$key];
         }
+
         return $props;
     }
 
@@ -578,6 +581,7 @@ abstract class DbObject
                 return $this->properties[$keyName];
             }
         }
+
         return null;
     }
 
@@ -592,6 +596,7 @@ abstract class DbObject
         if ($autoincKeyName !== null && isset($this->properties[$autoincKeyName])) {
             return (int) $this->properties[$autoincKeyName];
         }
+
         return null;
     }
 
@@ -705,6 +710,7 @@ abstract class DbObject
         $this->hasBeenModified = false;
         $this->modifiedProperties = [];
         $this->onLoadFromDb();
+
         return $this;
     }
 
@@ -954,6 +960,7 @@ abstract class DbObject
         } else {
             $this->set($keyname, $key);
         }
+
         return $this;
     }
 
@@ -1121,6 +1128,7 @@ abstract class DbObject
         // $this->log(sprintf('%s "%s" has been DELETED', $table, this->getLogId()));
         $this->onDelete();
         $this->loadedFromDb = false;
+
         return true;
     }
 
@@ -1255,6 +1263,7 @@ abstract class DbObject
     {
         $obj = new static();
         $obj->setConnection($connection)->setKey($id);
+
         return $obj->existsInDb();
     }
 

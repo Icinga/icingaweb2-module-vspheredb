@@ -89,6 +89,7 @@ class PerfdataConsumerForm extends ObjectForm
                 $this->translate('There is no such PerfdataConsumer: %s'),
                 $implementation
             ));
+
             return;
         }
         $instance = new $class();

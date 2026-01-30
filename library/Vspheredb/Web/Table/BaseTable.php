@@ -131,6 +131,7 @@ abstract class BaseTable extends ZfQueryBasedTable
             } else {
                 $tr = $this::row($columns, null, 'th');
             }
+
             return $tr;
         } else {
             return null;

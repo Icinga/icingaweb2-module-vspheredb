@@ -397,6 +397,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
     public function filterVCenterUuids(?array $uuids): static
     {
         $this->vCenterFilterUuids = $uuids;
+
         return $this;
     }
 
@@ -408,6 +409,8 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
     public function filterParentUuids(?array $uuids): static
     {
         $this->parentFilterUuids = $uuids;
+
+        return $this;
     }
 
     /**

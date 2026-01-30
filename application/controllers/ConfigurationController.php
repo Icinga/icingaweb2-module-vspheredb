@@ -53,6 +53,7 @@ class ConfigurationController extends Controller
                     'The database has no vSphereDB schema. Waiting for the Background Daemon'
                     . ' to initialize the database'
                 )));
+
                 return;
             }
 
@@ -61,6 +62,7 @@ class ConfigurationController extends Controller
                     'The database has pending DB migrations. Please restart the Background'
                     . ' daemon to apply them'
                 )));
+
                 return;
             }
 

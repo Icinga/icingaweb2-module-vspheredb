@@ -43,6 +43,7 @@ class LogLevelForm extends InlineForm
             $this->talkedToSocket = true;
         } catch (\Exception $e) {
             $this->talkedToSocket = false;
+
             return;
         }
 

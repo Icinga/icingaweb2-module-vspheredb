@@ -118,6 +118,7 @@ class ApiConnectionHandler implements EventEmitterInterface
     {
         if ($servers->equals($this->appliedServers)) {
             $this->logger->debug('Server Set is unchanged');
+
             return;
         }
         $vCenterCandidates = [];
@@ -262,6 +263,7 @@ class ApiConnectionHandler implements EventEmitterInterface
                     'Not retrying %s, connection has been removed',
                     $server->getIdentifier()
                 ));
+
                 return;
             }
             $this->loop->cancelTimer($this->failing[$serverId]);

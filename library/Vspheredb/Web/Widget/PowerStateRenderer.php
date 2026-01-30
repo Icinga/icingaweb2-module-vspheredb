@@ -15,6 +15,7 @@ class PowerStateRenderer extends Html
         if (is_object($state)) {
             $state = $state->runtime_power_state;
         }
+
         return Icon::create('off', [
             'title' => $this->getPowerStateDescription($state),
             'class' => [ 'state', $state ]

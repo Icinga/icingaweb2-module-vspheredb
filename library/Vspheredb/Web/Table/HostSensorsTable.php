@@ -32,6 +32,7 @@ class HostSensorsTable extends ZfQueryBasedTable
     public function renderRow($row): HtmlElement
     {
         $this->renderTypeIfNew($row->sensor_type);
+
         return static::row([
             $this->renderHealthState($row->health_state),
             $row->name,

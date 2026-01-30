@@ -115,6 +115,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     {
         $class = static::getClass($consumer->get('implementation'));
         /** @var PerfDataConsumerHook $instance */
+
         return $class::initialize($loop, $consumer->settings());
     }
 
@@ -146,6 +147,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     protected function processQueue(): bool
     {
         array_pop($this->queue);
+
         return true;
     }
 

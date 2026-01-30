@@ -156,6 +156,7 @@ class Command extends CliCommand
     public function fail($msg)
     {
         echo $this->screen->colorize("$msg\n", 'red');
+
         exit(1);
     }
 
@@ -192,6 +193,7 @@ class Command extends CliCommand
         // This allows to flush streams, especially pending log messages
         $this->loop()->addTimer(0.1, function () {
             $this->stopMainLoop();
+
             exit(1);
         });
         $this->eventuallyStartMainLoop();

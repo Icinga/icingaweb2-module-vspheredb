@@ -47,6 +47,7 @@ class Anonymizer
             $instance = Hook::first('vspheredb/Anonymizer');
             if ($instance === null) {
                 self::$instance = false;
+
                 return null;
             } else {
                 self::$instance = $instance;

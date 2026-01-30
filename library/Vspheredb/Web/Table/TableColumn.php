@@ -70,6 +70,7 @@ abstract class TableColumn
     public function setAlias(string $alias): static
     {
         $this->alias = $alias;
+
         return $this;
     }
 
@@ -108,6 +109,7 @@ abstract class TableColumn
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -172,6 +174,7 @@ abstract class TableColumn
     public function setDefaultSortDirection(string $defaultSortDirection): static
     {
         $this->defaultSortDirection = $defaultSortDirection;
+
         return $this;
     }
 }

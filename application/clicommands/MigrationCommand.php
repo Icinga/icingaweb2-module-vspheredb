@@ -60,6 +60,7 @@ class MigrationCommand extends Command
     public function runAction(): never
     {
         $this->migrations()->applyPendingMigrations();
+
         exit(0);
     }
 

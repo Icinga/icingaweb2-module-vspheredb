@@ -172,6 +172,7 @@ class RestApi
                     } else {
                         $this->logger->debug('REST API Session is no longer valid');
                         $this->sidStore->forgetCookies();
+
                         return false;
                     }
                 }

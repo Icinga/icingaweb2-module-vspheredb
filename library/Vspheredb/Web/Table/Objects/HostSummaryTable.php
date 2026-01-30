@@ -244,6 +244,7 @@ abstract class HostSummaryTable extends ObjectsTable
         if (empty($result)) {
             return null;
         }
+
         return [
             Html::tag('br'),
             Html::tag('small', $result),

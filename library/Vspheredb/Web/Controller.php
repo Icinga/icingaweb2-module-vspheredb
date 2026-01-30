@@ -69,6 +69,7 @@ class Controller extends CompatController
     {
         $vCenter = VCenter::loadWithUuid($this->params->getRequired($paramName), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($vCenter->get('instance_uuid'));
+
         return $vCenter;
     }
 
