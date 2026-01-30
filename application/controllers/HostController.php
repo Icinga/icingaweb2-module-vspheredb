@@ -24,6 +24,7 @@ use Icinga\Module\Vspheredb\Web\Widget\HostHeader;
 use Icinga\Module\Vspheredb\Web\Widget\HostMonitoringInfo;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 use Icinga\Module\Vspheredb\Web\Widget\TaggingDetails;
+use ipl\Html\Attributes;
 
 class HostController extends Controller
 {
@@ -39,7 +40,7 @@ class HostController extends Controller
     public function indexAction(): void
     {
         $host = $this->addHost();
-        $this->content()->addAttributes(['class' => 'host-info']);
+        $this->content()->addAttributes(Attributes::create(['class' => 'host-info']));
         $vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
         $quickStats = HostQuickStats::loadFor($host);
         $this->addSections([
@@ -113,7 +114,7 @@ class HostController extends Controller
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($host->get('vcenter_uuid'));
         $quickStats = HostQuickStats::loadFor($host);
         $this->controls()->add($this->hostHeader = new HostHeader($host, $quickStats));
-        $this->controls()->addAttributes(['class' => 'controls-with-object-header']);
+        $this->controls()->addAttributes(Attributes::create(['class' => 'controls-with-object-header']));
         $this->setTitle($host->object()->get('object_name'));
         $this->handleTabs($host);
 

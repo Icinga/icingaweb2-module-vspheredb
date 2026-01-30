@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Util;
+use ipl\Html\Attributes;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
@@ -19,8 +20,8 @@ class TopPerfTable extends Table
     {
         $this->getHeader()->add(Table::tr([
             Table::th($title),
-            Table::th('5x5min')->addAttributes(['class' => 'sparkline-header']),
-            Table::th('Last 5min')->addAttributes(['class' => 'last-5min-header'])
+            Table::th('5x5min')->addAttributes(Attributes::create(['class' => 'sparkline-header'])),
+            Table::th('Last 5min')->addAttributes(Attributes::create(['class' => 'last-5min-header']))
         ]));
         foreach ($rows as $row) {
             $this->getBody()->add(Table::row([

@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use Icinga\Module\Vspheredb\Format;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use gipfl\Translation\TranslationHelper;
@@ -35,7 +36,7 @@ class CpuAbsoluteUsage extends BaseHtmlElement
         }
 
         if ($class !== null) {
-            $this->addAttributes(['class' => $class]);
+            $this->addAttributes(Attributes::create(['class' => $class]));
         }
         [$value, $unit] = Format::mhzWithSeparateUnit($mhz);
         $this->add([

@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Web\Compat\StyleWithNonce;
 use Zend_Db_Adapter_Abstract;
@@ -197,7 +198,7 @@ class DatastoreUsage extends BaseHtmlElement
             ->setModule('vspheredb')
             ->addFor($link, ['width' => sprintf('%.3F%%; ', $percent)]);
 
-        $link->addAttributes($attributes);
+        $link->addAttributes(Attributes::create($attributes));
 
         if ($vmUuid) {
             $alpha = (20 + (crc32(sha1($vmUuid . $this->uuid)) % 60)) / 100;
