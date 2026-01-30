@@ -136,6 +136,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->initializeDbProcess();
         $this->keepRefreshingServerConfig();
         $this->daemonState->setState(self::STATE_IDLE);
+
         return resolve(null);
     }
 
@@ -638,6 +639,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->logger->notice('[db] sending DB config to child process');
         if (! $this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_READY) {
             $this->logger->warning('[db] DB runner is NOT ready, not sending config');
+
             return resolve(null);
         }
         if ($this->dbConfig === null) {
@@ -750,6 +752,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             $this->setDbState('config error');
             if ($this->dbConfig === null) {
                 $this->logger->error('[configwatch] Got no valid DB configuration');
+
                 return;
             } else {
                 $this->logger->error('[configwatch] There is no longer a valid DB configuration');

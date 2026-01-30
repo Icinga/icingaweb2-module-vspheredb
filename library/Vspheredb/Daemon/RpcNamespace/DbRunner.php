@@ -134,6 +134,7 @@ class DbRunner
     public function runDbCleanupRequest(): bool
     {
         $this->requireCleanup()->runForStartup();
+
         return true;
     }
 
@@ -143,6 +144,7 @@ class DbRunner
     public function clearDbConfigRequest(): bool
     {
         $this->disconnect();
+
         return true;
     }
 
@@ -236,11 +238,13 @@ class DbRunner
     {
         if ($this->connection === null) {
             $this->logger->warning('Not refreshing Rule problems, DB is not ready');
+
             return false;
         }
 
         if (Db::migrationsForDb($this->connection)->hasPendingMigrations()) {
             $this->logger->warning('Not refreshing Rule problems, DB is not ready');
+
             return false;
         }
 
@@ -254,6 +258,7 @@ class DbRunner
             return true;
         } catch (\Throwable $e) {
             $this->logger->error('Refreshing Rule Problems failed: ' . $e->getMessage());
+
             return false;
         }
     }
@@ -367,6 +372,7 @@ class DbRunner
         }
         $c = new DbCleanup($this->connection->getDbAdapter(), $this->logger);
         Process::setTitle('Icinga::vSphereDB::DB::cleanup');
+
         return $c;
     }
 

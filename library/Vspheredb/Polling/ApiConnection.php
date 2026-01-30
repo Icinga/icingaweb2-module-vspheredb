@@ -250,6 +250,7 @@ class ApiConnection implements EventEmitterInterface
         $serverId = $this->serverInfo->getServerId();
         $cacheDir = SafeCacheDir::getSubDirectory("wsdl-$serverId");
         $loader = new WsdlLoader($cacheDir, $this->logger, $this->serverInfo, $this->curl);
+
         return $loader->fetchInitialWsdlFile($this->loop);
     }
 

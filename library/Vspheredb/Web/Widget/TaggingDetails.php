@@ -56,6 +56,7 @@ class TaggingDetails extends HtmlDocument
 
         if (empty($this->tags) && empty($internal)) {
             $this->add($this->translate('No tags been defined'));
+
             return;
         }
         $table = NameValueTable::create();

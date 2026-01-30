@@ -211,6 +211,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     {
         if ($object === null) {
             $this->object = null;
+
             return;
         }
 
@@ -231,6 +232,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     public static function getType(): false|string
     {
         $parts = explode('\\', get_class(static::create()));
+
         return end($parts);
     }
 

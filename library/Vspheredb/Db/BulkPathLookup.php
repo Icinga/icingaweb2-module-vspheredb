@@ -68,6 +68,7 @@ class BulkPathLookup
         foreach ($db->fetchAll($query) as $row) {
             $result[$row->uuid] = $row;
         }
+
         return $result;
     }
 }

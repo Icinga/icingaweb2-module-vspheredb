@@ -130,6 +130,7 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
     {
         if (empty($uuids)) {
             $this->getQuery()->where('1 = 0');
+
             return $this;
         }
 

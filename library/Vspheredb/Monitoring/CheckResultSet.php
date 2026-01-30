@@ -74,6 +74,7 @@ class CheckResultSet implements CheckResultInterface
     protected function indentAllButFirstLine(string $string, int $spaces): string
     {
         $lines = explode(PHP_EOL, rtrim($string));
+
         return array_shift($lines) . $this->indent(implode(PHP_EOL, $lines), $spaces);
     }
 

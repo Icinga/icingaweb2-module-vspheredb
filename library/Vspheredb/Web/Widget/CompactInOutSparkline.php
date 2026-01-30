@@ -39,6 +39,7 @@ class CompactInOutSparkline extends BaseHtmlElement
         if ($values === null) {
             return null;
         }
+
         return Html::tag('span', [
             'class'            => 'sparkline',
             'sparkType'        => 'bar',

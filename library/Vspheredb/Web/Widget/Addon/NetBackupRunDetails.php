@@ -28,6 +28,7 @@ class NetBackupRunDetails extends NameValueTable
                 $this->translate('Excluded'),
                 $this->translate('This VM has been excluded from Backup')
             );
+
             return;
         }
         if (isset($attributes['Job name'])) {

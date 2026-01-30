@@ -82,6 +82,7 @@ class SafeCacheDir
     protected static function uidToName(int $uid): string
     {
         $info = posix_getpwuid($uid);
+
         return $info['name'];
     }
 }

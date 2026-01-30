@@ -158,6 +158,7 @@ class VsphereApi
                 }
                 $this->logger->notice($message);
                 $this->cookieStore->forgetCookies();
+
                 return $this->login();
             });
         } else {
@@ -328,6 +329,7 @@ class VsphereApi
                         $object->getLogName()
                     )));
                 }
+
                 return $result->objects[0];
             });
     }
@@ -356,6 +358,7 @@ class VsphereApi
                     }
                     $result = new RetrieveResult();
                     $result->objects = $objects;
+
                     return $result;
                 });
             });
