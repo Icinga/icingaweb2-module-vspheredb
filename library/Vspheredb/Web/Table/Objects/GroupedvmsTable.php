@@ -51,13 +51,6 @@ class GroupedvmsTable extends ObjectsTable
             []
         );
 
-        if ($this->parentUuids) {
-            $query->where('ho.parent_uuid IN (?)', $this->parentUuids);
-        }
-        if ($this->filterVCenter) {
-            $query->where('ho.vcenter_uuid = ?', $this->filterVCenter->getUuid());
-        }
-
         return $query;
     }
 

@@ -15,6 +15,7 @@ use Icinga\Module\Vspheredb\Web\Tabs\ConfigTabs;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Notification;
+use ipl\Html\Contract\Form;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 
@@ -191,7 +192,7 @@ class ConfigurationController extends Controller
         }
 
         $form = new MonitoringConnectionForm($this->db());
-        $form->on(MonitoringConnectionForm::ON_SUCCESS, function (MonitoringConnectionForm $form) {
+        $form->on(Form::ON_SUBMIT, function (MonitoringConnectionForm $form) {
             // TODO: created, modified, nothing, %s
             // $this->getViewRenderer()->disable();
             $this->redirectNow($this->url()->with('id', $form->getId()));

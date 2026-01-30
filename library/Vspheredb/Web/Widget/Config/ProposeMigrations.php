@@ -9,6 +9,7 @@ use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Form\ApplyMigrationsForm;
+use ipl\Html\Contract\Form;
 use ipl\Html\HtmlDocument;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -143,7 +144,7 @@ class ProposeMigrations extends HtmlDocument
     {
         $this->add(
             (new ApplyMigrationsForm($migrations))
-                ->on(ApplyMigrationsForm::ON_SUCCESS, function () {
+                ->on(Form::ON_SUBMIT, function () {
                     $this->appliedMigrations = true;
                 })
                 ->handleRequest($this->request)

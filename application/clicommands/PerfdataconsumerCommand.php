@@ -73,7 +73,7 @@ class PerfdataconsumerCommand extends Command
     protected function validateRequestWithForm(ServerRequest $request, Form $form): bool
     {
         $success = false;
-        $form->on($form::ON_SUCCESS, function () use (&$success) {
+        $form->on($form::ON_SUBMIT, function () use (&$success) {
             $success = true;
         });
         $form->handleRequest($request);

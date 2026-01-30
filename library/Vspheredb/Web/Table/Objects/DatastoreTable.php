@@ -172,12 +172,6 @@ class DatastoreTable extends ObjectsTable
                 []
             );
         }
-        if ($this->parentUuids) {
-            $query->where('o.parent_uuid IN (?)', $this->parentUuids);
-        }
-        if ($this->filterVCenter) {
-            $query->where('o.vcenter_uuid = ?', $this->filterVCenter->getUuid());
-        }
 
         return $query;
     }
