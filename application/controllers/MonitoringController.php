@@ -23,6 +23,7 @@ use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
 use ipl\Html\Attributes;
+use ipl\Html\Contract\Form;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
@@ -238,7 +239,7 @@ class MonitoringController extends Controller
         $inherited = InheritedSettings::loadFor($binaryUuid, $tree, $db);
         $inherited->setInternalDefaults(RuleSetRegistry::default());
         $form = new RuleForm($chosenType, $binaryUuid, $db, $inherited, $storedConfig);
-        $form->on(RuleForm::ON_SUCCESS, function (RuleForm $form) use ($title) {
+        $form->on(Form::ON_SUBMIT, function (RuleForm $form) use ($title) {
             if ($form->hasNotBeenModified()) {
                 Notification::info($this->translate('No change has been applied'));
                 $this->redirectNow($this->url());

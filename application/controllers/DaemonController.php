@@ -80,7 +80,7 @@ class DaemonController extends Controller
                 ));
             } else {
                 $restartForm = new RestartDaemonForm($this->remoteClient(), $this->loop());
-                $restartForm->on($restartForm::ON_SUCCESS, function () {
+                $restartForm->on($restartForm::ON_SUBMIT, function () {
                     Notification::success('Daemon has been asked to restart');
                     $this->redirectNow($this->url());
                 });

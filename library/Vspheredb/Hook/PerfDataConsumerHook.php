@@ -4,9 +4,9 @@ namespace Icinga\Module\Vspheredb\Hook;
 
 use gipfl\InfluxDb\DataPoint;
 use gipfl\Web\Form;
+use Icinga\Application\Hook;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
-use Icinga\Web\Hook;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
