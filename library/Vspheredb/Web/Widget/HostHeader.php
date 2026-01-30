@@ -12,10 +12,10 @@ use ipl\Html\HtmlDocument;
 class HostHeader extends BaseHtmlElement
 {
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
-    /** @var HtmlDocument */
-    protected $icons;
+    /** @var ?HtmlDocument */
+    protected ?HtmlDocument $icons = null;
 
     protected $tag = 'div';
 
@@ -24,7 +24,7 @@ class HostHeader extends BaseHtmlElement
     ];
 
     /** @var HostQuickStats */
-    protected $quickStats;
+    protected HostQuickStats $quickStats;
 
     public function __construct(HostSystem $host, HostQuickStats $quickStats)
     {
@@ -32,7 +32,7 @@ class HostHeader extends BaseHtmlElement
         $this->quickStats = $quickStats;
     }
 
-    public function getIcons()
+    public function getIcons(): HtmlDocument
     {
         if ($this->icons === null) {
             $powerStateRenderer = new PowerStateRenderer();
@@ -49,7 +49,7 @@ class HostHeader extends BaseHtmlElement
     /**
      * @throws \Icinga\Exception\NotFoundError
      */
-    protected function assemble()
+    protected function assemble(): void
     {
         $host = $this->host;
         $host->object()->set('object_name', Anonymizer::anonymizeString($host->object()->get('object_name')));

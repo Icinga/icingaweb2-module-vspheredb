@@ -7,7 +7,7 @@ use Icinga\Module\Vspheredb\Polling\ServerSet;
 
 trait RpcServerUpdateHelper
 {
-    protected function sendServerInfoToSocket()
+    protected function sendServerInfoToSocket(): string
     {
         /** @var ConfigurationController $this */
         try {

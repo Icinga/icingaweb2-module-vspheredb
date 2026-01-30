@@ -10,10 +10,11 @@ class SubTitle extends BaseHtmlElement
 
     /**
      * SubTitle constructor.
-     * @param string $title
+     *
+     * @param string      $title
      * @param string|null $icon
      */
-    public function __construct($title, $icon = null)
+    public function __construct(string $title, ?string $icon = null)
     {
         $this->setContent($title);
         if ($icon !== null) {

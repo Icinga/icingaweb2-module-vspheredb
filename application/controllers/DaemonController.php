@@ -15,13 +15,14 @@ use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\WebUtil;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 
 class DaemonController extends Controller
 {
     use AsyncControllerHelper;
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->setAutorefreshInterval(30);
@@ -40,7 +41,10 @@ class DaemonController extends Controller
         ]);
     }
 
-    protected function prepareLogSettings()
+    /**
+     * @return array|null
+     */
+    protected function prepareLogSettings(): ?array
     {
         $logLevelForm = new LogLevelForm($this->remoteClient(), $this->loop());
         $logLevelForm->on($logLevelForm::ON_SUCCESS, function () {
@@ -54,7 +58,10 @@ class DaemonController extends Controller
         return null;
     }
 
-    protected function prepareDaemonInfo()
+    /**
+     * @return Hint|array
+     */
+    protected function prepareDaemonInfo(): Hint|array
     {
         $db = $this->db()->getDbAdapter();
         $daemon = $db->fetchRow(
@@ -85,7 +92,12 @@ class DaemonController extends Controller
         }
     }
 
-    protected function prepareProcessTable($processes)
+    /**
+     * @param mixed $processes
+     *
+     * @return Table
+     */
+    protected function prepareProcessTable(mixed $processes): Table
     {
         $table = new Table();
         foreach ($processes as $pid => $process) {
@@ -103,7 +115,10 @@ class DaemonController extends Controller
         return $table;
     }
 
-    protected function prepareLogWindow()
+    /**
+     * @return HtmlElement
+     */
+    protected function prepareLogWindow(): HtmlElement
     {
         $db = $this->db()->getDbAdapter();
         $lineCount = 1000;
@@ -128,7 +143,10 @@ class DaemonController extends Controller
         return $logWindow;
     }
 
-    protected function prepareCurlInfoTable()
+    /**
+     * @return Hint|Table|string
+     */
+    protected function prepareCurlInfoTable(): Hint|Table|string
     {
         try {
             $table = new Table();
@@ -205,7 +223,10 @@ class DaemonController extends Controller
         */
     }
 
-    protected function prepareVsphereConnectionTable()
+    /**
+     * @return Hint|VsphereApiConnectionTable
+     */
+    protected function prepareVsphereConnectionTable(): Hint|VsphereApiConnectionTable
     {
         try {
             $table = new VsphereApiConnectionTable(array_map(function ($row) {
@@ -225,7 +246,10 @@ class DaemonController extends Controller
         }
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $action = $this->getRequest()->getControllerName();
         $tabs = $this->tabs(new MainTabs($this->Auth(), $this->db()));

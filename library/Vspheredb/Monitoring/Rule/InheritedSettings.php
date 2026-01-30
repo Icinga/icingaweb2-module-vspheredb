@@ -8,10 +8,11 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 class InheritedSettings extends Settings
 {
     /** @var MonitoringRulesTree */
-    protected $tree;
+    protected MonitoringRulesTree $tree;
 
-    protected $inheritedFromUuids = [];
-    protected $inheritedFromNames = [];
+    protected array $inheritedFromUuids = [];
+
+    protected array $inheritedFromNames = [];
 
     public function __construct(MonitoringRulesTree $tree)
     {
@@ -38,7 +39,7 @@ class InheritedSettings extends Settings
         return $self;
     }
 
-    public function applyInherited(Settings $settings, $inheritedFrom = null)
+    public function applyInherited(Settings $settings, $inheritedFrom = null): void
     {
         foreach ($settings->settings as $key => $value) {
             $this->setInherited($key, $value, $inheritedFrom);
@@ -83,9 +84,10 @@ class InheritedSettings extends Settings
 
     /**
      * @param string $prefix
+     *
      * @return $this|InheritedSettings
      */
-    public function withRemovedPrefix(string $prefix)
+    public function withRemovedPrefix(string $prefix): InheritedSettings
     {
         $length = strlen($prefix);
         $settings = new InheritedSettings($this->tree);
@@ -111,7 +113,7 @@ class InheritedSettings extends Settings
         return array_keys($keys);
     }
 
-    public function setInternalDefaults(RuleSetRegistry $registry)
+    public function setInternalDefaults(RuleSetRegistry $registry): void
     {
         foreach ($registry->getSets() as $set) {
             foreach ($set->getRules() as $rule) {
@@ -131,12 +133,12 @@ class InheritedSettings extends Settings
 
     /**
      * @param string $name
-     * @param $value
-     * @param $inheritedFrom
+     * @param mixed $value
+     * @param ?string $inheritedFrom
      *
      * @return void
      */
-    public function setInherited(string $name, $value, $inheritedFrom = null): void
+    public function setInherited(string $name, mixed $value, ?string $inheritedFrom = null): void
     {
         if ($this->get($name) !== null) {
             return;

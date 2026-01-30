@@ -10,7 +10,7 @@ class TaggingSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $result = self::wantBinaryUuids($result);
         $dbObjects = $class::loadAllForVCenter($this->vCenter);

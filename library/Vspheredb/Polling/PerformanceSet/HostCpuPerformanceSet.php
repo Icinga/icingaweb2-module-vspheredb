@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Polling\PerformanceSet;
 
 class HostCpuPerformanceSet extends DefaultPerformanceSet
 {
-    protected $name = 'HostCpu';
-    protected $objectType = 'HostSystem';
-    protected $countersGroup = 'cpu';
-    protected $counters = [
+    protected ?string $name = 'HostCpu';
+
+    protected ?string $objectType = 'HostSystem';
+
+    protected ?string $countersGroup = 'cpu';
+
+    protected ?array $counters = [
         'coreUtilization',
         'demand',
         'latency',

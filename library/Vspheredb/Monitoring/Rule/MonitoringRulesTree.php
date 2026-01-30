@@ -12,22 +12,22 @@ class MonitoringRulesTree
 
     public const ROOT_OBJECT_TYPE = 'root';
 
-    /** @var Db */
-    protected $db;
+    /** @var ?Db */
+    protected ?Db $db;
 
     /** @var string */
-    protected $baseObjectFolderName;
+    protected string $baseObjectFolderName;
 
     /** @var ?array */
-    protected $fetchedTree;
+    protected ?array $fetchedTree = null;
 
     /** @var ?array */
-    protected $configList;
+    protected ?array $configList = null;
 
     /** @var ?array */
-    protected $allNodes;
+    protected ?array $allNodes = null;
 
-    public function __construct(Db $db, $baseObjectFolderName)
+    public function __construct(Db $db, string $baseObjectFolderName)
     {
         $this->db = $db;
         $this->baseObjectFolderName = $baseObjectFolderName;
@@ -76,7 +76,7 @@ class MonitoringRulesTree
         return $parents;
     }
 
-    public function getRootNode()
+    public function getRootNode(): object
     {
         return (object) [
             'object_name' => $this->translate('All vCenters'),
@@ -202,7 +202,7 @@ class MonitoringRulesTree
         return $root;
     }
 
-    public function discard()
+    public function discard(): void
     {
         $this->allNodes = null;
         $this->fetchedTree = null;

@@ -7,23 +7,22 @@ use ipl\Html\BaseHtmlElement;
 
 class MemoryUsage extends UsageBar
 {
-    /** @var int */
-    protected $usedHost;
+    /** @var int|float|null */
+    protected int|float|null $usedHost;
 
-    protected $colors = [
+    protected array $colors = [
         'used' => 'rgba(0, 149, 191, 0.75)',
         'host' => 'rgba(160, 200, 211, 0.75)',
     ];
 
-    protected $formatter = [Format::class, 'mBytes'];
-
-    public function __construct($usedMb, $capacityMb, $usedHostMb = null)
+    public function __construct(int|float|null $usedMb, int|float|null $capacityMb, int|float|null $usedHostMb = null)
     {
         parent::__construct($usedMb, $capacityMb);
         $this->usedHost = $usedHostMb;
+        $this->formatter = Format::mBytes(...);
     }
 
-    protected function getLabelUsed()
+    protected function getLabelUsed(): string
     {
         if ($this->usedHost === null) {
             return parent::getLabelUsed();
@@ -38,7 +37,7 @@ class MemoryUsage extends UsageBar
         }
     }
 
-    protected function assembleBar(BaseHtmlElement $bar)
+    protected function assembleBar(BaseHtmlElement $bar): void
     {
         parent::assembleBar($bar);
         if ($this->usedHost !== null && $this->capacity !== null) {

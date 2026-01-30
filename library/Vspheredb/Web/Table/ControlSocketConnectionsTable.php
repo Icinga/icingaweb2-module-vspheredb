@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Icon;
+use ipl\Html\HtmlElement;
 
 class ControlSocketConnectionsTable extends ArrayTable
 {
@@ -31,7 +32,7 @@ class ControlSocketConnectionsTable extends ArrayTable
     }
     */
 
-    protected $myPid;
+    protected int $myPid;
 
     public function __construct($rows)
     {
@@ -39,7 +40,7 @@ class ControlSocketConnectionsTable extends ArrayTable
         $this->myPid = posix_getpid();
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $tr = $this::row([
             [
@@ -61,7 +62,7 @@ class ControlSocketConnectionsTable extends ArrayTable
         return $tr;
     }
 
-    public function getColumnsToBeRendered()
+    public function getColumnsToBeRendered(): array
     {
         return [
             $this->translate('Socket'),

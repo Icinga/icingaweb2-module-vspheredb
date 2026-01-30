@@ -3,18 +3,20 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Select;
 
 class PerfDataConsumerTable extends BaseTable
 {
-    protected $keyColumn = 'uuid';
+    protected string $keyColumn = 'uuid';
 
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
         'data-base-target' => '_next',
     ];
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             (new SimpleColumn('name', $this->translate('Name'), [
@@ -35,7 +37,7 @@ class PerfDataConsumerTable extends BaseTable
         ]);
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         return $this->db()->select()->from(
             ['pc' => 'perfdata_consumer'],

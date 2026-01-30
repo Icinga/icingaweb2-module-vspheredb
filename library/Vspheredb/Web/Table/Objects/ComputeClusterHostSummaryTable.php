@@ -6,20 +6,20 @@ use Icinga\Module\Vspheredb\Util;
 
 class ComputeClusterHostSummaryTable extends HostSummaryTable
 {
-    protected $baseUrl = 'vspheredb/compute-cluster';
+    protected ?string $baseUrl = 'vspheredb/compute-cluster';
 
-    protected $baseUrlHosts = 'vspheredb/compute-cluster/hosts';
+    protected string $baseUrlHosts = 'vspheredb/compute-cluster/hosts';
 
-    protected $groupBy = 'o.uuid';
+    protected ?string $groupBy = 'o.uuid';
 
-    protected $nameColumn = 'o.object_name';
+    protected ?string $nameColumn = 'o.object_name';
 
-    protected function getGroupingTitle()
+    protected function getGroupingTitle(): string
     {
         return $this->translate('Compute Cluster');
     }
 
-    protected function getFilterParams($row)
+    protected function getFilterParams(object $row): array
     {
         return Util::uuidParams($row->uuid);
     }

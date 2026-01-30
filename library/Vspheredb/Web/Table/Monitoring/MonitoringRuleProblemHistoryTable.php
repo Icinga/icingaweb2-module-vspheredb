@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Monitoring;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Db\DbUtil;
@@ -13,26 +14,28 @@ use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Icinga\Module\Vspheredb\Web\Table\UuidLinkHelper;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements TableWithVCenterFilter
 {
     use UuidLinkHelper;
 
-    protected $entityUuid;
+    protected ?string $entityUuid = null;
 
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
         'data-base-target' => '_next',
     ];
 
-    public function filterEntityUuid($uuid)
+    public function filterEntityUuid(string $uuid): static
     {
         $this->entityUuid = $uuid;
 
         return $this;
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $this->renderDayIfNew($row->ts_changed_ms / 1000);
 
@@ -68,7 +71,7 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
         return $tr;
     }
 
-    protected function linkToObject($row)
+    protected function linkToObject($row): Link
     {
         return Link::create(
             Anonymizer::anonymizeString($row->object_name),
@@ -91,7 +94,7 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
         }
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): Select|Zend_Db_Select
     {
         // uuid, current_state, former_state, rule_name, ts_changed_ms, output
         $query = $this->db()->select()->from([
@@ -118,12 +121,12 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
         return $query;
     }
 
-    public function filterVCenter(VCenter $vCenter): self
+    public function filterVCenter(VCenter $vCenter): static
     {
         return $this->filterVCenterUuids([$vCenter->getUuid()]);
     }
 
-    public function filterVCenterUuids(array $uuids): self
+    public function filterVCenterUuids(array $uuids): static
     {
         if (empty($uuids)) {
             $this->getQuery()->where('1 = 0');

@@ -13,18 +13,16 @@ use function React\Promise\resolve;
 
 class IcingaCliRpc extends IcingaCli
 {
-    /** @var IcingaCliRunner */
-    protected $runner;
+    /** @var ?JsonRpcConnection */
+    protected ?JsonRpcConnection $rpc = null;
 
-    /** @var JsonRpcConnection */
-    protected $rpc;
+    /** @var ?Deferred */
+    protected ?Deferred $waitingForRpc = null;
 
-    /** @var Deferred */
-    protected $waitingForRpc;
-
-    protected $arguments = [];
-
-    protected function init()
+    /**
+     * @return void
+     */
+    protected function init(): void
     {
         $this->on('start', function (Process $process) {
             $netString = new StreamWrapper(
@@ -48,7 +46,7 @@ class IcingaCliRpc extends IcingaCli
     /**
      * @return PromiseInterface <Connection>
      */
-    public function rpc()
+    public function rpc(): PromiseInterface
     {
         if (! $this->waitingForRpc) {
             $this->waitingForRpc = new Deferred();

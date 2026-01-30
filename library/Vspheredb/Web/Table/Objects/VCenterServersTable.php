@@ -6,6 +6,7 @@ use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
 use Icinga\Module\Vspheredb\Web\Form\DisableServerForm;
 use Icinga\Module\Vspheredb\Web\Form\EnableServerForm;
@@ -13,7 +14,9 @@ use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use ipl\Html\Html;
 use ipl\Stdlib\Events;
-use Psr\Http\Message\RequestInterface;
+use ipl\Html\HtmlElement;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend_Db_Select;
 
 class VCenterServersTable extends BaseTable
 {
@@ -21,16 +24,16 @@ class VCenterServersTable extends BaseTable
 
     public const ON_FORM_ACTION = 'formAction';
 
-    protected $request;
+    protected ?ServerRequestInterface $request = null;
 
-    protected $serverConnections;
+    protected ?array $serverConnections = null;
 
-    public function setRequest(RequestInterface $request)
+    public function setRequest(ServerRequestInterface $request): void
     {
         $this->request = $request;
     }
 
-    public function setServerConnections($connections)
+    public function setServerConnections(?array $connections): void
     {
         $this->serverConnections = $connections;
     }
@@ -67,7 +70,7 @@ class VCenterServersTable extends BaseTable
         }
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAttributes([
             'class' => 'table-vcenter-servers',
@@ -116,7 +119,7 @@ class VCenterServersTable extends BaseTable
         ]);
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $tr = parent::renderRow($row);
         if ($row->enabled === 'n') {
@@ -126,7 +129,7 @@ class VCenterServersTable extends BaseTable
         return $tr;
     }
 
-    protected function makeUrl($row)
+    protected function makeUrl(object $row): string
     {
         return sprintf(
             '%s://%s@%s',
@@ -136,7 +139,7 @@ class VCenterServersTable extends BaseTable
         );
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         return $this->db()->select()->from(
             ['vcs' => 'vcenter_server'],

@@ -12,29 +12,32 @@ use Ramsey\Uuid\Uuid;
 
 abstract class BaseDbObject extends VspheredbDbObject implements JsonSerialization
 {
-    /** @var Db $connection Exists in parent, but IDEs need a better hint */
-    protected $connection;
+    protected string|array|null $keyName = 'id';
 
-    protected $keyName = 'id';
+    /** @var ?ManagedObject */
+    private ?ManagedObject $object = null;
 
-    /** @var ManagedObject */
-    private $object;
+    /** @var array */
+    protected array $propertyMap = [];
 
-    protected $propertyMap = [];
+    /** @var array */
+    protected array $objectReferences = [];
 
-    protected $objectReferences = [];
+    /** @var array */
+    protected array $booleanProperties = [];
 
-    protected $booleanProperties = [];
-
-    protected $dateTimeProperties = [];
+    /** @var array */
+    protected array $dateTimeProperties = [];
 
     /**
      * @param string $uuid
-     * @param Db $connection
+     * @param Db     $connection
+     *
      * @return static
+     *
      * @throws \Icinga\Exception\NotFoundError
      */
-    public static function loadWithUuid(string $uuid, Db $connection)
+    public static function loadWithUuid(string $uuid, Db $connection): static
     {
         if (strlen($uuid) === 16) {
             $uuid = Uuid::fromBytes($uuid);
@@ -45,17 +48,27 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return static::load($uuid->getBytes(), $connection);
     }
 
-    public function isObjectReference($property)
+    /**
+     * @param string $property
+     *
+     * @return bool
+     */
+    public function isObjectReference(string $property): bool
     {
         return $property === 'parent' || in_array($property, $this->objectReferences);
     }
 
-    public function isBooleanProperty($property)
+    /**
+     * @param string $property
+     *
+     * @return bool
+     */
+    public function isBooleanProperty(string $property): bool
     {
         return in_array($property, $this->booleanProperties);
     }
 
-    protected function isBinaryColumn($column)
+    protected function isBinaryColumn(string $column): bool
     {
         if ($this->isObjectReference($column)) {
             return true;
@@ -68,17 +81,23 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return parent::isBinaryColumn($column);
     }
 
-    public function isDateTimeProperty($property)
+    /**
+     * @param string $property
+     *
+     * @return bool
+     */
+    public function isDateTimeProperty(string $property): bool
     {
         return in_array($property, $this->dateTimeProperties);
     }
 
     /**
-     * @param $properties
+     * @param object  $properties
      * @param VCenter $vCenter
+     *
      * @return $this
      */
-    public function setMapped($properties, VCenter $vCenter)
+    public function setMapped(object $properties, VCenter $vCenter): static
     {
         if ($this->hasProperty('vcenter_uuid')) {
             $this->set('vcenter_uuid', $vCenter->getUuid());
@@ -114,7 +133,10 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     }
 
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    /**
+     * @return object
+     */
+    public function jsonSerialize(): object
     {
         $serialized = [];
         foreach ($this->getProperties() as $key => $value) {
@@ -139,12 +161,23 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return (object) $serialized;
     }
 
-    public static function fromSerialization($any)
+    /**
+     * @param mixed $any
+     *
+     * @return static
+     */
+    public static function fromSerialization(mixed $any): static
     {
         return static::create((array) $any);
     }
 
-    protected function createUuidForMoref($value, VCenter $vCenter)
+    /**
+     * @param mixed   $value
+     * @param VCenter $vCenter
+     *
+     * @return string|null
+     */
+    protected function createUuidForMoref(mixed $value, VCenter $vCenter): ?string
     {
         if (empty($value)) {
             return null;
@@ -156,10 +189,11 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     }
 
     /**
-     * @return ManagedObject
+     * @return ManagedObject|null
+     *
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function object()
+    public function object(): ?ManagedObject
     {
         if ($this->object === null) {
             $this->object = ManagedObject::load($this->get('uuid'), $this->connection);
@@ -168,7 +202,12 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return $this->object;
     }
 
-    public function setManagedObject(?ManagedObject $object)
+    /**
+     * @param ManagedObject|null $object
+     *
+     * @return void
+     */
+    public function setManagedObject(?ManagedObject $object): void
     {
         if ($object === null) {
             $this->object = null;
@@ -186,7 +225,10 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         $this->object = $object;
     }
 
-    public static function getType()
+    /**
+     * @return false|string
+     */
+    public static function getType(): false|string
     {
         $parts = explode('\\', get_class(static::create()));
         return end($parts);
@@ -194,9 +236,10 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
 
     /**
      * @param VCenter $vCenter
+     *
      * @return static[]
      */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
         $connection = $vCenter->getConnection();

@@ -29,9 +29,10 @@ class MonitoringController extends Controller
 {
     use AsyncControllerHelper;
 
-    protected $vCenterFilterForm;
+    /** @var ?FilterVCenterForm */
+    protected ?FilterVCenterForm $vCenterFilterForm = null;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $action = $this->getRequest()->getActionName();
@@ -74,7 +75,7 @@ class MonitoringController extends Controller
         }
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->addTitle($this->translate('Monitoring Rules'));
         $this->setAutorefreshInterval(20);
@@ -83,7 +84,7 @@ class MonitoringController extends Controller
         $table->renderTo($this);
     }
 
-    public function problemsAction()
+    public function problemsAction(): void
     {
         $this->addSingleTab($this->translate('Current Problems'));
         $vCenter = $this->requireVCenter();
@@ -97,7 +98,7 @@ class MonitoringController extends Controller
         $table->renderTo($this);
     }
 
-    public function historyAction()
+    public function historyAction(): void
     {
         $this->addTitle($this->translate('Monitoring Rules - Problem History'));
         $this->setAutorefreshInterval(20);
@@ -106,7 +107,7 @@ class MonitoringController extends Controller
         $table->renderTo($this);
     }
 
-    public function configurationAction()
+    public function configurationAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring Rules'));
@@ -143,37 +144,42 @@ class MonitoringController extends Controller
         ]);
     }
 
-    public function hostrulesAction()
+    public function hostrulesAction(): void
     {
         $this->showType(ObjectType::HOST_SYSTEM);
     }
 
-    public function hosttreeAction()
+    public function hosttreeAction(): void
     {
         $this->showTree(ObjectType::HOST_SYSTEM);
     }
 
-    public function vmrulesAction()
+    public function vmrulesAction(): void
     {
         $this->showType(ObjectType::VIRTUAL_MACHINE);
     }
 
-    public function vmtreeAction()
+    public function vmtreeAction(): void
     {
         $this->showTree(ObjectType::VIRTUAL_MACHINE);
     }
 
-    public function datastorerulesAction()
+    public function datastorerulesAction(): void
     {
         $this->showType(ObjectType::DATASTORE);
     }
 
-    public function datastoretreeAction()
+    public function datastoretreeAction(): void
     {
         $this->showTree(ObjectType::DATASTORE);
     }
 
-    public function showTree($chosenType)
+    /**
+     * @param string $chosenType
+     *
+     * @return void
+     */
+    public function showTree(string $chosenType): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring'));
@@ -181,7 +187,12 @@ class MonitoringController extends Controller
         $this->content()->add(new MonitoringRulesTreeRenderer($tree, "vspheredb/monitoring/{$chosenType}rules"));
     }
 
-    public function showType($chosenType)
+    /**
+     * @param string $chosenType
+     *
+     * @return void
+     */
+    public function showType(string $chosenType): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('Rules'));
@@ -267,6 +278,11 @@ class MonitoringController extends Controller
         ]);
     }
 
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
     protected function getTypeLabelForObjectType(string $type): string
     {
         switch ($type) {
@@ -281,8 +297,14 @@ class MonitoringController extends Controller
         throw new RuntimeException("Unexpected object type: '$type'");
     }
 
-    // Duplicated from ObjectsController
-    protected function filterByVCenterIfRequired(TableWithVCenterFilter $table)
+    /**
+     * Duplicated from ObjectsController
+     *
+     * @param TableWithVCenterFilter $table
+     *
+     * @return void
+     */
+    protected function filterByVCenterIfRequired(TableWithVCenterFilter $table): void
     {
         $this->getRestrictionHelper()->restrictTable($table);
         $this->controls()->prepend($this->getVCenterFilterForm());
@@ -292,7 +314,11 @@ class MonitoringController extends Controller
         }
     }
 
-    // Duplicated from ObjectsController
+    /**
+     * Duplicated from ObjectsController
+     *
+     * @return FilterVCenterForm
+     */
     protected function getVCenterFilterForm(): FilterVCenterForm
     {
         if ($this->vCenterFilterForm === null) {

@@ -6,5 +6,5 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\TaggingSyncStore;
 
 abstract class TaggingSyncTask extends SyncTask implements RestApiTask
 {
-    protected $syncStoreClass = TaggingSyncStore::class;
+    protected string $syncStoreClass = TaggingSyncStore::class;
 }

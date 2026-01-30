@@ -21,7 +21,10 @@ class VcentersController extends ObjectsController
 {
     use AsyncControllerHelper;
 
-    protected function getConnectionsByVCenter()
+    /**
+     * @return array|null
+     */
+    protected function getConnectionsByVCenter(): ?array
     {
         try {
             $connections = $this->syncRpcCall('vsphere.getApiConnections');
@@ -35,7 +38,7 @@ class VcentersController extends ObjectsController
     /**
      * @throws \Zend_Db_Select_Exception
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->setAutorefreshInterval(15);
         $this->addSingleTab($this->translate('VCenters'));
@@ -79,7 +82,10 @@ class VcentersController extends ObjectsController
         // $this->controls()->prepend($this->cpuSummary($table));
     }
 
-    protected function addNoVCenterHint()
+    /**
+     * @return void
+     */
+    protected function addNoVCenterHint(): void
     {
         $this->content()->add(Hint::warning(
             $this->translate('No vCenter available. You might want to check your %s or your %s'),
@@ -99,7 +105,7 @@ class VcentersController extends ObjectsController
      * @return CpuAbsoluteUsage
      * @throws \Zend_Db_Select_Exception
      */
-    protected function cpuSummary(VCenterSummaryTable $table)
+    protected function cpuSummary(VCenterSummaryTable $table): CpuAbsoluteUsage
     {
         $query = clone($table->getQuery());
         $query->reset('columns')->reset('limitcount')->reset('limitoffset')->reset('group');
@@ -117,7 +123,10 @@ class VcentersController extends ObjectsController
         );
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $action = $this->getRequest()->getControllerName();
         $tabs = $this->tabs(new MainTabs($this->Auth(), $this->db()));
@@ -128,7 +137,10 @@ class VcentersController extends ObjectsController
         }
     }
 
-    protected function checkDaemonStatus()
+    /**
+     * @return void
+     */
+    protected function checkDaemonStatus(): void
     {
         $db = $this->db()->getDbAdapter();
         $daemon = $db->fetchRow(
@@ -152,7 +164,10 @@ class VcentersController extends ObjectsController
         }
     }
 
-    protected function checkForMigrations()
+    /**
+     * @return void
+     */
+    protected function checkForMigrations(): void
     {
         if (Db::migrationsForDb($this->db())->hasPendingMigrations()) {
             $this->redirectNow('vspheredb/configuration/database');

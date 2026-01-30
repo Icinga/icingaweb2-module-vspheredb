@@ -34,23 +34,29 @@ class RemoteApi implements EventEmitterInterface
     use EventEmitterTrait;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
-    /** @var ControlSocket */
-    protected $controlSocket;
+    /** @var ?ControlSocket */
+    protected ?ControlSocket $controlSocket = null;
 
     /** @var ApiConnectionHandler */
-    protected $apiConnectionHandler;
+    protected ApiConnectionHandler $apiConnectionHandler;
 
     /** @var CurlAsync */
-    protected $curl;
+    protected CurlAsync $curl;
 
     /** @var RpcNamespaceDbProxy */
-    protected $rpcNamespaceRpcProxy;
+    protected RpcNamespaceDbProxy $rpcNamespaceRpcProxy;
 
+    /**
+     * @param ApiConnectionHandler $apiConnectionHandler
+     * @param CurlAsync            $curl
+     * @param LoopInterface        $loop
+     * @param LoggerInterface      $logger
+     */
     public function __construct(
         ApiConnectionHandler $apiConnectionHandler,
         CurlAsync $curl,
@@ -64,18 +70,34 @@ class RemoteApi implements EventEmitterInterface
         $this->rpcNamespaceRpcProxy = new RpcNamespaceDbProxy('db.');
     }
 
-    public function run($socketPath, LoopInterface $loop)
+    /**
+     * @param string        $socketPath
+     * @param LoopInterface $loop
+     *
+     * @return void
+     */
+    public function run(string $socketPath, LoopInterface $loop): void
     {
         $this->loop = $loop;
         $this->initializeControlSocket($socketPath);
     }
 
-    public function setDbProcessRunner(?DbProcessRunner $dbProcessRunner)
+    /**
+     * @param DbProcessRunner|null $dbProcessRunner
+     *
+     * @return void
+     */
+    public function setDbProcessRunner(?DbProcessRunner $dbProcessRunner): void
     {
         $this->rpcNamespaceRpcProxy->setDbProcessRunner($dbProcessRunner);
     }
 
-    protected function initializeControlSocket($path)
+    /**
+     * @param string $path
+     *
+     * @return void
+     */
+    protected function initializeControlSocket(string $path): void
     {
         if (empty($path)) {
             throw new \InvalidArgumentException('Control socket path expected, got none');
@@ -87,7 +109,12 @@ class RemoteApi implements EventEmitterInterface
         $this->controlSocket = $socket;
     }
 
-    protected function isAllowed(UnixSocketPeer $peer)
+    /**
+     * @param UnixSocketPeer $peer
+     *
+     * @return bool
+     */
+    protected function isAllowed(UnixSocketPeer $peer): bool
     {
         if ($peer->getUid() === 0) {
             return true;
@@ -105,7 +132,12 @@ class RemoteApi implements EventEmitterInterface
         return in_array($myGid, array_map('intval', explode(' ', shell_exec("id -G $uid"))));
     }
 
-    protected function addSocketEventHandlers(ControlSocket $socket)
+    /**
+     * @param ControlSocket $socket
+     *
+     * @return void
+     */
+    protected function addSocketEventHandlers(ControlSocket $socket): void
     {
         $socket->on('connection', function (ConnectionInterface $connection) {
             $jsonRpc = new JsonRpcConnection(new StreamWrapper($connection));

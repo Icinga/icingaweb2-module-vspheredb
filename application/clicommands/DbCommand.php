@@ -7,6 +7,7 @@ use gipfl\Cli\Process;
 use gipfl\Log\IcingaWeb\IcingaLogger;
 use gipfl\Log\Logger;
 use gipfl\Log\Writer\JsonRpcConnectionWriter;
+use gipfl\Protocol\JsonRpc\Handler\JsonRpcHandler;
 use gipfl\Protocol\JsonRpc\Handler\NamespacedPacketHandler;
 use gipfl\Protocol\JsonRpc\JsonRpcConnection;
 use gipfl\Protocol\NetString\StreamWrapper;
@@ -20,7 +21,10 @@ use React\Stream\WritableResourceStream;
  */
 class DbCommand extends Command
 {
-    public function runAction()
+    /**
+     * @return void
+     */
+    public function runAction(): void
     {
         if (!$this->isRpc()) {
             $this->fail('This is an internal command and should not be called directly');
@@ -45,7 +49,10 @@ class DbCommand extends Command
         $this->loop()->run();
     }
 
-    protected function prepareLogger()
+    /**
+     * @return Logger
+     */
+    protected function prepareLogger(): Logger
     {
         $logger = new Logger();
         $this->eventuallyFilterLog($logger);
@@ -55,8 +62,13 @@ class DbCommand extends Command
 
     /**
      * Prepares a JSON-RPC Connection on STDIN/STDOUT
+     *
+     * @param LoopInterface  $loop
+     * @param JsonRpcHandler $handler
+     *
+     * @return JsonRpcConnection
      */
-    protected function prepareJsonRpc(LoopInterface $loop, $handler)
+    protected function prepareJsonRpc(LoopInterface $loop, JsonRpcHandler $handler): JsonRpcConnection
     {
         return new JsonRpcConnection(new StreamWrapper(
             new ReadableResourceStream(STDIN, $loop),

@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Daemon;
 use gipfl\Protocol\JsonRpc\JsonRpcConnection;
 use gipfl\Protocol\NetString\StreamWrapper;
 use React\EventLoop\LoopInterface;
+use React\Promise\PromiseInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\UnixConnector;
 
@@ -12,37 +13,58 @@ use function React\Promise\resolve;
 
 class RemoteClient
 {
-    protected $path;
+    /** @var string */
+    protected string $path;
 
-    /** @var JsonRpcConnection */
-    protected $connection;
+    /** @var ?JsonRpcConnection */
+    protected ?JsonRpcConnection $connection = null;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
-    protected $pendingConnection;
+    /** @var ?PromiseInterface */
+    protected ?PromiseInterface $pendingConnection = null;
 
-    public function __construct($path, LoopInterface $loop)
+    /**
+     * @param string        $path
+     * @param LoopInterface $loop
+     */
+    public function __construct(string $path, LoopInterface $loop)
     {
         $this->path = $path;
         $this->loop = $loop;
     }
 
-    public function request($method, $params = null)
+    /**
+     * @param string     $method
+     * @param array|null $params
+     *
+     * @return PromiseInterface
+     */
+    public function request(string $method, ?array $params = null): PromiseInterface
     {
         return $this->connection()->then(function (JsonRpcConnection $connection) use ($method, $params) {
             return $connection->request($method, $params);
         });
     }
 
-    public function notify($method, $params = null)
+    /**
+     * @param string     $method
+     * @param array|null $params
+     *
+     * @return PromiseInterface
+     */
+    public function notify(string $method, ?array $params = null): PromiseInterface
     {
         return $this->connection()->then(function (JsonRpcConnection $connection) use ($method, $params) {
             $connection->notification($method, $params);
         });
     }
 
-    protected function connection()
+    /**
+     * @return PromiseInterface
+     */
+    protected function connection(): PromiseInterface
     {
         if ($this->connection === null) {
             if ($this->pendingConnection === null) {
@@ -55,7 +77,10 @@ class RemoteClient
         }
     }
 
-    protected function connect()
+    /**
+     * @return PromiseInterface
+     */
+    protected function connect(): PromiseInterface
     {
         $connector = new UnixConnector($this->loop);
         $connected = function (ConnectionInterface $connection) {

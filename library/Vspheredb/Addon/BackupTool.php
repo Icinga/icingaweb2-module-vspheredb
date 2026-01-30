@@ -20,21 +20,24 @@ interface BackupTool
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @param VirtualMachine $vm
+     *
      * @return bool
      */
-    public function wants(VirtualMachine $vm);
+    public function wants(VirtualMachine $vm): bool;
 
     /**
      * @param VirtualMachine $vm
+     *
+     * @return void
      */
-    public function handle(VirtualMachine $vm);
+    public function handle(VirtualMachine $vm): void;
 
     /**
      * @return HtmlDocument|null
      */
-    public function getInfoRenderer();
+    public function getInfoRenderer(): ?HtmlDocument;
 }

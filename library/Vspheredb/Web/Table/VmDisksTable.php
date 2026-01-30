@@ -3,12 +3,16 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class VmDisksTable extends ZfQueryBasedTable
 {
@@ -19,18 +23,18 @@ class VmDisksTable extends ZfQueryBasedTable
     protected $parentIds;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
-    /** @var string */
-    protected $uuid;
+    /** @var ?string */
+    protected ?string $uuid = null;
 
-    /** @var string */
-    protected $moref;
+    /** @var ?string */
+    protected ?string $moref = null;
 
     /** @var OverallStatusRenderer */
-    protected $renderStatus;
+    protected OverallStatusRenderer $renderStatus;
 
-    protected $withPerfImages = false;
+    protected bool $withPerfImages = false;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -40,7 +44,7 @@ class VmDisksTable extends ZfQueryBasedTable
         $this->setVm($vm);
     }
 
-    protected function setVm(VirtualMachine $vm)
+    protected function setVm(VirtualMachine $vm): static
     {
         $this->vm = $vm;
         $this->uuid = $vm->get('uuid');
@@ -49,7 +53,7 @@ class VmDisksTable extends ZfQueryBasedTable
         return $this;
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $device = sprintf(
             '%s%d:%d',
@@ -79,7 +83,7 @@ class VmDisksTable extends ZfQueryBasedTable
         }
     }
 
-    protected function formatSimple($row, $device)
+    protected function formatSimple(object $row, string $device): FormattedString
     {
         return Html::sprintf(
             '%s (%s): %s',
@@ -89,7 +93,7 @@ class VmDisksTable extends ZfQueryBasedTable
         );
     }
 
-    protected function prepareImgColumn($device)
+    protected function prepareImgColumn($device): ?HtmlElement
     {
         if ($this->withPerfImages) {
             return $this::td([
@@ -102,7 +106,7 @@ class VmDisksTable extends ZfQueryBasedTable
         }
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $uuid = $this->vm->get('uuid');
         $query = $this->db()->select()->from(['vmd' => 'vm_disk'], [

@@ -27,6 +27,7 @@ class EventFilterSpecByTime
     /**
      * @param ?int|string $beginTime
      * @param ?int|string $endTime
+     *
      * @return static
      */
     public static function create($beginTime = null, $endTime = null)
@@ -52,7 +53,9 @@ class EventFilterSpecByTime
 
     /**
      * DateTime for SOAP call
+     *
      * @param $timestamp
+     *
      * @return string
      */
     protected static function makeDateTime($timestamp)

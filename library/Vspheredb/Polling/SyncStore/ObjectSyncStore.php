@@ -16,7 +16,7 @@ class ObjectSyncStore extends SyncStore
     public const CUSTOM_VALUE_KEY = 'summary.customValue';
 
     /** @var ?array */
-    protected $customFieldsMap;
+    protected ?array $customFieldsMap;
 
     public function __construct(
         $db,
@@ -28,7 +28,7 @@ class ObjectSyncStore extends SyncStore
         parent::__construct($db, $vCenter, $logger);
     }
 
-    protected function indexByUuid($result)
+    protected function indexByUuid($result): array
     {
         // map by key
         $fromApi = [];
@@ -50,7 +50,7 @@ class ObjectSyncStore extends SyncStore
         return $fromApi;
     }
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $result = $this->indexByUuid($result);
         $dbObjects = $class::loadAllForVCenter($this->vCenter);
@@ -72,7 +72,7 @@ class ObjectSyncStore extends SyncStore
         $this->storeSyncObjects($connection->getDbAdapter(), $dbObjects, $result, $stats);
     }
 
-    protected static function mapResultCustomValues($object, array $map)
+    protected static function mapResultCustomValues($object, array $map): void
     {
         $key = self::CUSTOM_VALUE_KEY;
         if (isset($object->$key) && ! empty((array) $object->$key)) {

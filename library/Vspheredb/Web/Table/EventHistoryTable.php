@@ -12,12 +12,15 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\DeferredText;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Zend_Db_Select;
 
 class EventHistoryTable extends ZfQueryBasedTable
 {
@@ -26,9 +29,9 @@ class EventHistoryTable extends ZfQueryBasedTable
         'data-base-target' => '_next',
     ];
 
-    protected $requiredUuids = [];
+    protected array $requiredUuids = [];
 
-    protected $vMotionEvents = [
+    protected array $vMotionEvents = [
         'VmFailedMigrateEvent',
         'MigrationEvent',
         'VmBeingMigratedEvent',
@@ -37,7 +40,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         'VmMigratedEvent',
     ];
 
-    protected $otherKnownEvents = [
+    protected array $otherKnownEvents = [
         'VmStartingEvent',
         'VmPoweredOnEvent',
         'VmStoppingEvent',
@@ -54,24 +57,24 @@ class EventHistoryTable extends ZfQueryBasedTable
         'VmCloneFailedEvent'
     ];
 
-    protected $fetchedUuids;
+    protected ?array $fetchedUuids = null;
 
-    /** @var Datastore */
-    protected $datastore;
+    /** @var ?Datastore */
+    protected ?Datastore $datastore = null;
 
-    /** @var HostSystem */
-    protected $host;
+    /** @var ?HostSystem */
+    protected ?HostSystem $host = null;
 
-    /** @var VirtualMachine */
-    protected $vm;
+    /** @var ?VirtualMachine */
+    protected ?VirtualMachine $vm = null;
 
-    /** @var string */
-    protected $eventType;
+    /** @var string|array|null */
+    protected string|array|null $eventType = null;
 
     /** @var ?UuidInterface */
-    protected $parent;
+    protected ?UuidInterface $parent = null;
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $this->renderDayIfNew($row->ts_event_ms / 1000);
         $content = [];
@@ -181,28 +184,28 @@ class EventHistoryTable extends ZfQueryBasedTable
         return $tr;
     }
 
-    public function filterVm(VirtualMachine $vm)
+    public function filterVm(VirtualMachine $vm): static
     {
         $this->vm = $vm;
 
         return $this;
     }
 
-    public function filterHost(HostSystem $host)
+    public function filterHost(HostSystem $host): static
     {
         $this->host = $host;
 
         return $this;
     }
 
-    public function filterDatastore(Datastore $datastore)
+    public function filterDatastore(Datastore $datastore): static
     {
         $this->datastore = $datastore;
 
         return $this;
     }
 
-    public function filterEventType($type)
+    public function filterEventType(string|array|null $type): static
     {
         if (is_array($type)) {
             $this->eventType = $type;
@@ -213,7 +216,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         return $this;
     }
 
-    public function filterParent($uuid)
+    public function filterParent(?string $uuid): static
     {
         if ($uuid !== null && strlen($uuid)) {
             $this->parent = Uuid::fromString($uuid);
@@ -244,7 +247,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         }
     }
 
-    protected function fetchUuidNames()
+    protected function fetchUuidNames(): void
     {
         $db = $this->db();
         if (empty($this->requiredUuids)) {
@@ -260,15 +263,15 @@ class EventHistoryTable extends ZfQueryBasedTable
         );
     }
 
-    protected function timeSince($ms)
+    protected function timeSince(int $ms): ?string
     {
         return DateFormatter::timeAgo($ms);
     }
 
     /**
-     * @return \Zend_Db_Select
+     * @return Zend_Db_Select
      */
-    protected function prepareQuery()
+    protected function prepareQuery(): Zend_Db_Select
     {
         $query = $this->db()->select()->from([
             'vh' => 'vm_event_history'
@@ -317,7 +320,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         return $query;
     }
 
-    protected function deferredVMotionPath($row)
+    protected function deferredVMotionPath(object $row): DeferredText
     {
         $properties = [
             'host_uuid',
@@ -355,10 +358,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
+     * @param object $row
+     *
      * @return HtmlDocument
      */
-    protected function showMotionPath($row)
+    protected function showMotionPath(object $row): HtmlDocument
     {
         $html = new HtmlDocument();
         if ($row->host_uuid !== $row->destination_host_uuid) {
@@ -393,10 +397,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showHostToHostMigration($row)
+    protected function showHostToHostMigration(object $row): FormattedString
     {
         if ($row->event_type === 'VmEmigratingEvent') {
             return Html::sprintf(
@@ -427,10 +432,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showDatastoreToDatastoreMigration($row)
+    protected function showDatastoreToDatastoreMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s %s',
@@ -449,10 +455,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showToDatastoreMigration($row)
+    protected function showToDatastoreMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s',
@@ -466,10 +473,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showFromDatastoreMigration($row)
+    protected function showFromDatastoreMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s',
@@ -483,10 +491,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showToHostMigration($row)
+    protected function showToHostMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s',
@@ -500,10 +509,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showFromHostMigration($row)
+    protected function showFromHostMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s',

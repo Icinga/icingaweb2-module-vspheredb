@@ -22,24 +22,25 @@ use RuntimeException;
 class CheckRunner
 {
     public const RULESET_NAME_PARAMETER = 'ruleset';
+
     public const RULE_NAME_PARAMETER = 'rule';
 
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     /** @var Screen */
-    protected $screen;
+    protected Screen $screen;
 
-    /** @var string */
-    protected $ruleSetName;
+    /** @var ?string */
+    protected ?string $ruleSetName = null;
 
-    /** @var string */
-    protected $ruleName;
+    /** @var ?string */
+    protected ?string $ruleName = null;
 
     /** @var bool */
-    protected $inspect = false;
+    protected bool $inspect = false;
 
-    protected $preloadedTrees = [];
+    protected array $preloadedTrees = [];
 
     public function __construct(Db $db)
     {
@@ -192,6 +193,7 @@ class CheckRunner
 
     /**
      * @param BaseDbObject $object
+     *
      * @return array<string, CheckResultSet>
      */
     public function checkForDb(BaseDbObject $object): array

@@ -3,27 +3,30 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Date\DateFormatter;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class AlarmHistoryTable extends ZfQueryBasedTable
 {
     use UuidLinkHelper;
 
-    protected $entityUuid;
+    protected ?string $entityUuid = null;
 
     protected $defaultAttributes = [
         'class' => 'common-table',
         'data-base-target' => '_next',
     ];
 
-    public function filterEntityUuid($uuid)
+    public function filterEntityUuid($uuid): static
     {
         $this->entityUuid = $uuid;
 
         return $this;
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $this->renderDayIfNew($row->ts_event_ms / 1000);
         $content = [
@@ -39,12 +42,13 @@ class AlarmHistoryTable extends ZfQueryBasedTable
 
         return $tr;
     }
-    protected function timeSince($ms)
+
+    protected function timeSince(int $ms): ?string
     {
         return DateFormatter::timeAgo($ms);
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from([
             'ah' => 'alarm_history'

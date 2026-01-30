@@ -14,12 +14,12 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class VmsController extends ObjectsController
 {
-    protected $otherTabActions = [
+    protected array $otherTabActions = [
         'diskusage' => 'index',
         'snapshot'  => 'index',
     ];
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->handleTabs();
         $this->addTreeViewToggle();
@@ -59,12 +59,12 @@ class VmsController extends ObjectsController
         $this->content()->prepend($summaries);
     }
 
-    public function exportAction()
+    public function exportAction(): void
     {
         $this->sendExport('virtual_machine');
     }
 
-    public function diskusageAction()
+    public function diskusageAction(): void
     {
         $this->handleTabs();
 
@@ -89,7 +89,7 @@ class VmsController extends ObjectsController
         $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machine Guest Disks'));
     }
 
-    public function snapshotAction()
+    public function snapshotAction(): void
     {
         $this->handleTabs();
         $urlParams = $this->getParentParamsToPreserve();

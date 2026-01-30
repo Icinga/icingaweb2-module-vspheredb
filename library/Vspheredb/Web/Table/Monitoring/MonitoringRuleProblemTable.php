@@ -4,15 +4,17 @@ namespace Icinga\Module\Vspheredb\Web\Table\Monitoring;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use ipl\Html\Html;
+use Zend_Db_Select;
 
 class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithVCenterFilter
 {
-    protected $formerVCenter = null;
+    protected ?string $formerVCenter = null;
 
     public function getColumnsToBeRendered(): array
     {
@@ -22,7 +24,7 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
         ];
     }
 
-    public function renderRow($row)
+    public function renderRow($row): array
     {
         if ($row->vcenter_name === $this->formerVCenter) {
             $row->vcenter_name = null;
@@ -63,12 +65,12 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
         return (array) $row;
     }
 
-    public function filterVCenter(VCenter $vCenter): self
+    public function filterVCenter(VCenter $vCenter): static
     {
         return $this->filterVCenterUuids([$vCenter->getUuid()]);
     }
 
-    public function filterVCenterUuids(array $uuids): self
+    public function filterVCenterUuids(array $uuids): static
     {
         if (empty($uuids)) {
             $this->getQuery()->where('1 = 0');
@@ -86,7 +88,7 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
         return $this;
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): Select|Zend_Db_Select
     {
         $db = $this->db();
         return $db->select()->from(

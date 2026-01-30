@@ -11,7 +11,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class DatastoresController extends ObjectsController
 {
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->handleTabs();
         $this->addTreeViewToggle();
@@ -35,7 +35,7 @@ class DatastoresController extends ObjectsController
         $this->content()->prepend($summaries);
     }
 
-    public function exportAction()
+    public function exportAction(): void
     {
         $this->sendExport('datastore');
     }

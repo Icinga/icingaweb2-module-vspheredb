@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\Db\DbObject;
 
 class VmDatastoreUsage extends DbObject
 {
-    protected $keyName = ['vm_uuid', 'datastore_uuid'];
+    protected string|array|null $keyName = ['vm_uuid', 'datastore_uuid'];
 
-    protected $table = 'vm_datastore_usage';
+    protected ?string $table = 'vm_datastore_usage';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'vm_uuid'        => null,
         'datastore_uuid' => null,
         'vcenter_uuid'   => null,
@@ -22,9 +22,10 @@ class VmDatastoreUsage extends DbObject
 
     /**
      * @param VCenter $vCenter
+     *
      * @return static[]
      */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
         $objects = static::loadAll(

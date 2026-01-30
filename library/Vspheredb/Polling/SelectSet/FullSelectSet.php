@@ -15,7 +15,7 @@ class FullSelectSet implements SelectSet
     /**
      * @return SelectionSpec[]
      */
-    public static function create()
+    public static function create(): array
     {
         return [
             GenericSpec::traverseDatacenterHosts(),

@@ -8,7 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 class ServerSet implements JsonSerialization
 {
     /** @var array<int, ServerInfo> */
-    protected $servers = [];
+    protected array $servers = [];
 
     /**
      * ServerSet constructor.
@@ -37,7 +37,7 @@ class ServerSet implements JsonSerialization
         return array_keys($this->servers);
     }
 
-    public function addServer(ServerInfo $server)
+    public function addServer(ServerInfo $server): void
     {
         $this->servers[$server->getServerId()] = $server;
         ksort($this->servers);
@@ -58,6 +58,7 @@ class ServerSet implements JsonSerialization
 
     /**
      * @param VCenterServer[] $servers
+     *
      * @return static
      */
     public static function fromServers(array $servers): ServerSet

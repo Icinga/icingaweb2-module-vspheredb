@@ -10,70 +10,60 @@ use InvalidArgumentException;
 use LogicException;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
+use stdClass;
 use Zend_Db_Adapter_Abstract;
 use Zend_Db_Exception;
+use Zend_Db_Expr;
+use Zend_Db_Select;
 
 /**
  * Cloned from Director. Should sooner or later be replaced by something modern
  */
 abstract class DbObject
 {
-    /** @var DbConnection $connection */
-    protected $connection;
+    /** @var ?DbConnection $connection */
+    protected ?DbConnection $connection = null;
 
-    /** @var string Table name. MUST be set when extending this class */
-    protected $table;
+    /** @var ?string Table name. MUST be set when extending this class */
+    protected ?string $table = null;
 
-    /** @var Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var ?Zend_Db_Adapter_Abstract */
+    protected ?Zend_Db_Adapter_Abstract $db = null;
 
     /**
      * Default columns. MUST be set when extending this class. Each table
      * column MUST be defined with a default value. Default value may be null.
      *
-     * @var array
+     * @var ?array
      */
-    protected $defaultProperties;
+    protected ?array $defaultProperties = null;
 
-    /**
-     * Properties as loaded from db
-     */
-    protected $loadedProperties;
+    /** @var ?array Properties as loaded from db */
+    protected ?array $loadedProperties = null;
 
-    /**
-     * Whether at least one property has been modified
-     */
-    protected $hasBeenModified = false;
+    /** @var bool Whether at least one property has been modified */
+    protected bool $hasBeenModified = false;
 
-    /**
-     * Whether this object has been loaded from db
-     */
-    protected $loadedFromDb = false;
+    /** @var bool Whether this object has been loaded from db */
+    protected bool $loadedFromDb = false;
 
-    /**
-     * Object properties
-     */
-    protected $properties = [];
+    /** @var array Object properties */
+    protected array $properties = [];
 
-    /**
-     * Property names that have been modified since object creation
-     */
-    protected $modifiedProperties = [];
+    /** @var array Property names that have been modified since object creation */
+    protected array $modifiedProperties = [];
 
-    /**
-     * Unique key name, could be primary
-     */
-    protected $keyName;
+    /** @var string|string[]|null Unique key name, could be primary */
+    protected string|array|null $keyName = null;
 
-    /**
-     * Set this to an eventual autoincrementing column. May equal $keyName
-     */
-    protected $autoincKeyName;
+    /** @var ?string Set this to an eventual autoincrementing column. May equal $keyName */
+    protected ?string $autoincKeyName = null;
 
     /** @var bool forbid updates to autoinc values */
-    protected $protectAutoinc = true;
+    protected bool $protectAutoinc = true;
 
-    protected $binaryProperties = [];
+    /** @var array */
+    protected array $binaryProperties = [];
 
     /**
      * Constructor is not accessible and should not be overridden
@@ -92,7 +82,10 @@ abstract class DbObject
         $this->beforeInit();
     }
 
-    public function getTableName()
+    /**
+     * @return string|null
+     */
+    public function getTableName(): ?string
     {
         return $this->table;
     }
@@ -110,7 +103,7 @@ abstract class DbObject
      *
      * @return boolean  Whether this object is valid
      */
-    public function validate()
+    public function validate(): bool
     {
         return true;
     }
@@ -121,7 +114,7 @@ abstract class DbObject
      *
      * @return void
      */
-    protected function beforeInit()
+    protected function beforeInit(): void
     {
     }
 
@@ -131,7 +124,7 @@ abstract class DbObject
      *
      * @return void
      */
-    protected function onLoadFromDb()
+    protected function onLoadFromDb(): void
     {
     }
 
@@ -142,7 +135,7 @@ abstract class DbObject
      *
      * @return void
      */
-    protected function beforeStore()
+    protected function beforeStore(): void
     {
     }
 
@@ -151,7 +144,7 @@ abstract class DbObject
      *
      * @return void
      */
-    protected function onStore()
+    protected function onStore(): void
     {
     }
 
@@ -161,7 +154,7 @@ abstract class DbObject
      *
      * @return void
      */
-    protected function onInsert()
+    protected function onInsert(): void
     {
     }
 
@@ -171,7 +164,7 @@ abstract class DbObject
      *
      * @return void
      */
-    protected function onUpdate()
+    protected function onUpdate(): void
     {
     }
 
@@ -181,7 +174,7 @@ abstract class DbObject
      *
      * @return void
      */
-    protected function beforeDelete()
+    protected function beforeDelete(): void
     {
     }
 
@@ -191,18 +184,18 @@ abstract class DbObject
      *
      * @return void
      */
-    protected function onDelete()
+    protected function onDelete(): void
     {
     }
 
     /**
      * Set database connection
      *
-     * @param DbConnection $connection Database connection
+     * @param DbConnection|null $connection Database connection
      *
-     * @return self
+     * @return $this
      */
-    public function setConnection(DbConnection $connection)
+    public function setConnection(?DbConnection $connection): static
     {
         $this->connection = $connection;
         $this->db = $connection->getDbAdapter();
@@ -217,7 +210,7 @@ abstract class DbObject
      *
      * @return mixed
      */
-    public function get($property)
+    public function get(string $property): mixed
     {
         $func = 'get' . ucfirst($property);
         if (substr($func, -2) === '[]') {
@@ -244,7 +237,14 @@ abstract class DbObject
         return $this->properties[$key];
     }
 
-    protected function assertPropertyExists($key)
+    /**
+     * @param string $key
+     *
+     * @return $this
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function assertPropertyExists(string $key): static
     {
         if (! array_key_exists($key, $this->properties)) {
             throw new InvalidArgumentException(sprintf(
@@ -256,7 +256,12 @@ abstract class DbObject
         return $this;
     }
 
-    public function hasProperty($key)
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasProperty(string $key): bool
     {
         if (array_key_exists($key, $this->properties)) {
             return true;
@@ -280,11 +285,10 @@ abstract class DbObject
      * @param string $key
      * @param mixed  $value
      *
-     * @return self
+     * @return $this|null
      */
-    public function set($key, $value)
+    public function set(string $key, mixed $value): ?static
     {
-        $key = (string) $key;
         if ($value === '') {
             $value = null;
         }
@@ -334,11 +338,11 @@ abstract class DbObject
 
     /**
      * @param string $key
-     * @param $value
+     * @param mixed $value
      *
      * @return $this
      */
-    protected function reallySet(string $key, $value): static
+    protected function reallySet(string $key, mixed $value): static
     {
         if ($value === $this->properties[$key]) {
             return $this;
@@ -354,11 +358,11 @@ abstract class DbObject
     /**
      * Magic getter
      *
-     * @param mixed $key
+     * @param string $key
      *
      * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         return $this->get($key);
     }
@@ -366,12 +370,12 @@ abstract class DbObject
     /**
      * Magic setter
      *
-     * @param  string  $key  Key
-     * @param  mixed   $val  Value
+     * @param string $key Key
+     * @param  mixed $val Value
      *
      * @return void
      */
-    public function __set($key, $val)
+    public function __set(string $key, mixed $val): void
     {
         $this->set($key, $val);
     }
@@ -379,10 +383,11 @@ abstract class DbObject
     /**
      * Magic isset check
      *
-     * @param  string $key
-     * @return boolean
+     * @param string $key
+     *
+     * @return bool
      */
-    public function __isset($key)
+    public function __isset(string $key): bool
     {
         return array_key_exists($key, $this->properties);
     }
@@ -405,17 +410,12 @@ abstract class DbObject
     /**
      * Runs set() for every key/value pair of the given Array
      *
-     * @param  array $props  Array of properties
-     * @return self
+     * @param array $props Array of properties
+     *
+     * @return $this
      */
-    public function setProperties($props)
+    public function setProperties(array $props): static
     {
-        if (! is_array($props)) {
-            throw new InvalidArgumentException(sprintf(
-                'Array required, got %s',
-                gettype($props)
-            ));
-        }
         foreach ($props as $key => $value) {
             $this->set($key, $value);
         }
@@ -427,7 +427,7 @@ abstract class DbObject
      *
      * @return array
      */
-    public function getProperties()
+    public function getProperties(): array
     {
         //return $this->properties;
         $res = [];
@@ -438,12 +438,18 @@ abstract class DbObject
         return $res;
     }
 
-    protected function getPropertiesForDb()
+    /**
+     * @return array|null
+     */
+    protected function getPropertiesForDb(): ?array
     {
         return $this->properties;
     }
 
-    public function listProperties()
+    /**
+     * @return array
+     */
+    public function listProperties(): array
     {
         return array_keys($this->properties);
     }
@@ -453,7 +459,7 @@ abstract class DbObject
      *
      * @return array
      */
-    public function getModifiedProperties()
+    public function getModifiedProperties(): array
     {
         $props = [];
         foreach (array_keys($this->modifiedProperties) as $key) {
@@ -475,7 +481,7 @@ abstract class DbObject
      *
      * @return array
      */
-    public function listModifiedProperties()
+    public function listModifiedProperties(): array
     {
         return array_keys($this->modifiedProperties);
     }
@@ -485,7 +491,7 @@ abstract class DbObject
      *
      * @return bool
      */
-    public function hasBeenModified()
+    public function hasBeenModified(): bool
     {
         return $this->hasBeenModified;
     }
@@ -493,10 +499,11 @@ abstract class DbObject
     /**
      * Whether the given property has been modified
      *
-     * @param  string   $key Property name
-     * @return boolean
+     * @param string $key Property name
+     *
+     * @return bool
      */
-    protected function hasModifiedProperty($key)
+    protected function hasModifiedProperty(string $key): bool
     {
         return array_key_exists($key, $this->modifiedProperties);
     }
@@ -521,7 +528,10 @@ abstract class DbObject
         return $this->autoincKeyName;
     }
 
-    public function getKeyParams()
+    /**
+     * @return array
+     */
+    public function getKeyParams(): array
     {
         $params = [];
         $key = $this->getKeyName();
@@ -542,11 +552,11 @@ abstract class DbObject
      *
      * // TODO: may conflict with ->id
      *
-     * @throws InvalidArgumentException When key can not be calculated
+     * @return string|array|null
      *
-     * @return string|array
+     * @throws InvalidArgumentException When key can not be calculated
      */
-    public function getId()
+    public function getId(): array|string|null
     {
         $keyName = $this->getKeyName();
         if (is_array($keyName)) {
@@ -574,9 +584,9 @@ abstract class DbObject
     /**
      * Get the autoinc value if set
      *
-     * @return int
+     * @return int|null
      */
-    public function getAutoincId()
+    public function getAutoincId(): ?int
     {
         $autoincKeyName = $this->getAutoincKeyName();
         if ($autoincKeyName !== null && isset($this->properties[$autoincKeyName])) {
@@ -585,7 +595,10 @@ abstract class DbObject
         return null;
     }
 
-    protected function forgetAutoincId()
+    /**
+     * @return $this
+     */
+    protected function forgetAutoincId(): static
     {
         $autoincKeyName = $this->getAutoincKeyName();
         if ($autoincKeyName !== null && isset($this->properties[$autoincKeyName])) {
@@ -598,19 +611,22 @@ abstract class DbObject
     /**
      * Liefert das benutzte Datenbank-Handle
      *
-     * @return Zend_Db_Adapter_Abstract
+     * @return Zend_Db_Adapter_Abstract|null
      */
-    public function getDb()
+    public function getDb(): ?Zend_Db_Adapter_Abstract
     {
         return $this->db;
     }
 
-    public function hasConnection()
+    public function hasConnection(): bool
     {
         return $this->connection !== null;
     }
 
-    public function getConnection()
+    /**
+     * @return DbConnection|null
+     */
+    public function getConnection(): ?DbConnection
     {
         return $this->connection;
     }
@@ -619,10 +635,11 @@ abstract class DbObject
      * Lädt einen Datensatz aus der Datenbank und setzt die entsprechenden
      * Eigenschaften dieses Objekts
      *
+     * @return $this
+     *
      * @throws NotFoundError
-     * @return self
      */
-    protected function loadFromDb()
+    protected function loadFromDb(): static
     {
         $select = $this->db->select()->from($this->table)->where($this->createWhere());
         $properties = $this->db->fetchRow($select);
@@ -648,17 +665,23 @@ abstract class DbObject
 
     /**
      * @param object $row
-     * @param Db $db
-     * @return self
+     * @param Db     $db
+     *
+     * @return static
      */
-    public static function fromDbRow($row, Db $db)
+    public static function fromDbRow(object $row, Db $db): static
     {
         return (new static())
             ->setConnection($db)
             ->setDbProperties($row);
     }
 
-    public function setDbProperties($properties)
+    /**
+     * @param array|stdClass $properties
+     *
+     * @return $this
+     */
+    public function setDbProperties(array|stdClass $properties): static
     {
         foreach ($properties as $key => $val) {
             if (! array_key_exists($key, $this->properties)) {
@@ -685,7 +708,10 @@ abstract class DbObject
         return $this;
     }
 
-    public function getOriginalProperties()
+    /**
+     * @return array|null
+     */
+    public function getOriginalProperties(): ?array
     {
         return $this->loadedProperties;
     }
@@ -720,7 +746,10 @@ abstract class DbObject
         return $this;
     }
 
-    public function hasBeenLoadedFromDb()
+    /**
+     * @return bool
+     */
+    public function hasBeenLoadedFromDb(): bool
     {
         return $this->loadedFromDb;
     }
@@ -728,10 +757,11 @@ abstract class DbObject
     /**
      * Ändert den entsprechenden Datensatz in der Datenbank
      *
-     * @return int  Anzahl der geänderten Zeilen
+     * @return int|true Anzahl der geänderten Zeilen
+     *
      * @throws \Zend_Db_Adapter_Exception
      */
-    protected function updateDb()
+    protected function updateDb(): int|true
     {
         $properties = $this->getModifiedProperties();
         if (empty($properties)) {
@@ -750,10 +780,11 @@ abstract class DbObject
     /**
      * Fügt der Datenbank-Tabelle einen entsprechenden Datensatz hinzu
      *
-     * @return int  Anzahl der betroffenen Zeilen
+     * @return int Anzahl der betroffenen Zeilen
+     *
      * @throws \Zend_Db_Adapter_Exception
      */
-    protected function insertIntoDb()
+    protected function insertIntoDb(): int
     {
         $properties = $this->getPropertiesForDb();
         $autoincKeyName = $this->getAutoincKeyName();
@@ -774,7 +805,12 @@ abstract class DbObject
         return $this->db->insert($this->table, $properties);
     }
 
-    protected function isBinaryColumn($column)
+    /**
+     * @param string $column
+     *
+     * @return bool
+     */
+    protected function isBinaryColumn(string $column): bool
     {
         return in_array($column, $this->binaryProperties);
     }
@@ -782,11 +818,15 @@ abstract class DbObject
     /**
      * Store object to database
      *
-     * @param  DbConnection $db
-     * @return bool Whether storing succeeded
+     * @param DbConnection|null $db
+     *
+     * @return true Whether storing succeeded
+     *
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      * @throws DuplicateKeyException
      */
-    public function store(?DbConnection $db = null)
+    public function store(?DbConnection $db = null): true
     {
         if ($db !== null) {
             $this->setConnection($db);
@@ -878,7 +918,7 @@ abstract class DbObject
      *
      * @return int  Affected rows
      */
-    protected function deleteFromDb()
+    protected function deleteFromDb(): int
     {
         return $this->db->delete(
             $this->table,
@@ -890,9 +930,10 @@ abstract class DbObject
      * @param string[]|string $key
      *
      * @return self
+     *
      * @throws InvalidArgumentException
      */
-    protected function setKey(array|string $key)
+    protected function setKey(array|string $key): static
     {
         $keyname = $this->getKeyName();
         if (is_array($keyname)) {
@@ -916,7 +957,10 @@ abstract class DbObject
         return $this;
     }
 
-    protected function existsInDb()
+    /**
+     * @return bool
+     */
+    protected function existsInDb(): bool
     {
         $result = $this->db->fetchRow(
             $this->db->select()->from($this->table)->where($this->createWhere())
@@ -924,7 +968,10 @@ abstract class DbObject
         return $result !== false;
     }
 
-    public function createWhere()
+    /**
+     * @return string
+     */
+    public function createWhere(): string
     {
         if ($id = $this->getAutoincId()) {
             if ($originalId = $this->getOriginalProperty($this->autoincKeyName)) {
@@ -970,7 +1017,13 @@ abstract class DbObject
         }
     }
 
-    protected function createQuotedWhere($column, $value)
+    /**
+     * @param string $column
+     * @param mixed  $value
+     *
+     * @return string
+     */
+    protected function createQuotedWhere(string $column, mixed $value): string
     {
         return $this->db->quoteInto(
             sprintf('%s = ?', $column),
@@ -978,7 +1031,13 @@ abstract class DbObject
         );
     }
 
-    protected function eventuallyQuoteBinary($value, $column)
+    /**
+     * @param mixed  $value
+     * @param string $column
+     *
+     * @return array|mixed|string|Zend_Db_Expr
+     */
+    protected function eventuallyQuoteBinary(mixed $value, string $column): mixed
     {
         if ($this->isBinaryColumn($column)) {
             return $this->connection->quoteBinary($value);
@@ -987,7 +1046,10 @@ abstract class DbObject
         }
     }
 
-    protected function getLogId()
+    /**
+     * @return mixed|string
+     */
+    protected function getLogId(): mixed
     {
         if (is_array($this->keyName)) {
             $id = [];
@@ -1009,8 +1071,10 @@ abstract class DbObject
 
     /**
      * @param string $name
+     *
+     * @return mixed|string
      */
-    protected function getReadableProperty(string $name)
+    protected function getReadableProperty(string $name): mixed
     {
         if (isset($this->properties[$name])) {
             $value = $this->properties[$name];
@@ -1024,7 +1088,10 @@ abstract class DbObject
         return $this->defaultProperties[$name];
     }
 
-    public function delete()
+    /**
+     * @return true
+     */
+    public function delete(): true
     {
         $table = $this->table;
 
@@ -1057,7 +1124,10 @@ abstract class DbObject
         return true;
     }
 
-    public function __clone()
+    /**
+     * @return void
+     */
+    public function __clone(): void
     {
         $this->onClone();
         $this->forgetAutoincId();
@@ -1065,17 +1135,20 @@ abstract class DbObject
         $this->hasBeenModified = true;
     }
 
-    protected function onClone()
+    /**
+     * @return void
+     */
+    protected function onClone(): void
     {
     }
 
     /**
-     * @param array $properties
+     * @param array             $properties
      * @param DbConnection|null $connection
      *
      * @return static
      */
-    public static function create($properties = [], ?DbConnection $connection = null)
+    public static function create(array $properties = [], ?DbConnection $connection = null): static
     {
         $obj = new static();
         if ($connection !== null) {
@@ -1086,12 +1159,14 @@ abstract class DbObject
     }
 
     /**
-     * @param $id
-     * @param DbConnection $connection
+     * @param int|string $id
+     * @param DbConnection|null $connection
+     *
      * @return static
+     *
      * @throws NotFoundError
      */
-    public static function loadWithAutoIncId($id, DbConnection $connection)
+    public static function loadWithAutoIncId(int|string $id, ?DbConnection $connection): static
     {
         /* Need to cast to int, otherwise the id will be matched against
          * object_name, which may wreak havoc if an object has a
@@ -1110,12 +1185,14 @@ abstract class DbObject
     }
 
     /**
-     * @param $id
+     * @param string       $id
      * @param DbConnection $connection
+     *
      * @return static
+     *
      * @throws NotFoundError
      */
-    public static function load($id, DbConnection $connection)
+    public static function load(string $id, DbConnection $connection): static
     {
         $obj = new static();
         $obj->setConnection($connection)->setKey($id)->loadFromDb();
@@ -1124,14 +1201,17 @@ abstract class DbObject
     }
 
     /**
-     * @param DbConnection $connection
-     * @param \Zend_Db_Select $query
-     * @param string|null $keyColumn
+     * @param DbConnection        $connection
+     * @param Zend_Db_Select|null $query
+     * @param string|null         $keyColumn
      *
      * @return static[]
      */
-    public static function loadAll(DbConnection $connection, $query = null, $keyColumn = null)
-    {
+    public static function loadAll(
+        DbConnection $connection,
+        ?Zend_Db_Select $query = null,
+        ?string $keyColumn = null
+    ): array {
         $objects = [];
         $db = $connection->getDbAdapter();
 
@@ -1168,9 +1248,10 @@ abstract class DbObject
     /**
      * @param $id
      * @param DbConnection $connection
+     *
      * @return bool
      */
-    public static function exists($id, DbConnection $connection)
+    public static function exists($id, DbConnection $connection): bool
     {
         $obj = new static();
         $obj->setConnection($connection)->setKey($id);

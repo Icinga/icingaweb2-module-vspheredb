@@ -7,19 +7,19 @@ class CheckResultSet implements CheckResultInterface
     public const NUMERATION_PREFIX = ' \\_ ';
 
     /** @var string */
-    protected $name;
+    protected string $name;
 
     /** @var CheckResultInterface[] */
-    protected $results = [];
+    protected array $results = [];
 
-    protected $prependedOutput = '';
+    protected string $prependedOutput = '';
 
     public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    public function addResult(CheckResultInterface $result)
+    public function addResult(CheckResultInterface $result): void
     {
         $this->results[] = $result;
     }
@@ -39,7 +39,7 @@ class CheckResultSet implements CheckResultInterface
         return empty($this->results);
     }
 
-    public function getOutput($prefix = ''): string
+    public function getOutput(string $prefix = ''): string
     {
         $indent = strlen($prefix . self::NUMERATION_PREFIX . '[');
         $lines = [sprintf('%s[%s] %s', $prefix, $this->getState()->getName(), $this->name)];
@@ -66,7 +66,7 @@ class CheckResultSet implements CheckResultInterface
         return implode(PHP_EOL, $lines);
     }
 
-    public function prependOutput(string $output)
+    public function prependOutput(string $output): void
     {
         $this->prependedOutput .= $output;
     }

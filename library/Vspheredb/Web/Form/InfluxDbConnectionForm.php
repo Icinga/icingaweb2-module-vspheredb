@@ -19,19 +19,18 @@ class InfluxDbConnectionForm extends Form
     public const INFLUXDB_MIN_SUPPORTED_VERSION = '1.6.0';
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
-    protected $detectedApiVersion;
+    protected ?string $detectedApiVersion = null;
 
-    protected $influxDbVersion;
+    protected ?string $influxDbVersion = null;
 
-    protected $baseUrlElement;
-    /**
-     * @var RemoteClient
-     */
-    protected $client;
+    protected ?TextWithActionButton $baseUrlElement = null;
 
-    protected $checkedNow = false;
+    /** @var RemoteClient */
+    protected RemoteClient $client;
+
+    protected bool $checkedNow = false;
 
     public function __construct(LoopInterface $loop, RemoteClient $client)
     {
@@ -39,7 +38,7 @@ class InfluxDbConnectionForm extends Form
         $this->client = $client;
     }
 
-    public function assemble()
+    public function assemble(): void
     {
         $this->addHidden('checked_url', ['ignore' => true]);
         $this->addHidden('checked_api_version', ['ignore' => true]);
@@ -68,7 +67,7 @@ class InfluxDbConnectionForm extends Form
         $this->addCredentials();
     }
 
-    protected function addCredentials()
+    protected function addCredentials(): static
     {
         if ($this->getApiVersion() === 'v2') {
             $this->addV2Credentials();
@@ -80,7 +79,7 @@ class InfluxDbConnectionForm extends Form
         return $this;
     }
 
-    protected function validateCredentials()
+    protected function validateCredentials(): void
     {
         if (!$this->checkedNow) {
             return;
@@ -105,17 +104,17 @@ class InfluxDbConnectionForm extends Form
         }
     }
 
-    protected function getExceptionMessageWithoutPhpFile(\Exception $e)
+    protected function getExceptionMessageWithoutPhpFile(\Exception $e): string
     {
         return preg_replace('/\sin\s.+?\.php\(\d+\)/', '', $e->getMessage());
     }
 
-    protected function remoteRequest($request, $params = [])
+    protected function remoteRequest(string $request, array $params = []): mixed
     {
         return await(timeout($this->client->request($request, $params), 5, $this->loop));
     }
 
-    protected function getDetectedApiVersion()
+    protected function getDetectedApiVersion(): ?string
     {
         if ($this->detectedApiVersion === null) {
             $this->detectedApiVersion = $this->getApiVersionForVersionString(
@@ -126,12 +125,12 @@ class InfluxDbConnectionForm extends Form
         return $this->detectedApiVersion;
     }
 
-    protected function getApiVersion()
+    protected function getApiVersion(): string
     {
         return $this->getValue('api_version', $this->getDetectedApiVersion());
     }
 
-    protected function getInfluxDbVersion()
+    protected function getInfluxDbVersion(): ?string
     {
         if ($this->influxDbVersion === null) {
             $element = $this->getUrlElement();
@@ -147,14 +146,14 @@ class InfluxDbConnectionForm extends Form
     }
 
     /**
-     * @return TextWithActionButton
+     * @return TextWithActionButton|null
      */
-    protected function getUrlElement()
+    protected function getUrlElement(): ?TextWithActionButton
     {
         return $this->baseUrlElement;
     }
 
-    protected function markUrlAsValidated()
+    protected function markUrlAsValidated(): static
     {
         $this
             ->getUrlElement()
@@ -164,14 +163,14 @@ class InfluxDbConnectionForm extends Form
         return $this;
     }
 
-    protected function autodetectIsUpToDate()
+    protected function autodetectIsUpToDate(): bool
     {
         $baseUrl = $this->getValue('base_url');
 
         return $baseUrl && $this->getValue('checked_url') === $baseUrl;
     }
 
-    protected function appendVersionInformation($apiVersion, $detectedVersion)
+    protected function appendVersionInformation(?string $apiVersion, ?string $detectedVersion): void
     {
         if (empty($apiVersion) || empty($detectedVersion)) {
             return;
@@ -193,7 +192,7 @@ class InfluxDbConnectionForm extends Form
         // $element->setValue($apiVersion);
     }
 
-    protected function addV1Credentials()
+    protected function addV1Credentials(): void
     {
         $this->addElement('text', 'username', [
             'label'       => $this->translate('Username'),
@@ -204,7 +203,7 @@ class InfluxDbConnectionForm extends Form
         ]);
     }
 
-    protected function addV2Credentials()
+    protected function addV2Credentials(): void
     {
         $this->addElement('text', 'username', [
             'label'       => $this->translate('Organisation'),
@@ -217,7 +216,7 @@ class InfluxDbConnectionForm extends Form
         ]);
     }
 
-    protected function detectInfluxDbVersion($baseUrl)
+    protected function detectInfluxDbVersion($baseUrl): false|string|null
     {
         if ($this->getValue('base_url') === null) {
             return null;
@@ -241,7 +240,7 @@ class InfluxDbConnectionForm extends Form
         }
     }
 
-    protected function tryCredentials($baseUrl, $apiVersion, $username, $password)
+    protected function tryCredentials(string $baseUrl, string $apiVersion, string $username, string $password): mixed
     {
         return $this->remoteRequest('influxdb.testConnection', [
             'baseUrl'  => $baseUrl,
@@ -251,18 +250,18 @@ class InfluxDbConnectionForm extends Form
         ]);
     }
 
-    protected function setCheckedApiVersionFor($baseUrl, $version)
+    protected function setCheckedApiVersionFor(string $baseUrl, string $version): void
     {
         $this->getElement('checked_url')->setValue($baseUrl);
         $this->setElementValue('checked_api_version', $version);
     }
 
-    protected function versionIsFine($version)
+    protected function versionIsFine(string $version): bool
     {
         return \version_compare($version, static::INFLUXDB_MIN_SUPPORTED_VERSION, 'ge');
     }
 
-    protected function getApiVersionForVersionString($version)
+    protected function getApiVersionForVersionString(?string $version): ?string
     {
         if ($version === null) {
             return null;

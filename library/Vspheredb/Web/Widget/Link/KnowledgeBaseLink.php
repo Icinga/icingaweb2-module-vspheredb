@@ -16,7 +16,7 @@ class KnowledgeBaseLink extends BaseHtmlElement
         'class'  => 'vmware_kb_link',
     ];
 
-    public function __construct($id, $title = null, $label = null)
+    public function __construct(int $id, ?string $title = null, ?string $label = null)
     {
         $this->id = $id;
         if ($label === null) {

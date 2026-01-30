@@ -11,11 +11,12 @@ abstract class MoRefList
     public const MEMBER_TABLE_NAME = 'unconfigured_table_name_object';
 
     /**
-     * @param VCenter $vCenter
+     * @param VCenter                  $vCenter
      * @param ManagedObjectReference[] $objects
+     *
      * @return string
      */
-    public static function requireChecksum(VCenter $vCenter, $objects)
+    public static function requireChecksum(VCenter $vCenter, array $objects): string
     {
         $key = static::calculateChecksum($vCenter, $objects);
 
@@ -27,11 +28,12 @@ abstract class MoRefList
     }
 
     /**
-     * @param $checksum
+     * @param string  $checksum
      * @param VCenter $vCenter
+     *
      * @return bool
      */
-    protected static function checksumExists($checksum, VCenter $vCenter)
+    protected static function checksumExists(string $checksum, VCenter $vCenter): bool
     {
         $db = $vCenter->getDb();
         return (int) $db->fetchOne(
@@ -42,11 +44,13 @@ abstract class MoRefList
     }
 
     /**
-     * @param $checksum
+     * @param string                   $checksum
      * @param ManagedObjectReference[] $objects
-     * @param VCenter $vCenter
+     * @param VCenter                  $vCenter
+     *
+     * @return void
      */
-    protected static function create($checksum, $objects, VCenter $vCenter)
+    protected static function create(string $checksum, array $objects, VCenter $vCenter): void
     {
         $db = $vCenter->getDb();
         $db->beginTransaction();
@@ -73,11 +77,12 @@ abstract class MoRefList
     }
 
     /**
-     * @param VCenter $vCenter
+     * @param VCenter                  $vCenter
      * @param ManagedObjectReference[] $objects
+     *
      * @return string
      */
-    protected static function calculateChecksum(VCenter $vCenter, $objects)
+    protected static function calculateChecksum(VCenter $vCenter, array $objects): string
     {
         $list = [];
         foreach ($objects as $object) {

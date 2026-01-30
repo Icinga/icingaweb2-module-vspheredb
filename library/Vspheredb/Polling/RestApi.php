@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Polling;
 
+use Closure;
 use gipfl\Curl\CurlAsync;
 use gipfl\Json\JsonString;
 use GuzzleHttp\Psr7\Request;
@@ -24,26 +25,25 @@ use function React\Promise\resolve;
 class RestApi
 {
     /** @var CurlAsync */
-    protected $curl;
+    protected CurlAsync $curl;
 
     /** @var CookieStore */
-    protected $sidStore;
+    protected CookieStore $sidStore;
 
     /** @var ServerInfo */
-    protected $server;
+    protected ServerInfo $server;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /** @var array[] */
-    protected $curlOptions;
-    /**
-     * @var VCenter
-     */
-    protected $vCenter;
+    protected array $curlOptions;
 
-    /** @var \Closure Will become obsolete with PHP 8.1 */
-    private $normalizeBatchResult;
+    /** @var VCenter */
+    protected VCenter $vCenter;
+
+    /** @var Closure Will become obsolete with PHP 8.1 */
+    private Closure $normalizeBatchResult;
 
     public function __construct(
         ServerInfo $server,
@@ -264,7 +264,7 @@ class RestApi
         return $this->curl->send($request, $this->curlOptions);
     }
 
-    public function getUsedCategories()
+    public function getUsedCategories(): PromiseInterface
     {
         // Test only, doesn't work
         return $this->post("cis/tagging/category?action=list-used-categories");

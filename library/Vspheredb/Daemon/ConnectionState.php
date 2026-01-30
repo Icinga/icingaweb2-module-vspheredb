@@ -8,20 +8,21 @@ use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Monitoring\Health\ApiConnectionInfo;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
+use Zend_Db_Adapter_Abstract;
 
 class ConnectionState
 {
     /** @var array */
-    protected $daemonApiConnections;
+    protected array $daemonApiConnections;
 
-    /** @var Adapter|\Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Adapter|Zend_Db_Adapter_Abstract */
+    protected Adapter|Zend_Db_Adapter_Abstract $db;
 
     /**
-     * @param ApiConnectionInfo[] $daemonApiConnections
-     * @param Adapter|\Zend_Db_Adapter_Abstract $db
+     * @param ApiConnectionInfo[]              $daemonApiConnections
+     * @param Zend_Db_Adapter_Abstract|Adapter $db
      */
-    public function __construct(array $daemonApiConnections, $db)
+    public function __construct(array $daemonApiConnections, Zend_Db_Adapter_Abstract|Adapter $db)
     {
         $this->daemonApiConnections = [];
         foreach ($daemonApiConnections as $connection) {
@@ -57,6 +58,9 @@ class ConnectionState
         return $connectionsByVCenter;
     }
 
+    /**
+     * @return array
+     */
     protected function getConfiguredServersByVCenter(): array
     {
         $db = $this->db;
@@ -88,6 +92,11 @@ class ConnectionState
         return $result;
     }
 
+    /**
+     * @param ServerConnectionInfo $info
+     *
+     * @return string
+     */
     public static function describe(ServerConnectionInfo $info): string
     {
         $t = StaticTranslator::get();
@@ -140,7 +149,10 @@ class ConnectionState
         }
     }
 
-    public static function describeNoServer()
+    /**
+     * @return string
+     */
+    public static function describeNoServer(): string
     {
         return StaticTranslator::get()->translate('There is no configured server for this vCenter');
     }

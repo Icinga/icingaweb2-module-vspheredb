@@ -28,13 +28,15 @@ class CheckCommand extends Command
 {
     use CheckPluginHelper;
 
-    /** @var Db */
-    protected $db;
+    /** @var ?Db */
+    protected ?Db $db = null;
 
     /**
      * Check vSphereDB daemon health
+     *
+     * @return void
      */
-    public function healthAction()
+    public function healthAction(): void
     {
         $this->run(function () {
             $migrations = Db::migrationsForDb($this->db());
@@ -82,8 +84,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check vcenterconnection --vCenter <id>
+     *
+     * @return void
      */
-    public function vcenterconnectionAction()
+    public function vcenterconnectionAction(): void
     {
         $this->run(function () {
             $vcenter = VCenterInfo::fetchOne(
@@ -105,8 +109,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check host [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
+     *
+     * @return void
      */
-    public function hostAction()
+    public function hostAction(): void
     {
         $this->run(function () {
             $uuid = $this->params->get('uuid');
@@ -130,8 +136,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check hosts
+     *
+     * @return void
      */
-    public function hostsAction()
+    public function hostsAction(): void
     {
         $this->showOverallStatusForProblems(
             $this->lookup()->listNonGreenObjects('HostSystem')
@@ -144,8 +152,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check vm [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
+     *
+     * @return void
      */
-    public function vmAction()
+    public function vmAction(): void
     {
         $this->run(function () {
             $uuid = $this->params->get('uuid');
@@ -174,8 +184,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check vms
+     *
+     * @return void
      */
-    public function vmsAction()
+    public function vmsAction(): void
     {
         $this->showOverallStatusForProblems(
             $this->lookup()->listNonGreenObjects('VirtualMachine')
@@ -188,8 +200,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check datastore [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
+     *
+     * @return void
      */
-    public function datastoreAction()
+    public function datastoreAction(): void
     {
         $this->run(function () {
             $uuid = $this->params->get('uuid');
@@ -213,15 +227,22 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check datastores
+     *
+     * @return void
      */
-    public function datastoresAction()
+    public function datastoresAction(): void
     {
         $this->showOverallStatusForProblems(
             $this->lookup()->listNonGreenObjects('Datastore')
         );
     }
 
-    protected function runChecks(BaseDbObject $object)
+    /**
+     * @param BaseDbObject $object
+     *
+     * @return never
+     */
+    protected function runChecks(BaseDbObject $object): never
     {
         $runner = new CheckRunner($this->db());
         if ($section = $this->params->get(CheckRunner::RULESET_NAME_PARAMETER)) {
@@ -244,10 +265,19 @@ class CheckCommand extends Command
         }
         $result = $runner->check($object);
         echo $this->colorizeOutput($result->getOutput()) . PHP_EOL;
+
         exit($result->getState()->getExitCode());
     }
 
-    protected static function assertString($string, string $label)
+    /**
+     * @param mixed  $string
+     * @param string $label
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function assertString(mixed $string, string $label): void
     {
         if (! is_string($string)) {
             throw new InvalidArgumentException("$label must be a string");
@@ -255,11 +285,12 @@ class CheckCommand extends Command
     }
 
     /**
-     * @param VCenterInfo $vcenter
+     * @param VCenterInfo                                  $vcenter
      * @param array<int, array<int, ServerConnectionInfo>> $connections
+     *
      * @return void
      */
-    protected function checkVCenterConnection(VCenterInfo $vcenter, array $connections)
+    protected function checkVCenterConnection(VCenterInfo $vcenter, array $connections): void
     {
         $vcenterId = $vcenter->id;
         $prefix = sprintf('%s, %s: ', $vcenter->name, $vcenter->software);
@@ -282,7 +313,10 @@ class CheckCommand extends Command
         }
     }
 
-    protected function checkDaemonStatus()
+    /**
+     * @return void
+     */
+    protected function checkDaemonStatus(): void
     {
         $db = $this->db()->getDbAdapter();
         $daemon = $db->fetchRow(
@@ -301,6 +335,11 @@ class CheckCommand extends Command
         }
     }
 
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
     protected function colorizeOutput(string $string): string
     {
         $screen = Screen::factory();
@@ -310,7 +349,12 @@ class CheckCommand extends Command
         }, $string);
     }
 
-    protected function showOverallStatusForProblems($problems)
+    /**
+     * @param array $problems
+     *
+     * @return void
+     */
+    protected function showOverallStatusForProblems(array $problems): void
     {
         $this->run(function () use ($problems) {
             if (empty($problems)) {
@@ -324,7 +368,13 @@ class CheckCommand extends Command
         });
     }
 
-    protected function addProblematicObjectNames($color, $objects)
+    /**
+     * @param string $color
+     * @param array  $objects
+     *
+     * @return void
+     */
+    protected function addProblematicObjectNames(string $color, array $objects): void
     {
         $showMax = 5;
         $stateName = $this->getStateForColor($color);
@@ -367,11 +417,17 @@ class CheckCommand extends Command
         return $colors[$color];
     }
 
+    /**
+     * @return CheckRelatedLookup
+     */
     protected function lookup(): CheckRelatedLookup
     {
         return new CheckRelatedLookup($this->db());
     }
 
+    /**
+     * @return Db
+     */
     protected function db(): Db
     {
         if ($this->db === null) {

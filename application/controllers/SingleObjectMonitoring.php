@@ -13,7 +13,12 @@ use Ramsey\Uuid\Uuid;
 
 trait SingleObjectMonitoring
 {
-    protected function showMonitoringDetails(BaseDbObject $object)
+    /**
+     * @param BaseDbObject $object
+     *
+     * @return void
+     */
+    protected function showMonitoringDetails(BaseDbObject $object): void
     {
         $history = $this->params->get('history');
         if ($history) {
@@ -37,7 +42,12 @@ trait SingleObjectMonitoring
         }
     }
 
-    protected function showMonitoringHistory(BaseDbObject $object)
+    /**
+     * @param BaseDbObject $object
+     *
+     * @return void
+     */
+    protected function showMonitoringHistory(BaseDbObject $object): void
     {
         $this->setAutorefreshInterval(20);
         $table = new MonitoringRuleProblemHistoryTable($this->db()->getDbAdapter());
@@ -46,7 +56,12 @@ trait SingleObjectMonitoring
         $table->renderTo($this);
     }
 
-    protected function showRuleConfigurationHint(BaseDbObject $object)
+    /**
+     * @param BaseDbObject $object
+     *
+     * @return void
+     */
+    protected function showRuleConfigurationHint(BaseDbObject $object): void
     {
         switch ($object->getTableName()) {
             case 'virtual_machine':
@@ -69,6 +84,12 @@ trait SingleObjectMonitoring
         }
     }
 
+    /**
+     * @param BaseDbObject $object
+     * @param bool|null    $inspect
+     *
+     * @return Hint
+     */
     protected function createMonitoringHint(BaseDbObject $object, ?bool $inspect = null): Hint
     {
         return Hint::info(Html::sprintf(
@@ -88,6 +109,11 @@ trait SingleObjectMonitoring
         ));
     }
 
+    /**
+     * @param bool|null $inspect
+     *
+     * @return Link
+     */
     protected function createMonitoringInspectionLink(?bool $inspect = null): Link
     {
         if ($inspect) {
@@ -107,6 +133,11 @@ trait SingleObjectMonitoring
         }
     }
 
+    /**
+     * @param bool|null $inspect
+     *
+     * @return Link
+     */
     protected function createMonitoringHistoryLink(?bool $inspect = null): Link
     {
         if ($inspect) {

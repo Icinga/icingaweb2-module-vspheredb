@@ -12,10 +12,11 @@ use function array_key_exists;
 class ServerInfo implements JsonSerialization
 {
     /** @var array */
-    protected $properties;
+    protected array $properties;
 
     /**
      * ServerInfo constructor.
+     *
      * @param array $properties
      */
     public function __construct(array $properties)
@@ -45,6 +46,7 @@ class ServerInfo implements JsonSerialization
 
     /**
      * @param VCenterServer $server
+     *
      * @return static
      */
     public static function fromServer(VCenterServer $server): ServerInfo
@@ -82,7 +84,7 @@ class ServerInfo implements JsonSerialization
         return (object) $this->properties;
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
         return sprintf(
             '%s://%s',

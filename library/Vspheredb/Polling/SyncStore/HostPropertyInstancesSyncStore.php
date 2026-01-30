@@ -10,19 +10,21 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    protected $baseKey = 'undefined.property';
-    protected $keyProperty = 'undefinedKeyProperty';
-    protected $dbKeyProperty = 'undefinedKeyProperty';
-    protected $instanceClass = 'undefinedInstanceClass';
+    protected string $baseKey = 'undefined.property';
 
-    public function store($result, $class, SyncStats $stats)
+    protected string $keyProperty = 'undefinedKeyProperty';
+
+    protected string $dbKeyProperty = 'undefinedKeyProperty';
+
+    protected string $instanceClass = 'undefinedInstanceClass';
+
+    public function store($result, $class, SyncStats $stats): void
     {
         $connection = $this->vCenter->getConnection();
         $dbObjects = $class::loadAllForVCenter($this->vCenter);
 
         $baseKey = $this->baseKey;
         $keyProperty = $this->keyProperty;
-        /** @var string $dbKeyProperty */
         $dbKeyProperty = $this->dbKeyProperty;
         $instanceClass = $this->instanceClass;
 

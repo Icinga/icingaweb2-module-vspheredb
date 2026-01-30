@@ -113,8 +113,13 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         return $results;
     }
 
-    protected function checkMax(CheckPluginState $uptimeState, $value, $threshold, $errorState, &$info)
-    {
+    protected function checkMax(
+        CheckPluginState $uptimeState,
+        int $value,
+        int $threshold,
+        int $errorState,
+        ?string &$info
+    ): void {
         if ($threshold) {
             if ($value >= $threshold) {
                 $uptimeState->raiseState($errorState);
@@ -123,8 +128,13 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         }
     }
 
-    protected function checkMin(CheckPluginState $uptimeState, $value, $threshold, $errorState, &$info)
-    {
+    protected function checkMin(
+        CheckPluginState $uptimeState,
+        int $value,
+        int $threshold,
+        int $errorState,
+        ?string &$info
+    ): void {
         if ($threshold) {
             if ($value < $threshold) {
                 $uptimeState->raiseState($errorState);
@@ -133,7 +143,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         }
     }
 
-    protected function getStatusMessageForPowerState($state, $what): string
+    protected function getStatusMessageForPowerState(string $state, string $what): string
     {
         switch ($state) {
             case 'poweredOff':

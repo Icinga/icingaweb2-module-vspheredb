@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\HostHbaSyncStore;
 
 class HostHbaSyncTask extends SyncTask
 {
-    protected $label = 'Host HBAs';
-    protected $tableName = 'host_hba';
-    protected $objectClass = HostHba::class;
-    protected $selectSetClass = HostSystemSelectSet::class;
-    protected $propertySetClass = HostHbaPropertySet::class;
-    protected $syncStoreClass = HostHbaSyncStore::class;
+    protected string $label = 'Host HBAs';
+
+    protected string $tableName = 'host_hba';
+
+    protected string $objectClass = HostHba::class;
+
+    protected string $selectSetClass = HostSystemSelectSet::class;
+
+    protected string $propertySetClass = HostHbaPropertySet::class;
+
+    protected string $syncStoreClass = HostHbaSyncStore::class;
 }

@@ -4,8 +4,11 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class VmsWithDuplicateProperty extends ZfQueryBasedTable
 {
@@ -18,13 +21,13 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         'object_name',
     ];
 
-    protected $property;
+    protected ?string $property = null;
 
-    protected $propertyTitle;
+    protected ?string $propertyTitle = null;
 
-    protected $lastValue;
+    protected ?string $lastValue = null;
 
-    public static function create(Db $db, $property, $title)
+    public static function create(Db $db, string $property, string $title): static
     {
         $table = new static($db);
         $table->property = $property;
@@ -33,7 +36,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         return $table;
     }
 
-    public function getColumnsToBeRendered()
+    public function getColumnsToBeRendered(): array
     {
         return [
             $this->propertyTitle,
@@ -41,7 +44,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         ];
     }
 
-    public function getColor()
+    public function getColor(): string
     {
         if (count($this) > 0) {
             return 'yellow';
@@ -50,7 +53,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         return 'green';
     }
 
-    public function setProperty($name, $title)
+    public function setProperty(string $name, string $title): static
     {
         $this->property = $name;
         $this->propertyTitle = $title;
@@ -58,7 +61,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         return $this;
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $caption = Link::create(
             $row->object_name,
@@ -85,7 +88,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         return $tr;
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $db = $this->db();
 

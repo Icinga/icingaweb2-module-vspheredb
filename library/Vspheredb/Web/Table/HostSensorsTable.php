@@ -7,6 +7,8 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class HostSensorsTable extends ZfQueryBasedTable
 {
@@ -20,14 +22,14 @@ class HostSensorsTable extends ZfQueryBasedTable
         'sensor_type',
     ];
 
-    /** @var HostSystem */
-    protected $host;
+    /** @var ?HostSystem */
+    protected ?HostSystem $host = null;
 
-    protected $lastType;
+    protected ?string $lastType = null;
 
-    protected $summaries;
+    protected ?array $summaries = null;
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $this->renderTypeIfNew($row->sensor_type);
         return static::row([
@@ -38,9 +40,9 @@ class HostSensorsTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $type
+     * @param string $type
      */
-    protected function renderTypeIfNew($type)
+    protected function renderTypeIfNew(string $type): void
     {
         if ($this->lastType !== $type) {
             $summary = $this->getSummaryByType($type);
@@ -65,7 +67,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         }
     }
 
-    protected function makeHealthStateBadge($state, $count)
+    protected function makeHealthStateBadge(string $state, int $count): Link
     {
         return Link::create($count, '#', null, ['class' => ['state', $state]]);
     }
@@ -84,7 +86,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         return $this->summaries[$type];
     }
 
-    protected function renderHealthState($state)
+    protected function renderHealthState(string $state): Icon
     {
         switch ($state) {
             case 'green':
@@ -103,7 +105,7 @@ class HostSensorsTable extends ZfQueryBasedTable
     {
     }
 
-    protected function renderCurrentMeasurement($row)
+    protected function renderCurrentMeasurement(object $row): string
     {
         if ($row->base_units === null) {
             return '-';
@@ -116,7 +118,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         );
     }
 
-    public function filterHost(HostSystem $host)
+    public function filterHost(HostSystem $host): static
     {
         $this->host = $host;
 
@@ -126,7 +128,7 @@ class HostSensorsTable extends ZfQueryBasedTable
     /**
      * @return array
      */
-    public function fetchSummaries()
+    public function fetchSummaries(): array
     {
         // Well... ROLLUP would help.
         $db = $this->db();
@@ -165,9 +167,9 @@ class HostSensorsTable extends ZfQueryBasedTable
     }
 
     /**
-     * @return \Zend_Db_Select
+     * @return Zend_Db_Select
      */
-    protected function prepareQuery()
+    protected function prepareQuery(): Zend_Db_Select
     {
         $query = $this->db()->select()->from([
             'hpd' => 'host_sensor'

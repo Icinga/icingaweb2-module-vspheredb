@@ -23,29 +23,33 @@ use SoapFault;
 class SoapClient
 {
     /** @var array */
-    protected $curlOptions;
+    protected array $curlOptions;
 
-    private $curl;
+    private CurlAsync $curl;
 
-    private $encoder;
+    private ClientEncoder $encoder;
 
-    private $decoder;
+    private ClientDecoder $decoder;
 
-    /** @var CookieStore */
-    protected $cookieStore;
+    /** @var ?CookieStore */
+    protected ?CookieStore $cookieStore = null;
 
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /**
-     * @param CurlAsync   $curl
-     * @param string|null $wsdl
-     * @param array       $options
+     * @param CurlAsync            $curl
+     * @param string|null          $wsdl
+     * @param array                $options
+     * @param array                $curlOptions
+     * @param LoggerInterface|null $logger
+     *
+     * @throws SoapFault
      */
     public function __construct(
         CurlAsync $curl,
-        $wsdl,
+        ?string $wsdl,
         array $options = [],
-        $curlOptions = [],
+        array $curlOptions = [],
         ?LoggerInterface $logger = null
     ) {
         $this->curl = $curl;
@@ -55,17 +59,18 @@ class SoapClient
         $this->logger = $logger ?: new NullLogger();
     }
 
-    public function setCookieStore(CookieStore $cookieStore)
+    public function setCookieStore(CookieStore $cookieStore): void
     {
         $this->cookieStore = $cookieStore;
     }
 
     /**
      * @param string $method
-     * @param mixed[] $args
+     * @param array  $args
+     *
      * @return PromiseInterface<ResponseInterface>
      */
-    public function call($method, $args): PromiseInterface
+    public function call(string $method, array $args): PromiseInterface
     {
         $request = $this->addCookiesToRequest(
             $this->encoder->encode($method, $args),
@@ -122,12 +127,12 @@ class SoapClient
             });
     }
 
-    protected function getBodyPart(ResponseInterface $response)
+    protected function getBodyPart(ResponseInterface $response): string
     {
         return str_replace(["\r", "\n"], ['\\r', '\\n'], substr($response->getBody(), 0, 800));
     }
 
-    protected function addCookiesToRequest(RequestInterface $request, $soapFunctionName)
+    protected function addCookiesToRequest(RequestInterface $request, $soapFunctionName): RequestInterface
     {
         if ($this->cookieStore && $this->cookieStore->hasCookies()) {
             foreach ($this->cookieStore->getCookies() as $cookie) {
@@ -138,7 +143,7 @@ class SoapClient
         return $request;
     }
 
-    protected function checkResponseForCookies(ResponseInterface $response)
+    protected function checkResponseForCookies(ResponseInterface $response): void
     {
         if ($this->cookieStore) {
             $cookies = $response->getHeader('set-cookie');

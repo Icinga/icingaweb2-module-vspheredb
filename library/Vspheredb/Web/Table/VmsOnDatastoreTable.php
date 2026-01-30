@@ -5,12 +5,15 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class VmsOnDatastoreTable extends ZfQueryBasedTable
 {
@@ -18,25 +21,25 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         'object_name',
     ];
 
-    /** @var Datastore */
-    protected $datastore;
+    /** @var ?Datastore */
+    protected ?Datastore $datastore = null;
 
-    /** @var string */
-    protected $uuid;
+    /** @var ?string */
+    protected ?string $uuid = null;
 
-    /** @var int */
-    protected $capacity;
+    /** @var ?int */
+    protected ?int $capacity = null;
 
-    /** @var int */
-    protected $uncommitted;
+    /** @var ?int */
+    protected ?int $uncommitted = null;
 
-    public static function create(Datastore $datastore)
+    public static function create(Datastore $datastore): VmsOnDatastoreTable
     {
         $tbl = new static($datastore->getConnection());
         return $tbl->setDatastore($datastore);
     }
 
-    protected function setDatastore(Datastore $datastore)
+    protected function setDatastore(Datastore $datastore): static
     {
         $this->datastore   = $datastore;
         $this->uuid        = $datastore->get('uuid');
@@ -46,7 +49,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         return $this;
     }
 
-    public function getColumnsToBeRendered()
+    public function getColumnsToBeRendered(): array
     {
         return [
             $this->translate('Virtual Machine'),
@@ -56,7 +59,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         ];
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $row->object_name = Anonymizer::anonymizeString($row->object_name);
         $size = $row->committed + $row->uncommitted;
@@ -100,7 +103,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
         return $tr;
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['o' => 'object'],

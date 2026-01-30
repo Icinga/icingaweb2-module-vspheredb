@@ -35,7 +35,7 @@ class VmController extends Controller
      * @throws MissingParameterException
      * @throws NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $vm = $this->addVm();
         $this->content()->addAttributes([
@@ -61,7 +61,7 @@ class VmController extends Controller
     /**
      * @throws MissingParameterException|NotFoundError
      */
-    public function hardwareAction()
+    public function hardwareAction(): void
     {
         $vm = $this->addVm();
         $this->content()->add([
@@ -73,7 +73,7 @@ class VmController extends Controller
     /**
      * @throws MissingParameterException|NotFoundError
      */
-    public function eventsAction()
+    public function eventsAction(): void
     {
         $table = new EventHistoryTable($this->db());
         $table->filterVm($this->addVm())->renderTo($this);
@@ -82,23 +82,24 @@ class VmController extends Controller
     /**
      * @throws MissingParameterException|NotFoundError
      */
-    public function alarmsAction()
+    public function alarmsAction(): void
     {
         $table = new AlarmHistoryTable($this->db());
         $table->filterEntityUuid($this->addVm()->get('uuid'))->renderTo($this);
     }
 
-    public function monitoringAction()
+    public function monitoringAction(): void
     {
         $this->showMonitoringDetails($this->addVm());
     }
 
     /**
      * @return VirtualMachine
+     *
      * @throws MissingParameterException
      * @throws NotFoundError
      */
-    protected function addVm()
+    protected function addVm(): VirtualMachine
     {
         $vm = VirtualMachine::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($vm->get('vcenter_uuid'));
@@ -110,7 +111,10 @@ class VmController extends Controller
         return $vm;
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $params = ['uuid' => $this->params->get('uuid')];
         $this->tabs()->add('index', [

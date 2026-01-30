@@ -3,26 +3,28 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Util;
+use Zend_Db_Select;
 
 class VmsSnapshotsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/vm';
+    protected ?string $baseUrl = 'vspheredb/vm';
 
     protected $searchColumns = [
         'object_name',
         'guest_host_name',
     ];
 
-    public function filterHost($uuid)
+    public function filterHost(string $uuid): static
     {
         $this->getQuery()->where('vc.runtime_host_uuid = ?', $uuid);
 
         return $this;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createColumn('guest_name', $this->translate('Guest hostname'), [
@@ -54,7 +56,7 @@ class VmsSnapshotsTable extends ObjectsTable
         ]);
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $columns = $this->getRequiredDbColumns();
         $query = $this->db()->select()->from(
@@ -73,7 +75,7 @@ class VmsSnapshotsTable extends ObjectsTable
         return $query;
     }
 
-    public function XXgetDefaultColumnNames()
+    public function XXgetDefaultColumnNames(): array
     {
         return [
             'object_name',

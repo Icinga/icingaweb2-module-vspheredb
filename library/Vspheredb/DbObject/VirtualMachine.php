@@ -6,16 +6,17 @@ use gipfl\Json\JsonString;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\MappedClass\GuestNicInfo;
 use Icinga\Module\Vspheredb\Util;
+use stdClass;
 
 class VirtualMachine extends BaseDbObject
 {
     use CustomValueSupport;
 
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'virtual_machine';
+    protected ?string $table = 'virtual_machine';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'              => null,
         'vcenter_uuid'      => null,
         'annotation'        => null,
@@ -51,12 +52,12 @@ class VirtualMachine extends BaseDbObject
         'guest_ip_stack'             => null,
     ];
 
-    protected $objectReferences = [
+    protected array $objectReferences = [
         'runtime_host_uuid',
         'resource_pool_uuid'
     ];
 
-    protected $booleanProperties = [
+    protected array $booleanProperties = [
         'template',
         'online_standby',
         'paused',
@@ -64,7 +65,7 @@ class VirtualMachine extends BaseDbObject
         'memory_hot_add_enabled',
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'config.annotation'          => 'annotation',
         // TODO: Delegate to vm_hardware sync?
         'config.hardware.memoryMB'   => 'hardware_memorymb',
@@ -101,8 +102,11 @@ class VirtualMachine extends BaseDbObject
     ];
 
     /** @var ?HostSystem */
-    protected $runtimeHost = null;
+    protected ?HostSystem $runtimeHost = null;
 
+    /**
+     * @return bool
+     */
     public function hasRuntimeHost(): bool
     {
         return $this->get('runtime_host_uuid') !== null;
@@ -138,7 +142,7 @@ class VirtualMachine extends BaseDbObject
      * @param HostSystem|null $host
      * @return void
      */
-    public function setRuntimeHost(?HostSystem $host)
+    public function setRuntimeHost(?HostSystem $host): void
     {
         if ($host === null) {
             $this->runtimeHost = null;
@@ -157,10 +161,11 @@ class VirtualMachine extends BaseDbObject
     }
 
     /**
-     * @param $value
+     * @param string|bool|null $value
+     *
      * @return $this
      */
-    public function setPaused($value)
+    public function setPaused(string|bool|null $value): static
     {
         // powered off?
         if ($value === null) {
@@ -206,8 +211,12 @@ class VirtualMachine extends BaseDbObject
      *     'netBIOSConfig' => NULL,
      *     'network' => 'Demo LAN',
      *  }]
+     *
+     * @param ?object $value
+     *
+     * @return void
      */
-    public function setNet($value)
+    public function setNet(?object $value): void
     {
         if ($value === null || ! isset($value->GuestNicInfo)) {
             $this->set('guest_ip_addresses', null);
@@ -251,7 +260,12 @@ class VirtualMachine extends BaseDbObject
         $this->set('guest_ip_addresses', JsonString::encode((object) $addresses));
     }
 
-    public function setGuestIpStack($value)
+    /**
+     * @param object|null $value
+     *
+     * @return void
+     */
+    public function setGuestIpStack(?object $value): void
     {
         if ($value === null) {
             $this->set('guest_ip_stack', null);
@@ -316,6 +330,8 @@ class VirtualMachine extends BaseDbObject
      *     }]
      *   }
      * }]
+     *
+     * @return array|null
      */
     public function guestIpStack(): ?array
     {
@@ -327,7 +343,10 @@ class VirtualMachine extends BaseDbObject
         return JsonString::decode($value);
     }
 
-    public function guestIpAddresses(): \stdClass
+    /**
+     * @return stdClass
+     */
+    public function guestIpAddresses(): stdClass
     {
         $value = $this->get('guest_ip_addresses');
         if ($value === null) {
@@ -338,9 +357,9 @@ class VirtualMachine extends BaseDbObject
     }
 
     /**
-     * @param $value
+     * @param object|null $value
      */
-    protected function setBootOptions($value)
+    protected function setBootOptions(?object $value): void
     {
         if ($value === null) {
             return;

@@ -26,6 +26,7 @@ class RetrieveOptions
 
     /**
      * @param ?int $maxObjects
+     *
      * @return static
      */
     public static function create($maxObjects = null)

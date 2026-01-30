@@ -34,7 +34,12 @@ class MemoryUsageRuleDefinition extends MonitoringRuleDefinition
         ];
     }
 
-    protected function getUsedMemory(BaseDbObject $quickStats)
+    /**
+     * @param BaseDbObject $quickStats
+     *
+     * @return int
+     */
+    protected function getUsedMemory(BaseDbObject $quickStats): int
     {
         if ($quickStats instanceof VmQuickStats) {
             return $quickStats->get('host_memory_usage_mb') * MemoryUsageHelper::MEGA_BYTE;

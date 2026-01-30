@@ -20,35 +20,35 @@ class CalendarMonthSummary extends Table
         'class'            => 'calendar',
     ];
 
-    protected $today;
+    protected ?string $today = null;
 
-    protected $year;
+    protected int $year;
 
-    protected $month;
+    protected int $month;
 
-    protected $strMonth;
+    protected string $strMonth;
 
-    protected $strToday;
+    protected string $strToday;
 
-    protected $days = [];
+    protected array $days = [];
 
-    protected $calendar;
+    protected Calendar $calendar;
 
-    protected $showWeekNumbers = true;
+    protected bool $showWeekNumbers = true;
 
-    protected $showOtherMonth = false;
+    protected bool $showOtherMonth = false;
 
-    protected $showGrayFuture = true;
+    protected bool $showGrayFuture = true;
 
-    protected $title;
+    protected ?string $title = null;
 
-    protected $color = '255, 128, 0';
+    protected string $color = '255, 128, 0';
 
-    protected $forcedMax;
+    protected ?int $forcedMax = null;
 
-    protected $timeFormat;
+    protected LocalTimeFormat $timeFormat;
 
-    public function __construct($year, $month)
+    public function __construct(int $year, int $month)
     {
         $this->calendar = new Calendar();
         $this->year = $year;
@@ -58,14 +58,14 @@ class CalendarMonthSummary extends Table
         $this->timeFormat = new LocalTimeFormat();
     }
 
-    public function setRgb($red, $green, $blue)
+    public function setRgb(int $red, int $green, int $blue): static
     {
         $this->color = sprintf('%d, %d, %d', $red, $green, $blue);
 
         return $this;
     }
 
-    public function addEvents($events, Url $baseUrl)
+    public function addEvents(array $events, Url $baseUrl): static
     {
         if (empty($events)) {
             return $this;
@@ -102,7 +102,7 @@ class CalendarMonthSummary extends Table
         return $this;
     }
 
-    public function markNow($now = null)
+    public function markNow(?int $now = null): static
     {
         if ($now === null) {
             $now = time();
@@ -112,14 +112,14 @@ class CalendarMonthSummary extends Table
         return $this;
     }
 
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    protected function getTitle()
+    protected function getTitle(): string
     {
         if ($this->title === null) {
             $this->title = $this->getMonthName() . ' ' . $this->year;
@@ -128,19 +128,19 @@ class CalendarMonthSummary extends Table
         return $this->title;
     }
 
-    public function forceMax($max)
+    public function forceMax(int $max): static
     {
         $this->forcedMax = $max;
 
         return $this;
     }
 
-    protected function getMonthAsTimestamp()
+    protected function getMonthAsTimestamp(): int
     {
         return strtotime($this->strMonth . '-01');
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->setCaption($this->getTitle());
         $this->getHeader()->add($this->createWeekdayHeader());
@@ -208,7 +208,7 @@ class CalendarMonthSummary extends Table
     }
 
 
-    protected function weekRow($cw)
+    protected function weekRow($cw): HtmlElement
     {
         $row = Table::tr();
 
@@ -221,13 +221,13 @@ class CalendarMonthSummary extends Table
         return $row;
     }
 
-    protected function getMonthName()
+    protected function getMonthName(): string
     {
         return $this->timeFormat->getMonthName($this->getMonthAsTimestamp());
         return date('F', $this->getMonthAsTimestamp());
     }
 
-    protected function createWeekdayHeader()
+    protected function createWeekdayHeader(): HtmlElement
     {
         $cols = $this->calendar->listShortWeekDayNames();
         if ($this->showWeekNumbers) {

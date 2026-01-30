@@ -37,8 +37,11 @@ use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
+use React\Promise\PromiseInterface;
 use React\Stream\Util as StreamUtil;
 use RuntimeException;
+use Zend_Db_Adapter_Abstract;
+use Zend_Db_Adapter_Exception;
 
 use function React\Promise\resolve;
 
@@ -60,59 +63,67 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     public const STATE_FAILED   = 'failed';
     public const STATE_IDLE     = 'idle';
 
-    /** @var LoopInterface */
-    private $loop;
+    /** @var ?LoopInterface */
+    private ?LoopInterface $loop = null;
 
-    /** @var array|null */
-    protected $dbConfig;
+    /** @var ?array */
+    protected ?array $dbConfig = null;
 
-    /** @var Db */
-    protected $connection;
+    /** @var ?Db */
+    protected ?Db $connection = null;
 
-    /** @var object */
-    protected $processInfo;
+    /** @var ?object */
+    protected ?object $processInfo = null;
 
-    protected $delayOnFailed = 5;
+    /** @var int */
+    protected int $delayOnFailed = 5;
 
-    /** @var NotifySystemD|boolean */
-    protected $systemd;
+    /** @var ?NotifySystemD */
+    protected ?NotifySystemD $systemd = null;
 
-    /** @var DbLogger */
-    protected $dbLogger;
+    /** @var ?DbLogger */
+    protected ?DbLogger $dbLogger = null;
 
-    /** @var RemoteApi */
-    protected $remoteApi;
+    /** @var ?RemoteApi */
+    protected ?RemoteApi $remoteApi = null;
 
-    /** @var @var RemoteClient */
-    protected $remoteClient;
+    /** @var ?RemoteClient */
+    protected ?RemoteClient $remoteClient = null;
 
-    /** @var CurlAsync */
-    protected $curl;
+    /** @var ?CurlAsync */
+    protected ?CurlAsync $curl = null;
 
-    /** @var ApiConnectionHandler */
-    protected $apiConnectionHandler;
+    /** @var ?ApiConnectionHandler */
+    protected ?ApiConnectionHandler $apiConnectionHandler = null;
 
-    /** @var DbProcessRunner */
-    protected $dbRunner;
+    /** @var ?DbProcessRunner */
+    protected ?DbProcessRunner $dbRunner = null;
 
-    /** @var DaemonState */
-    protected $daemonState;
+    /** @var ?DaemonState */
+    protected ?DaemonState $daemonState = null;
 
-    protected $dbIsReady = false;
+    /** @var bool */
+    protected bool $dbIsReady = false;
 
     /** @var array [splhash(ApiConnection) => [ Task, ... ]] */
-    protected $runningTasks = [];
+    protected array $runningTasks = [];
 
-    /** @var ConfigWatch */
-    protected $configWatch;
+    /** @var ?ConfigWatch */
+    protected ?ConfigWatch $configWatch = null;
 
-    protected $componentStates = [
+    /** @var array<string, string> */
+    protected array $componentStates = [
         self::COMPONENT_DB      => self::STATE_STOPPED,
         self::COMPONENT_LOCALDB => self::STATE_STOPPED,
         self::COMPONENT_API     => self::STATE_STOPPED,
     ];
 
-    public function start(LoopInterface $loop)
+    /**
+     * @param LoopInterface $loop
+     *
+     * @return PromiseInterface
+     */
+    public function start(LoopInterface $loop): PromiseInterface
     {
         MemoryLimit::raiseTo('1024M');
         $this->loop = $loop;
@@ -128,7 +139,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         return resolve(null);
     }
 
-    protected function initializeDaemonState()
+    /**
+     * @return DaemonState
+     */
+    protected function initializeDaemonState(): DaemonState
     {
         $daemonState = new DaemonState();
         $daemonState->setComponentStates($this->componentStates);
@@ -156,14 +170,24 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         return $daemonState;
     }
 
-    protected function setInitialDaemonState()
+    /**
+     * @return void
+     */
+    protected function setInitialDaemonState(): void
     {
         $daemonState = $this->daemonState;
         $daemonState->setProcessTitle(self::PROCESS_NAME);
         $daemonState->setState(self::STATE_STARTING);
     }
 
-    protected function onComponentChange($component, $formerState, $currentState)
+    /**
+     * @param string      $component
+     * @param string      $formerState
+     * @param string|null $currentState
+     *
+     * @return void
+     */
+    protected function onComponentChange(string $component, string $formerState, ?string $currentState): void
     {
         $this->logger->debug("[$component] component changed from $formerState to $currentState");
         if ($this->daemonState->getComponentState($component) !== $currentState) {
@@ -248,7 +272,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function stopComponent($component)
+    /**
+     * @param string $component
+     *
+     * @return void
+     */
+    protected function stopComponent(string $component): void
     {
         $state = $this->daemonState;
         if (! in_array($state->getComponentState($component), [self::STATE_STOPPED, self::STATE_STOPPING])) {
@@ -257,32 +286,56 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function setDbState($state)
+    /**
+     * @param string $state
+     *
+     * @return void
+     */
+    protected function setDbState(string $state): void
     {
         $this->daemonState->setComponentState(self::COMPONENT_DB, $state);
     }
 
-    protected function setLocalDbState($state)
+    /**
+     * @param string $state
+     *
+     * @return void
+     */
+    protected function setLocalDbState(string $state): void
     {
         $this->daemonState->setComponentState(self::COMPONENT_LOCALDB, $state);
     }
 
-    protected function setApiState($state)
+    /**
+     * @param string $state
+     *
+     * @return void
+     */
+    protected function setApiState(string $state): void
     {
         $this->daemonState->setComponentState(self::COMPONENT_API, $state);
     }
 
-    protected function getApiState()
+    /**
+     * @return string|null
+     */
+    protected function getApiState(): ?string
     {
         return $this->daemonState->getComponentState(self::COMPONENT_API);
     }
 
-    protected function getLocalDbState()
+    /**
+     * @return string|null
+     */
+    protected function getLocalDbState(): ?string
     {
         return $this->daemonState->getComponentState(self::COMPONENT_LOCALDB);
     }
 
-    protected function initializeDbProcess()
+    /**
+     * @return void
+     */
+    protected function initializeDbProcess(): void
     {
         $dbRunner = new DbProcessRunner($this->logger);
         $this->setDbState(self::STATE_STARTING);
@@ -304,7 +357,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         });
     }
 
-    protected function stopDbProcess()
+    /**
+     * @return void
+     */
+    protected function stopDbProcess(): void
     {
         if ($this->dbRunner) {
             $this->dbRunner->stop();
@@ -315,7 +371,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function keepRefreshingServerConfig()
+    /**
+     * @return void
+     */
+    protected function keepRefreshingServerConfig(): void
     {
         $refresh = function () {
             if ($this->daemonState->getComponentState(self::COMPONENT_LOCALDB) === self::STATE_READY) {
@@ -326,7 +385,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->loop->futureTick($refresh);
     }
 
-    public function stop()
+    /**
+     * @return PromiseInterface
+     */
+    public function stop(): PromiseInterface
     {
         try {
             $this->daemonState->setState(self::STATE_STOPPING);
@@ -339,7 +401,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         return resolve(null);
     }
 
-    protected function detectProcessInfo()
+    /**
+     * @return void
+     */
+    protected function detectProcessInfo(): void
     {
         $this->processInfo = (object) [
             'instance_uuid' => Uuid::uuid4()->getBytes(),
@@ -351,7 +416,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         ];
     }
 
-    protected function initializeDbLogger(LoggerInterface $logger)
+    /**
+     * @param LoggerInterface $logger
+     *
+     * @return void
+     */
+    protected function initializeDbLogger(LoggerInterface $logger): void
     {
         // TODO: ProcessInfo!
         $this->dbLogger = new DbLogger(
@@ -366,7 +436,14 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $logger->addWriter($this->dbLogger);
     }
 
-    protected function onNewConnectedServer(ServerInfo $server, AboutInfo $about, UuidInterface $uuid)
+    /**
+     * @param ServerInfo    $server
+     * @param AboutInfo     $about
+     * @param UuidInterface $uuid
+     *
+     * @return void
+     */
+    protected function onNewConnectedServer(ServerInfo $server, AboutInfo $about, UuidInterface $uuid): void
     {
         if (VCenter::exists($uuid->getBytes(), $this->connection)) {
             $this->logger->info(sprintf('Attached %s to an existing vCenter', $server->get('host')));
@@ -388,7 +465,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         });
     }
 
-    protected function onApiConnection(ApiConnection $connection)
+    /**
+     * @param ApiConnection $connection
+     *
+     * @return void
+     */
+    protected function onApiConnection(ApiConnection $connection): void
     {
         $vCenter = VCenter::loadWithAutoIncId(
             $connection->getServerInfo()->getVCenterId(),
@@ -416,8 +498,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     /**
      * @param ApiConnection $connection
      * @param DaemonTask[] $tasks
+     *
+     * @return void
      */
-    protected function launchTasksForConnection(ApiConnection $connection, array $tasks)
+    protected function launchTasksForConnection(ApiConnection $connection, array $tasks): void
     {
         $idx = spl_object_hash($connection);
         $this->runningTasks[$idx] = $tasks;
@@ -427,7 +511,13 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function prepareApi(LoopInterface $loop, LoggerInterface $logger)
+    /**
+     * @param LoopInterface   $loop
+     * @param LoggerInterface $logger
+     *
+     * @return void
+     */
+    protected function prepareApi(LoopInterface $loop, LoggerInterface $logger): void
     {
         $socketPath = Configuration::getSocketPath();
 
@@ -463,7 +553,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->remoteClient = new RemoteClient($socketPath, $loop);
     }
 
-    protected function stopApiTasksForConnection(ApiConnection $connection)
+    /**
+     * @param ApiConnection $connection
+     *
+     * @return void
+     */
+    protected function stopApiTasksForConnection(ApiConnection $connection): void
     {
         $this->stopApiTasksByConnectionIdx(spl_object_hash($connection));
     }
@@ -484,7 +579,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function stopAllApiTasks()
+    /**
+     * @return void
+     */
+    protected function stopAllApiTasks(): void
     {
         foreach ($this->runningTasks as $tasks) {
             foreach ($tasks as $task) {
@@ -495,7 +593,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->runningTasks = [];
     }
 
-    protected function onConnected()
+    /**
+     * @return void
+     */
+    protected function onConnected(): void
     {
         $fail = function (Exception $e) {
             $this->logger->error($e->getMessage());
@@ -521,12 +622,18 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             ->then($fail);
     }
 
-    protected function hasSchema()
+    /**
+     * @return bool
+     */
+    protected function hasSchema(): bool
     {
         return (Db::migrationsForDb($this->connection))->hasSchema();
     }
 
-    protected function sendDbConfigToRunner()
+    /**
+     * @return PromiseInterface
+     */
+    protected function sendDbConfigToRunner(): PromiseInterface
     {
         $this->logger->notice('[db] sending DB config to child process');
         if (! $this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_READY) {
@@ -547,7 +654,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function reconnectToDb()
+    /**
+     * @return void
+     */
+    protected function reconnectToDb(): void
     {
         if ($this->connection !== null) {
             $this->eventuallyDisconnectFromDb();
@@ -566,7 +676,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         });
     }
 
-    protected function connectToDb($config)
+    /**
+     * @param $config
+     *
+     * @return Db
+     */
+    protected function connectToDb($config): Db
     {
         $connection = new Db(new ConfigObject($config));
         $connection->getDbAdapter()->getConnection();
@@ -578,7 +693,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         return $connection;
     }
 
-    protected function eventuallyDisconnectFromDb($refresh = true)
+    /**
+     * @param bool $refresh
+     *
+     * @return void
+     */
+    protected function eventuallyDisconnectFromDb(bool $refresh = true): void
     {
         if ($this->connection !== null) {
             try {
@@ -603,7 +723,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function runConfigWatch()
+    /**
+     * @return void
+     */
+    protected function runConfigWatch(): void
     {
         if ($this->configWatch) {
             return;
@@ -616,7 +739,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $config->run($this->loop);
     }
 
-    protected function onDbConfig($config)
+    /**
+     * @param array|null $config
+     *
+     * @return void
+     */
+    protected function onDbConfig(?array $config): void
     {
         if ($config === null) {
             $this->setDbState('config error');
@@ -642,7 +770,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         });
     }
 
-    protected function stopConfigWatch()
+    /**
+     * @return void
+     */
+    protected function stopConfigWatch(): void
     {
         if ($this->configWatch) {
             $this->configWatch->stop();
@@ -650,7 +781,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    protected function refreshMyState($disconnectOnError = true)
+    /**
+     * @param bool $disconnectOnError
+     *
+     * @return void
+     */
+    protected function refreshMyState(bool $disconnectOnError = true): void
     {
         if ($this->connection === null) {
             return;
@@ -674,10 +810,13 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     }
 
     /**
-     * @param \Zend_Db_Adapter_Abstract $db
-     * @throws \Zend_Db_Adapter_Exception
+     * @param Zend_Db_Adapter_Abstract $db
+     *
+     * @return void
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
-    protected function insertMyState(\Zend_Db_Adapter_Abstract $db)
+    protected function insertMyState(Zend_Db_Adapter_Abstract $db): void
     {
         $db->insert('vspheredb_daemon', [
             'instance_uuid' => $this->processInfo->instance_uuid,
@@ -686,7 +825,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         ] + (array) $this->processInfo);
     }
 
-    protected function getProcessInfo()
+    /**
+     * @return object
+     */
+    protected function getProcessInfo(): object
     {
         global $argv;
         /** @var int $pid */
@@ -700,7 +842,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         return $info;
     }
 
-    protected function refreshConfiguredServers()
+    /**
+     * @return void
+     */
+    protected function refreshConfiguredServers(): void
     {
         if ($this->connection === null) {
             return;
@@ -717,7 +862,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
     }
 
-    public function setSystemd(NotifySystemD $systemd)
+    /**
+     * @param NotifySystemD $systemd
+     *
+     * @return void
+     */
+    public function setSystemd(NotifySystemD $systemd): void
     {
         $this->systemd = $systemd;
     }

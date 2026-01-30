@@ -56,7 +56,7 @@ class NetBackupRunDetails extends NameValueTable
         }
     }
 
-    protected function renderBackupHost($name)
+    protected function renderBackupHost(string $name): Link|string
     {
         try {
             // TODO: this is ugly.

@@ -10,7 +10,7 @@ class VmDiskUsageSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $vCenter = $this->vCenter;
         $vCenterUuid = $vCenter->getUuid();

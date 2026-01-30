@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\Util;
 use Psr\Log\LoggerAwareTrait;
 use Ramsey\Uuid\Uuid;
 use SplStack;
+use Zend_Db_Adapter_Abstract;
 
 class DbLogger implements LogWriterWithContext, EventEmitterInterface
 {
@@ -21,19 +22,30 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
 
     public const ERROR_PREFIX_LENGTH = 17;
 
-    protected $instance;
+    /** @var string */
+    protected string $instance;
 
-    protected $db;
+    /** @var ?Zend_Db_Adapter_Abstract */
+    protected ?Zend_Db_Adapter_Abstract $db = null;
 
-    protected $queue;
+    /** @var SplStack */
+    protected SplStack $queue;
 
-    protected $fqdn;
+    /** @var string */
+    protected string $fqdn;
 
-    protected $pid;
+    /** @var int */
+    protected int $pid;
 
-    protected $lastTs = null;
+    /** @var ?int */
+    protected ?int $lastTs = null;
 
-    public function __construct($instanceUuid, $fqdn, $pid)
+    /**
+     * @param string $instanceUuid
+     * @param string $fqdn
+     * @param int    $pid
+     */
+    public function __construct(string $instanceUuid, string $fqdn, int $pid)
     {
         $this->instance = $instanceUuid;
         $this->fqdn = $fqdn;
@@ -41,7 +53,12 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
         $this->queue = new SplStack();
     }
 
-    public function setDb(?Db $db = null)
+    /**
+     * @param Db|null $db
+     *
+     * @return void
+     */
+    public function setDb(?Db $db = null): void
     {
         if ($db === null) {
             $this->db = null;
@@ -51,7 +68,14 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
         }
     }
 
-    public function write($level, $message, $context = [])
+    /**
+     * @param string $level
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public function write($level, $message, $context = []): void
     {
         if (substr($message, 0, self::ERROR_PREFIX_LENGTH) === self::ERROR_PREFIX) {
             return;
@@ -79,7 +103,15 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
         $this->reallyWrite($timestamp, $level, $message, $context);
     }
 
-    protected function reallyWrite($timestamp, $level, $message, $context = [])
+    /**
+     * @param int    $timestamp
+     * @param string $level
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    protected function reallyWrite(int $timestamp, string $level, string $message, array $context = []): void
     {
         $params = [
             'instance_uuid' => $this->instance,
@@ -114,7 +146,10 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
         }
     }
 
-    protected function flushQueue()
+    /**
+     * @return void
+     */
+    protected function flushQueue(): void
     {
         while (! $this->queue->isEmpty()) {
             $log = $this->queue->pop();

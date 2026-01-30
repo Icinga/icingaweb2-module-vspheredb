@@ -2,33 +2,33 @@
 
 namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
-use gipfl\ZfDb\Adapter\Adapter;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Psr\Log\LoggerInterface;
+use Zend_Db_Adapter_Abstract;
 
 abstract class SyncStore
 {
-    /** @var Adapter|\Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /**
-     * @param Adapter|\Zend_Db_Adapter_Abstract $db
+     * @param Zend_Db_Adapter_Abstract $db
      * @param VCenter $vCenter
      * @param LoggerInterface $logger
      */
-    public function __construct($db, VCenter $vCenter, LoggerInterface $logger)
+    public function __construct(Zend_Db_Adapter_Abstract $db, VCenter $vCenter, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->vCenter = $vCenter;
         $this->logger = $logger;
     }
 
-    abstract public function store($result, $class, SyncStats $stats);
+    abstract public function store($result, $class, SyncStats $stats): void;
 }

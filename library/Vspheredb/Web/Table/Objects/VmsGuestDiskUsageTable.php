@@ -3,29 +3,31 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Img;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use ipl\Html\Html;
+use Zend_Db_Select;
 
 class VmsGuestDiskUsageTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/vm';
+    protected ?string $baseUrl = 'vspheredb/vm';
 
     protected $searchColumns = [
         'object_name',
         'disk_path',
     ];
 
-    protected $withHistory = false;
+    protected bool $withHistory = false;
 
-    public function filterHost($uuid)
+    public function filterHost(string $uuid): static
     {
         $this->getQuery()->where('vc.runtime_host_uuid = ?', $uuid);
 
         return $this;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createObjectNameColumn(),
@@ -97,7 +99,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
         }
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $columns = $this->getRequiredDbColumns();
         $query = $this->db()->select()->from(
@@ -116,7 +118,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
         return $query;
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'object_name',

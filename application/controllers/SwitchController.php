@@ -15,7 +15,7 @@ class SwitchController extends ObjectsController
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->setAutorefreshInterval(15);
         $table = new PortGroupsTable($this->db(), $this->url());

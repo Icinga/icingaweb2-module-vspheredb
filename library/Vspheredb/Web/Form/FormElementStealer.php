@@ -9,9 +9,9 @@ use ipl\Html\FormElement\SubmitElement;
 
 trait FormElementStealer
 {
-    protected $mainProperties = [];
+    protected array $mainProperties = [];
 
-    public function getValues()
+    public function getValues(): array
     {
         $values = parent::getValues();
         $mainProperties = array_merge($this->mainProperties, [
@@ -31,7 +31,7 @@ trait FormElementStealer
         return $finalValues;
     }
 
-    protected function addButtons($final, $selectProperty)
+    protected function addButtons(bool $final, string $selectProperty): void
     {
         if ($final) {
             $submit = new SubmitElement('submit', [
@@ -70,7 +70,7 @@ trait FormElementStealer
         }
     }
 
-    protected function addFormElementsFrom(Form $form)
+    protected function addFormElementsFrom(Form $form): void
     {
         foreach ($this->getElements() as $mainElement) {
             if (! $mainElement->isIgnored()) {

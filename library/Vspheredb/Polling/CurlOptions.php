@@ -19,7 +19,7 @@ class CurlOptions
         'SOCKS5' => CURLPROXY_SOCKS5,
     ];
 
-    public static function forServerInfo(ServerInfo $server)
+    public static function forServerInfo(ServerInfo $server): array
     {
         $host = $server->get('host');
         if (preg_match('/^(.+?):(\d{1,5})$/', $host, $match)) {
@@ -70,7 +70,7 @@ class CurlOptions
         return $options;
     }
 
-    protected static function wantCurlProxyType($type)
+    protected static function wantCurlProxyType(int|string $type): int
     {
         if (is_int($type)) {
             if (in_array($type, self::PROXY_TYPES, true)) {

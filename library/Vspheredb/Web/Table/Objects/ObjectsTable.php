@@ -7,6 +7,7 @@ use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
+use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
@@ -24,23 +25,23 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter,
     /** @deprecated  */
     protected $parentUuids;
 
-    protected $baseUrl;
+    protected ?string $baseUrl = null;
 
-    protected $overallStatusRenderer;
+    protected ?OverallStatusRenderer $overallStatusRenderer = null;
 
-    public function filterParentUuids(array $uuids)
+    public function filterParentUuids(array $uuids): static
     {
         $this->getQuery()->where('o.parent_uuid IN (?)', $uuids);
 
         return $this;
     }
 
-    public function filterVCenter(VCenter $vCenter): self
+    public function filterVCenter(VCenter $vCenter): static
     {
         return $this->filterVCenterUuids([$vCenter->getUuid()]);
     }
 
-    public function filterVCenterUuids(array $uuids): self
+    public function filterVCenterUuids(array $uuids): static
     {
         if (empty($uuids)) {
             $this->getQuery()->where('1 = 0');
@@ -62,7 +63,7 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter,
         return $this;
     }
 
-    protected function overallStatusRenderer()
+    protected function overallStatusRenderer(): OverallStatusRenderer
     {
         if ($this->overallStatusRenderer === null) {
             $this->overallStatusRenderer = new OverallStatusRenderer();
@@ -71,14 +72,14 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter,
         return $this->overallStatusRenderer;
     }
 
-    protected function createOverallStatusColumn()
+    protected function createOverallStatusColumn(): SimpleColumn
     {
         return $this->createColumn('overall_status', $this->translate('Status'), 'o.overall_status')
             ->setRenderer($this->overallStatusRenderer())
             ->setDefaultSortDirection('DESC');
     }
 
-    protected function createObjectNameColumn()
+    protected function createObjectNameColumn(): SimpleColumn
     {
         return $this->createColumn('object_name', $this->translate('Name'), [
             'object_name'    => 'o.object_name',

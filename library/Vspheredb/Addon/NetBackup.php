@@ -14,12 +14,16 @@ class NetBackup extends SimpleBackupTool
 
     public const CV_EXCLUDE = 'NB_EXCLUDE_FROM_BACKUP';
 
-    protected $customValues = [
+    /** @var string[] */
+    protected array $customValues = [
         self::CV_LAST_BACKUP,
         self::CV_EXCLUDE
     ];
 
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return 'Veritas NetBackup';
     }
@@ -27,12 +31,17 @@ class NetBackup extends SimpleBackupTool
     /**
      * @return NetBackupRunDetails
      */
-    public function getInfoRenderer()
+    public function getInfoRenderer(): NetBackupRunDetails
     {
         return new NetBackupRunDetails($this);
     }
 
-    protected function parseCustomValues(CustomValues $values)
+    /**
+     * @param CustomValues $values
+     *
+     * @return void
+     */
+    protected function parseCustomValues(CustomValues $values): void
     {
         if ($values->has(self::CV_LAST_BACKUP)) {
             $this->parseLastBackup($values->get(self::CV_LAST_BACKUP));
@@ -42,7 +51,12 @@ class NetBackup extends SimpleBackupTool
         }
     }
 
-    protected function parseLastBackup($string)
+    /**
+     * @param string $string
+     *
+     * @return void
+     */
+    protected function parseLastBackup(string $string): void
     {
         // Sun Sep 13 00:27:42 2020 +0200,backuphost.name,jobname
         $parts = \explode(',', $string);

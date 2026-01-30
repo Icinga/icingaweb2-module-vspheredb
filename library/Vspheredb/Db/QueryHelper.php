@@ -3,11 +3,24 @@
 namespace Icinga\Module\Vspheredb\Db;
 
 use Zend_Db_Adapter_Abstract as ZfDb;
+use Zend_Db_Select;
 
 class QueryHelper
 {
-    public static function applyOptionalVCenterFilter(ZfDb $db, $query, string $column, ?array $vCenterFilterUuids)
-    {
+    /**
+     * @param ZfDb           $db
+     * @param Zend_Db_Select $query
+     * @param string         $column
+     * @param array|null     $vCenterFilterUuids
+     *
+     * @return void
+     */
+    public static function applyOptionalVCenterFilter(
+        ZfDb $db,
+        Zend_Db_Select $query,
+        string $column,
+        ?array $vCenterFilterUuids
+    ): void {
         if ($vCenterFilterUuids === null) {
             return;
         }

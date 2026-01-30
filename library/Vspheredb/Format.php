@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 class Format
 {
-    public static function bytes($value): string
+    public static function bytes(float|int $value): string
     {
         $base = 1024;
         $units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
@@ -30,12 +30,12 @@ class Format
         return sprintf('%s%s %s', $sign, $output, $units[$pow]);
     }
 
-    public static function mBytes($value): string
+    public static function mBytes(float|int|null $value): string
     {
         return static::bytes($value * 1024 * 1024);
     }
 
-    public static function linkSpeedMb($mb): string
+    public static function linkSpeedMb(int $mb): string
     {
         if ($mb >= 1000000) {
             return sprintf('%.3G TBit/s', $mb / 1000000);
@@ -46,7 +46,7 @@ class Format
         }
     }
 
-    public static function mhz($mhz): string
+    public static function mhz(?int $mhz): string
     {
         if ($mhz === null) {
             return '-';

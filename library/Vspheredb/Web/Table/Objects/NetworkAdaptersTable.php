@@ -2,16 +2,18 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualPortgroup;
+use Zend_Db_Select;
 
 class NetworkAdaptersTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/vm';
+    protected ?string $baseUrl = 'vspheredb/vm';
 
-    /** @var DistributedVirtualPortgroup|null */
-    protected $portGroup;
+    /** @var ?DistributedVirtualPortgroup */
+    protected ?DistributedVirtualPortgroup $portGroup = null;
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['o' => 'object'],
@@ -40,14 +42,14 @@ class NetworkAdaptersTable extends ObjectsTable
         return $query;
     }
 
-    public function filterPortGroup(DistributedVirtualPortgroup $portGroup)
+    public function filterPortGroup(DistributedVirtualPortgroup $portGroup): static
     {
         $this->portGroup = $portGroup;
 
         return $this;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
@@ -59,7 +61,7 @@ class NetworkAdaptersTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'port_key',

@@ -9,23 +9,26 @@ use gipfl\Json\JsonSerialization;
  */
 class ManagedObjectReference implements JsonSerialization
 {
-    public $_; // phpcs:ignore
+    public string $_; // phpcs:ignore
 
-    public $type;
+    public string $type;
 
-    public function __construct($type, $moref)
+    public function __construct(string $type, string $moref)
     {
         $this->_ = $moref;
         $this->type = $type;
     }
 
-    public function getLogName()
+    public function getLogName(): string
     {
         return $this->type . '[' . $this->_ . ']';
     }
 
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    /**
+     * @return object
+     */
+    public function jsonSerialize(): object
     {
         return (object) [
             '_'    => $this->_,
@@ -33,7 +36,7 @@ class ManagedObjectReference implements JsonSerialization
         ];
     }
 
-    public static function fromSerialization($any)
+    public static function fromSerialization($any): static
     {
         return new static($any->type, $any->_);
     }

@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\HostVirtualNicSyncStore;
 
 class HostVirtualNicSyncTask extends SyncTask
 {
-    protected $label = 'Host Virtual NICs';
-    protected $tableName = 'host_virtual_nic';
-    protected $objectClass = HostVirtualNic::class;
-    protected $selectSetClass = HostSystemSelectSet::class;
-    protected $propertySetClass = HostVirtualNicPropertySet::class;
-    protected $syncStoreClass = HostVirtualNicSyncStore::class;
+    protected string $label = 'Host Virtual NICs';
+
+    protected string $tableName = 'host_virtual_nic';
+
+    protected string $objectClass = HostVirtualNic::class;
+
+    protected string $selectSetClass = HostSystemSelectSet::class;
+
+    protected string $propertySetClass = HostVirtualNicPropertySet::class;
+
+    protected string $syncStoreClass = HostVirtualNicSyncStore::class;
 }

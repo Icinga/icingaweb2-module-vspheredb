@@ -5,10 +5,10 @@ namespace Icinga\Module\Vspheredb\Monitoring;
 class SingleCheckResult implements CheckResultInterface
 {
     /** @var CheckPluginState */
-    protected $state;
+    protected CheckPluginState $state;
 
     /** @var string */
-    protected $output;
+    protected string $output;
 
     public function __construct(CheckPluginState $state, string $output)
     {

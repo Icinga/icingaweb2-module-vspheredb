@@ -16,7 +16,7 @@ class ComputeClusterController extends Controller
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $computeCluster = $this->addComputeCluster();
         $this->content()->addAttributes(['class' => 'host-info']);
@@ -32,10 +32,11 @@ class ComputeClusterController extends Controller
 
     /**
      * @return ComputeCluster
+     *
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
-    protected function addComputeCluster()
+    protected function addComputeCluster(): ComputeCluster
     {
         $computeCluster = ComputeCluster::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($computeCluster->get('vcenter_uuid'));
@@ -48,9 +49,12 @@ class ComputeClusterController extends Controller
 
     /**
      * @param ComputeCluster $computeCluster
+     *
+     * @return void
+     *
      * @throws \Icinga\Exception\MissingParameterException
      */
-    protected function handleTabs(ComputeCluster $computeCluster)
+    protected function handleTabs(ComputeCluster $computeCluster): void
     {
         $hexId = $this->params->getRequired('uuid');
         $this->tabs()->add('index', [

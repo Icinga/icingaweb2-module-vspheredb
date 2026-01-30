@@ -3,16 +3,18 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Util\Format;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Select;
 
 class DatastoreTable extends ObjectsTable
 {
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAttributes(['class' => 'datastores-table']);
         $this->addAvailableColumns([
@@ -101,7 +103,7 @@ class DatastoreTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'object_name',
@@ -111,7 +113,7 @@ class DatastoreTable extends ObjectsTable
         ];
     }
 
-    protected function formatBytesPercent($row, $name)
+    protected function formatBytesPercent(object $row, string $name): string
     {
         $bytes = $row->$name;
         $percent = $row->{"{$name}_percent"};
@@ -122,12 +124,12 @@ class DatastoreTable extends ObjectsTable
         );
     }
 
-    protected function formatPercent($value)
+    protected function formatPercent(string $value): string
     {
         return sprintf('%0.2f%%', $value);
     }
 
-    public function sortBy($columns)
+    public function sortBy(array|string $columns): static
     {
         parent::sortBy($columns);
 
@@ -136,7 +138,7 @@ class DatastoreTable extends ObjectsTable
         return $this;
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $wantsVCenter = false;
         $columns = $this->getRequiredDbColumns();

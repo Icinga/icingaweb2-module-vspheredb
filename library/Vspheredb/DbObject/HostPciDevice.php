@@ -4,9 +4,9 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class HostPciDevice extends BaseDbObject
 {
-    protected $table = 'host_pci_device';
+    protected ?string $table = 'host_pci_device';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'id'              => null,
         'host_uuid'       => null,
         'bus'             => null,
@@ -23,11 +23,11 @@ class HostPciDevice extends BaseDbObject
         'vcenter_uuid'    => null,
     ];
 
-    protected $objectReferences = [
+    protected array $objectReferences = [
         'host_uuid',
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'id'           => 'id',
         'bus'          => 'bus',
         'slot'         => 'slot',
@@ -42,9 +42,9 @@ class HostPciDevice extends BaseDbObject
         'parentBridge' => 'parent_bridge',
     ];
 
-    protected $keyName = ['host_uuid', 'id'];
+    protected string|array|null $keyName = ['host_uuid', 'id'];
 
-    public function setMapped($properties, VCenter $vCenter)
+    public function setMapped(object $properties, VCenter $vCenter): static
     {
         $this->set('vcenter_uuid', $vCenter->get('uuid'));
 
@@ -73,10 +73,12 @@ class HostPciDevice extends BaseDbObject
 
     /**
      * @param VCenter $vCenter
+     *
      * @return static[]
+     *
      * @throws \Icinga\Exception\IcingaException
      */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
         $objects = static::loadAll(

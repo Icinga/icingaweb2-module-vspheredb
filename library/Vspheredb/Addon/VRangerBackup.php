@@ -8,9 +8,10 @@ class VRangerBackup extends SimpleBackupTool
 {
     public const PREFIX = 'vRanger Backup & Replication:';
 
-    protected $lastAttributes;
-
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return 'vRanger Backup & Replication';
     }
@@ -18,12 +19,17 @@ class VRangerBackup extends SimpleBackupTool
     /**
      * @return VRangerBackupRunDetails
      */
-    public function getInfoRenderer()
+    public function getInfoRenderer(): VRangerBackupRunDetails
     {
         return new VRangerBackupRunDetails($this);
     }
 
-    protected function parseAnnotation($annotation)
+    /**
+     * @param string|null $annotation
+     *
+     * @return void
+     */
+    protected function parseAnnotation(?string $annotation): void
     {
         $this->lastAttributes = null;
         $begin = strpos($annotation, static::PREFIX);

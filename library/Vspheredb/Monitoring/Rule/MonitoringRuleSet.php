@@ -9,26 +9,27 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleSetDefiniti
 class MonitoringRuleSet
 {
     public const TABLE = 'monitoring_rule_set';
+
     public const NO_OBJECT = '';
 
     /** @var string */
-    protected $binaryUuid;
+    protected string $binaryUuid;
 
     /** @var string */
-    protected $objectFolder;
+    protected string $objectFolder;
 
     /** @var ?bool */
-    protected $enabled = null;
+    protected ?bool $enabled = null;
 
-    /** @var MonitoringRuleSetDefinition */
-    protected $definition;
+    /** @var ?MonitoringRuleSetDefinition */
+    protected ?MonitoringRuleSetDefinition $definition = null;
 
     /** @var Settings */
-    protected $settings;
+    protected Settings $settings;
 
-    protected $fromDb = false;
+    protected bool $fromDb = false;
 
-    protected static $preloadCache = null;
+    protected static ?array $preloadCache = null;
 
     public function __construct(string $binaryUuid, string $objectFolder, ?Settings $settings = null)
     {
@@ -64,7 +65,7 @@ class MonitoringRuleSet
         return null;
     }
 
-    protected static function makeKey($objectUuid, $objectFolder): string
+    protected static function makeKey(?string $objectUuid, string $objectFolder): string
     {
         // correct would be using UUID, but bin2hex() is faster, and this is internal only
         return ($objectUuid === null ? 'null' : bin2hex($objectUuid))
@@ -72,7 +73,7 @@ class MonitoringRuleSet
             . json_encode($objectFolder);
     }
 
-    public static function preloadAll(Db $connection)
+    public static function preloadAll(Db $connection): void
     {
         $db = $connection->getDbAdapter();
         self::$preloadCache = [];
@@ -84,7 +85,7 @@ class MonitoringRuleSet
         }
     }
 
-    public static function clearPreloadCache()
+    public static function clearPreloadCache(): void
     {
         self::$preloadCache = null;
     }
@@ -151,9 +152,9 @@ class MonitoringRuleSet
     }
 
     /**
-     * @return MonitoringRuleSetDefinition
+     * @return MonitoringRuleSetDefinition|null
      */
-    public function getDefinition(): MonitoringRuleSetDefinition
+    public function getDefinition(): ?MonitoringRuleSetDefinition
     {
         return $this->definition;
     }
@@ -168,6 +169,7 @@ class MonitoringRuleSet
 
     /**
      * @param Settings $settings
+     *
      * @return MonitoringRuleSet
      */
     public function setSettings(Settings $settings): MonitoringRuleSet

@@ -24,6 +24,7 @@ class Documentation
     ];
 
     protected ApplicationBootstrap $app;
+
     protected Auth $auth;
 
     // true links to GitHub, false to icinga.com
@@ -36,14 +37,14 @@ class Documentation
     }
 
     /**
-     * @param $label
+     * @param string $label
      * @param string $module
-     * @param $chapter
-     * @param $title
+     * @param string $chapter
+     * @param ?string $title
      *
      * @return Link|HtmlElement
      */
-    public static function link($label, string $module, $chapter, $title = null): Link|HtmlElement
+    public static function link(string $label, string $module, string $chapter, ?string $title = null): Link|HtmlElement
     {
         $doc = new static(Icinga::app(), Auth::getInstance());
 
@@ -51,15 +52,19 @@ class Documentation
     }
 
     /**
-     * @param $label
+     * @param string $label
      * @param string $module
-     * @param $chapter
-     * @param $title
+     * @param string $chapter
+     * @param ?string $title
      *
      * @return Link|HtmlElement
      */
-    public function getModuleLink($label, string $module, $chapter, $title = null): Link|HtmlElement
-    {
+    public function getModuleLink(
+        string $label,
+        string $module,
+        string $chapter,
+        ?string $title = null
+    ): Link|HtmlElement {
         if ($title !== null) {
             $title = sprintf(
                 $this->translate('Click to read our documentation: %s'),
@@ -94,7 +99,7 @@ class Documentation
             ] + $baseParams, $label);
     }
 
-    protected function getModuleDocumentationUrl($moduleName, $chapter): string
+    protected function getModuleDocumentationUrl(string $moduleName, string $chapter): string
     {
         return sprintf(
             'doc/module/%s/chapter/%s',
@@ -103,7 +108,7 @@ class Documentation
         );
     }
 
-    protected function githubDocumentationUrl($module, $chapter): string
+    protected function githubDocumentationUrl(string $module, string $chapter): string
     {
         return sprintf(
             "https://github.com/Icinga/icingaweb2-module-%s/blob/master/doc/%s.md",
@@ -112,7 +117,7 @@ class Documentation
         );
     }
 
-    protected function icingaDocumentationUrl($module, $chapter): string
+    protected function icingaDocumentationUrl(string $module, string $chapter): string
     {
         return sprintf(
             'https://icinga.com/docs/%s/latest/doc/%s/',

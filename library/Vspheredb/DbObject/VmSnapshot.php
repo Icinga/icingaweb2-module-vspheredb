@@ -4,11 +4,11 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class VmSnapshot extends BaseDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'vm_snapshot';
+    protected ?string $table = 'vm_snapshot';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'            => null,
         'parent_uuid'      => null,
         'vm_uuid'          => null,
@@ -22,21 +22,21 @@ class VmSnapshot extends BaseDbObject
         'vcenter_uuid'     => null,
     ];
 
-    protected $objectReferences = [
+    protected array $objectReferences = [
         'vm_uuid',
         'parent_uuid',
     ];
 
-    protected $booleanProperties = [
+    protected array $booleanProperties = [
         'quiesced',
         'replay_supported',
     ];
 
-    protected $dateTimeProperties = [
+    protected array $dateTimeProperties = [
         'ts_create',
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'id'              => 'id',
         'name'            => 'name',
         'description'     => 'description',

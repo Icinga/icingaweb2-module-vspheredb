@@ -10,14 +10,14 @@ use Zend_Db_Adapter_Pdo_Abstract;
 
 class Db extends DbConnection
 {
-    public static function newConfiguredInstance()
+    public static function newConfiguredInstance(): Db
     {
         return static::fromResourceName(
             Config::module('vspheredb')->get('db', 'resource')
         );
     }
 
-    public static function migrationsForDb(Db $connection)
+    public static function migrationsForDb(Db $connection): Migrations
     {
         $db = $connection->getDbAdapter();
         assert($db instanceof Zend_Db_Adapter_Pdo_Abstract);

@@ -4,12 +4,17 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
 use Icinga\Module\Vspheredb\Web\Widget\GrafanaVmPanel;
 use Icinga\Module\Vspheredb\Web\Widget\MacAddress;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use stdClass;
+use Zend_Db_Select;
 
 class VmNetworkAdapterTable extends ZfQueryBasedTable
 {
@@ -19,16 +24,15 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
     ];
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
-    /** @var string */
-    protected $moref;
+    /** @var ?string */
+    protected ?string $moref;
 
-    protected $withPerfImages = false;
-    /**
-     * @var array
-     */
-    protected $ipAddresses;
+    protected bool $withPerfImages = false;
+
+    /** @var stdClass */
+    protected stdClass $ipAddresses;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -39,7 +43,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         parent::__construct($vm->getConnection());
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         // $this->add($this::row([
         //     new GrafanaVmPanel($this->vm->object(), [1, 3], $row->label, 'All')
@@ -54,7 +58,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         }
     }
 
-    protected function linkToPortGroup($row)
+    protected function linkToPortGroup($row): string|FormattedString
     {
         if ($row->port_key === null) {
             return ''; // TODO: explain (no portgroup -> ESXi?)
@@ -77,7 +81,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         }
     }
 
-    protected function formatSimple($row)
+    protected function formatSimple($row): FormattedString
     {
         $ipInfo = $this->ipAddresses->{$row->hardware_key} ?? null;
         if ($ipInfo) {
@@ -121,7 +125,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         );
     }
 
-    protected function formatMultiLine($row)
+    protected function formatMultiLine($row): array
     {
         return [
             Html::tag('strong', $row->label),
@@ -133,7 +137,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         ];
     }
 
-    protected function prepareRowImages($row)
+    protected function prepareRowImages($row): array
     {
         return [
             RrdImg::vmIfTraffic($this->moref, $row->hardware_key),
@@ -141,7 +145,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         ];
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['vna' => 'vm_network_adapter'],

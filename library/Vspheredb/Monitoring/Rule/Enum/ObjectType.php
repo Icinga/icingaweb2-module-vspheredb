@@ -11,7 +11,9 @@ class ObjectType
 {
     // No enum, not yet.
     public const HOST_SYSTEM = 'host';
+
     public const VIRTUAL_MACHINE = 'vm';
+
     public const DATASTORE = 'datastore';
 
     public const TYPES = [

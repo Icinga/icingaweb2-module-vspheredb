@@ -3,15 +3,17 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Util\Format;
 use ipl\Html\Html;
+use Zend_Db_Select;
 
 class StoragePodTable extends ObjectsTable
 {
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
@@ -67,7 +69,7 @@ class StoragePodTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'overall_status',
@@ -92,7 +94,7 @@ class StoragePodTable extends ObjectsTable
         return sprintf('%0.2f%%', $value);
     }
 
-    public function sortBy($columns)
+    public function sortBy(array|string $columns): static
     {
         parent::sortBy($columns);
 
@@ -101,7 +103,7 @@ class StoragePodTable extends ObjectsTable
         return $this;
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['o' => 'object'],

@@ -30,13 +30,13 @@ class HostController extends Controller
     use DetailSections;
     use SingleObjectMonitoring;
 
-    /** @var HostHeader */
-    protected $hostHeader;
+    /** @var ?HostHeader */
+    protected ?HostHeader $hostHeader = null;
 
     /**
      * @throws MissingParameterException|NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $host = $this->addHost();
         $this->content()->addAttributes(['class' => 'host-info']);
@@ -56,9 +56,8 @@ class HostController extends Controller
 
     /**
      * @throws MissingParameterException|NotFoundError
-
      */
-    public function vmsAction()
+    public function vmsAction(): void
     {
         $host = $this->addHost();
         $table = new VmsTable($this->db(), $this->url());
@@ -72,9 +71,8 @@ class HostController extends Controller
 
     /**
      * @throws MissingParameterException|NotFoundError
-
      */
-    public function sensorsAction()
+    public function sensorsAction(): void
     {
         $table = new HostSensorsTable($this->db());
         $table->filterHost($this->addHost());
@@ -83,9 +81,8 @@ class HostController extends Controller
 
     /**
      * @throws MissingParameterException|NotFoundError
-
      */
-    public function pcidevicesAction()
+    public function pcidevicesAction(): void
     {
         $table = new HostPciDevicesTable($this->db());
         $table->filterHost($this->addHost())->renderTo($this);
@@ -93,24 +90,24 @@ class HostController extends Controller
 
     /**
      * @throws MissingParameterException|NotFoundError
-
      */
-    public function eventsAction()
+    public function eventsAction(): void
     {
         $table = new EventHistoryTable($this->db());
         $table->filterHost($this->addHost())->renderTo($this);
     }
 
-    public function monitoringAction()
+    public function monitoringAction(): void
     {
         $this->showMonitoringDetails($this->addHost());
     }
 
     /**
      * @return HostSystem
+     *
      * @throws MissingParameterException|NotFoundError
      */
-    protected function addHost()
+    protected function addHost(): HostSystem
     {
         $host = HostSystem::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($host->get('vcenter_uuid'));
@@ -125,9 +122,12 @@ class HostController extends Controller
 
     /**
      * @param HostSystem $host
+     *
+     * @return void
+     *
      * @throws MissingParameterException
      */
-    protected function handleTabs(HostSystem $host)
+    protected function handleTabs(HostSystem $host): void
     {
         $hexId = $this->params->getRequired('uuid');
         $this->tabs()->add('index', [

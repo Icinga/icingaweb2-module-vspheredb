@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Polling\PerformanceSet;
 
 class VmMemoryPerformanceSet extends DefaultPerformanceSet
 {
-    protected $name = 'VmMemory';
-    protected $objectType = 'VirtualMachine';
-    protected $countersGroup = 'mem';
-    protected $counters = [
+    protected ?string $name = 'VmMemory';
+
+    protected ?string $objectType = 'VirtualMachine';
+
+    protected ?string $countersGroup = 'mem';
+
+    protected ?array $counters = [
         'active',
         'usage',
         'granted',

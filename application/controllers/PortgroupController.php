@@ -15,7 +15,7 @@ class PortgroupController extends ObjectsController
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->setAutorefreshInterval(15);
         $table = new NetworkAdaptersTable($this->db(), $this->url());

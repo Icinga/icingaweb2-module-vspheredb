@@ -4,17 +4,18 @@ namespace Icinga\Module\Vspheredb;
 
 use Icinga\Data\Db\DbConnection;
 use Icinga\Data\ResourceFactory;
+use Zend_Db_Adapter_Abstract;
 
 class Ido
 {
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var ?Zend_Db_Adapter_Abstract */
+    protected ?Zend_Db_Adapter_Abstract $db = null;
 
     protected function __construct()
     {
     }
 
-    public static function createByResourceName($name)
+    public static function createByResourceName(string $name): static
     {
         $self = new static();
         /** @var DbConnection $resource */
@@ -24,13 +25,13 @@ class Ido
         return $self;
     }
 
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         // TODO: check program state
         return $this->db !== null;
     }
 
-    public function getAllHostStates()
+    public function getAllHostStates(): ?array
     {
         $query = $this->db->select()->from(
             ['o' => 'icinga_objects'],
@@ -52,7 +53,7 @@ class Ido
         return $this->db->fetchAll($query);
     }
 
-    public function hasHost($hostname)
+    public function hasHost(?string $hostname): bool
     {
         if (null === $hostname) {
             return false;
@@ -65,7 +66,7 @@ class Ido
         ) === $hostname;
     }
 
-    public function getHostState($hostname)
+    public function getHostState(string $hostname)
     {
         $query = $this->db->select()->from(
             ['o' => 'icinga_objects'],

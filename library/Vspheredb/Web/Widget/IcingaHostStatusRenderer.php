@@ -10,7 +10,7 @@ class IcingaHostStatusRenderer extends Html
 {
     use Translation;
 
-    public function __invoke($state)
+    public function __invoke($state): Icon
     {
         if (is_object($state)) {
             $state = $state->overall_status;

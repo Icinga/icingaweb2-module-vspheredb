@@ -3,12 +3,14 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Url;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Zend_Db_Select;
 
 class PerformanceCounterTable extends BaseTable
 {
-    /** @var VCenter */
-    protected $vCenter;
+    /** @var ?VCenter */
+    protected ?VCenter $vCenter;
 
     protected $searchColumns = [
         'counter_key',
@@ -29,7 +31,7 @@ class PerformanceCounterTable extends BaseTable
         parent::__construct($db, $url);
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createColumn('key', $this->translate('Key'), [
@@ -59,7 +61,7 @@ class PerformanceCounterTable extends BaseTable
         ]);
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['c' => 'performance_counter']

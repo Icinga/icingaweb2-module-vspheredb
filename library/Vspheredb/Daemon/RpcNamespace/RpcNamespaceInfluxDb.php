@@ -9,20 +9,26 @@ use gipfl\InfluxDb\InfluxDbConnectionV1;
 use gipfl\InfluxDb\InfluxDbConnectionV2;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
+use React\Promise\PromiseInterface;
 
 use function React\Promise\resolve;
 
 class RpcNamespaceInfluxDb
 {
+    /** @var LoopInterface */
+    protected LoopInterface $loop;
+
+    /** @var LoggerInterface */
+    protected LoggerInterface $logger;
+
+    /** @var CurlAsync */
+    protected CurlAsync $curl;
+
     /**
-     * @var LoopInterface
+     * @param CurlAsync       $curl
+     * @param LoopInterface   $loop
+     * @param LoggerInterface $logger
      */
-    protected $loop;
-
-    protected $logger;
-
-    protected $curl;
-
     public function __construct(CurlAsync $curl, LoopInterface $loop, LoggerInterface $logger)
     {
         $this->curl = $curl;
@@ -32,8 +38,10 @@ class RpcNamespaceInfluxDb
 
     /**
      * @param string $baseUrl Base URL
+     *
+     * @return PromiseInterface
      */
-    public function discoverVersionRequest($baseUrl)
+    public function discoverVersionRequest(string $baseUrl): PromiseInterface
     {
         return $this->connect($baseUrl)->then(function ($connection) {
             return $connection->getVersion();
@@ -41,26 +49,38 @@ class RpcNamespaceInfluxDb
     }
 
     /**
-     * @param string $baseUrl Base URL
-     * @param string $apiVersion v1/v2
-     * @param string $username username / organization
-     * @param string $password password / token
+     * @param string      $baseUrl    Base URL
+     * @param string|null $apiVersion v1/v2
+     * @param string|null $username   username / organization
+     * @param string|null $password   password / token
+     *
+     * @return PromiseInterface
      */
-    public function testConnectionRequest($baseUrl, $apiVersion = null, $username = null, $password = null)
-    {
+    public function testConnectionRequest(
+        string $baseUrl,
+        ?string $apiVersion = null,
+        ?string $username = null,
+        ?string $password = null
+    ): PromiseInterface {
         return $this->listDatabasesRequest($baseUrl, $apiVersion, $username, $password)->then(function () {
             return true;
         });
     }
 
     /**
-     * @param string $baseUrl Base URL
-     * @param string $apiVersion v1/v2
-     * @param string $username username / organization
-     * @param string $password password / token
+     * @param string      $baseUrl    Base URL
+     * @param string|null $apiVersion v1/v2
+     * @param string|null $username   username / organization
+     * @param string|null $password   password / token
+     *
+     * @return PromiseInterface
      */
-    public function listDatabasesRequest($baseUrl, $apiVersion = null, $username = null, $password = null)
-    {
+    public function listDatabasesRequest(
+        string $baseUrl,
+        ?string $apiVersion = null,
+        ?string $username = null,
+        ?string $password = null
+    ): PromiseInterface {
         return $this->connect($baseUrl, $apiVersion, $username, $password)->then(function ($connection) {
             /** @var InfluxDbConnectionV1|InfluxDbConnectionV2 $connection */
             return $connection->listDatabases();
@@ -69,13 +89,20 @@ class RpcNamespaceInfluxDb
 
     /**
      * @param string $dbName
-     * @param string $baseUrl Base URL
+     * @param string $baseUrl    Base URL
      * @param string $apiVersion v1/v2
-     * @param string $username username / organization
-     * @param string $password password / token
+     * @param string $username   username / organization
+     * @param string $password   password / token
+     *
+     * @return PromiseInterface
      */
-    public function createDatabaseRequest($dbName, $baseUrl, $apiVersion, $username, $password)
-    {
+    public function createDatabaseRequest(
+        string $dbName,
+        string $baseUrl,
+        string $apiVersion,
+        string $username,
+        string $password
+    ): PromiseInterface {
         return $this->connect($baseUrl, $apiVersion, $username, $password)->then(function ($connection) use ($dbName) {
             /** @var InfluxDbConnection $connection */
             $this->logger->info("CREATING $dbName");
@@ -83,8 +110,20 @@ class RpcNamespaceInfluxDb
         });
     }
 
-    protected function connect($baseUrl, $apiVersion = null, $username = null, $password = null)
-    {
+    /**
+     * @param string      $baseUrl
+     * @param string|null $apiVersion
+     * @param string|null $username
+     * @param string|null $password
+     *
+     * @return PromiseInterface
+     */
+    protected function connect(
+        string $baseUrl,
+        ?string $apiVersion = null,
+        ?string $username = null,
+        ?string $password = null
+    ): PromiseInterface {
         switch ($apiVersion) {
             case 'v1':
                 return resolve(new InfluxDbConnectionV1($this->curl, $baseUrl, $username, $password));

@@ -10,11 +10,11 @@ use RuntimeException;
 
 class ManagedObject extends VspheredbDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'object';
+    protected ?string $table = 'object';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'           => null,
         'vcenter_uuid'   => null,
         'moref'          => null,
@@ -26,13 +26,15 @@ class ManagedObject extends VspheredbDbObject
         'tags'           => null,
     ];
 
-    /** @var ManagedObject */
-    private $parent;
+    /** @var ?ManagedObject */
+    private ?ManagedObject $parent = null;
 
     /**
      * @param string $uuid
-     * @param Db $connection
+     * @param Db     $connection
+     *
      * @return static
+     *
      * @throws \Icinga\Exception\NotFoundError
      */
     public static function loadWithUuid(string $uuid, Db $connection): ManagedObject
@@ -47,9 +49,11 @@ class ManagedObject extends VspheredbDbObject
     }
 
     /**
+     * @returns void
+     *
      * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
      */
-    protected function beforeStore()
+    protected function beforeStore(): void
     {
         if (null !== $this->parent) {
             $this->parent->store();
@@ -62,12 +66,20 @@ class ManagedObject extends VspheredbDbObject
         $this->set('level', $this->calculateLevel());
     }
 
-    public function getBinaryUuid()
+    /**
+     * @return mixed
+     */
+    public function getBinaryUuid(): mixed
     {
         return $this->get('uuid');
     }
 
-    public function setParent(ManagedObject $object)
+    /**
+     * @param ManagedObject $object
+     *
+     * @return $this
+     */
+    public function setParent(ManagedObject $object): static
     {
         $this->parent = $object;
         // Hint: parent change hasn't been detected otherwise.
@@ -83,9 +95,10 @@ class ManagedObject extends VspheredbDbObject
 
     /**
      * @param VCenter $vCenter
+     *
      * @return static[]
      */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
 
@@ -100,7 +113,10 @@ class ManagedObject extends VspheredbDbObject
         );
     }
 
-    public function getNumericLevel()
+    /**
+     * @return int
+     */
+    public function getNumericLevel(): int
     {
         $level = $this->get('level');
         if ($level === null) {
@@ -110,7 +126,10 @@ class ManagedObject extends VspheredbDbObject
         return (int) $level;
     }
 
-    public function calculateLevel()
+    /**
+     * @return int
+     */
+    public function calculateLevel(): int
     {
         if ($this->parent === null) {
             return 0;
@@ -119,7 +138,12 @@ class ManagedObject extends VspheredbDbObject
         }
     }
 
-    protected function isBinaryColumn($column)
+    /**
+     * @param string $column
+     *
+     * @return bool
+     */
+    protected function isBinaryColumn(string $column): bool
     {
         if ($column === 'uuid' || substr($column, -5) === '_uuid') {
             return true;

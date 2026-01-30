@@ -16,12 +16,12 @@ class MappingHelper
      * and a key vars.disk.sda given as [ 'vars', 'disk', 'sda' ] this would
      * return { size => '255GB' }
      *
-     * @param  string $val  The value to extract data from
-     * @param  array  $keys A list of nested keys pointing to desired data
+     * @param object|string|null $val  The value to extract data from
+     * @param array       $keys A list of nested keys pointing to desired data
      *
      * @return mixed
      */
-    public static function getDeepValue($val, array $keys)
+    public static function getDeepValue(object|string|null $val, array $keys): mixed
     {
         if ($val === null) {
             return null;
@@ -43,11 +43,12 @@ class MappingHelper
      *
      * Supports also keys pointing to nested structures like vars.disk.sda
      *
-     * @param  object $row stdClass object providing property values
-     * @param  string $var  Variable/property name
+     * @param object $row stdClass object providing property values
+     * @param string $var Variable/property name
+     *
      * @return mixed
      */
-    public static function getSpecificValue($row, $var)
+    public static function getSpecificValue(object $row, string $var): mixed
     {
         if (strpos($var, '.') === false) {
             if ($row instanceof DbObject) {

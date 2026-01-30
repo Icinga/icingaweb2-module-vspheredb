@@ -14,17 +14,19 @@ use SoapFault;
  */
 final class ClientEncoder extends SoapClient
 {
-    private $request = null;
+    private ?Request $request = null;
 
     /**
      * Encodes the given RPC function name and arguments as a SOAP request
      *
      * @param string $name
-     * @param array $args
+     * @param array  $args
+     *
      * @return Request
+     *
      * @throws SoapFault if request is invalid according to WSDL
      */
-    public function encode($name, $args)
+    public function encode(string $name, array $args): Request
     {
         $this->__soapCall($name, $args);
 

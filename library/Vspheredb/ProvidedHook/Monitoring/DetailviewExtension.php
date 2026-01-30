@@ -12,6 +12,11 @@ class DetailviewExtension extends DetailviewExtensionHook
 {
     use HostDetailExtensionTrait;
 
+    /**
+     * @param MonitoredObject $object
+     *
+     * @return ValidHtml|null
+     */
     public function getHtmlForObject(MonitoredObject $object): ?ValidHtml
     {
         if (! $object instanceof Host) {

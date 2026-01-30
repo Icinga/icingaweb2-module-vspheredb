@@ -7,7 +7,7 @@ use Icinga\Module\Vspheredb\Web\OverviewTree;
 
 class OverviewController extends ObjectsController
 {
-    public function indexAction()
+    public function indexAction(): void
     {
         $type = $this->params->getRequired('type');
         $this->activateTab($type)
@@ -15,7 +15,12 @@ class OverviewController extends ObjectsController
              ->content()->add(new OverviewTree($this->db(), $this->getRestrictionHelper(), $type));
     }
 
-    protected function activateTab($name)
+    /**
+     * @param string $name
+     *
+     * @return $this
+     */
+    protected function activateTab(string $name): static
     {
         $this->controls()->getTabs()->add('datastore', [
             'label' => $this->translate('Datastores'),

@@ -3,13 +3,15 @@
 namespace Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup;
 
 use Ramsey\Uuid\UuidInterface;
+use Zend_Db_Select;
 
 class HostNetworkCounterLookup extends DefaultCounterLookup
 {
-    protected $objectKey = 'host_moref';
-    protected $instanceKey = 'device_label';
+    protected ?string $objectKey = 'host_moref';
 
-    protected $tagColumns = [
+    protected ?string $instanceKey = 'device_label';
+
+    protected ?array $tagColumns = [
         'host_uuid'    => 'o.uuid',
         'sysinfo_uuid' => 'hs.sysinfo_uuid',
         'host_moref'   => 'o.moref',
@@ -18,7 +20,7 @@ class HostNetworkCounterLookup extends DefaultCounterLookup
         'device_label' => 'hpn.device',
     ];
 
-    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
@@ -30,7 +32,7 @@ class HostNetworkCounterLookup extends DefaultCounterLookup
             ->order('hpn.device');
     }
 
-    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['hs' => 'host_system'], 'o.uuid = hs.uuid', [])

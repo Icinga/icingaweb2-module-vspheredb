@@ -4,7 +4,10 @@ namespace Icinga\Module\Vspheredb\Web\Table\Monitoring;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
+use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbUtil;
+use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
 use Icinga\Module\Vspheredb\Monitoring\MonitoringRuleLookup;
@@ -12,17 +15,22 @@ use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Select;
 
 class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
 {
-    protected $objectType;
-    protected $ruleSet;
-    protected $rule;
-    /** @var CheckRunner */
-    protected $runner;
-    protected $vCenter;
+    protected string $objectType;
 
-    public function __construct($db, $vCenter, $objectType, $ruleSet, $rule)
+    protected string $ruleSet;
+
+    protected string $rule;
+
+    /** @var CheckRunner */
+    protected CheckRunner $runner;
+
+    protected VCenter $vCenter;
+
+    public function __construct(Db $db, Vcenter $vCenter, string $objectType, string $ruleSet, string $rule)
     {
         parent::__construct($db);
         $this->objectType = $objectType;
@@ -41,7 +49,7 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
         ];
     }
 
-    public function renderRow($row)
+    public function renderRow($row): array
     {
         $url = MonitoringRuleLookup::getUrlForObjectType($this->objectType);
         $class = MonitoringRuleLookup::getClassForObjectType($this->objectType);
@@ -70,7 +78,7 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
         ]];
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): Select|Zend_Db_Select
     {
         $objectTable = MonitoringRuleLookup::getTableForObjectType($this->objectType);
         $db = $this->db();

@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class FullObjectListPropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return static::propertySet([
             'Datacenter',
@@ -28,9 +28,10 @@ class FullObjectListPropertySet implements PropertySet
     /**
      * @param string[] $types
      * @param ?string[] $pathSet
+     *
      * @return PropertySpec[]
      */
-    public static function propertySet(array $types, ?array $pathSet = null)
+    public static function propertySet(array $types, ?array $pathSet = null): array
     {
         $propSet = [];
         foreach ($types as $type) {

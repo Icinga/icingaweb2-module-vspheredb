@@ -10,9 +10,10 @@ use Ramsey\Uuid\UuidInterface;
 class InstanceKeys
 {
     /**
-     * @param array $values
+     * @param array   $values
      * @param RuleSet $set
-     * @param Rule|null $rule
+     * @param Rule    $rule
+     *
      * @return UuidInterface[] List of UUIDs
      */
     public static function getListFrom(array $values, RuleSet $set, Rule $rule): array

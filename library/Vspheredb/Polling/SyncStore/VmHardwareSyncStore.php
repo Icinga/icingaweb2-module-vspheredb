@@ -13,7 +13,7 @@ class VmHardwareSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $vCenter = $this->vCenter;
         $connection = $vCenter->getConnection();
@@ -83,7 +83,7 @@ class VmHardwareSyncStore extends SyncStore
         $this->storeSyncObjects($connection->getDbAdapter(), $nics, $seen, $ignoreNicStats);
     }
 
-    protected function assertValidDeviceKey($device)
+    protected function assertValidDeviceKey($device): void
     {
         if (! is_int($device->key)) {
             throw new InvalidArgumentException(

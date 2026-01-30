@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 
 class DatastoreSyncTask extends SyncTask
 {
-    protected $label = 'Data Stores';
-    protected $tableName = 'datastore';
-    protected $objectClass = Datastore::class;
-    protected $selectSetClass = DatastoreSelectSet::class;
-    protected $propertySetClass = DatastorePropertySet::class;
-    protected $syncStoreClass = ObjectSyncStore::class;
+    protected string $label = 'Data Stores';
+
+    protected string $tableName = 'datastore';
+
+    protected string $objectClass = Datastore::class;
+
+    protected string $selectSetClass = DatastoreSelectSet::class;
+
+    protected string $propertySetClass = DatastorePropertySet::class;
+
+    protected string $syncStoreClass = ObjectSyncStore::class;
 }

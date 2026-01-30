@@ -4,8 +4,10 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Img;
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
+use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\DelayedPerfdataRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\GuestToolsStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
@@ -14,10 +16,11 @@ use Icinga\Module\Vspheredb\Web\Widget\Renderer\GuestToolsVersionRenderer;
 use Icinga\Module\Vspheredb\Format;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Select;
 
 class VmsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/vm';
+    protected ?string $baseUrl = 'vspheredb/vm';
 
     protected $searchColumns = [
         'object_name',
@@ -26,14 +29,14 @@ class VmsTable extends ObjectsTable
         'moref',
     ];
 
-    public function filterHost($uuid)
+    public function filterHost(string $uuid): static
     {
         $this->getQuery()->where('vm.runtime_host_uuid = ?', $uuid);
 
         return $this;
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $columns = $this->getRequiredDbColumns();
         $wantsHosts = false;
@@ -117,7 +120,7 @@ class VmsTable extends ObjectsTable
         return $query;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $powerStateRenderer = new PowerStateRenderer();
         $guestToolsStatusRenderer = new GuestToolsStatusRenderer();
@@ -236,7 +239,7 @@ class VmsTable extends ObjectsTable
         // $this->addPerfColumns();
     }
 
-    protected function renderInterface($moref, $hardwareKey)
+    protected function renderInterface(string $moref, string $hardwareKey): Img
     {
         $width = 160;
         $height = 30;
@@ -264,7 +267,7 @@ class VmsTable extends ObjectsTable
         ], $attrs);
     }
 
-    protected function addPerfColumns()
+    protected function addPerfColumns(): void
     {
         $perf = new DelayedPerfdataRenderer($this->db());
         $this->addAvailableColumns([
@@ -275,7 +278,7 @@ class VmsTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'object_name',
@@ -284,12 +287,12 @@ class VmsTable extends ObjectsTable
         ];
     }
 
-    protected function getDefaultSortColumns()
+    protected function getDefaultSortColumns(): array
     {
         return ['object_name'];
     }
 
-    protected function createObjectNameColumn()
+    protected function createObjectNameColumn(): SimpleColumn
     {
         return $this->createColumn('object_name', $this->translate('Name'), [
             'object_name'         => 'o.object_name',

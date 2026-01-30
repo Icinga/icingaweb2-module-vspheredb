@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 
 class TopPerfTable extends Table
@@ -14,7 +15,7 @@ class TopPerfTable extends Table
         'data-base-target' => '_next',
     ];
 
-    public function __construct($title, $rows, $format, $link)
+    public function __construct(string $title, ?array $rows, ?string $format, string $link)
     {
         $this->getHeader()->add(Table::tr([
             Table::th($title),
@@ -30,7 +31,7 @@ class TopPerfTable extends Table
         }
     }
 
-    protected function createVmLink($row)
+    protected function createVmLink(object $row): Link
     {
         $name = $row->object_name;
         if (property_exists($row, 'instance') && strlen($row->instance)) {
@@ -44,7 +45,7 @@ class TopPerfTable extends Table
         );
     }
 
-    protected function createTopForParentLink($row)
+    protected function createTopForParentLink(object $row): Link
     {
         return Link::create(
             $row->object_name,
@@ -53,7 +54,7 @@ class TopPerfTable extends Table
         );
     }
 
-    protected function formatMicroSeconds($num)
+    protected function formatMicroSeconds(int $num): string
     {
         if ($num > 500) {
             return sprintf('%0.2Fms', $num / 1000);
@@ -62,7 +63,7 @@ class TopPerfTable extends Table
         }
     }
 
-    protected function formatKiloBytesPerSecond($num)
+    protected function formatKiloBytesPerSecond(int $num): string
     {
         $num *= 8;
         if ($num > 500000) {
@@ -74,7 +75,7 @@ class TopPerfTable extends Table
         }
     }
 
-    protected function makeSparkLine($row)
+    protected function makeSparkLine($row): HtmlElement
     {
         $values = [
             $row->value_minus4,

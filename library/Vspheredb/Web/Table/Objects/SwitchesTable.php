@@ -2,11 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use gipfl\ZfDb\Select;
+use Zend_Db_Select;
+
 class SwitchesTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/switch';
+    protected ?string $baseUrl = 'vspheredb/switch';
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['o' => 'object'],
@@ -20,7 +23,7 @@ class SwitchesTable extends ObjectsTable
         return $query;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
@@ -31,7 +34,7 @@ class SwitchesTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'overall_status',

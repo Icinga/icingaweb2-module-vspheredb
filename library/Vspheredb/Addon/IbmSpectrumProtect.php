@@ -12,26 +12,33 @@ class IbmSpectrumProtect implements BackupTool
 
     public const CLOSE_TAG = '</Last Backup>';
 
-    protected $lastAttributes;
+    /** @var array|null */
+    protected ?array $lastAttributes = null;
 
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return 'IBM Spectrum Protect';
     }
 
     /**
      * @param VirtualMachine $vm
+     *
      * @return bool
      */
-    public function wants(VirtualMachine $vm)
+    public function wants(VirtualMachine $vm): bool
     {
         return $this->wantsAnnotation($vm->get('annotation'));
     }
 
     /**
      * @param VirtualMachine $vm
+     *
+     * @return void
      */
-    public function handle(VirtualMachine $vm)
+    public function handle(VirtualMachine $vm): void
     {
         $this->parseAnnotation($vm->get('annotation'));
     }
@@ -39,16 +46,17 @@ class IbmSpectrumProtect implements BackupTool
     /**
      * @return IbmSpectrumProtectBackupRunDetails
      */
-    public function getInfoRenderer()
+    public function getInfoRenderer(): IbmSpectrumProtectBackupRunDetails
     {
         return new IbmSpectrumProtectBackupRunDetails($this);
     }
 
     /**
      * @param $annotation
+     *
      * @return bool
      */
-    public function wantsAnnotation($annotation)
+    public function wantsAnnotation($annotation): bool
     {
         return $annotation !== null && strpos($annotation, static::OPEN_TAG) !== false;
     }
@@ -56,7 +64,7 @@ class IbmSpectrumProtect implements BackupTool
     /**
      * @return array
      */
-    public function requireParsedAttributes()
+    public function requireParsedAttributes(): array
     {
         $attributes = $this->getAttributes();
         if ($attributes === null) {
@@ -69,12 +77,17 @@ class IbmSpectrumProtect implements BackupTool
     /**
      * @return array|null
      */
-    public function getAttributes()
+    public function getAttributes(): ?array
     {
         return $this->lastAttributes;
     }
 
-    protected function parseAnnotation($annotation)
+    /**
+     * @param string $annotation
+     *
+     * @return void
+     */
+    protected function parseAnnotation(string $annotation): void
     {
         $beginPos = strpos($annotation, static::OPEN_TAG);
         if ($beginPos === false) {
@@ -122,7 +135,12 @@ class IbmSpectrumProtect implements BackupTool
         $this->lastAttributes = $attributes;
     }
 
-    public function stripAnnotation(&$annotation)
+    /**
+     * @param string $annotation
+     *
+     * @return void
+     */
+    public function stripAnnotation(string &$annotation): void
     {
         $beginPos = strpos($annotation, static::OPEN_TAG);
         if ($beginPos === false) {
@@ -136,10 +154,11 @@ class IbmSpectrumProtect implements BackupTool
     }
 
     /**
-     * @param $string
+     * @param string $string
+     *
      * @return string|null
      */
-    public static function parseString($string)
+    public static function parseString(string $string): ?string
     {
         if (strlen($string) < 2) {
             return $string;
@@ -153,7 +172,12 @@ class IbmSpectrumProtect implements BackupTool
         }
     }
 
-    public static function parseDuration($value)
+    /**
+     * @param string $value
+     *
+     * @return float|int|null
+     */
+    public static function parseDuration(string $value): float|int|null
     {
         if (
             preg_match(
@@ -170,7 +194,12 @@ class IbmSpectrumProtect implements BackupTool
         }
     }
 
-    public static function parseBytes($value)
+    /**
+     * @param string $value
+     *
+     * @return int|null
+     */
+    public static function parseBytes(string $value): ?int
     {
         $value = static::parseString($value);
         if ($value === null) {
@@ -194,9 +223,10 @@ class IbmSpectrumProtect implements BackupTool
 
     /**
      * @param $time
+     *
      * @return int|null
      */
-    public static function parseTime($time)
+    public static function parseTime($time): ?int
     {
         $time = strtotime(static::parseString($time));
         if ($time === false) {
