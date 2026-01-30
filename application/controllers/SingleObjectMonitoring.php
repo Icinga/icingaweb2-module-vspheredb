@@ -63,19 +63,13 @@ trait SingleObjectMonitoring
      */
     protected function showRuleConfigurationHint(BaseDbObject $object): void
     {
-        switch ($object->getTableName()) {
-            case 'virtual_machine':
-                $tab = 'vmtree';
-                break;
-            case 'host_system':
-                $tab = 'hosttree';
-                break;
-            case 'datastore':
-                $tab = 'datastoretree';
-                break;
-            default:
-                $tab = null;
-        }
+        $tab = match ($object->getTableName()) {
+            'virtual_machine' => 'vmtree',
+            'host_system'     => 'hosttree',
+            'datastore'       => 'datastoretree',
+            default           => null,
+        };
+
         if ($tab) {
             $this->content()->add(Html::tag('p', [Html::tag('br'), Html::sprintf(
                 $this->translate('Please click %s to configure related Monitoring Rules'),

@@ -29,13 +29,11 @@ class IcingaHostStatusRenderer extends Html
      */
     protected function getStatusDescription(string $status): string
     {
-        $descriptions = [
-            'UP'   => $this->translate('This system is up'),
+        return match ($status) {
+            'UP'          => $this->translate('This system is up'),
             'DOWN'        => $this->translate('This system is down'),
             'UNREACHABLE' => $this->translate('Unreachable - another device might be responsible for this outage'),
-            'PENDING'     => $this->translate('Pending - this host has never been checked'),
-        ];
-
-        return $descriptions[$status];
+            'PENDING'     => $this->translate('Pending - this host has never been checked')
+        };
     }
 }

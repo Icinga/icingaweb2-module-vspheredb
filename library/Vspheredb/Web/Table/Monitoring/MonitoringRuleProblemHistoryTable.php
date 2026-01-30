@@ -82,16 +82,12 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
 
     protected function getBaseUrl($row): ?string
     {
-        switch ($row->object_type) {
-            case 'HostSystem':
-                return 'vspheredb/host';
-            case 'VirtualMachine':
-                return 'vspheredb/vm';
-            case 'Datastore':
-                return 'vspheredb/datastore';
-            default:
-                return null;
-        }
+        return match ($row->object_type) {
+            'HostSystem'     => 'vspheredb/host',
+            'VirtualMachine' => 'vspheredb/vm',
+            'Datastore'      => 'vspheredb/datastore',
+            default          => null
+        };
     }
 
     protected function prepareQuery(): Select|Zend_Db_Select

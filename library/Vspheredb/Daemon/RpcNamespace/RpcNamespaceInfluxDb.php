@@ -125,13 +125,10 @@ class RpcNamespaceInfluxDb
         ?string $username = null,
         ?string $password = null
     ): PromiseInterface {
-        switch ($apiVersion) {
-            case 'v1':
-                return resolve(new InfluxDbConnectionV1($this->curl, $baseUrl, $username, $password));
-            case 'v2':
-                return resolve(new InfluxDbConnectionV2($this->curl, $baseUrl, $username, $password));
-        }
-
-        return InfluxDbConnectionFactory::create($this->curl, $baseUrl, $username, $password);
+        return match ($apiVersion) {
+            'v1'    => resolve(new InfluxDbConnectionV1($this->curl, $baseUrl, $username, $password)),
+            'v2'    => resolve(new InfluxDbConnectionV2($this->curl, $baseUrl, $username, $password)),
+            default => InfluxDbConnectionFactory::create($this->curl, $baseUrl, $username, $password),
+        };
     }
 }

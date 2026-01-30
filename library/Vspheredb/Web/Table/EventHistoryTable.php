@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Util;
+use ipl\Html\Attributes;
 use ipl\Html\DeferredText;
 use ipl\Html\FormattedString;
 use ipl\Html\Html;
@@ -99,89 +100,33 @@ class EventHistoryTable extends ZfQueryBasedTable
         } elseif (in_array($row->event_type, $this->otherKnownEvents)) {
             $content[] = new HtmlString(nl2br(new Text($row->full_message)));
         }
-        $tr = $this::row([
-            $content,
-            DateFormatter::formatTime($row->ts_event_ms / 1000)
-        ]);
+        $tr = $this::row([$content, DateFormatter::formatTime($row->ts_event_ms / 1000)]);
 
-        switch ($row->event_type) {
-            case 'VmFailedMigrateEvent':
-            case 'VmBeingClonedNoFolderEvent':
-            case 'VmCloneFailedEvent':
-                $tr->addAttributes([
-                    'class' => 'state migration-failed',
-                ]);
-                break;
-            case 'DrsVmMigratedEvent':
-            case 'VmMigratedEvent':
-                $tr->addAttributes([
-                    'class' => 'state migrated',
-                ]);
-                break;
-            case 'VmBeingMigratedEvent':
-            case 'VmBeingHotMigratedEvent':
-                $tr->addAttributes([
-                    'class' => 'state migrating',
-                ]);
-                break;
-            case 'VmEmigratingEvent':
-                $tr->addAttributes([
-                    'class' => 'state emigrating',
-                ]);
-                break;
-            case 'VmResettingEvent':
-            case 'VmPoweredOffEvent':
-                $tr->addAttributes([
-                    'class' => 'state poweredOff',
-                ]);
-                break;
-            case 'VmStartingEvent':
-                $tr->addAttributes([
-                    'class' => 'state starting',
-                ]);
-                break;
-            case 'VmPoweredOnEvent':
-                $tr->addAttributes([
-                    'class' => 'state poweredOn',
-                ]);
-                break;
-            case 'VmStoppingEvent':
-                $tr->addAttributes([
-                    'class' => 'state stopping',
-                ]);
-                break;
-            case 'VmSuspendedEvent':
-                $tr->addAttributes([
-                    'class' => 'event suspended',
-                ]);
-                break;
-            case 'VmReconfiguredEvent':
-            case 'VmClonedEvent':
-            case 'VmBeingClonedEvent':
-                $tr->addAttributes([
-                    'class' => 'event reconfigured',
-                ]);
-                break;
-            case 'VmBeingCreatedEvent':
-            case 'VmBeingDeployedEvent':
-                $tr->addAttributes([
-                    'class' => 'event being-created',
-                ]);
-                break;
-            case 'VmCreatedEvent':
-                $tr->addAttributes([
-                    'class' => 'event created',
-                ]);
-                break;
-            default:
-                $tr->add($this::td(Html::tag('pre', null, print_r($row, 1))));
+        $class = match ($row->event_type) {
+            'VmFailedMigrateEvent', 'VmBeingClonedNoFolderEvent', 'VmCloneFailedEvent' => 'state migration-failed',
+            'DrsVmMigratedEvent', 'VmMigratedEvent'                                    => 'state migrated',
+            'VmBeingMigratedEvent', 'VmBeingHotMigratedEvent'                          => 'state migrating',
+            'VmEmigratingEvent'                                                        => 'state emigrating',
+            'VmResettingEvent', 'VmPoweredOffEvent'                                    => 'state poweredOff',
+            'VmStartingEvent'                                                          => 'state starting',
+            'VmPoweredOnEvent'                                                         => 'state poweredOn',
+            'VmStoppingEvent'                                                          => 'state stopping',
+            'VmSuspendedEvent'                                                         => 'event suspended',
+            'VmReconfiguredEvent', 'VmClonedEvent', 'VmBeingClonedEvent'               => 'event reconfigured',
+            'VmBeingCreatedEvent', 'VmBeingDeployedEvent'                              => 'event being-created',
+            'VmCreatedEvent'                                                           => 'event created',
+            default                                                                    => null
+        };
+
+        if ($class !== null) {
+            $tr->addAttributes(Attributes::create(['class' => $class]));
+        } else {
+            $tr->add($this::td(Html::tag('pre', null, print_r($row, 1))));
         }
 
-        $tr->addAttributes([
-            'title' => sprintf('%s (%s)', $row->full_message, $row->event_type)
-        ]);
-
-        return $tr;
+        return $tr->addAttributes(
+            Attributes::create(['title' => sprintf('%s (%s)', $row->full_message, $row->event_type)])
+        );
     }
 
     public function filterVm(VirtualMachine $vm): static

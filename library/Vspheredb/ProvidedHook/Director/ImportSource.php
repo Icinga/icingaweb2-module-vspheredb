@@ -189,21 +189,15 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         $pathLookup = new BulkPathLookup($connection);
         $tagLookup = new TagLookup($connection);
         $objectType = $this->getSetting('object_type');
-        switch ($objectType) {
-            case 'host_system':
-                $query = $this->prepareHostsQuery($db);
-                break;
-            case 'virtual_machine':
-                $query = $this->prepareVmQuery($db);
-                break;
-            case 'compute_resource':
-                $query = $this->prepareComputeResourceQuery($db);
-                break;
-            case 'datastore':
-                $query = $this->prepareDatastoreQuery($db);
-                break;
-            default:
-                return [];
+        $query = match ($objectType) {
+            'host_system'      => $this->prepareHostsQuery($db),
+            'virtual_machine'  => $this->prepareVmQuery($db),
+            'compute_resource' => $this->prepareComputeResourceQuery($db),
+            'datastore'        => $this->prepareDatastoreQuery($db),
+            default            => null
+        };
+        if ($query === null) {
+            return [];
         }
         QueryHelper::applyOptionalVCenterFilter($db, $query, 'vc.instance_uuid', $this->vCenterFilterUuids);
         $this->applyOptionalParentFilter($query);
@@ -335,18 +329,13 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
 
     public function listColumns(): array
     {
-        switch ($this->getSetting('object_type')) {
-            case 'host_system':
-                return array_keys($this->hostColumns);
-            case 'virtual_machine':
-                return array_keys($this->vmColumns);
-            case 'compute_resource':
-                return array_keys($this->computeResourceColumns);
-            case 'datastore':
-                return array_keys($this->datastoreColumns);
-            default:
-                return [];
-        }
+        return match ($this->getSetting('object_type')) {
+            'host_system'      => array_keys($this->hostColumns),
+            'virtual_machine'  => array_keys($this->vmColumns),
+            'compute_resource' => array_keys($this->computeResourceColumns),
+            'datastore'        => array_keys($this->datastoreColumns),
+            default            => []
+        };
 
         // Alternative: return $this->callOnManagedObject('getDefaultPropertySet');
     }

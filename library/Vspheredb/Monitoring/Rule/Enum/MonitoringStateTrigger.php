@@ -16,13 +16,9 @@ class MonitoringStateTrigger
 
     public static function getMonitoringState(?string $trigger): CheckPluginState
     {
-        switch ($trigger) {
-            case self::RAISE_WARNING:
-            case self::RAISE_CRITICAL:
-            case self::RAISE_UNKNOWN:
-                return new CheckPluginState($trigger);
-        }
-
-        return new CheckPluginState();
+        return match ($trigger) {
+            self::RAISE_WARNING, self::RAISE_CRITICAL, self::RAISE_UNKNOWN => new CheckPluginState($trigger),
+            default                                                        => new CheckPluginState()
+        };
     }
 }

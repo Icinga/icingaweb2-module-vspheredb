@@ -45,28 +45,17 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
      */
     protected function getConnectionStatusIcon(int $serverId, bool $enabled): Icon
     {
-        if (isset($this->serverConnections[$serverId])) {
-            $conn = end($this->serverConnections[$serverId]);
-            switch ($conn->state) {
-                case ApiConnection::STATE_CONNECTED:
-                    return Icon::create('ok');
-                case ApiConnection::STATE_LOGIN:
-                case ApiConnection::STATE_INIT:
-                    return Icon::create('spinner');
-                case ApiConnection::STATE_FAILING:
-                    return Icon::create('warning-empty');
-                case ApiConnection::STATE_STOPPING:
-                    return Icon::create('cancel');
-            }
-
-            return Icon::create('off');
-        } else {
-            if ($enabled) {
-                return Icon::create('help');
-            } else {
-                return Icon::create('off');
-            }
+        if (! isset($this->serverConnections[$serverId])) {
+            return $enabled ? Icon::create('help') : Icon::create('off');
         }
+
+        return match (end($this->serverConnections[$serverId])->state) {
+            ApiConnection::STATE_CONNECTED                        => Icon::create('ok'),
+            ApiConnection::STATE_LOGIN, ApiConnection::STATE_INIT => Icon::create('spinner'),
+            ApiConnection::STATE_FAILING                          => Icon::create('warning-empty'),
+            ApiConnection::STATE_STOPPING                         => Icon::create('cancel'),
+            default                                               => Icon::create('off')
+        };
     }
 
     protected function initialize(): void

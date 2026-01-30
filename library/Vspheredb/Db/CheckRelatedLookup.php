@@ -120,15 +120,11 @@ class CheckRelatedLookup
      */
     private static function getClassForType(string $type): string
     {
-        $classes = [
+        return match ($type) {
             'VirtualMachine' => VirtualMachine::class,
             'HostSystem'     => HostSystem::class,
             'Datastore'      => Datastore::class,
-        ];
-        if (! isset($classes[$type])) {
-            throw new InvalidArgumentException("'$type' is an unknown type");
-        }
-
-        return $classes[$type];
+            default          => throw new InvalidArgumentException("'$type' is an unknown type")
+        };
     }
 }

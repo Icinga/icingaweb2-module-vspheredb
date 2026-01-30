@@ -84,20 +84,14 @@ class FilterHostParentForm extends Form
 
     public function getColors(): array
     {
-        $colors = [
-            'VmPoweredOffEvent' => [255, 0, 0],
-            'VmResettingEvent' => [164, 0, 0],
-            'VmBeingHotMigratedEvent' => [255, 164, 0],
-            'VmReconfiguredEvent' => [164, 0, 128],
-            'VmPoweredOnEvent' => [0, 164, 0],
-            'VmCreatedEvent' => [0, 164, 0],
-            'VmStartingEvent' => [119, 170, 255],
-            'VmBeingCreatedEvent' => [119, 170, 255],
-        ];
-
-        $type = $this->getElement('type')->getValue() ?? '';
-
-        return $colors[$type] ?? $colors['VmReconfiguredEvent'];
+        return match ($this->getElement('type')->getValue()) {
+            'VmPoweredOffEvent'                      => [255, 0, 0],
+            'VmResettingEvent'                       => [164, 0, 0],
+            'VmBeingHotMigratedEvent'                => [255, 164, 0],
+            'VmPoweredOnEvent', 'VmCreatedEvent'     => [0, 164, 0],
+            'VmStartingEvent', 'VmBeingCreatedEvent' => [119, 170, 255],
+            default                                  => [164, 0, 128], // Use VmReconfiguredEvent as fallback
+        };
     }
 
     protected function enumHostParents(): array

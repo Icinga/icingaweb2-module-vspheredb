@@ -409,14 +409,11 @@ class CheckCommand extends Command
      */
     protected function getStateForColor(string $color): string
     {
-        $colors = [
-            'green'  => 'OK',
-            'gray'   => 'CRITICAL',
-            'yellow' => 'WARNING',
-            'red'    => 'CRITICAL',
-        ];
-
-        return $colors[$color];
+        return match ($color) {
+            'green'       => 'OK',
+            'gray', 'red' => 'CRITICAL',
+            'yellow'      => 'WARNING'
+        };
     }
 
     /**

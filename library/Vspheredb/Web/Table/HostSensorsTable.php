@@ -89,17 +89,12 @@ class HostSensorsTable extends ZfQueryBasedTable
 
     protected function renderHealthState(string $state): Icon
     {
-        switch ($state) {
-            case 'green':
-                return Icon::create('ok', ['class' => ['state', $state]]);
-            case 'red':
-            case 'yellow':
-                return Icon::create('attention-alt', ['class' => ['state', $state]]);
-            case 'unknown':
-                return Icon::create('help', ['class' => ['state gray']]);
-            default:
-                return $state;
-        }
+        return match ($state) {
+            'green'         => Icon::create('ok', ['class' => ['state', $state]]),
+            'red', 'yellow' => Icon::create('attention-alt', ['class' => ['state', $state]]),
+            'unknown'       => Icon::create('help', ['class' => ['state gray']]),
+            default         => $state
+        };
     }
 
     public function renderSummaries()

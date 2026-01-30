@@ -66,13 +66,11 @@ class TopPerfTable extends Table
     protected function formatKiloBytesPerSecond(int $num): string
     {
         $num *= 8;
-        if ($num > 500000) {
-            return sprintf('%0.2F Gbit/s', $num / 1024 / 1024);
-        } elseif ($num > 500) {
-            return sprintf('%0.2F Mbit/s', $num / 1024);
-        } else {
-            return sprintf('%0.2F Kbit/s', $num);
-        }
+        return match (true) {
+            $num > 500000 => sprintf('%0.2F Gbit/s', $num / 1024 / 1024),
+            $num > 500    => sprintf('%0.2F Mbit/s', $num / 1024),
+            default       => sprintf('%0.2F Kbit/s', $num)
+        };
     }
 
     protected function makeSparkLine($row): HtmlElement
