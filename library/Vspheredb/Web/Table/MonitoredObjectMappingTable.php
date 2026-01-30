@@ -4,23 +4,25 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\Extension\ZfSortablePriority;
+use gipfl\ZfDb\Select;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use Zend_Db_Select;
 
 class MonitoredObjectMappingTable extends BaseTable
 {
     use ZfSortablePriority;
 
-    protected $keyColumn = 'id';
+    protected string $keyColumn = 'id';
 
-    protected $priorityColumn = 'priority';
+    protected string $priorityColumn = 'priority';
 
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
         'data-base-target' => '_next',
     ];
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             (new SimpleColumn('source', $this->translate('Source'), [
@@ -71,7 +73,7 @@ class MonitoredObjectMappingTable extends BaseTable
     }
 
     // cloned from ZfSortablePriority, added data-base-target
-    protected function xaddSortPriorityButtons(BaseHtmlElement $tr, $row)
+    protected function xaddSortPriorityButtons(BaseHtmlElement $tr, object $row): BaseHtmlElement
     {
         $tr->add(
             Html::tag(
@@ -84,7 +86,7 @@ class MonitoredObjectMappingTable extends BaseTable
         return $tr;
     }
 
-    public function renderRow($row)
+    public function renderRow($row): BaseHtmlElement
     {
         return $this->xaddSortPriorityButtons(
             parent::renderRow($row),
@@ -92,12 +94,12 @@ class MonitoredObjectMappingTable extends BaseTable
         );
     }
 
-    public function render()
+    public function render(): string
     {
         return $this->renderWithSortableForm();
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         return $this->db()->select()->from(
             ['mc' => 'monitoring_connection'],

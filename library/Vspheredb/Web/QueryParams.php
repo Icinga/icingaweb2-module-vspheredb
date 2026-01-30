@@ -7,9 +7,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class QueryParams
 {
-    protected $params;
+    protected array $params;
 
-    protected function __construct($params)
+    protected function __construct(array $params)
     {
         $this->params = $params;
     }
@@ -19,18 +19,18 @@ class QueryParams
         return new static($request->getQueryParams());
     }
 
-    public function has($key): bool
+    public function has(string $key): bool
     {
         return \array_key_exists($key, $this->params);
     }
 
     /**
      * @param string $key
-     * @param $default
+     * @param mixed $default
      *
      * @return mixed|null
      */
-    public function get(string $key, $default = null): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         if ($this->has($key)) {
             return $this->params[$key];

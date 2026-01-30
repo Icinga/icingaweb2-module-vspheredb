@@ -145,7 +145,7 @@ class PersistedRuleProblems
         }
     }
 
-    protected function rememberCheckedObjects($checked)
+    protected function rememberCheckedObjects(array $checked): void
     {
         foreach ($checked as $uuid => $names) {
             foreach ($names as $name => $true) {
@@ -217,7 +217,7 @@ class PersistedRuleProblems
         return $checked;
     }
 
-    protected function dropObsoleteRows()
+    protected function dropObsoleteRows(): void
     {
         $db = $this->db->getDbAdapter();
         $db->beginTransaction();
@@ -254,7 +254,7 @@ class PersistedRuleProblems
         }
     }
 
-    protected function deleteOutdatedHistoryRows()
+    protected function deleteOutdatedHistoryRows(): void
     {
         $db = $this->db->getDbAdapter();
         $expiration = 86400 * 90;

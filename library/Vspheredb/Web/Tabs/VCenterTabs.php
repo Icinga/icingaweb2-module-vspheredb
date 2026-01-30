@@ -12,7 +12,7 @@ class VCenterTabs extends Tabs
     use TranslationHelper;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)
     {
@@ -21,7 +21,7 @@ class VCenterTabs extends Tabs
         $this->assemble();
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $hexUuid = Uuid::fromBytes($this->vCenter->getUuid())->toString();
         $this->add('vcenter', [

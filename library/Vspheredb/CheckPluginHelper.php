@@ -3,25 +3,27 @@
 namespace Icinga\Module\Vspheredb;
 
 use Exception;
+use gipfl\Cli\AnsiScreen;
 use gipfl\Cli\Screen;
 use Icinga\Module\Vspheredb\Clicommands\Command;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use InvalidArgumentException;
 use React\Promise\PromiseInterface;
+use Throwable;
 
 trait CheckPluginHelper
 {
     /** @var int */
-    protected $state = 0;
+    protected int $state = 0;
 
     protected $sortingState;
 
-    protected $sortingStateMap = [0, 1, 3, 2];
+    protected array $sortingStateMap = [0, 1, 3, 2];
 
-    protected $outputScreen;
+    protected AnsiScreen|Screen|null $outputScreen = null;
 
     /** @var array */
-    protected $nameStateMap = [
+    protected array $nameStateMap = [
         'OK'       => 0,
         'WARNING'  => 1,
         'CRITICAL' => 2,
@@ -29,14 +31,14 @@ trait CheckPluginHelper
     ];
 
     /** @var array */
-    protected $stateNameMap = [
+    protected array $stateNameMap = [
         'OK',
         'WARNING',
         'CRITICAL',
         'UNKNOWN',
     ];
 
-    protected $stateColors = [
+    protected array $stateColors = [
         'OK'       => 'green',
         'WARNING'  => 'brown',
         'CRITICAL' => 'red',
@@ -44,15 +46,15 @@ trait CheckPluginHelper
     ];
 
     /** @var array */
-    protected $messages = [];
+    protected array $messages = [];
 
-    /** @var string|null */
-    protected $message;
+    /** @var ?string */
+    protected ?string $message = null;
 
     /**
-     * @param $callable
+     * @param callable $callable
      */
-    protected function run($callable)
+    protected function run(callable $callable): void
     {
         /** @var Command $this */
         $this->loop()->futureTick(function () use ($callable) {
@@ -87,7 +89,7 @@ trait CheckPluginHelper
         $this->eventuallyStartMainLoop();
     }
 
-    protected function showOptionalTrace($e)
+    protected function showOptionalTrace(Throwable $e): void
     {
         if ($this->showTrace()) {
             echo $e->getTraceAsString();
@@ -96,15 +98,17 @@ trait CheckPluginHelper
 
     /**
      * @param string $string
+     *
      * @return string
      */
-    protected function stripNonUtf8Characters($string)
+    protected function stripNonUtf8Characters(string $string): string
     {
         return iconv('UTF-8', 'UTF-8//IGNORE', $string);
     }
 
     /**
      * @param int|string|null $state
+     *
      * @return string
      */
     protected function getStateName(int|string|null $state = null): string
@@ -119,6 +123,7 @@ trait CheckPluginHelper
     /**
      * @param int|string $state
      * @param string $message
+     *
      * @return $this
      */
     protected function addProblem(int|string $state, string $message): static
@@ -134,7 +139,7 @@ trait CheckPluginHelper
         return $this;
     }
 
-    protected function getOutputScreen()
+    protected function getOutputScreen(): AnsiScreen|Screen
     {
         if ($this->outputScreen === null) {
             $this->outputScreen = Screen::factory();
@@ -145,9 +150,10 @@ trait CheckPluginHelper
 
     /**
      * @param string $message
+     *
      * @return $this
      */
-    protected function addMessage($message)
+    protected function addMessage(string $message): static
     {
         $this->messages[] = $message;
 
@@ -156,9 +162,10 @@ trait CheckPluginHelper
 
     /**
      * @param string $message
+     *
      * @return $this
      */
-    protected function prependMessage($message)
+    protected function prependMessage(string $message): static
     {
         array_unshift($this->messages, $message);
 
@@ -167,6 +174,7 @@ trait CheckPluginHelper
 
     /**
      * @param int|string $state
+     *
      * @return $this
      */
     protected function raiseState(int|string $state): static
@@ -182,13 +190,14 @@ trait CheckPluginHelper
     /**
      * @return int
      */
-    protected function getState()
+    protected function getState(): int
     {
         return $this->state;
     }
 
     /**
      * @param int|string $state
+     *
      * @return int
      */
     protected function wantNumericState(int|string $state): int
@@ -208,12 +217,12 @@ trait CheckPluginHelper
         }
     }
 
-    protected function getMessages()
+    protected function getMessages(): array
     {
         return $this->messages;
     }
 
-    protected function shutdown()
+    protected function shutdown(): void
     {
         $messages = $this->getMessages();
         if (! empty($messages)) {

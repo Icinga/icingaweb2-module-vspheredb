@@ -16,7 +16,12 @@ use function stream_get_contents;
 
 class DbUtil
 {
-    public static function binaryResult($value)
+    /**
+     * @param $value
+     *
+     * @return false|mixed|string
+     */
+    public static function binaryResult($value): mixed
     {
         if (is_resource($value)) {
             return stream_get_contents($value);
@@ -26,12 +31,15 @@ class DbUtil
     }
 
     /**
-     * @param string|array $binary
+     * @param array|string|null        $binary
      * @param Zend_Db_Adapter_Abstract $db
-     * @return Zend_Db_Expr|Zend_Db_Expr[]
+     *
+     * @return Zend_Db_Expr|Zend_Db_Expr[]|null
      */
-    public static function quoteBinaryLegacy($binary, $db)
-    {
+    public static function quoteBinaryLegacy(
+        array|string|null $binary,
+        Zend_Db_Adapter_Abstract $db
+    ): Zend_Db_Expr|array|null {
         if (is_array($binary)) {
             return static::quoteArray($binary, 'quoteBinaryLegacy', $db);
         }
@@ -48,11 +56,12 @@ class DbUtil
     }
 
     /**
-     * @param string|array $binary
-     * @param Adapter $db
-     * @return Expr|Expr[]
+     * @param array|string|null $binary
+     * @param Adapter           $db
+     *
+     * @return Expr|Expr[]|null
      */
-    public static function quoteBinary($binary, $db)
+    public static function quoteBinary(array|string|null $binary, Adapter $db): Expr|array|null
     {
         if (is_array($binary)) {
             return static::quoteArray($binary, 'quoteBinary', $db);
@@ -70,12 +79,15 @@ class DbUtil
     }
 
     /**
-     * @param string|array $binary
-     * @param Adapter|Zend_Db_Adapter_Abstract $db
-     * @return Expr|Zend_Db_Expr|Expr[]|Zend_Db_Expr[]
+     * @param array|string|null                $binary
+     * @param Zend_Db_Adapter_Abstract|Adapter $db
+     *
+     * @return Expr|Zend_Db_Expr|Expr[]|Zend_Db_Expr[]|null
      */
-    public static function quoteBinaryCompat($binary, $db)
-    {
+    public static function quoteBinaryCompat(
+        array|string|null $binary,
+        Zend_Db_Adapter_Abstract|Adapter $db
+    ): Zend_Db_Expr|Expr|array|null {
         if ($db instanceof Adapter) {
             return static::quoteBinary($binary, $db);
         }
@@ -83,7 +95,14 @@ class DbUtil
         return static::quoteBinaryLegacy($binary, $db);
     }
 
-    protected static function quoteArray($array, $method, $db)
+    /**
+     * @param array                            $array
+     * @param string                           $method
+     * @param Adapter|Zend_Db_Adapter_Abstract $db
+     *
+     * @return array
+     */
+    protected static function quoteArray(array $array, string $method, Adapter|Zend_Db_Adapter_Abstract $db): array
     {
         $result = [];
         foreach ($array as $bin) {

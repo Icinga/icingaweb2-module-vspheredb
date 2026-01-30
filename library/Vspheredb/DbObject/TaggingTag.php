@@ -6,11 +6,11 @@ class TaggingTag extends BaseDbObject
 {
     public const TABLE = 'tagging_tag';
 
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = self::TABLE;
+    protected ?string $table = self::TABLE;
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'             => null,
         'category_uuid'    => null,
         'vcenter_uuid'     => null,
@@ -19,7 +19,7 @@ class TaggingTag extends BaseDbObject
         'description'      => null,
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'uuid'             => 'uuid',
         'category_uuid'    => 'category_uuid',
         'id'               => 'id',
@@ -27,7 +27,7 @@ class TaggingTag extends BaseDbObject
         'description'      => 'description',
     ];
 
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
         $connection = $vCenter->getConnection();

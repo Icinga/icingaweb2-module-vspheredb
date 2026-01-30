@@ -3,17 +3,19 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\Json\JsonString;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualSwitch;
 use ipl\Html\Html;
+use Zend_Db_Select;
 
 class PortGroupsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/portgroup';
+    protected ?string $baseUrl = 'vspheredb/portgroup';
 
-    /** @var DistributedVirtualSwitch|null */
-    protected $switch;
+    /** @var ?DistributedVirtualSwitch */
+    protected ?DistributedVirtualSwitch $switch = null;
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['o' => 'object'],
@@ -34,14 +36,14 @@ class PortGroupsTable extends ObjectsTable
         return $query;
     }
 
-    public function filterSwitch(DistributedVirtualSwitch $switch)
+    public function filterSwitch(DistributedVirtualSwitch $switch): static
     {
         $this->switch = $switch;
 
         return $this;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
@@ -76,7 +78,7 @@ class PortGroupsTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'overall_status',

@@ -12,11 +12,11 @@ class MainTabs extends Tabs
 {
     use TranslationHelper;
 
-    /** @var Db|null  */
-    protected $connection;
+    /** @var ?Db */
+    protected ?Db $connection;
 
     /** @var Auth */
-    protected $auth;
+    protected Auth $auth;
 
     public function __construct(Auth $auth, ?Db $connection = null)
     {
@@ -26,7 +26,7 @@ class MainTabs extends Tabs
         $this->assemble();
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         if ($this->connection) {
             $connection = $this->connection;

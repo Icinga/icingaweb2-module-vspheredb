@@ -20,19 +20,16 @@ class ChooseInfluxDatabaseForm extends Form
     use TranslationHelper;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
     /** @var array|null|false */
-    protected $dbList;
+    protected array|null|false $dbList = null;
 
-    /**
-     * @var RemoteClient
-     */
-    protected $client;
-    /**
-     * @var PerfDataConsumerHook
-     */
-    protected $hook;
+    /** @var RemoteClient */
+    protected RemoteClient $client;
+
+    /** @var PerfDataConsumerHook */
+    protected PerfDataConsumerHook $hook;
 
     public function __construct(LoopInterface $loop, RemoteClient $client, PerfDataConsumerHook $hook)
     {
@@ -41,12 +38,12 @@ class ChooseInfluxDatabaseForm extends Form
         $this->hook = $hook;
     }
 
-    public function assemble()
+    public function assemble(): void
     {
         $this->addDbSelection();
     }
 
-    protected function prepareParams()
+    protected function prepareParams(): array
     {
         return [
             'baseUrl'    => $this->hook->getSetting('base_url'),
@@ -56,7 +53,7 @@ class ChooseInfluxDatabaseForm extends Form
         ];
     }
 
-    protected function getDbList()
+    protected function getDbList(): false|array|null
     {
         if ($this->dbList === null) {
             $this->refreshDbList();
@@ -65,12 +62,12 @@ class ChooseInfluxDatabaseForm extends Form
         return $this->dbList;
     }
 
-    protected function remoteRequest($request, $params = [])
+    protected function remoteRequest(string $request, ?array $params = []): mixed
     {
         return await(timeout($this->client->request($request, $params), 5, $this->loop));
     }
 
-    protected function refreshDbList()
+    protected function refreshDbList(): void
     {
         try {
             $this->dbList = \array_filter(
@@ -85,7 +82,7 @@ class ChooseInfluxDatabaseForm extends Form
         }
     }
 
-    protected function createDatabase($name)
+    protected function createDatabase($name): mixed
     {
         Notification::info("Creating $name");
         $promise = $this->client->request('influxdb.createDatabase', $this->prepareParams() + [
@@ -97,7 +94,7 @@ class ChooseInfluxDatabaseForm extends Form
         return $result;
     }
 
-    protected function createRequestedDb(BaseFormElement $element, TextWithActionButton $action)
+    protected function createRequestedDb(BaseFormElement $element, TextWithActionButton $action): void
     {
         $name = $element->getValue();
         try {
@@ -123,14 +120,14 @@ class ChooseInfluxDatabaseForm extends Form
         }
     }
 
-    protected function getDbOptions()
+    protected function getDbOptions(): array
     {
         return ['' => $this->translate('Please choose')]
         + \array_combine($this->dbList, $this->dbList)
         + ['_new' => ' -> ' . $this->translate('Create a new Database')];
     }
 
-    protected function addDbSelection()
+    protected function addDbSelection(): static
     {
         if ($this->getSentValue('dbname') === '_new') {
             $elDbName = $this->createElement('hidden', 'dbname');

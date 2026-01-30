@@ -6,15 +6,17 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
+use Zend_Db_Adapter_Abstract;
 
 class FilterHostParentForm extends Form
 {
     use TranslationHelper;
 
     protected $useFormName = false;
+
     protected $useCsrf = false;
 
-    protected $db;
+    protected Zend_Db_Adapter_Abstract $db;
 
     public function __construct(Db $connection)
     {
@@ -22,12 +24,12 @@ class FilterHostParentForm extends Form
         $this->setMethod('GET');
     }
 
-    public function hasDefaultElementDecorator()
+    public function hasDefaultElementDecorator(): false
     {
         return false;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $vMotionEvents = [
             // 'MigrationEvent',
@@ -75,7 +77,7 @@ class FilterHostParentForm extends Form
         }
     }
 
-    public function onSuccess()
+    public function onSuccess(): void
     {
         // Overriding ipl method, would otherwise render a "success" paragraph
     }
@@ -98,7 +100,7 @@ class FilterHostParentForm extends Form
         return $colors[$type] ?? $colors['VmReconfiguredEvent'];
     }
 
-    protected function enumHostParents()
+    protected function enumHostParents(): array
     {
         $db = $this->db;
         $query = $db->select()->from(

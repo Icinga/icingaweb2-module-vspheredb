@@ -13,22 +13,22 @@ class CalendarForEvents extends HtmlDocument
     use TranslationHelper;
 
     /** @var VMotionHeatmap|AlarmHeatmap */
-    protected $calendars;
+    protected VMotionHeatmap|AlarmHeatmap $calendars;
 
     /** @var Url */
-    protected $baseUrl;
+    protected Url $baseUrl;
 
     /** @var int[] [r, g, b] */
-    protected $colors;
+    protected array $colors;
 
-    public function __construct($calendars, Url $baseUrl, array $colors)
+    public function __construct(VMotionHeatmap|AlarmHeatmap $calendars, Url $baseUrl, array $colors)
     {
         $this->calendars = $calendars;
         $this->baseUrl = $baseUrl;
         $this->colors = $colors;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $events = $this->calendars->getEvents();
         if (empty($events)) {

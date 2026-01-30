@@ -7,8 +7,11 @@ use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
 class MonitoringStateTrigger
 {
     public const IGNORE         = 'ignore';
+
     public const RAISE_WARNING  = 'warning';
+
     public const RAISE_CRITICAL = 'critical';
+
     public const RAISE_UNKNOWN  = 'unknown';
 
     public static function getMonitoringState(?string $trigger): CheckPluginState

@@ -12,23 +12,24 @@ use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Util;
 use InvalidArgumentException;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class PathToObjectRenderer
 {
-    protected $classLinkMap = [
+    protected array $classLinkMap = [
         VirtualMachine::class => 'vspheredb/vms',
         HostSystem::class     => 'vspheredb/hosts',
         Datastore::class      => 'vspheredb/datastores',
     ];
 
-    public static function render(BaseDbObject $object)
+    public static function render(BaseDbObject $object): HtmlElement
     {
         $instance = new static();
 
         return $instance($object);
     }
 
-    public function __invoke(BaseDbObject $object)
+    public function __invoke(BaseDbObject $object): HtmlElement
     {
         $uuid = $object->get('uuid');
         /** @var \Icinga\Module\Vspheredb\Db $connection */

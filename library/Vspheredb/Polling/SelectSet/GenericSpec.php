@@ -15,9 +15,10 @@ abstract class GenericSpec
 
     /**
      * @param string[] $specReferences
+     *
      * @return TraversalSpec
      */
-    public static function traverseFolder(array $specReferences = [])
+    public static function traverseFolder(array $specReferences = []): TraversalSpec
     {
         return self::traverse(self::TRAVERSE_FOLDER, 'Folder', 'childEntity', array_merge([
             self::TRAVERSE_FOLDER
@@ -28,31 +29,32 @@ abstract class GenericSpec
      * @param string $name
      * @param string $type
      * @param string $path
+     *
      * @return TraversalSpec
      */
-    public static function traverseDatacenter($name, $type, $path)
+    public static function traverseDatacenter(string $name, string $type, string $path): TraversalSpec
     {
         return self::traverse($name, $type, $path, [
             self::TRAVERSE_FOLDER
         ]);
     }
 
-    public static function traverseDatacenterHosts()
+    public static function traverseDatacenterHosts(): TraversalSpec
     {
         return self::traverseDatacenter(self::TRAVERSE_DC_HOST_SYSTEMS, 'Datacenter', 'hostFolder');
     }
 
-    public static function traverseDatacenterVirtualMachines()
+    public static function traverseDatacenterVirtualMachines(): TraversalSpec
     {
         return self::traverseDatacenter(self::TRAVERSE_DC_VIRTUAL_MACHINES, 'Datacenter', 'vmFolder');
     }
 
-    public static function traverseDatacenterDataStores()
+    public static function traverseDatacenterDataStores(): TraversalSpec
     {
         return self::traverseDatacenter(self::TRAVERSE_DC_DATA_STORES, 'Datacenter', 'datastoreFolder');
     }
 
-    public static function traverseDatacenterNetworks()
+    public static function traverseDatacenterNetworks(): TraversalSpec
     {
         return self::traverseDatacenter(self::TRAVERSE_DC_NETWORKS, 'Datacenter', 'networkFolder');
     }
@@ -62,10 +64,15 @@ abstract class GenericSpec
      * @param string $type
      * @param string $path
      * @param ?SelectionSpec[]|string[] $selectionSet
+     *
      * @return TraversalSpec
      */
-    public static function traverse($name, $type, $path, ?array $selectionSet = null)
-    {
+    public static function traverse(
+        string $name,
+        string $type,
+        string $path,
+        ?array $selectionSet = null
+    ): TraversalSpec {
         if ($selectionSet) {
             foreach ($selectionSet as $key => $entry) {
                 if (is_string($entry)) {

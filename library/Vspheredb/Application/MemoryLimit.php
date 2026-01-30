@@ -4,7 +4,12 @@ namespace Icinga\Module\Vspheredb\Application;
 
 class MemoryLimit
 {
-    public static function raiseTo($string)
+    /**
+     * @param string $string
+     *
+     * @return void
+     */
+    public static function raiseTo(string $string): void
     {
         $current = static::getBytes();
         $desired = static::parsePhpIniByteString($string);
@@ -13,7 +18,10 @@ class MemoryLimit
         }
     }
 
-    public static function getBytes()
+    /**
+     * @return int
+     */
+    public static function getBytes(): int
     {
         return static::parsePhpIniByteString((string) ini_get('memory_limit'));
     }
@@ -27,10 +35,11 @@ class MemoryLimit
      * > (for Gigabytes), and are all case-insensitive. Anything else assumes
      * > bytes.
      *
-     * @param $string
+     * @param string $string
+     *
      * @return int
      */
-    public static function parsePhpIniByteString($string)
+    public static function parsePhpIniByteString(string $string): int
     {
         $val = trim($string);
 

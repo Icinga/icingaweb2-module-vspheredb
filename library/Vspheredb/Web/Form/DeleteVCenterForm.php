@@ -23,17 +23,16 @@ class DeleteVCenterForm extends Form
     protected $defaultDecoratorClass = null;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     /** @var RemoteClient */
-    protected $client;
+    protected RemoteClient $client;
 
     /** @var LoopInterface */
-    protected $loop;
-    /**
-     * @var Db
-     */
-    protected $db;
+    protected LoopInterface $loop;
+
+    /** @var Db */
+    protected Db $db;
 
     public function __construct(Db $db, VCenter $vCenter, RemoteClient $client, LoopInterface $loop)
     {
@@ -43,7 +42,7 @@ class DeleteVCenterForm extends Form
         $this->loop = $loop;
     }
 
-    public function assemble()
+    public function assemble(): void
     {
         $this->add(Html::tag('h3', $this->translate('Delete this vCenter')));
         $this->add(Hint::warning($this->translate(
@@ -62,7 +61,7 @@ class DeleteVCenterForm extends Form
         ))->addToForm($this);
     }
 
-    public function onSuccess()
+    public function onSuccess(): void
     {
         $db = $this->db->getDbAdapter();
         // Delete the connection first.

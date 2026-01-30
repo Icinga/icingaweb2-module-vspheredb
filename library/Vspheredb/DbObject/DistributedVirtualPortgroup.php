@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\VmwareDataType\NumericRange;
 
 class DistributedVirtualPortgroup extends BaseDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'distributed_virtual_portgroup';
+    protected ?string $table = 'distributed_virtual_portgroup';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'           => null,
         'vcenter_uuid'   => null,
         'portgroup_type' => null,
@@ -20,25 +20,35 @@ class DistributedVirtualPortgroup extends BaseDbObject
         'num_ports'    => null,
     ];
 
-    protected $objectReferences = [
+    protected array $objectReferences = [
         'distributed_virtual_switch_uuid'
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'config.defaultPortConfig' => 'defaultPortConfig',
         'config.numPorts' => 'num_ports',
         'config.type'     => 'portgroup_type',
         'config.distributedVirtualSwitch' => 'distributed_virtual_switch_uuid',
     ];
 
-    protected function setDefaultPortConfig($config)
+    /**
+     * @param object $config
+     *
+     * @return void
+     */
+    protected function setDefaultPortConfig(object $config): void
     {
         if (property_exists($config, 'vlan')) {
             $this->setDefaultVlan($config->vlan->vlanId);
         }
     }
 
-    protected function setDefaultVlan($vlan)
+    /**
+     * @param mixed $vlan
+     *
+     * @return void
+     */
+    protected function setDefaultVlan(mixed $vlan): void
     {
         if (is_array($vlan)) {
             $ranges = [];

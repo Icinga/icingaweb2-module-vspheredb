@@ -18,14 +18,14 @@ class BackupToolInfo extends HtmlDocument
     use TranslationHelper;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
     public function __construct(VirtualMachine $vm)
     {
         $this->vm = $vm;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $vm = $this->vm;
         $this->add(new SubTitle($this->translate('Backup-Tools'), 'download'));
@@ -50,9 +50,10 @@ class BackupToolInfo extends HtmlDocument
 
     /**
      * TODO: Use a hook once the API stabilized
+     *
      * @return BackupTool[]
      */
-    protected function getBackupTools()
+    protected function getBackupTools(): array
     {
         return [
             new IbmSpectrumProtect(),

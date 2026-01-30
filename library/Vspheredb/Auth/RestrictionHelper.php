@@ -10,18 +10,24 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Adapter_Abstract;
+use Zend_Db_Select;
 
 class RestrictionHelper
 {
     /** @var Auth */
-    protected $auth;
+    protected Auth $auth;
 
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
 
     /** @var string[]|null */
-    protected $restrictedVCenterUuids = null;
+    protected ?array $restrictedVCenterUuids = null;
 
+    /**
+     * @param Auth $auth
+     * @param Db   $connection
+     */
     public function __construct(Auth $auth, Db $connection)
     {
         $this->db = $connection->getDbAdapter();
@@ -29,14 +35,25 @@ class RestrictionHelper
         $this->loadRestrictedVCenterList();
     }
 
-    public function restrictTable(TableWithVCenterFilter $table)
+    /**
+     * @param TableWithVCenterFilter $table
+     *
+     * @return void
+     */
+    public function restrictTable(TableWithVCenterFilter $table): void
     {
         if ($this->restrictedVCenterUuids) {
             $table->filterVCenterUuids($this->restrictedVCenterUuids);
         }
     }
 
-    public function filterQuery($query, $vCenterColumn = 'vcenter_uuid')
+    /**
+     * @param Zend_Db_Select $query
+     * @param string         $vCenterColumn
+     *
+     * @return void
+     */
+    public function filterQuery(Zend_Db_Select $query, string $vCenterColumn = 'vcenter_uuid'): void
     {
         $uuids = $this->restrictedVCenterUuids;
         if ($uuids === null) {
@@ -49,14 +66,26 @@ class RestrictionHelper
         }
     }
 
-    public function assertAccessToVCenterUuidIsGranted($uuid)
+    /**
+     * @param string $uuid
+     *
+     * @return void
+     *
+     * @throws NotFoundError
+     */
+    public function assertAccessToVCenterUuidIsGranted(string $uuid): void
     {
         if (! $this->allowsVCenter($uuid)) {
             throw new NotFoundError('Not found');
         }
     }
 
-    public function allowsVCenter($uuid): bool
+    /**
+     * @param string $uuid
+     *
+     * @return bool
+     */
+    public function allowsVCenter(string $uuid): bool
     {
         if ($this->restrictedVCenterUuids === null) {
             return true;
@@ -68,7 +97,10 @@ class RestrictionHelper
         return in_array($uuid, $this->restrictedVCenterUuids);
     }
 
-    public function loadRestrictedVCenterList()
+    /**
+     * @return void
+     */
+    public function loadRestrictedVCenterList(): void
     {
         $uuids = null;
         $restrictions = $this->auth->getRestrictions('vspheredb/vcenters');

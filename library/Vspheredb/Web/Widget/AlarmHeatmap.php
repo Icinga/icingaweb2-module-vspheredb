@@ -3,14 +3,15 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use Icinga\Module\Vspheredb\Db;
+use Zend_Db_Adapter_Abstract;
 use Zend_Db_Select as ZfSelect;
 
 class AlarmHeatmap
 {
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
 
-    protected $query;
+    protected ?ZfSelect $query = null;
 
     public function __construct(Db $connection)
     {

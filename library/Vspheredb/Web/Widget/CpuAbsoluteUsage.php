@@ -17,7 +17,7 @@ class CpuAbsoluteUsage extends BaseHtmlElement
         'class' => 'cpu'
     ];
 
-    public function __construct($mhz, $cores = null, $perCore = 2000)
+    public function __construct(int $mhz, ?int $cores = null, int $perCore = 2000)
     {
         $class = null;
         if ($cores !== null) {

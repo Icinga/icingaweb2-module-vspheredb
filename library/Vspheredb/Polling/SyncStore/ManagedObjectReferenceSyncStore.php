@@ -13,7 +13,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $connection = $this->vCenter->getConnection();
         $vCenter = $this->vCenter;

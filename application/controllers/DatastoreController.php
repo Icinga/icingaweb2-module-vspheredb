@@ -24,7 +24,7 @@ class DatastoreController extends Controller
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $ds = $this->addDatastore();
         $lookup = new PathLookup($this->db()->getDbAdapter());
@@ -67,7 +67,7 @@ class DatastoreController extends Controller
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function eventsAction()
+    public function eventsAction(): void
     {
         $ds = $this->addDatastore();
         $table = new EventHistoryTable($this->db());
@@ -75,7 +75,7 @@ class DatastoreController extends Controller
             ->renderTo($this);
     }
 
-    public function monitoringAction()
+    public function monitoringAction(): void
     {
         $this->showMonitoringDetails($this->addDatastore());
     }
@@ -85,7 +85,7 @@ class DatastoreController extends Controller
      * @throws \Icinga\Exception\MissingParameterException
      * @throws \Icinga\Exception\NotFoundError
      */
-    protected function addDatastore()
+    protected function addDatastore(): Datastore
     {
         $ds = Datastore::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $ds->object()->set('object_name', Anonymizer::anonymizeString($ds->object()->get('object_name')));
@@ -96,7 +96,10 @@ class DatastoreController extends Controller
         return $ds;
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $params = ['uuid' => $this->params->get('uuid')];
         $this->tabs()->add('index', [
@@ -118,7 +121,12 @@ class DatastoreController extends Controller
     {
     }
 
-    protected function bytes($bytes)
+    /**
+     * @param $bytes
+     *
+     * @return string
+     */
+    protected function bytes($bytes): string
     {
         return Format::bytes($bytes, Format::STANDARD_IEC);
     }

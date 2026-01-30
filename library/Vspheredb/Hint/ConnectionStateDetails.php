@@ -8,14 +8,25 @@ class ConnectionStateDetails
 {
     use TranslationHelper;
 
-    protected static $instance;
+    /** @var ?ConnectionStateDetails */
+    protected static ?ConnectionStateDetails $instance = null;
 
-    public static function getFor($state)
+    /**
+     * @param string $state
+     *
+     * @return string|null
+     */
+    public static function getFor(string $state): ?string
     {
         return static::instance()->getConnectionStateDetails($state);
     }
 
-    protected function getConnectionStateDetails($state)
+    /**
+     * @param string $state
+     *
+     * @return string|null
+     */
+    protected function getConnectionStateDetails(string $state): ?string
     {
         $infos = [
             'connected'    => $this->translate(
@@ -49,9 +60,9 @@ class ConnectionStateDetails
     }
 
     /**
-     * @return self
+     * @return static
      */
-    protected static function instance()
+    protected static function instance(): ConnectionStateDetails
     {
         if (static::$instance === null) {
             static::$instance = new static();

@@ -5,12 +5,13 @@ namespace Icinga\Module\Vspheredb\ProvidedHook\Director;
 use Icinga\Module\Director\Hook\DataTypeHook;
 use Icinga\Module\Director\Web\Form\QuickForm;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
+use Zend_Form_Element;
 
 class DataTypeMonitoringRule extends DataTypeHook
 {
     protected $db;
 
-    public function getFormElement($name, QuickForm $form)
+    public function getFormElement($name, QuickForm $form): Zend_Form_Element
     {
         $registry = RuleSetRegistry::default();
         $options = [];

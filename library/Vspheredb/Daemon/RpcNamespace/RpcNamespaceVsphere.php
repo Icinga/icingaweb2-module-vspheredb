@@ -9,8 +9,11 @@ use Icinga\Module\Vspheredb\Polling\ServerSet;
 class RpcNamespaceVsphere
 {
     /** @var ApiConnectionHandler */
-    protected $apiConnectionHandler;
+    protected ApiConnectionHandler $apiConnectionHandler;
 
+    /**
+     * @param ApiConnectionHandler $apiConnectionHandler
+     */
     public function __construct(ApiConnectionHandler $apiConnectionHandler)
     {
         $this->apiConnectionHandler = $apiConnectionHandler;
@@ -20,6 +23,7 @@ class RpcNamespaceVsphere
      * Hint: Full qualified reference is necessary for RPC type check
      *
      * @param \Icinga\Module\Vspheredb\Polling\ServerSet $servers
+     *
      * @return bool
      */
     public function setServersRequest(ServerSet $servers): bool

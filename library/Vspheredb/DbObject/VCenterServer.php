@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\Db;
 
 class VCenterServer extends BaseDbObject
 {
-    protected $table = 'vcenter_server';
+    protected ?string $table = 'vcenter_server';
 
-    protected $autoincKeyName = 'id';
+    protected ?string $autoincKeyName = 'id';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'id'              => null,
         'vcenter_id'      => null,
         'scheme'          => null,
@@ -28,9 +28,10 @@ class VCenterServer extends BaseDbObject
 
     /**
      * @param Db $db
+     *
      * @return VCenterServer[]
      */
-    public static function loadEnabledServers(Db $db)
+    public static function loadEnabledServers(Db $db): array
     {
         return static::loadAll(
             $db,

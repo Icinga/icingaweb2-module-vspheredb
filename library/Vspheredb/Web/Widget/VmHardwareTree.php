@@ -4,13 +4,14 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
-use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\DbConnection;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use Ramsey\Uuid\Uuid;
 
 class VmHardwareTree extends BaseHtmlElement
@@ -27,19 +28,19 @@ class VmHardwareTree extends BaseHtmlElement
     protected $tree;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
-    protected $devices = [];
+    protected array $devices = [];
 
-    protected $parents = [];
+    protected array $parents = [];
 
-    protected $children = [];
+    protected array $children = [];
 
-    protected $disks = [];
+    protected array $disks = [];
 
-    protected $nics = [];
+    protected array $nics = [];
 
-    protected $diskPerf;
+    protected ?array $diskPerf = null;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -47,14 +48,14 @@ class VmHardwareTree extends BaseHtmlElement
     }
 
     /**
-     * @return Db
+     * @return DbConnection
      */
-    protected function getDb()
+    protected function getDb(): DbConnection
     {
         return $this->vm->getConnection();
     }
 
-    protected function fetchDisks()
+    protected function fetchDisks(): void
     {
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
@@ -69,7 +70,7 @@ class VmHardwareTree extends BaseHtmlElement
         }
     }
 
-    protected function fetchNics()
+    protected function fetchNics(): void
     {
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
@@ -84,7 +85,7 @@ class VmHardwareTree extends BaseHtmlElement
         }
     }
 
-    protected function fetchHardware()
+    protected function fetchHardware(): void
     {
         $this->fetchDisks();
         $this->fetchNics();
@@ -107,7 +108,7 @@ class VmHardwareTree extends BaseHtmlElement
         }
     }
 
-    protected function renderDisk($disk, $device, $controller)
+    protected function renderDisk(object $disk, object $device, object $controller): array
     {
         $lookup = new PathLookup($this->getDb()->getDbAdapter());
         $result = [];
@@ -149,7 +150,7 @@ class VmHardwareTree extends BaseHtmlElement
         return $result;
     }
 
-    protected function renderNic($nic, $device, $controller)
+    protected function renderNic(object $nic, object $device, object $controller): Link|array
     {
         $desc = $device->label;
 
@@ -171,7 +172,7 @@ class VmHardwareTree extends BaseHtmlElement
         }
     }
 
-    protected function linkToPortGroup($uuid)
+    protected function linkToPortGroup($uuid): string
     {
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
@@ -206,7 +207,7 @@ class VmHardwareTree extends BaseHtmlElement
         );
     }
 
-    protected function fetchDiskPerf()
+    protected function fetchDiskPerf(): array
     {
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
@@ -238,13 +239,13 @@ class VmHardwareTree extends BaseHtmlElement
     }
 
 
-    public function assemble()
+    public function assemble(): void
     {
         $this->fetchHardware();
         $this->add($this->renderNodes($this->parents));
     }
 
-    protected function renderNodes($nodes, $level = 0)
+    protected function renderNodes(array $nodes, int $level = 0): HtmlElement|array
     {
         $result = [];
         foreach ($nodes as $child) {
@@ -258,7 +259,7 @@ class VmHardwareTree extends BaseHtmlElement
         }
     }
 
-    protected function renderNode($device, $level = 0)
+    protected function renderNode(object $device, int $level = 0): HtmlElement
     {
         /** @var int $key */
         $key = $device->hardware_key;

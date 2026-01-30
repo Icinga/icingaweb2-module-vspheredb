@@ -22,25 +22,43 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
-    protected $settings = [];
+    /** @var array */
+    protected array $settings = [];
 
-    protected $queue;
+    /** @var array */
+    protected array $queue = [];
 
-    public static function initialize(LoopInterface $loop, $settings = [])
+    /**
+     * @param LoopInterface $loop
+     * @param array|object  $settings
+     *
+     * @return $this
+     */
+    public static function initialize(LoopInterface $loop, array|object $settings = []): static
     {
         return (new static())->setLoop($loop)->setSettings($settings);
     }
 
-    public function setLoop(LoopInterface $loop)
+    /**
+     * @param LoopInterface $loop
+     *
+     * @return $this
+     */
+    public function setLoop(LoopInterface $loop): static
     {
         $this->loop = $loop;
 
         return $this;
     }
 
-    public function setSettings($settings)
+    /**
+     * @param array|object $settings
+     *
+     * @return $this
+     */
+    public function setSettings(array|object $settings): static
     {
         $this->settings = (array) $settings;
 
@@ -49,8 +67,11 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
 
     /**
      * @param string $name
+     * @param mixed  $default
+     *
+     * @return mixed
      */
-    public function getSetting(string $name, $default = null)
+    public function getSetting(string $name, mixed $default = null): mixed
     {
         if (array_key_exists($name, $this->settings)) {
             return $this->settings[$name];
@@ -62,22 +83,35 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     /**
      * @return string
      */
-    public static function getName()
+    public static function getName(): string
     {
         return preg_replace('/Hook$/', '', static::getClassBaseName(get_called_class()));
     }
 
     /**
+     * @param RemoteClient $client
+     *
      * @return Form
      */
-    abstract public function getConfigurationForm(RemoteClient $client);
+    abstract public function getConfigurationForm(RemoteClient $client): Form;
 
+    /**
+     * @param RemoteClient $client
+     *
+     * @return Form
+     */
     public function getSubscriptionForm(RemoteClient $client)
     {
         return null;
     }
 
-    public static function createConsumerInstance(PerfdataConsumer $consumer, LoopInterface $loop)
+    /**
+     * @param PerfdataConsumer $consumer
+     * @param LoopInterface    $loop
+     *
+     * @return static
+     */
+    public static function createConsumerInstance(PerfdataConsumer $consumer, LoopInterface $loop): static
     {
         $class = static::getClass($consumer->get('implementation'));
         /** @var PerfDataConsumerHook $instance */
@@ -87,9 +121,11 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     /**
      * Hint: Currently unused
      *
-     * @var DataPoint[] $points
+     * @param DataPoint[] $points
+     *
+     * @return void
      */
-    public function pushDataPoints($points)
+    public function pushDataPoints(array $points): void
     {
         if (empty($this->queue)) {
             $this->queue[] = $points;
@@ -107,13 +143,16 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
      *
      * @return bool
      */
-    protected function processQueue()
+    protected function processQueue(): bool
     {
         array_pop($this->queue);
         return true;
     }
 
-    public static function enum()
+    /**
+     * @return array<string, string>
+     */
+    public static function enum(): array
     {
         $enum = [];
         /** @var static $instance */
@@ -131,10 +170,11 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     }
 
     /**
-     * @param $name
-     * @return string|null|static
+     * @param string $name
+     *
+     * @return string|null
      */
-    public static function getClass($name)
+    public static function getClass(string $name): string|null
     {
         // TODO: module/Name for foreign ones?
         /** @var static $instance */
@@ -147,13 +187,23 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
         return null;
     }
 
-    protected static function getClassBaseName($class)
+    /**
+     * @param string $class
+     *
+     * @return string|null
+     */
+    protected static function getClassBaseName(string $class): ?string
     {
         $parts = \explode('\\', $class);
         return array_pop($parts);
     }
 
-    protected static function getModuleFromClassName($class)
+    /**
+     * @param string $class
+     *
+     * @return string
+     */
+    protected static function getModuleFromClassName(string $class): string
     {
         $parts = \explode('\\', ltrim($class, '\\'));
         if (count($parts) >= 3) {

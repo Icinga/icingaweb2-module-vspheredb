@@ -4,12 +4,12 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class ComputeCluster extends BaseDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
     // TODO: protected $table = 'compute_cluster';
-    protected $table = 'object';
+    protected ?string $table = 'object';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'           => null,
         'vcenter_uuid'   => null,
         'moref'          => null,
@@ -21,8 +21,7 @@ class ComputeCluster extends BaseDbObject
         'tags'           => null,
     ];
 
-    protected $propertyMap = [
-    ];
+    protected array $propertyMap = [];
 
     public function calculateStats()
     {
@@ -43,7 +42,10 @@ class ComputeCluster extends BaseDbObject
         );
     }
 
-    public function countHosts()
+    /**
+     * @return false|string|null
+     */
+    public function countHosts(): false|string|null
     {
         $db = $this->getDb();
         return $db->fetchOne(

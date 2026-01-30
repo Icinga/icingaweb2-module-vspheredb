@@ -3,7 +3,10 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class HostPciDevicesTable extends ZfQueryBasedTable
 {
@@ -18,10 +21,10 @@ class HostPciDevicesTable extends ZfQueryBasedTable
         'device_name'
     ];
 
-    /** @var HostSystem */
-    protected $host;
+    /** @var ?HostSystem */
+    protected ?HostSystem $host = null;
 
-    public function getColumnsToBeRendered()
+    public function getColumnsToBeRendered(): array
     {
         return [
             $this->translate('ID'),
@@ -29,7 +32,7 @@ class HostPciDevicesTable extends ZfQueryBasedTable
         ];
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         return static::row([
             $row->id,
@@ -37,14 +40,14 @@ class HostPciDevicesTable extends ZfQueryBasedTable
         ]);
     }
 
-    public function filterHost(HostSystem $host)
+    public function filterHost(HostSystem $host): static
     {
         $this->host = $host;
 
         return $this;
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from([
             'hpd' => 'host_pci_device'

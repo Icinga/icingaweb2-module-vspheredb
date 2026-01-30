@@ -22,28 +22,32 @@ class RuleForm extends Form
     use TranslationHelper;
 
     public const NEXT_UUID = '00000000-0000-0000-0000-000000000000';
+
     public const RESULT_CREATED    = 'created';
+
     public const RESULT_MODIFIED   = 'modified';
+
     public const RESULT_UNMODIFIED = 'unmodified';
+
     public const RESULT_DELETED    = 'deleted';
 
     /** @var string */
-    protected $objectType;
+    protected string $objectType;
 
     /** @var string */
-    protected $binaryUuid;
+    protected string $binaryUuid;
 
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     /** @var InheritedSettings */
-    protected $inherited;
+    protected InheritedSettings $inherited;
 
-    /** @var MonitoringRuleSet|null */
-    protected $loadedSet;
+    /** @var ?MonitoringRuleSet */
+    protected ?MonitoringRuleSet $loadedSet;
 
-    /** @var string Any of self::RESULT_* */
-    protected $result;
+    /** @var ?string Any of self::RESULT_* */
+    protected ?string $result = null;
 
     public function __construct(
         string $objectType,
@@ -64,7 +68,7 @@ class RuleForm extends Form
         }
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $sets = RuleSetRegistry::default()->getSets();
         foreach ($sets as $set) {
@@ -108,7 +112,7 @@ class RuleForm extends Form
         $this->applyInheritedInfo();
     }
 
-    protected function addRule(RuleSet $set, Rule $rule, ?UuidInterface $instance = null)
+    protected function addRule(RuleSet $set, Rule $rule, ?UuidInterface $instance = null): void
     {
         if ($instance === null) {
             $this->add(Html::tag('h3', $rule->getLabel()));
@@ -128,7 +132,7 @@ class RuleForm extends Form
         }
     }
 
-    protected function createRuleElement($elementName, $definition)
+    protected function createRuleElement($elementName, $definition): void
     {
         $elementType = array_shift($definition);
         $options = array_shift($definition) ?: [];
@@ -140,14 +144,14 @@ class RuleForm extends Form
         }
     }
 
-    protected function applyInheritedInfo()
+    protected function applyInheritedInfo(): void
     {
         foreach ((array) $this->inherited->jsonSerialize() as $key => $value) {
             $this->setInheritedValue($key, $value, $this->inherited->getInheritedFromName($key));
         }
     }
 
-    protected function setInheritedValue($elementName, $value, $sourceName = null)
+    protected function setInheritedValue(string $elementName, mixed $value, ?string $sourceName = null): void
     {
         if ($this->getValue($elementName) !== null) {
             return;
@@ -178,7 +182,7 @@ class RuleForm extends Form
         }
     }
 
-    protected function assertValidateParameterName($name)
+    protected function assertValidateParameterName($name): void
     {
         if (! preg_match('/^[A-z]+[A-z0-9_]*$/', $name)) {
             throw new InvalidArgumentException("'$name' is not a valid parameter name");
@@ -230,8 +234,13 @@ class RuleForm extends Form
         return $result;
     }
 
-    protected function applyResultValue(&$values, $prefix, $key, $elementType, $storingPrefix = null)
-    {
+    protected function applyResultValue(
+        array &$values,
+        string $prefix,
+        string $key,
+        string $elementType,
+        ?string $storingPrefix = null
+    ): void {
         $storingKey = ($storingPrefix ?? $prefix) . $key;
         $key = $prefix . $key;
         $value = $this->getValue($key);
@@ -243,7 +252,7 @@ class RuleForm extends Form
         }
     }
 
-    protected function normalizeBoolean($value): ?bool
+    protected function normalizeBoolean(?string $value): ?bool
     {
         switch ($value) {
             case null:
@@ -257,7 +266,7 @@ class RuleForm extends Form
         throw new \RuntimeException("'$value' is not a valid boolean value");
     }
 
-    protected function addEnabledSetting($prefix)
+    protected function addEnabledSetting(string $prefix): void
     {
         $elementName = $prefix . Settings::KEY_ENABLED;
         $this->addElement('boolean', $elementName, [
@@ -267,7 +276,7 @@ class RuleForm extends Form
         $this->setInheritedValue($elementName, true);
     }
 
-    protected function addStateTriggerElement(string $name, $options = [])
+    protected function addStateTriggerElement(string $name, array $options = []): void
     {
         $selectOptions = [
             '' => $this->translate('Not configured / Inherited'),
@@ -303,7 +312,7 @@ class RuleForm extends Form
     }
 
 
-    protected function onSuccess()
+    protected function onSuccess(): void
     {
         $values = $this->getNormalizedValues();
         $settings = new Settings($values);

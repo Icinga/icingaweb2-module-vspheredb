@@ -21,7 +21,7 @@ class ActiveMemoryUsageRuleDefinition extends MemoryUsageRuleDefinition
         return $this->translate('Active Memory Usage');
     }
 
-    protected function getUsedMemory(BaseDbObject $quickStats)
+    protected function getUsedMemory(BaseDbObject $quickStats): int
     {
         return $quickStats->get('guest_memory_usage_mb') * MemoryUsageHelper::MEGA_BYTE;
     }

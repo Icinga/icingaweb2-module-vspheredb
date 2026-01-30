@@ -18,13 +18,13 @@ class PerfdataConsumerForm extends ObjectForm
 
     public const ON_DELETE = 'delete';
 
-    protected $class = PerfdataConsumer::class;
+    protected ?string $class = PerfdataConsumer::class;
 
     /** @var RemoteClient */
-    protected $client;
+    protected RemoteClient $client;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
     public function __construct(LoopInterface $loop, RemoteClient $client, Store $store)
     {
@@ -33,7 +33,7 @@ class PerfdataConsumerForm extends ObjectForm
         parent::__construct($store);
     }
 
-    public function assemble()
+    public function assemble(): void
     {
         $this->addElement('text', 'name', [
             'label'       => $this->translate('Name'),
@@ -56,7 +56,7 @@ class PerfdataConsumerForm extends ObjectForm
         $this->addButtons(isset($implementation), 'implementation');
     }
 
-    public function isValidEvent($event)
+    public function isValidEvent(string $event): bool
     {
         if ($event === self::ON_DELETE) {
             return true;
@@ -65,7 +65,7 @@ class PerfdataConsumerForm extends ObjectForm
         return parent::isValidEvent($event);
     }
 
-    protected function selectImplementation()
+    protected function selectImplementation(): ?string
     {
         if (! $this->isNew()) {
             return $this->object->get('implementation');
@@ -80,7 +80,7 @@ class PerfdataConsumerForm extends ObjectForm
         return $this->getValue('implementation');
     }
 
-    protected function addImplementation($implementation)
+    protected function addImplementation(string $implementation): void
     {
         /** @var PerfDataConsumerHook $instance */
         $class = PerfDataConsumerHook::getClass($implementation);

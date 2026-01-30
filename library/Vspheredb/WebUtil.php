@@ -6,12 +6,13 @@ use Icinga\Date\DateFormatter;
 use ipl\Html\Error as HtmlError;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
 use Throwable;
 use Exception;
 
 class WebUtil
 {
-    public static function runFailSafe($callback, HtmlDocument $parent)
+    public static function runFailSafe(callable $callback, HtmlDocument $parent): void
     {
         try {
             $callback();
@@ -22,7 +23,7 @@ class WebUtil
         }
     }
 
-    public static function timeAgo($time)
+    public static function timeAgo(float|int $time): HtmlElement
     {
         return Html::tag('span', [
             'class' => 'time-ago',

@@ -15,10 +15,10 @@ class VmHeader extends BaseHtmlElement
     use TranslationHelper;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
     /** @var VmQuickStats */
-    protected $quickStats;
+    protected VmQuickStats $quickStats;
 
     protected $tag = 'div';
 
@@ -35,7 +35,7 @@ class VmHeader extends BaseHtmlElement
     /**
      * @throws \Icinga\Exception\NotFoundError
      */
-    protected function assemble()
+    protected function assemble(): void
     {
         $vm = $this->vm;
         $vm->object()->set('object_name', Anonymizer::anonymizeString($vm->object()->get('object_name')));

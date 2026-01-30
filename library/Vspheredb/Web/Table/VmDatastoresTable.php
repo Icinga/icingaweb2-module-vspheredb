@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
@@ -12,6 +13,8 @@ use Icinga\Module\Vspheredb\Web\Widget\DatastoreUsage;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class VmDatastoresTable extends ZfQueryBasedTable
 {
@@ -22,13 +25,13 @@ class VmDatastoresTable extends ZfQueryBasedTable
     protected $parentIds;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
-    /** @var string */
-    protected $uuid;
+    /** @var ?string */
+    protected ?string $uuid = null;
 
     /** @var OverallStatusRenderer */
-    protected $renderStatus;
+    protected OverallStatusRenderer $renderStatus;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -39,7 +42,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $this->renderStatus = new OverallStatusRenderer();
     }
 
-    protected function setVm(VirtualMachine $vm)
+    protected function setVm(VirtualMachine $vm): static
     {
         $this->vm = $vm;
         $this->uuid = $vm->get('uuid');
@@ -47,7 +50,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
         return $this;
     }
 
-    public function getColumnsToBeRendered()
+    public function getColumnsToBeRendered(): array
     {
         return [
             $this->translate('Status'),
@@ -58,7 +61,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
         ];
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $size = $row->committed + $row->uncommitted;
         $caption = Link::create(
@@ -96,7 +99,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
         return $tr;
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['o' => 'object'],

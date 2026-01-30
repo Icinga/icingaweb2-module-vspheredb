@@ -10,6 +10,7 @@ use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Web\Compat\StyleWithNonce;
+use Zend_Db_Adapter_Abstract;
 
 class DatastoreUsage extends BaseHtmlElement
 {
@@ -23,26 +24,26 @@ class DatastoreUsage extends BaseHtmlElement
     ];
 
     /** @var Datastore */
-    protected $datastore;
+    protected Datastore $datastore;
 
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var ?Zend_Db_Adapter_Abstract */
+    protected ?Zend_Db_Adapter_Abstract $db;
 
-    /** @var string */
-    protected $uuid;
-
-    /** @var int */
-    protected $capacity;
+    /** @var ?string */
+    protected ?string $uuid = null;
 
     /** @var int */
-    protected $uncommitted;
+    protected int $capacity;
 
-    protected $gotPercent = 0;
+    /** @var int */
+    protected int $uncommitted;
 
-    protected $baseUrl = 'vspheredb/vm';
+    protected float $gotPercent = 0;
 
-    /** @var Link[] Array key is the VirtualMachine id */
-    protected $diskLinks;
+    protected string $baseUrl = 'vspheredb/vm';
+
+    /** @var Link[]|null Array key is the VirtualMachine id */
+    protected ?array $diskLinks = null;
 
     public function __construct(Datastore $datastore)
     {
@@ -53,20 +54,20 @@ class DatastoreUsage extends BaseHtmlElement
         $this->db = $datastore->getDb();
     }
 
-    public function setCapacity($capacity)
+    public function setCapacity(int $capacity): static
     {
         $this->capacity = $capacity;
         return $this;
     }
 
-    public function setBaseUrl($url)
+    public function setBaseUrl(string $url): static
     {
         $this->baseUrl = $url;
 
         return $this;
     }
 
-    public function loadAllVmDisks()
+    public function loadAllVmDisks(): static
     {
         $query = $this->db->select()
             ->from(
@@ -117,7 +118,7 @@ class DatastoreUsage extends BaseHtmlElement
         return $this;
     }
 
-    public function addDiskFromDbRow($row)
+    public function addDiskFromDbRow(object $row): static
     {
         $info = $this->makeDisk($row);
         if ($info !== null) {
@@ -127,7 +128,7 @@ class DatastoreUsage extends BaseHtmlElement
         return $this;
     }
 
-    public function addFreeDatastoreSpace()
+    public function addFreeDatastoreSpace(): static
     {
         if ($this->capacity === 0) {
             return $this;
@@ -165,14 +166,14 @@ class DatastoreUsage extends BaseHtmlElement
     }
 
     /**
-     * @param $title
-     * @param $percent
+     * @param string $title
+     * @param float $percent
      * @param ?string $vmUuid
      * @param array $attributes
      *
      * @return $this
      */
-    public function addVmDisk($title, $percent, ?string $vmUuid = null, array $attributes = []): static
+    public function addVmDisk(string $title, float $percent, ?string $vmUuid = null, array $attributes = []): static
     {
         if ($vmUuid) {
             $url = $this->baseUrl;
@@ -208,7 +209,7 @@ class DatastoreUsage extends BaseHtmlElement
         return $this;
     }
 
-    protected function makeDisk($dbRow)
+    protected function makeDisk(object $dbRow): ?object
     {
         $size = $dbRow->committed + $dbRow->uncommitted;
         if ($size === 0) {
@@ -239,7 +240,7 @@ class DatastoreUsage extends BaseHtmlElement
         return $share;
     }
 
-    protected function bytes($bytes)
+    protected function bytes(int $bytes): string
     {
         return Format::bytes($bytes, Format::STANDARD_IEC);
     }

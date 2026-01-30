@@ -7,6 +7,7 @@ use gipfl\IcingaWeb2\Url;
 use gipfl\Translation\TranslationHelper;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use Zend_Db_Select as DbSelect;
 
 abstract class ToggleFlagList extends BaseHtmlElement
@@ -16,28 +17,28 @@ abstract class ToggleFlagList extends BaseHtmlElement
     protected $tag = 'li';
 
     /** @var Url */
-    private $url;
+    private Url $url;
 
     /** @var string */
-    private $param;
+    private string $param;
 
-    /** @var DbSelect|null */
-    private $originalQuery;
+    /** @var ?DbSelect */
+    private ?DbSelect $originalQuery = null;
 
-    /** @var DbSelect|null */
-    private $query;
+    /** @var ?DbSelect */
+    private ?DbSelect $query = null;
 
-    protected $iconMain = 'angle-double-down';
+    protected string $iconMain = 'angle-double-down';
 
-    protected $iconModified = 'flapping';
+    protected string $iconModified = 'flapping';
 
-    public function __construct(Url $url, $param)
+    public function __construct(Url $url, string $param)
     {
         $this->url = $url;
         $this->param = $param;
     }
 
-    public function applyToQuery(DbSelect $query)
+    public function applyToQuery(DbSelect $query): static
     {
         $this->originalQuery = $query;
         $this->query = clone $query;
@@ -45,16 +46,16 @@ abstract class ToggleFlagList extends BaseHtmlElement
         return $this;
     }
 
-    abstract protected function getListLabel();
+    abstract protected function getListLabel(): string;
 
-    abstract protected function getOptions();
+    abstract protected function getOptions(): array;
 
-    protected function getDefaultSelection()
+    protected function getDefaultSelection(): array
     {
         return \array_keys($this->getOptions());
     }
 
-    protected function setEnabled($enabled, $all)
+    protected function setEnabled(array $enabled, array $all): void
     {
         if ($all === $enabled) {
             // No need to extend the query with useless overhead
@@ -73,7 +74,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
         }
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $link = Link::create($this->getListLabel(), '#', null, ['class' => 'icon-' . $this->iconMain]);
         $this->add([
@@ -82,7 +83,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
         ]);
     }
 
-    protected function toggleColumnsOptions(Link $mainLink)
+    protected function toggleColumnsOptions(Link $mainLink): array
     {
         $default = $this->getDefaultSelection();
         $links = [];
@@ -138,7 +139,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
         return $links;
     }
 
-    protected function geturlReset()
+    protected function geturlReset(): Link
     {
         return Link::create(
             $this->translate('Reset'),
@@ -148,22 +149,22 @@ abstract class ToggleFlagList extends BaseHtmlElement
         );
     }
 
-    protected function getUrlWithOptions($options)
+    protected function getUrlWithOptions($options): Url
     {
         return $this->url->with($this->param, $this->joinUrlOptions($options));
     }
 
-    protected function joinUrlOptions($value)
+    protected function joinUrlOptions($value): string
     {
         return \implode(',', $value);
     }
 
-    protected function splitUrlOptions($value)
+    protected function splitUrlOptions($value): array
     {
         return \preg_split('/,/', $value, -1, PREG_SPLIT_NO_EMPTY);
     }
 
-    protected function createLinkList($links)
+    protected function createLinkList($links): HtmlElement
     {
         $ul = Html::tag('ul');
 

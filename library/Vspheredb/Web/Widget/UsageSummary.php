@@ -52,7 +52,7 @@ class UsageSummary extends BaseHtmlElement
         ]);
     }
 
-    protected function smallUnit($string)
+    protected function smallUnit(string $string): array
     {
         $parts = explode(' ', $string, 2);
         if (count($parts) < 2) {

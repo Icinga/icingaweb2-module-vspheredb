@@ -19,10 +19,12 @@ class Html5UiLink extends BaseHtmlElement
     use TranslationHelper;
 
     public const QUERYSTRING = '/ui/#?extensionId=%s&objectId=%s&navigator=%s';
+
     public const QUERYSTRING_LEGACY = [
         HostSystem::class     => '/ui/#/host/%s',
         VirtualMachine::class => '/ui/#/host/vms/%s',
     ];
+
     public const OBJECT_TYPES = [
         HostSystem::class     => 'HostSystem',
         VirtualMachine::class => 'VirtualMachine',
@@ -33,6 +35,7 @@ class Html5UiLink extends BaseHtmlElement
         HostSystem::class     => 'vsphere.core.viTree.hostsAndClustersView',
         VirtualMachine::class => 'vsphere.core.viTree.vmsAndTemplatesView',
     ];
+
     public const EXTENSION = [
         // Choose main detail view:
         //  $extension = 'vsphere.core.vm.monitor'; // Shows 'Monitor' Tab
@@ -41,8 +44,8 @@ class Html5UiLink extends BaseHtmlElement
         VirtualMachine::class => 'vsphere.core.vm.summary',
     ];
 
-    /** @var BaseDbObject */
-    protected $object;
+    /** @var ?BaseDbObject */
+    protected ?BaseDbObject $object = null;
 
     public $tag = 'a';
 
@@ -55,7 +58,7 @@ class Html5UiLink extends BaseHtmlElement
         $this->setAttribute('target', '_blank'); // To keep the session
     }
 
-    protected static function prepareUrl(VCenter $vCenter, BaseDbObject $object)
+    protected static function prepareUrl(VCenter $vCenter, BaseDbObject $object): string
     {
         $url = self::prepareBaseUrl($vCenter);
         if (self::isLegacy($vCenter)) {
@@ -67,22 +70,22 @@ class Html5UiLink extends BaseHtmlElement
         return $url;
     }
 
-    protected static function prepareBaseUrl(VCenter $vCenter)
+    protected static function prepareBaseUrl(VCenter $vCenter): string
     {
         return 'https://' . $vCenter->getFirstServer(false)->get('host');
     }
 
-    protected static function isLegacy(VCenter $vCenter)
+    protected static function isLegacy(VCenter $vCenter): bool
     {
         return version_compare($vCenter->get('version'), '6.7.0', '<');
     }
 
-    protected static function linkLegacy(BaseDbObject $object)
+    protected static function linkLegacy(BaseDbObject $object): string
     {
         return sprintf(self::pick(self::QUERYSTRING_LEGACY, $object), rawurlencode($object->object()->get('moref')));
     }
 
-    protected static function linkHtml5Ui(BaseDbObject $object, VCenter $vCenter)
+    protected static function linkHtml5Ui(BaseDbObject $object, VCenter $vCenter): string
     {
         return sprintf(
             self::QUERYSTRING,
@@ -92,7 +95,7 @@ class Html5UiLink extends BaseHtmlElement
         );
     }
 
-    protected static function prepareV7ObjectId(VCenter $vCenter, BaseDbObject $object)
+    protected static function prepareV7ObjectId(VCenter $vCenter, BaseDbObject $object): string
     {
         return sprintf(
             'urn:vmomi:%s:%s:%s',
@@ -102,12 +105,12 @@ class Html5UiLink extends BaseHtmlElement
         );
     }
 
-    protected static function moref(BaseDbObject $object)
+    protected static function moref(BaseDbObject $object): ?string
     {
         return $object->object()->get('moref');
     }
 
-    protected static function pick(array $list, BaseDbObject $object)
+    protected static function pick(array $list, BaseDbObject $object): mixed
     {
         $class = get_class($object);
         if (isset($list[$class])) {
@@ -117,10 +120,7 @@ class Html5UiLink extends BaseHtmlElement
         throw new RuntimeException("Unable to generate HTML5 UI link for $class");
     }
 
-    /**
-     * @throws \Icinga\Exception\NotFoundError
-     */
-    protected function assemble()
+    protected function assemble(): void
     {
     }
 }

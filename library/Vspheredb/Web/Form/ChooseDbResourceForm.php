@@ -9,6 +9,7 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Widget\Hint;
 use Icinga\Application\Config;
+use Icinga\Data\Db\DbConnection;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Web\Notification;
@@ -18,15 +19,15 @@ class ChooseDbResourceForm extends Form
 {
     use TranslationHelper;
 
-    private $config;
+    private ?Config $config = null;
 
-    private $storeConfigLabel;
+    private ?string $storeConfigLabel = null;
 
-    private $createDbLabel;
+    private ?string $createDbLabel = null;
 
-    private $migrateDbLabel;
+    private ?string $migrateDbLabel = null;
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->storeConfigLabel = $this->translate('Store configuration');
 
@@ -77,7 +78,7 @@ class ChooseDbResourceForm extends Form
         }
     }
 
-    protected function addResourceConfigElements()
+    protected function addResourceConfigElements(): void
     {
         $config = $this->config();
         $resources = $this->enumResources();
@@ -117,7 +118,7 @@ class ChooseDbResourceForm extends Form
     /**
      * @return bool
      */
-    protected function storeResourceConfig()
+    protected function storeResourceConfig(): bool
     {
         $config = $this->config();
         $value = $this->getValue('resource');
@@ -156,7 +157,7 @@ class ChooseDbResourceForm extends Form
         }
     }
 
-    public function onSuccess()
+    public function onSuccess(): void
     {
         if ($this->getSubmitLabel() === $this->storeConfigLabel) {
             if ($this->storeResourceConfig()) {
@@ -174,12 +175,12 @@ class ChooseDbResourceForm extends Form
         }
     }
 
-    protected function getSubmitLabel()
+    protected function getSubmitLabel(): string
     {
         return $this->getSubmitButton()->getButtonLabel();
     }
 
-    protected function getResourceName()
+    protected function getResourceName(): ?string
     {
         if ($this->hasBeenSent()) {
             $resource = $this->getValue('resource');
@@ -194,12 +195,12 @@ class ChooseDbResourceForm extends Form
         }
     }
 
-    public function getDb()
+    public function getDb(): Db
     {
         return Db::fromResourceName($this->getResourceName());
     }
 
-    protected function getResource()
+    protected function getResource(): DbConnection
     {
         return ResourceFactory::create($this->getResourceName());
     }
@@ -207,19 +208,19 @@ class ChooseDbResourceForm extends Form
     /**
      * @return Migrations
      */
-    protected function migrations()
+    protected function migrations(): Migrations
     {
         return Db::migrationsForDb($this->getDb());
     }
 
-    public function setModuleConfig(Config $config)
+    public function setModuleConfig(Config $config): static
     {
         $this->config = $config;
 
         return $this;
     }
 
-    protected function config()
+    protected function config(): Config
     {
         if ($this->config === null) {
             $this->config = Config::module('vspheredb');
@@ -228,7 +229,10 @@ class ChooseDbResourceForm extends Form
         return $this->config;
     }
 
-    protected function enumResources()
+    /**
+     * @return array<string, string>
+     */
+    protected function enumResources(): array
     {
         // return [];
         $resources = [];

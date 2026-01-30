@@ -21,13 +21,13 @@ class ConfigurationController extends Controller
     use AsyncControllerHelper;
     use RpcServerUpdateHelper;
 
-    public function init()
+    public function init(): void
     {
         $this->assertPermission('vspheredb/admin');
         parent::init();
     }
 
-    public function databaseAction()
+    public function databaseAction(): void
     {
         $this->addTitle($this->translate('vSphereDB Database Configuration'));
         $this->tabs(new ConfigTabs())->activate('database');
@@ -78,7 +78,7 @@ class ConfigurationController extends Controller
     /**
      * @throws \Icinga\Security\SecurityException
      */
-    public function serversAction()
+    public function serversAction(): void
     {
         $this->tabs(new ConfigTabs($this->db()))->activate('servers');
         $this->setAutorefreshInterval(10);
@@ -123,7 +123,12 @@ class ConfigurationController extends Controller
         }
     }
 
-    protected function mapServerConnectionsToId($connections)
+    /**
+     * @param mixed $connections
+     *
+     * @return array
+     */
+    protected function mapServerConnectionsToId(mixed $connections): array
     {
         $connectionsByServer = [];
         foreach ((array) $connections as $id => $connection) {
@@ -138,7 +143,7 @@ class ConfigurationController extends Controller
         return $connectionsByServer;
     }
 
-    public function monitoringAction()
+    public function monitoringAction(): void
     {
         $this->tabs(new ConfigTabs($this->db()))->activate('monitoring');
         $this->actions()->add(Link::create(
@@ -165,7 +170,7 @@ class ConfigurationController extends Controller
         }
     }
 
-    public function monitoringconfigAction()
+    public function monitoringconfigAction(): void
     {
         $id = $this->params->get('id');
         if ($id) {

@@ -3,33 +3,36 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Format;
+use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Select;
 
 abstract class HostSummaryTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/computeresource';
+    protected ?string $baseUrl = 'vspheredb/computeresource';
 
-    protected $baseUrlHosts = 'vspheredb/hosts';
+    protected string $baseUrlHosts = 'vspheredb/hosts';
 
     protected $searchColumns = [
         'name',
     ];
 
-    protected $groupByAlias = 'name';
+    protected string $groupByAlias = 'name';
 
-    protected $nameColumn;
+    protected ?string $nameColumn = null;
 
-    protected $groupBy;
+    protected ?string $groupBy = null;
 
-    abstract protected function getFilterParams($row);
+    abstract protected function getFilterParams(object $row): array;
 
-    abstract protected function getGroupingTitle();
+    abstract protected function getGroupingTitle(): string;
 
-    protected function prepareUnGroupedQuery()
+    protected function prepareUnGroupedQuery(): Select|Zend_Db_Select
     {
         return $this->db()->select()->from(
             ['o' => 'object'],
@@ -49,7 +52,7 @@ abstract class HostSummaryTable extends ObjectsTable
         )->where('h.runtime_power_state = ?', 'poweredOn');
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->prepareUnGroupedQuery();
         if ($this->parentUuids) {
@@ -66,7 +69,7 @@ abstract class HostSummaryTable extends ObjectsTable
         return $query;
     }
 
-    protected function createGroupingColumn()
+    protected function createGroupingColumn(): SimpleColumn
     {
         return $this->createColumn($this->groupByAlias, $this->getGroupingTitle(), [
             'name'         => $this->nameColumn,
@@ -87,16 +90,16 @@ abstract class HostSummaryTable extends ObjectsTable
         });
     }
 
-    protected function getExtraIcons($row)
+    protected function getExtraIcons(object $row)
     {
     }
 
-    protected function hasChosenColumn($name)
+    protected function hasChosenColumn(string $name): bool
     {
         return in_array($name, $this->getChosenColumnNames());
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createGroupingColumn(),
@@ -198,7 +201,7 @@ abstract class HostSummaryTable extends ObjectsTable
         ]);
     }
 
-    protected function getHostCountColumns()
+    protected function getHostCountColumns(): array
     {
         return [
             'hosts_cnt' => 'COUNT(*)',
@@ -209,7 +212,7 @@ abstract class HostSummaryTable extends ObjectsTable
         ];
     }
 
-    protected function renderHostSummaries($row)
+    protected function renderHostSummaries(object $row): ?array
     {
         $params = $this->getFilterParams($row);
 
@@ -247,7 +250,7 @@ abstract class HostSummaryTable extends ObjectsTable
         ];
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             $this->groupByAlias,

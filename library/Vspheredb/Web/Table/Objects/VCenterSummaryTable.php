@@ -3,32 +3,36 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Util;
+use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterConnectionStatusIcon;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Select;
 
 class VCenterSummaryTable extends ObjectsTable
 {
     protected $searchColumns = [
         'name',
     ];
-    protected $baseUrl = 'vspheredb/vcenter';
+    protected ?string $baseUrl = 'vspheredb/vcenter';
 
-    protected $baseUrlHosts = 'vspheredb/hosts';
+    protected string $baseUrlHosts = 'vspheredb/hosts';
 
-    protected $groupBy = 'o.vcenter_uuid';
+    protected string $groupBy = 'o.vcenter_uuid';
 
-    protected $groupByAlias = 'name';
+    protected string $groupByAlias = 'name';
 
-    protected $nameColumn = 'vc.name';
+    protected string $nameColumn = 'vc.name';
 
-    /** @var array<int, array<int, ServerConnectionInfo>> */
-    protected $connections;
+    /** @var ?array<int, array<int, ServerConnectionInfo>> */
+    protected ?array $connections = null;
 
     /**
      * @param array<int, array<int, ServerConnectionInfo>> $connections
@@ -40,7 +44,7 @@ class VCenterSummaryTable extends ObjectsTable
         return $this;
     }
 
-    protected function getExtraIcons($row)
+    protected function getExtraIcons(object $row): ?HtmlElement
     {
         if ($this->connections === null) {
             return null;
@@ -59,7 +63,7 @@ class VCenterSummaryTable extends ObjectsTable
         return $icons;
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             $this->groupByAlias,
@@ -69,7 +73,7 @@ class VCenterSummaryTable extends ObjectsTable
         ];
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->setAttribute('data-base-target', '_self');
         $this->addAvailableColumns([
@@ -80,7 +84,7 @@ class VCenterSummaryTable extends ObjectsTable
         $this->addVCenterColumns();
     }
 
-    protected function createGroupingColumn()
+    protected function createGroupingColumn(): SimpleColumn
     {
         return $this->createColumn($this->groupByAlias, $this->getGroupingTitle(), [
                 'name'         => $this->nameColumn,
@@ -101,12 +105,12 @@ class VCenterSummaryTable extends ObjectsTable
             });
     }
 
-    protected function hasChosenColumn($name)
+    protected function hasChosenColumn($name): bool
     {
         return in_array($name, $this->getChosenColumnNames());
     }
 
-    protected function addHostColumns()
+    protected function addHostColumns(): void
     {
         $this->addAvailableColumns([
             $this->createColumn('hosts_cnt', $this->translate('Hosts'), 'SUM(hosts_cnt)')
@@ -194,7 +198,7 @@ class VCenterSummaryTable extends ObjectsTable
         ]);
     }
 
-    protected function addDatastoreColumns()
+    protected function addDatastoreColumns(): void
     {
         $this->addAvailableColumns([
             $this->createColumn('datastore_usage', $this->translate('Storage'), [
@@ -209,7 +213,7 @@ class VCenterSummaryTable extends ObjectsTable
         ]);
     }
 
-    protected function addVCenterColumns()
+    protected function addVCenterColumns(): void
     {
         $this->addAvailableColumns([
             $this->createColumn('vcenter_software', $this->translate('Software'), [
@@ -226,7 +230,7 @@ class VCenterSummaryTable extends ObjectsTable
         ]);
     }
 
-    protected function renderHostSummaries($row)
+    protected function renderHostSummaries(object $row): ?array
     {
         $params = $this->getFilterParams($row);
 
@@ -264,7 +268,7 @@ class VCenterSummaryTable extends ObjectsTable
         ];
     }
 
-    protected function getHostCountColumns()
+    protected function getHostCountColumns(): array
     {
         return [
             'hosts_cnt' => 'COUNT(DISTINCT ho.uuid)',
@@ -275,7 +279,7 @@ class VCenterSummaryTable extends ObjectsTable
         ];
     }
 
-    protected function prepareHostsQuery()
+    protected function prepareHostsQuery(): Select|Zend_Db_Select
     {
         return $this->db()->select()->from(
             ['h' => 'host_system'],
@@ -310,7 +314,7 @@ class VCenterSummaryTable extends ObjectsTable
             ->group('h.vcenter_uuid');
     }
 
-    protected function prepareDatastoreQuery()
+    protected function prepareDatastoreQuery(): Select|Zend_Db_Select
     {
         return $this->db()->select()->from(
             // TODO: Join object?
@@ -324,7 +328,7 @@ class VCenterSummaryTable extends ObjectsTable
         )->group('ds.vcenter_uuid');
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): Select|Zend_Db_Select
     {
         $vCenterColumns = [
             'uuid' => 'vc.instance_uuid',
@@ -348,12 +352,12 @@ class VCenterSummaryTable extends ObjectsTable
         );
     }
 
-    protected function getGroupingTitle()
+    protected function getGroupingTitle(): string
     {
         return $this->translate('VCenter');
     }
 
-    protected function getFilterParams($row)
+    protected function getFilterParams($row): array
     {
         return ['vcenter' => Util::niceUuid($row->uuid)];
     }

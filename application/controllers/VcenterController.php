@@ -28,7 +28,7 @@ class VcenterController extends Controller
     use AsyncControllerHelper;
     use RpcServerUpdateHelper;
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $vCenter = $this->requireVCenter();
         $this->tabs(new VCenterTabs($vCenter))->activate('vcenter');
@@ -53,7 +53,7 @@ class VcenterController extends Controller
         $this->content()->add(new VCenterSummaries($vCenter));
     }
 
-    public function editAction()
+    public function editAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $vCenter = $this->requireVCenter();
@@ -104,7 +104,7 @@ class VcenterController extends Controller
     /**
      * @throws \Icinga\Security\SecurityException
      */
-    public function serverAction()
+    public function serverAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('vCenter Server'));
@@ -140,7 +140,10 @@ class VcenterController extends Controller
         }
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $action = $this->getRequest()->getActionName();
         $tabs = $this->tabs(new MainTabs($this->Auth(), $this->db()));

@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup;
 
 use Ramsey\Uuid\UuidInterface;
+use Zend_Db_Select;
 
 class VmDiskCounterLookup extends DefaultCounterLookup
 {
@@ -12,9 +13,11 @@ class VmDiskCounterLookup extends DefaultCounterLookup
     . " ELSE 'scsi' END"
     . " || vmhc.bus_number || ':' || vmhw.unit_number";
 
-    protected $objectKey = 'vm_moref';
-    protected $instanceKey = 'disk_hardware_key';
-    protected $tagColumns = [
+    protected ?string $objectKey = 'vm_moref';
+
+    protected ?string $instanceKey = 'disk_hardware_key';
+
+    protected ?array $tagColumns = [
         'vm_uuid' => 'o.uuid',
         'vm_name' => 'o.object_name',
         'vm_guest_host_name' => 'vm.guest_host_name',
@@ -23,7 +26,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
         'disk_hardware_label' => 'vmhw.label',
     ];
 
-    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
@@ -33,7 +36,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
             ->group('vm.uuid');
     }
 
-    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])

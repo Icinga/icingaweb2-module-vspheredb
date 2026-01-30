@@ -9,5 +9,5 @@ interface PropertySet
     /**
      * @return PropertySpec[]
      */
-    public static function create();
+    public static function create(): array;
 }

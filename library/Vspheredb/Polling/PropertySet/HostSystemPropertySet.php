@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class HostSystemPropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             PropertySpec::create('HostSystem', [

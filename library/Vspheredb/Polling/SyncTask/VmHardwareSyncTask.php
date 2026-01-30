@@ -10,14 +10,19 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\VmHardwareSyncStore;
 
 class VmHardwareSyncTask extends SyncTask
 {
-    protected $label = 'VM Hardware';
-    protected $tableName = 'vm_hardware';
-    protected $objectClass = VmHardware::class;
-    protected $selectSetClass = VirtualMachineSelectSet::class;
-    protected $propertySetClass = VmHardwarePropertySet::class;
-    protected $syncStoreClass = VmHardwareSyncStore::class;
+    protected string $label = 'VM Hardware';
 
-    public function tweakResult($result)
+    protected string $tableName = 'vm_hardware';
+
+    protected string $objectClass = VmHardware::class;
+
+    protected string $selectSetClass = VirtualMachineSelectSet::class;
+
+    protected string $propertySetClass = VmHardwarePropertySet::class;
+
+    protected string $syncStoreClass = VmHardwareSyncStore::class;
+
+    public function tweakResult($result): void
     {
         $whitelist = [
             // Problem with config.hardware: some properties are binary,

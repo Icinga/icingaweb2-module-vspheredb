@@ -11,8 +11,8 @@ class ConfigTabs extends Tabs
 {
     use TranslationHelper;
 
-    /** @var Db|null  */
-    protected $connection;
+    /** @var ?Db */
+    protected ?Db $connection;
 
     public function __construct(?Db $connection = null)
     {
@@ -21,7 +21,7 @@ class ConfigTabs extends Tabs
         $this->assemble();
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         if ($this->connection) {
             $migrations = Db::migrationsForDb($this->connection);

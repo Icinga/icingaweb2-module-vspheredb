@@ -4,11 +4,11 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class ComputeResource extends BaseDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'compute_resource';
+    protected ?string $table = 'compute_resource';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'                     => null,
         'vcenter_uuid'             => null,
         'effective_cpu_mhz'        => null,
@@ -21,7 +21,7 @@ class ComputeResource extends BaseDbObject
         'total_memory_size_mb'     => null,
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'summary.effectiveCpu'      => 'effective_cpu_mhz',
         'summary.effectiveMemory'   => 'effective_memory_size_mb',
         'summary.numCpuCores'       => 'cpu_cores',

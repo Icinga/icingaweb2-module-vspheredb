@@ -18,14 +18,16 @@ class HostVirtualizationInfoTable extends NameValueTable
     use TranslationHelper;
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     /**
      * HostVirtualizationInfoTable constructor.
+     *
      * @param HostSystem $host
+     *
      * @throws NotFoundError
      */
     public function __construct(HostSystem $host)
@@ -34,7 +36,7 @@ class HostVirtualizationInfoTable extends NameValueTable
         $this->vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->prepend(new SubTitle($this->translate('Virtualization Information'), 'cloud'));
         $host = $this->host;

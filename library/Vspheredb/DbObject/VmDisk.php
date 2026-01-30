@@ -6,9 +6,9 @@ use Ramsey\Uuid\Uuid;
 
 class VmDisk extends BaseVmHardwareDbObject
 {
-    protected $table = 'vm_disk';
+    protected ?string $table = 'vm_disk';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'vm_uuid'          => null,
         'hardware_key'     => null,
         'disk_uuid'        => null,
@@ -22,17 +22,17 @@ class VmDisk extends BaseVmHardwareDbObject
         'vcenter_uuid'     => null,
     ];
 
-    protected $objectReferences = [
+    protected array $objectReferences = [
         'datastore_uuid',
     ];
 
-    protected $booleanProperties = [
+    protected array $booleanProperties = [
         'split',
         'write_through',
         'thin_provisioned',
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         // 'backing.contentId' => 'content_id', // to binary, b82d1a823ecedaeece267061396dac9f
         'backing.uuid'        => 'disk_uuid', // to binary, 6000C299-5ba6-c2cf-1706-3ba11a5d1df0
         'backing.datastore._' => 'datastore_uuid', // make binary unique
@@ -46,10 +46,11 @@ class VmDisk extends BaseVmHardwareDbObject
     ];
 
     /**
-     * @param $value
+     * @param ?string $value
+     *
      * @return VmDisk
      */
-    public function setDisk_uuid($value) // phpcs:ignore
+    public function setDisk_uuid(?string $value): VmDisk // phpcs:ignore
     {
         if ($value !== null && strlen($value) > 16) {
             $value = Uuid::fromString($value)->getBytes();

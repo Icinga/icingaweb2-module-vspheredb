@@ -4,11 +4,15 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Img;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\SimpleUsageBar;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class VmDiskUsageTable extends ZfQueryBasedTable
 {
@@ -17,19 +21,19 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         'data-base-target' => '_next',
     ];
 
-    protected $totalSize = 0;
+    protected int $totalSize = 0;
 
-    protected $totalFree = 0;
+    protected int $totalFree = 0;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
-    /** @var string */
-    protected $uuid;
+    /** @var ?string */
+    protected ?string $uuid = null;
 
-    private $root;
+    private object $root;
 
-    private $withHistory = false;
+    private bool $withHistory = false;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -37,7 +41,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         $this->setVm($vm);
     }
 
-    protected function setVm(VirtualMachine $vm)
+    protected function setVm(VirtualMachine $vm): static
     {
         $this->vm = $vm;
         $this->uuid = $vm->get('uuid');
@@ -45,7 +49,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         return $this;
     }
 
-    public function getColumnsToBeRendered()
+    public function getColumnsToBeRendered(): ?array
     {
         if (count($this) === 0) {
             $this->prepend($this->translate('No guest disk found. Please check guest utilities'));
@@ -65,10 +69,12 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
     /**
      * @param $row
-     * @return \ipl\Html\HtmlElement
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @return HtmlElement
+     *
+     * @throws NotFoundError
      */
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $caption = $row->disk_path;
 
@@ -123,7 +129,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         return $tr;
     }
 
-    protected function fetchRows()
+    protected function fetchRows(): void
     {
         parent::fetchRows();
         if (count($this) === 0) {
@@ -143,19 +149,19 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         ]));
     }
 
-    public function generateFooter()
+    public function generateFooter(): HtmlElement
     {
         return Html::tag('tfoot');
     }
 
-    protected function makeDisk($disk)
+    protected function makeDisk(object $disk): SimpleUsageBar
     {
         $used = $disk->capacity - $disk->free_space;
 
         return new SimpleUsageBar($used, $disk->capacity, $disk->disk_path);
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         return $this->db()->select()->from(
             'vm_disk_usage',

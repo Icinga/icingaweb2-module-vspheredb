@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
+use Icinga\Module\Vspheredb\Db\DbConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
@@ -14,10 +15,10 @@ class VmExtraInfoTable extends NameValueTable
     use TranslationHelper;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -26,15 +27,12 @@ class VmExtraInfoTable extends NameValueTable
         $this->vCenter = VCenter::load($vm->get('vcenter_uuid'), $vm->getConnection());
     }
 
-    protected function getDb()
+    protected function getDb(): ?DbConnection
     {
         return $this->vm->getConnection();
     }
 
-    /**
-     * @throws \Icinga\Exception\NotFoundError
-     */
-    protected function assemble()
+    protected function assemble(): void
     {
         $vm = $this->vm;
 

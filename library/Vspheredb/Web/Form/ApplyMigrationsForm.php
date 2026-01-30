@@ -13,14 +13,14 @@ class ApplyMigrationsForm extends Form
     use TranslationHelper;
 
     /** @var  Migrations */
-    protected $migrations;
+    protected Migrations $migrations;
 
     public function __construct(Migrations $migrations)
     {
         $this->migrations = $migrations;
     }
 
-    public function assemble()
+    public function assemble(): void
     {
         if ($this->migrations->hasSchema()) {
             $count = $this->migrations->countPendingMigrations();
@@ -41,7 +41,7 @@ class ApplyMigrationsForm extends Form
         ]);
     }
 
-    public function onSuccess()
+    public function onSuccess(): void
     {
         $this->migrations->applyPendingMigrations();
         Notification::success($this->translate(

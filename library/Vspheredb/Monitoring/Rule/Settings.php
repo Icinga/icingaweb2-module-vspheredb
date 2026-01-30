@@ -11,6 +11,7 @@ use Ramsey\Uuid\UuidInterface;
 class Settings extends SettingsDataType
 {
     public const KEY_SEPARATOR = '/';
+
     public const KEY_ENABLED = '_enabled';
 
     public function isDisabled(?RuleSet $set = null, ?Rule $rule = null): bool
@@ -38,18 +39,20 @@ class Settings extends SettingsDataType
 
     /**
      * @param string $key
+     *
      * @return $this|Settings
      */
-    public function withRemovedKey(string $key)
+    public function withRemovedKey(string $key): Settings
     {
         return $this->withRemovedPrefix($key . Settings::KEY_SEPARATOR);
     }
 
     /**
      * @param string $prefix
+     *
      * @return $this|Settings
      */
-    public function withRemovedPrefix(string $prefix)
+    public function withRemovedPrefix(string $prefix): Settings
     {
         $length = strlen($prefix);
         $settings = new Settings();

@@ -9,14 +9,14 @@ use ipl\Html\HtmlDocument;
 class VCenterHeader extends HtmlDocument
 {
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)
     {
         $this->vCenter = $vCenter;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $vCenter = $this->vCenter;
         $title = Html::tag('h1', [

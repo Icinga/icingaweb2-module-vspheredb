@@ -7,15 +7,17 @@ use Icinga\Module\Vspheredb\MappedClass\KnownEvent;
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use RuntimeException;
+use Zend_Db_Adapter_Abstract;
 
 class VmEventHistorySyncStore extends SyncStore
 {
     use SyncHelper;
 
-    protected $lastEventKey;
-    protected $lastEventTimestamp;
+    protected ?int $lastEventKey = null;
 
-    public function store($result, $class, SyncStats $stats)
+    protected ?int $lastEventTimestamp = null;
+
+    public function store($result, $class, SyncStats $stats): void
     {
         if (empty($result)) {
             return;
@@ -70,31 +72,30 @@ class VmEventHistorySyncStore extends SyncStore
 
     /**
      * @return int
-     * @throws \Zend_Db_Select_Exception
-     * @throws \gipfl\ZfDb\Exception\SelectException
+     *
      */
-    protected function getLastEventKey()
+    protected function getLastEventKey(): int
     {
         return static::selectLast($this->db, $this->vCenter->getUuid(), 'event_key');
     }
 
     /**
      * @return int
-     * @throws \Zend_Db_Select_Exception
-     * @throws \gipfl\ZfDb\Exception\SelectException
+     *
      */
-    public function getLastEventTimeStamp()
+    public function getLastEventTimeStamp(): int
     {
         return static::selectLast($this->db, $this->vCenter->getUuid(), 'ts_event_ms');
     }
 
     /**
-     * @param $db
-     * @param string $vCenterUuid
-     * @param string $column
+     * @param Zend_Db_Adapter_Abstract $db
+     * @param string                   $vCenterUuid
+     * @param string                   $column
+     *
      * @return int
      */
-    public static function selectLast($db, $vCenterUuid, $column)
+    public static function selectLast(Zend_Db_Adapter_Abstract $db, $vCenterUuid, string $column): int
     {
         $union = $db->select()->union([
             'vmeh' => $db->select()->from(

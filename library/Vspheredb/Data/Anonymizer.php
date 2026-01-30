@@ -7,9 +7,14 @@ use Icinga\Module\Vspheredb\Hook\AnonymizerHook;
 
 class Anonymizer
 {
-    /** @var ?AnonymizerHook */
-    protected static $instance = null;
+    /** @var AnonymizerHook|false|null */
+    protected static AnonymizerHook|false|null $instance = null;
 
+    /**
+     * @param string|null $string
+     *
+     * @return string|null
+     */
     public static function anonymizeString(?string $string): ?string
     {
         if ($instance = self::instance()) {
@@ -19,6 +24,11 @@ class Anonymizer
         return $string;
     }
 
+    /**
+     * @param string|null $string
+     *
+     * @return string|null
+     */
     public static function shuffleString(?string $string): ?string
     {
         if ($instance = self::instance()) {
@@ -28,6 +38,9 @@ class Anonymizer
         return $string;
     }
 
+    /**
+     * @return AnonymizerHook|null
+     */
     protected static function instance(): ?AnonymizerHook
     {
         if (self::$instance === null) {

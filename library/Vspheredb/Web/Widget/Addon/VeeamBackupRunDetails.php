@@ -13,6 +13,7 @@ class VeeamBackupRunDetails extends NameValueTable
 
     /**
      * VeeamBackupRunDetails constructor.
+     *
      * @param VeeamBackup $details
      */
     public function __construct(VeeamBackup $details)

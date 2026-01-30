@@ -9,19 +9,29 @@ use RuntimeException;
 class BulkPathLookup
 {
     /** @var Db */
-    protected $db;
-
-    protected $nodes;
+    protected Db $db;
 
     /** @var ?array */
-    protected $vCenterFilterUuids;
+    protected ?array $nodes = null;
 
+    /** @var ?array */
+    protected ?array $vCenterFilterUuids;
+
+    /**
+     * @param Db         $db
+     * @param array|null $vCenterUuids
+     */
     public function __construct(Db $db, ?array $vCenterUuids = null)
     {
         $this->db = $db;
         $this->vCenterFilterUuids = $vCenterUuids;
     }
 
+    /**
+     * @param string|null $objectParent
+     *
+     * @return array
+     */
     public function getParents(?string $objectParent): array
     {
         if ($this->nodes === null) {
@@ -41,6 +51,9 @@ class BulkPathLookup
         return array_reverse($path, true);
     }
 
+    /**
+     * @return array
+     */
     protected function fetchAllParents(): array
     {
         $db = $this->db->getDbAdapter();

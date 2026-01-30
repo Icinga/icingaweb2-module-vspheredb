@@ -12,14 +12,14 @@ use Icinga\Module\Vspheredb\Web\Widget\CalendarForEvents;
 
 class AlarmsController extends Controller
 {
-    public function init()
+    public function init(): void
     {
         $this->assertPermission('vspheredb/admin');
         parent::init();
         $this->handleTabs();
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->actions()->add(Link::create(
             $this->translate('Calendar'),
@@ -49,7 +49,7 @@ class AlarmsController extends Controller
         $table->renderTo($this);
     }
 
-    public function heatmapAction()
+    public function heatmapAction(): void
     {
         $this->actions()->add(Link::create(
             $this->translate('Table'),
@@ -68,7 +68,10 @@ class AlarmsController extends Controller
         $this->content()->add(new CalendarForEvents($heatMap, $baseUrl, [255, 0, 0]));
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $params = [];
         if ($day = $this->params->get('day')) {

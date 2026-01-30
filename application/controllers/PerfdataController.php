@@ -24,12 +24,12 @@ class PerfdataController extends Controller
 {
     use AsyncControllerHelper;
 
-    public function init()
+    public function init(): void
     {
         $this->assertPermission('vspheredb/admin');
     }
 
-    public function countersAction()
+    public function countersAction(): void
     {
         $vCenter = $this->requireVCenter();
         $this->tabs(new VCenterTabs($vCenter))->activate('perfcounters');
@@ -47,7 +47,7 @@ class PerfdataController extends Controller
         $table->renderTo($this);
     }
 
-    public function consumersAction()
+    public function consumersAction(): void
     {
         $this->setAutorefreshInterval(10);
         $this->tabs(new ConfigTabs())->activate('perfdata');
@@ -64,7 +64,7 @@ class PerfdataController extends Controller
         $table->renderTo($this);
     }
 
-    public function consumerAction()
+    public function consumerAction(): void
     {
         $store = new ZfDbStore($this->db()->getDbAdapter());
         $form = new PerfdataConsumerForm($this->loop(), $this->remoteClient(), $store);

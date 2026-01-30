@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\Db;
 
 class HostQuickStats extends BaseDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'host_quick_stats';
+    protected ?string $table = 'host_quick_stats';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'                        => null,
         'distributed_cpu_fairness'    => null,
         'distributed_memory_fairness' => null,
@@ -20,7 +20,7 @@ class HostQuickStats extends BaseDbObject
         'vcenter_uuid'                => null,
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'summary.quickStats.distributedCpuFairness'    => 'distributed_cpu_fairness',
         'summary.quickStats.distributedMemoryFairness' => 'distributed_memory_fairness',
         'summary.quickStats.overallCpuUsage'           => 'overall_cpu_usage',
@@ -28,19 +28,33 @@ class HostQuickStats extends BaseDbObject
         'summary.quickStats.uptime'                    => 'uptime',
     ];
 
-    protected static $preloadCache = null;
+    /** @var static[]|null */
+    protected static ?array $preloadCache = null;
 
-    public static function preloadAll(Db $db)
+    /**
+     * @param Db $db
+     *
+     * @return void
+     */
+    public static function preloadAll(Db $db): void
     {
         self::$preloadCache = self::loadAll($db, null, 'uuid');
     }
 
-    public static function clearPreloadCache()
+    /**
+     * @return void
+     */
+    public static function clearPreloadCache(): void
     {
         self::$preloadCache = null;
     }
 
-    public static function loadFor(HostSystem $object)
+    /**
+     * @param HostSystem $object
+     *
+     * @return static
+     */
+    public static function loadFor(HostSystem $object): static
     {
         if ($object->hasBeenLoadedFromDb()) {
             $connection = $object->getConnection();
