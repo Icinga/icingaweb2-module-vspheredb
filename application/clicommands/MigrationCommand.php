@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use gipfl\DbMigration\Migrations;
 use Icinga\Module\Vspheredb\Db;
 
 /**
@@ -25,8 +26,10 @@ class MigrationCommand extends Command
      *
      * Exit code 0 means that there are pending migrations, code 1 that there
      * are no such. Use --verbose for human-readable output
+     *
+     * @return never
      */
-    public function pendingAction()
+    public function pendingAction(): never
     {
         if ($count = $this->migrations()->countPendingMigrations()) {
             if ($this->isVerbose) {
@@ -51,14 +54,19 @@ class MigrationCommand extends Command
      * Run any pending migrations
      *
      * All pending migrations will be silently applied
+     *
+     * @return never
      */
-    public function runAction()
+    public function runAction(): never
     {
         $this->migrations()->applyPendingMigrations();
         exit(0);
     }
 
-    protected function migrations()
+    /**
+     * @return Migrations
+     */
+    protected function migrations(): Migrations
     {
         return Db::migrationsForDb(Db::newConfiguredInstance());
     }

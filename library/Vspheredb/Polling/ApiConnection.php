@@ -20,48 +20,59 @@ class ApiConnection implements EventEmitterInterface
     use EventEmitterTrait;
     use StateMachine;
 
+    // Events
     public const ON_READY = 'ready';
+
     public const ON_ERROR = 'error';
 
+    // States
     public const STATE_STOPPED = 'stopped';
+
     public const STATE_STOPPING = 'stopping';
+
     public const STATE_INIT = 'initializing';
+
     public const STATE_LOGIN = 'login';
+
     public const STATE_CONNECTED = 'connected';
+
     public const STATE_FAILING = 'failing';
 
     /** @var CurlAsync */
-    protected $curl;
+    protected CurlAsync $curl;
 
-    /** @var LoopInterface */
-    protected $loop;
+    /** @var ?LoopInterface */
+    protected ?LoopInterface $loop = null;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    protected $scheduledPollerStartup;
+    /** @var ?TimerInterface */
+    protected ?TimerInterface $scheduledPollerStartup = null;
 
     /** @var ServerInfo */
-    protected $serverInfo;
-
-    protected $wsdlFile;
-
-    /** @var VsphereApi */
-    protected $api;
-
-    protected $stopping;
-
-    /** @var PromiseInterface */
-    protected $loginPromise;
-
-    /** @var PromiseInterface */
-    protected $wsdlPromise;
-
-    /** @var TimerInterface */
-    protected $sessionChecker;
+    protected ServerInfo $serverInfo;
 
     /** @var ?string */
-    protected $lastErrorMessage = null;
+    protected ?string $wsdlFile = null;
+
+    /** @var ?VsphereApi */
+    protected ?VsphereApi $api = null;
+
+    /** @var ?bool */
+    protected ?bool $stopping = null;
+
+    /** @var ?PromiseInterface */
+    protected ?PromiseInterface $loginPromise = null;
+
+    /** @var ?PromiseInterface */
+    protected ?PromiseInterface $wsdlPromise = null;
+
+    /** @var ?TimerInterface */
+    protected ?TimerInterface $sessionChecker = null;
+
+    /** @var ?string */
+    protected ?string $lastErrorMessage = null;
 
     public function __construct(CurlAsync $curl, ServerInfo $serverInfo, LoggerInterface $logger)
     {
@@ -130,13 +141,13 @@ class ApiConnection implements EventEmitterInterface
         });
     }
 
-    protected function stopSessionChecker()
+    protected function stopSessionChecker(): void
     {
         $this->loop->cancelTimer($this->sessionChecker);
         $this->sessionChecker = null;
     }
 
-    protected function runSessionChecker()
+    protected function runSessionChecker(): void
     {
         $this->sessionChecker = $this->loop->addPeriodicTimer(150, function () {
             $this->getApi()->eventuallyLogin()->then(null, function (Exception $e) {
@@ -148,22 +159,22 @@ class ApiConnection implements EventEmitterInterface
         });
     }
 
-    public function getApi()
+    public function getApi(): ?VsphereApi
     {
         return $this->api;
     }
 
-    public function isReady()
+    public function isReady(): bool
     {
         return $this->getState() === self::STATE_CONNECTED;
     }
 
-    public function getServerInfo()
+    public function getServerInfo(): ServerInfo
     {
         return $this->serverInfo;
     }
 
-    protected function scheduleNextAttempt($delay = 60)
+    protected function scheduleNextAttempt($delay = 60): void
     {
         if ($this->scheduledPollerStartup) {
             return;
@@ -174,7 +185,7 @@ class ApiConnection implements EventEmitterInterface
         });
     }
 
-    protected function eventuallyRemoveScheduledAttempt()
+    protected function eventuallyRemoveScheduledAttempt(): void
     {
         if ($this->scheduledPollerStartup) {
             $this->loop->cancelTimer($this->scheduledPollerStartup);
@@ -182,7 +193,7 @@ class ApiConnection implements EventEmitterInterface
         }
     }
 
-    protected function startWsdlDownload()
+    protected function startWsdlDownload(): void
     {
         $this->wsdlPromise = $this->fetchWsdl()
             ->then(function ($wsdlFile) {
@@ -199,13 +210,13 @@ class ApiConnection implements EventEmitterInterface
             });
     }
 
-    protected function eventuallyLogout()
+    protected function eventuallyLogout(): PromiseInterface
     {
         $api = new VsphereApi($this->wsdlFile, $this->serverInfo, $this->curl, $this->loop, $this->logger);
         return $api->eventuallyLogout();
     }
 
-    protected function login()
+    protected function login(): PromiseInterface
     {
         $api = new VsphereApi($this->wsdlFile, $this->serverInfo, $this->curl, $this->loop, $this->logger);
         return $this->loginPromise = $api->eventuallyLogin()->then(function (UserSession $session) use ($api) {
@@ -223,18 +234,18 @@ class ApiConnection implements EventEmitterInterface
         });
     }
 
-    public function stop()
+    public function stop(): void
     {
         $this->setState(self::STATE_STOPPING);
     }
 
-    public function run(LoopInterface $loop)
+    public function run(LoopInterface $loop): void
     {
         $this->loop = $loop;
         $this->setState(self::STATE_INIT);
     }
 
-    public function fetchWsdl()
+    public function fetchWsdl(): PromiseInterface
     {
         $serverId = $this->serverInfo->getServerId();
         $cacheDir = SafeCacheDir::getSubDirectory("wsdl-$serverId");
@@ -247,7 +258,7 @@ class ApiConnection implements EventEmitterInterface
         return $this->lastErrorMessage;
     }
 
-    protected function logError($message)
+    protected function logError($message): void
     {
         $this->lastErrorMessage = $message;
         $this->logger->error($message);

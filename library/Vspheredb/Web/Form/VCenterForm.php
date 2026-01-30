@@ -12,7 +12,7 @@ class VCenterForm extends Form
     use TranslationHelper;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)
     {
@@ -20,7 +20,7 @@ class VCenterForm extends Form
         $this->populate($vCenter->getProperties());
     }
 
-    public function assemble()
+    public function assemble(): void
     {
         $this->add(Html::tag('h3', $this->translate('Rename this vCenter')));
         $this->addElement('text', 'name', [
@@ -35,7 +35,7 @@ class VCenterForm extends Form
         ]);
     }
 
-    public function onSuccess()
+    public function onSuccess(): void
     {
         $this->vCenter->setProperties($this->getValues())->store();
     }

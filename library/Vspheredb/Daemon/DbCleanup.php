@@ -2,28 +2,31 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
-use gipfl\Log\Logger;
 use gipfl\ZfDb\Adapter\Adapter;
 use Psr\Log\LoggerInterface;
+use Zend_Db_Adapter_Abstract;
 
 class DbCleanup
 {
-    protected $db;
+    protected Adapter|Zend_Db_Adapter_Abstract $db;
 
-    /** @var Logger */
-    protected $logger;
+    /** @var LoggerInterface */
+    protected LoggerInterface $logger;
 
     /**
-     * @param Adapter|\Zend_Db_Adapter_Abstract $db
+     * @param Adapter|Zend_Db_Adapter_Abstract $db
      * @param LoggerInterface $logger
      */
-    public function __construct($db, LoggerInterface $logger)
+    public function __construct(Adapter|Zend_Db_Adapter_Abstract $db, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->logger = $logger;
     }
 
-    public function runForStartup()
+    /**
+     * @return void
+     */
+    public function runForStartup(): void
     {
         $this->logger->notice('Running DB cleanup (this could take some time)');
         $db = $this->db;
@@ -55,7 +58,10 @@ QUERY;
         $this->logger->notice('DB has been cleaned up');
     }
 
-    public function runRegular()
+    /**
+     * @return void
+     */
+    public function runRegular(): void
     {
         $this->logger->notice('Running DB cleanup (this could take some time)');
         $db = $this->db;
@@ -65,7 +71,12 @@ QUERY;
         $this->logger->notice('DB has been cleaned up');
     }
 
-    protected function optimizeWhenDeleted($result)
+    /**
+     * @param int $result
+     *
+     * @return void
+     */
+    protected function optimizeWhenDeleted(int $result): void
     {
         if ($result > 0) {
             $this->logger->info(

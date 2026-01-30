@@ -8,11 +8,9 @@ use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\NetBackup;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
-use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\CustomValues;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
-use InvalidArgumentException;
 use ipl\Html\HtmlDocument;
 
 class CustomValueDetails extends HtmlDocument
@@ -20,19 +18,14 @@ class CustomValueDetails extends HtmlDocument
     use TranslationHelper;
 
     /** @var HostSystem|VirtualMachine */
-    protected $object;
+    protected HostSystem|VirtualMachine $object;
 
-    public function __construct(BaseDbObject $object)
+    public function __construct(HostSystem|VirtualMachine $object)
     {
-        if (! $object instanceof HostSystem && ! $object instanceof VirtualMachine) {
-            throw new InvalidArgumentException(
-                'HostSystem or VirtualMachine expected, got ' . \get_class($object)
-            );
-        }
         $this->object = $object;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $object = $this->object;
         $this->prepend(new SubTitle($this->translate('Custom Values'), 'th-list'));
@@ -56,7 +49,7 @@ class CustomValueDetails extends HtmlDocument
         }
     }
 
-    protected function stripBackupToolCustomValues(CustomValues $values)
+    protected function stripBackupToolCustomValues(CustomValues $values): void
     {
         $tools = [
             new IbmSpectrumProtect(),

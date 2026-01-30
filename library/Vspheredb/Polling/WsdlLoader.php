@@ -28,7 +28,7 @@ class WsdlLoader
      *
      * @var array
      */
-    protected $requiredFiles = [
+    protected array $requiredFiles = [
         'vimService.wsdl',
         'vim.wsdl',
         'core-types.xsd',
@@ -40,26 +40,26 @@ class WsdlLoader
         'vim-messagetypes.xsd',
     ];
 
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
-    protected $cacheDir;
+    protected string $cacheDir;
 
-    protected $curl;
+    protected CurlAsync $curl;
 
-    protected $serverInfo;
+    protected ServerInfo $serverInfo;
 
-    protected $baseUrl;
+    protected string $baseUrl;
 
     /** @var PromiseInterface[] */
-    protected $pending = [];
+    protected array $pending = [];
 
     /** @var ?Deferred */
-    protected $deferred;
+    protected ?Deferred $deferred = null;
 
-    public function __construct($cacheDir, LoggerInterface $logger, ServerInfo $server, CurlAsync $curl)
+    public function __construct(string $cacheDir, LoggerInterface $logger, ServerInfo $server, CurlAsync $curl)
     {
         $this->cacheDir = $cacheDir;
         $this->logger = $logger;
@@ -68,7 +68,7 @@ class WsdlLoader
         $this->baseUrl = $server->getUrl();
     }
 
-    public function fetchInitialWsdlFile(LoopInterface $loop)
+    public function fetchInitialWsdlFile(LoopInterface $loop): PromiseInterface
     {
         $this->loop = $loop;
         return $this->fetchFiles()->then(function () {
@@ -76,12 +76,12 @@ class WsdlLoader
         });
     }
 
-    protected function getInitialFilename()
+    protected function getInitialFilename(): string
     {
         return $this->cacheDir . '/' . $this->requiredFiles[0];
     }
 
-    public function stop()
+    public function stop(): void
     {
         if ($this->deferred) {
             $deferred = $this->deferred;
@@ -95,7 +95,7 @@ class WsdlLoader
         }
     }
 
-    public function flushWsdlCache()
+    public function flushWsdlCache(): void
     {
         $dir = $this->cacheDir;
         $unlinked = false;
@@ -147,7 +147,7 @@ class WsdlLoader
         }
     }
 
-    protected function fetchFiles()
+    protected function fetchFiles(): PromiseInterface
     {
         if ($this->deferred) {
             $this->logger->notice('Calling WsdlLoader::fetchFiles while already loading');
@@ -181,7 +181,7 @@ class WsdlLoader
         return $deferred->promise();
     }
 
-    protected function resolveIfReady()
+    protected function resolveIfReady(): void
     {
         if (empty($this->pending)) {
             $deferred = $this->deferred;
@@ -198,7 +198,7 @@ class WsdlLoader
         }
     }
 
-    protected function url($file)
+    protected function url($file): string
     {
         return $this->baseUrl . "/sdk/$file";
     }

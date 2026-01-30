@@ -16,10 +16,10 @@ class HostHardwareInfoTable extends NameValueTable
     use TranslationHelper;
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
     /** @var HostQuickStats */
-    protected $quickStats;
+    protected HostQuickStats $quickStats;
 
     public function __construct(HostSystem $host, HostQuickStats $quickStats)
     {
@@ -27,7 +27,7 @@ class HostHardwareInfoTable extends NameValueTable
         $this->quickStats = $quickStats;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->prepend(new SubTitle($this->translate('Hardware Information'), 'th-thumb-empty'));
         $host = $this->host;

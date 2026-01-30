@@ -5,10 +5,12 @@ namespace Icinga\Module\Vspheredb\DbObject;
 class TaggingCategory extends BaseDbObject
 {
     public const TABLE = 'tagging_category';
-    protected $keyName = 'uuid';
-    protected $table = self::TABLE;
 
-    protected $defaultProperties = [
+    protected string|array|null $keyName = 'uuid';
+
+    protected ?string $table = self::TABLE;
+
+    protected ?array $defaultProperties = [
         'uuid'             => null,
         'vcenter_uuid'     => null,
         'id'               => null,
@@ -18,7 +20,7 @@ class TaggingCategory extends BaseDbObject
         'associable_types' => null,
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'uuid'             => 'uuid',
         'id'               => 'id',
         'name'             => 'name',

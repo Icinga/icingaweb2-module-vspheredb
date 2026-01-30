@@ -6,16 +6,21 @@ use RuntimeException;
 
 trait StateMachine
 {
-    /** @var string */
-    private $currentState;
+    /** @var ?string */
+    private ?string $currentState = null;
 
     /** @var array [fromState][toState] = [callback, ...] */
-    private $allowedTransitions = [];
+    private array $allowedTransitions = [];
 
     /** @var array [state] = [callback, ...] */
-    private $onState = [];
+    private array $onState = [];
 
-    public function initializeStateMachine($initialState)
+    /**
+     * @param string $initialState
+     *
+     * @return void
+     */
+    public function initializeStateMachine(string $initialState): void
     {
         if ($this->currentState !== null) {
             throw new RuntimeException('StateMachine has already been initialized');

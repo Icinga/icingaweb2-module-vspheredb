@@ -8,6 +8,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 
@@ -18,13 +19,13 @@ class MobLink extends HtmlDocument
 {
     use TranslationHelper;
 
-    protected $vCenter;
+    protected VCenter $vCenter;
 
-    protected $label;
+    protected string $label;
 
-    protected $moRef;
+    protected ?string $moRef = null;
 
-    public function __construct(VCenter $vCenter, ?BaseDbObject $object = null, $label = null)
+    public function __construct(VCenter $vCenter, ?BaseDbObject $object = null, ?string $label = null)
     {
         $this->vCenter = $vCenter;
         if ($object) {
@@ -41,7 +42,7 @@ class MobLink extends HtmlDocument
         }
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         try {
             $server = $this->vCenter->getFirstServer(false);
@@ -65,9 +66,10 @@ class MobLink extends HtmlDocument
      * @param VCenterServer $server
      * @param string $moRef
      * @param string $label
-     * @return \ipl\Html\BaseHtmlElement
+     *
+     * @return BaseHtmlElement
      */
-    protected function createObjectLink(VCenterServer $server, $moRef, $label)
+    protected function createObjectLink(VCenterServer $server, string $moRef, string $label): BaseHtmlElement
     {
         return Html::tag('a', [
             'href' => sprintf(
@@ -87,9 +89,10 @@ class MobLink extends HtmlDocument
     /**
      * @param VCenterServer $server
      * @param string $label
-     * @return \ipl\Html\BaseHtmlElement
+     *
+     * @return BaseHtmlElement
      */
-    protected function createBaseLink(VCenterServer $server, $label)
+    protected function createBaseLink(VCenterServer $server, $label): BaseHtmlElement
     {
         return Html::tag('a', [
             'href' => sprintf('https://%s/mob/', $server->get('host')),

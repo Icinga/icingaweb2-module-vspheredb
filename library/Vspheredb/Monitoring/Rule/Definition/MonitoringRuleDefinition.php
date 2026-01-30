@@ -17,7 +17,9 @@ abstract class MonitoringRuleDefinition
     public const SUPPORTED_OBJECT_TYPES = [];
 
     abstract public function getLabel(): string;
+
     abstract public static function getIdentifier(): string;
+
     abstract public function getParameters(): array;
 
     public static function isMultiInstanceRule(): bool
@@ -33,6 +35,7 @@ abstract class MonitoringRuleDefinition
     /**
      * @param BaseDbObject $object
      * @param Settings $settings
+     *
      * @return SingleCheckResult[]
      */
     public function checkObject(BaseDbObject $object, Settings $settings): array
@@ -60,7 +63,7 @@ abstract class MonitoringRuleDefinition
         return [];
     }
 
-    protected function assertSupportedObject($object)
+    protected function assertSupportedObject($object): void
     {
         $type = ObjectType::getDbClassType(get_class($object));
         if (!static::supportsObjectType($type)) {

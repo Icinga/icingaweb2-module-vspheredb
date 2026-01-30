@@ -3,26 +3,41 @@
 namespace Icinga\Module\Vspheredb\Daemon\RpcNamespace;
 
 use Icinga\Module\Vspheredb\Daemon\DbProcessRunner;
+use React\Promise\PromiseInterface;
 
 class RpcNamespaceDbProxy
 {
     /** @var ?DbProcessRunner */
-    protected $runner;
+    protected ?DbProcessRunner $runner = null;
 
     /** @var string */
-    protected $prefix;
+    protected string $prefix;
 
+    /**
+     * @param string $prefix
+     */
     public function __construct(string $prefix)
     {
         $this->prefix = $prefix;
     }
 
-    public function setDbProcessRunner(?DbProcessRunner $runner)
+    /**
+     * @param DbProcessRunner|null $runner
+     *
+     * @return void
+     */
+    public function setDbProcessRunner(?DbProcessRunner $runner): void
     {
         $this->runner = $runner;
     }
 
-    public function __call($method, $params)
+    /**
+     * @param string $method
+     * @param array  $params
+     *
+     * @return PromiseInterface
+     */
+    public function __call(string $method, array $params)
     {
         if (preg_match('/Request$/', $method)) {
             if ($this->runner === null) {

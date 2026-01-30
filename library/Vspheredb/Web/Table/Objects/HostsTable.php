@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Util;
@@ -12,12 +13,13 @@ use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\ServiceTagRenderer;
 use Icinga\Module\Vspheredb\Format;
+use Zend_Db_Select;
 
 class HostsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/host';
+    protected ?string $baseUrl = 'vspheredb/host';
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $serviceTagRenderer = new ServiceTagRenderer();
         $powerStateRenderer = new PowerStateRenderer();
@@ -139,7 +141,7 @@ class HostsTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'object_name',
@@ -148,7 +150,7 @@ class HostsTable extends ObjectsTable
         ];
     }
 
-    protected function createVmSubQuery()
+    protected function createVmSubQuery(): Select|Zend_Db_Select
     {
         return $this->db()->select()->from(
             ['vc' => 'virtual_machine'],
@@ -169,7 +171,7 @@ class HostsTable extends ObjectsTable
         )->group('vc.runtime_host_uuid');
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $columns = $this->getRequiredDbColumns();
         $wantsVms = false;

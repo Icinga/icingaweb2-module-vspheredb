@@ -12,14 +12,14 @@ class VmRouteConfigTable extends HtmlDocument
     use TranslationHelper;
 
     /** @var VirtualMachine */
-    protected $object;
+    protected VirtualMachine $object;
 
     public function __construct(VirtualMachine $object)
     {
         $this->object = $object;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $object = $this->object;
         $this->prepend(new SubTitle($this->translate('Guest Routing Table'), 'sitemap'));

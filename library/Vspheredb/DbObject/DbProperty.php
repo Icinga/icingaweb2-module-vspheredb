@@ -7,10 +7,11 @@ use InvalidArgumentException;
 class DbProperty
 {
     /**
-     * @param ?boolean $value
-     * @return null|string
+     * @param bool|null $value
+     *
+     * @return string|null
      */
-    public static function booleanToDb($value)
+    public static function booleanToDb(?bool $value): ?string
     {
         if ($value === true) {
             return 'y';
@@ -27,10 +28,11 @@ class DbProperty
     }
 
     /**
-     * @param ?string $value
+     * @param string|null $value
+     *
      * @return bool|null
      */
-    public static function dbToBoolean($value)
+    public static function dbToBoolean(?string $value): ?bool
     {
         if ($value === 'y') {
             return true;

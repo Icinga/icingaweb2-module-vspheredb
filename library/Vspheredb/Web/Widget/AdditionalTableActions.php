@@ -10,19 +10,20 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
+use ipl\Html\HtmlElement;
 
 class AdditionalTableActions
 {
     use TranslationHelper;
 
     /** @var Auth */
-    protected $auth;
+    protected Auth $auth;
 
     /** @var Url */
-    protected $url;
+    protected Url $url;
 
     /** @var BaseTable */
-    protected $table;
+    protected BaseTable $table;
 
     public function __construct(BaseTable $table, Auth $auth, Url $url)
     {
@@ -31,7 +32,7 @@ class AdditionalTableActions
         $this->table = $table;
     }
 
-    public function appendTo(HtmlDocument $parent)
+    public function appendTo(HtmlDocument $parent): static
     {
         $links = [];
         if ($this->hasPermission('vspheredb/export') && $this->urlAllowsExport($this->url)) {
@@ -79,7 +80,7 @@ class AdditionalTableActions
         ]);
     }
 
-    protected function createShowSqlToggle()
+    protected function createShowSqlToggle(): Link
     {
         if ($this->url->getParam('format') === 'sql') {
             $link = Link::create(
@@ -96,7 +97,7 @@ class AdditionalTableActions
         return $link;
     }
 
-    protected function toggleColumnsOptions()
+    protected function toggleColumnsOptions(): array
     {
         $links = [];
         $table = $this->table;
@@ -158,7 +159,7 @@ class AdditionalTableActions
         return $links;
     }
 
-    protected function moreOptions($links)
+    protected function moreOptions(array $links): HtmlElement
     {
         $options = $this->ul([
             /*$this->li([
@@ -174,7 +175,7 @@ class AdditionalTableActions
         return $options;
     }
 
-    protected function linkList($links)
+    protected function linkList(array $links): HtmlElement
     {
         $ul = Html::tag('ul');
 
@@ -185,22 +186,22 @@ class AdditionalTableActions
         return $ul;
     }
 
-    protected function ulLi($content)
+    protected function ulLi($content): HtmlElement
     {
         return $this->ul($this->li($content));
     }
 
-    protected function ul($content, $attributes = null)
+    protected function ul(mixed $content, ?array $attributes = null): HtmlElement
     {
         return Html::tag('ul', $attributes, $content);
     }
 
-    protected function li($content)
+    protected function li(mixed $content): HtmlElement
     {
         return Html::tag('li', null, $content);
     }
 
-    protected function hasPermission($permission)
+    protected function hasPermission($permission): bool
     {
         return $this->auth->hasPermission($permission);
     }

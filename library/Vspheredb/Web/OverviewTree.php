@@ -9,16 +9,17 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class OverviewTree extends BaseHtmlElement
 {
     use TranslationHelper;
 
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     /** @var RestrictionHelper */
-    protected $restrictionHelper;
+    protected RestrictionHelper $restrictionHelper;
 
     protected $tag = 'ul';
 
@@ -27,16 +28,16 @@ class OverviewTree extends BaseHtmlElement
         'data-base-target' => '_next',
     ];
 
-    protected $typeFilter;
+    protected ?string $typeFilter;
 
-    public function __construct(Db $db, RestrictionHelper $restrictionHelper, $typeFilter = null)
+    public function __construct(Db $db, RestrictionHelper $restrictionHelper, ?string $typeFilter = null)
     {
         $this->db = $db;
         $this->typeFilter = $typeFilter;
         $this->restrictionHelper = $restrictionHelper;
     }
 
-    public function renderContent()
+    public function renderContent(): string
     {
         $this->add(
             $this->dumpTree(
@@ -51,7 +52,7 @@ class OverviewTree extends BaseHtmlElement
         return parent::renderContent();
     }
 
-    protected function getTree()
+    protected function getTree(): array
     {
         $tree = [];
         $all = [];
@@ -81,7 +82,7 @@ class OverviewTree extends BaseHtmlElement
         return $tree;
     }
 
-    protected function fetchTree()
+    protected function fetchTree(): ?array
     {
         $db = $this->db->getDbAdapter();
         $hostCnt = $db->select()->from('object', [
@@ -135,7 +136,7 @@ class OverviewTree extends BaseHtmlElement
         return $this->db->getDbAdapter()->fetchAll($query);
     }
 
-    protected function dumpTree($tree, $level = 0)
+    protected function dumpTree(object $tree, int $level = 0): HtmlElement
     {
         $hasChildren = ! empty($tree->children);
         $type = $tree->object_type;

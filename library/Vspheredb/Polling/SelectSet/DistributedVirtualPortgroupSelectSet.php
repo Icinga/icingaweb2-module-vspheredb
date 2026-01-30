@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Polling\SelectSet;
 
 class DistributedVirtualPortgroupSelectSet implements SelectSet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             GenericSpec::traverseFolder([

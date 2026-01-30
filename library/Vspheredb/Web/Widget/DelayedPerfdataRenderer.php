@@ -4,38 +4,38 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use ipl\Html\DeferredText;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
-use Icinga\Module\Vspheredb\Web\Table\TableColumn;
+use Zend_Db_Adapter_Abstract;
 
 class DelayedPerfdataRenderer
 {
-    protected $requiredVms = [];
+    protected array $requiredVms = [];
 
-    protected $perf;
+    protected ?array $perf = null;
 
-    protected $counters = [
+    protected array $counters = [
         526 => 'net.bytesRx',
         527 => 'net.bytesRx',
         171 => 'virtualDisk.numberReadAveraged',
         172 => 'virtualDisk.numberWriteAveraged',
     ];
 
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
 
-    public function __construct(\Zend_Db_Adapter_Abstract $db)
+    public function __construct(Zend_Db_Adapter_Abstract $db)
     {
         $this->db = $db;
     }
 
-    public function requireVm($uuid)
+    public function requireVm(string $uuid): void
     {
         $this->requiredVms[] = $uuid;
     }
 
     /**
-     * @return TableColumn
+     * @return SimpleColumn
      */
-    public function getDiskColumn()
+    public function getDiskColumn(): SimpleColumn
     {
         return (new SimpleColumn('disk_io_perf', '5x5min Disk I/O', 'o.uuid'))
             ->setRenderer(function ($row) {
@@ -46,9 +46,9 @@ class DelayedPerfdataRenderer
     }
 
     /**
-     * @return TableColumn
+     * @return SimpleColumn
      */
-    public function getNetColumn()
+    public function getNetColumn(): SimpleColumn
     {
         return (new SimpleColumn('network_io_perf', 'Network I/O (perf)', 'o.uuid'))
             ->setRenderer(function ($row) {
@@ -59,9 +59,9 @@ class DelayedPerfdataRenderer
     }
 
     /**
-     * @return TableColumn
+     * @return SimpleColumn
      */
-    public function getCurrentNetColumn()
+    public function getCurrentNetColumn(): SimpleColumn
     {
         return (new SimpleColumn('network_io', 'Network I/O', 'o.uuid'))
             ->setRenderer(function ($row) {
@@ -72,9 +72,9 @@ class DelayedPerfdataRenderer
     }
 
     /**
-     * @return TableColumn
+     * @return SimpleColumn
      */
-    public function getCurrentDiskColumn()
+    public function getCurrentDiskColumn(): SimpleColumn
     {
         return (new SimpleColumn('disk_io', 'Disk I/O', 'o.uuid'))
             ->setRenderer(function ($row) {
@@ -84,7 +84,7 @@ class DelayedPerfdataRenderer
             });
     }
 
-    protected function formatMicroSeconds($num)
+    protected function formatMicroSeconds(int $num): string
     {
         if ($num > 500) {
             return sprintf('%0.2Fms', $num / 1000);
@@ -93,7 +93,7 @@ class DelayedPerfdataRenderer
         }
     }
 
-    protected function formatKiloBytesPerSecond($num)
+    protected function formatKiloBytesPerSecond(int $num): string
     {
         $num *= 8;
         if ($num > 500000) {
@@ -175,7 +175,7 @@ class DelayedPerfdataRenderer
         }
     }
 
-    protected function fetchPerf()
+    protected function fetchPerf(): array
     {
         $db = $this->db;
 

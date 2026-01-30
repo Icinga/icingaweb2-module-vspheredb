@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\Db;
 
 class VmQuickStats extends BaseDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'vm_quick_stats';
+    protected ?string $table = 'vm_quick_stats';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'                              => null,
         'ballooned_memory_mb'               => null,
         'compressed_memory_kb'              => null,
@@ -35,7 +35,7 @@ class VmQuickStats extends BaseDbObject
         'vcenter_uuid'                      => null,
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'summary.quickStats.balloonedMemory'              => 'ballooned_memory_mb',
         'summary.quickStats.compressedMemory'             => 'compressed_memory_kb',
         'summary.quickStats.consumedOverheadMemory'       => 'consumed_overhead_memory_mb',
@@ -58,14 +58,23 @@ class VmQuickStats extends BaseDbObject
         'summary.quickStats.uptimeSeconds'                => 'uptime',
     ];
 
-    protected static $preloadCache = null;
+    /** @var static[]|null */
+    protected static ?array $preloadCache = null;
 
-    public static function preloadAll(Db $db)
+    /**
+     * @param Db $db
+     *
+     * @return void
+     */
+    public static function preloadAll(Db $db): void
     {
         self::$preloadCache = self::loadAll($db, null, 'uuid');
     }
 
-    public static function clearPreloadCache()
+    /**
+     * @return void
+     */
+    public static function clearPreloadCache(): void
     {
         self::$preloadCache = null;
     }
@@ -73,10 +82,14 @@ class VmQuickStats extends BaseDbObject
     /**
      * Valid are values from 0 to max allowed memory, but I've met -1 on an
      * ESXi host in the wild (6.7)
+     *
+     * @param int $value
+     *
+     * @return static
      */
-    public function setHost_memory_usage_mb($value) // phpcs:ignore
+    public function setHost_memory_usage_mb(int $value): static // phpcs:ignore
     {
-        if ((int) $value === -1) {
+        if ($value === -1) {
             $value = null;
         }
 
@@ -85,7 +98,12 @@ class VmQuickStats extends BaseDbObject
         return $this;
     }
 
-    public static function loadFor(VirtualMachine $object)
+    /**
+     * @param VirtualMachine $object
+     *
+     * @return VmQuickStats|mixed|static
+     */
+    public static function loadFor(VirtualMachine $object): mixed
     {
         if ($object->hasBeenLoadedFromDb()) {
             $connection = $object->getConnection();
@@ -105,7 +123,12 @@ class VmQuickStats extends BaseDbObject
         return static::create();
     }
 
-    protected function setUptime($value)
+    /**
+     * @param int $value
+     *
+     * @return VmQuickStats
+     */
+    protected function setUptime(int $value): VmQuickStats
     {
         if ($value === 0) {
             $value = null;

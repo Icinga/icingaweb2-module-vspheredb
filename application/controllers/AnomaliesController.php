@@ -9,7 +9,7 @@ use ipl\Html\Html;
 class AnomaliesController extends Controller
 {
     // TODO: Overbooked datastores
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('Anomalies'));
@@ -19,7 +19,13 @@ class AnomaliesController extends Controller
         $this->addTable('guest_ip_address', $this->translate('Guest IP address'));
     }
 
-    protected function addTable($property, $title)
+    /**
+     * @param string $property
+     * @param string $title
+     *
+     * @return void
+     */
+    protected function addTable(string $property, string $title): void
     {
         $table = VmsWithDuplicateProperty::create($this->db(), $property, $title);
 

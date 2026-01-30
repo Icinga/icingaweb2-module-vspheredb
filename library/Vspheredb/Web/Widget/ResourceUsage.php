@@ -6,15 +6,21 @@ use gipfl\Json\JsonSerialization;
 
 class ResourceUsage implements JsonSerialization
 {
-    public $usedMhz;
-    public $totalMhz;
-    public $usedMb;
-    public $totalMb;
-    public $dsCapacity;
-    public $dsFreeSpace;
-    public $dsUncommitted;
+    public ?int $usedMhz = null;
 
-    public static function fromSerialization($any)
+    public ?int $totalMhz = null;
+
+    public ?int $usedMb = null;
+
+    public ?int $totalMb = null;
+
+    public ?int $dsCapacity = null;
+
+    public ?int $dsFreeSpace = null;
+
+    public ?int $dsUncommitted = null;
+
+    public static function fromSerialization($any): static
     {
         $self = new static();
         $self->usedMhz       = $any->used_mhz;
@@ -29,7 +35,7 @@ class ResourceUsage implements JsonSerialization
     }
 
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'used_mhz'        => $this->usedMhz,

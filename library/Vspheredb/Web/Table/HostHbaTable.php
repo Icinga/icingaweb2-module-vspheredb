@@ -3,10 +3,14 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class HostHbaTable extends ZfQueryBasedTable
 {
@@ -16,10 +20,10 @@ class HostHbaTable extends ZfQueryBasedTable
     ];
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
-    /** @var string */
-    protected $moref;
+    /** @var ?string */
+    protected ?string $moref = null;
 
     public function __construct(HostSystem $host)
     {
@@ -35,7 +39,7 @@ class HostHbaTable extends ZfQueryBasedTable
         ), 'sitemap'));
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $attributes = [];
         if ($row->status !== 'online') {
@@ -45,7 +49,7 @@ class HostHbaTable extends ZfQueryBasedTable
         return $this::row([$this->formatSimple($row)], $attributes);
     }
 
-    protected function formatSimple($row)
+    protected function formatSimple(object $row): FormattedString
     {
         return Html::sprintf(
             '%s (%s: %s), %s: %s',
@@ -57,7 +61,7 @@ class HostHbaTable extends ZfQueryBasedTable
         );
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['hh' => 'host_hba'],

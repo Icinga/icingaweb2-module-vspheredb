@@ -11,7 +11,7 @@ class HostSystemSelectSet implements SelectSet
     /**
      * @return TraversalSpec[]
      */
-    public static function create()
+    public static function create(): array
     {
         return [
             GenericSpec::traverseFolder([

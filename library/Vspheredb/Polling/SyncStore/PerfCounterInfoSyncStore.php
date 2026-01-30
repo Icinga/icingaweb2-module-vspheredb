@@ -14,7 +14,7 @@ class PerfCounterInfoSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         if (! $result instanceof PerformanceManager) {
             throw new InvalidArgumentException('PerformanceManager expected, got: ' . var_export($result, 1));
@@ -27,9 +27,13 @@ class PerfCounterInfoSyncStore extends SyncStore
      * TODO: really sync
      *
      * @param PerfCounterInfo[] $infos
+     * @param SyncStats         $stats
+     *
+     * @return void
+     *
      * @throws Exception
      */
-    protected function processCounterInfo(array $infos, SyncStats $stats)
+    protected function processCounterInfo(array $infos, SyncStats $stats): void
     {
         $uuid = $this->vCenter->get('uuid');
         $db = $this->vCenter->getDb();

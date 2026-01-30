@@ -6,7 +6,7 @@ use ipl\Html\FormElement\NumberElement as Number;
 
 class NumberElement extends Number
 {
-    public function getValue()
+    public function getValue(): mixed
     {
         $value = parent::getValue();
         if (is_string($value)) {

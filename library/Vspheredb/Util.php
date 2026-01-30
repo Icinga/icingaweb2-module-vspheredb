@@ -12,19 +12,19 @@ class Util
      *
      * @return int
      */
-    public static function currentTimestamp()
+    public static function currentTimestamp(): int
     {
         $time = explode(' ', microtime());
 
         return (int) round(1000 * ((int) $time[1] + (float) $time[0]));
     }
 
-    public static function timeStringToUnixTime($string)
+    public static function timeStringToUnixTime(string $string): int
     {
         return (new DateTime($string))->getTimestamp();
     }
 
-    public static function timeStringToUnixMs($string)
+    public static function timeStringToUnixMs(string $string): int
     {
         $time = new DateTime($string);
 
@@ -33,10 +33,12 @@ class Util
 
     /**
      * DateTime for SOAP call
-     * @param $timestamp
+     *
+     * @param int $timestamp
+     *
      * @return string
      */
-    public static function makeDateTime($timestamp)
+    public static function makeDateTime(int $timestamp): string
     {
         return gmdate('Y-m-d\TH:i:s\Z', $timestamp);
     }

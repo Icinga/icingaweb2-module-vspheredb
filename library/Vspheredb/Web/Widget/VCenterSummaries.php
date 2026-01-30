@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use Zend_Db_Select;
 
 class VCenterSummaries extends BaseHtmlElement
 {
@@ -19,14 +20,14 @@ class VCenterSummaries extends BaseHtmlElement
     ];
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)
     {
         $this->vCenter = $vCenter;
     }
 
-    protected function selectObject($type, $columns)
+    protected function selectObject(array|string $type, array $columns): Zend_Db_Select
     {
         $connection = $this->vCenter->getConnection();
         $db = $connection->getDbAdapter();
@@ -43,7 +44,7 @@ class VCenterSummaries extends BaseHtmlElement
         return $query;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $connection = $this->vCenter->getConnection();
         $db = $connection->getDbAdapter();
@@ -143,7 +144,7 @@ class VCenterSummaries extends BaseHtmlElement
         );
     }
 
-    protected function getWorstState($counters)
+    protected function getWorstState(object $counters): string
     {
         foreach (['red', 'yellow', 'gray', 'green'] as $color) {
             if ($counters->$color > 0) {
@@ -155,7 +156,7 @@ class VCenterSummaries extends BaseHtmlElement
         return 'gray';
     }
 
-    protected function addCountlet($counters, $title, $url)
+    protected function addCountlet(object $counters, string $title, string $url): void
     {
         if ((int) $counters->total === 0) {
             return;

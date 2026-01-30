@@ -8,9 +8,9 @@ use ipl\Html\DeferredText;
 
 trait UuidLinkHelper
 {
-    protected $requiredUuids = [];
+    protected array $requiredUuids = [];
 
-    protected $fetchedUuids;
+    protected ?array $fetchedUuids = null;
 
     /**
      * @param ?string $uuid
@@ -45,7 +45,7 @@ trait UuidLinkHelper
         return $result->setEscaped(true);
     }
 
-    protected function getUuidBaseUrl($uuid)
+    protected function getUuidBaseUrl($uuid): ?string
     {
         $type = $this->getUuidProperty($uuid, 'object_type');
 
@@ -63,11 +63,11 @@ trait UuidLinkHelper
 
     /**
      * @param ?string $uuid
-     * @param $property
+     * @param string $property
      *
      * @return string
      */
-    protected function getUuidProperty(?string $uuid, $property): string
+    protected function getUuidProperty(?string $uuid, string $property): string
     {
         if ($uuid === null) {
             return '[NULL]';
@@ -84,7 +84,7 @@ trait UuidLinkHelper
         }
     }
 
-    protected function fetchUuidObjectDetails()
+    protected function fetchUuidObjectDetails(): void
     {
         if (method_exists($this, 'db')) {
             /** @var \Zend_Db_Adapter_Abstract $db */

@@ -6,18 +6,19 @@ use Evenement\EventEmitterTrait;
 use gipfl\Process\FinishedProcessState;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
+use React\Promise\PromiseInterface;
 
 class IcingaCli
 {
     use EventEmitterTrait;
 
     /** @var IcingaCliRunner */
-    protected $runner;
+    protected IcingaCliRunner $runner;
 
-    protected $arguments = [];
+    protected array $arguments = [];
 
-    /** @var LoopInterface */
-    protected $loop;
+    /** @var ?LoopInterface */
+    protected ?LoopInterface $loop = null;
 
     public function __construct(?IcingaCliRunner $runner = null)
     {
@@ -28,24 +29,40 @@ class IcingaCli
         $this->init();
     }
 
-    protected function init()
+    /**
+     * @return void
+     */
+    protected function init(): void
     {
         // Override this if you want.
     }
 
-    public function setArguments($arguments)
+    /**
+     * @param array $arguments
+     *
+     * @return $this
+     */
+    public function setArguments(array $arguments): static
     {
         $this->arguments = $arguments;
 
         return $this;
     }
 
-    public function getArguments()
+    /**
+     * @return array
+     */
+    public function getArguments(): array
     {
         return $this->arguments;
     }
 
-    public function run(LoopInterface $loop)
+    /**
+     * @param LoopInterface $loop
+     *
+     * @return PromiseInterface
+     */
+    public function run(LoopInterface $loop): PromiseInterface
     {
         $this->loop = $loop;
         $process = $this->runner->command($this->getArguments());

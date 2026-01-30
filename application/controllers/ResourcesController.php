@@ -17,7 +17,7 @@ class ResourcesController extends ObjectsController
     /**
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function clustersAction()
+    public function clustersAction(): void
     {
         if ($vCenterUuid = $this->params->get('vcenter')) {
             $vCenter = VCenter::loadWithUuid($vCenterUuid, $this->db());
@@ -49,7 +49,7 @@ class ResourcesController extends ObjectsController
     /**
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function hostsAction()
+    public function hostsAction(): void
     {
         $this->addSingleTab('Compute Resources');
 
@@ -73,7 +73,7 @@ class ResourcesController extends ObjectsController
         $this->showTable($table, 'vspheredb/groupedvms');
     }
 
-    public function projectsAction()
+    public function projectsAction(): void
     {
         $this->addSingleTab('Project Summary');
         $this->setAutorefreshInterval(15);

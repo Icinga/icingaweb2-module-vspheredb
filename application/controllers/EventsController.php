@@ -15,14 +15,14 @@ use Ramsey\Uuid\Uuid;
 
 class EventsController extends Controller
 {
-    public function init()
+    public function init(): void
     {
         $this->assertPermission('vspheredb/admin');
         parent::init();
         $this->handleTabs();
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->actions()->add(Link::create(
             $this->translate('Calendar'),
@@ -62,7 +62,10 @@ class EventsController extends Controller
         $table->renderTo($this);
     }
 
-    protected function addFilterForm()
+    /**
+     * @return FilterHostParentForm
+     */
+    protected function addFilterForm(): FilterHostParentForm
     {
         $form = new FilterHostParentForm($this->db());
         $form->handleRequest($this->getServerRequest());
@@ -71,7 +74,7 @@ class EventsController extends Controller
         return $form;
     }
 
-    public function heatmapAction()
+    public function heatmapAction(): void
     {
         $this->actions()->add(Link::create(
             $this->translate('Table'),
@@ -97,7 +100,10 @@ class EventsController extends Controller
         $this->content()->add(new CalendarForEvents($heatMap, $baseUrl, $form->getColors()));
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $params = [];
         if ($day = $this->params->get('day')) {

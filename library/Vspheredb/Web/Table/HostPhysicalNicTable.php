@@ -3,12 +3,16 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\MacAddress;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class HostPhysicalNicTable extends ZfQueryBasedTable
 {
@@ -18,10 +22,10 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
     ];
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
-    /** @var string */
-    protected $moref;
+    /** @var ?string */
+    protected ?string $moref = null;
 
     public function __construct(HostSystem $host)
     {
@@ -37,7 +41,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         ), 'sitemap'));
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $attributes = [];
         if ($row->link_speed_mb === null) {
@@ -46,7 +50,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         return $this::row([$this->formatSimple($row)], $attributes);
     }
 
-    protected function formatSimple($row)
+    protected function formatSimple(object $row): FormattedString
     {
         if ($row->link_speed_mb === null) {
             $speedInfo = $this->translate('Link is down');
@@ -70,7 +74,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         );
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['hpn' => 'host_physical_nic'],

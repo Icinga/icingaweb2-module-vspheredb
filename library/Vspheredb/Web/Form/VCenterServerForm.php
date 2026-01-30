@@ -5,7 +5,6 @@ namespace Icinga\Module\Vspheredb\Web\Form;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use ipl\Html\FormElement\SubmitElement;
 
@@ -15,21 +14,19 @@ class VCenterServerForm extends Form
 
     public const UNCHANGED_PASSWORD = '__UNCHANGED__';
 
-    protected $objectClassName = VCenterServer::class;
+    /** @var ?VCenterServer */
+    protected ?VCenterServer $object = null;
 
-    /** @var VCenterServer */
-    protected $object;
+    protected Db $db;
 
-    protected $db;
-
-    protected $deleted = false;
+    protected bool $deleted = false;
 
     public function __construct(Db $db)
     {
         $this->db = $db;
     }
 
-    public function assemble()
+    public function assemble(): void
     {
         if (! class_exists('SoapClient')) {
             $this->addMessage($this->translate(
@@ -180,12 +177,12 @@ class VCenterServerForm extends Form
         }
     }
 
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->object === null || ! $this->object->hasBeenLoadedFromDb();
     }
 
-    public function getValues()
+    public function getValues(): array
     {
         $values = parent::getValues();
         if (! $this->isNew()) {
@@ -200,7 +197,7 @@ class VCenterServerForm extends Form
         return $values;
     }
 
-    public function setObject(VCenterServer $object)
+    public function setObject(VCenterServer $object): static
     {
         $this->object = $object;
         $properties = $object->getProperties();
@@ -216,25 +213,23 @@ class VCenterServerForm extends Form
     }
 
     /**
-     * @return BaseDbObject
+     * @return VCenterServer
      */
-    public function getObject()
+    public function getObject(): VCenterServer
     {
         if ($this->object === null) {
-            /** @var BaseDbObject $class */
-            $class = $this->objectClassName;
-            $this->object = $class::create([], $this->db);
+            $this->object = VCenterServer::create([], $this->db);
         }
 
         return $this->object;
     }
 
-    public function hasBeenDeleted()
+    public function hasBeenDeleted(): bool
     {
         return $this->deleted;
     }
 
-    public function onSuccess()
+    public function onSuccess(): void
     {
         $this->getObject()->setProperties($this->getValues());
     }

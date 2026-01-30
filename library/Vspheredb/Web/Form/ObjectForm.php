@@ -15,14 +15,16 @@ abstract class ObjectForm extends Form
     use TranslationHelper;
 
     /** @var Store */
-    protected $store;
+    protected Store $store;
 
-    /** @var StorableInterface */
-    protected $object;
+    /** @var ?StorableInterface */
+    protected ?StorableInterface $object = null;
 
-    protected $class;
+    /** @var ?class-string */
+    protected ?string $class = null;
 
-    protected $wasNew = true;
+    /** @var bool */
+    protected bool $wasNew = true;
 
     public function __construct(Store $store)
     {
@@ -30,7 +32,7 @@ abstract class ObjectForm extends Form
         $this->setMethod('POST');
     }
 
-    public function setObject(StorableInterface $object)
+    public function setObject(StorableInterface $object): static
     {
         $this->object = $object;
         $this->populate($object->getProperties());
@@ -42,22 +44,22 @@ abstract class ObjectForm extends Form
     /**
      * @return ?StorableInterface
      */
-    public function getObject()
+    public function getObject(): ?StorableInterface
     {
         return $this->object;
     }
 
-    public function wasNew()
+    public function wasNew(): bool
     {
         return $this->wasNew;
     }
 
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->object === null || $this->object->isNew();
     }
 
-    protected function getObjectClass()
+    protected function getObjectClass(): string
     {
         if ($this->class === null) {
             throw new RuntimeException(sprintf(
@@ -69,14 +71,14 @@ abstract class ObjectForm extends Form
         return $this->class;
     }
 
-    protected static function now()
+    protected static function now(): float
     {
         $time = explode(' ', microtime());
 
         return round(1000 * ((int)$time[1] + (float)$time[0]));
     }
 
-    public function onSuccess()
+    public function onSuccess(): void
     {
         if ($this->object) {
             $object = $this->object;
@@ -94,7 +96,7 @@ abstract class ObjectForm extends Form
         $this->store->store($object);
     }
 
-    protected function createObject()
+    protected function createObject(): mixed
     {
         /** @var StorableInterface $class Not really an object, it's a class name */
         $class = $this->getObjectClass();

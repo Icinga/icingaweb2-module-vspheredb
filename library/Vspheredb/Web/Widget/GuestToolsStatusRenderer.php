@@ -10,7 +10,7 @@ class GuestToolsStatusRenderer extends Html
 {
     use TranslationHelper;
 
-    public function __invoke($state)
+    public function __invoke($state): Icon
     {
         if (is_object($state)) {
             $state = $state->guest_tools_status;

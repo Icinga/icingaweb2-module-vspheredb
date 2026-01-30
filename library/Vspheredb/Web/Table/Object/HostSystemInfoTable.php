@@ -22,13 +22,13 @@ class HostSystemInfoTable extends NameValueTable
     use TranslationHelper;
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
     /** @var HostQuickStats */
-    protected $quickStats;
+    protected HostQuickStats $quickStats;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(HostSystem $host, HostQuickStats $quickStats, VCenter $vCenter)
     {
@@ -37,7 +37,7 @@ class HostSystemInfoTable extends NameValueTable
         $this->vCenter = $vCenter;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->prepend(new SubTitle($this->translate('System Information'), 'host'));
         $host = $this->host;
@@ -56,7 +56,7 @@ class HostSystemInfoTable extends NameValueTable
         ]);
     }
 
-    protected function showUptime($uptime)
+    protected function showUptime($uptime): array
     {
         return [
             DateFormatter::formatDuration($uptime),
@@ -71,7 +71,7 @@ class HostSystemInfoTable extends NameValueTable
      * @param HostSystem $host
      * @return \ipl\Html\HtmlElement|mixed
      */
-    protected function getFormattedServiceTag(HostSystem $host)
+    protected function getFormattedServiceTag(HostSystem $host): mixed
     {
         if ($tag = $host->get('service_tag')) {
             $tag = Anonymizer::shuffleString($tag);
@@ -83,7 +83,7 @@ class HostSystemInfoTable extends NameValueTable
         }
     }
 
-    protected function prepareTools(HostSystem $host)
+    protected function prepareTools(HostSystem $host): Hint|array
     {
         $tools = [];
 
@@ -99,7 +99,7 @@ class HostSystemInfoTable extends NameValueTable
         return $tools;
     }
 
-    protected function renderVendorModel($vendor, $model)
+    protected function renderVendorModel(?string $vendor, ?string $model): array|string|null
     {
         if ($url = $this->findVendorModel($vendor, $model)) {
             if (is_array($url)) {
@@ -134,9 +134,9 @@ class HostSystemInfoTable extends NameValueTable
      * @param ?string $vendor
      * @param ?string $model
      *
-     * @return ?string
+     * @return array|string|null
      */
-    protected function findVendorModel(?string $vendor, ?string $model): ?string
+    protected function findVendorModel(?string $vendor, ?string $model): array|string|null
     {
         $images = include __DIR__ . '/known-vendor-model-images.php';
         if ($vendor === null || $model === null) {
@@ -156,7 +156,7 @@ class HostSystemInfoTable extends NameValueTable
         return null;
     }
 
-    protected function linkToDellSupport($serviceTag)
+    protected function linkToDellSupport(?string $serviceTag): HtmlElement|string
     {
         if ($serviceTag === null) {
             return '-';

@@ -9,7 +9,7 @@ use ipl\Html\HtmlDocument;
 class ComputeClusterHeader extends HtmlDocument
 {
     /** @var ComputeCluster */
-    protected $computeCluster;
+    protected ComputeCluster $computeCluster;
 
     public function __construct(ComputeCluster $computeCluster)
     {
@@ -19,7 +19,7 @@ class ComputeClusterHeader extends HtmlDocument
     /**
      * @throws \Icinga\Exception\NotFoundError
      */
-    protected function assemble()
+    protected function assemble(): void
     {
         $computeCluster = $this->computeCluster;
         $object = $computeCluster->object();
@@ -31,7 +31,7 @@ class ComputeClusterHeader extends HtmlDocument
         $stats = $computeCluster->calculateStats();
 
         $cpu = new CpuAbsoluteUsage(
-            $stats->overall_cpu_usage,
+            (int) $stats->overall_cpu_usage,
             $stats->hardware_cpu_cores
         );
         $mem = new MemoryUsage(

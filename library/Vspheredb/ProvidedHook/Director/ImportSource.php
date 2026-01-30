@@ -16,6 +16,7 @@ use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Adapter_Abstract as ZfDb;
+use Zend_Db_Select;
 
 use function array_keys;
 
@@ -26,7 +27,7 @@ use function array_keys;
  */
 class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, TableWithParentFilter
 {
-    protected $hostColumns = [
+    protected array $hostColumns = [
         'object_name'             => 'o.object_name',
         'uuid'                    => 'o.uuid',
         'parent_uuid'             => 'o.parent_uuid',
@@ -45,7 +46,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'path'                    => '(NULL)',
     ];
 
-    protected $vmColumns = [
+    protected array $vmColumns = [
         'object_name'         => 'o.object_name',
         'moref'               => 'o.moref',
         'uuid'                => 'o.uuid',
@@ -72,7 +73,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'resource_pool'       => 'rp.object_name',
     ];
 
-    protected $computeResourceColumns = [
+    protected array $computeResourceColumns = [
         'object_name'              => 'o.object_name',
         'object_type'              => 'o.object_type',
         'uuid'                     => 'o.uuid',
@@ -91,7 +92,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'path'                     => '(NULL)',
     ];
 
-    protected $datastoreColumns = [
+    protected array $datastoreColumns = [
         'object_name'          => 'o.object_name',
         'uuid'                 => 'o.uuid',
         'parent_uuid'          => 'o.parent_uuid',
@@ -105,16 +106,16 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
     ];
 
     /** @var ?array */
-    protected $parentFilterUuids = null;
+    protected ?array $parentFilterUuids = null;
     /** @var ?array */
-    protected $vCenterFilterUuids = null;
+    protected ?array $vCenterFilterUuids = null;
 
-    public function getName()
+    public function getName(): string
     {
         return 'VMware vSphereDB';
     }
 
-    public static function addSettingsFormFields(QuickForm $form)
+    public static function addSettingsFormFields(QuickForm $form): void
     {
         assert($form instanceof ImportSourceForm);
         $form->addElement('select', 'object_type', [
@@ -145,6 +146,9 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         }
     }
 
+    /**
+     * @return array
+     */
     protected static function enumVCenters(): array
     {
         $db = Db::newConfiguredInstance();
@@ -162,7 +166,12 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         return $enum;
     }
 
-    protected function eventuallyFilterVCenter($query)
+    /**
+     * @param Zend_Db_Select $query
+     *
+     * @return Zend_Db_Select
+     */
+    protected function eventuallyFilterVCenter(Zend_Db_Select $query): Zend_Db_Select
     {
         $vCenterUuid = $this->getSetting('vcenter_uuid');
         if ($vCenterUuid !== null && strlen($vCenterUuid) > 0) {
@@ -216,7 +225,12 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         return $result;
     }
 
-    public static function convertDbRowToJsonData($row)
+    /**
+     * @param object $row
+     *
+     * @return void
+     */
+    public static function convertDbRowToJsonData(object $row): void
     {
         $row->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
         if (isset($row->custom_values)) {
@@ -241,7 +255,12 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         }
     }
 
-    protected function prepareVmQuery(ZfDb $db)
+    /**
+     * @param ZfDb $db
+     *
+     * @return Zend_Db_Select
+     */
+    protected function prepareVmQuery(ZfDb $db): Zend_Db_Select
     {
         $query = $db->select()->from(['o' => 'object'], $this->vmColumns)
             ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
@@ -258,7 +277,12 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         return $query;
     }
 
-    protected function prepareHostsQuery(ZfDb $db)
+    /**
+     * @param ZfDb $db
+     *
+     * @return Zend_Db_Select
+     */
+    protected function prepareHostsQuery(ZfDb $db): Zend_Db_Select
     {
         return $db->select()->from(['o' => 'object'], $this->hostColumns)->join(
             ['h' => 'host_system'],
@@ -267,7 +291,12 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         )->order('o.object_name')->order('o.uuid');
     }
 
-    protected function prepareComputeResourceQuery(ZfDb $db)
+    /**
+     * @param ZfDb $db
+     *
+     * @return Zend_Db_Select
+     */
+    protected function prepareComputeResourceQuery(ZfDb $db): Zend_Db_Select
     {
         return $db->select()->from(['o' => 'object'], $this->computeResourceColumns)->join(
             ['cr' => 'compute_resource'],
@@ -276,7 +305,12 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         )->order('o.object_name')->order('o.uuid');
     }
 
-    protected function prepareDatastoreQuery(ZfDb $db)
+    /**
+     * @param ZfDb $db
+     *
+     * @return Zend_Db_Select
+     */
+    protected function prepareDatastoreQuery(ZfDb $db): Zend_Db_Select
     {
         return $db->select()->from(['o' => 'object'], $this->datastoreColumns)->join(
             ['ds' => 'datastore'],
@@ -285,7 +319,12 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         )->order('o.object_name')->order('o.uuid');
     }
 
-    protected function joinVCenter($query)
+    /**
+     * @param Zend_Db_Select $query
+     *
+     * @return Zend_Db_Select
+     */
+    protected function joinVCenter(Zend_Db_Select $query): Zend_Db_Select
     {
         return $query->join(
             ['vc' => 'vcenter'],
@@ -312,13 +351,21 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         // Alternative: return $this->callOnManagedObject('getDefaultPropertySet');
     }
 
+    /**
+     * @return string
+     */
     protected function getManagedObjectClass(): string
     {
         return 'Icinga\\Module\\Vspheredb\\DbObject\\'
             . $this->getSetting('object_type');
     }
 
-    protected function callOnManagedObject($method)
+    /**
+     * @param string $method
+     *
+     * @return mixed
+     */
+    protected function callOnManagedObject(string $method): mixed
     {
         $params = func_get_args();
         array_shift($params);
@@ -337,23 +384,38 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         return 'object_name';
     }
 
-    public function filterVCenter(VCenter $vCenter): self
+    public function filterVCenter(VCenter $vCenter): static
     {
         return $this->filterVCenterUuids([$vCenter->getUuid()]);
     }
 
-    public function filterVCenterUuids(?array $uuids): self
+    /**
+     * @param array|null $uuids
+     *
+     * @return $this
+     */
+    public function filterVCenterUuids(?array $uuids): static
     {
         $this->vCenterFilterUuids = $uuids;
         return $this;
     }
 
-    public function filterParentUuids(?array $uuids)
+    /**
+     * @param array|null $uuids
+     *
+     * @return $this
+     */
+    public function filterParentUuids(?array $uuids): static
     {
         $this->parentFilterUuids = $uuids;
     }
 
-    protected function applyOptionalParentFilter($query)
+    /**
+     * @param $query
+     *
+     * @return void
+     */
+    protected function applyOptionalParentFilter($query): void
     {
         if ($this->parentFilterUuids === null) {
             return;

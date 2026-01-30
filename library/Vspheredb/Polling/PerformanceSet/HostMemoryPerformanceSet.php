@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Polling\PerformanceSet;
 
 class HostMemoryPerformanceSet extends DefaultPerformanceSet
 {
-    protected $name = 'HostMemory';
-    protected $objectType = 'HostSystem';
-    protected $countersGroup = 'mem';
-    protected $counters = [
+    protected ?string $name = 'HostMemory';
+
+    protected ?string $objectType = 'HostSystem';
+
+    protected ?string $countersGroup = 'mem';
+
+    protected ?array $counters = [
         'active',
         'usage',
         'totalCapacity',

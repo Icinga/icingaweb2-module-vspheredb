@@ -14,12 +14,12 @@ class VCenterSelection extends SelectElement
     use TranslationHelper;
 
     /** @var Db */
-    protected $connection;
+    protected Db $connection;
 
     /** @var Auth */
-    protected $auth;
+    protected Auth $auth;
 
-    protected $optional = false;
+    protected bool $optional = false;
 
     public function __construct(Db $connection, Auth $auth, $required = false, $name = 'vcenter', $attributes = null)
     {
@@ -33,7 +33,7 @@ class VCenterSelection extends SelectElement
         ]);
     }
 
-    protected function enumVCenters()
+    protected function enumVCenters(): array
     {
         $db = $this->connection->getDbAdapter();
         $pairs = $db->fetchPairs(

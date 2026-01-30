@@ -8,11 +8,11 @@ use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 class ToggleTableColumns extends ToggleFlagList
 {
     /** @var BaseTable */
-    protected $table;
+    protected BaseTable $table;
 
-    protected $iconMain = 'th-list';
+    protected string $iconMain = 'th-list';
 
-    protected $iconModified = 'th-list';
+    protected string $iconModified = 'th-list';
 
     public function __construct(BaseTable $table, Url $url)
     {
@@ -20,23 +20,23 @@ class ToggleTableColumns extends ToggleFlagList
         $this->table = $table;
     }
 
-    protected function getListLabel()
+    protected function getListLabel(): string
     {
         return '';
         // return $this->translate('Columns');
     }
 
-    protected function getDefaultSelection()
+    protected function getDefaultSelection(): array
     {
         return $this->table->getChosenColumnNames();
     }
 
-    protected function setEnabled($enabled, $all)
+    protected function setEnabled(array $enabled, array $all): void
     {
         $this->table->chooseColumns($enabled);
     }
 
-    protected function getOptions()
+    protected function getOptions(): array
     {
         $options = [];
         foreach ($this->table->getAvailableColumns() as $column) {

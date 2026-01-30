@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\ManagedObjectReferenceSyncStore;
 
 class ManagedObjectReferenceSyncTask extends SyncTask
 {
-    protected $label = 'Managed Object References';
-    protected $tableName = 'object';
-    protected $objectClass = ManagedObject::class;
-    protected $selectSetClass = FullSelectSet::class;
-    protected $propertySetClass = FullObjectListPropertySet::class;
-    protected $syncStoreClass = ManagedObjectReferenceSyncStore::class;
+    protected string $label = 'Managed Object References';
+
+    protected string $tableName = 'object';
+
+    protected string $objectClass = ManagedObject::class;
+
+    protected string $selectSetClass = FullSelectSet::class;
+
+    protected string $propertySetClass = FullObjectListPropertySet::class;
+
+    protected string $syncStoreClass = ManagedObjectReferenceSyncStore::class;
 }

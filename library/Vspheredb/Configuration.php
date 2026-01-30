@@ -9,9 +9,9 @@ class Configuration
 {
     public const DEFAULT_SOCKET = '/run/icinga-vspheredb/vspheredb.sock';
 
-    private static $controlSocket;
+    private static ?string $controlSocket = null;
 
-    public static function getSocketPath()
+    public static function getSocketPath(): string
     {
         if (self::$controlSocket === null) {
             if ($path = getenv('VSPHEREDB_SOCKET')) {
@@ -29,9 +29,9 @@ class Configuration
      *
      * Used for testing reasons only. Set null to re-enable the default logic
      *
-     * @param $path
+     * @param string $path
      */
-    public static function setControlSocket($path)
+    public static function setControlSocket(string $path): void
     {
         self::$controlSocket = $path;
     }

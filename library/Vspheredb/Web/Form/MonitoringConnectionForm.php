@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
 use gipfl\Web\Form\Decorator\DdDtDecorator;
 use gipfl\Web\Widget\Hint;
 use Icinga\Application\Config;
@@ -11,18 +13,19 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\QueryParams;
 use Icinga\Web\Notification;
 use InvalidArgumentException;
-use gipfl\Translation\TranslationHelper;
-use gipfl\Web\Form;
 use ipl\Html\FormElement\SubmitElement;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Adapter_Abstract;
 
 class MonitoringConnectionForm extends Form
 {
     use TranslationHelper;
 
-    protected $db;
+    protected Zend_Db_Adapter_Abstract $db;
+
     protected bool $hasBeenDeleted = false;
+
     protected ?int $id = null;
 
     public function __construct(Db $connection)
@@ -36,7 +39,7 @@ class MonitoringConnectionForm extends Form
         return $this->hasBeenDeleted;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->add(Hint::info($this->translate(
             'The vSphereDB module can hook into the Icinga monitoring module.'
@@ -209,7 +212,7 @@ class MonitoringConnectionForm extends Form
         return $this->id;
     }
 
-    public function onSuccess()
+    public function onSuccess(): void
     {
         $values = $this->getValues();
         $db = $this->db;
@@ -239,7 +242,7 @@ class MonitoringConnectionForm extends Form
         }
     }
 
-    protected function enumIcingadbCustomVars(DbConnection $db)
+    protected function enumIcingadbCustomVars(DbConnection $db): array
     {
         $dba = $db->getDbAdapter();
 
@@ -267,7 +270,7 @@ class MonitoringConnectionForm extends Form
         return $result;
     }
 
-    protected function enumIdoCustomVars(DbConnection $db)
+    protected function enumIdoCustomVars(DbConnection $db): array
     {
         $dba = $db->getDbAdapter();
 

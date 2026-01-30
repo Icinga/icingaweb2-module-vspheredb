@@ -14,16 +14,16 @@ use function GuzzleHttp\Psr7\build_query;
 class GrafanaVmPanel extends HtmlDocument
 {
     /** @var ManagedObject */
-    protected $object;
+    protected ManagedObject $object;
 
-    /** @var int */
-    protected $panels;
+    /** @var int[] */
+    protected array $panels;
 
-    /** @var string|null */
-    protected $interface;
+    /** @var ?string */
+    protected ?string $interface;
 
-    /** @var string|null */
-    protected $disk;
+    /** @var ?string */
+    protected ?string $disk;
 
     /**
      * @param ManagedObject $object
@@ -31,7 +31,7 @@ class GrafanaVmPanel extends HtmlDocument
      * @param ?string $interface
      * @param ?string $disk
      */
-    public function __construct(ManagedObject $object, array $panels, $interface = 'All', $disk = 'All')
+    public function __construct(ManagedObject $object, array $panels, ?string $interface = 'All', ?string $disk = 'All')
     {
         $this->object = $object;
         $this->panels = $panels;
@@ -39,7 +39,7 @@ class GrafanaVmPanel extends HtmlDocument
         $this->disk = $disk;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $width = floor(100 / count($this->panels));
         foreach ($this->panels as $id) {
@@ -52,7 +52,7 @@ class GrafanaVmPanel extends HtmlDocument
         }
     }
 
-    protected function panelUrl($panelId)
+    protected function panelUrl(int $panelId): string
     {
         // &from=1636834148559&to=1636838149732
         $orgId = 1;

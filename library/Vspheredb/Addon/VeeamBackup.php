@@ -10,24 +10,30 @@ class VeeamBackup extends SimpleBackupTool
 {
     public const PREFIX = 'Veeam Backup: ';
 
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return 'Veeam Backup & Replication';
     }
 
     /**
      * @param VirtualMachine $vm
+     *
      * @return bool
      */
-    public function wants(VirtualMachine $vm)
+    public function wants(VirtualMachine $vm): bool
     {
         return $this->wantsAnnotation($vm->get('annotation'));
     }
 
     /**
      * @param VirtualMachine $vm
+     *
+     * @return void
      */
-    public function handle(VirtualMachine $vm)
+    public function handle(VirtualMachine $vm): void
     {
         $this->parseAnnotation($vm->get('annotation'));
     }
@@ -35,7 +41,7 @@ class VeeamBackup extends SimpleBackupTool
     /**
      * @return VeeamBackupRunDetails
      */
-    public function getInfoRenderer()
+    public function getInfoRenderer(): VeeamBackupRunDetails
     {
         return new VeeamBackupRunDetails($this);
     }
@@ -43,7 +49,7 @@ class VeeamBackup extends SimpleBackupTool
     /**
      * @return array
      */
-    public function requireParsedAttributes()
+    public function requireParsedAttributes(): array
     {
         $attributes = $this->getAttributes();
         if ($attributes === null) {

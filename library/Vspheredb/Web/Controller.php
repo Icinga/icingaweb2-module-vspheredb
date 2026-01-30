@@ -14,17 +14,14 @@ use Zend_Controller_Response_Abstract as ZfResponse;
 
 class Controller extends CompatController
 {
-    /** @var Db */
-    private $db;
+    /** @var ?Db */
+    private ?Db $db = null;
 
     /** @var ?RestrictionHelper */
-    private $restrictionHelper;
+    private ?RestrictionHelper $restrictionHelper = null;
 
-    public function __construct(
-        ZfRequest $request,
-        ZfResponse $response,
-        array $invokeArgs = array()
-    ) {
+    public function __construct(ZfRequest $request, ZfResponse $response, array $invokeArgs = array())
+    {
         parent::__construct($request, $response, $invokeArgs);
 
         if (! $this->isXhr() && Config::app()->get('security', 'use_strict_csp', false)) {
@@ -32,7 +29,7 @@ class Controller extends CompatController
         }
     }
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         if ($this->view->compact) {
@@ -42,7 +39,7 @@ class Controller extends CompatController
         }
     }
 
-    protected function db()
+    protected function db(): Db
     {
         if ($this->db === null) {
             try {
@@ -75,7 +72,7 @@ class Controller extends CompatController
         return $vCenter;
     }
 
-    protected function redirectToConfiguration()
+    protected function redirectToConfiguration(): void
     {
         if (
             $this->getRequest()->getControllerName() !== 'configuration'

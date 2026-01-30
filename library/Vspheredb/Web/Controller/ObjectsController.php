@@ -13,6 +13,7 @@ use Icinga\Module\Vspheredb\Web\Form\FilterVCenterForm;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
+use Icinga\Web\Url as WebUrl;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 
@@ -20,13 +21,16 @@ class ObjectsController extends Controller
 {
     use RestApi;
 
-    protected $otherTabActions = [];
+    /** @var array */
+    protected array $otherTabActions = [];
 
-    /** @var PathLookup */
-    protected $pathLookup;
-    protected $vCenterFilterForm;
+    /** @var ?PathLookup */
+    protected ?PathLookup $pathLookup = null;
 
-    protected function linkBackToOverview($type)
+    /** @var ?FilterVCenterForm */
+    protected ?FilterVCenterForm $vCenterFilterForm = null;
+
+    protected function linkBackToOverview($type): static
     {
         $this->actions()->add(
             Link::create(
@@ -43,7 +47,7 @@ class ObjectsController extends Controller
         return $this;
     }
 
-    protected function addTreeViewToggle()
+    protected function addTreeViewToggle(): void
     {
         if ($this->params->get('render') === 'tree') {
             $this->actions()->add(
@@ -66,8 +70,11 @@ class ObjectsController extends Controller
         }
     }
 
-    protected function eventuallyFilterByParent(TableWithParentFilter $table, $url, $defaultTitle = null)
-    {
+    protected function eventuallyFilterByParent(
+        TableWithParentFilter $table,
+        WebUrl|string $url,
+        ?string $defaultTitle = null
+    ): void {
         $parent = $this->params->get('parent');
         if ($parent === null) {
             $parent = $this->params->get('uuid');
@@ -96,7 +103,7 @@ class ObjectsController extends Controller
         }
     }
 
-    protected function eventuallyFilterByVCenter(TableWithVCenterFilter $table)
+    protected function eventuallyFilterByVCenter(TableWithVCenterFilter $table): void
     {
         $this->getRestrictionHelper()->restrictTable($table);
         $this->getVCenterFilterForm();
@@ -119,7 +126,7 @@ class ObjectsController extends Controller
         return $this->vCenterFilterForm;
     }
 
-    protected function showTable(ObjectsTable $table, $url, $defaultTitle = null)
+    protected function showTable(ObjectsTable $table, WebUrl|string $url, ?string $defaultTitle = null): static
     {
         $this->eventuallyFilterByParent($table, $url, $defaultTitle);
         $this->eventuallyFilterByVCenter($table);
@@ -129,7 +136,7 @@ class ObjectsController extends Controller
         return $this;
     }
 
-    protected function renderTableWithCount(ObjectsTable $table, $title = null)
+    protected function renderTableWithCount(ObjectsTable $table, ?string $title = null): void
     {
         $total = count($table);
         $table->renderTo($this);
@@ -144,7 +151,7 @@ class ObjectsController extends Controller
         }
     }
 
-    protected function downloadTable(ObjectsTable $table, string $title)
+    protected function downloadTable(ObjectsTable $table, string $title): void
     {
         $this->eventuallyFilterByParent($table, Url::fromPath(''), $title);
         $this->eventuallyFilterByVCenter($table);
@@ -156,7 +163,7 @@ class ObjectsController extends Controller
         $this->downloadJson($this->getResponse(), $rows, "$title.json");
     }
 
-    protected function sendExport($type)
+    protected function sendExport($type): void
     {
         $import = new ImportSource();
         $import->setSettings([
@@ -167,7 +174,7 @@ class ObjectsController extends Controller
         $this->downloadJson($this->getResponse(), $import->fetchData(), $type . 's.json');
     }
 
-    protected function addPathTo($parent, $url)
+    protected function addPathTo(string $parent, WebUrl|string $url): void
     {
         $lookup = $this->pathLookup();
         $path = Html::tag('span', ['class' => 'dc-path']);
@@ -187,7 +194,7 @@ class ObjectsController extends Controller
         $this->content()->add($path);
     }
 
-    protected function handleTabs()
+    protected function handleTabs(): void
     {
         $action = $this->getRequest()->getControllerName();
         if (isset($this->otherTabActions[$action])) {

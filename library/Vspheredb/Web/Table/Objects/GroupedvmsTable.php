@@ -3,26 +3,29 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Util;
+use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Format;
+use Zend_Db_Select;
 
 class GroupedvmsTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/vm';
+    protected ?string $baseUrl = 'vspheredb/vm';
 
-    protected $groupByAlias = 'project';
+    protected string $groupByAlias = 'project';
 
-    protected $groupBy = '(SUBSTR(o.object_name, 1, POSITION(\'-\' IN o.object_name) - 1))';
+    protected string $groupBy = '(SUBSTR(o.object_name, 1, POSITION(\'-\' IN o.object_name) - 1))';
 
-    public function filter($uuid)
+    public function filter(string $uuid): static
     {
         $this->getQuery()->where('vm.runtime_host_uuid = ?', $uuid);
 
         return $this;
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->db()->select()->from(
             ['o' => 'object'],
@@ -58,7 +61,7 @@ class GroupedvmsTable extends ObjectsTable
         return $query;
     }
 
-    protected function createGroupingColumn()
+    protected function createGroupingColumn(): SimpleColumn
     {
         return $this->createColumn($this->groupByAlias, 'Project', $this->groupBy)
             ->setRenderer(function ($row) {
@@ -76,7 +79,7 @@ class GroupedvmsTable extends ObjectsTable
             });
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createGroupingColumn(),
@@ -148,7 +151,7 @@ class GroupedvmsTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'project',

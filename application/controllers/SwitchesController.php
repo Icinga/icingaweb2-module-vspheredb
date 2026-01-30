@@ -10,7 +10,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class SwitchesController extends ObjectsController
 {
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->addSingleTab($this->translate('Switches'));
         $this->setAutorefreshInterval(15);

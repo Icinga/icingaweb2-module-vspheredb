@@ -7,19 +7,20 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use stdClass;
 
 /**
  * @method Db getConnection()
  */
 class VCenter extends BaseDbObject
 {
-    protected $table = 'vcenter';
+    protected ?string $table = 'vcenter';
 
-    protected $keyName = 'instance_uuid';
+    protected string|array|null $keyName = 'instance_uuid';
 
-    protected $autoincKeyName = 'id';
+    protected ?string $autoincKeyName = 'id';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'id'                      => null,
         'instance_uuid'           => null,
         'trust_store_id'          => null,
@@ -38,7 +39,7 @@ class VCenter extends BaseDbObject
         'locale_version'          => null,
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'instanceUuid'          => 'instance_uuid',
         'name'                  => 'api_name',
         'version'               => 'version',
@@ -54,7 +55,10 @@ class VCenter extends BaseDbObject
         'localeVersion'         => 'locale_version',
     ];
 
-    public function getFullName()
+    /**
+     * @return string
+     */
+    public function getFullName(): string
     {
         return sprintf(
             '%s %s build-%s',
@@ -64,28 +68,42 @@ class VCenter extends BaseDbObject
         );
     }
 
-    public function isHostAgent()
+    /**
+     * @return bool
+     */
+    public function isHostAgent(): bool
     {
         return $this->get('api_type') === 'HostAgent';
     }
 
-    public function isVirtualCenter()
+    /**
+     * @return bool
+     */
+    public function isVirtualCenter(): bool
     {
         return $this->get('api_type') === 'VirtualCenter';
     }
 
-    // TODO: Settle with one or the other. This should better give a UUID object
-    public function getUuid()
+
+    /**
+     * TODO: Settle with one or the other. This should better give a UUID object
+     *
+     * @return mixed
+     */
+    public function getUuid(): mixed
     {
         return $this->get('instance_uuid');
     }
 
-    public function getBinaryUuid()
+    /**
+     * @return mixed
+     */
+    public function getBinaryUuid(): mixed
     {
         return $this->get('instance_uuid');
     }
 
-    public static function loadWithUuid(string $uuid, Db $connection)
+    public static function loadWithUuid(string $uuid, Db $connection): static
     {
         if (strlen($uuid) === 16) {
             $uuid = Uuid::fromBytes($uuid);
@@ -98,10 +116,13 @@ class VCenter extends BaseDbObject
 
     /**
      * @param bool $enabled
-     * @return VCenterServer
+     * @param bool $required
+     *
+     * @return VCenterServer|null
+     *
      * @throws NotFoundError
      */
-    public function getFirstServer($enabled = true, $required = true)
+    public function getFirstServer(bool $enabled = true, bool $required = true): ?VCenterServer
     {
         $db = $this->getConnection()->getDbAdapter();
         $query = $db->select()
@@ -139,9 +160,14 @@ class VCenter extends BaseDbObject
         }
     }
 
-    public function makeBinaryGlobalUuid($moRefId)
+    /**
+     * @param mixed $moRefId
+     *
+     * @return string
+     */
+    public function makeBinaryGlobalUuid(mixed $moRefId): string
     {
-        if ($moRefId instanceof ManagedObjectReference || $moRefId instanceof \stdClass) {
+        if ($moRefId instanceof ManagedObjectReference || $moRefId instanceof stdClass) {
             return $this->makeBinaryGlobalMoRefUuid($moRefId);
         } elseif (is_string($moRefId)) {
             return Uuid::uuid5(Uuid::fromBytes($this->get('uuid')), $moRefId)->getBytes();
@@ -151,20 +177,23 @@ class VCenter extends BaseDbObject
     }
 
     /**
-     * @param ManagedObjectReference|\stdClass $moRef
+     * @param stdClass|ManagedObjectReference $moRef
+     *
      * @return string
      */
-    public function makeBinaryGlobalMoRefUuid($moRef): string
+    public function makeBinaryGlobalMoRefUuid(stdClass|ManagedObjectReference $moRef): string
     {
         return $this->makeBinaryGlobalMoRefUuidObject($moRef)->getBytes();
     }
 
     /**
-     * @param ManagedObjectReference|\stdClass $moRef
+     * @param stdClass|ManagedObjectReference $moRef
+     *
+     * @return UuidInterface
      */
-    public function makeBinaryGlobalMoRefUuidObject($moRef): UuidInterface
+    public function makeBinaryGlobalMoRefUuidObject(stdClass|ManagedObjectReference $moRef): UuidInterface
     {
-        if ($moRef instanceof \stdClass) {
+        if ($moRef instanceof stdClass) {
             $moRef = ManagedObjectReference::fromSerialization($moRef);
         }
 
@@ -172,9 +201,11 @@ class VCenter extends BaseDbObject
     }
 
     /**
-     * @param $value
+     * @param string $value
+     *
+     * @return void
      */
-    public function setInstance_uuid($value) // phpcs:ignore
+    public function setInstance_uuid(string $value): void // phpcs:ignore
     {
         if (strlen($value) > 16) {
             $this->reallySet('instance_uuid', Uuid::fromString($value)->getBytes());

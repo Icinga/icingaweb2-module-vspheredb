@@ -7,16 +7,18 @@ use Ramsey\Uuid\UuidInterface;
 interface CounterLookup
 {
     /**
-     * @param UuidInterface $vCenterUuid
+     * @param UuidInterface|null $vCenterUuid
+     *
      * @return array
      */
-    public function fetchTags(?UuidInterface $vCenterUuid = null);
+    public function fetchTags(?UuidInterface $vCenterUuid = null): array;
 
     /**
      * Hint: instance = '*' -> all instances, instance = '' -> aggregated
      *
-     * @param UuidInterface $vCenterUuid
+     * @param UuidInterface|null $vCenterUuid
+     *
      * @return array
      */
-    public function fetchRequiredMetricInstances(?UuidInterface $vCenterUuid = null);
+    public function fetchRequiredMetricInstances(?UuidInterface $vCenterUuid = null): array;
 }

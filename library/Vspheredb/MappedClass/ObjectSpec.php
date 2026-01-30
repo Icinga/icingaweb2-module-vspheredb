@@ -49,6 +49,7 @@ class ObjectSpec
      * @param ManagedObjectReference $obj
      * @param ?SelectionSpec[] $selectSet
      * @param ?boolean $skip
+     *
      * @return static
      */
     public static function create(ManagedObjectReference $obj, ?array $selectSet = null, $skip = null)

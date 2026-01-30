@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\Db\DbObject;
 
 class VmDiskUsage extends DbObject
 {
-    protected $keyName = ['vm_uuid', 'disk_path'];
+    protected string|array|null $keyName = ['vm_uuid', 'disk_path'];
 
-    protected $table = 'vm_disk_usage';
+    protected ?string $table = 'vm_disk_usage';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'vm_uuid'      => null,
         'disk_path'    => null,
         'capacity'     => null,
@@ -20,9 +20,10 @@ class VmDiskUsage extends DbObject
 
     /**
      * @param VCenter $vCenter
+     *
      * @return static[]
      */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
         $objects = static::loadAll(

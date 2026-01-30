@@ -7,7 +7,7 @@ use RuntimeException;
 
 class RuleSetRegistry implements JsonSerialization
 {
-    protected static $allSets = [
+    protected static array $allSets = [
         ObjectStateRuleSet::class,
         ComputeResourceUsageRuleSet::class,
         DiskHealthRuleSet::class,
@@ -16,7 +16,7 @@ class RuleSetRegistry implements JsonSerialization
     ];
 
     /** @var MonitoringRuleSetDefinition[] */
-    protected $sets = [];
+    protected array $sets = [];
 
     /**
      * @param string[]|MonitoringRuleSetDefinition[] $sets
@@ -36,7 +36,7 @@ class RuleSetRegistry implements JsonSerialization
         return $this->sets;
     }
 
-    public static function byName(string $name): RuleSetRegistry
+    public static function byName(string $name): static
     {
         /** @var string|MonitoringRuleSetDefinition $class */
         foreach (self::$allSets as $class) {
@@ -48,12 +48,12 @@ class RuleSetRegistry implements JsonSerialization
         throw new \InvalidArgumentException("There is no Rule Set named '$name'");
     }
 
-    public static function default(): RuleSetRegistry
+    public static function default(): static
     {
         return new static(self::$allSets);
     }
 
-    public function loadSet(string $class)
+    public function loadSet(string $class): void
     {
         $set = new $class();
         /** @var string $name */
@@ -65,7 +65,7 @@ class RuleSetRegistry implements JsonSerialization
         $this->sets[$name] = $set;
     }
 
-    public static function fromSerialization($any): RuleSetRegistry
+    public static function fromSerialization(mixed $any): static
     {
         return new static((array) $any);
     }

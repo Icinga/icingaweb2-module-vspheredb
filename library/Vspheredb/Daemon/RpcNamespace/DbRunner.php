@@ -20,6 +20,7 @@ use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
 use RuntimeException;
+use Zend_Db_Adapter_Abstract;
 
 use function React\Promise\reject;
 use function React\Promise\resolve;
@@ -30,26 +31,32 @@ use function React\Promise\resolve;
 class DbRunner
 {
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /** @var Db */
-    protected $connection;
+    /** @var ?Db */
+    protected ?Db $connection = null;
 
-    protected $db;
+    /** @var ?Zend_Db_Adapter_Abstract */
+    protected ?Zend_Db_Adapter_Abstract $db = null;
 
-    /** @var ?DbCleanup */
-    protected $runningVcenterDeletion = null;
+    /** @var ?VCenterCleanup */
+    protected ?VCenterCleanup $runningVcenterDeletion = null;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
-    protected $vCenters = [];
+    /** @var array */
+    protected array $vCenters = [];
 
     /**
      * @var array vCenterId -> [ SyncStoreClassName => SyncStore ]
      */
-    protected $vCenterSyncStores = [];
+    protected array $vCenterSyncStores = [];
 
+    /**
+     * @param LoggerInterface $logger
+     * @param LoopInterface   $loop
+     */
     public function __construct(LoggerInterface $logger, LoopInterface $loop)
     {
         MemoryLimit::raiseTo('1024M');
@@ -77,10 +84,12 @@ class DbRunner
 
     /**
      * @param object $config
+     *
      * @return PromiseInterface
+     *
      * @throws Exception
      */
-    public function setDbConfigRequest($config)
+    public function setDbConfigRequest(object $config): PromiseInterface
     {
         try {
             $this->vCenters = [];
@@ -111,7 +120,10 @@ class DbRunner
         }
     }
 
-    protected function setProcessReadyTitle()
+    /**
+     * @return void
+     */
+    protected function setProcessReadyTitle(): void
     {
         Process::setTitle('Icinga::vSphereDB::DB::connected');
     }
@@ -119,7 +131,7 @@ class DbRunner
     /**
      * @return bool
      */
-    public function runDbCleanupRequest()
+    public function runDbCleanupRequest(): bool
     {
         $this->requireCleanup()->runForStartup();
         return true;
@@ -128,7 +140,7 @@ class DbRunner
     /**
      * @return bool
      */
-    public function clearDbConfigRequest()
+    public function clearDbConfigRequest(): bool
     {
         $this->disconnect();
         return true;
@@ -137,7 +149,7 @@ class DbRunner
     /**
      * @return bool
      */
-    public function hasPendingMigrationsRequest()
+    public function hasPendingMigrationsRequest(): bool
     {
         if ($this->connection === null) {
             throw new RuntimeException('Unable to determine migration status, have no DB connection');
@@ -167,10 +179,12 @@ class DbRunner
 
     /**
      * @param int $vCenterId
+     *
      * @return int
+     *
      * @throws \Icinga\Exception\NotFoundError
      */
-    public function getLastEventTimeStampRequest($vCenterId)
+    public function getLastEventTimeStampRequest(int $vCenterId): int
     {
         return VmEventHistorySyncStore::selectLast(
             $this->db,
@@ -180,15 +194,21 @@ class DbRunner
     }
 
     /**
-     * @param int $vCenterId
-     * @param array $result
+     * @param int    $vCenterId
+     * @param array  $result
      * @param string $taskLabel
      * @param string $storeClass
      * @param string $objectClass
+     *
      * @return SyncStats
      */
-    public function processSyncTaskResultRequest($vCenterId, $result, $taskLabel, $storeClass, $objectClass)
-    {
+    public function processSyncTaskResultRequest(
+        int $vCenterId,
+        array $result,
+        string $taskLabel,
+        string $storeClass,
+        string $objectClass
+    ): SyncStats {
         Process::setTitle('Icinga::vSphereDB::DB::Storing ' . $taskLabel);
 
         $stats = new SyncStats($taskLabel);
@@ -209,7 +229,10 @@ class DbRunner
         return $stats;
     }
 
-    public function refreshMonitoringRuleProblemsRequest()
+    /**
+     * @return bool
+     */
+    public function refreshMonitoringRuleProblemsRequest(): bool
     {
         if ($this->connection === null) {
             $this->logger->warning('Not refreshing Rule problems, DB is not ready');
@@ -237,9 +260,10 @@ class DbRunner
 
     /**
      * @param int $vCenterId
+     *
      * @return bool
      */
-    public function deleteVcenterRequest($vCenterId)
+    public function deleteVcenterRequest(int $vCenterId): bool
     {
         $this->logger->notice('Got db.deleteVcenter for id=' . $vCenterId);
         if ($this->connection === null) {
@@ -303,7 +327,12 @@ class DbRunner
         return $this->vCenters[$id];
     }
 
-    protected function connect($config)
+    /**
+     * @param object $config
+     *
+     * @return void
+     */
+    protected function connect(object $config): void
     {
         $this->logger->debug('Connecting to DB');
         try {
@@ -316,7 +345,10 @@ class DbRunner
         $this->db->getConnection();
     }
 
-    protected function disconnect()
+    /**
+     * @return void
+     */
+    protected function disconnect(): void
     {
         if ($this->connection) {
             $this->connection->getDbAdapter()->closeConnection();
@@ -325,7 +357,10 @@ class DbRunner
         }
     }
 
-    protected function requireCleanup()
+    /**
+     * @return DbCleanup
+     */
+    protected function requireCleanup(): DbCleanup
     {
         if ($this->connection === null) {
             throw new RuntimeException('Cannot run DB cleanup w/o DB connection');
@@ -335,7 +370,7 @@ class DbRunner
         return $c;
     }
 
-    protected function applyMigrations()
+    protected function applyMigrations(): PromiseInterface
     {
         try {
             $migrations = Db::migrationsForDb($this->connection);

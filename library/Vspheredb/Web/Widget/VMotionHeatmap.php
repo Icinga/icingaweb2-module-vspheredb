@@ -3,16 +3,17 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use Icinga\Module\Vspheredb\Db;
+use Zend_Db_Adapter_Abstract;
 use Zend_Db_Select as ZfSelect;
 
 class VMotionHeatmap
 {
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
 
-    protected $query;
+    protected ?ZfSelect $query = null;
 
-    protected $eventType;
+    protected ?string $eventType = null;
 
     public function __construct(Db $connection)
     {
@@ -24,14 +25,14 @@ class VMotionHeatmap
         return $this->db->fetchPairs($this->getQuery());
     }
 
-    public function filterEventType($type): self
+    public function filterEventType(?string $type): static
     {
         $this->eventType = $type;
 
         return $this;
     }
 
-    public function filterParent($uuid): self
+    public function filterParent(string $uuid): static
     {
         $this->getQuery()->join(['h' => 'object'], $this->db->quoteInto(
             'h.uuid = veh.host_uuid AND h.parent_uuid = ?',

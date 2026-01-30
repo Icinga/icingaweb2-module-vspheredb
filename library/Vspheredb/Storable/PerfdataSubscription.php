@@ -15,11 +15,11 @@ class PerfdataSubscription implements DbStorableInterface
         set as parentSet;
     }
 
-    protected $tableName = 'perfdata_subscription';
+    protected string $tableName = 'perfdata_subscription';
 
-    protected $keyProperty = 'uuid';
+    protected string $keyProperty = 'uuid';
 
-    protected $defaultProperties = [
+    protected array $defaultProperties = [
         'uuid'          => null,
         'consumer_uuid' => null,
         'vcenter_uuid'  => null,
@@ -27,7 +27,7 @@ class PerfdataSubscription implements DbStorableInterface
         'enabled'       => null,
     ];
 
-    public function set($property, $value)
+    public function set($property, $value): bool
     {
         if ($property === 'consumer') {
             $property = 'consumer_uuid';
@@ -49,6 +49,7 @@ class PerfdataSubscription implements DbStorableInterface
 
     /**
      * @param VCenter $vCenter
+     *
      * @return PerfdataSubscription|null
      */
     public static function optionallyLoadForVCenter(VCenter $vCenter, ZfDbStore $store)

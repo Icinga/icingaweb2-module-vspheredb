@@ -3,23 +3,40 @@
 namespace Icinga\Module\Vspheredb\Db;
 
 use Exception;
-use gipfl\ZfDb\Adapter\Adapter;
 use Icinga\Module\Vspheredb\Db;
 use InvalidArgumentException;
 use React\EventLoop\Loop;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
+use RuntimeException;
+use Zend_Db_Adapter_Abstract;
 
 class VCenterCleanup
 {
+    /** @var Db */
     protected Db $connection;
-    protected int $vCenterId;
-    protected array $scheduledQueries = [];
-    protected string $vCenterUuid;
-    protected ?Deferred $deferred = null;
-    /** @var \Zend_Db_Adapter_Abstract|Adapter */
-    protected $db;
 
+    /** @var int */
+    protected int $vCenterId;
+
+    /** @var array */
+    protected array $scheduledQueries = [];
+
+    /** @var string */
+    protected string $vCenterUuid;
+
+    /** @var ?Deferred */
+    protected ?Deferred $deferred = null;
+
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
+
+    /**
+     * @param Db  $connection
+     * @param int $vCenterId
+     *
+     * @throws InvalidArgumentException
+     */
     public function __construct(Db $connection, int $vCenterId)
     {
         $this->connection = $connection;
@@ -33,6 +50,11 @@ class VCenterCleanup
         $this->vCenterUuid = $uuid;
     }
 
+    /**
+     * @return PromiseInterface
+     *
+     * @throws RuntimeException
+     */
     public function run(): PromiseInterface
     {
         if ($this->deferred !== null) {
@@ -45,6 +67,9 @@ class VCenterCleanup
         return $this->deferred->promise();
     }
 
+    /**
+     * @return void
+     */
     protected function tick(): void
     {
         $query = array_shift($this->scheduledQueries);
@@ -71,6 +96,9 @@ class VCenterCleanup
         }
     }
 
+    /**
+     * @return void
+     */
     protected function scheduleQueries(): void
     {
         $uuid = $this->vCenterUuid;

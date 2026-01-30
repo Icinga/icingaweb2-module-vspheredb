@@ -11,22 +11,22 @@ abstract class SyncTask
     public const UNSPECIFIED = 'unspecified';
 
     /** @var string */
-    protected $label = self::UNSPECIFIED;
+    protected string $label = self::UNSPECIFIED;
 
     /** @var string */
-    protected $tableName = self::UNSPECIFIED;
+    protected string $tableName = self::UNSPECIFIED;
 
     /** @var string */
-    protected $objectClass = self::UNSPECIFIED;
+    protected string $objectClass = self::UNSPECIFIED;
 
     /** @var string */
-    protected $selectSetClass = self::UNSPECIFIED;
+    protected string $selectSetClass = self::UNSPECIFIED;
 
     /** @var string */
-    protected $propertySetClass = self::UNSPECIFIED;
+    protected string $propertySetClass = self::UNSPECIFIED;
 
     /** @var string */
-    protected $syncStoreClass = self::UNSPECIFIED;
+    protected string $syncStoreClass = self::UNSPECIFIED;
 
     public function getLabel(): string
     {

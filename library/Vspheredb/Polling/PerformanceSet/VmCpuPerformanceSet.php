@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Polling\PerformanceSet;
 
 class VmCpuPerformanceSet extends DefaultPerformanceSet
 {
-    protected $name = 'VmCpu';
-    protected $objectType = 'VirtualMachine';
-    protected $countersGroup = 'cpu';
-    protected $counters = [
+    protected ?string $name = 'VmCpu';
+
+    protected ?string $objectType = 'VirtualMachine';
+
+    protected ?string $countersGroup = 'cpu';
+
+    protected ?array $counters = [
         'coreUtilization',
         'demand',
         'latency',

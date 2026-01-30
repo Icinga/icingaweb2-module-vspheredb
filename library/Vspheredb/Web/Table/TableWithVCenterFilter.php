@@ -6,6 +6,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 
 interface TableWithVCenterFilter
 {
-    public function filterVCenter(VCenter $vCenter);
-    public function filterVCenterUuids(array $uuids);
+    public function filterVCenter(VCenter $vCenter): static;
+
+    public function filterVCenterUuids(array $uuids): static;
 }

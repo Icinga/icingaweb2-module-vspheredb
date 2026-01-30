@@ -4,19 +4,28 @@ namespace Icinga\Module\Vspheredb\EventHistory;
 
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use Zend_Db_Adapter_Abstract;
 
 class VmRecentMigrationHistory
 {
-    protected $vm;
+    /** @var VirtualMachine */
+    protected VirtualMachine $vm;
 
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
 
+    /**
+     * @param VirtualMachine $vm
+     */
     public function __construct(VirtualMachine $vm)
     {
         $this->vm = $vm;
         $this->db = $vm->getConnection()->getDbAdapter();
     }
 
+    /**
+     * @return int
+     */
     public function countWeeklyMigrationAttempts(): int
     {
         $query = $this->db->select()

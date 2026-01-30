@@ -5,16 +5,24 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use React\EventLoop\Loop;
+use React\EventLoop\LoopInterface;
 
 use function React\Async\await;
 use function React\Promise\Timer\timeout;
 
 trait AsyncControllerHelper
 {
-    /** @var RemoteClient */
-    protected $remoteClient;
+    /** @var ?RemoteClient */
+    protected ?RemoteClient $remoteClient = null;
 
-    protected function syncRpcCall($method, $params = [], $timeout = 30)
+    /**
+     * @param string $method
+     * @param array  $params
+     * @param ?float $timeout
+     *
+     * @return mixed
+     */
+    protected function syncRpcCall(string $method, array $params = [], ?float $timeout = 30): mixed
     {
         return await(timeout($this->remoteClient()->request($method, $params), $timeout));
     }
@@ -22,7 +30,7 @@ trait AsyncControllerHelper
     /**
      * @return RemoteClient
      */
-    protected function remoteClient()
+    protected function remoteClient(): RemoteClient
     {
         if ($this->remoteClient === null) {
             $this->remoteClient = new RemoteClient(Configuration::getSocketPath(), $this->loop());
@@ -31,7 +39,10 @@ trait AsyncControllerHelper
         return $this->remoteClient;
     }
 
-    protected function loop()
+    /**
+     * @return LoopInterface
+     */
+    protected function loop(): LoopInterface
     {
         return Loop::get();
     }

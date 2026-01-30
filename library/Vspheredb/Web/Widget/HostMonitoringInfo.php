@@ -17,13 +17,13 @@ class HostMonitoringInfo extends HtmlDocument
     use TranslationHelper;
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
-    /** @var mixed */
-    protected $info;
+    /** @var false|array|null */
+    protected false|array|null $info = null;
 
     /**
      * HostVirtualizationInfoTable constructor.
@@ -36,7 +36,7 @@ class HostMonitoringInfo extends HtmlDocument
         $this->vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         if ($info = $this->getInfo()) {
             $this->prepend(new SubTitle($this->translate('Monitoring'), 'binoculars'));
@@ -44,12 +44,12 @@ class HostMonitoringInfo extends HtmlDocument
         }
     }
 
-    public function hasInfo()
+    public function hasInfo(): bool
     {
         return $this->getInfo() !== false;
     }
 
-    protected function getInfo()
+    protected function getInfo(): false|array
     {
         if ($this->info === null) {
             $this->info = $this->prepareInfo();
@@ -59,9 +59,9 @@ class HostMonitoringInfo extends HtmlDocument
     }
 
     /**
-     * @return array|false
+     * @return false|array
      */
-    protected function prepareInfo()
+    protected function prepareInfo(): false|array
     {
         $host = $this->host;
         $name = $host->get('host_name');

@@ -12,17 +12,28 @@ use function is_array;
 
 class DbConnection extends IcingaDbConnection
 {
-    public function isMysql()
+    /**
+     * @return bool
+     */
+    public function isMysql(): bool
     {
         return $this->getDbType() === 'mysql';
     }
 
-    public function isPgsql()
+    /**
+     * @return bool
+     */
+    public function isPgsql(): bool
     {
         return $this->getDbType() === 'pgsql';
     }
 
-    public function quoteBinary($binary)
+    /**
+     * @param string|array $binary
+     *
+     * @return Zend_Db_Expr|array|string
+     */
+    public function quoteBinary(string|array $binary): Zend_Db_Expr|array|string
     {
         if ($binary === '') {
             return '';
@@ -39,7 +50,12 @@ class DbConnection extends IcingaDbConnection
         return new Zend_Db_Expr('0x' . bin2hex($binary));
     }
 
-    public function hasPgExtension($name)
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasPgExtension(string $name): bool
     {
         $db = $this->getDbAdapter();
         $query = $db->select()->from(
@@ -50,7 +66,14 @@ class DbConnection extends IcingaDbConnection
         return (int) $db->fetchOne($query) === 1;
     }
 
-    public static function pgBinEscape($binary)
+    /**
+     * @param $binary
+     *
+     * @return Zend_Db_Expr
+     *
+     * @throws RuntimeException
+     */
+    public static function pgBinEscape($binary): Zend_Db_Expr
     {
         if ($binary instanceof Zend_Db_Expr) {
             throw new RuntimeException('Trying to escape binary twice');
