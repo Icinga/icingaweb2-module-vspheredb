@@ -55,12 +55,6 @@ abstract class HostSummaryTable extends ObjectsTable
     public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->prepareUnGroupedQuery();
-        if ($this->parentUuids) {
-            $query->where('o.uuid IN (?)', $this->parentUuids);
-        }
-        if ($this->filterVCenter) {
-            $query->where('o.vcenter_uuid = ?', $this->filterVCenter->getUuid());
-        }
 
         if ($this->groupBy !== null) {
             $query->group($this->groupBy);

@@ -17,6 +17,7 @@ use Icinga\Module\Vspheredb\Web\Tabs\ConfigTabs;
 use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Web\Notification;
+use ipl\Html\Contract\Form;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 
@@ -68,11 +69,11 @@ class PerfdataController extends Controller
     {
         $store = new ZfDbStore($this->db()->getDbAdapter());
         $form = new PerfdataConsumerForm($this->loop(), $this->remoteClient(), $store);
-        $form->on($form::ON_DELETE, function () {
+        $form->on(PerfdataConsumerForm::ON_DELETE, function () {
             Notification::success($this->translate('Performance Data Consumer has been removed'));
             $this->redirectNow('vspheredb/perfdata/consumers');
         });
-        $form->on(PerfdataConsumerForm::ON_SUCCESS, function (PerfdataConsumerForm $form) {
+        $form->on(Form::ON_SUBMIT, function (PerfdataConsumerForm $form) {
             if ($form->wasNew()) {
                 Notification::success($this->translate('Performance Data Consumer has been created'));
             } else {
