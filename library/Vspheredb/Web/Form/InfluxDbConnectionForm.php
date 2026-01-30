@@ -6,6 +6,7 @@ use Exception;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
+use ipl\Html\Attributes;
 use ipl\Html\FormElement\SelectElement;
 use ipl\I18n\Translation;
 use React\EventLoop\LoopInterface;
@@ -159,7 +160,7 @@ class InfluxDbConnectionForm extends Form
         $this
             ->getUrlElement()
             ->getElement()
-            ->addAttributes(['class' => 'validated']);
+            ->addAttributes(Attributes::create(['class' => 'validated']));
 
         return $this;
     }

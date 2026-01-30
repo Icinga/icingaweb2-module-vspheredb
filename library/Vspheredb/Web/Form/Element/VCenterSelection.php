@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Form\Element;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Auth\RestrictionHelper;
 use Icinga\Module\Vspheredb\Db;
+use ipl\Html\Attributes;
 use ipl\Html\FormElement\SelectElement;
 use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
@@ -27,10 +28,10 @@ class VCenterSelection extends SelectElement
         $this->auth = $auth;
         parent::__construct($name, $attributes);
         $enum = $this->enumVCenters();
-        $this->addAttributes([
+        $this->addAttributes(Attributes::create([
             'options' => $required ? $enum : ['' => $this->translate('All vCenters'),] + $enum,
             'class' => 'autosubmit',
-        ]);
+        ]));
     }
 
     protected function enumVCenters(): array

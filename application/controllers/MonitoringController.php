@@ -22,6 +22,7 @@ use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemTable;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
+use ipl\Html\Attributes;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
@@ -112,9 +113,7 @@ class MonitoringController extends Controller
     {
         $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring Rules'));
-        $this->content()->addAttributes([
-            'class' => 'overview-chapter'
-        ]);
+        $this->content()->addAttributes(Attributes::create(['class' => 'overview-chapter']));
         $this->content()->add([
             Hint::info(Html::sprintf($this->translate(
                 'The Icinga vSphere%s Integration ships a lot of data, state and sensor values.'

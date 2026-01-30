@@ -8,6 +8,7 @@ use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\Web\Widget\ToggleTableColumns;
 use InvalidArgumentException;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -371,7 +372,7 @@ abstract class BaseTable extends ZfQueryBasedTable
 
         if ($this->columnToggle !== null && $lastTh !== null) {
             $lastTh->add(Html::tag('ul', ['class' => 'nav'], $this->columnToggle));
-            $lastTh->addAttributes(['class' => 'with-column-selector']);
+            $lastTh->addAttributes(Attributes::create(['class' => 'with-column-selector']));
         }
 
         return $parent;

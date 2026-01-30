@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\Web\Table\Objects\HostsTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\ComputeClusterHeader;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
+use ipl\Html\Attributes;
 
 class ComputeClusterController extends Controller
 {
@@ -21,7 +22,7 @@ class ComputeClusterController extends Controller
     public function indexAction(): void
     {
         $computeCluster = $this->addComputeCluster();
-        $this->content()->addAttributes(['class' => 'host-info']);
+        $this->content()->addAttributes(Attributes::create(['class' => 'host-info']));
         $table = new HostsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());

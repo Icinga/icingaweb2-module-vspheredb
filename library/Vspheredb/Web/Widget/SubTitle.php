@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 
 class SubTitle extends BaseHtmlElement
@@ -18,7 +19,7 @@ class SubTitle extends BaseHtmlElement
     {
         $this->setContent($title);
         if ($icon !== null) {
-            $this->addAttributes(['class' => "icon-$icon"]);
+            $this->addAttributes(Attributes::create(['class' => "icon-$icon"]));
         }
     }
 }

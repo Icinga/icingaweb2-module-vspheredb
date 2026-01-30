@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Icon;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 
 class ControlSocketConnectionsTable extends ArrayTable
@@ -56,7 +57,7 @@ class ControlSocketConnectionsTable extends ArrayTable
             $row->pid
         ]);
         if ($row->pid === $this->myPid) {
-            $tr->addAttributes(['class' => 'control-socket-connections-table-row']);
+            $tr->addAttributes(Attributes::create(['class' => 'control-socket-connections-table-row']));
         }
 
         return $tr;
