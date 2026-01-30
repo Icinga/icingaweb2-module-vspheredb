@@ -5,7 +5,7 @@ namespace Icinga\Module\Vspheredb\Clicommands;
 class VcenterCommand extends Command
 {
     /**
-     * Deprecated
+     * @deprecated Please check documentation
      */
     public function initializeAction()
     {
