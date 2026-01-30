@@ -120,16 +120,13 @@ class IbmSpectrumProtect implements BackupTool
             if (strpos($line, '=') === false) {
                 continue;
             }
-            [$key, $value] = preg_split('/=/', $line, 2);
-            if ($key === 'Last Run Time') {
-                $attributes[$key] = static::parseTime($value);
-            } elseif ($key === 'Data Transmitted') {
-                $attributes[$key] = static::parseBytes($value);
-            } elseif ($key === 'Duration') {
-                $attributes[$key] = static::parseDuration($value);
-            } else {
-                $attributes[$key] = static::parseString($value);
-            }
+            [$key, $value] = explode('=', $line, 2);
+            $attributes[$key] = match ($key) {
+                'Last Run Time'    => static::parseTime($value),
+                'Data Transmitted' => static::parseBytes($value),
+                'Duration'         => static::parseDuration($value),
+                default            => static::parseString($value)
+            };
         }
 
         $this->lastAttributes = $attributes;

@@ -145,18 +145,13 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
 
     protected function getStatusMessageForPowerState(string $state, string $what): string
     {
-        switch ($state) {
-            case 'poweredOff':
-                return "$what has been powered off";
-            case 'suspended':
-                return "$what has been suspended";
-            case 'unknown':
-                return "$what power state is unknown, might be disconnected";
-            case 'poweredOn':
-                return "$what is powered on";
-        }
-
-        throw new InvalidArgumentException("'$state' is not a known power state");
+        return match ($state) {
+            'poweredOff' => "$what has been powered off",
+            'suspended'  => "$what has been suspended",
+            'unknown'    => "$what power state is unknown, might be disconnected",
+            'poweredOn'  => "$what is powered on",
+            default      => throw new InvalidArgumentException("'$state' is not a known power state")
+        };
     }
 
     public function getInternalDefaults(): array

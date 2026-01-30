@@ -37,13 +37,11 @@ class Format
 
     public static function linkSpeedMb(int $mb): string
     {
-        if ($mb >= 1000000) {
-            return sprintf('%.3G TBit/s', $mb / 1000000);
-        } elseif ($mb >= 1000) {
-            return sprintf('%.3G GBit/s', $mb / 1000);
-        } else {
-            return sprintf('%.3G MBit/s', $mb);
-        }
+        return match (true) {
+            $mb >= 1000000 => sprintf('%.3G TBit/s', $mb / 1000000),
+            $mb >= 1000    => sprintf('%.3G GBit/s', $mb / 1000),
+            default        => sprintf('%.3G MBit/s', $mb)
+        };
     }
 
     public static function mhz(?int $mhz): string
@@ -53,29 +51,24 @@ class Format
         }
         $sign = $mhz < 0 ? '-' : '';
         $mhz = abs($mhz);
-        if ($mhz >= 1000000) {
-            return $sign . sprintf('%.3G THz', $mhz / 1000000);
-        } elseif ($mhz >= 1000) {
-            return $sign . sprintf('%.3G GHz', $mhz / 1000);
-        } else {
-            return $sign . sprintf('%.3G MHz', $mhz);
-        }
+
+        return $sign . match (true) {
+            $mhz >= 1000000 => sprintf('%.3G THz', $mhz / 1000000),
+            $mhz >= 1000    => sprintf('%.3G GHz', $mhz / 1000),
+            default         => sprintf('%.3G MHz', $mhz)
+        };
     }
 
     public static function mhzWithSeparateUnit($mhz): array
     {
         $sign = $mhz < 0 ? '-' : '';
         $mhz = abs($mhz);
-        if ($mhz > 1000000) {
-            $unit = 'THz';
-            $value = $mhz / 1000000;
-        } elseif ($mhz > 1000) {
-            $unit = 'GHz';
-            $value = $mhz / 1000;
-        } else {
-            $unit = 'MHz';
-            $value = $mhz;
-        }
+
+        [$unit, $value] = match (true) {
+            $mhz >= 1000000 => ['THz', $mhz / 1000000],
+            $mhz >= 1000    => ['GHz', $mhz / 1000],
+            default         => ['MHz', $mhz]
+        };
 
         return [$sign . sprintf('%.3G', $value), $unit];
     }

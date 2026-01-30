@@ -47,18 +47,12 @@ trait UuidLinkHelper
 
     protected function getUuidBaseUrl($uuid): ?string
     {
-        $type = $this->getUuidProperty($uuid, 'object_type');
-
-        switch ($type) {
-            case 'HostSystem':
-                return 'vspheredb/host';
-            case 'VirtualMachine':
-                return 'vspheredb/vm';
-            case 'Datastore':
-                return 'vspheredb/datastore';
-            default:
-                return null;
-        }
+        return match ($this->getUuidProperty($uuid, 'object_type')) {
+            'HostSystem'     => 'vspheredb/host',
+            'VirtualMachine' => 'vspheredb/vm',
+            'Datastore'      => 'vspheredb/datastore',
+            default          => null
+        };
     }
 
     /**

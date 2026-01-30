@@ -11,26 +11,18 @@ class VCenterConnectionStatusIcon
 {
     public static function create(ServerConnectionInfo $info): Icon
     {
-        $state = $info->getState();
-        $title = ConnectionState::describe($info);
-        switch ($state) {
-            case 'unknown':
-                return Icon::create('help', ['class' => 'unknown', 'title' => $title]);
-            case 'disabled':
-                return Icon::create('cancel', ['title' => $title]);
-            case ApiConnection::STATE_CONNECTED:
-                return Icon::create('ok', ['class' => 'green', 'title' => $title]);
-            case ApiConnection::STATE_LOGIN:
-            case ApiConnection::STATE_INIT:
-                return Icon::create('spinner', ['class' => 'yellow', 'title' => $title]);
-            case ApiConnection::STATE_FAILING:
-                return Icon::create('warning-empty', ['class' => 'red', 'title' => $title]);
-            case ApiConnection::STATE_STOPPING:
-                return Icon::create('cancel', ['class' => 'yellow', 'title' => $title]);
-        }
+        $title = ['title' => ConnectionState::describe($info)];
 
-        // Fail, error?
-        return Icon::create('warning-empty', ['class' => 'warning', 'title' => $title]);
+        return match ($info->getState()) {
+            'unknown'                      => Icon::create('help', ['class' => 'unknown'] + $title),
+            'disabled'                     => Icon::create('cancel', $title),
+            ApiConnection::STATE_CONNECTED => Icon::create('ok', ['class' => 'green'] + $title),
+            ApiConnection::STATE_LOGIN,
+            ApiConnection::STATE_INIT      => Icon::create('spinner', ['class' => 'yellow'] + $title),
+            ApiConnection::STATE_FAILING   => Icon::create('warning-empty', ['class' => 'red'] + $title),
+            ApiConnection::STATE_STOPPING  => Icon::create('cancel', ['class' => 'yellow'] + $title),
+            default                        => Icon::create('warning-empty', ['class' => 'warning'] + $title)
+        };
     }
 
     public static function noServer(): Icon

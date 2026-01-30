@@ -42,13 +42,11 @@ class OverallStatusRenderer extends Html
      */
     protected function getStatusDescription(string $status): string
     {
-        $descriptions = [
+        return match ($status) {
             'gray'   => $this->translate('Gray - status is unknown'),
             'green'  => $this->translate('Green - everything is fine'),
             'yellow' => $this->translate('Yellow - there are warnings'),
-            'red'    => $this->translate('Red - there is a problem'),
-        ];
-
-        return $descriptions[$status];
+            'red'    => $this->translate('Red - there is a problem')
+        };
     }
 }

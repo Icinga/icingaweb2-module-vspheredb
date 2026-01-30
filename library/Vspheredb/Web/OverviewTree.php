@@ -199,27 +199,22 @@ class OverviewTree extends BaseHtmlElement
      */
     protected function getClassByType(string $type): string
     {
-        $typeClasses = [
-            'ComputeResource'        => 'cubes',
-            'ClusterComputeResource' => 'cubes',
-            'Datacenter'             => 'home',
-            'DistributedVirtualPortgroup' => 'plug',
-            'DistributedVirtualSwitch' => 'sitemap',
+        return 'icon-' . match ($type) {
+            'ComputeResource',
+            'ClusterComputeResource'         => 'cubes',
+            'Datacenter'                     => 'home',
+            'DistributedVirtualPortgroup'    => 'plug',
+            'DistributedVirtualSwitch',
             'VmwareDistributedVirtualSwitch' => 'sitemap',
-            'Datastore'              => 'database',
-            // 'DatastoreHostMount',
-            'Folder'                 => 'folder-empty',
-            'Network'                => 'arrows-cw',
-            'ResourcePool'           => 'chart-pie',
-            'StoragePod'             => 'cloud',
-            'HostSystem'             => 'host',
-            'VirtualApp'             => 'th-thumb-empty',
-            'VirtualMachine'         => 'service',
-        ];
-        if (isset($typeClasses[$type])) {
-            return 'icon-' . $typeClasses[$type];
-        } else {
-            return 'icon-attention-alt';
-        }
+            'Datastore'                      => 'database',
+            'Folder'                         => 'folder-empty',
+            'Network'                        => 'arrows-cw',
+            'ResourcePool'                   => 'chart-pie',
+            'StoragePod'                     => 'cloud',
+            'HostSystem'                     => 'host',
+            'VirtualApp'                     => 'th-thumb-empty',
+            'VirtualMachine'                 => 'service',
+            default                          => 'attention-alt'
+        };
     }
 }
