@@ -6,13 +6,13 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\ZfDb\Select;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
+use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\BiosInfo;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\PowerStateRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\ServiceTagRenderer;
-use Icinga\Module\Vspheredb\Format;
 use Zend_Db_Select;
 
 class HostsTable extends ObjectsTable

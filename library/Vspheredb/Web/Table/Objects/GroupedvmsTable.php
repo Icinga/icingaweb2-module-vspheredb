@@ -4,10 +4,10 @@ namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\ZfDb\Select;
+use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
-use Icinga\Module\Vspheredb\Format;
 use Zend_Db_Select;
 
 class GroupedvmsTable extends ObjectsTable

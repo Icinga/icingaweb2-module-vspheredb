@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Api\Protocol;
 
-use SoapClient;
 use ReturnTypeWillChange;
 use RingCentral\Psr7\Request;
+use SoapClient;
 use SoapFault;
 
 /**

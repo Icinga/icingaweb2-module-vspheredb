@@ -18,7 +18,6 @@ use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Web\Notification;
 use ipl\Html\Contract\Form;
-use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 
 class PerfdataController extends Controller

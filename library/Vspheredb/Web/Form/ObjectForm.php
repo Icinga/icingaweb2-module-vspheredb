@@ -2,13 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use gipfl\Translation\TranslationHelper;
+use gipfl\Web\Form;
+use gipfl\ZfDbStore\StorableInterface;
 use gipfl\ZfDbStore\Store;
 use Icinga\Authentication\Auth;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
-use gipfl\Translation\TranslationHelper;
-use gipfl\Web\Form;
-use gipfl\ZfDbStore\StorableInterface;
 
 abstract class ObjectForm extends Form
 {

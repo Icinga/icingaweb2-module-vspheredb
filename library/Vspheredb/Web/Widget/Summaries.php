@@ -4,8 +4,8 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Url;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use ipl\Html\BaseHtmlElement;

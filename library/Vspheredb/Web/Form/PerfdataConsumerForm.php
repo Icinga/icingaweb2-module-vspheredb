@@ -3,12 +3,10 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use gipfl\Translation\TranslationHelper;
-use gipfl\Web\Form\Decorator\DdDtDecorator;
 use gipfl\ZfDbStore\Store;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
-use ipl\Html\FormElement\SubmitElement;
 use React\EventLoop\LoopInterface;
 
 class PerfdataConsumerForm extends ObjectForm

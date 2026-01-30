@@ -2,9 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use gipfl\Translation\TranslationHelper;
-use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
+use gipfl\IcingaWeb2\Widget\Tabs;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 
 class ConfigTabs extends Tabs

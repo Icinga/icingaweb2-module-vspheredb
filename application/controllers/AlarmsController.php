@@ -5,8 +5,8 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AlarmHeatmap;
 use Icinga\Module\Vspheredb\Web\Widget\CalendarForEvents;
 

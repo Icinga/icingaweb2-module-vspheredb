@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Polling\SyncTask;
 
-use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\VmHardware;
 use Icinga\Module\Vspheredb\Polling\PropertySet\VmHardwarePropertySet;
 use Icinga\Module\Vspheredb\Polling\SelectSet\VirtualMachineSelectSet;
