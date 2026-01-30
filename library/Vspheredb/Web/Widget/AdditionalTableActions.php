@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use ipl\Html\Html;
-use ipl\Html\HtmlDocument;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Url;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
+use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 
 class AdditionalTableActions

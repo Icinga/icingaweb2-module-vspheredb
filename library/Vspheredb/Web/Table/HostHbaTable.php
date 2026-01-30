@@ -5,7 +5,6 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
-use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\FormattedString;
 use ipl\Html\Html;

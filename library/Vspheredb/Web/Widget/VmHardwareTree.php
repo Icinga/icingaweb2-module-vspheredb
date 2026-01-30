@@ -12,7 +12,6 @@ use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
-use Ramsey\Uuid\Uuid;
 
 class VmHardwareTree extends BaseHtmlElement
 {

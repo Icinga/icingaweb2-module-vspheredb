@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Format;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use gipfl\Translation\TranslationHelper;
 
 class CpuAbsoluteUsage extends BaseHtmlElement
 {

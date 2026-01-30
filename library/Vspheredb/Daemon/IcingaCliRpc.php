@@ -9,8 +9,6 @@ use React\ChildProcess\Process;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
 
-use function React\Promise\resolve;
-
 class IcingaCliRpc extends IcingaCli
 {
     /** @var ?JsonRpcConnection */

@@ -3,9 +3,9 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use gipfl\Json\JsonSerialization;
-use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Module\Vspheredb\MappedClass\ElementDescription;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;

@@ -6,9 +6,9 @@ use Exception;
 use gipfl\Translation\StaticTranslator;
 use gipfl\Web\Form;
 use gipfl\ZfDbStore\ZfDbStore;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Web\Form\PerfdataConsumerForm;
-use GuzzleHttp\Psr7\ServerRequest;
 
 class PerfdataconsumerCommand extends Command
 {

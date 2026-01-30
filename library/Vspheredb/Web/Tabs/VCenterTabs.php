@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\Tabs;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Ramsey\Uuid\Uuid;
 
