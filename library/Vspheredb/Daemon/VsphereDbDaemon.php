@@ -638,7 +638,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     protected function sendDbConfigToRunner(): PromiseInterface
     {
         $this->logger->notice('[db] sending DB config to child process');
-        if (! $this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_READY) {
+        if ($this->daemonState->getComponentState(self::COMPONENT_DB) !== self::STATE_READY) {
             $this->logger->warning('[db] DB runner is NOT ready, not sending config');
 
             return resolve(null);
