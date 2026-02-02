@@ -75,10 +75,9 @@ class VCenterCleanup
     {
         $query = array_shift($this->scheduledQueries);
         if ($query === null) {
-            if ($this->deferred) {
-                // Should never be null, this is just a safety measure
-                $this->deferred->resolve(true);
-            }
+            // Should never be null, this is just a safety measure
+            $this->deferred?->resolve(true);
+
             return;
         }
 

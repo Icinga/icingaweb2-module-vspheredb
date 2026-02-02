@@ -263,9 +263,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                     // Intentional fall-through:
                     // no break
                 case self::STATE_STOPPING:
-                    if ($this->apiConnectionHandler) {
-                        $this->apiConnectionHandler->stop();
-                    }
+                    $this->apiConnectionHandler?->stop();
                     $this->stopAllApiTasks();
                     $this->setApiState(self::STATE_STOPPED);
                     break;
@@ -349,9 +347,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         });
         $dbRunner->run($this->loop)->then(function () use ($dbRunner) {
             $this->dbRunner = $dbRunner;
-            if ($this->remoteApi) {
-                $this->remoteApi->setDbProcessRunner($dbRunner);
-            }
+            $this->remoteApi?->setDbProcessRunner($dbRunner);
             $this->loop->futureTick(function () {
                 $this->setDbState(self::STATE_IDLE);
             });
@@ -366,9 +362,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         if ($this->dbRunner) {
             $this->dbRunner->stop();
             $this->dbRunner = null;
-            if ($this->remoteApi) {
-                $this->remoteApi->setDbProcessRunner(null);
-            }
+            $this->remoteApi?->setDbProcessRunner(null);
         }
     }
 
@@ -774,10 +768,8 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
      */
     protected function stopConfigWatch(): void
     {
-        if ($this->configWatch) {
-            $this->configWatch->stop();
-            $this->configWatch = null;
-        }
+        $this->configWatch?->stop();
+        $this->configWatch = null;
     }
 
     /**

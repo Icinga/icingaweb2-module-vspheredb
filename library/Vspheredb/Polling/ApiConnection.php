@@ -99,18 +99,14 @@ class ApiConnection implements EventEmitterInterface
         });
         $this->onTransition(self::STATE_INIT, self::STATE_STOPPING, function () {
             $this->stopping = true;
-            if ($this->wsdlPromise) {
-                $this->wsdlPromise->cancel();
-                $this->wsdlPromise = null;
-            }
+            $this->wsdlPromise?->cancel();
+            $this->wsdlPromise = null;
             $this->setState(self::STATE_STOPPED);
         });
         $this->onTransition(self::STATE_LOGIN, self::STATE_STOPPING, function () {
             $this->stopping = true;
-            if ($this->loginPromise) {
-                $this->loginPromise->cancel();
-                $this->loginPromise = null;
-            }
+            $this->loginPromise?->cancel();
+            $this->loginPromise = null;
             $this->setState(self::STATE_STOPPED);
         });
         // TODO: do we need failing -> stopping?
