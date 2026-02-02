@@ -62,10 +62,8 @@ class ControlSocket implements EventEmitterInterface
      */
     public function shutdown(): void
     {
-        if ($this->server) {
-            $this->server->close();
-            $this->server = null;
-        }
+        $this->server?->close();
+        $this->server = null;
 
         $this->eventuallyRemoveSocketFile();
     }

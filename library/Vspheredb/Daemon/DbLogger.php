@@ -139,9 +139,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
         try {
             $this->db->insert('vspheredb_daemonlog', $params);
         } catch (Exception $e) {
-            if ($this->logger) {
-                $this->logger->debug(self::ERROR_PREFIX . $e->getMessage());
-            }
+            $this->logger?->debug(self::ERROR_PREFIX . $e->getMessage());
             $this->emit('error', [$e]);
         }
     }

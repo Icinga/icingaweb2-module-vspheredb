@@ -155,10 +155,8 @@ class PerfDataSync implements DaemonTask
      */
     protected function stopRunningInfluxDbInstances(): void
     {
-        if ($this->influxDbWriter) {
-            $this->influxDbWriter->stop();
-            $this->influxDbWriter = null;
-        }
+        $this->influxDbWriter?->stop();
+        $this->influxDbWriter = null;
     }
 
     /**
