@@ -28,9 +28,7 @@ class IcingaCliRpc extends IcingaCli
                 $process->stdin
             );
             $netString->on('error', function (Exception $e) {
-                if ($this->waitingForRpc) {
-                    $this->waitingForRpc->reject($e);
-                }
+                $this->waitingForRpc?->reject($e);
                 $this->emit('error', [$e]);
             });
             $this->rpc = new JsonRpcConnection($netString);
