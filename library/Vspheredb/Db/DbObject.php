@@ -142,7 +142,7 @@ abstract class DbObject
     }
 
     /**
-     * Wird ausgeführt, nachdem ein Objekt erfolgreich gespeichert worden ist
+     * Will be executed after an object has been stored successfully
      *
      * @return void
      */
@@ -151,8 +151,8 @@ abstract class DbObject
     }
 
     /**
-     * Wird ausgeführt, nachdem ein Objekt erfolgreich der Datenbank hinzu-
-     * gefügt worden ist
+     * Will be executed after an object has successfully been inserted into the
+     * database
      *
      * @return void
      */
@@ -161,8 +161,7 @@ abstract class DbObject
     }
 
     /**
-     * Wird ausgeführt, nachdem bestehendes Objekt erfolgreich der Datenbank
-     * geändert worden ist
+     * Will be executed after an existing object has been successfully updated
      *
      * @return void
      */
@@ -171,8 +170,8 @@ abstract class DbObject
     }
 
     /**
-     * Wird ausgeführt, bevor ein Objekt gelöscht wird. Die Operation wird
-     * aber auf jeden Fall durchgeführt, außer man wirft eine Exception
+     * Will be executed before an object will be deleted. The operation will
+     * definitely be executed, except an exception is thrown.
      *
      * @return void
      */
@@ -181,8 +180,8 @@ abstract class DbObject
     }
 
     /**
-     * Wird ausgeführt, nachdem bestehendes Objekt erfolgreich aud der
-     * Datenbank gelöscht worden ist
+     * Will be executed after an existing object has been successfully deleted
+     * from the database
      *
      * @return void
      */
@@ -608,7 +607,7 @@ abstract class DbObject
     }
 
     /**
-     * Liefert das benutzte Datenbank-Handle
+     * Returns the used database handle
      *
      * @return Zend_Db_Adapter_Abstract|null
      */
@@ -631,8 +630,8 @@ abstract class DbObject
     }
 
     /**
-     * Lädt einen Datensatz aus der Datenbank und setzt die entsprechenden
-     * Eigenschaften dieses Objekts
+     * Loads a record from the database and sets the corresponding properties
+     * on the object
      *
      * @return $this
      *
@@ -746,9 +745,9 @@ abstract class DbObject
     }
 
     /**
-     * Ändert den entsprechenden Datensatz in der Datenbank
+     * Updates the corresponding record in the database
      *
-     * @return int|true Anzahl der geänderten Zeilen
+     * @return int|true Number of updated rows
      *
      * @throws Zend_Db_Adapter_Exception
      */
@@ -769,9 +768,9 @@ abstract class DbObject
     }
 
     /**
-     * Fügt der Datenbank-Tabelle einen entsprechenden Datensatz hinzu
+     * Inserts a record into the database table
      *
-     * @return int Anzahl der betroffenen Zeilen
+     * @return int Number of affected rows
      *
      * @throws Zend_Db_Adapter_Exception
      */
