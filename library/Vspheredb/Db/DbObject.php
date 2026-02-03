@@ -840,7 +840,7 @@ abstract class DbObject
 
         try {
             if ($this->hasBeenLoadedFromDb()) {
-                if ($this->updateDb() !== false) {
+                if ($this->updateDb()) {
                     $this->onUpdate();
                 } else {
                     throw new RuntimeException(sprintf('FAILED storing %s "%s"', $table, $this->getLogId()));
