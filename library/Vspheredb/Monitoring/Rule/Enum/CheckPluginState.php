@@ -32,15 +32,15 @@ enum CheckPluginState: int
         };
     }
 
-    public static function fromName(string $name): self
+    public static function fromTrigger(MonitoringStateTrigger $trigger): self
     {
         foreach (CheckPluginState::cases() as $case) {
-            if ($case->name === strtoupper($name)) {
+            if ($case->name === strtoupper($trigger->value)) {
                 return $case;
             }
         }
 
-        throw new InvalidArgumentException("$name is not a valid state name");
+        throw new InvalidArgumentException("$trigger->value is not a valid state name");
     }
 
     /**

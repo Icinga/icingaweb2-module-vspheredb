@@ -36,7 +36,7 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
             $color = 'gray';
             $message = 'Could not find the related Managed Object, please check my vCenter permissions';
         }
-        $state = MonitoringStateTrigger::getMonitoringState($settings->get("trigger_on_$color"));
+        $state = MonitoringStateTrigger::nullableFrom($settings->get("trigger_on_$color"))->monitoringState();
 
         return [new SingleCheckResult($state, $message)];
     }
@@ -54,9 +54,9 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
     public function getInternalDefaults(): array
     {
         return [
-            'trigger_on_gray'   => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_yellow' => MonitoringStateTrigger::RAISE_WARNING,
-            'trigger_on_red'    => MonitoringStateTrigger::RAISE_CRITICAL
+            'trigger_on_gray'   => MonitoringStateTrigger::RAISE_CRITICAL->value,
+            'trigger_on_yellow' => MonitoringStateTrigger::RAISE_WARNING->value,
+            'trigger_on_red'    => MonitoringStateTrigger::RAISE_CRITICAL->value
         ];
     }
 
