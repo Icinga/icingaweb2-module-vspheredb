@@ -8,7 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\MonitoringStateTrigger;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
@@ -37,7 +37,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         if ($object instanceof VirtualMachine) {
             $what = 'Virtual Machine';
             if ($object->get('template') === 'y') {
-                return [new SingleCheckResult(new CheckPluginState(), 'This is a VM template')];
+                return [new SingleCheckResult(CheckPluginState::OK, 'This is a VM template')];
             }
         } elseif ($object instanceof HostSystem) {
             $what = 'Host System';
@@ -47,7 +47,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
 
         $powerState = $object->get('runtime_power_state');
         if ($powerState === 'poweredOn') {
-            $state = new CheckPluginState(CheckPluginState::OK);
+            $state = CheckPluginState::OK;
         } else {
             $state = MonitoringStateTrigger::getMonitoringState($settings->get("trigger_on_$powerState"));
         }
@@ -56,7 +56,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         $results = [new SingleCheckResult($state, $message)];
 
         if ($powerState === 'poweredOn') {
-            $uptimeState = new CheckPluginState();
+            $uptimeState = CheckPluginState::OK;
             if ($object instanceof HostSystem) {
                 $stats = HostQuickStats::loadFor($object);
             } else {
@@ -71,13 +71,13 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
 
             foreach (
                 [
-                    'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING,
-                    'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL
+                    'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING->value,
+                    'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL->value
                 ] as $setting => $errorState
             ) {
                 $min = $settings->get($setting);
                 if ($min) {
-                    $this->checkMin($uptimeState, $uptime, $min, $errorState, $info);
+                    $uptimeState = $this->checkMin($uptimeState, $uptime, $min, $errorState, $info);
                 }
             }
 
@@ -87,13 +87,13 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
             }
             foreach (
                 [
-                    'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING,
-                    'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL
+                    'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING->value,
+                    'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL->value
                 ] as $setting => $errorState
             ) {
                 $min = $settings->get($setting);
                 if ($min) {
-                    $this->checkMax($uptimeState, $uptime, $min * 86400, $errorState, $info);
+                    $uptimeState = $this->checkMax($uptimeState, $uptime, $min * 86400, $errorState, $info);
                 }
             }
 
@@ -115,13 +115,14 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         int $threshold,
         int $errorState,
         ?string &$info
-    ): void {
-        if ($threshold) {
-            if ($value >= $threshold) {
-                $uptimeState->raiseState($errorState);
-                $info = sprintf('>= %s ago', DateFormatter::formatDuration($threshold));
-            }
+    ): CheckPluginState {
+        if ($value >= $threshold) {
+            $info = sprintf('>= %s ago', DateFormatter::formatDuration($threshold));
+
+            return $uptimeState->raise(CheckPluginState::from($errorState));
         }
+
+        return $uptimeState;
     }
 
     protected function checkMin(
@@ -130,13 +131,14 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         int $threshold,
         int $errorState,
         ?string &$info
-    ): void {
-        if ($threshold) {
-            if ($value < $threshold) {
-                $uptimeState->raiseState($errorState);
-                $info = sprintf('less than %s ago', DateFormatter::formatDuration($threshold));
-            }
+    ): CheckPluginState {
+        if ($value < $threshold) {
+            $info = sprintf('less than %s ago', DateFormatter::formatDuration($threshold));
+
+            return $uptimeState->raise(CheckPluginState::from($errorState));
         }
+
+        return $uptimeState;
     }
 
     protected function getStatusMessageForPowerState(string $state, string $what): string

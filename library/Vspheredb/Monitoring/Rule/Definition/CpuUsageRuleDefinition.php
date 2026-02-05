@@ -9,7 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\Format;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
@@ -58,12 +58,12 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
                 $mhzSingleCpu = 2000;
             }
         }
-        $state = new CheckPluginState();
+        $state = CheckPluginState::OK;
         $mhzUsed = $quickStats->get('overall_cpu_usage');
         $mhzCapacity = $mhzSingleCpu * $cpuCount;
         $mhzFree = $mhzCapacity - $mhzUsed;
         if ($mhzCapacity === 0) {
-            $state->raiseState(CheckPluginState::UNKNOWN);
+            $state = $state->raise(CheckPluginState::UNKNOWN);
             return [
                 new SingleCheckResult($state, sprintf(
                     '%s used, but got ZERO capacity (%d CPUs, %s per CPU)',
@@ -86,11 +86,11 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
 
         $min = $settings->get('warning_if_less_than_percent_free');
         if ($min && ($percentFree < (float) $min)) {
-            $state->raiseState(CheckPluginState::WARNING);
+            $state = $state->raise(CheckPluginState::WARNING);
         }
         $min = $settings->get('critical_if_less_than_percent_free');
         if ($min && ($percentFree < (float) $min)) {
-            $state->raiseState(CheckPluginState::CRITICAL);
+            $state = $state->raise(CheckPluginState::CRITICAL);
         }
 
         return [
