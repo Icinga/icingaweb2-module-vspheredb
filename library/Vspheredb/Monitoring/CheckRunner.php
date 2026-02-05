@@ -13,6 +13,7 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\ObjectStateRuleSet;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\VMwareObjectStateRuleDefinition;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\Rule\InheritedSettings;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
@@ -151,9 +152,7 @@ class CheckRunner
                 try {
                     $results = $rule->checkObject($object, $ruleSettings);
                 } catch (Exception $e) {
-                    $results = [
-                        new SingleCheckResult(new CheckPluginState(CheckPluginState::UNKNOWN), $e->getMessage())
-                    ];
+                    $results = [new SingleCheckResult(CheckPluginState::UNKNOWN, $e->getMessage())];
                 }
                 foreach ($results as $result) {
                     $ruleResult->addResult($result);
@@ -207,7 +206,7 @@ class CheckRunner
             $ruleSetResult = new CheckResultSet((new ObjectStateRuleSet())->getLabel());
             $ruleResult = new CheckResultSet((new VMwareObjectStateRuleDefinition())->getLabel());
             $ruleResult->addResult(new SingleCheckResult(
-                new CheckPluginState(CheckPluginState::UNKNOWN),
+                CheckPluginState::UNKNOWN,
                 'Could not find the related Managed Object, please check my vCenter permissions'
             ));
             $ruleSetResult->addResult($ruleResult);

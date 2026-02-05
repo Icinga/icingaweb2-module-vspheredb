@@ -3,8 +3,8 @@
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
 use gipfl\Translation\StaticTranslator;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState as State;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState as State;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
 use Icinga\Util\Format;
@@ -19,9 +19,9 @@ class MemoryUsageHelper
         int $capacity,
         ?string $instanceName = null
     ): SingleCheckResult {
-        $state = new State();
+        $state = State::OK;
         if ($capacity === 0) {
-            $state->raiseState(CheckPluginState::UNKNOWN);
+            $state = $state->raise(CheckPluginState::UNKNOWN);
             return new SingleCheckResult($state, sprintf(
                 '%s free, but got ZERO capacity',
                 Format::bytes($free, Format::STANDARD_IEC)
@@ -41,36 +41,36 @@ class MemoryUsageHelper
             $output = "$instanceName has $output";
         }
 
-        $percentState = new State();
+        $percentState = State::OK;
         $min = $settings->get('warning_if_less_than_percent_free');
         if ($min && ($percentFree < (float) $min)) {
-            $percentState->raiseState(State::WARNING);
+            $percentState = $percentState->raise(State::WARNING);
         }
         $min = $settings->get('critical_if_less_than_percent_free');
         if ($min && ($percentFree < (float) $min)) {
-            $percentState->raiseState(State::CRITICAL);
+            $percentState = $percentState->raise(State::CRITICAL);
         }
 
-        $mbState = new State();
+        $mbState = State::OK;
         $mbFree = $free / self::MEGA_BYTE;
         $min = $settings->get('warning_if_less_than_mbytes_free');
         if ($min && ($mbFree < (float) $min)) {
-            $mbState->raiseState(State::WARNING);
+            $mbState = $mbState->raise(State::WARNING);
         }
         $min = $settings->get('critical_if_less_than_mbytes_free');
         if ($min && ($mbFree < (float) $min)) {
-            $mbState->raiseState(State::CRITICAL);
+            $mbState = $mbState->raise(State::CRITICAL);
         }
 
         if ($mbState->isProblem() && $percentState->isProblem()) {
             if ($settings->get('threshold_precedence') === 'worst_wins') {
-                $state->raiseState(State::getWorst($percentState, $mbState));
+                $state = $state->raise(State::getWorst($percentState, $mbState));
             } else {
-                $state->raiseState(State::getBest($percentState, $mbState));
+                $state = $state->raise(State::getBest($percentState, $mbState));
             }
         } else {
-            $state->raiseState($percentState);
-            $state->raiseState($mbState);
+            $state = $state->raise($percentState);
+            $state = $state->raise($mbState);
         }
 
         return new SingleCheckResult($state, $output);

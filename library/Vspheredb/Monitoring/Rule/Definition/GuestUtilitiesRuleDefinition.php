@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState as State;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState as State;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\MonitoringStateTrigger as Trigger;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
@@ -40,13 +40,13 @@ class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
 
     public function checkObject(BaseDbObject $object, Settings $settings): array
     {
-        $state = new State();
+        $state = State::OK;
         $version = $object->get('guest_tools_version');
         $versionInfo = '';
 
         if ($version === '2147483647') {
             $versionInfo = "v$version";
-            $state->raiseState(Trigger::getMonitoringState($settings->get('version_2147483647')));
+            $state = $state->raise(Trigger::getMonitoringState($settings->get('version_2147483647')));
         } elseif (
             $version !== null && (
                 preg_match('/^([89])(\d{1})(\d{2})$/', $version, $m)
@@ -58,27 +58,27 @@ class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
             $required = $settings->get('warning_if_less_than');
             if ($required && version_compare($version, $required) < 0) {
                 $versionInfo .= ", less than $required";
-                $state->raiseState(State::WARNING);
+                $state = $state->raise(State::WARNING);
             }
             $required = $settings->get('critical_if_less_than');
             if ($required && version_compare($version, $required) < 0) {
                 $versionInfo .= ", less than $required";
-                $state->raiseState(State::CRITICAL);
+                $state = $state->raise(State::CRITICAL);
             }
         }
 
         switch ($object->get('guest_tools_status')) {
             case 'toolsNotInstalled':
                 $message = 'Guest Tools are NOT installed';
-                $state->raiseState(Trigger::getMonitoringState($settings->get('on_not_installed')));
+                $state = $state->raise(Trigger::getMonitoringState($settings->get('on_not_installed')));
                 break;
             case 'toolsNotRunning':
                 $message = sprintf('Guest Tools (%s) are NOT running', $versionInfo);
-                $state->raiseState(Trigger::getMonitoringState($settings->get('on_not_running')));
+                $state = $state->raise(Trigger::getMonitoringState($settings->get('on_not_running')));
                 break;
             case 'toolsOld':
                 $message = sprintf('Guest Tools (%s) are old (considered outdated by VMware)', $versionInfo);
-                $state->raiseState(Trigger::getMonitoringState($settings->get('on_vcenter_complaint')));
+                $state = $state->raise(Trigger::getMonitoringState($settings->get('on_vcenter_complaint')));
                 break;
             case 'toolsOk':
                 $message = sprintf('Guest Tools (%s) are up to date and running', $versionInfo);
