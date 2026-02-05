@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
@@ -96,7 +97,7 @@ trait SingleObjectMonitoring
                 'class' => 'logOutput'
             ], sprintf(
                 'icingacli vspheredb check %s --uuid %s%s',
-                CheckRunner::getCheckTypeForObject($object),
+                ObjectType::fromDbObject($object)->value,
                 Uuid::fromBytes($object->get('uuid'))->toString(),
                 $inspect ? ' --inspect' : ''
             ))

@@ -7,13 +7,11 @@ use gipfl\Cli\Screen;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\DbObject\Datastore;
-use Icinga\Module\Vspheredb\DbObject\HostSystem;
-use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\ObjectStateRuleSet;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\VMwareObjectStateRuleDefinition;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\InheritedSettings;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
@@ -68,22 +66,22 @@ class CheckRunner
     }
 
     /**
-     * @param string $type
+     * @param ObjectType $type
      *
      * @return void
      */
-    public function preloadTreeFor(string $type): void
+    public function preloadTreeFor(ObjectType $type): void
     {
-        $this->preloadedTrees[$type] = new MonitoringRulesTree($this->db, $type);
+        $this->preloadedTrees[$type->value] = new MonitoringRulesTree($this->db, $type->value);
     }
 
     public function check(BaseDbObject $object): CheckResultSet
     {
-        $type = self::getCheckTypeForObject($object);
+        $type = ObjectType::fromDbObject($object);
         $registry = $this->getRegistry();
         $settings = $this->getSettingsForObject($object, $registry, $type);
 
-        $all = new CheckResultSet(sprintf('%s, according configured rules', $this->getTypeLabelForObject($object)));
+        $all = new CheckResultSet(sprintf('%s, according configured rules', $type->label()));
         $final = $this->ruleSetName === null ? $all : null;
         foreach ($registry->getSets() as $set) {
             if ($settings->isDisabled($set)) {
@@ -125,7 +123,7 @@ class CheckRunner
                         throw new RuntimeException(sprintf(
                             'Cannot run checks for Rule "%s", it does not support "%s" objects',
                             $this->ruleName,
-                            $type
+                            $type->value
                         ));
                     }
                     continue;
@@ -181,9 +179,9 @@ class CheckRunner
     protected function getSettingsForObject(
         BaseDbObject $object,
         RuleSetRegistry $registry,
-        string $type
+        ObjectType $type
     ): InheritedSettings {
-        $tree = $this->preloadedTrees[$type] ?? new MonitoringRulesTree($this->db, $type);
+        $tree = $this->preloadedTrees[$type->value] ?? new MonitoringRulesTree($this->db, $type->value);
         $settings = $tree->getInheritedSettingsFor($object);
         $settings->setInternalDefaults($registry);
 
@@ -197,7 +195,7 @@ class CheckRunner
      */
     public function checkForDb(BaseDbObject $object): array
     {
-        $type = self::getCheckTypeForObject($object);
+        $type = ObjectType::fromDbObject($object);
         $registry = $this->getRegistry();
         try {
             $settings = $this->getSettingsForObject($object, $registry, $type);
@@ -240,32 +238,6 @@ class CheckRunner
         }
 
         return $results;
-    }
-
-    protected function getTypeLabelForObject(BaseDbObject $object): string
-    {
-        if ($object instanceof HostSystem) {
-            return 'Host System';
-        } elseif ($object instanceof VirtualMachine) {
-            return 'Virtual Machine';
-        } elseif ($object instanceof Datastore) {
-            return 'Datastore';
-        }
-
-        return 'Object';
-    }
-
-    public static function getCheckTypeForObject(BaseDbObject $object): string
-    {
-        if ($object instanceof HostSystem) {
-            return 'host';
-        } elseif ($object instanceof VirtualMachine) {
-            return 'vm';
-        } elseif ($object instanceof Datastore) {
-            return 'datastore';
-        }
-
-        throw new InvalidArgumentException('Check commands are not supported for ' . get_class($object));
     }
 
     protected function light(string $string): string
