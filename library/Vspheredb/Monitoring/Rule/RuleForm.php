@@ -271,10 +271,10 @@ class RuleForm extends Form
     {
         $selectOptions = [
             '' => $this->translate('Not configured / Inherited'),
-            MonitoringStateTrigger::IGNORE => $this->translate('Do nothing'),
-            MonitoringStateTrigger::RAISE_WARNING => $this->translate('Trigger a Warning state'),
-            MonitoringStateTrigger::RAISE_CRITICAL => $this->translate('Trigger a Critical state'),
-            MonitoringStateTrigger::RAISE_UNKNOWN => $this->translate('Trigger an Unknown state')
+            MonitoringStateTrigger::IGNORE->value => $this->translate('Do nothing'),
+            MonitoringStateTrigger::RAISE_WARNING->value => $this->translate('Trigger a Warning state'),
+            MonitoringStateTrigger::RAISE_CRITICAL->value => $this->translate('Trigger a Critical state'),
+            MonitoringStateTrigger::RAISE_UNKNOWN->value => $this->translate('Trigger an Unknown state')
         ];
 
         $this->addElement('select', $name, ['options' => $selectOptions] + $options);

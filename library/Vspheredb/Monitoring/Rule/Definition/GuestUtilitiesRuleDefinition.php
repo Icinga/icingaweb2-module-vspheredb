@@ -31,10 +31,10 @@ class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
     public function getSuggestedSettings(): array
     {
         return [
-            'on_vcenter_complaint' => Trigger::RAISE_WARNING,
-            'on_not_installed'     => Trigger::RAISE_WARNING,
-            'on_not_running'       => Trigger::RAISE_WARNING,
-            'version_2147483647'   => Trigger::IGNORE
+            'on_vcenter_complaint' => Trigger::RAISE_WARNING->value,
+            'on_not_installed'     => Trigger::RAISE_WARNING->value,
+            'on_not_running'       => Trigger::RAISE_WARNING->value,
+            'version_2147483647'   => Trigger::IGNORE->value
         ];
     }
 
@@ -46,7 +46,7 @@ class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
 
         if ($version === '2147483647') {
             $versionInfo = "v$version";
-            $state = $state->raise(Trigger::getMonitoringState($settings->get('version_2147483647')));
+            $state = $state->raise(Trigger::nullableFrom($settings->get('version_2147483647'))->monitoringState());
         } elseif (
             $version !== null && (
                 preg_match('/^([89])(\d{1})(\d{2})$/', $version, $m)
@@ -70,15 +70,16 @@ class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
         switch ($object->get('guest_tools_status')) {
             case 'toolsNotInstalled':
                 $message = 'Guest Tools are NOT installed';
-                $state = $state->raise(Trigger::getMonitoringState($settings->get('on_not_installed')));
+                $state = $state->raise(Trigger::nullableFrom($settings->get('on_not_installed'))->monitoringState());
                 break;
             case 'toolsNotRunning':
                 $message = sprintf('Guest Tools (%s) are NOT running', $versionInfo);
-                $state = $state->raise(Trigger::getMonitoringState($settings->get('on_not_running')));
+                $state = $state->raise(Trigger::nullableFrom($settings->get('on_not_running'))->monitoringState());
                 break;
             case 'toolsOld':
                 $message = sprintf('Guest Tools (%s) are old (considered outdated by VMware)', $versionInfo);
-                $state = $state->raise(Trigger::getMonitoringState($settings->get('on_vcenter_complaint')));
+                $state = $state->raise(Trigger::nullableFrom($settings->get('on_vcenter_complaint'))
+                    ->monitoringState());
                 break;
             case 'toolsOk':
                 $message = sprintf('Guest Tools (%s) are up to date and running', $versionInfo);
