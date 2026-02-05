@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleDefinition 
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleSetDefinition as RuleSet;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\MonitoringStateTrigger;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ResultStatus;
 use InvalidArgumentException;
 use ipl\Html\Attributes;
@@ -26,8 +27,8 @@ class RuleForm extends Form
 
     public const NEXT_UUID = '00000000-0000-0000-0000-000000000000';
 
-    /** @var string */
-    protected string $objectType;
+    /** @var ObjectType */
+    protected ObjectType $objectType;
 
     /** @var string */
     protected string $binaryUuid;
@@ -45,7 +46,7 @@ class RuleForm extends Form
     protected ?ResultStatus $result = null;
 
     public function __construct(
-        string $objectType,
+        ObjectType $objectType,
         string $binaryUuid,
         Db $db,
         InheritedSettings $inherited,
@@ -309,7 +310,7 @@ class RuleForm extends Form
             $set = $this->loadedSet;
             $set->setSettings($settings);
         } else {
-            $set = new MonitoringRuleSet($this->binaryUuid, $this->objectType, $settings);
+            $set = new MonitoringRuleSet($this->binaryUuid, $this->objectType->value, $settings);
         }
         if (empty($values)) {
             if ($set->delete($this->db)) {

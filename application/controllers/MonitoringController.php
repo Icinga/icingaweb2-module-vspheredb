@@ -26,7 +26,6 @@ use ipl\Html\Attributes;
 use ipl\Html\Contract\Form;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
-use RuntimeException;
 
 class MonitoringController extends Controller
 {
@@ -176,24 +175,24 @@ class MonitoringController extends Controller
     }
 
     /**
-     * @param string $chosenType
+     * @param ObjectType $chosenType
      *
      * @return void
      */
-    public function showTree(string $chosenType): void
+    public function showTree(ObjectType $chosenType): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring'));
-        $tree = new MonitoringRulesTree($this->db(), $chosenType);
-        $this->content()->add(new MonitoringRulesTreeRenderer($tree, "vspheredb/monitoring/{$chosenType}rules"));
+        $tree = new MonitoringRulesTree($this->db(), $chosenType->value);
+        $this->content()->add(new MonitoringRulesTreeRenderer($tree, "vspheredb/monitoring/{$chosenType->value}rules"));
     }
 
     /**
-     * @param string $chosenType
+     * @param ObjectType $chosenType
      *
      * @return void
      */
-    public function showType(string $chosenType): void
+    public function showType(ObjectType $chosenType): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('Rules'));
@@ -234,8 +233,8 @@ class MonitoringController extends Controller
             }
         }
         $this->addTitle($title);
-        $tree = new MonitoringRulesTree($db, $chosenType);
-        $storedConfig = MonitoringRuleSet::loadOptionalForUuid($binaryUuid, $chosenType, $db);
+        $tree = new MonitoringRulesTree($db, $chosenType->value);
+        $storedConfig = MonitoringRuleSet::loadOptionalForUuid($binaryUuid, $chosenType->value, $db);
         $inherited = InheritedSettings::loadFor($binaryUuid, $tree, $db);
         $inherited->setInternalDefaults(RuleSetRegistry::default());
         $form = new RuleForm($chosenType, $binaryUuid, $db, $inherited, $storedConfig);
@@ -280,17 +279,16 @@ class MonitoringController extends Controller
     }
 
     /**
-     * @param string $type
+     * @param ObjectType $type
      *
      * @return string
      */
-    protected function getTypeLabelForObjectType(string $type): string
+    protected function getTypeLabelForObjectType(ObjectType $type): string
     {
         return match ($type) {
-            'host'      => $this->translate('Host Systems'),
-            'vm'        => $this->translate('Virtual Machines'),
-            'datastore' => $this->translate('Datastores'),
-            default     => throw new RuntimeException("Unexpected object type: '$type'")
+            ObjectType::HOST_SYSTEM     => $this->translate('Host Systems'),
+            ObjectType::VIRTUAL_MACHINE => $this->translate('Virtual Machines'),
+            ObjectType::DATASTORE       => $this->translate('Datastores')
         };
     }
 

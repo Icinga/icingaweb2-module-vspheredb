@@ -10,7 +10,7 @@ use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
-use Icinga\Module\Vspheredb\Monitoring\MonitoringRuleLookup;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
@@ -49,8 +49,9 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
 
     public function renderRow($row): array
     {
-        $url = MonitoringRuleLookup::getUrlForObjectType($this->objectType);
-        $class = MonitoringRuleLookup::getClassForObjectType($this->objectType);
+        $type = ObjectType::fromParam($this->objectType);
+        $url = $type->url();
+        $class = $type->class();
 
         $object = $class::load($row->uuid, $this->connection());
         $result = $this->runner->check($object);
@@ -73,7 +74,7 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
 
     protected function prepareQuery(): Select|Zend_Db_Select
     {
-        $objectTable = MonitoringRuleLookup::getTableForObjectType($this->objectType);
+        $objectTable = ObjectType::fromParam($this->objectType)->table();
         $db = $this->db();
         return $db->select()
             ->from(['p' => 'monitoring_rule_problem'], [
