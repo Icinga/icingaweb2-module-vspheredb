@@ -49,7 +49,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         if ($powerState === 'poweredOn') {
             $state = CheckPluginState::OK;
         } else {
-            $state = MonitoringStateTrigger::getMonitoringState($settings->get("trigger_on_$powerState"));
+            $state = MonitoringStateTrigger::nullableFrom($settings->get("trigger_on_$powerState"))->monitoringState();
         }
         $message = $this->getStatusMessageForPowerState($powerState, $what);
 
@@ -155,9 +155,9 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
     public function getInternalDefaults(): array
     {
         return [
-            'trigger_on_poweredOff'        => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_suspended'         => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_unknown'           => MonitoringStateTrigger::RAISE_UNKNOWN,
+            'trigger_on_poweredOff'        => MonitoringStateTrigger::RAISE_CRITICAL->value,
+            'trigger_on_suspended'         => MonitoringStateTrigger::RAISE_CRITICAL->value,
+            'trigger_on_unknown'           => MonitoringStateTrigger::RAISE_UNKNOWN->value,
             'warning_for_uptime_less_than' => 900
         ];
     }

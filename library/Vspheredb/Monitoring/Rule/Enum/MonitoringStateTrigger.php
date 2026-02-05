@@ -2,21 +2,41 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Enum;
 
-class MonitoringStateTrigger
+enum MonitoringStateTrigger: string
 {
-    public const IGNORE         = 'ignore';
+    case IGNORE = 'ignore';
+    case RAISE_WARNING  = 'warning';
+    case RAISE_CRITICAL = 'critical';
+    case RAISE_UNKNOWN  = 'unknown';
 
-    public const RAISE_WARNING  = 'warning';
-
-    public const RAISE_CRITICAL = 'critical';
-
-    public const RAISE_UNKNOWN  = 'unknown';
-
-    public static function getMonitoringState(?string $trigger): CheckPluginState
+    /**
+     * Allow to create a trigger out of null. Null leads to the IGNORE case.
+     *
+     * @param string|null $from
+     *
+     * @return self
+     */
+    public static function nullableFrom(?string $from): self
     {
-        return match ($trigger) {
-            self::RAISE_WARNING, self::RAISE_CRITICAL, self::RAISE_UNKNOWN => CheckPluginState::fromName($trigger),
-            default                                                        => CheckPluginState::OK
+        if ($from === null) {
+            return self::IGNORE;
+        }
+
+        return self::from($from);
+    }
+
+    /**
+     * Get the monitoring state for the trigger
+     *
+     * @return CheckPluginState
+     */
+    public function monitoringState(): CheckPluginState
+    {
+        return match ($this) {
+            self::RAISE_WARNING  => CheckPluginState::fromTrigger(self::RAISE_WARNING),
+            self::RAISE_CRITICAL => CheckPluginState::fromTrigger(self::RAISE_CRITICAL),
+            self::RAISE_UNKNOWN  => CheckPluginState::fromTrigger(self::RAISE_UNKNOWN),
+            default              => CheckPluginState::OK
         };
     }
 }
