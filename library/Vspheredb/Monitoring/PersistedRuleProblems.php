@@ -13,6 +13,7 @@ use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRuleSet;
 use Icinga\Module\Vspheredb\Util;
 use Throwable;
@@ -43,13 +44,13 @@ class PersistedRuleProblems
         $objects = ManagedObject::loadAll($this->db, null, 'uuid');
         $datastores = Datastore::loadAll($this->db, null, 'uuid');
         $this->presetManagedObjects($datastores, $objects);
-        $this->checkObjects($datastores, 'datastore');
+        $this->checkObjects($datastores, ObjectType::DATASTORE);
         unset($datastores);
 
         HostQuickStats::preloadAll($this->db);
         $hosts = HostSystem::loadAll($this->db, null, 'uuid');
         $this->presetManagedObjects($hosts, $objects);
-        $this->checkObjects($hosts, 'host');
+        $this->checkObjects($hosts, ObjectType::HOST_SYSTEM);
 
         VmQuickStats::preloadAll($this->db);
         // TODO: Preload Disk Usage and Snapshots
@@ -72,7 +73,7 @@ class PersistedRuleProblems
                 $vm->setManagedObject($objects[$uuid]);
             }
         }
-        $this->checkObjects($vms, 'vm');
+        $this->checkObjects($vms, ObjectType::VIRTUAL_MACHINE);
 
         unset($objects);
         unset($hosts);
@@ -117,10 +118,13 @@ class PersistedRuleProblems
 
     /**
      * @param BaseDbObject[] $objects
+     * @param ObjectType     $folderType
+     *
      * @return void
-     * @throws \Zend_Db_Adapter_Exception
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
-    protected function checkObjects(array $objects, $folderType)
+    protected function checkObjects(array $objects, ObjectType $folderType): void
     {
         $runner = new CheckRunner($this->db);
         $runner->preloadTreeFor($folderType);
