@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
@@ -40,7 +40,7 @@ class SnapshotsRuleDefinition extends MonitoringRuleDefinition
             'cnt' => 'COUNT(*)',
             'ts_oldest' => 'FLOOR(MIN(ts_create) / 1000)'
         ])->where('vm_snapshot.vm_uuid = ?', $object->getConnection()->quoteBinary($object->get('uuid'))));
-        $state = new CheckPluginState();
+        $state = CheckPluginState::OK;
         $count = (int) $info->cnt;
 
         if ($count === 0) {
@@ -48,19 +48,19 @@ class SnapshotsRuleDefinition extends MonitoringRuleDefinition
         } else {
             $max = $settings->get('warning_if_more_than');
             if ($max && $count > $max) {
-                $state->raiseState(CheckPluginState::WARNING);
+                $state = $state->raise(CheckPluginState::WARNING);
             }
             $max = $settings->get('critical_if_more_than');
             if ($max && $count > $max) {
-                $state->raiseState(CheckPluginState::CRITICAL);
+                $state = $state->raise(CheckPluginState::CRITICAL);
             }
             $min = $settings->get('warning_if_older_than');
             if ($min && $info->ts_oldest < (time() - $min * 86400)) {
-                $state->raiseState(CheckPluginState::WARNING);
+                $state = $state->raise(CheckPluginState::WARNING);
             }
             $min = $settings->get('critical_if_older_than');
             if ($min && $info->ts_oldest < (time() - $min * 86400)) {
-                $state->raiseState(CheckPluginState::CRITICAL);
+                $state = $state->raise(CheckPluginState::CRITICAL);
             }
             $name = $db->fetchOne(
                 $db->select()->from('vm_snapshot', 'name')

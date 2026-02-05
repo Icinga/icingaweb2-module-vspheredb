@@ -13,10 +13,10 @@ use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Monitoring\Health\VCenterInfo;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
 use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 
@@ -339,7 +339,7 @@ class CheckCommand extends Command
         $screen = Screen::factory();
         $pattern = '/\[(OK|WARNING|CRITICAL|UNKNOWN)]\s/';
         return preg_replace_callback($pattern, function ($match) use ($screen) {
-            return '[' . $screen->colorize($match[1], (new CheckPluginState($match[1]))->getColor()) . '] ';
+            return '[' . $screen->colorize($match[1], CheckPluginState::from($match[1])->color()) . '] ';
         }, $string);
     }
 

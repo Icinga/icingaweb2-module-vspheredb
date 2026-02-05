@@ -2,8 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Enum;
 
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
-
 class MonitoringStateTrigger
 {
     public const IGNORE         = 'ignore';
@@ -17,8 +15,8 @@ class MonitoringStateTrigger
     public static function getMonitoringState(?string $trigger): CheckPluginState
     {
         return match ($trigger) {
-            self::RAISE_WARNING, self::RAISE_CRITICAL, self::RAISE_UNKNOWN => new CheckPluginState($trigger),
-            default                                                        => new CheckPluginState()
+            self::RAISE_WARNING, self::RAISE_CRITICAL, self::RAISE_UNKNOWN => CheckPluginState::fromName($trigger),
+            default                                                        => CheckPluginState::OK
         };
     }
 }
