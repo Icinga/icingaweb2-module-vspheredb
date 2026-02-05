@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleDefinition 
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleSetDefinition as RuleSet;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\MonitoringStateTrigger;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ResultStatus;
 use InvalidArgumentException;
 use ipl\Html\Attributes;
 use ipl\Html\FormElement\NumberElement;
@@ -25,14 +26,6 @@ class RuleForm extends Form
 
     public const NEXT_UUID = '00000000-0000-0000-0000-000000000000';
 
-    public const RESULT_CREATED    = 'created';
-
-    public const RESULT_MODIFIED   = 'modified';
-
-    public const RESULT_UNMODIFIED = 'unmodified';
-
-    public const RESULT_DELETED    = 'deleted';
-
     /** @var string */
     protected string $objectType;
 
@@ -48,8 +41,8 @@ class RuleForm extends Form
     /** @var ?MonitoringRuleSet */
     protected ?MonitoringRuleSet $loadedSet;
 
-    /** @var ?string Any of self::RESULT_* */
-    protected ?string $result = null;
+    /** @var ?ResultStatus Any of self::RESULT_* */
+    protected ?ResultStatus $result = null;
 
     public function __construct(
         string $objectType,
@@ -289,22 +282,22 @@ class RuleForm extends Form
 
     public function hasBeenCreated(): bool
     {
-        return $this->result === self::RESULT_CREATED;
+        return $this->result === ResultStatus::CREATED;
     }
 
     public function hasBeenModified(): bool
     {
-        return $this->result === self::RESULT_MODIFIED;
+        return $this->result === ResultStatus::MODIFIED;
     }
 
     public function hasNotBeenModified(): bool
     {
-        return $this->result === self::RESULT_UNMODIFIED;
+        return $this->result === ResultStatus::UNMODIFIED;
     }
 
     public function hasBeenDeleted(): bool
     {
-        return $this->result === self::RESULT_DELETED;
+        return $this->result === ResultStatus::DELETED;
     }
 
 
@@ -320,19 +313,17 @@ class RuleForm extends Form
         }
         if (empty($values)) {
             if ($set->delete($this->db)) {
-                $result = self::RESULT_DELETED;
+                $this->result = ResultStatus::DELETED;
             } else {
-                $result = self::RESULT_UNMODIFIED; // No different message for now
+                $this->result = ResultStatus::UNMODIFIED; // No different message for now
             }
         } else {
             if ($set->hasBeenLoadedFromDb()) {
-                $result = $set->store($this->db) ? self::RESULT_MODIFIED : self::RESULT_UNMODIFIED;
+                $this->result = $set->store($this->db) ? ResultStatus::MODIFIED : ResultStatus::UNMODIFIED;
             } else {
                 $set->store($this->db);
-                $result = self::RESULT_CREATED;
+                $this->result = ResultStatus::CREATED;
             }
         }
-
-        $this->result = $result;
     }
 }
