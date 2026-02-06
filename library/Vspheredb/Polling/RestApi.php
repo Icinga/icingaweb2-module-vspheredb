@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Polling;
 
-use Closure;
 use gipfl\Curl\CurlAsync;
 use gipfl\Json\JsonString;
 use GuzzleHttp\Psr7\Request;
@@ -42,9 +41,6 @@ class RestApi
     /** @var VCenter */
     protected VCenter $vCenter;
 
-    /** @var Closure Will become obsolete with PHP 8.1 */
-    private Closure $normalizeBatchResult;
-
     public function __construct(
         ServerInfo $server,
         VCenter $vCenter,
@@ -57,10 +53,6 @@ class RestApi
         $this->curl = $curl;
         $this->logger = $logger;
         $this->curlOptions = CurlOptions::forServerInfo($server);
-        $this->normalizeBatchResult = function ($result) {
-            // print_r($result);
-            return $this->normalizeBatchResult($result);
-        };
     }
 
     /**
@@ -280,40 +272,36 @@ class RestApi
     protected function get(string $url): PromiseInterface
     {
         return $this->send($this->request('GET', $this->apiUrl($url)))
-            ->then([$this, 'decodeResponse']);
+            ->then($this->decodeResponse(...));
     }
 
     protected function post(string $url, $body = null): PromiseInterface
     {
         return $this->send($this->request('POST', $this->apiUrl($url), $body))
-            ->then([$this, 'decodeResponse']);
+            ->then($this->decodeResponse(...));
     }
 
     protected function taggingBatchLegacy(string $action, $body = null): PromiseInterface
     {
         return $this->postLegacy("cis/tagging/batch?~action=$action", $body)
-            ->then($this->normalizeBatchResult);
+            ->then($this->normalizeBatchResult(...));
     }
 
     protected function getLegacy(string $url): PromiseInterface
     {
         return $this->send($this->request('GET', $this->legacyUrl($url)))
-            ->then([$this, 'decodeResponse'])
-            ->then([$this, 'requireValueProperty']);
+            ->then($this->decodeResponse(...))
+            ->then($this->requireValueProperty(...));
     }
 
     protected function postLegacy(string $url, $body = null): PromiseInterface
     {
         return $this->send($this->request('POST', $this->legacyUrl($url), $body))
-            ->then([$this, 'decodeResponse'])
-            ->then([$this, 'requireValueProperty']);
+            ->then($this->decodeResponse(...))
+            ->then($this->requireValueProperty(...));
     }
 
-    /**
-     * Will become protected, once we have ->decodeResponse(...) on 8.1
-     * @internal
-     */
-    public function decodeResponse(ResponseInterface $response)
+    protected function decodeResponse(ResponseInterface $response)
     {
         if ($response->getStatusCode() > 299) {
             throw new RuntimeException(
@@ -350,10 +338,7 @@ class RestApi
         return $request;
     }
 
-    /**
-     * @internal Will become protected with 8.1
-     */
-    public function requireValueProperty(stdClass $result)
+    protected function requireValueProperty(stdClass $result)
     {
         if (isset($result->error_type)) {
             // {
