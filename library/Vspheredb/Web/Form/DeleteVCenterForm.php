@@ -42,7 +42,7 @@ class DeleteVCenterForm extends Form
         $this->loop = $loop;
     }
 
-    public function assemble(): void
+    protected function assemble(): void
     {
         $this->add(Html::tag('h3', $this->translate('Delete this vCenter')));
         $this->add(Hint::warning($this->translate(
@@ -61,7 +61,7 @@ class DeleteVCenterForm extends Form
         ))->addToForm($this);
     }
 
-    public function onSuccess(): void
+    protected function onSuccess(): void
     {
         $db = $this->db->getDbAdapter();
         // Delete the connection first.

@@ -31,7 +31,7 @@ class PerfdataConsumerForm extends ObjectForm
         parent::__construct($store);
     }
 
-    public function assemble(): void
+    protected function assemble(): void
     {
         $this->addElement('text', 'name', [
             'label'       => $this->translate('Name'),

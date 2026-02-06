@@ -64,7 +64,7 @@ class VCenterShipMetricsForm extends ObjectForm
         return array_map(fn ($consumer) => $consumer->get('name'), $consumers);
     }
 
-    public function assemble(): void
+    protected function assemble(): void
     {
         $this->add(Html::tag('h3', $this->translate('Ship Performance Data')));
         if ($this->object instanceof PerfdataSubscription && !$this->hasBeenSent()) {

@@ -78,7 +78,7 @@ enum ObjectType: string
     /**
      * Get the class for the object type
      *
-     * @return string|VirtualMachine|HostSystem|Datastore
+     * @return class-string
      */
     public function class(): string
     {
