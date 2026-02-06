@@ -26,7 +26,7 @@ class VCenterServerForm extends Form
         $this->db = $db;
     }
 
-    public function assemble(): void
+    protected function assemble(): void
     {
         if (! class_exists('SoapClient')) {
             $this->addMessage($this->translate('The PHP SOAP extension (php-soap) is not installed/enabled'));
@@ -215,7 +215,7 @@ class VCenterServerForm extends Form
         return $this->deleted;
     }
 
-    public function onSuccess(): void
+    protected function onSuccess(): void
     {
         $this->getObject()->setProperties($this->getValues());
     }

@@ -155,7 +155,7 @@ class ChooseDbResourceForm extends Form
         }
     }
 
-    public function onSuccess(): void
+    protected function onSuccess(): void
     {
         if ($this->getSubmitLabel() === $this->storeConfigLabel) {
             if ($this->storeResourceConfig()) {

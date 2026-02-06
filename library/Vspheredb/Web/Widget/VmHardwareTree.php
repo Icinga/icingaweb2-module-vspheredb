@@ -234,7 +234,7 @@ class VmHardwareTree extends BaseHtmlElement
     }
 
 
-    public function assemble(): void
+    protected function assemble(): void
     {
         $this->fetchHardware();
         $this->add($this->renderNodes($this->parents));

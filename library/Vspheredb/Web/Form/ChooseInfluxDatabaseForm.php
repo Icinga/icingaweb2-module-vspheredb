@@ -39,7 +39,7 @@ class ChooseInfluxDatabaseForm extends Form
         $this->hook = $hook;
     }
 
-    public function assemble(): void
+    protected function assemble(): void
     {
         $this->addDbSelection();
     }

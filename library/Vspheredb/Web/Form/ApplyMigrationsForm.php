@@ -20,7 +20,7 @@ class ApplyMigrationsForm extends Form
         $this->migrations = $migrations;
     }
 
-    public function assemble(): void
+    protected function assemble(): void
     {
         if ($this->migrations->hasSchema()) {
             $count = $this->migrations->countPendingMigrations();
@@ -36,7 +36,7 @@ class ApplyMigrationsForm extends Form
         $this->addElement('submit', 'submit', ['label' => $label]);
     }
 
-    public function onSuccess(): void
+    protected function onSuccess(): void
     {
         $this->migrations->applyPendingMigrations();
         Notification::success($this->translate('Pending database schema migrations have successfully been applied'));
