@@ -77,7 +77,7 @@ class FilterHostParentForm extends Form
         }
     }
 
-    public function onSuccess(): void
+    protected function onSuccess(): void
     {
         // Overriding ipl method, would otherwise render a "success" paragraph
     }

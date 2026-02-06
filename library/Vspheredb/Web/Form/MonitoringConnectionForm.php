@@ -197,7 +197,7 @@ class MonitoringConnectionForm extends Form
         return $this->id;
     }
 
-    public function onSuccess(): void
+    protected function onSuccess(): void
     {
         $values = $this->getValues();
         $db = $this->db;

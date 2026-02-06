@@ -74,7 +74,7 @@ abstract class ObjectForm extends Form
         return round(1000 * ((int)$time[1] + (float)$time[0]));
     }
 
-    public function onSuccess(): void
+    protected function onSuccess(): void
     {
         if ($this->object) {
             $object = $this->object;

@@ -40,7 +40,7 @@ class InfluxDbConnectionForm extends Form
         $this->client = $client;
     }
 
-    public function assemble(): void
+    protected function assemble(): void
     {
         $this->addHidden('checked_url', ['ignore' => true]);
         $this->addHidden('checked_api_version', ['ignore' => true]);
