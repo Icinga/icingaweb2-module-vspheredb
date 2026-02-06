@@ -177,11 +177,11 @@ class HostsTable extends ObjectsTable
         $wantsVms = false;
         $wantsVCenter = false;
         foreach ($columns as $column) {
-            if (preg_match('/^\(?vms\./', $column)) {
+            if (str_starts_with($column, 'vms.') || str_starts_with($column, '(vms.')) {
                 $wantsVms = true;
                 break;
             }
-            if (substr($column, 0, 3) === 'vc.') {
+            if (str_starts_with($column, 'vc.')) {
                 $wantsVCenter = true;
             }
         }

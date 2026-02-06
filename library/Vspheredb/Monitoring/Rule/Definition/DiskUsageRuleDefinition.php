@@ -65,7 +65,7 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
 
     protected static function stringMatches(string $filterString, string $string): bool
     {
-        if (strpos($filterString, '*') === false) {
+        if (! str_contains($filterString, '*')) {
             return $string === $filterString;
         }
 

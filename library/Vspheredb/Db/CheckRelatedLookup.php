@@ -101,7 +101,7 @@ class CheckRelatedLookup
             }
             if ($value === null) {
                 $select->where($key);
-            } elseif (strpos($key, '?') === false) {
+            } elseif (! str_contains($key, '?')) {
                 $select->where("$key = ?", $value);
             } else {
                 $select->where($key, $value);

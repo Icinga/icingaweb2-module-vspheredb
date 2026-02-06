@@ -45,19 +45,19 @@ class VmsTable extends ObjectsTable
         $wantsDisks = false;
         $wantsDataStores = false;
         foreach ($columns as $column) {
-            if (substr($column, 0, 2) === 'h.') {
+            if (str_starts_with($column, 'h.')) {
                 $wantsHosts = true;
             }
-            if (substr($column, 0, 4) === 'vqs.') {
+            if (str_starts_with($column, 'vqs.')) {
                 $wantsStats = true;
             }
-            if (substr($column, 0, 3) === 'vc.') {
+            if (str_starts_with($column, 'vc.')) {
                 $wantsVCenter = true;
             }
-            if (substr($column, 0, 4) === 'vmd.') {
+            if (str_starts_with($column, 'vmd.')) {
                 $wantsDisks = true;
             }
-            if (substr($column, 0, 4) === 'vdu.') {
+            if (str_starts_with($column, 'vdu.')) {
                 $wantsDataStores = true;
             }
         }
