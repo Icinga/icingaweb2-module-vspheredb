@@ -215,7 +215,7 @@ abstract class DbObject
     public function get(string $property): mixed
     {
         $func = 'get' . ucfirst($property);
-        if (substr($func, -2) === '[]') {
+        if (str_ends_with($func, '[]')) {
             $func = substr($func, 0, -2);
         }
         // TODO: id check avoids collision with getId. Rethink this.
@@ -273,7 +273,7 @@ abstract class DbObject
             return false;
         }
         $func = 'get' . ucfirst($key);
-        if (substr($func, -2) === '[]') {
+        if (str_ends_with($func, '[]')) {
             $func = substr($func, 0, -2);
         }
         if (method_exists($this, $func)) {
@@ -311,7 +311,7 @@ abstract class DbObject
         }
 
         $func = 'set' . ucfirst($key);
-        if (substr($func, -2) === '[]') {
+        if (str_ends_with($func, '[]')) {
             $func = substr($func, 0, -2);
         }
 
@@ -1087,7 +1087,7 @@ abstract class DbObject
     {
         if (isset($this->properties[$name])) {
             $value = $this->properties[$name];
-            if (preg_match('/uuid$/', $name) && strlen($value) === 16) {
+            if (str_ends_with($name, 'uuid') && strlen($value) === 16) {
                 return Uuid::fromBytes($value)->toString();
             }
 

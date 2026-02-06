@@ -149,7 +149,7 @@ class HostSystemInfoTable extends NameValueTable
         }
         if (isset($images[$vendor])) {
             foreach ($images[$vendor] as $pattern => $url) {
-                if (substr($pattern, 0, 1) === '/' && preg_match($pattern, $model)) {
+                if (str_starts_with($pattern, '/') && preg_match($pattern, $model)) {
                     return $url;
                 }
             }

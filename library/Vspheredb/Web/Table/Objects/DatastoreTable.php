@@ -148,7 +148,7 @@ class DatastoreTable extends ObjectsTable
             ->group('o.uuid');
 
         foreach ($columns as $column) {
-            if (substr($column, 0, 3) === 'vc.') {
+            if (str_starts_with($column, 'vc.')) {
                 $wantsVCenter = true;
             }
         }

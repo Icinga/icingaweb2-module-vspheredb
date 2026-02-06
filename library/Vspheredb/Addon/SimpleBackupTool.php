@@ -33,7 +33,7 @@ abstract class SimpleBackupTool implements BackupTool
      */
     public function wantsAnnotation($annotation): bool
     {
-        return $annotation !== null && strpos($annotation, static::PREFIX) !== false;
+        return $annotation !== null && str_contains($annotation, static::PREFIX);
     }
 
     /**
@@ -132,7 +132,7 @@ abstract class SimpleBackupTool implements BackupTool
         $parts = preg_split('/],\s/', rtrim($match, ']'));
         $attributes = [];
         foreach ($parts as $part) {
-            if (strpos($part, ': [') === false) {
+            if (! str_contains($part, ': [')) {
                 continue;
             }
             [$key, $value] = preg_split('/:\s\[/', $part, 2);

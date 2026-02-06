@@ -69,7 +69,7 @@ class CheckCommand extends Command
                 }
             }, function (Exception $e) {
                 $message = $e->getMessage();
-                if (preg_match('/^Unable to connect/', $message)) {
+                if (str_starts_with($message, 'Unable to connect')) {
                     $message = "Daemon not running? $message";
                 }
                 $this->addProblem('CRITICAL', $message);

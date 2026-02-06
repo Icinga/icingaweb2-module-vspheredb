@@ -147,7 +147,7 @@ class ManagedObject extends VspheredbDbObject
      */
     protected function isBinaryColumn(string $column): bool
     {
-        if ($column === 'uuid' || substr($column, -5) === '_uuid') {
+        if ($column === 'uuid' || str_ends_with($column, '_uuid')) {
             return true;
         }
 

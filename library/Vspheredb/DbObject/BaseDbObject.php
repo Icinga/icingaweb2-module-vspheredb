@@ -77,7 +77,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
             return true;
         }
 
-        if ($column === 'uuid' || substr($column, -5) === '_uuid') {
+        if ($column === 'uuid' || str_ends_with($column, '_uuid')) {
             return true;
         }
 
@@ -147,7 +147,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
                 $value = DbProperty::dbToBoolean($value);
             } elseif ($this->isObjectReference($key)) {
                 $value = Uuid::fromBytes($value)->toString();
-            } elseif ($key === 'uuid' || substr($key, -5) === '_uuid') { // Hint: SHOULD be keys or references
+            } elseif ($key === 'uuid' || str_ends_with($key, '_uuid')) { // Hint: SHOULD be keys or references
                 if (strlen($value) === 16) {
                     $value = Uuid::fromBytes($value)->toString();
                 } elseif ($value !== null) {

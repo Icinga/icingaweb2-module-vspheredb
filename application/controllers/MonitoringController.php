@@ -37,7 +37,7 @@ class MonitoringController extends Controller
     {
         parent::init();
         $action = $this->getRequest()->getActionName();
-        if (preg_match('/tree$/', $action) || in_array($action, ['index', 'configuration', 'history'])) {
+        if (str_ends_with($action, 'tree') || in_array($action, ['index', 'configuration', 'history'])) {
             $tabs = $this->tabs();
             $tabs->add('index', [
                 'label' => $this->translate('Monitoring'),
@@ -63,7 +63,7 @@ class MonitoringController extends Controller
             }
             $tabs->activate($action);
         }
-        if (preg_match('/tree$/', $action)) {
+        if (str_ends_with($action, 'tree')) {
             $this->actions()->add(
                 Link::create($this->translate('Back to overview'), 'vspheredb/monitoring', null, [
                     'class' => 'icon-left-small'

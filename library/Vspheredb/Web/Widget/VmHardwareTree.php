@@ -272,7 +272,7 @@ class VmHardwareTree extends BaseHtmlElement
 
         // TODO: get serious:
         // $isNic = array_key_exists($key, $this->nics
-        $isNic = strpos($desc, 'Network') === 0;
+        $isNic = str_starts_with($desc, 'Network');
 
         if ($isDisk) {
             $class = 'icon-database';

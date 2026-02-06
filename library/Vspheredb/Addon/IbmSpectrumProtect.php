@@ -58,7 +58,7 @@ class IbmSpectrumProtect implements BackupTool
      */
     public function wantsAnnotation($annotation): bool
     {
-        return $annotation !== null && strpos($annotation, static::OPEN_TAG) !== false;
+        return $annotation !== null && str_contains($annotation, static::OPEN_TAG);
     }
 
     /**
@@ -117,7 +117,7 @@ class IbmSpectrumProtect implements BackupTool
         ];
 
         foreach ($lines as $line) {
-            if (strpos($line, '=') === false) {
+            if (! str_contains($line, '=')) {
                 continue;
             }
             [$key, $value] = explode('=', $line, 2);
