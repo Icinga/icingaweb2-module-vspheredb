@@ -74,7 +74,7 @@ class VmEssentialInfoTable extends NameValueTable
 
         $annotation = trim($annotation);
 
-        if (strpos($annotation, "\n") === false) {
+        if (! str_contains($annotation, "\n")) {
             return $annotation;
         } else {
             return Html::tag('pre', null, $annotation);

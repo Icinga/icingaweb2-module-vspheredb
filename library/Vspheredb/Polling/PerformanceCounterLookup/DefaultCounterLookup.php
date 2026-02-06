@@ -117,7 +117,7 @@ abstract class DefaultCounterLookup implements CounterLookup
     protected function convertResultRowUuidsToText($row): void
     {
         foreach (array_keys((array) $row) as $key) {
-            if ($key === 'uuid' || substr($key, -5) === '_uuid') {
+            if ($key === 'uuid' || str_ends_with($key, '_uuid')) {
                 if (strlen($row->$key) === 16) {
                     $row->$key = Uuid::fromBytes($row->$key)->toString();
                 }

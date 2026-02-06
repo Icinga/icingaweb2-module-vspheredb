@@ -50,7 +50,7 @@ class MappingHelper
      */
     public static function getSpecificValue(object $row, string $var): mixed
     {
-        if (strpos($var, '.') === false) {
+        if (! str_contains($var, '.')) {
             if ($row instanceof DbObject) {
                 return $row->$var;
             }

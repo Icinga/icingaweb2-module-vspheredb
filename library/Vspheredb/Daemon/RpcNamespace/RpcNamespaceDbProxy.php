@@ -40,7 +40,7 @@ class RpcNamespaceDbProxy
      */
     public function __call(string $method, array $params)
     {
-        if (preg_match('/Request$/', $method)) {
+        if (str_ends_with($method, 'Request')) {
             if ($this->runner === null) {
                 throw new RuntimeException('DB runner is not ready');
             }
