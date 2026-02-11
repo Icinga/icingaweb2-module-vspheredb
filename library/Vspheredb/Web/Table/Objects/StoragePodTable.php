@@ -10,7 +10,7 @@ use Icinga\Util\Format;
 use ipl\Html\Html;
 use Zend_Db_Select;
 
-class StoragePodTable extends ObjectsTable
+class StoragePodTable extends PercentObjectsTable
 {
     protected function initialize(): void
     {
@@ -70,22 +70,6 @@ class StoragePodTable extends ObjectsTable
             'object_name',
             'usage'
         ];
-    }
-
-    protected function formatBytesPercent($row, $name)
-    {
-        $bytes = $row->$name;
-        $percent = $row->{"{$name}_percent"};
-        return sprintf(
-            '%s (%s)',
-            Format::bytes($bytes, Format::STANDARD_IEC),
-            $this->formatPercent($percent)
-        );
-    }
-
-    protected function formatPercent($value)
-    {
-        return sprintf('%0.2f%%', $value);
     }
 
     public function sortBy(array|string $columns): static

@@ -13,7 +13,7 @@ use ipl\Html\Attributes;
 use Ramsey\Uuid\Uuid;
 use Zend_Db_Select;
 
-class DatastoreTable extends ObjectsTable
+class DatastoreTable extends PercentObjectsTable
 {
     protected function initialize(): void
     {
@@ -110,19 +110,6 @@ class DatastoreTable extends ObjectsTable
             'size',
             'usage'
         ];
-    }
-
-    protected function formatBytesPercent(object $row, string $name): string
-    {
-        $bytes = $row->$name;
-        $percent = $row->{"{$name}_percent"};
-
-        return sprintf('%s (%s)', Format::bytes($bytes, Format::STANDARD_IEC), $this->formatPercent($percent));
-    }
-
-    protected function formatPercent(string $value): string
-    {
-        return sprintf('%0.2f%%', $value);
     }
 
     public function sortBy(array|string $columns): static
