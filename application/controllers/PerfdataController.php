@@ -73,11 +73,11 @@ class PerfdataController extends Controller
             $this->redirectNow('vspheredb/perfdata/consumers');
         });
         $form->on(Form::ON_SUBMIT, function (PerfdataConsumerForm $form) {
-            if ($form->wasNew()) {
-                Notification::success($this->translate('Performance Data Consumer has been created'));
-            } else {
-                Notification::success($this->translate('Performance Data Consumer has been updated'));
-            }
+            Notification::success(
+                $form->wasNew()
+                    ? $this->translate('Performance Data Consumer has been created')
+                    : $this->translate('Performance Data Consumer has been updated')
+            );
             $this->redirectNow(Url::fromPath('vspheredb/perfdata/consumer', [
                 'uuid' => Uuid::fromBytes($form->getObject()->get('uuid'))->toString()
             ]));

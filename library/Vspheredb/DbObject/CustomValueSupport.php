@@ -16,11 +16,7 @@ trait CustomValueSupport
      */
     protected function setCustomValues(mixed $value): void
     {
-        if ($value === null) {
-            $this->set('custom_values', null);
-        } else {
-            $this->set('custom_values', JsonString::encode($value));
-        }
+        $this->set('custom_values', $value === null ? null : JsonString::encode($value));
     }
 
 

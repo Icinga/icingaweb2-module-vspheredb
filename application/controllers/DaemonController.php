@@ -130,11 +130,9 @@ class DaemonController extends Controller
         $logWindow = Html::tag('div', ['class' => 'logWindow'], $log);
         foreach ($logLines as $line) {
             $ts = $line->ts_create / 1000;
-            if ($ts + 3600 * 16 < time()) {
-                $tsFormatted = DateFormatter::formatDateTime($ts);
-            } else {
-                $tsFormatted = DateFormatter::formatTime($ts);
-            }
+            $tsFormatted = $ts + 3600 * 16 < time()
+                ? DateFormatter::formatDateTime($ts)
+                : DateFormatter::formatTime($ts);
             $log->add(Html::tag('div', ['class' => $line->level], "$tsFormatted: " . $line->message));
         }
 

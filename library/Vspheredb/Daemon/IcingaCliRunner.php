@@ -86,11 +86,7 @@ class IcingaCliRunner
         $command = ['exec', escapeshellcmd($this->binary)];
 
         foreach ($arguments as $argument) {
-            if (ctype_alnum(preg_replace('/^\-{1,2}/', '', $argument))) {
-                $command[] = $argument;
-            } else {
-                $command[] = escapeshellarg($argument);
-            }
+            $command[] = ctype_alnum(preg_replace('/^\-{1,2}/', '', $argument)) ? $argument : escapeshellarg($argument);
         }
 
         return implode(' ', $command);

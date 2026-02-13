@@ -157,11 +157,10 @@ trait HostDetailExtensionTrait
                     continue;
                 }
 
-                if (str_starts_with($property, 'vars.')) {
-                    $value = $this->getCustomVar($host, substr($property, 5));
-                } else {
-                    $value = $host->$property;
-                }
+                $value = str_starts_with($property, 'vars.')
+                    ? $this->getCustomVar($host, substr($property, 5))
+                    : $host->$property;
+
                 if (! $value) {
                     continue;
                 }

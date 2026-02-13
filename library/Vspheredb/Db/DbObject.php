@@ -858,11 +858,9 @@ abstract class DbObject
 
                 if ($this->insertIntoDb()) {
                     if ($autoincKeyName && $this->getProperty($autoincKeyName) === null) {
-                        if ($this->connection->isPgsql()) {
-                            $this->properties[$autoincKeyName] = $this->db->lastInsertId($table, $autoincKeyName);
-                        } else {
-                            $this->properties[$autoincKeyName] = $this->db->lastInsertId();
-                        }
+                        $this->properties[$autoincKeyName] = $this->connection->isPgsql()
+                            ? $this->db->lastInsertId($table, $autoincKeyName)
+                            : $this->db->lastInsertId();
                     }
                     // $this->log(sprintf('New %s "%s" has been stored', $table, $id));
                     $this->onInsert();
@@ -970,27 +968,23 @@ abstract class DbObject
             /** @var string $k */
             foreach ($key as $k) {
                 if ($this->hasBeenLoadedFromDb()) {
-                    if ($this->loadedProperties[$k] === null) {
-                        $where[] = sprintf('%s IS NULL', $k);
-                    } else {
-                        $where[] = $this->createQuotedWhere($k, $this->loadedProperties[$k]);
-                    }
+                    $where[] = $this->loadedProperties[$k] === null
+                        ? sprintf('%s IS NULL', $k)
+                        : $this->createQuotedWhere($k, $this->loadedProperties[$k]);
                 } else {
-                    if ($this->properties[$k] === null) {
-                        $where[] = sprintf('%s IS NULL', $k);
-                    } else {
-                        $where[] = $this->createQuotedWhere($k, $this->properties[$k]);
-                    }
+                    $where[] = $this->properties[$k] === null
+                        ? sprintf('%s IS NULL', $k)
+                        : $this->createQuotedWhere($k, $this->properties[$k]);
                 }
             }
 
             return implode(' AND ', $where);
         }
-        if ($this->hasBeenLoadedFromDb()) {
-            return $this->createQuotedWhere($key, $this->loadedProperties[$key]);
-        } else {
-            return $this->createQuotedWhere($key, $this->properties[$key]);
-        }
+
+        return $this->createQuotedWhere(
+            $key,
+            $this->hasBeenLoadedFromDb() ? $this->loadedProperties[$key] : $this->properties[$key]
+        );
     }
 
     /**

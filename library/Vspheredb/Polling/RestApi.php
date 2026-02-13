@@ -326,11 +326,9 @@ class RestApi
     {
         if ($this->sidStore->hasCookies()) {
             foreach ($this->sidStore->getCookies() as $sid) {
-                if (str_starts_with($request->getUri()->getPath(), '/rest/')) {
-                    $request = $request->withAddedHeader('cookie', "vmware-api-session-id=$sid");
-                } else {
-                    $request = $request->withAddedHeader('vmware-api-session-id', $sid);
-                }
+                $request = str_starts_with($request->getUri()->getPath(), '/rest/')
+                    ? $request->withAddedHeader('cookie', "vmware-api-session-id=$sid")
+                    : $request->withAddedHeader('vmware-api-session-id', $sid);
             }
         }
 

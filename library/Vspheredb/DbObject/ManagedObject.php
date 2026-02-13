@@ -41,11 +41,7 @@ class ManagedObject extends VspheredbDbObject
      */
     public static function loadWithUuid(string $uuid, Db $connection): ManagedObject
     {
-        if (strlen($uuid) === 16) {
-            $uuid = Uuid::fromBytes($uuid);
-        } else {
-            $uuid = Uuid::fromString($uuid);
-        }
+        $uuid = strlen($uuid) === 16 ? Uuid::fromBytes($uuid) : Uuid::fromString($uuid);
 
         return static::load($uuid->getBytes(), $connection);
     }
@@ -86,11 +82,10 @@ class ManagedObject extends VspheredbDbObject
         $this->parent = $object;
         // Hint: parent change hasn't been detected otherwise.
         // TODO: check whether change detection is still fine
-        if ($object->hasBeenLoadedFromDb()) {
-            $this->set('parent_uuid', $object->get('uuid'));
-        } else {
-            $this->set('parent_uuid', 'NOT YET, SETTING A TOO LONG STRING');
-        }
+        $this->set(
+            'parent_uuid',
+            $object->hasBeenLoadedFromDb() ? $object->get('uuid') : 'NOT YET, SETTING A TOO LONG STRING'
+        );
 
         return $this;
     }
@@ -133,11 +128,7 @@ class ManagedObject extends VspheredbDbObject
      */
     public function calculateLevel(): int
     {
-        if ($this->parent === null) {
-            return 0;
-        } else {
-            return $this->parent->calculateLevel() + 1;
-        }
+        return $this->parent === null ? 0 : $this->parent->calculateLevel() + 1;
     }
 
     /**

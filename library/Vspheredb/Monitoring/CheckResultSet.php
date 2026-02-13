@@ -86,11 +86,7 @@ class CheckResultSet implements CheckResultInterface
         $output = '';
         $prefix = str_repeat(' ', $spaces);
         foreach ($lines as $line) {
-            if ($output === '') {
-                $output .= "$prefix$line";
-            } else {
-                $output .= "\n$prefix$line";
-            }
+            $output .= $output === '' ? "$prefix$line" : "\n$prefix$line";
         }
 
         return "$output"; // Hint: "$output\n" would be "correcter"

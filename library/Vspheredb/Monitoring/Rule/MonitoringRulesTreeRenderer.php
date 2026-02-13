@@ -66,12 +66,6 @@ class MonitoringRulesTreeRenderer extends BaseHtmlElement
 
     protected function createLink(string $label, ?string $uuid = null, array $attributes = []): Link
     {
-        if ($uuid === null) {
-            $params = [];
-        } else {
-            $params = Util::uuidParams($uuid);
-        }
-
-        return Link::create($label, $this->url, $params, $attributes);
+        return Link::create($label, $this->url, $uuid === null ? [] : Util::uuidParams($uuid), $attributes);
     }
 }

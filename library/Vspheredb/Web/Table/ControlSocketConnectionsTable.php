@@ -45,11 +45,9 @@ class ControlSocketConnectionsTable extends ArrayTable
     {
         $tr = $this::row([
             [
-                $row->direction === 'in' ? Icon::create('endtime', [
-                    'title' => $this->translate('Incoming connection')
-                ]) : Icon::create('starttime', [
-                    'title' => $this->translate('Outgoing connection')
-                ]),
+                $row->direction === 'in'
+                    ? Icon::create('endtime', ['title' => $this->translate('Incoming connection')])
+                    : Icon::create('starttime', ['title' => $this->translate('Outgoing connection')]),
                 ' ',
                 $row->socket
             ],

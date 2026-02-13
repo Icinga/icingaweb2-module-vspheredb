@@ -48,11 +48,7 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter,
         }
 
         $db = $this->db();
-        if ($this instanceof VCenterSummaryTable) {
-            $column = 'vc.instance_uuid';
-        } else {
-            $column = 'o.vcenter_uuid';
-        }
+        $column = $this instanceof VCenterSummaryTable ? 'vc.instance_uuid' : 'o.vcenter_uuid';
         if (count($uuids) === 1) {
             $this->getQuery()->where("$column = ?", DbUtil::quoteBinaryCompat(array_shift($uuids), $db));
         } else {
@@ -88,15 +84,9 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter,
                 $statusRenderer = $this->overallStatusRenderer();
                 $result = [$statusRenderer($row)];
             }
-            if ($this->baseUrl === null) {
-                $result[] = $row->object_name;
-            } else {
-                $result[] = Link::create(
-                    $row->object_name,
-                    $this->baseUrl,
-                    ['uuid' => Uuid::fromBytes($row->uuid)->toString()]
-                );
-            }
+            $result[] = $this->baseUrl === null
+                ? $row->object_name
+                : Link::create($row->object_name, $this->baseUrl, ['uuid' => Uuid::fromBytes($row->uuid)->toString()]);
 
             return $result;
         });

@@ -84,11 +84,7 @@ class ObjectsController extends Controller
         if ($parent) {
             $lookup = $this->pathLookup();
             $name = $lookup->getObjectName($parent);
-            if ($name) {
-                $this->addTitle($name);
-            } else {
-                $this->addTitle($defaultTitle);
-            }
+            $this->addTitle($name ?: $defaultTitle);
             if ($this->params->get('showDescendants')) {
                 $uuids = $lookup->listFoldersBelongingTo($parent);
                 $table->filterParentUuids($uuids);
@@ -142,11 +138,11 @@ class ObjectsController extends Controller
             return;
         }
         $found = count($table);
-        if ($total === $found) {
-            $this->content()->prepend(sprintf('%d %s', $total, $title));
-        } else {
-            $this->content()->prepend(sprintf('%d out of %d %s', $found, $total, $title));
-        }
+        $this->content()->prepend(
+            $total === $found
+                ? sprintf('%d %s', $total, $title)
+                : sprintf('%d out of %d %s', $found, $total, $title)
+        );
     }
 
     protected function downloadTable(ObjectsTable $table, string $title): void

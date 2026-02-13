@@ -42,11 +42,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
      */
     public static function loadWithUuid(string $uuid, Db $connection): static
     {
-        if (strlen($uuid) === 16) {
-            $uuid = Uuid::fromBytes($uuid);
-        } else {
-            $uuid = Uuid::fromString($uuid);
-        }
+        $uuid = strlen($uuid) === 16 ? Uuid::fromBytes($uuid) : Uuid::fromString($uuid);
 
         return static::load($uuid->getBytes(), $connection);
     }

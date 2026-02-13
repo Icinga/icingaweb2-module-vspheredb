@@ -114,11 +114,7 @@ class PathLookup
 
     public function listPathTo(string $uuid, bool $includeSelf = true): array
     {
-        if ($includeSelf) {
-            $parents = [$uuid];
-        } else {
-            $parents = [];
-        }
+        $parents = $includeSelf ? [$uuid] : [];
 
         $puuid = $uuid;
         while ($puuid = $this->fetchParentForId($puuid)) {
@@ -134,11 +130,6 @@ class PathLookup
             ->from('object', 'parent_uuid')
             ->where('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db));
 
-        $parent = $this->db->fetchOne($query);
-        if ($parent) {
-            return $parent;
-        } else {
-            return null;
-        }
+        return $this->db->fetchOne($query) ?: null;
     }
 }

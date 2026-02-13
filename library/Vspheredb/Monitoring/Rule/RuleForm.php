@@ -113,11 +113,10 @@ class RuleForm extends Form
         if ($instance === null) {
             $this->add(Html::tag('h3', $rule->getLabel()));
         } else {
-            if ($instance->toString() === self::NEXT_UUID) {
-                $this->add(Html::tag('h3', $rule->getLabel() . sprintf(' (%s)', $this->translate('new instance'))));
-            } else {
-                $this->add(Html::tag('h3', $rule->getLabel() . sprintf(' (%s)', $instance->toString())));
-            }
+            $uuid = $instance->toString() === self::NEXT_UUID
+                ? $this->translate('new instance')
+                : $instance->toString();
+            $this->add(Html::tag('h3', $rule->getLabel() . sprintf(' (%s)', $uuid)));
         }
         $prefix = Settings::prefix($set, $rule, $instance);
         $this->addEnabledSetting($prefix);
@@ -313,11 +312,7 @@ class RuleForm extends Form
             $set = new MonitoringRuleSet($this->binaryUuid, $this->objectType->value, $settings);
         }
         if (empty($values)) {
-            if ($set->delete($this->db)) {
-                $this->result = ResultStatus::DELETED;
-            } else {
-                $this->result = ResultStatus::UNMODIFIED; // No different message for now
-            }
+            $this->result = $set->delete($this->db) ? ResultStatus::DELETED : ResultStatus::UNMODIFIED;
         } else {
             if ($set->hasBeenLoadedFromDb()) {
                 $this->result = $set->store($this->db) ? ResultStatus::MODIFIED : ResultStatus::UNMODIFIED;

@@ -163,11 +163,7 @@ class VmHardwareTree extends BaseHtmlElement
             ['class' => 'icon-sitemap']
         );
 
-        if ($nic->portgroup_uuid === null) {
-            return $result;
-        } else {
-            return [$result, $this->linkToPortGroup($nic->portgroup_uuid)];
-        }
+        return $nic->portgroup_uuid === null ? $result : [$result, $this->linkToPortGroup($nic->portgroup_uuid)];
     }
 
     protected function linkToPortGroup($uuid): string
@@ -290,11 +286,11 @@ class VmHardwareTree extends BaseHtmlElement
         if ($isDisk) {
             $li->add($this->renderDisk($this->disks[$key], $device, $this->devices[$controllerKey]));
         } elseif ($isNic) {
-            if (array_key_exists($key, $this->nics)) {
-                $li->add($this->renderNic($this->nics[$key], $device, $this->devices[$controllerKey]));
-            } else {
-                $li->add(Link::create($desc, '#', null, ['class' => $class, 'title' => 'No more details available']));
-            }
+            $li->add(
+                array_key_exists($key, $this->nics)
+                    ? $this->renderNic($this->nics[$key], $device, $this->devices[$controllerKey])
+                    : Link::create($desc, '#', null, ['class' => $class, 'title' => 'No more details available'])
+            );
         } else {
             $li->add(Link::create($desc, '#', null, ['class' => $class]));
         }

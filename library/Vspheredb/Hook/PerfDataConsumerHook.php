@@ -160,11 +160,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
         foreach (Hook::all('vspheredb/PerfDataConsumer') as $class => $instance) {
             $module = static::getModuleFromClassName($class);
             $idx = $instance::getName();
-            if ($module === 'vspheredb') {
-                $enum[$idx] = $idx;
-            } else {
-                $enum[$idx] = "$idx ($module)";
-            }
+            $enum[$idx] = $idx . ($module === 'vspheredb' ? '' : " ($module)");
         }
 
         return $enum;

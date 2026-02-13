@@ -83,11 +83,7 @@ class VCenterShipMetricsForm extends ObjectForm
     protected function selectConsumer(): ?PerfdataConsumer
     {
         $consumers = $this->fetchConsumers();
-        if ($this->object) {
-            $consumer = Uuid::fromBytes($this->object->get('consumer_uuid'))->toString();
-        } else {
-            $consumer = null;
-        }
+        $consumer = $this->object ? Uuid::fromBytes($this->object->get('consumer_uuid'))->toString() : null;
         $this->addElement('select', 'consumer', [
             'label' => $this->translate('Consumer'),
             'options' => ['' => $this->translate('- please choose -')] + $this->enumConsumers($consumers),
