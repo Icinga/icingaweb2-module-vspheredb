@@ -69,11 +69,7 @@ class ServerInfo implements JsonSerialization
     public function get(string $key, $default = null): mixed
     {
         if (array_key_exists($key, $this->properties)) {
-            if ($this->properties[$key] === null) {
-                return $default;
-            } else {
-                return $this->properties[$key];
-            }
+            return $this->properties[$key] === null ? $default : $this->properties[$key];
         }
 
         throw new InvalidArgumentException("Trying to access invalid property: '$key'");

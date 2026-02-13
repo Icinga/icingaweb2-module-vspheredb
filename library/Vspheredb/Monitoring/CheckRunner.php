@@ -166,11 +166,7 @@ class CheckRunner
 
     protected function getRegistry(): RuleSetRegistry
     {
-        if ($this->ruleSetName) {
-            return RuleSetRegistry::byName($this->ruleSetName);
-        } else {
-            return RuleSetRegistry::default();
-        }
+        return $this->ruleSetName ? RuleSetRegistry::byName($this->ruleSetName) : RuleSetRegistry::default();
     }
 
     /**

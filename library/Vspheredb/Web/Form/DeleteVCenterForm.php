@@ -68,11 +68,11 @@ class DeleteVCenterForm extends Form
         $db->delete('vcenter_server', $db->quoteInto('vcenter_id = ?', (int) $this->vCenter->get('id')));
 
         try {
-            if (await($this->client->request('db.deleteVcenter', [$this->vCenter->get('id')]))) {
-                Notification::success($this->translate('vCenter data cleanup has been launched'));
-            } else {
-                Notification::success($this->translate('Failed to trigger vCenter data cleanup'));
-            }
+            Notification::success(
+                await($this->client->request('db.deleteVcenter', [$this->vCenter->get('id')]))
+                    ? $this->translate('vCenter data cleanup has been launched')
+                    : $this->translate('Failed to trigger vCenter data cleanup')
+            );
         } catch (Exception $e) {
             Notification::error($e->getMessage());
         }

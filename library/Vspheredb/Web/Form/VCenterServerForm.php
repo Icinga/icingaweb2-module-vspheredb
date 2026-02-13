@@ -93,17 +93,13 @@ class VCenterServerForm extends Form
             'required'    => true
         ]);
 
-        if ($this->isNew()) {
-            $this->addElement('password', 'password', [
-                'label' => $this->translate('Password'),
-                'required' => true
-            ]);
-        } else {
-            $this->addElement('password', 'password', [
-                'label' => $this->translate('Password'),
-                'placeholder' => $this->translate('(keep as stored)')
-            ]);
-        }
+        $this->addElement(
+            'password',
+            'password',
+            ['label' => $this->translate('Password')] + ($this->isNew()
+                ? ['required' => true]
+                : ['placeholder' => $this->translate('(keep as stored)')])
+        );
 
         $this->addElement('select', 'proxy_type', [
             'label' => $this->translate('Proxy'),

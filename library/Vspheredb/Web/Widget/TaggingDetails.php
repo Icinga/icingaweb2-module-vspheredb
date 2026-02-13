@@ -64,11 +64,7 @@ class TaggingDetails extends HtmlDocument
         $this->add($table);
 
         foreach ($this->categories as $category) {
-            if ($category->cardinalityIsSingle()) {
-                $parent = new HtmlDocument();
-            } else {
-                $parent = Html::tag('ul');
-            }
+            $parent = $category->cardinalityIsSingle() ? new HtmlDocument() : Html::tag('ul');
             foreach ($this->tags as $tag) {
                 if ($tag->get('category_uuid') === $category->get('uuid')) {
                     $tagName = $tag->get('name');
@@ -76,11 +72,7 @@ class TaggingDetails extends HtmlDocument
                     if ($description !== null && $description !== '') {
                         $tagName = Html::tag('span', ['class' => 'hover-hint', 'title' => $description], $tagName);
                     }
-                    if ($category->cardinalityIsSingle()) {
-                        $parent->add($tagName);
-                    } else {
-                        $parent->add(Html::tag('li', $tagName));
-                    }
+                    $parent->add($category->cardinalityIsSingle() ? $tagName : Html::tag('li', $tagName));
                 }
             }
             $table->addNameValueRow($category->get('name'), $parent);

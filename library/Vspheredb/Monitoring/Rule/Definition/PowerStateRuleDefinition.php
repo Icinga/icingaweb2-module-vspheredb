@@ -46,11 +46,9 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         }
 
         $powerState = $object->get('runtime_power_state');
-        if ($powerState === 'poweredOn') {
-            $state = CheckPluginState::OK;
-        } else {
-            $state = MonitoringStateTrigger::nullableFrom($settings->get("trigger_on_$powerState"))->monitoringState();
-        }
+        $state = $powerState === 'poweredOn'
+            ? CheckPluginState::OK
+            : MonitoringStateTrigger::nullableFrom($settings->get("trigger_on_$powerState"))->monitoringState();
         $message = $this->getStatusMessageForPowerState($powerState, $what);
 
         $results = [new SingleCheckResult($state, $message)];

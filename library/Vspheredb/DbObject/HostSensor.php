@@ -55,11 +55,7 @@ class HostSensor extends BaseDbObject
 
     public function setHealth_state($healthState): void // phpcs:ignore
     {
-        if (is_object($healthState)) {
-            $this->reallySet('health_state', lcfirst($healthState->key));
-        } else {
-            $this->reallySet('health_state', $healthState);
-        }
+        $this->reallySet('health_state', is_object($healthState) ? lcfirst($healthState->key) : $healthState);
     }
 
     public static function loadAllForVCenter(VCenter $vCenter): array

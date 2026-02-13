@@ -60,14 +60,8 @@ class Html5UiLink extends BaseHtmlElement
 
     protected static function prepareUrl(VCenter $vCenter, BaseDbObject $object): string
     {
-        $url = self::prepareBaseUrl($vCenter);
-        if (self::isLegacy($vCenter)) {
-            $url .= self::linkLegacy($object);
-        } else {
-            $url .= self::linkHtml5Ui($object, $vCenter);
-        }
-
-        return $url;
+        return self::prepareBaseUrl($vCenter)
+            . (self::isLegacy($vCenter) ? self::linkLegacy($object) : self::linkHtml5Ui($object, $vCenter));
     }
 
     protected static function prepareBaseUrl(VCenter $vCenter): string

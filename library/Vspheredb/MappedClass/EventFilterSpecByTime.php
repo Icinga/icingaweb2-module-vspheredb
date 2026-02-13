@@ -36,18 +36,10 @@ class EventFilterSpecByTime
     {
         $self = new static();
         if ($beginTime) {
-            if (is_int($beginTime)) {
-                $self->beginTime = self::makeDateTime($beginTime);
-            } else {
-                $self->beginTime = $beginTime;
-            }
+            $self->beginTime = is_int($beginTime) ? self::makeDateTime($beginTime) : $beginTime;
         }
         if ($endTime) {
-            if (is_int($endTime)) {
-                $self->endTime = self::makeDateTime($endTime);
-            } else {
-                $self->endTime = $endTime;
-            }
+            $self->endTime = is_int($endTime) ? self::makeDateTime($endTime) : $endTime;
         }
 
         return $self;

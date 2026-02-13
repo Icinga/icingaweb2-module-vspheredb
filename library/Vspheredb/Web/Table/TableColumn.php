@@ -120,13 +120,7 @@ abstract class TableColumn
      */
     public function renderRow($row): mixed
     {
-        if ($this->renderer === null) {
-            return Html::wantHtml($row->{$this->getAlias()});
-        } else {
-            $func = $this->renderer;
-
-            return $func($row);
-        }
+        return $this->renderer === null ? Html::wantHtml($row->{$this->getAlias()}) : ($this->renderer)($row);
     }
 
     /**

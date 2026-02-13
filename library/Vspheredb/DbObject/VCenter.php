@@ -106,11 +106,7 @@ class VCenter extends BaseDbObject
 
     public static function loadWithUuid(string $uuid, Db $connection): static
     {
-        if (strlen($uuid) === 16) {
-            $uuid = Uuid::fromBytes($uuid);
-        } else {
-            $uuid = Uuid::fromString($uuid);
-        }
+        $uuid = strlen($uuid) === 16 ? Uuid::fromBytes($uuid) : Uuid::fromString($uuid);
 
         return static::load($uuid->getBytes(), $connection);
     }
@@ -204,10 +200,6 @@ class VCenter extends BaseDbObject
      */
     public function setInstance_uuid(string $value): void // phpcs:ignore
     {
-        if (strlen($value) > 16) {
-            $this->reallySet('instance_uuid', Uuid::fromString($value)->getBytes());
-        } else {
-            $this->reallySet('instance_uuid', $value);
-        }
+        $this->reallySet('instance_uuid', strlen($value) > 16 ? Uuid::fromString($value)->getBytes() : $value);
     }
 }
