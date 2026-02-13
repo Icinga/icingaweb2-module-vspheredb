@@ -39,11 +39,11 @@ class MobLink extends HtmlDocument
     {
         try {
             $server = $this->vCenter->getFirstServer(false);
-            if ($this->moRef) {
-                $this->add($this->createObjectLink($server, $this->moRef, $this->label));
-            } else {
-                $this->add($this->createBaseLink($server, $this->label));
-            }
+            $this->add(
+                $this->moRef
+                    ? $this->createObjectLink($server, $this->moRef, $this->label)
+                    : $this->createBaseLink($server, $this->label)
+            );
         } catch (NotFoundError) {
             $this->add([
                 Icon::create('warning-empty', ['class' => 'red']),

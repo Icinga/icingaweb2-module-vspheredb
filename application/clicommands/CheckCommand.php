@@ -61,11 +61,11 @@ class CheckCommand extends Command
                 }
 
                 if (count($vCenters) > 1) {
-                    if ($this->getState() === 0) {
-                        $this->prependMessage('All vCenters/ESXi Hosts are connected');
-                    } else {
-                        $this->prependMessage('There are problems with some vCenters/ESXi Host connections');
-                    }
+                    $this->prependMessage(
+                        $this->getState() === 0
+                            ? 'All vCenters/ESXi Hosts are connected'
+                            : 'There are problems with some vCenters/ESXi Host connections'
+                    );
                 }
             }, function (Exception $e) {
                 $message = $e->getMessage();
@@ -118,11 +118,9 @@ class CheckCommand extends Command
     {
         $this->run(function () {
             $uuid = $this->params->get('uuid');
-            if ($uuid !== null) {
-                $params = ['uuid' => Uuid::fromString($uuid)->getBytes()];
-            } else {
-                $params = ['host_name' => $this->params->getRequired('name')];
-            }
+            $params = $uuid !== null
+                ? ['uuid' => Uuid::fromString($uuid)->getBytes()]
+                : ['host_name' => $this->params->getRequired('name')];
             $host = $this->lookup()->findOneBy('HostSystem', $params);
             $this->runChecks($host);
         });
@@ -205,11 +203,9 @@ class CheckCommand extends Command
     {
         $this->run(function () {
             $uuid = $this->params->get('uuid');
-            if ($uuid !== null) {
-                $params = ['uuid' => Uuid::fromString($uuid)->getBytes()];
-            } else {
-                $params = ['object_name' => $this->params->getRequired('name')];
-            }
+            $params = $uuid !== null
+                ? ['uuid' => Uuid::fromString($uuid)->getBytes()]
+                : ['object_name' => $this->params->getRequired('name')];
             $datastore = $this->lookup()->findOneBy('Datastore', $params);
             $this->runChecks($datastore);
         });

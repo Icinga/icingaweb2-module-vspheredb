@@ -145,26 +145,21 @@ class OverviewTree extends BaseHtmlElement
             $li->add(Html::tag('a', ['name'  => $tree->object_name, 'class' => 'icon-globe'], $tree->object_name));
         } else {
             $count = $tree->cnt_vm + $tree->cnt_host + $tree->cnt_ds;
-            if ($count) {
-                $label = sprintf('%s (%d)', $tree->object_name, $count);
-                // $label = sprintf('%s (%d VMs, %d Hosts)', $tree->object_name, $tree->cnt_vm, $tree->cnt_host);
-            } else {
-                $label = $tree->object_name;
-            }
+            $label = $count ? sprintf('%s (%d)', $tree->object_name, $count) : $tree->object_name;
             $attributes = ['class' => [$this->getClassByType($type), $tree->overall_status]];
 
-            if ($count) {
-                $li->add(Link::create(
+            $link = $count
+                ? Link::create(
                     $label,
                     $tree->cnt_host > 0
                         ? 'vspheredb/hosts'
                         : ($tree->cnt_ds > 0 ? 'vspheredb/datastores' : 'vspheredb/vms'),
                     Util::uuidParams($tree->uuid),
                     $attributes
-                ));
-            } else {
-                $li->add(Html::tag('a', $attributes, $label));
-            }
+                )
+                : Html::tag('a', $attributes, $label);
+
+            $li->add($link);
         }
 
         if ($hasChildren) {

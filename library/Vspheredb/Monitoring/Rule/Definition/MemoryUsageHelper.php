@@ -63,11 +63,9 @@ class MemoryUsageHelper
         }
 
         if ($mbState->isProblem() && $percentState->isProblem()) {
-            if ($settings->get('threshold_precedence') === 'worst_wins') {
-                $state = $state->raise(State::getWorst($percentState, $mbState));
-            } else {
-                $state = $state->raise(State::getBest($percentState, $mbState));
-            }
+            $state = $settings->get('threshold_precedence') === 'worst_wins'
+                ? $state->raise(State::getWorst($percentState, $mbState))
+                : $state->raise(State::getBest($percentState, $mbState));
         } else {
             $state = $state->raise($percentState);
             $state = $state->raise($mbState);

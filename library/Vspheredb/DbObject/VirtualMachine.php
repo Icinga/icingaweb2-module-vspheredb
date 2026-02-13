@@ -365,11 +365,10 @@ class VirtualMachine extends BaseDbObject
         if ($value === null) {
             return;
         }
-        if (property_exists($value, 'networkBootProtocol')) {
-            $this->set('boot_network_protocol', $value->networkBootProtocol);
-        } else {
-            $this->set('boot_network_protocol', null);
-        }
+        $this->set(
+            'boot_network_protocol',
+            property_exists($value, 'networkBootProtocol') ? $value->networkBootProtocol : null
+        );
 
         // bootOrder might be missing, should then default to disk, net
         if (property_exists($value, 'bootOrder')) {

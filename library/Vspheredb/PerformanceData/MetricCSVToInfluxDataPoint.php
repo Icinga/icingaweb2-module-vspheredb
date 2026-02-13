@@ -36,11 +36,10 @@ class MetricCSVToInfluxDataPoint
         foreach ($result as $time => $results) {
             foreach ($results as $key => $metrics) {
                 if (! isset($tags[$key])) {
-                    if (count($tags) > 10) {
-                        $tagList = implode(', ', array_slice(array_keys($tags), 0, 10)) . ', ...';
-                    } else {
-                        $tagList = implode(', ', array_keys($tags));
-                    }
+                    $tagList = count($tags) > 10
+                        ? implode(', ', array_slice(array_keys($tags), 0, 10)) . ', ...'
+                        : implode(', ', array_keys($tags));
+
                     throw new InvalidArgumentException("Cannot find tags for '$key', got: $tagList");
                 }
 

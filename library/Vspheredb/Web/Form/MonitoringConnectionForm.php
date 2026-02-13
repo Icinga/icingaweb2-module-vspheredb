@@ -203,11 +203,7 @@ class MonitoringConnectionForm extends Form
         $db = $this->db;
         $id = $this->getId();
         $vCenterUuid = $this->getValue('vcenter');
-        if ($vCenterUuid === null) {
-            $values['vcenter_uuid'] = null;
-        } else {
-            $values['vcenter_uuid'] = Uuid::fromString($vCenterUuid)->getBytes();
-        }
+        $values['vcenter_uuid'] = $vCenterUuid !== null ? Uuid::fromString($vCenterUuid)->getBytes() : null;
         if ($id) {
             $db->update('monitoring_connection', $values, $db->quoteInto('id = ?', $id));
             Notification::success($this->translate('Monitoring Integration has been modified'));

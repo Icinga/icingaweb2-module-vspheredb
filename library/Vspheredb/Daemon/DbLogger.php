@@ -129,11 +129,9 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
         }
         if (isset($context['vcenter_uuid'])) {
             $uuid = $context['vcenter_uuid'];
-            if (strlen($uuid) === 16) {
-                $params['vcenter_uuid'] = $context['vcenter_uuid'];
-            } else {
-                $params['vcenter_uuid'] = Uuid::fromString($context['vcenter_uuid'])->getBytes();
-            }
+            $params['vcenter_uuid'] = strlen($uuid) === 16
+                ? $context['vcenter_uuid']
+                : Uuid::fromString($context['vcenter_uuid'])->getBytes();
         }
 
         try {

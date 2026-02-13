@@ -52,15 +52,13 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
             $output = CheckPluginHelper::colorizeOutput(implode("\n", $lines));
         }
 
-        if ($this->entityUuid) {
-            $cell[] = Html::tag('strong', $row->rule_name);
-        } else {
-            $cell[] = Html::sprintf(
+        $cell[] = $this->entityUuid
+            ? Html::tag('strong', $row->rule_name)
+            : Html::sprintf(
                 $this->translate("%s on %s"),
                 Html::tag('strong', $row->rule_name),
                 $this->linkToObject($row) // No link if entityUuid!!
             );
-        }
         $cell[] = "\n";
         $cell[] = $output;
 

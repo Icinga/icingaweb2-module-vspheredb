@@ -93,11 +93,7 @@ class ConfigWatch
      */
     protected function getResourceName(): ?string
     {
-        if ($this->dbResourceName) {
-            return $this->dbResourceName;
-        } else {
-            return $this->loadDbResourceName();
-        }
+        return $this->dbResourceName ?: $this->loadDbResourceName();
     }
 
     /**

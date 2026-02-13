@@ -172,11 +172,7 @@ class Command extends CliCommand
      */
     public function failFriendly(string $task, Exception|string $error = 'unknown error', ?string $subject = null): void
     {
-        if ($error instanceof Exception) {
-            $message = $error->getMessage();
-        } else {
-            $message = $error;
-        }
+        $message = $error instanceof Exception ? $error->getMessage() : $error;
 
         if (!$this->isRpc()) {
             $this->fail($message);
