@@ -68,9 +68,7 @@ class VmLocationInfoTable extends NameValueTable
                 $hostResources = $this->prepareHostInfo($host, $quickStats);
             } catch (NotFoundError $e) {
                 $hostResources = '-';
-                $hostInfo = Html::tag('span', [
-                    'class' => 'error'
-                ], $this->translate('Failed to load related host'));
+                $hostInfo = Html::tag('span', ['class' => 'error'], $this->translate('Failed to load related host'));
             }
         }
 
@@ -91,9 +89,7 @@ class VmLocationInfoTable extends NameValueTable
         $memCapacity = $host->get('hardware_memory_size_mb');
         $memUsed = $quickStats->get('overall_memory_usage_mb');
 
-        return Html::tag('div', [
-            'class' => 'resource-info-small'
-        ], Html::tag('div', [
+        return Html::tag('div', ['class' => 'resource-info-small'], Html::tag('div', [
             new CpuUsage($cpuUsed, $cpuCapacity),
             sprintf(
                 $this->translate('Free CPU: %s'),

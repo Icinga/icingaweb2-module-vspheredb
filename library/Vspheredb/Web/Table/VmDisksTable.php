@@ -16,9 +16,7 @@ use Zend_Db_Select;
 
 class VmDisksTable extends ZfQueryBasedTable
 {
-    protected $searchColumns = [
-        'object_name',
-    ];
+    protected $searchColumns = ['object_name'];
 
     protected $parentIds;
 
@@ -77,9 +75,7 @@ class VmDisksTable extends ZfQueryBasedTable
                 $this->prepareImgColumn($device)
             ]);
         } else {
-            return $this->row([
-                $this->formatSimple($row, $device)
-            ]);
+            return $this->row([$this->formatSimple($row, $device)]);
         }
     }
 

@@ -87,10 +87,7 @@ class VmEssentialInfoTable extends NameValueTable
         $uuid = $vm->get('uuid');
         $this->addNameValueRow($this->translate('Tools'), $this->prepareTools($vm));
         if ($annotation = $vm->get('annotation')) {
-            $this->addNameValueRow(
-                $this->translate('Annotation'),
-                $this->formatAnnotation($annotation)
-            );
+            $this->addNameValueRow($this->translate('Annotation'), $this->formatAnnotation($annotation));
         }
 
         if ($guestName = $vm->get('guest_full_name')) {
@@ -224,9 +221,7 @@ class VmEssentialInfoTable extends NameValueTable
                     )
                 ];
             } else {
-                return [Html::sprintf(
-                    "There is no monitored Host mapped to this VM"
-                )];
+                return [Html::sprintf("There is no monitored Host mapped to this VM")];
             }
         } catch (Exception $e) {
             return [

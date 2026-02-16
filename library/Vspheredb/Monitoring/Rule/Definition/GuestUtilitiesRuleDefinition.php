@@ -16,9 +16,7 @@ use function sprintf;
 
 class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
 {
-    public const SUPPORTED_OBJECT_TYPES = [
-        ObjectType::VIRTUAL_MACHINE,
-    ];
+    public const SUPPORTED_OBJECT_TYPES = [ObjectType::VIRTUAL_MACHINE];
 
     public static function getIdentifier(): string
     {
@@ -90,9 +88,7 @@ class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
                 $message = 'Guest Tools status is now known';
         }
 
-        return [
-            new SingleCheckResult($state, $message)
-        ];
+        return [new SingleCheckResult($state, $message)];
     }
 
     public function getParameters(): array

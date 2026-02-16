@@ -7,9 +7,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 
 class ActiveMemoryUsageRuleDefinition extends MemoryUsageRuleDefinition
 {
-    public const SUPPORTED_OBJECT_TYPES = [
-        ObjectType::VIRTUAL_MACHINE,
-    ];
+    public const SUPPORTED_OBJECT_TYPES = [ObjectType::VIRTUAL_MACHINE];
 
     public static function getIdentifier(): string
     {

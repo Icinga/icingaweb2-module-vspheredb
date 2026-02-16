@@ -134,14 +134,11 @@ class MonitoringConnectionForm extends Form
 
         $this->add(Html::tag('h2', $this->translate('Host Systems')));
         $this->add(Html::tag('p', $this->translate(
-            'Map monitored hosts to physical Host Systems belonging to your'
-            . ' VMware environment'
+            'Map monitored hosts to physical Host Systems belonging to your VMware environment'
         )));
         $this->addElement('select', 'host_property', [
             'label'       => $this->translate('Host System Property'),
-            'description' => $this->translate(
-                'Property of the Host System (known by the vSphereDB module)'
-            ),
+            'description' => $this->translate('Property of the Host System (known by the vSphereDB module)'),
             'options'     => $this->optionalEnum([
                 'host_name'    => $this->translate('Hostname'),
                 'object_name'  => $this->translate('Object Name'),
@@ -151,22 +148,17 @@ class MonitoringConnectionForm extends Form
         ]);
         $this->addElement('select', 'monitoring_host_property', [
             'label'       => $this->translate('Monitored Host Property'),
-            'description' => $this->translate(
-                'Property of the Host System (as known by Icinga)'
-            ),
+            'description' => $this->translate('Property of the Host System (as known by Icinga)'),
             'options'     => $varOptions,
         ]);
 
         $this->add(Html::tag('h2', $this->translate('Virtual Machines')));
         $this->add(Html::tag('p', $this->translate(
-            'Map monitored hosts to Virtual Machines belonging to your'
-            . ' VMware environment'
+            'Map monitored hosts to Virtual Machines belonging to your VMware environment'
         )));
         $this->addElement('select', 'vm_property', [
             'label'       => $this->translate('Virtual Machine Property'),
-            'description' => $this->translate(
-                'Property of the Virtual Machine (known by the vSphereDB module)'
-            ),
+            'description' => $this->translate('Property of the Virtual Machine (known by the vSphereDB module)'),
             'options'     => $this->optionalEnum([
                 'guest_host_name' => $this->translate('Guest Hostname'),
                 'object_name'     => $this->translate('Object Name'),
@@ -175,30 +167,21 @@ class MonitoringConnectionForm extends Form
         ]);
         $this->addElement('select', 'monitoring_vm_host_property', [
             'label'       => $this->translate('Monitored Host Property'),
-            'description' => $this->translate(
-                'Property of the Virtual Machine (as known by Icinga)'
-            ),
+            'description' => $this->translate('Property of the Virtual Machine (as known by Icinga)'),
             'options'     => $varOptions,
         ]);
 
-        $submit = new SubmitElement('submit', [
-            'label' => $this->translate('Store')
-        ]);
+        $submit = new SubmitElement('submit', ['label' => $this->translate('Store')]);
         $this->addElement($submit);
 
         if ($id = $this->getId()) {
-            $delete = new SubmitElement('delete', [
-                'label' => $this->translate('Delete')
-            ]);
+            $delete = new SubmitElement('delete', ['label' => $this->translate('Delete')]);
             $deco = $submit->getWrapper();
             assert($deco instanceof DdDtDecorator);
             $deco->dd()->add($delete);
             $this->registerElement($delete);
             if ($delete->hasBeenPressed()) {
-                $this->db->delete(
-                    'monitoring_connection',
-                    $this->db->quoteInto('id = ?', $id)
-                );
+                $this->db->delete('monitoring_connection', $this->db->quoteInto('id = ?', $id));
                 Notification::success($this->translate('Monitoring Integration has been deleted'));
                 $this->hasBeenDeleted = true;
             }
@@ -228,19 +211,11 @@ class MonitoringConnectionForm extends Form
             $values['vcenter_uuid'] = Uuid::fromString($vCenterUuid)->getBytes();
         }
         if ($id) {
-            $db->update(
-                'monitoring_connection',
-                $values,
-                $db->quoteInto('id = ?', $id)
-            );
+            $db->update('monitoring_connection', $values, $db->quoteInto('id = ?', $id));
             Notification::success($this->translate('Monitoring Integration has been modified'));
         } else {
-            $priority = (int) $db->fetchOne(
-                $db->select()->from('monitoring_connection', 'MAX(priority)')
-            ) + 1;
-            $db->insert('monitoring_connection', $values + [
-                    'priority'     => $priority,
-                ]);
+            $priority = (int) $db->fetchOne($db->select()->from('monitoring_connection', 'MAX(priority)')) + 1;
+            $db->insert('monitoring_connection', $values + ['priority' => $priority]);
             $this->id = (int) $db->lastInsertId();
             Notification::success($this->translate('Monitoring Integration has been created'));
         }

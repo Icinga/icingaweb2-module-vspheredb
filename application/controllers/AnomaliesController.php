@@ -32,27 +32,12 @@ class AnomaliesController extends Controller
         $count = count($table);
         if ($count) {
             $this->content()->add([
-                Html::tag(
-                    'h1',
-                    null,
-                    sprintf(
-                        '%d Virtual Machines with duplicate %s',
-                        $count,
-                        $title
-                    )
-                ),
+                Html::tag('h1', null, sprintf('%d Virtual Machines with duplicate %s', $count, $title)),
                 $table
             ]);
         } else {
             $this->content()->add(
-                Html::tag(
-                    'h1',
-                    null,
-                    sprintf(
-                        'There are no Virtual Machines with duplicate %s',
-                        $title
-                    )
-                )
+                Html::tag('h1', null, sprintf('There are no Virtual Machines with duplicate %s', $title))
             );
         }
     }

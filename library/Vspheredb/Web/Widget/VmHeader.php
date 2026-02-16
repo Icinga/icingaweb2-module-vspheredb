@@ -23,9 +23,7 @@ class VmHeader extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'vm-header'
-    ];
+    protected $defaultAttributes = ['class' => 'vm-header'];
 
     public function __construct(VirtualMachine $vm, VmQuickStats $quickStats)
     {
@@ -46,25 +44,17 @@ class VmHeader extends BaseHtmlElement
         $powerState = $vm->get('runtime_power_state');
         $renderer = new PowerStateRenderer();
         if ($vm->get('template') === 'y') {
-            $cpu = Html::tag('div', [
-                'class' => 'vm-template'
-            ], Icon::create('upload', [
+            $cpu = Html::tag('div', ['class' => 'vm-template'], Icon::create('upload', [
                 'title' => $this->translate('This is a template'),
                 'class' => [ 'state' ]
             ]));
 
             $mem = $this->translate('This is a template');
         } elseif ($powerState !== 'poweredOn') {
-            $cpu = Html::tag('div', [
-                'class' => 'cpu off',
-                // 'style' => 'font-size: 3em; width: 1em; height: 1em; display: inline-block;',
-            ], $renderer($powerState));
+            $cpu = Html::tag('div', ['class' => 'cpu off'], $renderer($powerState));
             $mem = $renderer->getPowerStateDescription($powerState);
         } else {
-            $cpu = new CpuAbsoluteUsage(
-                $this->quickStats->get('overall_cpu_usage'),
-                $vm->get('hardware_numcpu')
-            );
+            $cpu = new CpuAbsoluteUsage($this->quickStats->get('overall_cpu_usage'), $vm->get('hardware_numcpu'));
             $mem = new MemoryUsage(
                 $this->quickStats->get('guest_memory_usage_mb'),
                 $vm->get('hardware_memorymb'),
@@ -72,10 +62,6 @@ class VmHeader extends BaseHtmlElement
             );
         }
         $title = Html::tag('h1', $vm->object()->get('object_name'));
-        $this->add([
-            $cpu,
-            $title,
-            $mem
-        ]);
+        $this->add([$cpu, $title, $mem]);
     }
 }

@@ -18,9 +18,7 @@ use Zend_Db_Select;
 
 class VmDatastoresTable extends ZfQueryBasedTable
 {
-    protected $searchColumns = [
-        'object_name',
-    ];
+    protected $searchColumns = ['object_name'];
 
     protected $parentIds;
 
@@ -68,10 +66,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
             $row->object_name,
             'vspheredb/datastore',
             Util::uuidParams($row->uuid),
-            ['title' => sprintf(
-                $this->translate('Datastore: %s'),
-                $row->object_name
-            )]
+            ['title' => sprintf($this->translate('Datastore: %s'), $row->object_name)]
         );
 
         /** @var Db $connection */

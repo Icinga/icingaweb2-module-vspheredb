@@ -58,10 +58,7 @@ class GrafanaVmPanel extends HtmlDocument
         $orgId = 1;
         $dsName = 'vSphereDB';
         $dashboard = 'Icinga-vSphereDB-VirtualMachineDetails';
-        $url = sprintf(
-            'https://grafana.example.com:3000/d-solo/%s/virtual-machine-details',
-            $dashboard
-        );
+        $url = sprintf('https://grafana.example.com:3000/d-solo/%s/virtual-machine-details', $dashboard);
 
         $params = [
             'orgId' => $orgId,

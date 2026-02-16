@@ -29,9 +29,7 @@ class VCenterServerForm extends Form
     public function assemble(): void
     {
         if (! class_exists('SoapClient')) {
-            $this->addMessage($this->translate(
-                'The PHP SOAP extension (php-soap) is not installed/enabled'
-            ));
+            $this->addMessage($this->translate('The PHP SOAP extension (php-soap) is not installed/enabled'));
 
             return;
         }
@@ -51,9 +49,7 @@ class VCenterServerForm extends Form
 
         $this->addElement('select', 'scheme', [
             'label' => $this->translate('Protocol'),
-            'description' => $this->translate(
-                'Whether to use encryption when talking to your vCenter'
-            ),
+            'description' => $this->translate('Whether to use encryption when talking to your vCenter'),
             'multiOptions' => [
                 'https' => $this->translate('HTTPS (strongly recommended)'),
                 'http'  => $this->translate('HTTP (this is plaintext!)'),
@@ -66,9 +62,7 @@ class VCenterServerForm extends Form
         $ssl = $this->getValue('scheme', 'https') === 'https';
         $this->addElement('boolean', 'enabled', [
             'label'       => $this->translate('Enabled'),
-            'description' => $this->translate(
-                'Whether the background daemon should actively poll this node.'
-            ),
+            'description' => $this->translate('Whether the background daemon should actively poll this node.'),
             'required'    => true,
             'value'       => 'y',
         ]);
@@ -86,8 +80,7 @@ class VCenterServerForm extends Form
             $this->addElement('boolean', 'ssl_verify_host', [
                 'label'       => $this->translate('Verify Host'),
                 'description' => $this->translate(
-                    'Whether we should check that the certificate matches the'
-                    . 'configured host'
+                    'Whether we should check that the certificate matches the configured host'
                 ),
                 'value'       => 'y',
                 'required'    => true,
@@ -96,9 +89,7 @@ class VCenterServerForm extends Form
 
         $this->addElement('text', 'username', [
             'label'       => $this->translate('Username'),
-            'description' => $this->translate(
-                'Will be used for SOAP authentication against your vCenter'
-            ),
+            'description' => $this->translate('Will be used for SOAP authentication against your vCenter'),
             'required'    => true,
         ]);
 
@@ -133,18 +124,15 @@ class VCenterServerForm extends Form
         if ($proxyType) {
             $this->addElement('text', 'proxy_address', [
                 'label' => $this->translate('Proxy Address'),
-                'description' => $this->translate(
-                    'Hostname, IP or <host>:<port>'
-                ),
+                'description' => $this->translate('Hostname, IP or <host>:<port>'),
                 'required' => true,
             ]);
             if ($proxyType === 'HTTP') {
                 $this->addElement('text', 'proxy_user', [
                     'label' => $this->translate('Proxy Username'),
                     'description' => $this->translate(
-                        'In case your proxy requires authentication, please'
-                        . ' configure this here'
-                    ),
+                        'In case your proxy requires authentication, please configure this here'
+                    )
                 ]);
 
                 $passRequired = $this->getValue('proxy_user') !== null && strlen($this->getValue('proxy_user')) > 0;
@@ -161,9 +149,7 @@ class VCenterServerForm extends Form
             'label' => $this->isNew() ? $this->translate('Create') : $this->translate('Store')
         ]);
         if (! $this->isNew()) {
-            $buttons[] = $deleteButton = new SubmitElement('btn_delete', [
-                'label' => $this->translate('Delete')
-            ]);
+            $buttons[] = $deleteButton = new SubmitElement('btn_delete', ['label' => $this->translate('Delete')]);
         } else {
             $deleteButton = null;
         }

@@ -326,10 +326,7 @@ abstract class DbObject
             ));
         }
 
-        if (
-            (is_numeric($value) || is_string($value))
-            && (string) $value === (string) $this->get($key)
-        ) {
+        if ((is_numeric($value) || is_string($value)) && (string) $value === (string) $this->get($key)) {
             return $this;
         }
 
@@ -653,17 +650,9 @@ abstract class DbObject
 
         if (empty($properties)) {
             if (is_array($this->getKeyName())) {
-                throw new NotFoundError(
-                    'Failed to load %s for %s',
-                    $this->table,
-                    $this->createWhere()
-                );
+                throw new NotFoundError('Failed to load %s for %s', $this->table, $this->createWhere());
             } else {
-                throw new NotFoundError(
-                    'Failed to load %s "%s"',
-                    $this->table,
-                    $this->getLogId()
-                );
+                throw new NotFoundError('Failed to load %s "%s"', $this->table, $this->getLogId());
             }
         }
 
@@ -862,11 +851,7 @@ abstract class DbObject
                     $result = true;
                     $this->onUpdate();
                 } else {
-                    throw new RuntimeException(sprintf(
-                        'FAILED storing %s "%s"',
-                        $table,
-                        $this->getLogId()
-                    ));
+                    throw new RuntimeException(sprintf('FAILED storing %s "%s"', $table, $this->getLogId()));
                 }
             } else {
                 $autoincKeyName = $this->getAutoincKeyName();
@@ -876,11 +861,7 @@ abstract class DbObject
                     if ($autoId = $this->getAutoincId()) {
                         $logId .= sprintf(', %s=%s', $autoincKeyName, $autoId);
                     }
-                    throw new DuplicateKeyException(
-                        'Trying to recreate %s (%s)',
-                        $table,
-                        $logId
-                    );
+                    throw new DuplicateKeyException('Trying to recreate %s (%s)', $table, $logId);
                 }
 
                 if ($this->insertIntoDb()) {
@@ -895,11 +876,7 @@ abstract class DbObject
                     $this->onInsert();
                     $result = true;
                 } else {
-                    throw new RuntimeException(sprintf(
-                        'FAILED to store new %s "%s"',
-                        $table,
-                        $this->getLogId()
-                    ));
+                    throw new RuntimeException(sprintf('FAILED to store new %s "%s"', $table, $this->getLogId()));
                 }
             }
         } catch (Zend_Db_Exception $e) {

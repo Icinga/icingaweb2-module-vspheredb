@@ -136,9 +136,7 @@ class DaemonController extends Controller
             } else {
                 $tsFormatted = DateFormatter::formatTime($ts);
             }
-            $log->add(Html::tag('div', [
-                'class' => $line->level
-            ], "$tsFormatted: " . $line->message));
+            $log->add(Html::tag('div', ['class' => $line->level], "$tsFormatted: " . $line->message));
         }
 
         return $logWindow;

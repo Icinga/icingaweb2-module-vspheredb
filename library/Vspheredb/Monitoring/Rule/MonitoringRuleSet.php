@@ -68,9 +68,7 @@ class MonitoringRuleSet
     protected static function makeKey(?string $objectUuid, string $objectFolder): string
     {
         // correct would be using UUID, but bin2hex() is faster, and this is internal only
-        return ($objectUuid === null ? 'null' : bin2hex($objectUuid))
-            . '|'
-            . json_encode($objectFolder);
+        return ($objectUuid === null ? 'null' : bin2hex($objectUuid)) . '|' . json_encode($objectFolder);
     }
 
     public static function preloadAll(Db $connection): void
@@ -122,10 +120,7 @@ class MonitoringRuleSet
         $existing = self::loadOptionalForUuid($this->binaryUuid, $this->objectFolder, $connection);
         $db = $connection->getDbAdapter();
         if ($existing) {
-            $rowCount = $db->delete(
-                MonitoringRuleSet::TABLE,
-                $this->createWhere($connection)
-            );
+            $rowCount = $db->delete(MonitoringRuleSet::TABLE, $this->createWhere($connection));
             $this->fromDb = false;
 
             return $rowCount > 0;

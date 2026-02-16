@@ -29,12 +29,7 @@ class MetricCSVToInfluxDataPoint
         foreach ($metric->value as $series) {
             $key = static::makeKey($object, $series->id);
             $metric = $countersMap[$series->id->counterId];
-            foreach (
-                array_combine(
-                    $dates,
-                    explode(',', $series->value)
-                ) as $time => $value
-            ) {
+            foreach (array_combine($dates, explode(',', $series->value)) as $time => $value) {
                 $result[$time][$key][$metric] = $value === '' ? null : (int) $value;
             }
         }
@@ -48,12 +43,8 @@ class MetricCSVToInfluxDataPoint
                     }
                     throw new InvalidArgumentException("Cannot find tags for '$key', got: $tagList");
                 }
-                yield new DataPoint(
-                    $measurementName,
-                    ['instance' => $key] + $tags[$key],
-                    $metrics,
-                    $time
-                );
+
+                yield new DataPoint($measurementName, ['instance' => $key] + $tags[$key], $metrics, $time);
             }
         }
     }

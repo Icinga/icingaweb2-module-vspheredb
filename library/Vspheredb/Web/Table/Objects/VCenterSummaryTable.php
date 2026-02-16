@@ -77,9 +77,7 @@ class VCenterSummaryTable extends ObjectsTable
     protected function initialize(): void
     {
         $this->setAttribute('data-base-target', '_self');
-        $this->addAvailableColumns([
-            $this->createGroupingColumn(),
-        ]);
+        $this->addAvailableColumns([$this->createGroupingColumn()]);
         $this->addHostColumns();
         $this->addDatastoreColumns();
         $this->addVCenterColumns();

@@ -157,14 +157,8 @@ class DatastoreUsage extends BaseHtmlElement
                 ['class' => 'unknown']
             );
         }
-        $this->addVmDisk(
-            $title,
-            $percent,
-            null,
-            ['class' => $class]
-        );
 
-        return $this;
+        return $this->addVmDisk($title, $percent, null, ['class' => $class]);
     }
 
     /**
@@ -226,9 +220,7 @@ class DatastoreUsage extends BaseHtmlElement
             'used_percent'        => ($dbRow->committed / $size) * 100,
             'datastore_percent'   => ($dbRow->committed / $this->capacity) * 100,
             'uncommitted'         => $dbRow->uncommitted,
-            'uncommitted_percent' => $this->uncommitted > 0
-                ? ($dbRow->uncommitted / $this->uncommitted) * 100
-                : 0,
+            'uncommitted_percent' => $this->uncommitted > 0 ? ($dbRow->uncommitted / $this->uncommitted) * 100 : 0,
             'extra-class' => null,
         ];
         $share->title = sprintf(

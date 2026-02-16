@@ -84,9 +84,7 @@ class ChooseInfluxDatabaseForm extends Form
     protected function createDatabase($name): mixed
     {
         Notification::info("Creating $name");
-        $promise = $this->client->request('influxdb.createDatabase', $this->prepareParams() + [
-            'dbName' => $name
-        ]);
+        $promise = $this->client->request('influxdb.createDatabase', $this->prepareParams() + ['dbName' => $name]);
         $result = await($promise);
         Notification::info("DON $name");
 

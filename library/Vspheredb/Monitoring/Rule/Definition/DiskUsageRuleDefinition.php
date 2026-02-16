@@ -9,9 +9,7 @@ use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
 
 class DiskUsageRuleDefinition extends MonitoringRuleDefinition
 {
-    public const SUPPORTED_OBJECT_TYPES = [
-        ObjectType::VIRTUAL_MACHINE,
-    ];
+    public const SUPPORTED_OBJECT_TYPES = [ObjectType::VIRTUAL_MACHINE];
 
     public static function getIdentifier(): string
     {

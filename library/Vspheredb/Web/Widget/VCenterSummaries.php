@@ -163,10 +163,7 @@ class VCenterSummaries extends BaseHtmlElement
         }
         $url = Url::fromPath($url)->with('vcenter', Util::niceUuid($this->vCenter->getUuid()));
         $state = $this->getWorstState($counters);
-        $title = Html::tag('h3', [
-            Link::create($title, $url),
-            ' (' . $counters->total . ')'
-        ]);
+        $title = Html::tag('h3', [Link::create($title, $url), ' (' . $counters->total . ')']);
         $cell = Html::tag('div', ['class' => ['summary-countlet', "state-$state"]]);
         $cell->add($title);
 

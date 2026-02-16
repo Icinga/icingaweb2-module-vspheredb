@@ -52,10 +52,7 @@ class VMotionHeatmap
         ])->where('veh.ts_event_ms > ?', time() * 1000 - 86400 * $maxDays * 1000)->group('day');
 
         if ($this->eventType !== null && $this->eventType !== '') {
-            $query->where(
-                'veh.event_type = ?',
-                $this->eventType
-            );
+            $query->where('veh.event_type = ?', $this->eventType);
         }
 
         return $query;

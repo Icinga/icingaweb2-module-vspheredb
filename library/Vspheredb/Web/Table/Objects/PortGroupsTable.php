@@ -27,10 +27,7 @@ class PortGroupsTable extends ObjectsTable
         );
 
         if ($this->switch) {
-            $query->where(
-                'distributed_virtual_switch_uuid = ?',
-                $this->switch->get('uuid')
-            );
+            $query->where('distributed_virtual_switch_uuid = ?', $this->switch->get('uuid'));
         }
 
         return $query;
