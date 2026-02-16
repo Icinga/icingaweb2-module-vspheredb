@@ -57,11 +57,7 @@ class Controller extends CompatController
 
     protected function getRestrictionHelper(): RestrictionHelper
     {
-        if ($this->restrictionHelper === null) {
-            $this->restrictionHelper = new RestrictionHelper($this->Auth(), $this->db());
-        }
-
-        return $this->restrictionHelper;
+        return $this->restrictionHelper ??= new RestrictionHelper($this->Auth(), $this->db());
     }
 
     protected function requireVCenter($paramName = 'vcenter'): VCenter

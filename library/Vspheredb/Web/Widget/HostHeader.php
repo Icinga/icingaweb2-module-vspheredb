@@ -33,14 +33,10 @@ class HostHeader extends BaseHtmlElement
 
     public function getIcons(): HtmlDocument
     {
-        if ($this->icons === null) {
-            $powerStateRenderer = new PowerStateRenderer();
-            $overallStatusRenderer = new OverallStatusRenderer();
-            $this->icons = (new HtmlDocument())->add([
-                $overallStatusRenderer($this->host->object()->get('overall_status')),
-                $powerStateRenderer($this->host->get('runtime_power_state'))
-            ]);
-        }
+        $this->icons ??= (new HtmlDocument())->add([
+            (new OverallStatusRenderer())($this->host->object()->get('overall_status')),
+            (new PowerStateRenderer())($this->host->get('runtime_power_state'))
+        ]);
 
         return $this->icons;
     }

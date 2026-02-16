@@ -64,10 +64,6 @@ class VMotionHeatmap
 
     protected function getQuery(): ZfSelect
     {
-        if ($this->query === null) {
-            $this->query = $this->prepareQuery();
-        }
-
-        return $this->query;
+        return $this->query ??= $this->prepareQuery();
     }
 }

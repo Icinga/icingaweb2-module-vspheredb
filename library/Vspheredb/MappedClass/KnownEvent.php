@@ -72,11 +72,7 @@ abstract class KnownEvent implements JsonSerialization
 
     public function getTimestampMs()
     {
-        if ($this->timestampMs === null) {
-            $this->timestampMs = $this->timeStringToUnixMs($this->createdTime);
-        }
-
-        return $this->timestampMs;
+        return $this->timestampMs ??= $this->timeStringToUnixMs($this->createdTime);
     }
 
     /**
