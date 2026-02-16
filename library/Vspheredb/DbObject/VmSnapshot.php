@@ -19,21 +19,21 @@ class VmSnapshot extends BaseDbObject
         'ts_create'        => null,
         'state'            => null,
         'quiesced'         => null,
-        'vcenter_uuid'     => null,
+        'vcenter_uuid'     => null
     ];
 
     protected array $objectReferences = [
         'vm_uuid',
-        'parent_uuid',
+        'parent_uuid'
     ];
 
     protected array $booleanProperties = [
         'quiesced',
-        'replay_supported',
+        'replay_supported'
     ];
 
     protected array $dateTimeProperties = [
-        'ts_create',
+        'ts_create'
     ];
 
     protected array $propertyMap = [
@@ -44,6 +44,6 @@ class VmSnapshot extends BaseDbObject
         'quiesced'        => 'quiesced',
         'createTime'      => 'ts_create',
         'vm'              => 'vm_uuid',
-        'parent'          => 'parent_uuid',
+        'parent'          => 'parent_uuid'
     ];
 }

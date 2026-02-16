@@ -45,7 +45,7 @@ class ResourceUsage implements JsonSerialization
             'total_mb'        => $this->totalMb,
             'ds_capacity'     => $this->dsCapacity,
             'ds_free_space'   => $this->dsFreeSpace,
-            'ds_uncommitted'  => $this->dsUncommitted,
+            'ds_uncommitted'  => $this->dsUncommitted
         ];
     }
 }

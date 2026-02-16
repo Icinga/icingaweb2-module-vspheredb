@@ -30,7 +30,7 @@ class RestartDaemonForm extends InlineForm
     {
         (new NextConfirmCancel(
             NextConfirmCancel::buttonNext($this->translate('Restart'), [
-                'title' => $this->translate('Click to restart the vSphereDB background daemon'),
+                'title' => $this->translate('Click to restart the vSphereDB background daemon')
             ]),
             NextConfirmCancel::buttonConfirm($this->translate('Yes, please restart')),
             NextConfirmCancel::buttonCancel($this->translate('Cancel'))

@@ -117,7 +117,7 @@ class VcentersController extends ObjectsController
             'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
             'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
             'used_mb'   => 'SUM(hqs.overall_memory_usage_mb)',
-            'total_mb'  => 'SUM(h.hardware_memory_size_mb)',
+            'total_mb'  => 'SUM(h.hardware_memory_size_mb)'
         ]);
 
         $total = $this->db()->getDbAdapter()->fetchRow($query);

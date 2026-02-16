@@ -311,7 +311,7 @@ abstract class BaseTable extends ZfQueryBasedTable
     {
         $icons = [
             'ASC'  => 'up-dir',
-            'DESC' => 'down-dir',
+            'DESC' => 'down-dir'
         ];
         if (array_key_exists($column->getAlias(), $this->sortColums)) {
             $element->add(Icon::create($icons[$this->sortColums[$column->getAlias()]]));

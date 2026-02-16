@@ -141,7 +141,7 @@ class Command extends CliCommand
             'http_proxy',
             'https_proxy',
             'HTTPS_PROXY',
-            'ALL_PROXY',
+            'ALL_PROXY'
         ];
         foreach ($settings as $setting) {
             putenv("$setting=");

@@ -97,7 +97,7 @@ class VCenterShipMetricsForm extends ObjectForm
             ),
             'required' => true,
             'value' => $consumer,
-            'class' => 'autosubmit',
+            'class' => 'autosubmit'
         ]);
         $this->addHidden('enabled', ['value' => 'y']);
 

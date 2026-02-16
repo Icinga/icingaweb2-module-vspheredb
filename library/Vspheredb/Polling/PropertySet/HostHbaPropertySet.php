@@ -10,7 +10,7 @@ class HostHbaPropertySet implements PropertySet
     {
         return [
             PropertySpec::create('HostSystem', [
-                'config.storageDevice.hostBusAdapter',
+                'config.storageDevice.hostBusAdapter'
             ])
         ];
     }

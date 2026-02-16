@@ -29,8 +29,8 @@ class VCenterSelection extends SelectElement
         parent::__construct($name, $attributes);
         $enum = $this->enumVCenters();
         $this->addAttributes(Attributes::create([
-            'options' => $required ? $enum : ['' => $this->translate('All vCenters'),] + $enum,
-            'class' => 'autosubmit',
+            'options' => $required ? $enum : ['' => $this->translate('All vCenters')] + $enum,
+            'class' => 'autosubmit'
         ]));
     }
 
@@ -40,7 +40,7 @@ class VCenterSelection extends SelectElement
         $pairs = $db->fetchPairs(
             $db->select()->from(['vc' => 'vcenter'], [
                 'uuid' => 'LOWER(HEX(vc.instance_uuid))',
-                'name' => "vc.name || ' (' || REPLACE(vc.api_name, 'VMware ', '') || ')'",
+                'name' => "vc.name || ' (' || REPLACE(vc.api_name, 'VMware ', '') || ')'"
             ])->order('vc.name')
         );
         $enum = [];

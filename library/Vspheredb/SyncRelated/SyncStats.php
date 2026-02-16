@@ -91,7 +91,7 @@ class SyncStats implements JsonSerialization
             'modified'     => $this->modified,
             'deleted'      => $this->deleted,
             'totalFromApi' => $this->totalFromApi,
-            'totalFromDb'  => $this->totalFromDb,
+            'totalFromDb'  => $this->totalFromDb
         ];
     }
 }

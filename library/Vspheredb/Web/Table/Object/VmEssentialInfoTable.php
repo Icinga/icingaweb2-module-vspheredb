@@ -64,7 +64,7 @@ class VmEssentialInfoTable extends NameValueTable
             new IbmSpectrumProtect(),
             new NetBackup(),
             new VeeamBackup(),
-            new VRangerBackup(),
+            new VRangerBackup()
         ];
         foreach ($tools as $tool) {
             if ($tool instanceof SimpleBackupTool) {
@@ -115,8 +115,8 @@ class VmEssentialInfoTable extends NameValueTable
             $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
             $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
             $this->translate('Guest OS') => $guest,
-            $this->translate('Guest Utilities') => $guestInfo,
-            // $this->translate('Test') => $this->getMonitoringInfo($vm),
+            $this->translate('Guest Utilities') => $guestInfo
+            // $this->translate('Test') => $this->getMonitoringInfo($vm)
         ]);
         $quickStats = VmQuickStats::loadFor($vm);
         if ($vm->get('runtime_power_state') === 'poweredOn') {
@@ -127,8 +127,8 @@ class VmEssentialInfoTable extends NameValueTable
                     DateFormatter::formatDuration($uptime),
                     $uptime < 900 ? Icon::create('warning-empty', [
                         'class' => ['state', 'yellow'],
-                        'title' => $this->translate('System booted recently'),
-                    ]) : null,
+                        'title' => $this->translate('System booted recently')
+                    ]) : null
                 ]
             );
         }

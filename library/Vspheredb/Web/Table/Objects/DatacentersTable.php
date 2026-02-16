@@ -21,7 +21,7 @@ class DatacentersTable extends ObjectsTable
     {
         return [
             'overall_status',
-            'object_name',
+            'object_name'
         ];
     }
 

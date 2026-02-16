@@ -83,7 +83,7 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter,
         return $this->createColumn('object_name', $this->translate('Name'), [
             'object_name'    => 'o.object_name',
             'overall_status' => 'o.overall_status',
-            'uuid'           => 'o.uuid',
+            'uuid'           => 'o.uuid'
         ])->setRenderer(function ($row) {
             $row->object_name = Anonymizer::anonymizeString($row->object_name);
             if (in_array('overall_status', $this->getChosenColumnNames())) {

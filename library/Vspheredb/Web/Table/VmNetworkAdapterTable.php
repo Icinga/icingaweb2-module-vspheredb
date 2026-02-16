@@ -20,7 +20,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     /** @var VirtualMachine */
@@ -134,7 +134,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
     {
         return [
             RrdImg::vmIfTraffic($this->moref, $row->hardware_key),
-            RrdImg::vmIfPackets($this->moref, $row->hardware_key),
+            RrdImg::vmIfPackets($this->moref, $row->hardware_key)
         ];
     }
 
@@ -149,7 +149,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
                 'vna.mac_address',
                 'vna.address_type',
                 'vna.portgroup_uuid',
-                'portgroup_name' => 'pgo.object_name',
+                'portgroup_name' => 'pgo.object_name'
             ]
         )->join(
             ['vh' => 'vm_hardware'],

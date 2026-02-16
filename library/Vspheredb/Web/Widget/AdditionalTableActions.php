@@ -76,7 +76,7 @@ class AdditionalTableActions
         return in_array($url->getPath(), [
             'vspheredb/vms',
             'vspheredb/hosts',
-            'vspheredb/datastores',
+            'vspheredb/datastores'
         ]);
     }
 
@@ -157,7 +157,7 @@ class AdditionalTableActions
             $this->li([
                 Link::create(Icon::create('down-open'), '#'),
                 $this->linkList($links)
-            ]),
+            ])
         ], ['class' => 'nav']);
     }
 

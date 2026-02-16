@@ -10,7 +10,7 @@ class HostSensorsPropertySet implements PropertySet
     {
         return [
             PropertySpec::create('HostSystem', [
-                'runtime.healthSystemRuntime.systemHealthInfo.numericSensorInfo',
+                'runtime.healthSystemRuntime.systemHealthInfo.numericSensorInfo'
             ])
         ];
     }

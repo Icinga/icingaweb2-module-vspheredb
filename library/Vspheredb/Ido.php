@@ -42,7 +42,7 @@ class Ido
                     . " WHEN 2 THEN 'UNREACHABLE' END"
                     . " ELSE 'PENDING' END)",
                 'is_in_downtime'  => "(CASE WHEN hs.scheduled_downtime_depth > 0 THEN 'y' ELSE 'n' END)",
-                'is_acknowledged' => "(CASE WHEN hs.problem_has_been_acknowledged = 1 THEN 'y' ELSE 'n' END)",
+                'is_acknowledged' => "(CASE WHEN hs.problem_has_been_acknowledged = 1 THEN 'y' ELSE 'n' END)"
             ]
         )->join(
             ['hs' => 'icinga_hoststatus'],
@@ -61,7 +61,7 @@ class Ido
 
         return $this->db->fetchOne(
             $this->db->select()->from('icinga_objects', [
-                'host_name' => 'name1',
+                'host_name' => 'name1'
             ])->where('name1 = ? AND is_active = 1 AND objecttype_id = 1', $hostname)
         ) === $hostname;
     }
@@ -78,7 +78,7 @@ class Ido
                     . " ELSE 'PENDING' END)",
                 'is_in_downtime'  => "(CASE WHEN hs.scheduled_downtime_depth > 0 THEN 'y' ELSE 'n' END)",
                 'is_acknowledged' => "(CASE WHEN hs.problem_has_been_acknowledged = 1 THEN 'y' ELSE 'n' END)",
-                'output'          => "hs.output",
+                'output'          => "hs.output"
             ]
         )->join(
             ['hs' => 'icinga_hoststatus'],

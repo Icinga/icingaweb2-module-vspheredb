@@ -61,7 +61,7 @@ abstract class KnownEvent implements JsonSerialization
             'ts_event_ms'    => $this->getTimestampMs(),
             'event_type'     => array_pop($classParts),
             'event_key'      => $this->key,
-            'event_chain_id' => $this->chainId,
+            'event_chain_id' => $this->chainId
         ];
         if (isset($this->fullFormattedMessage) && strlen($this->fullFormattedMessage)) {
             $data['full_message'] = $this->fullFormattedMessage;

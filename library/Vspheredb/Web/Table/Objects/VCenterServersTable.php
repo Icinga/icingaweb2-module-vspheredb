@@ -70,7 +70,7 @@ class VCenterServersTable extends BaseTable
                 'username' => 'vcs.username',
                 'scheme'   => 'vcs.scheme',
                 'enabled'  => 'vcs.enabled',
-                'vcenter'  => 'vc.name',
+                'vcenter'  => 'vc.name'
             ]))->setRenderer(function ($row) {
                 $td = Html::tag('td', ['class' => 'column-server']);
                 $td->add(Link::create($this->makeUrl($row), 'vspheredb/vcenter/server', ['id' => $row->id]));
@@ -81,7 +81,7 @@ class VCenterServersTable extends BaseTable
             })->setDefaultSortDirection('DESC'),
             (new SimpleColumn('enabled', $this->translate('Status'), [
                 'vcs.enabled',
-                'vcs.id',
+                'vcs.id'
             ]))->setRenderer(function ($row) {
                 if ($row->enabled === 'y') {
                     $form = new DisableServerForm($row->id, $this->db());
@@ -103,7 +103,7 @@ class VCenterServersTable extends BaseTable
                     $td->add([' ', $this->getConnectionStatusIcon($row->id, $row->enabled === 'y'), ' ']);
                 }
                 return $td;
-            }),
+            })
         ]);
     }
 

@@ -26,7 +26,7 @@ class VmsTable extends ObjectsTable
         'object_name',
         'guest_host_name',
         'guest_ip_address',
-        'moref',
+        'moref'
     ];
 
     public function filterHost(string $uuid): static
@@ -86,14 +86,14 @@ class VmsTable extends ObjectsTable
             $sub = $this->db()->select()->from('vm_datastore_usage', [
                 'vm_uuid' => 'vm_uuid',
                 'datastore_capacity' => 'SUM(committed + uncommitted)',
-                'datastore_usage' => 'SUM(committed)',
+                'datastore_usage' => 'SUM(committed)'
             ])->group('vm_uuid');
             $query->joinLeft(['vdu' => $sub], 'vdu.vm_uuid = o.uuid', []);
         }
         if ($wantsDisks) {
             $sub = $this->db()->select()->from('vm_disk', [
                 'vm_uuid' => 'vm_uuid',
-                'disk_capacity' => 'SUM(capacity)',
+                'disk_capacity' => 'SUM(capacity)'
             ])->group('vm_uuid');
             $query->joinLeft(['vmd' => $sub], 'vmd.vm_uuid = o.uuid', []);
         }
@@ -114,7 +114,7 @@ class VmsTable extends ObjectsTable
         $memoryColumns = [
             'guest_memory_usage_mb' => 'vqs.guest_memory_usage_mb',
             'host_memory_usage_mb'  => 'vqs.host_memory_usage_mb',
-            'hardware_memorymb'     => 'vm.hardware_memorymb',
+            'hardware_memorymb'     => 'vm.hardware_memorymb'
         ];
         $this->addAvailableColumns([
             $this->createColumn('runtime_power_state', $this->translate('Power'), 'vm.runtime_power_state')
@@ -197,7 +197,7 @@ class VmsTable extends ObjectsTable
                 })->setDefaultSortDirection('DESC'),
 
             $this->createColumn('uptime', $this->translate('Uptime'), [
-                'uptime' => 'vqs.uptime',
+                'uptime' => 'vqs.uptime'
             ])->setRenderer(function ($row) {
                 if ($row->uptime === null) {
                     return null;
@@ -208,7 +208,7 @@ class VmsTable extends ObjectsTable
             /*
             TODO: Not yet
             $this->createColumn('ifTraffic', $this->translate('NIC Usage'), [
-                'moref' => 'o.moref',
+                'moref' => 'o.moref'
             ])->setRenderer(function ($row) {
                 return $this->renderInterface($row->moref, 4000);
             }),
@@ -232,11 +232,11 @@ class VmsTable extends ObjectsTable
             'rnd'      => floor(time() / 20),
             'format'   => 'png',
             'start'    => $start,
-            'end'      => $end,
+            'end'      => $end
         ];
         $attrs = [
             'height' => $height,
-            'width'  => $width,
+            'width'  => $width
             //'align'  => 'right',
             // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
         ];
@@ -251,7 +251,7 @@ class VmsTable extends ObjectsTable
             $perf->getDiskColumn()->setDefaultSortDirection('DESC'),
             $perf->getNetColumn()->setDefaultSortDirection('DESC'),
             $perf->getCurrentNetColumn()->setDefaultSortDirection('DESC'),
-            $perf->getCurrentDiskColumn()->setDefaultSortDirection('DESC'),
+            $perf->getCurrentDiskColumn()->setDefaultSortDirection('DESC')
         ]);
     }
 
@@ -260,7 +260,7 @@ class VmsTable extends ObjectsTable
         return [
             'object_name',
             'cpu_usage',
-            'memory_usage',
+            'memory_usage'
         ];
     }
 
@@ -276,7 +276,7 @@ class VmsTable extends ObjectsTable
             'overall_status'      => 'o.overall_status',
             'runtime_power_state' => 'vm.runtime_power_state',
             'template'            => 'vm.template',
-            'uuid'                => 'o.uuid',
+            'uuid'                => 'o.uuid'
         ])->setRenderer(function ($row) {
             if (in_array('overall_status', $this->getChosenColumnNames())) {
                 $result = [];

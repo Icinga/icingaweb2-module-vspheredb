@@ -10,7 +10,7 @@ class HostPhysicalNicPropertySet implements PropertySet
     {
         return [
             PropertySpec::create('HostSystem', [
-                'config.network.pnic',
+                'config.network.pnic'
             ])
         ];
     }

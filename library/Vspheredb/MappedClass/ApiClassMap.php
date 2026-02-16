@@ -234,7 +234,7 @@ class ApiClassMap
             'HostTcpHba'                              => HostTcpHba::class,
 
             'GuestNicInfo'                            => GuestNicInfo::class,
-            'NetDnsConfigInfo'                        => NetDnsConfigInfo::class,
+            'NetDnsConfigInfo'                        => NetDnsConfigInfo::class
         ];
     }
 }

@@ -55,7 +55,7 @@ class BackupToolInfo extends HtmlDocument
             new IbmSpectrumProtect(),
             new NetBackup(),
             new VeeamBackup(),
-            new VRangerBackup(),
+            new VRangerBackup()
         ];
     }
 }

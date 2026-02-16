@@ -109,7 +109,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
             }
             $links[] = Link::create($label, $this->getUrlWithOptions($urlOptions), null, [
                 'class' => "icon-$icon",
-                'title' => $title,
+                'title' => $title
             ]);
         }
         if (! empty($disabled) && $all !== $default) {

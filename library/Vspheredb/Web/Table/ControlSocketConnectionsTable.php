@@ -10,7 +10,7 @@ class ControlSocketConnectionsTable extends ArrayTable
 {
     protected $searchColumns = [
         'username',
-        'socket',
+        'socket'
     ];
 
     /* Sample Row:
@@ -46,9 +46,9 @@ class ControlSocketConnectionsTable extends ArrayTable
         $tr = $this::row([
             [
                 $row->direction === 'in' ? Icon::create('endtime', [
-                    'title' => $this->translate('Incoming connection'),
+                    'title' => $this->translate('Incoming connection')
                 ]) : Icon::create('starttime', [
-                    'title' => $this->translate('Outgoing connection'),
+                    'title' => $this->translate('Outgoing connection')
                 ]),
                 ' ',
                 $row->socket
@@ -68,7 +68,7 @@ class ControlSocketConnectionsTable extends ArrayTable
         return [
             $this->translate('Socket'),
             $this->translate('User'),
-            $this->translate('Client PID'),
+            $this->translate('Client PID')
         ];
     }
 }

@@ -27,7 +27,7 @@ class EventHistoryTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => ['common-table', 'event-history-table'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected array $requiredUuids = [];
@@ -38,7 +38,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         'VmBeingMigratedEvent',
         'VmBeingHotMigratedEvent',
         'VmEmigratingEvent',
-        'VmMigratedEvent',
+        'VmMigratedEvent'
     ];
 
     protected array $otherKnownEvents = [
@@ -230,7 +230,7 @@ class EventHistoryTable extends ZfQueryBasedTable
             'vh.destination_host_uuid',
             'vh.destination_datastore_uuid',
             'vh.full_message',
-            'vh.fault_reason',
+            'vh.fault_reason'
         ])->order('ts_event_ms DESC');
 
         if (is_string($this->eventType) && strlen($this->eventType)) {
@@ -271,7 +271,7 @@ class EventHistoryTable extends ZfQueryBasedTable
             'host_uuid',
             'destination_host_uuid',
             'datastore_uuid',
-            'destination_datastore_uuid',
+            'destination_datastore_uuid'
         ];
         foreach ($properties as $property) {
             if ($row->$property !== null) {

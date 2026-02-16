@@ -14,7 +14,7 @@ class VmsSnapshotsTable extends ObjectsTable
 
     protected $searchColumns = [
         'object_name',
-        'guest_host_name',
+        'guest_host_name'
     ];
 
     public function filterHost(string $uuid): static
@@ -30,7 +30,7 @@ class VmsSnapshotsTable extends ObjectsTable
             $this->createColumn('guest_name', $this->translate('Guest hostname'), [
                 'object_name'     => 'o.object_name',
                 'uuid'            => 'vm.uuid',
-                'guest_host_name' => 'vm.guest_host_name',
+                'guest_host_name' => 'vm.guest_host_name'
             ])->setRenderer(function ($row) {
                 if ($row->guest_host_name === null || $row->guest_host_name === $row->object_name) {
                     $name = $row->object_name;
@@ -81,7 +81,7 @@ class VmsSnapshotsTable extends ObjectsTable
             'object_name',
             'disk_path',
             'free_space',
-            'capacity',
+            'capacity'
         ];
     }
 }

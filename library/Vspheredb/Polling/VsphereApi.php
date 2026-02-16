@@ -181,7 +181,7 @@ class VsphereApi
         $this->logger->debug(sprintf('Sending Login request to %s', $this->makeLocation()));
         return $this->callOnServiceInstanceObject('sessionManager', 'Login', [
             'userName' => $this->server->get('username'),
-            'password' => $this->server->get('password'),
+            'password' => $this->server->get('password')
         ])->then(function ($result) {
             return $result->returnval;
         });
@@ -373,7 +373,7 @@ class VsphereApi
         return $this->getServiceInstance()->then(function (ServiceContent $content) {
             return $this->fetchSingleObject($content->sessionManager, [
                 'currentSession',
-                'defaultLocale',
+                'defaultLocale'
             ])->then(function (SessionManager $manager) {
                 if (isset($manager->currentSession)) {
                     return $manager->currentSession;
@@ -524,7 +524,7 @@ class VsphereApi
     public function readNextEvents(): PromiseInterface
     {
         return $this->callOnEventCollector('ReadNextEvents', [
-            'maxCount' => 1000,
+            'maxCount' => 1000
         ]);
     }
 
@@ -618,7 +618,7 @@ class VsphereApi
             'classmap'           => ApiClassMap::getMap(),
             'features'           => SOAP_SINGLE_ELEMENT_ARRAYS | SOAP_USE_XSI_ARRAY_TYPE,
             'cache_wsdl'         => WSDL_CACHE_NONE,
-            'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+            'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP
         ], CurlOptions::forServerInfo($this->server), $this->logger);
         $this->soapClient->setCookieStore($this->cookieStore);
     }
@@ -666,7 +666,7 @@ class VsphereApi
             'VmBeingClonedEvent',
             'VmBeingClonedNoFolderEvent',
             'VmClonedEvent',
-            'VmCloneFailedEvent',
+            'VmCloneFailedEvent'
         ];
     }
 }

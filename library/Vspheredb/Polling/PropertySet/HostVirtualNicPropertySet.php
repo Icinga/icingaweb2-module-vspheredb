@@ -10,7 +10,7 @@ class HostVirtualNicPropertySet implements PropertySet
     {
         return [
             PropertySpec::create('HostSystem', [
-                'config.network.vnic',
+                'config.network.vnic'
             ])
         ];
     }

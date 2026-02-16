@@ -66,7 +66,7 @@ class VCenterInfo
             'id'               => 'vc.id',
             'name'             => 'vc.name',
             'software_name'    => 'vc.api_name',
-            'software_version' => 'vc.version',
+            'software_version' => 'vc.version'
         ];
 
         return $db->select()->from(['vc' => 'vcenter'], $columns)->order('name');

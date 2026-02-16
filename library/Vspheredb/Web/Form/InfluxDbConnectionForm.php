@@ -47,7 +47,7 @@ class InfluxDbConnectionForm extends Form
         $this->baseUrlElement = new TextWithActionButton('base_url', [
             'label'       => $this->translate('Base URL'),
             'description' => $this->translate('InfluxDB base URL, like http://influxdb.example.com:8086'),
-            'required'    => true,
+            'required'    => true
         ], [
             'label' => $this->translate('Verify'),
             'title' => $this->translate('Attempt to establish a connection to your InfluxDB instance')
@@ -60,8 +60,8 @@ class InfluxDbConnectionForm extends Form
             'options' => [
                 '' => $this->translate('Autodetect'),
                 'v1' => 'v1',
-                'v2' => 'v2',
-            ],
+                'v2' => 'v2'
+            ]
         ]);
         $this->appendVersionInformation($this->getDetectedApiVersion(), $this->getInfluxDbVersion());
         $this->addCredentials();
@@ -186,7 +186,7 @@ class InfluxDbConnectionForm extends Form
         $this->addElement('text', 'username', ['label' => $this->translate('Username')]);
         $this->addElement('password', 'password', [
             'label'       => $this->translate('Password'),
-            'required'    => $this->hasElementValue('username'),
+            'required'    => $this->hasElementValue('username')
         ]);
     }
 
@@ -194,12 +194,12 @@ class InfluxDbConnectionForm extends Form
     {
         $this->addElement('text', 'username', [
             'label'       => $this->translate('Organisation'),
-            'required'    => true,
+            'required'    => true
         ]);
         $this->addElement('text', 'password', [
             'label'       => $this->translate('Token'),
             // 'description' => $this->translate('InfluxDB Token (InfluxDB -> Data -> Tokens'),
-            'required'    => true,
+            'required'    => true
         ]);
     }
 
@@ -233,7 +233,7 @@ class InfluxDbConnectionForm extends Form
             'baseUrl'  => $baseUrl,
             'apiVersion' => $apiVersion,
             'username' => $username,
-            'password' => $password,
+            'password' => $password
         ]);
     }
 

@@ -17,7 +17,7 @@ class HostQuickStats extends BaseDbObject
         'overall_cpu_usage'           => null,
         'overall_memory_usage_mb'     => null,
         'uptime'                      => null,
-        'vcenter_uuid'                => null,
+        'vcenter_uuid'                => null
     ];
 
     protected array $propertyMap = [
@@ -25,7 +25,7 @@ class HostQuickStats extends BaseDbObject
         'summary.quickStats.distributedMemoryFairness' => 'distributed_memory_fairness',
         'summary.quickStats.overallCpuUsage'           => 'overall_cpu_usage',
         'summary.quickStats.overallMemoryUsage'        => 'overall_memory_usage_mb',
-        'summary.quickStats.uptime'                    => 'uptime',
+        'summary.quickStats.uptime'                    => 'uptime'
     ];
 
     /** @var static[]|null */

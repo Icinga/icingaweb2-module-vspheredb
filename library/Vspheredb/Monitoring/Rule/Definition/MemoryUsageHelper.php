@@ -85,25 +85,25 @@ class MemoryUsageHelper
                 'options' => [
                     '' => $t->translate('- please choose -'),
                     'best_wins' => $t->translate('Better state wins'),
-                    'worst_wins' => $t->translate('Worse state wins'),
-                ],
+                    'worst_wins' => $t->translate('Worse state wins')
+                ]
             ]],
             'warning_if_less_than_percent_free' => ['number', [
                 'label' => $t->translate('Raise Warning with less than X percent free'),
-                'placeholder' => '5',
+                'placeholder' => '5'
             ]],
             'critical_if_less_than_percent_free' => ['number', [
                 'label' => $t->translate('Raise Critical with less than X percent free'),
-                'placeholder' => '2',
+                'placeholder' => '2'
             ]],
             'warning_if_less_than_mbytes_free' => ['number', [
                 'label' => $t->translate('Raise Warning with less than X MBytes free'),
-                'placeholder' => '500',
+                'placeholder' => '500'
             ]],
             'critical_if_less_than_mbytes_free' => ['number', [
                 'label' => $t->translate('Raise Critical with less than X MBytes free'),
-                'placeholder' => '100',
-            ]],
+                'placeholder' => '100'
+            ]]
         ];
     }
 }

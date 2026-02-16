@@ -8,9 +8,9 @@ class StoragePodSelectSet implements SelectSet
     {
         return [
             GenericSpec::traverseFolder([
-                GenericSpec::TRAVERSE_DC_DATA_STORES,
+                GenericSpec::TRAVERSE_DC_DATA_STORES
             ]),
-            GenericSpec::traverseDatacenterDataStores(),
+            GenericSpec::traverseDatacenterDataStores()
         ];
     }
 }

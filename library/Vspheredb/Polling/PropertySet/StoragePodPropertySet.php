@@ -12,7 +12,7 @@ class StoragePodPropertySet implements PropertySet
             PropertySpec::create('StoragePod', [
                 'name',
                 'summary.capacity',
-                'summary.freeSpace',
+                'summary.freeSpace'
             ])
         ];
     }

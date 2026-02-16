@@ -180,7 +180,7 @@ class RestApi
     {
         $request = new Request('POST', $this->apiUrl('session'), [
             'Accept' => 'application/json',
-            'Authorization' => $this->generateBasicAuthHeaderLine(),
+            'Authorization' => $this->generateBasicAuthHeaderLine()
         ]);
 
         return $this->curl->send($request, $this->curlOptions)
@@ -362,7 +362,7 @@ class RestApi
     protected function request(string $method, string $url, $body = null): RequestInterface
     {
         $headers = [
-            'Accept' => 'application/json',
+            'Accept' => 'application/json'
         ];
         if ($body) {
             $headers['Content-type'] = 'application/json';

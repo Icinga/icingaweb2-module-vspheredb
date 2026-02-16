@@ -19,17 +19,17 @@ class VmDisk extends BaseVmHardwareDbObject
         'split'            => null,
         'write_through'    => null,
         'thin_provisioned' => null,
-        'vcenter_uuid'     => null,
+        'vcenter_uuid'     => null
     ];
 
     protected array $objectReferences = [
-        'datastore_uuid',
+        'datastore_uuid'
     ];
 
     protected array $booleanProperties = [
         'split',
         'write_through',
-        'thin_provisioned',
+        'thin_provisioned'
     ];
 
     protected array $propertyMap = [

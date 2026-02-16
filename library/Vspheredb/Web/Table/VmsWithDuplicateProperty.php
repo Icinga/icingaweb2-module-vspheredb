@@ -14,7 +14,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected $searchColumns = ['object_name'];
@@ -87,7 +87,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
                 'vm.guest_host_name',
                 "vm.$property",
                 'vm.runtime_power_state',
-                'o.overall_status',
+                'o.overall_status'
             ]
         )->join(
             ['o' => 'object'],

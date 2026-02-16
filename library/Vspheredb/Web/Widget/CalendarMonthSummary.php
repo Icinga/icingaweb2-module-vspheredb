@@ -18,7 +18,7 @@ class CalendarMonthSummary extends Table
 
     protected $defaultAttributes = [
         'data-base-target' => '_next',
-        'class'            => 'calendar',
+        'class'            => 'calendar'
     ];
 
     protected ?string $today = null;

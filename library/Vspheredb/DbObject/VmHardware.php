@@ -14,11 +14,11 @@ class VmHardware extends BaseVmHardwareDbObject
         'controller_key' => null,
         'label'          => null,
         'summary'        => null,
-        'vcenter_uuid'   => null,
+        'vcenter_uuid'   => null
     ];
 
     protected array $objectReferences = [
-        'vm_uuid',
+        'vm_uuid'
     ];
 
     protected array $propertyMap = [
@@ -26,6 +26,6 @@ class VmHardware extends BaseVmHardwareDbObject
         'deviceInfo.summary' => 'summary',
         'busNumber'          => 'bus_number',
         'unitNumber'         => 'unit_number',
-        'controllerKey'      => 'controller_key',
+        'controllerKey'      => 'controller_key'
     ];
 }

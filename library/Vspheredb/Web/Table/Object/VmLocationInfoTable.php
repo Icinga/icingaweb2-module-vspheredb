@@ -63,7 +63,7 @@ class VmLocationInfoTable extends NameValueTable
                 $hostInfo = [
                     $lookup->linkToObject($hostUuid),
                     Html::tag('br'),
-                    ConnectionStateDetails::getFor($vm->get('connection_state')),
+                    ConnectionStateDetails::getFor($vm->get('connection_state'))
                 ];
                 $hostResources = $this->prepareHostInfo($host, $quickStats);
             } catch (NotFoundError) {
@@ -78,7 +78,7 @@ class VmLocationInfoTable extends NameValueTable
             $this->translate('Host Resources') => $hostResources,
             $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
             $this->translate('Path') => PathToObjectRenderer::render($vm),
-            $this->translate('vCenter') => new VCenterLink($this->vCenter),
+            $this->translate('vCenter') => new VCenterLink($this->vCenter)
         ]);
     }
 
@@ -100,7 +100,7 @@ class VmLocationInfoTable extends NameValueTable
             sprintf(
                 $this->translate('Free Memory: %s'),
                 Format::mBytes($memCapacity - $memUsed)
-            ),
+            )
         ]));
     }
 }

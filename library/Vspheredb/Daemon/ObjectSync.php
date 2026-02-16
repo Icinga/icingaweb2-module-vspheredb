@@ -59,7 +59,7 @@ class ObjectSync implements DaemonTask
     /** @var string[] */
     protected array $fastTasks = [
         HostQuickStatsSyncTask::class,
-        VmQuickStatsSyncTask::class,
+        VmQuickStatsSyncTask::class
     ];
 
     /** @var string[] */
@@ -72,7 +72,7 @@ class ObjectSync implements DaemonTask
         ComputeResourceSyncTask::class,
         VmDiskUsageSyncTask::class,
         VmDatastoreUsageSyncTask::class,
-        VmSnapshotSyncTask::class,
+        VmSnapshotSyncTask::class
     ];
 
     /** @var string[] */
@@ -82,14 +82,14 @@ class ObjectSync implements DaemonTask
         HostHbaSyncTask::class,
         HostPhysicalNicSyncTask::class,
         HostVirtualNicSyncTask::class,
-        VmHardwareSyncTask::class,
+        VmHardwareSyncTask::class
     ];
 
     /** @var string[] */
     protected array $taggingTasks = [
         TaggingTagSyncTask::class,
         TaggingObjectTagSyncTask::class,
-        TaggingCategorySyncTask::class,
+        TaggingCategorySyncTask::class
     ];
 
     /** @var TimerInterface[]  */
@@ -321,7 +321,7 @@ class ObjectSync implements DaemonTask
                 'result'      => $result,
                 'taskLabel'   => $task->getLabel(),
                 'storeClass'  => $task->getSyncStoreClass(),
-                'objectClass' => $task->getObjectClass(),
+                'objectClass' => $task->getObjectClass()
             ])->then(function ($stats) use ($idx, $label) {
                 $stats = SyncStats::fromSerialization($stats);
                 if ($stats->hasChanges()) {
@@ -371,7 +371,7 @@ class ObjectSync implements DaemonTask
 
             return $this->dbRunner->request('db.setCustomFieldsMap', [
                 'vCenterId' => $this->vCenter->get('id'),
-                'map'       => $manager->requireMap(),
+                'map'       => $manager->requireMap()
             ]);
         });
     }

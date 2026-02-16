@@ -10,7 +10,7 @@ class HostHardwarePropertySet implements PropertySet
     {
         return [
             PropertySpec::create('HostSystem', [
-                'hardware.pciDevice',
+                'hardware.pciDevice'
             ])
         ];
     }

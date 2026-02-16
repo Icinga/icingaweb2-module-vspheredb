@@ -16,7 +16,7 @@ class CurlOptions
     /** @var array */
     public const PROXY_TYPES = [
         'HTTP'   => CURLPROXY_HTTP,
-        'SOCKS5' => CURLPROXY_SOCKS5,
+        'SOCKS5' => CURLPROXY_SOCKS5
     ];
 
     public static function forServerInfo(ServerInfo $server): array
@@ -33,7 +33,7 @@ class CurlOptions
                 // Host header disabled for now, see #496
                 // "Host: $host",
                 'Expect:',
-                'User-Agent: Icinga-vSphereDB/1.8',
+                'User-Agent: Icinga-vSphereDB/1.8'
             ]
         ];
 

@@ -53,7 +53,7 @@ class HostSystemInfoTable extends NameValueTable
             $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
             $this->translate('BIOS Version') => new BiosInfo($host),
             $this->translate('Uptime')       => $this->showUptime($this->quickStats->get('uptime')),
-            $this->translate('System UUID')  => Html::tag('pre', Anonymizer::shuffleString($host->get('sysinfo_uuid'))),
+            $this->translate('System UUID')  => Html::tag('pre', Anonymizer::shuffleString($host->get('sysinfo_uuid')))
         ]);
     }
 
@@ -63,8 +63,8 @@ class HostSystemInfoTable extends NameValueTable
             DateFormatter::formatDuration($uptime),
             $uptime < 900 ? Icon::create('warning-empty', [
                 'class' => ['state', 'yellow'],
-                'title' => $this->translate('System booted recently'),
-            ]) : null,
+                'title' => $this->translate('System booted recently')
+            ]) : null
         ];
     }
 

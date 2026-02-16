@@ -20,7 +20,7 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
     {
         return [
             $this->translate('VCenter'),
-            $this->translate('Problems / Monitoring Rule'),
+            $this->translate('Problems / Monitoring Rule')
         ];
     }
 
@@ -55,7 +55,7 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
             'vcenter'    => Util::niceUuid($row->vcenter_uuid),
             'objectType' => $objectType,
             'ruleSet'    => $ruleSet,
-            'rule'       => $rule,
+            'rule'       => $rule
         ])];
         unset($row->vcenter_uuid);
 
@@ -99,7 +99,7 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
                 'object_rule_name' => "o.object_type || '/' || p.rule_name",
                 'cnt_critical' => "SUM(CASE WHEN p.current_state = 'CRITICAL' THEN 1 ELSE 0 END)",
                 'cnt_unknown' => "SUM(CASE WHEN p.current_state = 'UNKNOWN' THEN 1 ELSE 0 END)",
-                'cnt_warning' => "SUM(CASE WHEN p.current_state = 'WARNING' THEN 1 ELSE 0 END)",
+                'cnt_warning' => "SUM(CASE WHEN p.current_state = 'WARNING' THEN 1 ELSE 0 END)"
             ]
         )
         ->join(['o' => 'object'], 'o.uuid = p.uuid', [])

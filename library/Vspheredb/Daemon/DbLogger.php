@@ -91,7 +91,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
                 'timestamp' => $timestamp,
                 'level'     => $level,
                 'message'   => $message,
-                'context'   => $context,
+                'context'   => $context
             ]);
             if ($this->queue->count() > 100) {
                 $this->queue->pop();
@@ -119,7 +119,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
             'pid'           => $this->pid,
             'fqdn'         => $this->fqdn,
             'level'         => $level,
-            'message'       => $message,
+            'message'       => $message
         ];
         if (isset($context['pid'])) {
             $params['pid'] = $context['pid'];

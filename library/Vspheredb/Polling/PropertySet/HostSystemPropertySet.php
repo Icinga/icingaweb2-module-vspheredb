@@ -35,7 +35,7 @@ class HostSystemPropertySet implements PropertySet
 
                 'summary.hardware.memorySize',
                 'hardware.biosInfo.releaseDate',
-                'summary.hardware.otherIdentifyingInfo',
+                'summary.hardware.otherIdentifyingInfo'
             ])
         ];
     }

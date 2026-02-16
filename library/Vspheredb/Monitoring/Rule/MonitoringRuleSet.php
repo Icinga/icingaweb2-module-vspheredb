@@ -108,7 +108,7 @@ class MonitoringRuleSet
         $db->insert(MonitoringRuleSet::TABLE, [
             'object_uuid'   => $this->binaryUuid,
             'object_folder' => $this->objectFolder,
-            'settings'      => JsonString::encode($this->settings),
+            'settings'      => JsonString::encode($this->settings)
         ]);
         $this->fromDb = true;
 

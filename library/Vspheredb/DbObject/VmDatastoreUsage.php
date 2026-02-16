@@ -17,7 +17,7 @@ class VmDatastoreUsage extends DbObject
         'committed'      => null,
         'uncommitted'    => null,
         'unshared'       => null,
-        'ts_updated'     => null,
+        'ts_updated'     => null
     ];
 
     /**

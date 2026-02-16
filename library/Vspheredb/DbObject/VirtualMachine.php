@@ -50,7 +50,7 @@ class VirtualMachine extends BaseDbObject
         'cpu_hot_add_enabled'        => null,
         'memory_hot_add_enabled'     => null,
         'guest_ip_addresses'         => null,
-        'guest_ip_stack'             => null,
+        'guest_ip_stack'             => null
     ];
 
     protected array $objectReferences = [
@@ -63,7 +63,7 @@ class VirtualMachine extends BaseDbObject
         'online_standby',
         'paused',
         'cpu_hot_add_enabled',
-        'memory_hot_add_enabled',
+        'memory_hot_add_enabled'
     ];
 
     protected array $propertyMap = [
@@ -99,7 +99,7 @@ class VirtualMachine extends BaseDbObject
         'config.cpuHotAddEnabled'    => 'cpu_hot_add_enabled',
         'config.memoryHotAddEnabled' => 'memory_hot_add_enabled',
         // 'runtime.bootTime' => 'runtime_last_boot_time',
-        // 'runtime.suspendTime' 'runtime_last_suspend_time',
+        // 'runtime.suspendTime' 'runtime_last_suspend_time'
     ];
 
     /** @var ?HostSystem */
@@ -237,7 +237,7 @@ class VirtualMachine extends BaseDbObject
                 $addresses[$key] = (object) [
                     'connected' => $nic->connected,
                     'network'   => $nic->network,
-                    'addresses' => [],
+                    'addresses' => []
                 ];
             }
 
@@ -258,7 +258,7 @@ class VirtualMachine extends BaseDbObject
                         // * tentative    Indicates that the uniqueness of the address on the link
                         //                is presently being verified
                         // * unknown      Indicates that the status cannot be determined
-                        'state'        => property_exists($config, 'state') ? $config->state : null,
+                        'state'        => property_exists($config, 'state') ? $config->state : null
                     ];
                 }
             }

@@ -23,7 +23,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
         'vm_guest_host_name' => 'vm.guest_host_name',
         'vm_moref' => 'o.moref',
         'disk_hardware_key' => '(' . self::INSTANCE_KEY_EXPRESSION . ')',
-        'disk_hardware_label' => 'vmhw.label',
+        'disk_hardware_label' => 'vmhw.label'
     ];
 
     protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
@@ -31,7 +31,7 @@ class VmDiskCounterLookup extends DefaultCounterLookup
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
                 'o.moref',
-                'GROUP_CONCAT(' . self::INSTANCE_KEY_EXPRESSION . " SEPARATOR ',')",
+                'GROUP_CONCAT(' . self::INSTANCE_KEY_EXPRESSION . " SEPARATOR ',')"
             ])
             ->group('vm.uuid');
     }

@@ -47,7 +47,7 @@ class PortGroupsTable extends ObjectsTable
             $this->createObjectNameColumn(),
             $this->createColumn('vlan', $this->translate('VLAN'), [
                 'vdp.vlan',
-                'vdp.vlan_ranges',
+                'vdp.vlan_ranges'
             ])->setRenderer(function ($row) {
                 if ($row->vlan === null) {
                     if ($row->vlan_ranges === null) {
@@ -71,7 +71,7 @@ class PortGroupsTable extends ObjectsTable
                     return $row->vlan;
                 }
             }),
-            $this->createColumn('num_ports', $this->translate('Ports'), 'vdp.num_ports'),
+            $this->createColumn('num_ports', $this->translate('Ports'), 'vdp.num_ports')
         ]);
     }
 

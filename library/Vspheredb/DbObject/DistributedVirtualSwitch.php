@@ -23,7 +23,7 @@ class DistributedVirtualSwitch extends BaseDbObject
         'max_ports'            => null,
         'hostmembers_checksum' => null,
         'portgroups_checksum'  => null,
-        'vms_checksum'         => null,
+        'vms_checksum'         => null
     ];
 
     protected array $propertyMap = [
@@ -35,7 +35,7 @@ class DistributedVirtualSwitch extends BaseDbObject
         'summary.numHosts'       => 'num_hosts',
         'config.numPorts'        => 'num_ports',
         'config.maxPorts'        => 'max_ports',
-        'config.uplinkPortgroup' => 'uplinkPortGroups',
+        'config.uplinkPortgroup' => 'uplinkPortGroups'
     ];
 
     /** @var array|null */

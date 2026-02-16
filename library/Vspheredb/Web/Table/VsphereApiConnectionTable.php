@@ -9,7 +9,7 @@ class VsphereApiConnectionTable extends ArrayTable
         return [
             $this->translate('VCenter'),
             $this->translate('Server'),
-            $this->translate('State'),
+            $this->translate('State')
         ];
     }
 }

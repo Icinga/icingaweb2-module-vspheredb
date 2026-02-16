@@ -24,7 +24,7 @@ class VeeamBackupRunDetails extends NameValueTable
             $this->translate('Job name')      => $attributes['Job name'],
             $this->translate('Last Run Time') => DateFormatter::formatDateTime($attributes['Time']),
             $this->translate('Backup host')   => $attributes['Backup host'],
-            $this->translate('Backup folder') => $attributes['Backup folder'],
+            $this->translate('Backup folder') => $attributes['Backup folder']
         ]);
     }
 }

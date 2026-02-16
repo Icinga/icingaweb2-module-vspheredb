@@ -23,7 +23,7 @@ class IbmSpectrumProtectBackupRunDetails extends NameValueTable
 
         $optional = [
             $this->translate('Schedule')      => $attributes['Schedule'],
-            $this->translate('Application Protection') => $attributes['Application Protection'],
+            $this->translate('Application Protection') => $attributes['Application Protection']
         ];
 
         $this->addNameValuePairs([
@@ -33,7 +33,7 @@ class IbmSpectrumProtectBackupRunDetails extends NameValueTable
             $this->translate('Duration')      => DateFormatter::formatDuration($attributes['Duration']),
             $this->translate('Type')          => $attributes['Type'],
             $this->translate('Data Mover')    => $attributes['Data Mover'],
-            $this->translate('Snapshot Type') => $attributes['Snapshot Type'],
+            $this->translate('Snapshot Type') => $attributes['Snapshot Type']
         ]);
 
         foreach ($optional as $name => $value) {

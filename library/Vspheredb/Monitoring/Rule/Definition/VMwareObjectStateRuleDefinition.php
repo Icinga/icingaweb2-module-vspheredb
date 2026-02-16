@@ -14,7 +14,7 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
     public const SUPPORTED_OBJECT_TYPES = [
         ObjectType::HOST_SYSTEM,
         ObjectType::VIRTUAL_MACHINE,
-        ObjectType::DATASTORE,
+        ObjectType::DATASTORE
     ];
 
     public static function getIdentifier(): string
@@ -64,15 +64,15 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
     {
         return [
             'trigger_on_yellow' => ['state_trigger', [
-                'label' => $this->translate('When VMware shows YELLOW'),
+                'label' => $this->translate('When VMware shows YELLOW')
             ]],
             'trigger_on_gray' => ['state_trigger', [
                 'label' => $this->translate('When VMware shows GRAY'),
                 'description' => $this->translate('VM might be unreachable')
             ]],
             'trigger_on_red' => ['state_trigger', [
-                'label' => $this->translate('When VMware shows RED'),
-            ]],
+                'label' => $this->translate('When VMware shows RED')
+            ]]
         ];
     }
 }

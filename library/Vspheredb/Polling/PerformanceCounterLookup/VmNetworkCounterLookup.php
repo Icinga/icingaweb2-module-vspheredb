@@ -19,7 +19,7 @@ class VmNetworkCounterLookup extends DefaultCounterLookup
         'interface_hardware_key' => 'vna.hardware_key',
         // 'parent_name'     => 'po.object_name',
         'interface_label'        => 'vh.label',
-        // 'portgroup_name'  => 'pgo.object_name',
+        // 'portgroup_name'  => 'pgo.object_name'
     ];
 
     protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
@@ -27,7 +27,7 @@ class VmNetworkCounterLookup extends DefaultCounterLookup
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
                 'o.moref',
-                'hardware_key' => "GROUP_CONCAT(vna.hardware_key SEPARATOR ',')",
+                'hardware_key' => "GROUP_CONCAT(vna.hardware_key SEPARATOR ',')"
             ])
             ->group('vm.uuid')
             ->order('vm.runtime_host_uuid')

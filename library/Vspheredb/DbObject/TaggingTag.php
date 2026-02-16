@@ -16,7 +16,7 @@ class TaggingTag extends BaseDbObject
         'vcenter_uuid'     => null,
         'id'               => null,
         'name'             => null,
-        'description'      => null,
+        'description'      => null
     ];
 
     protected array $propertyMap = [
@@ -24,7 +24,7 @@ class TaggingTag extends BaseDbObject
         'category_uuid'    => 'category_uuid',
         'id'               => 'id',
         'name'             => 'name',
-        'description'      => 'description',
+        'description'      => 'description'
     ];
 
     public static function loadAllForVCenter(VCenter $vCenter): array

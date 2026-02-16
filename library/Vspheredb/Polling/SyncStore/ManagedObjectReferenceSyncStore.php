@@ -68,7 +68,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
                     'object_name'    => $name,
                     'object_type'    => $moRef->type,
                     'overall_status' => $obj->overallStatus,
-                    'tags'           => JsonString::encode($tags),
+                    'tags'           => JsonString::encode($tags)
                 ], $connection);
             }
             if (property_exists($obj, 'parent')) {

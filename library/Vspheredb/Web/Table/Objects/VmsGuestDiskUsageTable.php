@@ -15,7 +15,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
 
     protected $searchColumns = [
         'object_name',
-        'disk_path',
+        'disk_path'
     ];
 
     protected bool $withHistory = false;
@@ -42,7 +42,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                 }),
             $this->createColumn('usage', $this->translate('Usage'), [
                 'free_space' => 'vdu.free_space',
-                'capacity'   => 'vdu.capacity',
+                'capacity'   => 'vdu.capacity'
             ])->setRenderer(function ($row) {
                 $title = sprintf(
                     '%s free out of %s (%.2F %%)',
@@ -54,13 +54,13 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                 return new SimpleUsageBar($row->capacity - $row->free_space, $row->capacity, $title);
             })->setSortExpression(
                 '1 - (vdu.free_space / vdu.capacity)'
-            )->setDefaultSortDirection('DESC'),
+            )->setDefaultSortDirection('DESC')
         ]);
 
         if ($this->withHistory) {
             $this->addAvailableColumn(
                 $this->createColumn('history', $this->translate('History'), [
-                    'object_name' => 'o.object_name',
+                    'object_name' => 'o.object_name'
                 ])->setRenderer(function ($row) {
                     $ciName = str_replace(' ', '_', $row->object_name);
                     $path = str_replace('/', '_', $row->disk_path);
@@ -88,7 +88,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
                                     'width'    => 80 * 6,
                                     'start'    => $start,
                                     'end'      => $end,
-                                    'template' => 'vm_disk',
+                                    'template' => 'vm_disk'
                                 ],
                                 ['class' => 'inline-perf-small']
                             )
@@ -124,7 +124,7 @@ class VmsGuestDiskUsageTable extends ObjectsTable
             'object_name',
             'disk_path',
             'capacity',
-            'usage',
+            'usage'
         ];
     }
 }

@@ -269,7 +269,7 @@ class RuleForm extends Form
         $elementName = $prefix . Settings::KEY_ENABLED;
         $this->addElement('boolean', $elementName, [
             'label'   => $this->translate('Enabled'),
-            // 'class' => 'autosubmit',
+            // 'class' => 'autosubmit'
         ]);
         $this->setInheritedValue($elementName, true);
     }
@@ -281,7 +281,7 @@ class RuleForm extends Form
             MonitoringStateTrigger::IGNORE => $this->translate('Do nothing'),
             MonitoringStateTrigger::RAISE_WARNING => $this->translate('Trigger a Warning state'),
             MonitoringStateTrigger::RAISE_CRITICAL => $this->translate('Trigger a Critical state'),
-            MonitoringStateTrigger::RAISE_UNKNOWN => $this->translate('Trigger an Unknown state'),
+            MonitoringStateTrigger::RAISE_UNKNOWN => $this->translate('Trigger an Unknown state')
         ];
 
         $this->addElement('select', $name, ['options' => $selectOptions] + $options);

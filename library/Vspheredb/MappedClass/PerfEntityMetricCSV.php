@@ -37,7 +37,7 @@ class PerfEntityMetricCSV implements JsonSerialization
         return (object) [
             'entity'        => $this->entity,
             'sampleInfoCSV' => $this->sampleInfoCSV,
-            'value'         => $this->value,
+            'value'         => $this->value
         ];
     }
 }

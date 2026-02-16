@@ -90,7 +90,7 @@ abstract class VmEvent extends KnownEvent
             'vm_uuid'               => $this->getVmUuid($vCenter),
             'compute_resource_uuid' => $this->getComputeResourceUuid($vCenter),
             'config_spec'           => $this->getConfigSpec($vCenter),
-            'config_changes'        => $this->getConfigChanges($vCenter),
+            'config_changes'        => $this->getConfigChanges($vCenter)
         ];
     }
 }

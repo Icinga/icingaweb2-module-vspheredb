@@ -31,7 +31,7 @@ class HostVirtualNic extends BaseVmHardwareDbObject
         // pinnedPnic?
         'device'                 => null,
         'tso_enabled'            => null,
-        'vcenter_uuid'           => null,
+        'vcenter_uuid'           => null
     ];
 
     protected array $propertyMap = [
@@ -52,6 +52,6 @@ class HostVirtualNic extends BaseVmHardwareDbObject
         'spec.distributedVirtualPort.ip.ipV6Config.origin'     => 'ipv6_origin',
         */
         'spec.mac'        => 'mac_address',
-        'spec.distributedVirtualPort.tsoEnabled' => 'tso_enabled',
+        'spec.distributedVirtualPort.tsoEnabled' => 'tso_enabled'
     ];
 }

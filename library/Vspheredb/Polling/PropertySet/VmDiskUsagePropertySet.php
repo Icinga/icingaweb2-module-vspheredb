@@ -10,7 +10,7 @@ class VmDiskUsagePropertySet implements PropertySet
     {
         return [
             PropertySpec::create('VirtualMachine', [
-                'guest.disk',
+                'guest.disk'
             ])
         ];
     }

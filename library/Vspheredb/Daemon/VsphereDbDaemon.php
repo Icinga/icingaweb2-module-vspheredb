@@ -115,7 +115,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     protected array $componentStates = [
         self::COMPONENT_DB      => self::STATE_STOPPED,
         self::COMPONENT_LOCALDB => self::STATE_STOPPED,
-        self::COMPONENT_API     => self::STATE_STOPPED,
+        self::COMPONENT_API     => self::STATE_STOPPED
     ];
 
     /**
@@ -414,7 +414,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             'pid'           => posix_getpid(),
             'fqdn'          => Platform::getFqdn(),
             'username'      => Platform::getPhpUser(),
-            'php_version'   => Platform::getPhpVersion(),
+            'php_version'   => Platform::getPhpVersion()
         ];
     }
 
@@ -490,7 +490,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             $restApi = new RestApi($serverInfo, $vCenter, $this->curl, $logger);
             $this->launchTasksForConnection($connection, [
                 new ObjectSync($vCenter, $connection->getApi(), $restApi, $this->dbRunner, $logger),
-                new PerfDataSync($vCenter, $connection->getApi(), $this->curl, $this->loop, $logger),
+                new PerfDataSync($vCenter, $connection->getApi(), $this->curl, $this->loop, $logger)
             ]);
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
@@ -794,7 +794,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             $db = $this->connection->getDbAdapter();
             $updated = $db->update('vspheredb_daemon', [
                 'ts_last_refresh' => Util::currentTimestamp(),
-                'process_info' => json_encode($this->getProcessInfo()),
+                'process_info' => json_encode($this->getProcessInfo())
             ], $db->quoteInto('instance_uuid = ?', DbUtil::quoteBinaryCompat($this->processInfo->instance_uuid, $db)));
 
             if (!$updated) {
@@ -820,7 +820,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $db->insert('vspheredb_daemon', [
             'instance_uuid' => $this->processInfo->instance_uuid,
             'ts_last_refresh' => Util::currentTimestamp(),
-            'process_info'    => json_encode($this->getProcessInfo()),
+            'process_info'    => json_encode($this->getProcessInfo())
         ] + (array) $this->processInfo);
     }
 

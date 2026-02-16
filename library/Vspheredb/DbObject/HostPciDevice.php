@@ -22,11 +22,11 @@ class HostPciDevice extends BaseDbObject
         'vendor_name'     => null,
         'sub_vendor_id'   => null,
         'parent_bridge'   => null,
-        'vcenter_uuid'    => null,
+        'vcenter_uuid'    => null
     ];
 
     protected array $objectReferences = [
-        'host_uuid',
+        'host_uuid'
     ];
 
     protected array $propertyMap = [
@@ -41,7 +41,7 @@ class HostPciDevice extends BaseDbObject
         'vendorId'     => 'vendor_id',
         'vendorName'   => 'vendor_name',
         'subVendorId'  => 'sub_vendor_id',
-        'parentBridge' => 'parent_bridge',
+        'parentBridge' => 'parent_bridge'
     ];
 
     protected string|array|null $keyName = ['host_uuid', 'id'];

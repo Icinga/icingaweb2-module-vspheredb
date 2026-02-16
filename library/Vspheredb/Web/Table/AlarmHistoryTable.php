@@ -16,7 +16,7 @@ class AlarmHistoryTable extends ZfQueryBasedTable
 
     protected $defaultAttributes = [
         'class' => 'common-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     public function filterEntityUuid($uuid): static

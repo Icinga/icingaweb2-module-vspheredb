@@ -28,7 +28,7 @@ class DatastoreTable extends ObjectsTable
                 'free_space'           => 'ds.free_space',
                 'uncommitted'          => 'ds.uncommitted',
                 'free_space_percent'   => '(ds.free_space / ds.capacity) * 100',
-                'uncommitted_percent'  => '(ds.uncommitted / ds.capacity) * 100',
+                'uncommitted_percent'  => '(ds.uncommitted / ds.capacity) * 100'
             ])->setRenderer(function ($row) {
                 $row->object_name = Anonymizer::anonymizeString($row->object_name);
                 if (in_array('overall_status', $this->getChosenColumnNames())) {
@@ -86,7 +86,7 @@ class DatastoreTable extends ObjectsTable
                     return Format::bytes($row->capacity, Format::STANDARD_IEC);
                 }),
             $this->createColumn('cnt_vms', $this->translate('VMs'), [
-                'cnt_vms' => 'COALESCE(vdu.cnt_vms, 0)',
+                'cnt_vms' => 'COALESCE(vdu.cnt_vms, 0)'
             ])->setDefaultSortDirection('DESC'),
             $this->createColumn('usage', $this->translate('Usage'), [
                 'uuid' => 'o.uuid'
@@ -100,7 +100,7 @@ class DatastoreTable extends ObjectsTable
                 return $usage;
             })->setSortExpression(
                 '1 - (ds.free_space / ds.capacity)'
-            )->setDefaultSortDirection('DESC'),
+            )->setDefaultSortDirection('DESC')
         ]);
     }
 
@@ -110,7 +110,7 @@ class DatastoreTable extends ObjectsTable
             'object_name',
             'free_space',
             'size',
-            'usage',
+            'usage'
         ];
     }
 
@@ -154,7 +154,7 @@ class DatastoreTable extends ObjectsTable
         if ($this->hasColumn('cnt_vms')) {
             $vduQuery = $this->db()->select()->from('vm_datastore_usage', [
                 'cnt_vms' => 'COUNT(*)',
-                'ds_uuid' => 'datastore_uuid',
+                'ds_uuid' => 'datastore_uuid'
             ])->group('datastore_uuid');
             $query->joinLeft(
                 ['vdu' => $vduQuery],

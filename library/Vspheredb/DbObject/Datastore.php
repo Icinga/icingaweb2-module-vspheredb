@@ -18,7 +18,7 @@ class Datastore extends BaseDbObject
         'uncommitted'            => null,
         'is_accessible'          => null,
         'multiple_host_access'   => null,
-        'ts_last_forced_refresh' => null,
+        'ts_last_forced_refresh' => null
     ];
 
     protected array $booleanProperties = [

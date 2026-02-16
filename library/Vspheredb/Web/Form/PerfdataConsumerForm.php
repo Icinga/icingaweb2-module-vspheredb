@@ -38,12 +38,12 @@ class PerfdataConsumerForm extends ObjectForm
         $this->addElement('text', 'name', [
             'label'       => $this->translate('Name'),
             'required'    => true,
-            'description' => $this->translate('Arbitrary unique name for this Performance Data Consumer'),
+            'description' => $this->translate('Arbitrary unique name for this Performance Data Consumer')
         ]);
         $this->addElement('boolean', 'enabled', [
             'label' => $this->translate('Enabled'),
             'value' => 'y',
-            'required' => true,
+            'required' => true
         ]);
         if ($this->object instanceof PerfdataConsumer && !$this->hasBeenSent()) {
             $this->populate((array) $this->object->settings());
@@ -74,7 +74,7 @@ class PerfdataConsumerForm extends ObjectForm
             'label'    => $this->translate('Implementation'),
             'options'  => ['' => $this->translate('- please choose -')] + PerfDataConsumerHook::enum(),
             'required' => true,
-            'class'    => 'autosubmit',
+            'class'    => 'autosubmit'
         ]);
 
         return $this->getValue('implementation');

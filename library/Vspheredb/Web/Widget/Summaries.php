@@ -72,7 +72,7 @@ class Summaries extends BaseHtmlElement
                 'poweredOff',
                 'unknown',
                 'standby',
-                'suspended',
+                'suspended'
             ]);
 
             $this->wantsPowerState = true;

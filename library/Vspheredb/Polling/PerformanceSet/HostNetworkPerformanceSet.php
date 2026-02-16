@@ -24,6 +24,6 @@ class HostNetworkPerformanceSet extends DefaultPerformanceSet
         'droppedRx',
         'droppedTx',
         'errorsRx',
-        'errorsTx',
+        'errorsTx'
     ];
 }

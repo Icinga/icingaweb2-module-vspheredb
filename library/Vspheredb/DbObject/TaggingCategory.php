@@ -17,7 +17,7 @@ class TaggingCategory extends BaseDbObject
         'name'             => null,
         'cardinality'      => null,
         'description'      => null,
-        'associable_types' => null,
+        'associable_types' => null
     ];
 
     protected array $propertyMap = [
@@ -26,7 +26,7 @@ class TaggingCategory extends BaseDbObject
         'name'             => 'name',
         'cardinality'      => 'cardinality',
         'description'      => 'description',
-        'associable_types' => 'associable_types',
+        'associable_types' => 'associable_types'
     ];
 
     public function cardinalityIsSingle(): bool

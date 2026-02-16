@@ -15,7 +15,7 @@ class MemoryUsageRuleDefinition extends MonitoringRuleDefinition
 {
     public const SUPPORTED_OBJECT_TYPES = [
         ObjectType::HOST_SYSTEM,
-        ObjectType::VIRTUAL_MACHINE,
+        ObjectType::VIRTUAL_MACHINE
     ];
 
     public static function getIdentifier(): string

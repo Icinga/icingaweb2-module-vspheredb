@@ -20,7 +20,7 @@ class PathToObjectRenderer
     protected array $classLinkMap = [
         VirtualMachine::class => 'vspheredb/vms',
         HostSystem::class     => 'vspheredb/hosts',
-        Datastore::class      => 'vspheredb/datastores',
+        Datastore::class      => 'vspheredb/datastores'
     ];
 
     public static function render(BaseDbObject $object): HtmlElement

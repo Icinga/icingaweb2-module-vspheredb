@@ -32,7 +32,7 @@ class VmQuickStats extends BaseDbObject
         'static_memory_entitlement_mb'      => null,
         'swapped_memory_mb'                 => null,
         'uptime'                            => null,
-        'vcenter_uuid'                      => null,
+        'vcenter_uuid'                      => null
     ];
 
     protected array $propertyMap = [
@@ -55,7 +55,7 @@ class VmQuickStats extends BaseDbObject
         'summary.quickStats.staticCpuEntitlement'         => 'static_cpu_entitlement',
         'summary.quickStats.staticMemoryEntitlement'      => 'static_memory_entitlement_mb',
         'summary.quickStats.swappedMemory'                => 'swapped_memory_mb',
-        'summary.quickStats.uptimeSeconds'                => 'uptime',
+        'summary.quickStats.uptimeSeconds'                => 'uptime'
     ];
 
     /** @var static[]|null */

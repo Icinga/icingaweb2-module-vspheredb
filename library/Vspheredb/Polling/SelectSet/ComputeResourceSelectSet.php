@@ -10,7 +10,7 @@ class ComputeResourceSelectSet implements SelectSet
             GenericSpec::traverseFolder([
                 GenericSpec::TRAVERSE_DC_HOST_SYSTEMS
             ]),
-            GenericSpec::traverseDatacenterHosts(),
+            GenericSpec::traverseDatacenterHosts()
         ];
     }
 }

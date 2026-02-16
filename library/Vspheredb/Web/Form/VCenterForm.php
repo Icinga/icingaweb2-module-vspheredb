@@ -28,7 +28,7 @@ class VCenterForm extends Form
             'description' => $this->translate(
                 'You might want to change the display name of your vCenter.'
                 . ' This defaults to the first related Server host name.'
-            ),
+            )
         ]);
         $this->addElement('submit', 'submit', [
             'label' => $this->translate('Rename')

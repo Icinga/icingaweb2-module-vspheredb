@@ -52,7 +52,7 @@ class HostVirtualizationInfoTable extends NameValueTable
             ),
             $this->translate('HA State')    => $host->get('das_host_state'),
             $this->translate('Hypervisor')  => $host->get('product_full_name'),
-            $this->translate('API Version') => $host->get('product_api_version'),
+            $this->translate('API Version') => $host->get('product_api_version')
         ]);
     }
 }

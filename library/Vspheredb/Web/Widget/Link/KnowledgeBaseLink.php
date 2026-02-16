@@ -13,7 +13,7 @@ class KnowledgeBaseLink extends BaseHtmlElement
 
     protected $defaultAttributes = [
         'target' => '_blank',
-        'class'  => 'vmware_kb_link',
+        'class'  => 'vmware_kb_link'
     ];
 
     public function __construct(int $id, ?string $title = null, ?string $label = null)

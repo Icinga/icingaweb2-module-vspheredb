@@ -43,7 +43,7 @@ trait FormElementStealer
             if ($this->isNew()) {
                 $back = new SubmitElement('btn_back', [
                     'label' => $this->translate('Back'),
-                    'formnovalidate' => true,
+                    'formnovalidate' => true
                 ]);
                 $deco->dd()->add($back);
                 $this->registerElement($back);

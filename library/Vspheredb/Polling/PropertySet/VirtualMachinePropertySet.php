@@ -44,7 +44,7 @@ class VirtualMachinePropertySet implements PropertySet
                 'config.cpuHotAddEnabled',
                 'config.memoryHotAddEnabled',
                 // 'runtime.bootTime',
-                // 'runtime.suspendTime',
+                // 'runtime.suspendTime'
             ])
         ];
     }

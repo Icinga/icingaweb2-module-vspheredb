@@ -38,7 +38,7 @@ class HostHeader extends BaseHtmlElement
             $overallStatusRenderer = new OverallStatusRenderer();
             $this->icons = (new HtmlDocument())->add([
                 $overallStatusRenderer($this->host->object()->get('overall_status')),
-                $powerStateRenderer($this->host->get('runtime_power_state')),
+                $powerStateRenderer($this->host->get('runtime_power_state'))
             ]);
         }
 

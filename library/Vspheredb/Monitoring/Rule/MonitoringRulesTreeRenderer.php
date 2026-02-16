@@ -17,7 +17,7 @@ class MonitoringRulesTreeRenderer extends BaseHtmlElement
 
     protected $defaultAttributes = [
         'class'            => 'tree',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     /** @var MonitoringRulesTree */

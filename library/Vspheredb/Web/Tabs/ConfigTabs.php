@@ -36,23 +36,23 @@ class ConfigTabs extends Tabs
         if ($migrations && $migrations->hasSchema()) {
             $this->add('servers', [
                 'label' => $this->translate('Servers'),
-                'url' => 'vspheredb/configuration/servers',
+                'url'   => 'vspheredb/configuration/servers'
             ]);
             $this->add('perfdata', [
                 'label' => $this->translate('Performance Data'),
-                'url'   => 'vspheredb/perfdata/consumers',
+                'url'   => 'vspheredb/perfdata/consumers'
             ]);
 
             // Disable Tab unless #160 is ready
             $this->add('monitoring', [
                 'label' => $this->translate('Monitoring'),
-                'url' => 'vspheredb/configuration/monitoring',
+                'url'   => 'vspheredb/configuration/monitoring'
             ]);
         }
 
         $this->add('database', [
             'label' => $this->translate('Database'),
-            'url'   => 'vspheredb/configuration/database',
+            'url'   => 'vspheredb/configuration/database'
         ]);
     }
 }
