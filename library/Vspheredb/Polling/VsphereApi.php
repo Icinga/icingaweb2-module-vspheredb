@@ -104,11 +104,7 @@ class VsphereApi
      */
     public function getServiceInstance(): PromiseInterface
     {
-        if ($this->serviceInstance === null) {
-            $this->serviceInstance = $this->retrieveServiceContent();
-        }
-
-        return resolve($this->serviceInstance);
+        return resolve($this->serviceInstance ??= $this->retrieveServiceContent());
     }
 
     /**

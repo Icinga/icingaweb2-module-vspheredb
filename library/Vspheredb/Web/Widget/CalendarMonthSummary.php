@@ -122,11 +122,7 @@ class CalendarMonthSummary extends Table
 
     protected function getTitle(): string
     {
-        if ($this->title === null) {
-            $this->title = $this->getMonthName() . ' ' . $this->year;
-        }
-
-        return $this->title;
+        return $this->title ??= $this->getMonthName() . ' ' . $this->year;
     }
 
     public function forceMax(int $max): static

@@ -91,10 +91,6 @@ class MonitoringConnection extends BaseDbObject
      */
     public function getMonitoring(): Ido
     {
-        if ($this->monitoring === null) {
-            $this->monitoring = Ido::createByResourceName($this->get('source_resource_name'));
-        }
-
-        return $this->monitoring;
+        return $this->monitoring ??= Ido::createByResourceName($this->get('source_resource_name'));
     }
 }

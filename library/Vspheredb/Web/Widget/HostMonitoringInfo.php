@@ -50,9 +50,7 @@ class HostMonitoringInfo extends HtmlDocument
 
     protected function getInfo(): false|array
     {
-        if ($this->info === null) {
-            $this->info = $this->prepareInfo();
-        }
+        $this->info ??= $this->prepareInfo();
 
         return $this->info;
     }

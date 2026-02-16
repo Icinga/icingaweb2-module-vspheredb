@@ -32,11 +32,7 @@ trait AsyncControllerHelper
      */
     protected function remoteClient(): RemoteClient
     {
-        if ($this->remoteClient === null) {
-            $this->remoteClient = new RemoteClient(Configuration::getSocketPath(), $this->loop());
-        }
-
-        return $this->remoteClient;
+        return $this->remoteClient ??= new RemoteClient(Configuration::getSocketPath(), $this->loop());
     }
 
     /**

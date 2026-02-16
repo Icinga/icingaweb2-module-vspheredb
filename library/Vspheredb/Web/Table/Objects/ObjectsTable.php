@@ -64,11 +64,7 @@ abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter,
 
     protected function overallStatusRenderer(): OverallStatusRenderer
     {
-        if ($this->overallStatusRenderer === null) {
-            $this->overallStatusRenderer = new OverallStatusRenderer();
-        }
-
-        return $this->overallStatusRenderer;
+        return $this->overallStatusRenderer ??= new OverallStatusRenderer();
     }
 
     protected function createOverallStatusColumn(): SimpleColumn

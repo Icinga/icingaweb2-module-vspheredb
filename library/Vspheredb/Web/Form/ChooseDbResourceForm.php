@@ -217,11 +217,7 @@ class ChooseDbResourceForm extends Form
 
     protected function config(): Config
     {
-        if ($this->config === null) {
-            $this->config = Config::module('vspheredb');
-        }
-
-        return $this->config;
+        return $this->config ??= Config::module('vspheredb');
     }
 
     /**

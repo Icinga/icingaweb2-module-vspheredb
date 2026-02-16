@@ -162,11 +162,7 @@ class MonitoringRulesTree
 
     protected function getTree(): array
     {
-        if ($this->fetchedTree === null) {
-            $this->fetchedTree = $this->fetchTree();
-        }
-
-        return $this->fetchedTree;
+        return $this->fetchedTree ??= $this->fetchTree();
     }
 
     protected function fetchTree(): array

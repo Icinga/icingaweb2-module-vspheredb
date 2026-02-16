@@ -12,11 +12,7 @@ class ApiClassMap
 
     public static function getMap()
     {
-        if (self::$map === null) {
-            self::$map = static::prepareMap();
-        }
-
-        return self::$map;
+        return self::$map ??= static::prepareMap();
     }
 
     /**

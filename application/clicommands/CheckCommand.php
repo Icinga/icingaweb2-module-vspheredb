@@ -421,10 +421,6 @@ class CheckCommand extends Command
      */
     protected function db(): Db
     {
-        if ($this->db === null) {
-            $this->db = Db::newConfiguredInstance();
-        }
-
-        return $this->db;
+        return $this->db ??= Db::newConfiguredInstance();
     }
 }

@@ -148,11 +148,7 @@ class Summaries extends BaseHtmlElement
 
     protected function stats()
     {
-        if ($this->stats === null) {
-            $this->stats = $this->db->fetchRow($this->query);
-        }
-
-        return $this->stats;
+        return $this->stats ??= $this->db->fetchRow($this->query);
     }
 
     public function addPowerState(): static

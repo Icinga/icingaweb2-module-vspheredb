@@ -200,11 +200,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
      */
     public function object(): ?ManagedObject
     {
-        if ($this->object === null) {
-            $this->object = ManagedObject::load($this->get('uuid'), $this->connection);
-        }
-
-        return $this->object;
+        return $this->object ??= ManagedObject::load($this->get('uuid'), $this->connection);
     }
 
     /**

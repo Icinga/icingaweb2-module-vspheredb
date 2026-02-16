@@ -158,9 +158,7 @@ class DelayedPerfdataRenderer
      */
     protected function getVmValues(string $name, string $instance, int $counter): ?array
     {
-        if ($this->perf === null) {
-            $this->perf = $this->fetchPerf();
-        }
+        $this->perf ??= $this->fetchPerf();
 
         if (
             array_key_exists($name, $this->perf)
