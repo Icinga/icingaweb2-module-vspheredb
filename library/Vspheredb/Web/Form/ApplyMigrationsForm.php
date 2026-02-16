@@ -27,25 +27,18 @@ class ApplyMigrationsForm extends Form
             if ($count === 1) {
                 $label = $this->translate('Apply a pending schema migration');
             } else {
-                $label = sprintf(
-                    $this->translate('Apply %d pending schema migrations'),
-                    $count
-                );
+                $label = sprintf($this->translate('Apply %d pending schema migrations'), $count);
             }
         } else {
             $this->add(Hint::warning($this->translate('There is no vSphereDB schema in this database')));
             $label = $this->translate('Create schema');
         }
-        $this->addElement('submit', 'submit', [
-            'label' => $label
-        ]);
+        $this->addElement('submit', 'submit', ['label' => $label]);
     }
 
     public function onSuccess(): void
     {
         $this->migrations->applyPendingMigrations();
-        Notification::success($this->translate(
-            'Pending database schema migrations have successfully been applied'
-        ));
+        Notification::success($this->translate('Pending database schema migrations have successfully been applied'));
     }
 }

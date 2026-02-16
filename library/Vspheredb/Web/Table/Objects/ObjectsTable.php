@@ -15,9 +15,7 @@ use Ramsey\Uuid\Uuid;
 
 abstract class ObjectsTable extends BaseTable implements TableWithVCenterFilter, TableWithParentFilter
 {
-    protected $searchColumns = [
-        'object_name',
-    ];
+    protected $searchColumns = ['object_name'];
 
     /** @deprecated  */
     protected $filterVCenter;

@@ -29,9 +29,7 @@ class AlarmHistoryTable extends ZfQueryBasedTable
     public function renderRow($row): HtmlElement
     {
         $this->renderDayIfNew($row->ts_event_ms / 1000);
-        $content = [
-            DateFormatter::formatTime($row->ts_event_ms / 1000),
-        ];
+        $content = [DateFormatter::formatTime($row->ts_event_ms / 1000)];
 
         if ($this->entityUuid === null) {
             $this->linkToUuid($row->entity_uuid);

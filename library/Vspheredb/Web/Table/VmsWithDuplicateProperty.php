@@ -17,9 +17,7 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
         'data-base-target' => '_next',
     ];
 
-    protected $searchColumns = [
-        'object_name',
-    ];
+    protected $searchColumns = ['object_name'];
 
     protected ?string $property = null;
 
@@ -29,19 +27,12 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
 
     public static function create(Db $db, string $property, string $title): static
     {
-        $table = new static($db);
-        $table->property = $property;
-        $table->propertyTitle = $title;
-
-        return $table;
+        return (new static($db))->setProperty($property, $title);
     }
 
     public function getColumnsToBeRendered(): array
     {
-        return [
-            $this->propertyTitle,
-            $this->translate('Name'),
-        ];
+        return [$this->propertyTitle, $this->translate('Name')];
     }
 
     public function getColor(): string
@@ -63,24 +54,14 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
 
     public function renderRow($row): HtmlElement
     {
-        $caption = Link::create(
-            $row->object_name,
-            'vspheredb/vm',
-            Util::uuidParams($row->uuid)
-        );
+        $caption = Link::create($row->object_name, 'vspheredb/vm', Util::uuidParams($row->uuid));
 
         $value = $row->{$this->property};
 
         if ($value === $this->lastValue) {
-            $tr = $this::row([
-                '',
-                $caption,
-            ]);
+            $tr = $this::row(['', $caption]);
         } else {
-            $tr = $this::row([
-                $value,
-                $caption,
-            ]);
+            $tr = $this::row([$value, $caption]);
             $this->lastValue = $value;
         }
         $tr->getAttributes()->add('class', [$row->runtime_power_state, $row->overall_status]);

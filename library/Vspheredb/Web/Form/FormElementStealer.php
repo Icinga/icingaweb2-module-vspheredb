@@ -14,9 +14,7 @@ trait FormElementStealer
     public function getValues(): array
     {
         $values = parent::getValues();
-        $mainProperties = array_merge($this->mainProperties, [
-            'settings',
-        ]);
+        $mainProperties = array_merge($this->mainProperties, ['settings']);
         $finalValues = [];
         $settings = [];
         foreach ($values as $key => $value) {
@@ -53,9 +51,7 @@ trait FormElementStealer
                     $this->setElementValue($selectProperty, null);
                 }
             } else {
-                $delete = new SubmitElement('btn_delete', [
-                    'label' => $this->translate('Delete')
-                ]);
+                $delete = new SubmitElement('btn_delete', ['label' => $this->translate('Delete')]);
                 $deco->dd()->add($delete);
                 $this->registerElement($delete);
                 if ($delete->hasBeenPressed()) {
@@ -64,9 +60,7 @@ trait FormElementStealer
                 }
             }
         } else {
-            $this->addElement('submit', 'next', [
-                'label' => $this->translate('Next')
-            ]);
+            $this->addElement('submit', 'next', ['label' => $this->translate('Next')]);
         }
     }
 

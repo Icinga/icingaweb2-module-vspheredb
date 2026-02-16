@@ -277,9 +277,7 @@ class DbRunner
             throw new RuntimeException('Unable to remove vCenter, have no DB connection');
         }
         if ($this->runningVcenterDeletion !== null) {
-            throw new RuntimeException(
-                'Unable to remove vCenter, a cleanup is in progress'
-            );
+            throw new RuntimeException('Unable to remove vCenter, a cleanup is in progress');
         }
 
         Process::setTitle('Icinga::vSphereDB::DB::deleteVcenter ' . $vCenterId);

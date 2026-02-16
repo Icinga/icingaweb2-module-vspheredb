@@ -20,9 +20,7 @@ class HostHeader extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'host-header'
-    ];
+    protected $defaultAttributes = ['class' => 'host-header'];
 
     /** @var HostQuickStats */
     protected HostQuickStats $quickStats;
@@ -63,14 +61,7 @@ class HostHeader extends BaseHtmlElement
             $this->quickStats->get('overall_memory_usage_mb'),
             $host->get('hardware_memory_size_mb')
         );
-        $title = Html::tag('h1', [
-            $host->object()->get('object_name'),
-            $this->getIcons()
-        ]);
-        $this->add([
-            $cpu,
-            $title,
-            $mem
-        ]);
+        $title = Html::tag('h1', [$host->object()->get('object_name'), $this->getIcons()]);
+        $this->add([$cpu, $title, $mem]);
     }
 }

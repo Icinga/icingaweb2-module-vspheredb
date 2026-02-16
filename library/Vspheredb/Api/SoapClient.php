@@ -73,10 +73,7 @@ class SoapClient
      */
     public function call(string $method, array $args): PromiseInterface
     {
-        $request = $this->addCookiesToRequest(
-            $this->encoder->encode($method, $args),
-            $method
-        );
+        $request = $this->addCookiesToRequest($this->encoder->encode($method, $args), $method);
 
         return $this->curl->send($request, $this->curlOptions)
             ->then(function (ResponseInterface $response) use ($method) {
@@ -119,9 +116,7 @@ class SoapClient
                         throw new Exception($response->getReasonPhrase());
                     }
 
-                    $this->logger->error(
-                        'Failing Response: ' . $this->getBodyPart($response)
-                    );
+                    $this->logger->error('Failing Response: ' . $this->getBodyPart($response));
 
                     throw $e;
                 }

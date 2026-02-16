@@ -8,9 +8,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 
 class DatastoreUsageRuleDefinition extends MonitoringRuleDefinition
 {
-    public const SUPPORTED_OBJECT_TYPES = [
-        ObjectType::DATASTORE,
-    ];
+    public const SUPPORTED_OBJECT_TYPES = [ObjectType::DATASTORE];
 
     public static function getIdentifier(): string
     {

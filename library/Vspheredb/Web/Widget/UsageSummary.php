@@ -13,9 +13,7 @@ class UsageSummary extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'usage-summary-widget'
-    ];
+    protected $defaultAttributes = ['class' => 'usage-summary-widget'];
 
     public function __construct(ResourceUsage $usate)
     {
@@ -43,10 +41,8 @@ class UsageSummary extends BaseHtmlElement
                     'span',
                     $this->translate('Total') . ': ' . Format::mBytes($usate->dsCapacity / $mb)
                 ),
-                (new MemoryUsage(
-                    ($usate->dsCapacity - $usate->dsFreeSpace) / $mb,
-                    $usate->dsCapacity / $mb
-                ))->showLabels(false),
+                (new MemoryUsage(($usate->dsCapacity - $usate->dsFreeSpace) / $mb, $usate->dsCapacity / $mb))
+                    ->showLabels(false),
                 $this->translate('Storage')
             ]),
         ]);

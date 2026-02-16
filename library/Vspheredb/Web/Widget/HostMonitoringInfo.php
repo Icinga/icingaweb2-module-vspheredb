@@ -89,12 +89,7 @@ class HostMonitoringInfo extends HtmlDocument
                 return false;
             }
         } catch (Exception $e) {
-            return [
-                Hint::error(
-                    $this->translate('Unable to check monitoring state: %s'),
-                    $e->getMessage()
-                )
-            ];
+            return [Hint::error($this->translate('Unable to check monitoring state: %s'), $e->getMessage())];
         }
     }
 }

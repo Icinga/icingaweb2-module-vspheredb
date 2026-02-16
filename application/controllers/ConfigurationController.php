@@ -96,12 +96,7 @@ class ConfigurationController extends Controller
             $connections = $this->mapServerConnectionsToId($this->syncRpcCall('vsphere.getApiConnections'));
             foreach ($connections as $conns) {
                 foreach ($conns as $conn) {
-                    if (
-                        in_array($conn->state, [
-                        ApiConnection::STATE_INIT,
-                        ApiConnection::STATE_LOGIN,
-                        ])
-                    ) {
+                    if (in_array($conn->state, [ApiConnection::STATE_INIT, ApiConnection::STATE_LOGIN])) {
                         $this->setAutorefreshInterval(5);
                     }
                 }
@@ -169,9 +164,7 @@ class ConfigurationController extends Controller
             $this->content()->add($wrapper);
             $table->renderTo($this);
         } else {
-            $this->content()->add(Hint::warning($this->translate(
-                'No integration has been configured'
-            )));
+            $this->content()->add(Hint::warning($this->translate('No integration has been configured')));
         }
     }
 

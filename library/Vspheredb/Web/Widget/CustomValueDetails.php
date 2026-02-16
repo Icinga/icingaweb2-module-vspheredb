@@ -51,13 +51,7 @@ class CustomValueDetails extends HtmlDocument
 
     protected function stripBackupToolCustomValues(CustomValues $values): void
     {
-        $tools = [
-            new IbmSpectrumProtect(),
-            new NetBackup(),
-            new VRangerBackup(),
-        ];
-
-        foreach ($tools as $tool) {
+        foreach ([new IbmSpectrumProtect(), new NetBackup(), new VRangerBackup()] as $tool) {
             if ($tool instanceof SimpleBackupTool) {
                 $tool->stripCustomValues($values);
             }

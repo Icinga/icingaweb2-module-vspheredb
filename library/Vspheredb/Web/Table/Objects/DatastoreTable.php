@@ -118,11 +118,8 @@ class DatastoreTable extends ObjectsTable
     {
         $bytes = $row->$name;
         $percent = $row->{"{$name}_percent"};
-        return sprintf(
-            '%s (%s)',
-            Format::bytes($bytes, Format::STANDARD_IEC),
-            $this->formatPercent($percent)
-        );
+
+        return sprintf('%s (%s)', Format::bytes($bytes, Format::STANDARD_IEC), $this->formatPercent($percent));
     }
 
     protected function formatPercent(string $value): string
@@ -166,11 +163,7 @@ class DatastoreTable extends ObjectsTable
             );
         }
         if ($wantsVCenter) {
-            $query->join(
-                ['vc' => 'vcenter'],
-                'vc.instance_uuid = ds.vcenter_uuid',
-                []
-            );
+            $query->join(['vc' => 'vcenter'], 'vc.instance_uuid = ds.vcenter_uuid', []);
         }
 
         return $query;

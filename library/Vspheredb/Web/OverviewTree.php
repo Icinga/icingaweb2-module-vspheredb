@@ -108,11 +108,7 @@ class OverviewTree extends BaseHtmlElement
                 'parent_object_type' => 'po.object_type',
             ])
             ->joinLeft(['po' => 'object'], 'po.uuid = o.parent_uuid', [])
-            ->where(' o.object_type NOT IN (?)', [
-                'VirtualMachine',
-                'HostSystem',
-                'Datastore'
-            ]);
+            ->where(' o.object_type NOT IN (?)', ['VirtualMachine', 'HostSystem', 'Datastore']);
         $this->restrictionHelper->filterQuery($hostCnt);
         $this->restrictionHelper->filterQuery($vmCnt);
         $this->restrictionHelper->filterQuery($dsCnt);
@@ -150,10 +146,7 @@ class OverviewTree extends BaseHtmlElement
         }
 
         if ($level === 0) {
-            $li->add(Html::tag('a', [
-                'name'  => $tree->object_name,
-                'class' => 'icon-globe'
-            ], $tree->object_name));
+            $li->add(Html::tag('a', ['name'  => $tree->object_name, 'class' => 'icon-globe'], $tree->object_name));
         } else {
             $count = $tree->cnt_vm + $tree->cnt_host + $tree->cnt_ds;
             if ($count) {
@@ -162,9 +155,7 @@ class OverviewTree extends BaseHtmlElement
             } else {
                 $label = $tree->object_name;
             }
-            $attributes = [
-                'class' => [$this->getClassByType($type), $tree->overall_status]
-            ];
+            $attributes = ['class' => [$this->getClassByType($type), $tree->overall_status]];
 
             if ($count) {
                 $li->add(Link::create(
@@ -181,9 +172,7 @@ class OverviewTree extends BaseHtmlElement
         }
 
         if ($hasChildren) {
-            $li->add(
-                $ul = Html::tag('ul')
-            );
+            $li->add($ul = Html::tag('ul'));
             foreach ($tree->children as $child) {
                 $ul->add($this->dumpTree($child, $level + 1));
             }

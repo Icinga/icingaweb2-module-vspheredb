@@ -40,11 +40,7 @@ class BackupToolInfo extends HtmlDocument
             }
         }
         if ($seenBackupTools === 0) {
-            $this->add(Html::tag(
-                'p',
-                null,
-                $this->translate('No known backup tool has been used for this VM')
-            ));
+            $this->add(Html::tag('p', null, $this->translate('No known backup tool has been used for this VM')));
         }
     }
 

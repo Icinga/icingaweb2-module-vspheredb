@@ -72,27 +72,15 @@ class VmsTable extends ObjectsTable
         );
 
         if ($wantsStats) {
-            $query->join(
-                ['vqs' => 'vm_quick_stats'],
-                'vqs.uuid = vm.uuid',
-                []
-            );
+            $query->join(['vqs' => 'vm_quick_stats'], 'vqs.uuid = vm.uuid', []);
         }
 
         if ($wantsVCenter) {
-            $query->join(
-                ['vc' => 'vcenter'],
-                'vc.instance_uuid = vm.vcenter_uuid',
-                []
-            );
+            $query->join(['vc' => 'vcenter'], 'vc.instance_uuid = vm.vcenter_uuid', []);
         }
 
         if ($wantsHosts) {
-            $query->joinLeft(
-                ['h' => 'host_system'],
-                'vm.runtime_host_uuid = h.uuid',
-                []
-            );
+            $query->joinLeft(['h' => 'host_system'], 'vm.runtime_host_uuid = h.uuid', []);
         }
         if ($wantsDataStores) {
             $sub = $this->db()->select()->from('vm_datastore_usage', [
@@ -253,9 +241,7 @@ class VmsTable extends ObjectsTable
             // 'style'  => 'border-bottom: 1px solid rgba(0, 0, 0, 0.3); border-left: 1px solid rgba(0, 0, 0, 0.3);'
         ];
 
-        return Img::create('rrd/img', $params + [
-            'template' => 'vSphereDB-vmIfTraffic',
-        ], $attrs);
+        return Img::create('rrd/img', $params + ['template' => 'vSphereDB-vmIfTraffic'], $attrs);
     }
 
     protected function addPerfColumns(): void

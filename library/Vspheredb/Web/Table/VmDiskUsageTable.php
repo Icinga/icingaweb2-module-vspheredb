@@ -83,13 +83,10 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $this->root = $row;
         }
 
-        $free = Format::bytes($row->free_space)
-            . sprintf(' (%0.3f%%)', ($row->free_space / $row->capacity) * 100);
+        $free = Format::bytes($row->free_space) . sprintf(' (%0.3f%%)', ($row->free_space / $row->capacity) * 100);
 
         $tr = $this::tr([
-            $this::td($caption, [
-                'title' => $caption
-            ]),
+            $this::td($caption, ['title' => $caption]),
             $this::td(Format::bytes($row->capacity), ['class' => 'vm-disk-usage-capacity']),
             $this::td($free, ['class' => 'vm-disk-usage-free']),
             $this::td($this->makeDisk($row), ['class' => 'vm-disk-usage-usage'])

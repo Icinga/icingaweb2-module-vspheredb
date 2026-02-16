@@ -284,9 +284,7 @@ class RuleForm extends Form
             MonitoringStateTrigger::RAISE_UNKNOWN => $this->translate('Trigger an Unknown state'),
         ];
 
-        $this->addElement('select', $name, [
-            'options' => $selectOptions,
-        ] + $options);
+        $this->addElement('select', $name, ['options' => $selectOptions] + $options);
     }
 
     public function hasBeenCreated(): bool

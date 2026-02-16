@@ -57,10 +57,7 @@ class HostSensorsTable extends ZfQueryBasedTable
             }
 
             $this->nextHeader()->add(
-                $this::th($title, [
-                    'colspan' => 3,
-                    'class'   => 'table-header-day'
-                ])
+                $this::th($title, ['colspan' => 3, 'class' => 'table-header-day'])
             );
 
             $this->lastType = $type;

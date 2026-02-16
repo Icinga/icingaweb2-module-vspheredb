@@ -62,10 +62,7 @@ abstract class ObjectForm extends Form
     protected function getObjectClass(): string
     {
         if ($this->class === null) {
-            throw new RuntimeException(sprintf(
-                'ObjectForm %s defined no $class',
-                get_class($this)
-            ));
+            throw new RuntimeException(sprintf('ObjectForm %s defined no $class', get_class($this)));
         }
 
         return $this->class;

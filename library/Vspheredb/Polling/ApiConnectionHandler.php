@@ -192,11 +192,7 @@ class ApiConnectionHandler implements EventEmitterInterface
             $deferred->reject(new Exception($message));
             $this->setFailed($server, $message);
         });
-        $this->logger->notice(sprintf(
-            'initializing server %d: %s',
-            $server->getServerId(),
-            $server->getIdentifier()
-        ));
+        $this->logger->notice(sprintf('initializing server %d: %s', $server->getServerId(), $server->getIdentifier()));
         $apiConnection->run($this->loop);
 
         return $deferred;

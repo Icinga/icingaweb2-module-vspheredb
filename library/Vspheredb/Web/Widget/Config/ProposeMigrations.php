@@ -94,8 +94,7 @@ class ProposeMigrations extends HtmlDocument
         if ($migrations->hasSchema()) {
             if ($migrations->hasPendingMigrations()) {
                 $this->add(Hint::warning($this->translate(
-                    'There are pending Database Schema Migrations. Please ask'
-                    . ' an Administrator to apply them now!'
+                    'There are pending Database Schema Migrations. Please ask an Administrator to apply them now!'
                 )));
             }
         } else {
@@ -113,8 +112,7 @@ class ProposeMigrations extends HtmlDocument
         if ($migrations->hasSchema()) {
             if ($migrations->hasPendingMigrations()) {
                 $this->add(Hint::warning($this->translate(
-                    'There are pending Database Schema Migrations. Please apply'
-                    . ' them now!'
+                    'There are pending Database Schema Migrations. Please apply them now!'
                 )));
                 $this->addForm($migrations);
             }

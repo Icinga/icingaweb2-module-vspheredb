@@ -116,9 +116,7 @@ abstract class BaseTable extends ZfQueryBasedTable
 
     public function nextHeader(): HtmlElement
     {
-        return parent::nextHeader()->setAttributes([
-            'data-base-target' => '_self'
-        ]);
+        return parent::nextHeader()->setAttributes(['data-base-target' => '_self']);
     }
 
     protected function renderTitleColumns(): ?HtmlElement
@@ -126,9 +124,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         $columns = $this->getColumnsToBeRendered();
         if (isset($columns) && count($columns)) {
             if ($this->baseUrl) {
-                $tr = $this::tr()->setAttributes([
-                    'data-base-target' => '_self'
-                ]);
+                $tr = $this::tr()->setAttributes(['data-base-target' => '_self']);
                 $this->addSortHeadersTo($tr);
             } else {
                 $tr = $this::row($columns, null, 'th');

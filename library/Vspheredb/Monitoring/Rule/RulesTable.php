@@ -20,9 +20,7 @@ class RulesTable extends Table
     protected function assemble(): void
     {
         foreach ($this->ruleSets as $set) {
-            $this->add(Table::row([
-                $set->getDefinition()::getIdentifier()
-            ]));
+            $this->add(Table::row([$set->getDefinition()::getIdentifier()]));
         }
     }
 }

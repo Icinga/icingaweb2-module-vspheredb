@@ -48,10 +48,7 @@ class VmRouteConfigTable extends HtmlDocument
                     if (empty($gateway)) {
                         $gateway[] = '-';
                     }
-                    $table->add(Table::row([
-                        $route->network . '/' . $route->prefixLength,
-                        implode(', ', $gateway),
-                    ]));
+                    $table->add(Table::row([$route->network . '/' . $route->prefixLength, implode(', ', $gateway)]));
                 }
             }
             $this->add($table);

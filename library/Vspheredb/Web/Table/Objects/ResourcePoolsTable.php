@@ -36,11 +36,7 @@ class ResourcePoolsTable extends ObjectsTable
         )->where('object_type = ?', 'ResourcePool');
 
         if ($this->hasColumn('cnt_vms')) {
-            $query->joinLeft(
-                ['vm' => 'virtual_machine'],
-                'vm.resource_pool_uuid = o.uuid',
-                []
-            )->group('o.uuid');
+            $query->joinLeft(['vm' => 'virtual_machine'], 'vm.resource_pool_uuid = o.uuid', [])->group('o.uuid');
         }
 
         return $query;

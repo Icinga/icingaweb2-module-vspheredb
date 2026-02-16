@@ -119,13 +119,9 @@ class CheckCommand extends Command
         $this->run(function () {
             $uuid = $this->params->get('uuid');
             if ($uuid !== null) {
-                $params = [
-                    'uuid' => Uuid::fromString($uuid)->getBytes()
-                ];
+                $params = ['uuid' => Uuid::fromString($uuid)->getBytes()];
             } else {
-                $params = [
-                    'host_name' => $this->params->getRequired('name')
-                ];
+                $params = ['host_name' => $this->params->getRequired('name')];
             }
             $host = $this->lookup()->findOneBy('HostSystem', $params);
             $this->runChecks($host);
@@ -210,13 +206,9 @@ class CheckCommand extends Command
         $this->run(function () {
             $uuid = $this->params->get('uuid');
             if ($uuid !== null) {
-                $params = [
-                    'uuid' => Uuid::fromString($uuid)->getBytes()
-                ];
+                $params = ['uuid' => Uuid::fromString($uuid)->getBytes()];
             } else {
-                $params = [
-                    'object_name' => $this->params->getRequired('name')
-                ];
+                $params = ['object_name' => $this->params->getRequired('name')];
             }
             $datastore = $this->lookup()->findOneBy('Datastore', $params);
             $this->runChecks($datastore);

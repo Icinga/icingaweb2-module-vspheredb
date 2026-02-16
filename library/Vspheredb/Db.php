@@ -12,9 +12,7 @@ class Db extends DbConnection
 {
     public static function newConfiguredInstance(): Db
     {
-        return static::fromResourceName(
-            Config::module('vspheredb')->get('db', 'resource')
-        );
+        return static::fromResourceName(Config::module('vspheredb')->get('db', 'resource'));
     }
 
     public static function migrationsForDb(Db $connection): Migrations

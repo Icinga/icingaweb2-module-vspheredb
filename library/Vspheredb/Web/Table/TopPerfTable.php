@@ -39,11 +39,7 @@ class TopPerfTable extends Table
             $name .= ': ' . $row->instance;
         }
 
-        return Link::create(
-            $name,
-            'vspheredb/vm',
-            Util::uuidParams($row->object_uuid)
-        );
+        return Link::create($name, 'vspheredb/vm', Util::uuidParams($row->object_uuid));
     }
 
     protected function createTopForParentLink(object $row): Link

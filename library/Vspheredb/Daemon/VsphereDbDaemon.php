@@ -651,9 +651,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                 $this->setDbState(self::STATE_FAILED);
             });
         } else {
-            return $this->dbRunner->request('db.setDbConfig', [
-                'config' => $this->dbConfig
-            ]);
+            return $this->dbRunner->request('db.setDbConfig', ['config' => $this->dbConfig]);
         }
     }
 

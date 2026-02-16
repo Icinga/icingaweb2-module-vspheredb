@@ -21,9 +21,7 @@ class TaggingSyncStore extends SyncStore
             if (array_key_exists($idx, $dbObjects)) {
                 $dbObject = $dbObjects[$idx];
             } else {
-                $dbObjects[$idx] = $dbObject = $class::create([
-                    'vcenter_uuid' => $vCenterUuid
-                ], $connection);
+                $dbObjects[$idx] = $dbObject = $class::create(['vcenter_uuid' => $vCenterUuid], $connection);
             }
             $dbObject->setMapped($object, $this->vCenter);
         }

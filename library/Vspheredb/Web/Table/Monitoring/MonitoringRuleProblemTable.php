@@ -39,10 +39,7 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
                 if (! empty($states)) {
                     $states[] = ' ';
                 }
-                $states[] = Html::tag('span', ['class' => [
-                    'badge',
-                    "state-$state"
-                ]], $row->$property);
+                $states[] = Html::tag('span', ['class' => ['badge', "state-$state"]], $row->$property);
             }
             unset($row->$property);
         }

@@ -33,10 +33,7 @@ class NetworkAdaptersTable extends ObjectsTable
         );
 
         if ($this->portGroup) {
-            $query->where(
-                'portgroup_uuid = ?',
-                $this->portGroup->get('uuid')
-            );
+            $query->where('portgroup_uuid = ?', $this->portGroup->get('uuid'));
         }
 
         return $query;
@@ -55,9 +52,7 @@ class NetworkAdaptersTable extends ObjectsTable
             $this->createOverallStatusColumn(),
             $this->createColumn('port_key', $this->translate('Port'), 'vna.port_key'),
             $this->createObjectNameColumn(),
-            $this->createColumn('label', $this->translate('Interface'), [
-                'vh.label',
-            ]),
+            $this->createColumn('label', $this->translate('Interface'), ['vh.label']),
         ]);
     }
 

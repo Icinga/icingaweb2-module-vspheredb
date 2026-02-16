@@ -161,8 +161,7 @@ abstract class SimpleBackupTool implements BackupTool
             $end = strlen($annotation);
         }
 
-        $annotation = substr($annotation, 0, $begin)
-        . substr($annotation, $end);
+        $annotation = substr($annotation, 0, $begin) . substr($annotation, $end);
     }
 
     /**

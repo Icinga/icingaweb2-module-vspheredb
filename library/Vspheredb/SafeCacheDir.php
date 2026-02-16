@@ -13,13 +13,7 @@ class SafeCacheDir
      */
     public static function getDirectory(): string
     {
-        $directory = sprintf(
-            '%s/%s-%s',
-            sys_get_temp_dir(),
-            'iwebVsphere',
-            static::getCurrentUsername()
-        );
-
+        $directory = sprintf('%s/%s-%s', sys_get_temp_dir(), 'iwebVsphere', static::getCurrentUsername());
         static::claimDirectory($directory);
 
         return $directory;
@@ -53,10 +47,7 @@ class SafeCacheDir
             }
         } else {
             if (! @mkdir($directory, 0700)) {
-                throw new RuntimeException(sprintf(
-                    'Could not create %s',
-                    $directory
-                ));
+                throw new RuntimeException(sprintf('Could not create %s', $directory));
             }
         }
     }
@@ -70,9 +61,7 @@ class SafeCacheDir
             if (function_exists('posix_geteuid')) {
                 static::$currentUser = static::uidToName(posix_geteuid());
             } else {
-                throw new RuntimeException(
-                    'POSIX methods not available, is php-posix installed and enabled?'
-                );
+                throw new RuntimeException('POSIX methods not available, is php-posix installed and enabled?');
             }
         }
 

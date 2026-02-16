@@ -40,9 +40,7 @@ class PathToObjectRenderer
         if (isset($this->classLinkMap[$class])) {
             $baseUrl = $this->classLinkMap[$class];
         } else {
-            throw new InvalidArgumentException(
-                "PathToObjectRenderer doesn't support $class"
-            );
+            throw new InvalidArgumentException("PathToObjectRenderer doesn't support $class");
         }
         $path = Html::tag('span', ['class' => 'dc-path']);
         $parts = [];

@@ -14,9 +14,7 @@ class CpuAbsoluteUsage extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'cpu'
-    ];
+    protected $defaultAttributes = ['class' => 'cpu'];
 
     public function __construct(int $mhz, ?int $cores = null, int $perCore = 2000)
     {
@@ -40,12 +38,8 @@ class CpuAbsoluteUsage extends BaseHtmlElement
         }
         [$value, $unit] = Format::mhzWithSeparateUnit($mhz);
         $this->add([
-            Html::tag('span', [
-                'class' => 'cpu-consumption'
-            ], $value),
-            Html::tag('span', [
-                'class' => 'cpu-unit'
-            ], $unit),
+            Html::tag('span', ['class' => 'cpu-consumption'], $value),
+            Html::tag('span', ['class' => 'cpu-unit'], $unit)
         ])->setSeparator("\n");
     }
 }

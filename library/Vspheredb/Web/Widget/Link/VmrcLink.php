@@ -37,20 +37,14 @@ class VmrcLink extends HtmlDocument
         try {
             $server = $this->vCenter->getFirstServer(false);
             $this->add(Html::tag('a', [
-                'href' => sprintf(
-                    'vmrc://%s/?moid=%s',
-                    $server->get('host'),
-                    \rawurlencode($this->moRef)
-                ),
+                'href'   => sprintf('vmrc://%s/?moid=%s', $server->get('host'), rawurlencode($this->moRef)),
                 'target' => '_self',
                 'title' => $this->translate('Open VMware Remote Console (VMRC)'),
                 'class' => 'icon-host',
             ], $this->label));
         } catch (NotFoundError $e) {
             $this->add([
-                Icon::create('warning-empty', [
-                    'class' => 'red'
-                ]),
+                Icon::create('warning-empty', ['class' => 'red']),
                 ' ',
                 $this->translate('No related vServer has been configured')
             ]);

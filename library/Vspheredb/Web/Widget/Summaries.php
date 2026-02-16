@@ -21,9 +21,7 @@ class Summaries extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'object-summaries',
-    ];
+    protected $defaultAttributes = ['class' => 'object-summaries'];
 
     /** @var ?ZfSelect */
     protected ?ZfSelect $query = null;
@@ -117,9 +115,7 @@ class Summaries extends BaseHtmlElement
 
         // This works, but is not as general-purpose as it should be
         if (count($query->getPart(ZfSelect::GROUP)) > 0) {
-            $query = $query->getAdapter()->select()->from([
-                'o' => $query->columns('o.overall_status')
-            ], []);
+            $query = $query->getAdapter()->select()->from(['o' => $query->columns('o.overall_status')], []);
         }
 
         $this->query = $query;
@@ -213,12 +209,7 @@ class Summaries extends BaseHtmlElement
     {
         $this->setSeparator(' ');
         $this->add([Icon::create('ok'), $this->translate('Status') . ': ']);
-        $this->addSummaryLinks('overall_status', [
-            'red',
-            'yellow',
-            'gray',
-            'green'
-        ]);
+        $this->addSummaryLinks('overall_status', ['red', 'yellow', 'gray', 'green']);
         if ($this->wantsPowerState) {
             $this->add([Icon::create('off'), $this->translate('Power') . ': ']);
             $this->addSummaryLinks('runtime_power_state', [

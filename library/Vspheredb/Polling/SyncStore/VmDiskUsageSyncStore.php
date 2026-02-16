@@ -55,10 +55,7 @@ class VmDiskUsageSyncStore extends SyncStore
                     }
 
                     /** @var stdClass $base */
-                    if (
-                        $info->capacity === $base->capacity
-                        && $info->freeSpace === $base->freeSpace
-                    ) {
+                    if ($info->capacity === $base->capacity && $info->freeSpace === $base->freeSpace) {
                         continue;
                     }
                 }

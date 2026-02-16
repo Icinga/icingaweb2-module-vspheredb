@@ -200,18 +200,10 @@ class HostsTable extends ObjectsTable
         );
 
         if ($wantsVms) {
-            $query->joinLeft(
-                ['vms' => $this->createVmSubQuery()],
-                'vms.runtime_host_uuid = h.uuid',
-                []
-            );
+            $query->joinLeft(['vms' => $this->createVmSubQuery()], 'vms.runtime_host_uuid = h.uuid', []);
         }
         if ($wantsVCenter) {
-            $query->join(
-                ['vc' => 'vcenter'],
-                'vc.instance_uuid = h.vcenter_uuid',
-                []
-            );
+            $query->join(['vc' => 'vcenter'], 'vc.instance_uuid = h.vcenter_uuid', []);
         }
 
         return $query;

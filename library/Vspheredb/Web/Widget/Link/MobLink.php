@@ -53,9 +53,7 @@ class MobLink extends HtmlDocument
             }
         } catch (NotFoundError $e) {
             $this->add([
-                Icon::create('warning-empty', [
-                    'class' => 'red'
-                ]),
+                Icon::create('warning-empty', ['class' => 'red']),
                 ' ',
                 $this->translate('No related vServer has been configured')
             ]);
@@ -72,16 +70,9 @@ class MobLink extends HtmlDocument
     protected function createObjectLink(VCenterServer $server, string $moRef, string $label): BaseHtmlElement
     {
         return Html::tag('a', [
-            'href' => sprintf(
-                'https://%s/mob/?moid=%s',
-                $server->get('host'),
-                rawurlencode($moRef)
-            ),
+            'href'   => sprintf('https://%s/mob/?moid=%s', $server->get('host'), rawurlencode($moRef)),
             'target' => '_blank',
-            'title' => sprintf(
-                $this->translate('Show "%s" in the Managed Object Browser (MOB)'),
-                $moRef
-            ),
+            'title'  => sprintf($this->translate('Show "%s" in the Managed Object Browser (MOB)'), $moRef),
             'class' => 'icon-eye',
         ], $label);
     }
@@ -97,9 +88,7 @@ class MobLink extends HtmlDocument
         return Html::tag('a', [
             'href' => sprintf('https://%s/mob/', $server->get('host')),
             'target' => '_blank',
-            'title' => sprintf(
-                $this->translate('Open the Managed Object Browser (MOB)')
-            ),
+            'title'  => sprintf($this->translate('Open the Managed Object Browser (MOB)')),
             'class' => 'icon-eye',
         ], $label);
     }

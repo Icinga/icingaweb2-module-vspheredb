@@ -25,28 +25,13 @@ class ComputeClusterHeader extends HtmlDocument
         $computeCluster = $this->computeCluster;
         $object = $computeCluster->object();
         $overallStatusRenderer = new OverallStatusRenderer();
-        $icons = [
-            $overallStatusRenderer($object->get('overall_status')),
-        ];
+        $icons = [$overallStatusRenderer($object->get('overall_status'))];
 
         $stats = $computeCluster->calculateStats();
 
-        $cpu = new CpuAbsoluteUsage(
-            (int) $stats->overall_cpu_usage,
-            $stats->hardware_cpu_cores
-        );
-        $mem = new MemoryUsage(
-            $stats->overall_memory_usage_mb,
-            $stats->hardware_memory_size_mb
-        );
-        $title = Html::tag('h1', [
-            $computeCluster->get('object_name'),
-            $icons
-        ]);
-        $this->add([
-            $cpu,
-            $title,
-            $mem
-        ]);
+        $cpu = new CpuAbsoluteUsage((int) $stats->overall_cpu_usage, $stats->hardware_cpu_cores);
+        $mem = new MemoryUsage($stats->overall_memory_usage_mb, $stats->hardware_memory_size_mb);
+        $title = Html::tag('h1', [$computeCluster->get('object_name'), $icons]);
+        $this->add([$cpu, $title, $mem]);
     }
 }

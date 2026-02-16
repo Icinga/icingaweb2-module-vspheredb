@@ -14,9 +14,7 @@ class UsageBar extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'resource-usage',
-    ];
+    protected $defaultAttributes = ['class' => 'resource-usage'];
 
     protected array $colors = ['used' => 'rgba(0, 149, 191, 0.75)'];
 
@@ -49,11 +47,7 @@ class UsageBar extends BaseHtmlElement
             $color = $this->colors[$color];
         }
 
-        $usage = Html::tag('div', [
-            'class' => 'usage',
-            'title' => $title
-        ]);
-
+        $usage = Html::tag('div', ['class' => 'usage', 'title' => $title]);
 
         $style = (new StyleWithNonce())
             ->setModule('vspheredb')
@@ -118,10 +112,7 @@ class UsageBar extends BaseHtmlElement
 
     protected function assemble(): void
     {
-        $usage = Html::tag('div', [
-            'class' => 'usage-bar',
-            'data-base-target' => '_next',
-        ]);
+        $usage = Html::tag('div', ['class' => 'usage-bar', 'data-base-target' => '_next']);
         $this->assembleBar($usage);
         $this->add($usage);
         if ($this->showLabels) {
@@ -132,13 +123,9 @@ class UsageBar extends BaseHtmlElement
     protected function addLabels(): void
     {
         $this->add([
-            Html::tag('span', [
-                'class' => 'usage-used'
-            ], $this->getLabelUsed()),
+            Html::tag('span', ['class' => 'usage-used'], $this->getLabelUsed()),
             ' ',
-            Html::tag('span', [
-                'class' => 'usage-capacity'
-            ], $this->getLabelCapacity()),
+            Html::tag('span', ['class' => 'usage-capacity'], $this->getLabelCapacity())
         ]);
     }
 }
