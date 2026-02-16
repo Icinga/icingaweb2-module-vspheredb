@@ -19,7 +19,7 @@ use Zend_Db_Select;
 class VCenterSummaryTable extends ObjectsTable
 {
     protected $searchColumns = [
-        'name',
+        'name'
     ];
     protected ?string $baseUrl = 'vspheredb/vcenter';
 
@@ -70,7 +70,7 @@ class VCenterSummaryTable extends ObjectsTable
             $this->groupByAlias,
             'cpu',
             'memory',
-            'datastore_usage',
+            'datastore_usage'
         ];
     }
 
@@ -87,7 +87,7 @@ class VCenterSummaryTable extends ObjectsTable
     {
         return $this->createColumn($this->groupByAlias, $this->getGroupingTitle(), [
                 'name'         => $this->nameColumn,
-                'uuid'         => $this->groupBy,
+                'uuid'         => $this->groupBy
             ] + $this->getHostCountColumns())->setRenderer(function ($row) {
                 $link = Link::create(
                     $row->{$this->groupByAlias},
@@ -99,7 +99,7 @@ class VCenterSummaryTable extends ObjectsTable
                 return [
                     $this->getExtraIcons($row),
                     $link,
-                    $this->renderHostSummaries($row),
+                    $this->renderHostSummaries($row)
                 ];
             });
     }
@@ -143,11 +143,11 @@ class VCenterSummaryTable extends ObjectsTable
                 "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
                 "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
                 "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
-                "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
+                "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)"
             ])->setDefaultSortDirection('DESC'),
             $this->createColumn('cpu', $this->translate('CPU'), [
                 'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
-                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
+                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
             ])->setRenderer(function ($row) {
                 $bar = new CpuUsage($row->used_mhz, $row->total_mhz);
                 if ($this->hasChosenColumn('overall_cpu_usage') || $this->hasChosenColumn('hardware_cpu_mhz')) {
@@ -176,7 +176,7 @@ class VCenterSummaryTable extends ObjectsTable
 
             $this->createColumn('memory', $this->translate('Memory'), [
                 'memory_used_mb'  => 'SUM(hqs.overall_memory_usage_mb)',
-                'memory_total_mb' => 'SUM(h.hardware_memory_size_mb)',
+                'memory_total_mb' => 'SUM(h.hardware_memory_size_mb)'
             ])->setRenderer(function ($row) {
                 $bar = new MemoryUsage($row->memory_used_mb, $row->memory_total_mb);
                 if ($this->hasChosenColumn('overall_memory_usage') || $this->hasChosenColumn('hardware_memorymb')) {
@@ -193,7 +193,7 @@ class VCenterSummaryTable extends ObjectsTable
             $this->createColumn('hardware_memory_mb', $this->translate('Capacity'))
                 ->setRenderer(function ($row) {
                     return Format::mBytes($row->hardware_memory_mb);
-                })->setDefaultSortDirection('DESC'),
+                })->setDefaultSortDirection('DESC')
         ]);
     }
 
@@ -202,13 +202,13 @@ class VCenterSummaryTable extends ObjectsTable
         $this->addAvailableColumns([
             $this->createColumn('datastore_usage', $this->translate('Storage'), [
                 'ds_capacity'   => 'ds.ds_capacity',
-                'ds_free_space' => 'ds.ds_free_space',
+                'ds_free_space' => 'ds.ds_free_space'
             ])->setRenderer(function ($row) {
                 return new MemoryUsage(
                     ($row->ds_capacity - $row->ds_free_space) / 1000000,
                     $row->ds_capacity / 1000000
                 );
-            })->setSortExpression('(ds.ds_capacity - ds.ds_free_space) / ds.ds_capacity'),
+            })->setSortExpression('(ds.ds_capacity - ds.ds_free_space) / ds.ds_capacity')
         ]);
     }
 
@@ -217,7 +217,7 @@ class VCenterSummaryTable extends ObjectsTable
         $this->addAvailableColumns([
             $this->createColumn('vcenter_software', $this->translate('Software'), [
                 'software_name' => 'vc.api_name',
-                'software_version' => 'vc.version',
+                'software_version' => 'vc.version'
             ])->setRenderer(function ($row) {
                 // VMware ESXi -> ESXi
                 return sprintf(
@@ -225,7 +225,7 @@ class VCenterSummaryTable extends ObjectsTable
                     preg_replace('/^VMware /', '', $row->software_name),
                     $row->software_version
                 );
-            }),
+            })
         ]);
     }
 
@@ -264,7 +264,7 @@ class VCenterSummaryTable extends ObjectsTable
 
         return [
             Html::tag('br'),
-            Html::tag('small', $result),
+            Html::tag('small', $result)
         ];
     }
 
@@ -275,7 +275,7 @@ class VCenterSummaryTable extends ObjectsTable
             'hosts_cnt_overall_gray'   => "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
             'hosts_cnt_overall_green'  => "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
             'hosts_cnt_overall_yellow' => "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
-            'hosts_cnt_overall_red'    => "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
+            'hosts_cnt_overall_red'    => "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)"
         ];
     }
 
@@ -300,7 +300,7 @@ class VCenterSummaryTable extends ObjectsTable
                 'memory_used_mb'           => 'SUM(hqs.overall_memory_usage_mb)',
                 'memory_total_mb'          => 'SUM(h.hardware_memory_size_mb)',
                 'overall_memory_usage'     => 'SUM(hqs.overall_memory_usage_mb)',
-                'hardware_memory_mb'       => 'SUM(h.hardware_memory_size_mb)',
+                'hardware_memory_mb'       => 'SUM(h.hardware_memory_size_mb)'
             ]
         )->join(
             ['ho' => 'object'],
@@ -323,7 +323,7 @@ class VCenterSummaryTable extends ObjectsTable
                 'vcenter_uuid'   => 'ds.vcenter_uuid',
                 'ds_capacity'    => 'SUM(ds.capacity)',
                 'ds_free_space'  => 'SUM(ds.free_space)',
-                'ds_uncommitted' => 'SUM(ds.uncommitted)',
+                'ds_uncommitted' => 'SUM(ds.uncommitted)'
             ]
         )->group('ds.vcenter_uuid');
     }
@@ -335,7 +335,7 @@ class VCenterSummaryTable extends ObjectsTable
             'vcenter_id' => 'vc.id',
             'name' => 'vc.name',
             'software_name' => 'vc.api_name',
-            'software_version' => 'vc.version',
+            'software_version' => 'vc.version'
         ];
 
         return $this->db()->select()->from(

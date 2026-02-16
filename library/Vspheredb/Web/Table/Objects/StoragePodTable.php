@@ -20,7 +20,7 @@ class StoragePodTable extends ObjectsTable
             $this->createColumn('object_name', $this->translate('Name'), [
                 'object_name'          => 'o.object_name',
                 'uuid'                 => 'o.uuid',
-                'cnt_datastore'        => 'COUNT(dso.uuid)',
+                'cnt_datastore'        => 'COUNT(dso.uuid)'
             ])->setRenderer(function ($row) {
                 $cntDs = (int) $row->cnt_datastore;
                 if ($cntDs === 0) {
@@ -56,7 +56,7 @@ class StoragePodTable extends ObjectsTable
             $this->createColumn('usage', $this->translate('Usage'), [
                 'uuid'       => 'o.uuid',
                 'free_space' => 'sp.free_space',
-                'capacity'   => 'sp.capacity',
+                'capacity'   => 'sp.capacity'
             ])->setRenderer(function ($row) {
                 /** @var Db $connection */
                 $div = 1024 * 1024;
@@ -65,7 +65,7 @@ class StoragePodTable extends ObjectsTable
                 return $usage;
             })->setSortExpression(
                 '1 - (sp.free_space / sp.capacity)'
-            )->setDefaultSortDirection('DESC'),
+            )->setDefaultSortDirection('DESC')
         ]);
     }
 
@@ -74,7 +74,7 @@ class StoragePodTable extends ObjectsTable
         return [
             'overall_status',
             'object_name',
-            'usage',
+            'usage'
         ];
     }
 

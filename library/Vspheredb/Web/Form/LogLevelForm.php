@@ -58,7 +58,7 @@ class LogLevelForm extends InlineForm
         $toggle->showWithConfirm(new SelectElement('log_level', [
             'options'  => ['' => $this->translate('- please choose -')] + $this->listLogLevels(),
             'required' => true,
-            'value'    => $currentLevel,
+            'value'    => $currentLevel
         ]));
         $toggle->addToForm($this);
     }
@@ -78,7 +78,7 @@ class LogLevelForm extends InlineForm
             LogLevel::WARNING,
             LogLevel::NOTICE,
             LogLevel::INFO,
-            LogLevel::DEBUG,
+            LogLevel::DEBUG
         ];
 
         return array_combine($levels, $levels);

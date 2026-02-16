@@ -18,7 +18,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => ['vm-disk-usage-table', 'common-table', 'table-row-selectable'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected int $totalSize = 0;
@@ -64,7 +64,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $this->translate('Disk'),
             $this->translate('Size'),
             $this->translate('Free space'),
-            $this->translate('Usage'),
+            $this->translate('Usage')
         ];
     }
 
@@ -115,7 +115,7 @@ class VmDiskUsageTable extends ZfQueryBasedTable
                     'width'    => 480,
                     'start'    => $start,
                     'end'      => $end,
-                    'template' => 'vm_disk',
+                    'template' => 'vm_disk'
                 ]),
                 [
                     'colspan' => 4,

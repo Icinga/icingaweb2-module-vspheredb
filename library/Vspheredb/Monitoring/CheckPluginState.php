@@ -28,20 +28,20 @@ class CheckPluginState
         self::NAME_OK       => self::OK,
         self::NAME_WARNING  => self::WARNING,
         self::NAME_CRITICAL => self::CRITICAL,
-        self::NAME_UNKNOWN  => self::UNKNOWN,
+        self::NAME_UNKNOWN  => self::UNKNOWN
     ];
     public const STATE_NAME_MAP = [
         self::OK       => self::NAME_OK,
         self::WARNING  => self::NAME_WARNING,
         self::CRITICAL => self::NAME_CRITICAL,
-        self::UNKNOWN  => self::NAME_UNKNOWN,
+        self::UNKNOWN  => self::NAME_UNKNOWN
     ];
 
     public const STATE_COLORS = [
         self::OK      => 'green',
         self::WARNING => 'brown',
         self::CRITICAL => 'red',
-        self::UNKNOWN => 'purple',
+        self::UNKNOWN => 'purple'
     ];
 
     /** @var int */

@@ -58,7 +58,7 @@ class DatastoreController extends Controller
                 $ds->get('capacity') - $ds->get('free_space')
             ),
             $this->translate('Uncommitted') => $this->bytes($ds->get('uncommitted')),
-            $this->translate('Sizing') => $this->sizingInfo($ds),
+            $this->translate('Sizing') => $this->sizingInfo($ds)
         ]);
         $vms = VmsOnDatastoreTable::create($ds);
 

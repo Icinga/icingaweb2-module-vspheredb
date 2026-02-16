@@ -33,7 +33,7 @@ class ManagedObjectReference implements JsonSerialization
     {
         return (object) [
             '_'    => $this->_,
-            'type' => $this->type,
+            'type' => $this->type
         ];
     }
 

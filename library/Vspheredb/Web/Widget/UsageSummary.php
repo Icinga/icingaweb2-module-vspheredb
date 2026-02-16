@@ -25,13 +25,13 @@ class UsageSummary extends BaseHtmlElement
                 Html::tag('div', $attr, $this->smallUnit(Format::mhz($usate->usedMhz))),
                 Html::tag('span', $this->translate('Total') . ': ' . Format::mhz($usate->totalMhz)),
                 (new CpuUsage($usate->usedMhz, $usate->totalMhz))->showLabels(false),
-                $this->translate('CPU'),
+                $this->translate('CPU')
             ]),
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(Format::mBytes($usate->usedMb))),
                 Html::tag('span', $this->translate('Total') . ': ' . Format::mBytes($usate->totalMb)),
                 (new MemoryUsage($usate->usedMb, $usate->totalMb))->showLabels(false),
-                $this->translate('Memory'),
+                $this->translate('Memory')
             ]),
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(
@@ -44,7 +44,7 @@ class UsageSummary extends BaseHtmlElement
                 (new MemoryUsage(($usate->dsCapacity - $usate->dsFreeSpace) / $mb, $usate->dsCapacity / $mb))
                     ->showLabels(false),
                 $this->translate('Storage')
-            ]),
+            ])
         ]);
     }
 

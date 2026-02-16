@@ -19,7 +19,7 @@ class PerfdataConsumer implements DbStorableInterface
         'name'             => null,
         'implementation'   => null,
         'settings'         => null,
-        'enabled'          => null,
+        'enabled'          => null
     ];
 
     public function settings(): mixed

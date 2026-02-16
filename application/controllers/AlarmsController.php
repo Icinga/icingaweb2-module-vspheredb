@@ -27,7 +27,7 @@ class AlarmsController extends Controller
             $this->url()->getParams()->toArray(false),
             [
                 'class' => 'icon-calendar',
-                'data-base-target' => '_main',
+                'data-base-target' => '_main'
             ]
         ));
         $day = $this->params->shift('day');
@@ -57,7 +57,7 @@ class AlarmsController extends Controller
             $this->url()->getParams()->toArray(false),
             [
                 'class' => 'icon-th-list',
-                'data-base-target' => '_main',
+                'data-base-target' => '_main'
             ]
         ));
         $this->addTitle($this->translate('Alarm Heatmap'));

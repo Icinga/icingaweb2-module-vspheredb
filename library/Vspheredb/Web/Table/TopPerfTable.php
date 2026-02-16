@@ -13,7 +13,7 @@ class TopPerfTable extends Table
 {
     protected $defaultAttributes = [
         'class' => 'common-table table-row-selectable',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     public function __construct(string $title, ?array $rows, ?string $format, string $link)
@@ -27,7 +27,7 @@ class TopPerfTable extends Table
             $this->getBody()->add(Table::row([
                 $this->$link($row),
                 $this->makeSparkLine($row),
-                $format ? $this->$format($row->value_last) : $row->value_last,
+                $format ? $this->$format($row->value_last) : $row->value_last
             ]));
         }
     }
@@ -77,7 +77,7 @@ class TopPerfTable extends Table
             $row->value_minus3,
             $row->value_minus2,
             $row->value_minus1,
-            $row->value_last,
+            $row->value_last
         ];
 
         return Html::tag('span', [

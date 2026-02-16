@@ -15,7 +15,7 @@ class VmDiskUsage extends DbObject
         'disk_path'    => null,
         'capacity'     => null,
         'free_space'   => null,
-        'vcenter_uuid' => null,
+        'vcenter_uuid' => null
     ];
 
     /**

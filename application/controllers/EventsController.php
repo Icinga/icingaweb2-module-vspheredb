@@ -30,7 +30,7 @@ class EventsController extends Controller
             $this->url()->getParams()->toArray(false),
             [
                 'class' => 'icon-calendar',
-                'data-base-target' => '_main',
+                'data-base-target' => '_main'
             ]
         ));
 
@@ -82,7 +82,7 @@ class EventsController extends Controller
             $this->url()->getParams()->toArray(false),
             [
                 'class' => 'icon-th-list',
-                'data-base-target' => '_main',
+                'data-base-target' => '_main'
             ]
         ));
 
@@ -114,7 +114,7 @@ class EventsController extends Controller
         }
         $tabs = $this->tabs()->add('events', [
             'label' => $this->translate('Events'),
-            'url'   => $this->url(),
+            'url'   => $this->url()
         ])->add('alarms', [
             'label' => $this->translate('Alarms'),
             'url'   => $alarmsUrl,

@@ -38,14 +38,14 @@ class HostsTable extends ObjectsTable
                 }),
             $this->createColumn('service_tag', $this->translate('Service Tag'), [
                 'service_tag'    => 'h.service_tag',
-                'sysinfo_vendor' => 'h.sysinfo_vendor',
+                'sysinfo_vendor' => 'h.sysinfo_vendor'
             ])->setRenderer($serviceTagRenderer),
             $this->createColumn('product_api_version', $this->translate('API Version'), [
-                'product_api_version' => 'h.product_api_version',
+                'product_api_version' => 'h.product_api_version'
             ]),
             $this->createColumn('cpu_usage', $this->translate('CPU Usage'), [
                 'cpu_usage' => 'hqs.overall_cpu_usage',
-                'cpu_total' => '(hardware_cpu_cores * hardware_cpu_mhz)',
+                'cpu_total' => '(hardware_cpu_cores * hardware_cpu_mhz)'
             ])->setRenderer(function ($row) {
                 return new CpuUsage($row->cpu_usage, $row->cpu_total);
             })->setSortExpression(
@@ -53,7 +53,7 @@ class HostsTable extends ObjectsTable
             )->setDefaultSortDirection('DESC'),
             $this->createColumn('memory_usage', $this->translate('Memory Usage'), [
                 'hardware_memory_size_mb' => 'h.hardware_memory_size_mb',
-                'memory_usage_mb'         => 'hqs.overall_memory_usage_mb',
+                'memory_usage_mb'         => 'hqs.overall_memory_usage_mb'
             ])->setRenderer(function ($row) {
                 return new MemoryUsage($row->memory_usage_mb, $row->hardware_memory_size_mb);
             })->setSortExpression(
@@ -65,7 +65,7 @@ class HostsTable extends ObjectsTable
                 'vms_cnt_overall_gray'   => 'vms.vms_cnt_overall_gray',
                 'vms_cnt_overall_green'  => 'vms.vms_cnt_overall_green',
                 'vms_cnt_overall_yellow' => 'vms.vms_cnt_overall_yellow',
-                'vms_cnt_overall_red'    => 'vms.vms_cnt_overall_red',
+                'vms_cnt_overall_red'    => 'vms.vms_cnt_overall_red'
             ])->setRenderer(function ($row) {
                 $result = [];
                 foreach (['red', 'yellow', 'gray', 'green'] as $state) {
@@ -92,7 +92,7 @@ class HostsTable extends ObjectsTable
                 'vms.vms_cnt_overall_red',
                 'vms.vms_cnt_overall_yellow',
                 'vms.vms_cnt_overall_gray',
-                'vms.vms_cnt_overall_green',
+                'vms.vms_cnt_overall_green'
             ])->setDefaultSortDirection('DESC'),
             $this->createColumn('vms_cnt_cpu', $this->translate('VM CPUs'), 'vms.cnt_cpu')
                 ->setDefaultSortDirection('DESC'),
@@ -117,26 +117,26 @@ class HostsTable extends ObjectsTable
                 'sysinfo_vendor'    => 'h.sysinfo_vendor',
                 'sysinfo_model'     => 'h.sysinfo_model',
                 'bios_version'      => 'h.bios_version',
-                'bios_release_date' => 'h.bios_release_date',
+                'bios_release_date' => 'h.bios_release_date'
             ])->setRenderer(function ($row) {
                 $host = HostSystem::create([
                     'sysinfo_vendor'    => $row->sysinfo_vendor,
                     'sysinfo_model'     => $row->sysinfo_model,
                     'bios_version'      => $row->bios_version,
-                    'bios_release_date' => $row->bios_release_date,
+                    'bios_release_date' => $row->bios_release_date
                 ]);
 
                 return new BiosInfo($host);
             }),
             $this->createColumn('uptime', $this->translate('Uptime'), [
-                'uptime' => 'hqs.uptime',
+                'uptime' => 'hqs.uptime'
             ])->setRenderer(function ($row) {
                 if ($row->uptime === null) {
                     return null;
                 }
 
                 return DateFormatter::formatDuration($row->uptime);
-            }),
+            })
 
         ]);
     }
@@ -146,7 +146,7 @@ class HostsTable extends ObjectsTable
         return [
             'object_name',
             'cpu_usage',
-            'memory_usage',
+            'memory_usage'
         ];
     }
 
@@ -162,7 +162,7 @@ class HostsTable extends ObjectsTable
                 'vms_cnt_overall_gray'   => "SUM(CASE WHEN vo.overall_status = 'gray' THEN 1 ELSE 0 END)",
                 'vms_cnt_overall_green'  => "SUM(CASE WHEN vo.overall_status = 'green' THEN 1 ELSE 0 END)",
                 'vms_cnt_overall_yellow' => "SUM(CASE WHEN vo.overall_status = 'yellow' THEN 1 ELSE 0 END)",
-                'vms_cnt_overall_red'    => "SUM(CASE WHEN vo.overall_status = 'red' THEN 1 ELSE 0 END)",
+                'vms_cnt_overall_red'    => "SUM(CASE WHEN vo.overall_status = 'red' THEN 1 ELSE 0 END)"
             ]
         )->join(
             ['vo' => 'object'],

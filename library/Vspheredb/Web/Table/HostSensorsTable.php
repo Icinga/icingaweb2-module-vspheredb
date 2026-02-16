@@ -14,12 +14,12 @@ class HostSensorsTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table sensors-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected $searchColumns = [
         'name',
-        'sensor_type',
+        'sensor_type'
     ];
 
     /** @var ?HostSystem */
@@ -36,7 +36,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         return static::row([
             $this->renderHealthState($row->health_state),
             $row->name,
-            $this->renderCurrentMeasurement($row),
+            $this->renderCurrentMeasurement($row)
         ]);
     }
 
@@ -130,7 +130,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         $query = $db->select()->from(['hs' => 'host_sensor'], [
             'sensor_type'  => 'sensor_type',
             'health_state' => 'health_state',
-            'cnt'          => 'COUNT(*)',
+            'cnt'          => 'COUNT(*)'
         ])
             ->where('base_units IS NOT NULL')
             ->group('sensor_type')
@@ -149,7 +149,7 @@ class HostSensorsTable extends ZfQueryBasedTable
                     'green' => 0,
                     'yellow' => 0,
                     'unknown' => 0,
-                    'red' => 0,
+                    'red' => 0
                 ];
             }
 

@@ -10,7 +10,7 @@ class HostNetworkPropertySet implements PropertySet
     {
         return [
             PropertySpec::create('HostSystem', [
-                'config.network',
+                'config.network'
             ])
         ];
     }

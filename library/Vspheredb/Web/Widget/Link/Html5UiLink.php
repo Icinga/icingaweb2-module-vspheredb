@@ -22,18 +22,18 @@ class Html5UiLink extends BaseHtmlElement
 
     public const QUERYSTRING_LEGACY = [
         HostSystem::class     => '/ui/#/host/%s',
-        VirtualMachine::class => '/ui/#/host/vms/%s',
+        VirtualMachine::class => '/ui/#/host/vms/%s'
     ];
 
     public const OBJECT_TYPES = [
         HostSystem::class     => 'HostSystem',
-        VirtualMachine::class => 'VirtualMachine',
+        VirtualMachine::class => 'VirtualMachine'
     ];
 
     // left-hand tree view:
     public const NAVIGATOR = [
         HostSystem::class     => 'vsphere.core.viTree.hostsAndClustersView',
-        VirtualMachine::class => 'vsphere.core.viTree.vmsAndTemplatesView',
+        VirtualMachine::class => 'vsphere.core.viTree.vmsAndTemplatesView'
     ];
 
     public const EXTENSION = [
@@ -41,7 +41,7 @@ class Html5UiLink extends BaseHtmlElement
         //  $extension = 'vsphere.core.vm.monitor'; // Shows 'Monitor' Tab
         // $extension = 'vsphere.core.inventory.serverObjectViewsExtension';
         HostSystem::class     => 'vsphere.core.host.summary',
-        VirtualMachine::class => 'vsphere.core.vm.summary',
+        VirtualMachine::class => 'vsphere.core.vm.summary'
     ];
 
     /** @var ?BaseDbObject */

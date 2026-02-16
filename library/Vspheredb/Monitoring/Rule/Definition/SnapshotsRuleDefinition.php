@@ -28,7 +28,7 @@ class SnapshotsRuleDefinition extends MonitoringRuleDefinition
             'warning_if_more_than'  => 1,
             'critical_if_more_than' => 5,
             'warning_if_older_than' => 7, // Days
-            'critical_if_older_than' => 30,
+            'critical_if_older_than' => 30
         ];
     }
 
@@ -82,20 +82,20 @@ class SnapshotsRuleDefinition extends MonitoringRuleDefinition
         return [
             'warning_if_more_than' => ['number', [
                 'label' => $this->translate('Raise Warning if more than X snapshots'),
-                'placeholder' => 'unset',
+                'placeholder' => 'unset'
             ]],
             'critical_if_more_than' => ['number', [
                 'label' => $this->translate('Raise Critical if more than X snapshots'),
-                'placeholder' => 'unset',
+                'placeholder' => 'unset'
             ]],
             'warning_if_older_than' => ['number', [
                 'label' => $this->translate('Raise Warning for snapshots older than X days'),
-                'placeholder' => 'unset',
+                'placeholder' => 'unset'
             ]],
             'critical_if_older_than' => ['number', [
                 'label' => $this->translate('Raise Critical for snapshots older than X days'),
-                'placeholder' => 'unset',
-            ]],
+                'placeholder' => 'unset'
+            ]]
         ];
     }
 }

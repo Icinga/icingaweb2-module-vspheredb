@@ -187,7 +187,7 @@ class VCenterCleanup
             ['DELETE FROM object WHERE vcenter_uuid = ? ORDER BY level DESC;', [$uuid]],
             ['OPTIMIZE TABLE object', []],
             ['DELETE FROM vcenter WHERE id = ?;', [$this->vCenterId]],
-            ['OPTIMIZE TABLE vcenter', []],
+            ['OPTIMIZE TABLE vcenter', []]
         ];
     }
 }

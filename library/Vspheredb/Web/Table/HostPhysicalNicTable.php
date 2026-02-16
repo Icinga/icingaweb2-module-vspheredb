@@ -18,7 +18,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     /** @var HostSystem */
@@ -86,7 +86,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
                 'hpn.link_speed_mb',
                 'hpn.link_duplex',
                 'hpn.mac_address',
-                'hpn.pci',
+                'hpn.pci'
             ]
         )->where('hpn.host_uuid = ?', $this->host->get('uuid'))->order('hpn.device ASC');
 

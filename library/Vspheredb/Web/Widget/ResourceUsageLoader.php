@@ -51,7 +51,7 @@ class ResourceUsageLoader
             'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
             'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
             'used_mb'   => 'SUM(hqs.overall_memory_usage_mb)',
-            'total_mb'  => 'SUM(h.hardware_memory_size_mb)',
+            'total_mb'  => 'SUM(h.hardware_memory_size_mb)'
         ])->join([
             'hqs' => 'host_quick_stats'
         ], 'h.uuid = hqs.uuid', []);
@@ -60,7 +60,7 @@ class ResourceUsageLoader
         $query = $db->select()->from(['ds' => 'datastore'], [
             'ds_capacity'    => 'SUM(ds.capacity)',
             'ds_free_space'  => 'SUM(ds.free_space)',
-            'ds_uncommitted' => 'SUM(ds.uncommitted)',
+            'ds_uncommitted' => 'SUM(ds.uncommitted)'
         ]);
         $storage = $db->fetchRow($this->applyFilters($query, 'ds'));
 

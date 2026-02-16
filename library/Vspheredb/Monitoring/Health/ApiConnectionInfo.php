@@ -17,7 +17,7 @@ class ApiConnectionInfo implements JsonSerialization
         ApiConnection::STATE_FAILING   => 'CRITICAL',
         ApiConnection::STATE_STOPPED   => 'WARNING',
         ApiConnection::STATE_STOPPING  => 'WARNING',
-        'unknown' => 'CRITICAL',
+        'unknown'                      => 'CRITICAL'
     ];
 
     /** @var string */
@@ -109,7 +109,7 @@ class ApiConnectionInfo implements JsonSerialization
             'state' => $this->state,
             'server' => $this->server,
             'serverId' => $this->serverId,
-            'vCenterId' => $this->vCenterId,
+            'vCenterId' => $this->vCenterId
         ];
 
         if ($this->lastErrorMessage) {

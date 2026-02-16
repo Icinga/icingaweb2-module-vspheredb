@@ -185,7 +185,7 @@ class PersistedRuleProblems
                     } else {
                         $db->update(self::TABLE, [
                             'current_state' => $state,
-                            'ts_changed_ms' => $now,
+                            'ts_changed_ms' => $now
                         ], $where);
                     }
                     $db->insert(self::HISTORY_TABLE, [
@@ -194,7 +194,7 @@ class PersistedRuleProblems
                         'former_state'   => $formerState,
                         'rule_name'      => $name,
                         'ts_changed_ms'  => $now,
-                        'output'         => $resultSet->getOutput(),
+                        'output'         => $resultSet->getOutput()
                     ]);
                 } elseif ($state !== CheckPluginState::NAME_OK) {
                     $db->insert(self::TABLE, [
@@ -202,7 +202,7 @@ class PersistedRuleProblems
                         'current_state'  => $state,
                         'rule_name'      => $name,
                         'ts_created_ms'  => $now,
-                        'ts_changed_ms'  => $now,
+                        'ts_changed_ms'  => $now
                     ]);
                     // emit new problem
                     $db->insert(self::HISTORY_TABLE, [
@@ -211,7 +211,7 @@ class PersistedRuleProblems
                         'former_state'   => CheckPluginState::NAME_OK, // null?
                         'rule_name'      => $name,
                         'ts_changed_ms'  => $now,
-                        'output'         => $resultSet->getOutput(),
+                        'output'         => $resultSet->getOutput()
                     ]);
                 }
             }
@@ -240,7 +240,7 @@ class PersistedRuleProblems
                             'former_state'   => $row->current_state,
                             'rule_name'      => $name,
                             'ts_changed_ms'  => $now,
-                            'output'         => null,
+                            'output'         => null
                         ]);
                     }
                 }

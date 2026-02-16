@@ -51,7 +51,7 @@ class PerfCounterInfoSyncStore extends SyncStore
                     'vcenter_uuid' => $uuid,
                     'name'    => $group,
                     'label'   => $info->groupInfo->label,
-                    'summary' => $info->groupInfo->summary,
+                    'summary' => $info->groupInfo->summary
                 ];
             }
             if (! array_key_exists($unit, $units)) {
@@ -59,7 +59,7 @@ class PerfCounterInfoSyncStore extends SyncStore
                     'vcenter_uuid' => $uuid,
                     'name'    => $unit,
                     'label'   => $info->unitInfo->label,
-                    'summary' => $info->unitInfo->summary,
+                    'summary' => $info->unitInfo->summary
                 ];
             }
             $counter = [
@@ -73,7 +73,7 @@ class PerfCounterInfoSyncStore extends SyncStore
                 'rollup_type'      => $info->rollupType,
                 'stats_type'       => $info->statsType,
                 'level'            => $info->level ?? 0, // ESXi? Check docs!
-                'per_device_level' => $info->perDeviceLevel ?? 0,
+                'per_device_level' => $info->perDeviceLevel ?? 0
             ];
             $counters[] = $counter;
         }

@@ -111,7 +111,7 @@ class VmEventHistorySyncStore extends SyncStore
             'ah' => $db->select()->from(
                 'alarm_history',
                 [$column => "MAX($column)"]
-            )->where('vcenter_uuid = ?', $vCenterUuid),
+            )->where('vcenter_uuid = ?', $vCenterUuid)
         ], Select::SQL_UNION_ALL);
 
         return (int) $db->fetchOne(

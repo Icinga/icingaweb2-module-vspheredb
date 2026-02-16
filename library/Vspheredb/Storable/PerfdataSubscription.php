@@ -25,7 +25,7 @@ class PerfdataSubscription implements DbStorableInterface
         'consumer_uuid' => null,
         'vcenter_uuid'  => null,
         'settings'      => null,
-        'enabled'       => null,
+        'enabled'       => null
     ];
 
     public function set($property, $value): bool

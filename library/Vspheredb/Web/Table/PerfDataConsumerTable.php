@@ -13,7 +13,7 @@ class PerfDataConsumerTable extends BaseTable
 
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected function initialize(): void
@@ -21,7 +21,7 @@ class PerfDataConsumerTable extends BaseTable
         $this->addAvailableColumns([
             (new SimpleColumn('name', $this->translate('Name'), [
                 'uuid' => 'pc.uuid',
-                'name' => 'pc.name',
+                'name' => 'pc.name'
             ]))->setRenderer(function ($row) {
                 return Link::create($row->name, 'vspheredb/perfdata/consumer', [
                     'uuid' => Uuid::fromBytes($row->uuid)
@@ -30,10 +30,10 @@ class PerfDataConsumerTable extends BaseTable
                 ]);
             }),
             (new SimpleColumn('implementation', $this->translate('Implementation'), [
-                'implementation' => 'pc.implementation',
+                'implementation' => 'pc.implementation'
             ]))->setRenderer(function ($row) {
                 return $row->implementation;
-            }),
+            })
         ]);
     }
 

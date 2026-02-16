@@ -38,7 +38,7 @@ class CustomValueDetails extends HtmlDocument
                 'Application'       => 'WebSphere Application Server',
                 'Installation Date' => '2020-01-02',
                 'Cost Center'       => '48145',
-                'Department'        => 'Web Shop',
+                'Department'        => 'Web Shop'
             ]);
         }
         if ($values->isEmpty()) {

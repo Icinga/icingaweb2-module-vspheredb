@@ -10,7 +10,7 @@ class VmSnapshotPropertySet implements PropertySet
     {
         return [
             PropertySpec::create('VirtualMachine', [
-                'snapshot',
+                'snapshot'
             ])
         ];
     }

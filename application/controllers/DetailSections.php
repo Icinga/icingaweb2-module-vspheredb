@@ -20,7 +20,7 @@ trait DetailSections
             return null;
         }
 
-        return Html::tag('div', ['class' => 'section',], new HtmlString($content));
+        return Html::tag('div', ['class' => 'section'], new HtmlString($content));
     }
 
     /**

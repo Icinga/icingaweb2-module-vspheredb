@@ -36,7 +36,7 @@ class HostSystem extends BaseDbObject
         'hardware_num_nic'        => null,
         'runtime_power_state'     => null,
         'das_host_state'          => null,
-        'custom_values'           => null,
+        'custom_values'           => null
     ];
 
     protected array $propertyMap = [
@@ -61,7 +61,7 @@ class HostSystem extends BaseDbObject
         'summary.hardware.cpuMhz'           => 'hardware_cpu_mhz',
         'summary.hardware.cpuModel'         => 'hardware_cpu_model',
         'summary.hardware.numHBAs'          => 'hardware_num_hba',
-        'summary.hardware.numNics'          => 'hardware_num_nic',
+        'summary.hardware.numNics'          => 'hardware_num_nic'
     ];
 
     /**

@@ -19,7 +19,7 @@ class MonitoredObjectMappingTable extends BaseTable
 
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected function initialize(): void
@@ -29,7 +29,7 @@ class MonitoredObjectMappingTable extends BaseTable
                 'source_type'          => 'mc.source_type',
                 'source_resource_name' => 'mc.source_resource_name',
                 'id'                   => 'mc.id',
-                'priority'             => 'mc.priority',
+                'priority'             => 'mc.priority'
             ]))->setRenderer(function ($row) {
                 return Link::create(sprintf(
                     '%s: %s',
@@ -43,7 +43,7 @@ class MonitoredObjectMappingTable extends BaseTable
             }),
             (new SimpleColumn('host_mapping', $this->translate('Host Mapping'), [
                 'host_property'            => 'mc.host_property',
-                'monitoring_host_property' => 'mc.monitoring_host_property',
+                'monitoring_host_property' => 'mc.monitoring_host_property'
             ]))->setRenderer(function ($row) {
                 if ($row->host_property === null) {
                     return null;
@@ -57,7 +57,7 @@ class MonitoredObjectMappingTable extends BaseTable
             }),
             (new SimpleColumn('vm_mapping', $this->translate('VM Mapping'), [
                 'vm_property'                 => 'mc.vm_property',
-                'monitoring_vm_host_property' => 'mc.monitoring_vm_host_property',
+                'monitoring_vm_host_property' => 'mc.monitoring_vm_host_property'
             ]))->setRenderer(function ($row) {
                 if ($row->host_property === null) {
                     return null;
@@ -68,7 +68,7 @@ class MonitoredObjectMappingTable extends BaseTable
                         $row->vm_property
                     );
                 }
-            }),
+            })
         ]);
     }
 

@@ -50,7 +50,7 @@ class HostHardwareInfoTable extends NameValueTable
                 $this->quickStats->get('overall_memory_usage_mb'),
                 $host->get('hardware_memory_size_mb')
             ),
-            $this->translate('HBAs') => $host->get('hardware_num_hba'),
+            $this->translate('HBAs') => $host->get('hardware_num_hba')
         ]);
     }
 }

@@ -36,7 +36,7 @@ class RpcNamespaceProcess implements EventEmitterInterface
 
         return (object) [
             'state'   => $this->daemon->getProcessState()->getInfo(),
-            'details' => (object) $details,
+            'details' => (object) $details
         ];
     }
     */

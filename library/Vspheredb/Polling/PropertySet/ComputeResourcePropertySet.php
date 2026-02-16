@@ -18,7 +18,7 @@ class ComputeResourcePropertySet implements PropertySet
                 'summary.numHosts',
                 // 'summary.overallStatus',
                 'summary.totalCpu',
-                'summary.totalMemory',
+                'summary.totalMemory'
             ])
         ];
     }

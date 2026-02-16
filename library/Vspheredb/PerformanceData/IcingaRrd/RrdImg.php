@@ -85,7 +85,7 @@ class RrdImg
             'rnd'      => floor(time() / 20),
             'format'   => 'png',
             'start'    => $start,
-            'end'      => $end,
+            'end'      => $end
         ];
 
         return Img::create('rrd/img', $params + ['template' => $template], ['class' => 'rrd-image']);
@@ -105,7 +105,7 @@ class RrdImg
         // TODO, CSS. disk was 1em, net 2em
         return Html::tag('div', ['class' => 'rrd-image-legend'], [
             Html::tag('strong', $title),
-            static::prepareImg($moref, $device, $template),
+            static::prepareImg($moref, $device, $template)
         ]);
     }
 }

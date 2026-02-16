@@ -51,7 +51,7 @@ class HostController extends Controller
             new HostHardwareInfoTable($host, $quickStats),
             new HostMonitoringInfo($host),
             new HostPhysicalNicTable($host),
-            new HostHbaTable($host),
+            new HostHbaTable($host)
         ]);
     }
 

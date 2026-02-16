@@ -16,7 +16,7 @@ class DelayedPerfdataRenderer
         526 => 'net.bytesRx',
         527 => 'net.bytesRx',
         171 => 'virtualDisk.numberReadAveraged',
-        172 => 'virtualDisk.numberWriteAveraged',
+        172 => 'virtualDisk.numberWriteAveraged'
     ];
 
     /** @var Zend_Db_Adapter_Abstract */
@@ -182,7 +182,7 @@ class DelayedPerfdataRenderer
                 "COALESCE(value_minus3, '0')",
                 "COALESCE(value_minus2, '0')",
                 "COALESCE(value_minus1, '0')",
-                'value_last',
+                'value_last'
             ]) . ')';
 
         $query = $db->select()->from('counter_300x5', [

@@ -79,7 +79,7 @@ class GroupedvmsTable extends ObjectsTable
             /*
             $this->createColumn('cpu', 'CPU', [
                 'used_mhz'  => 'SUM(vqs.overall_cpu_usage)',
-                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
+                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
             ])->setRenderer(function ($row) {
                 return new CpuUsage($row->used_mhz, $row->total_mhz);
             })->setSortExpression(
@@ -95,7 +95,7 @@ class GroupedvmsTable extends ObjectsTable
             $this->createColumn('memory', $this->translate('Memory'), [
                 'used_mb'      => 'SUM(vqs.guest_memory_usage_mb)',
                 'total_mb'     => 'SUM(vm.hardware_memorymb)',
-                'host_used_mb' => 'SUM(vqs.host_memory_usage_mb)',
+                'host_used_mb' => 'SUM(vqs.host_memory_usage_mb)'
             ])->setRenderer(function ($row) {
                 return new MemoryUsage($row->used_mb, $row->total_mb, $row->host_used_mb);
             })->setSortExpression(
@@ -104,7 +104,7 @@ class GroupedvmsTable extends ObjectsTable
 
             $this->createColumn('host_memory', $this->translate('Host Memory'), [
                 'host_used_mb'  => 'SUM(vqs.host_memory_usage_mb)',
-                'total_mb' => 'SUM(vm.hardware_memorymb)',
+                'total_mb' => 'SUM(vm.hardware_memorymb)'
             ])->setRenderer(function ($row) {
                 return new MemoryUsage($row->host_used_mb, $row->total_mb);
             })->setSortExpression(
@@ -114,7 +114,7 @@ class GroupedvmsTable extends ObjectsTable
             /*
             $this->createColumn('memory', 'Host Memory', [
                 'used_mb'  => 'SUM(vqs.host_memory_usage_mb)',
-                'total_mb' => 'SUM(vm.hardware_memorymb)',
+                'total_mb' => 'SUM(vm.hardware_memorymb)'
             ])->setRenderer(function ($row) {
                 $used = $row->used_mb * 1024 * 1024;
                 $total = $row->total_mb * 1024 * 1024;
@@ -127,7 +127,7 @@ class GroupedvmsTable extends ObjectsTable
                 return [
                     new SimpleUsageBar($used, $total, $title),
                     Html::tag('small', ['style' => 'float: left'], 'Used: ' . Format::bytes($used)),
-                    Html::tag('small', ['style' => 'float: right'], 'Capacity: ' . Format::bytes($total)),
+                    Html::tag('small', ['style' => 'float: right'], 'Capacity: ' . Format::bytes($total))
                 ];
             })->setSortExpression(
                 'AVG(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)'
@@ -139,7 +139,7 @@ class GroupedvmsTable extends ObjectsTable
             $this->createColumn('hardware_memorymb', 'Memory Capacity', 'SUM(vm.hardware_memorymb)')
                 ->setRenderer(function ($row) {
                     return Format::mBytes($row->hardware_memorymb);
-                })->setDefaultSortDirection('DESC'),
+                })->setDefaultSortDirection('DESC')
 
         ]);
     }

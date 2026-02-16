@@ -49,7 +49,7 @@ class VmHardwareSyncTask extends SyncTask
             'capacityInBytes',
             'split',
             'writeThrough',
-            'thinProvisioned',
+            'thinProvisioned'
         ];
         // $unset = []; // used only when looking for new properties
         foreach ($result as $value) {

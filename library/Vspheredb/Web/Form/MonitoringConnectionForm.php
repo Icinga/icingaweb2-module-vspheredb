@@ -51,7 +51,7 @@ class MonitoringConnectionForm extends Form
         $this->addElement('select', 'vcenter', [
             'label'    => $this->translate('vCenter'),
             'options'  => $this->optionalEnum($this->enumVCenters()),
-            'ignore'   => true,
+            'ignore'   => true
         ]);
 
         $this->addElement('select', 'source_type', [
@@ -61,7 +61,7 @@ class MonitoringConnectionForm extends Form
                 // 'icinga2-api' => $this->translate('Icinga 2 API'),
                 'icingadb' => $this->translate('Icinga DB')
             ]),
-            'class' => 'autosubmit',
+            'class' => 'autosubmit'
         ]);
         $sourceType = $this->getElement('source_type')->getValue();
         if (! $sourceType) {
@@ -109,7 +109,7 @@ class MonitoringConnectionForm extends Form
                 'name'         => $this->translate('Hostname'),
                 'display_name' => $this->translate('Display Name'),
                 'address'      => $this->translate('Address v4'),
-                'address6'     => $this->translate('Address v6'),
+                'address6'     => $this->translate('Address v6')
             ] + [$this->translate('Custom Variables') => $icingadbVars]);
         } else {
             try {
@@ -128,7 +128,7 @@ class MonitoringConnectionForm extends Form
             $varOptions = $this->optionalEnum([
                 'host_name'    => $this->translate('Hostname'),
                 'display_name' => $this->translate('Display Name'),
-                'address'      => $this->translate('Address'),
+                'address'      => $this->translate('Address')
             ] + [$this->translate('Custom Variables') => $idoVars]);
         }
 
@@ -143,13 +143,13 @@ class MonitoringConnectionForm extends Form
                 'host_name'    => $this->translate('Hostname'),
                 'object_name'  => $this->translate('Object Name'),
                 'sysinfo_uuid' => $this->translate('System (BIOS) UUID'),
-                'service_tag'  => $this->translate('IP Address'),
-            ]),
+                'service_tag'  => $this->translate('IP Address')
+            ])
         ]);
         $this->addElement('select', 'monitoring_host_property', [
             'label'       => $this->translate('Monitored Host Property'),
             'description' => $this->translate('Property of the Host System (as known by Icinga)'),
-            'options'     => $varOptions,
+            'options'     => $varOptions
         ]);
 
         $this->add(Html::tag('h2', $this->translate('Virtual Machines')));
@@ -162,13 +162,13 @@ class MonitoringConnectionForm extends Form
             'options'     => $this->optionalEnum([
                 'guest_host_name' => $this->translate('Guest Hostname'),
                 'object_name'     => $this->translate('Object Name'),
-                'bios_uuid'       => $this->translate('BIOS UUID'),
-            ]),
+                'bios_uuid'       => $this->translate('BIOS UUID')
+            ])
         ]);
         $this->addElement('select', 'monitoring_vm_host_property', [
             'label'       => $this->translate('Monitored Host Property'),
             'description' => $this->translate('Property of the Virtual Machine (as known by Icinga)'),
-            'options'     => $varOptions,
+            'options'     => $varOptions
         ]);
 
         $submit = new SubmitElement('submit', ['label' => $this->translate('Store')]);
@@ -325,7 +325,7 @@ class MonitoringConnectionForm extends Form
         return $this->makeNiceUuidKeys($this->db->fetchPairs(
             $this->db->select()->from(['vc' => 'vcenter'], [
                 'uuid' => 'vc.instance_uuid',
-                'name' => 'vc.name',
+                'name' => 'vc.name'
             ])->order('vc.name')
         ));
     }

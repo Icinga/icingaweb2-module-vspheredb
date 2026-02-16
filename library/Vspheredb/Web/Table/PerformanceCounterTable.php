@@ -20,9 +20,9 @@ class PerformanceCounterTable extends BaseTable
         'label',
         'summary',
         'stats_type',
-        'rollup_type',
+        'rollup_type'
         // TODO: disabled, Director breaks this right now for security reasons
-        // "(c.group_name || '.' || c.name)",
+        // "(c.group_name || '.' || c.name)"
     ];
 
     public function __construct($db, ?Url $url = null, ?VCenter $vCenter = null)
@@ -57,7 +57,7 @@ class PerformanceCounterTable extends BaseTable
             $this->createColumn('unit_name', $this->translate('Unit')),
             $this->createColumn('stats_type', $this->translate('Stats')),
             $this->createColumn('rollup_type', $this->translate('Rollup')),
-            $this->createColumn('counter_key', $this->translate('ID')),
+            $this->createColumn('counter_key', $this->translate('ID'))
         ]);
     }
 

@@ -73,7 +73,7 @@ class MobLink extends HtmlDocument
             'href'   => sprintf('https://%s/mob/?moid=%s', $server->get('host'), rawurlencode($moRef)),
             'target' => '_blank',
             'title'  => sprintf($this->translate('Show "%s" in the Managed Object Browser (MOB)'), $moRef),
-            'class' => 'icon-eye',
+            'class' => 'icon-eye'
         ], $label);
     }
 
@@ -89,7 +89,7 @@ class MobLink extends HtmlDocument
             'href' => sprintf('https://%s/mob/', $server->get('host')),
             'target' => '_blank',
             'title'  => sprintf($this->translate('Open the Managed Object Browser (MOB)')),
-            'class' => 'icon-eye',
+            'class' => 'icon-eye'
         ], $label);
     }
 }

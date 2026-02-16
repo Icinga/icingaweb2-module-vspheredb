@@ -65,7 +65,7 @@ abstract class HostSummaryTable extends ObjectsTable
     {
         return $this->createColumn($this->groupByAlias, $this->getGroupingTitle(), [
             'name'         => $this->nameColumn,
-            'uuid'         => $this->groupBy,
+            'uuid'         => $this->groupBy
         ] + $this->getHostCountColumns())->setRenderer(function ($row) {
             $link = Link::create(
                 $row->{$this->groupByAlias},
@@ -77,7 +77,7 @@ abstract class HostSummaryTable extends ObjectsTable
             return [
                 $this->getExtraIcons($row),
                 $link,
-                $this->renderHostSummaries($row),
+                $this->renderHostSummaries($row)
             ];
         });
     }
@@ -126,11 +126,11 @@ abstract class HostSummaryTable extends ObjectsTable
                 "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
                 "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
                 "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
-                "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
+                "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)"
             ])->setDefaultSortDirection('DESC'),
             $this->createColumn('cpu', $this->translate('CPU'), [
                 'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
-                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
+                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
             ])->setRenderer(function ($row) {
                 $bar = new CpuUsage($row->used_mhz, $row->total_mhz);
                 if ($this->hasChosenColumn('overall_cpu_usage') || $this->hasChosenColumn('hardware_cpu_mhz')) {
@@ -159,7 +159,7 @@ abstract class HostSummaryTable extends ObjectsTable
 
             $this->createColumn('memory', $this->translate('Memory'), [
                 'used_mb'  => 'SUM(hqs.overall_memory_usage_mb)',
-                'total_mb' => 'SUM(h.hardware_memory_size_mb)',
+                'total_mb' => 'SUM(h.hardware_memory_size_mb)'
             ])->setRenderer(function ($row) {
                 $bar = new MemoryUsage($row->used_mb, $row->total_mb);
                 if ($this->hasChosenColumn('overall_memory_usage') || $this->hasChosenColumn('hardware_memorymb')) {
@@ -200,7 +200,7 @@ abstract class HostSummaryTable extends ObjectsTable
             'hosts_cnt_overall_gray'   => "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
             'hosts_cnt_overall_green'  => "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
             'hosts_cnt_overall_yellow' => "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
-            'hosts_cnt_overall_red'    => "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
+            'hosts_cnt_overall_red'    => "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)"
         ];
     }
 
@@ -239,7 +239,7 @@ abstract class HostSummaryTable extends ObjectsTable
 
         return [
             Html::tag('br'),
-            Html::tag('small', $result),
+            Html::tag('small', $result)
         ];
     }
 

@@ -37,7 +37,7 @@ class WsdlLoader
         'reflect-types.xsd',
         'reflect-messagetypes.xsd',
         'vim-types.xsd',
-        'vim-messagetypes.xsd',
+        'vim-messagetypes.xsd'
     ];
 
     protected LoggerInterface $logger;

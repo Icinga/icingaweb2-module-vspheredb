@@ -20,6 +20,6 @@ class VmNetworkPerformanceSet extends DefaultPerformanceSet
         'multicastRx',
         'multicastTx',
         'droppedRx',
-        'droppedTx',
+        'droppedTx'
     ];
 }

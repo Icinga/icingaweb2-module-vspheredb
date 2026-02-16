@@ -49,7 +49,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
                     'committed'   => $usage->committed,
                     'uncommitted' => $usage->uncommitted,
                     'unshared'    => $usage->unshared,
-                    'ts_updated'  => $timestamp,
+                    'ts_updated'  => $timestamp
                 ];
                 $seen[$key] = $key;
                 if (array_key_exists($key, $dbObjects)) {
@@ -77,7 +77,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
 
         $query = $db->select()->from(['o' => 'object'], [
             'moref'       => 'o.moref',
-            'object_name' => 'o.object_name',
+            'object_name' => 'o.object_name'
         ])->join(
             ['vm' => 'virtual_machine'],
             "vm.uuid = o.uuid AND vm.template = 'n' AND vm.runtime_power_state = 'poweredOn'",

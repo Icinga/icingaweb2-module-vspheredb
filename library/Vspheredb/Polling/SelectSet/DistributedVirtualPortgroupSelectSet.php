@@ -10,7 +10,7 @@ class DistributedVirtualPortgroupSelectSet implements SelectSet
             GenericSpec::traverseFolder([
                 GenericSpec::TRAVERSE_DC_NETWORKS
             ]),
-            GenericSpec::traverseDatacenterNetworks(),
+            GenericSpec::traverseDatacenterNetworks()
         ];
     }
 }

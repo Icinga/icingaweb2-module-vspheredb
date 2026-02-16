@@ -50,7 +50,7 @@ class ChooseInfluxDatabaseForm extends Form
             'baseUrl'    => $this->hook->getSetting('base_url'),
             'apiVersion' => $this->hook->getSetting('api_version'),
             'username'   => $this->hook->getSetting('username'),
-            'password'   => $this->hook->getSetting('password'),
+            'password'   => $this->hook->getSetting('password')
         ];
     }
 
@@ -141,7 +141,7 @@ class ChooseInfluxDatabaseForm extends Form
         } else {
             $elDbName = $this->createElement('text', 'dbname', [
                 'label'       => $this->translate('Database'),
-                'required'    => true,
+                'required'    => true
             ]);
             $this->addElement($elDbName);
         }
@@ -149,7 +149,7 @@ class ChooseInfluxDatabaseForm extends Form
             $action = new TextWithActionButton('new_dbname', [
                 'label'       => $this->translate('New Database'),
                 'description' => $this->translate('New InfluxDB database name'),
-                'required'    => true,
+                'required'    => true
             ], [
                 'label' => $this->translate('Create'),
                 'title' => $this->translate('Create a new InfluxDB database')

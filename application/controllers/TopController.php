@@ -47,7 +47,7 @@ class TopController extends Controller
                 $this->fetchTop(543, $parentId),
                 'formatMicroSeconds',
                 'createVmLink'
-            ),
+            )
         ]);
     }
 
@@ -90,7 +90,7 @@ class TopController extends Controller
                 $this->fetchTopPerParent(543, 'AVG'),
                 'formatMicroSeconds',
                 'createTopForParentLink'
-            ),
+            )
         ]);
     }
 
@@ -125,21 +125,21 @@ class TopController extends Controller
                 'value_minus1' => "$agg(c.value_minus1)",
                 'value_minus2' => "$agg(c.value_minus2)",
                 'value_minus3' => "$agg(c.value_minus3)",
-                'value_minus4' => "$agg(c.value_minus4)",
+                'value_minus4' => "$agg(c.value_minus4)"
             ]
         )->join(
             ['o' => 'object'],
             'o.uuid = c.object_uuid',
             [
                 'o.uuid',
-                'o.overall_status',
+                'o.overall_status'
             ]
         )->join(
             ['p' => 'object'],
             'o.parent_uuid = p.uuid',
             [
                 'object_uuid' => 'p.uuid',
-                'object_name' => 'p.object_name',
+                'object_name' => 'p.object_name'
             ]
         )->where('counter_key = ?', $counterUuid)
             ->group('p.uuid')
@@ -166,7 +166,7 @@ class TopController extends Controller
                 'c.value_minus1',
                 'c.value_minus2',
                 'c.value_minus3',
-                'c.value_minus4',
+                'c.value_minus4'
             ]
         )->join(
             ['o' => 'object'],
@@ -174,7 +174,7 @@ class TopController extends Controller
             [
                 'o.uuid',
                 'object_name' => 'o.object_name',
-                'o.overall_status',
+                'o.overall_status'
             ]
         )->where('counter_key = ?', $counterId)
             ->order('value_last DESC')

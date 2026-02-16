@@ -47,7 +47,7 @@ class VCenterSummaries extends BaseHtmlElement
             'red'    => "SUM(CASE WHEN o.overall_status = 'red' THEN 1 ELSE 0 END)",
             'yellow' => "SUM(CASE WHEN o.overall_status = 'yellow' THEN 1 ELSE 0 END)",
             'green'  => "SUM(CASE WHEN o.overall_status = 'green' THEN 1 ELSE 0 END)",
-            'gray'   => "SUM(CASE WHEN o.overall_status = 'gray' THEN 1 ELSE 0 END)",
+            'gray'   => "SUM(CASE WHEN o.overall_status = 'gray' THEN 1 ELSE 0 END)"
         ];
 
         $this->addCountlet(

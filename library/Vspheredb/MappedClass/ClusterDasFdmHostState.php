@@ -115,7 +115,7 @@ class ClusterDasFdmHostState implements JsonSerialization
     {
         return (object) [
             'state' => $this->state,
-            'stateReporter' => $this->stateReporter,
+            'stateReporter' => $this->stateReporter
         ];
     }
 }

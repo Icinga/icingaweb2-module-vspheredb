@@ -17,6 +17,6 @@ class VmCpuPerformanceSet extends DefaultPerformanceSet
         'readiness',
         'usage',
         'usagemhz',
-        'utilization',
+        'utilization'
     ];
 }

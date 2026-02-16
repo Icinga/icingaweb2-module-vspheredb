@@ -12,7 +12,7 @@ class HostPciDevicesTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected $searchColumns = [
@@ -28,7 +28,7 @@ class HostPciDevicesTable extends ZfQueryBasedTable
     {
         return [
             $this->translate('ID'),
-            $this->translate('Device (Vendor)'),
+            $this->translate('Device (Vendor)')
         ];
     }
 
@@ -36,7 +36,7 @@ class HostPciDevicesTable extends ZfQueryBasedTable
     {
         return static::row([
             $row->id,
-            sprintf('%s (%s)', $row->device_name, $row->vendor_name),
+            sprintf('%s (%s)', $row->device_name, $row->vendor_name)
         ]);
     }
 

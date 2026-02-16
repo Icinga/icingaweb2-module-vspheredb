@@ -53,7 +53,7 @@ class VmController extends Controller
             new VmDiskUsageTable($vm),
             new VmSnapshotTable($vm),
             new BackupToolInfo($vm),
-            new VmExtraInfoTable($vm),
+            new VmExtraInfoTable($vm)
         ]);
     }
 
@@ -65,7 +65,7 @@ class VmController extends Controller
         $vm = $this->addVm();
         $this->content()->add([
             new SubTitle($this->translate('Hardware'), 'print'),
-            new VmHardwareTree($vm),
+            new VmHardwareTree($vm)
         ]);
     }
 

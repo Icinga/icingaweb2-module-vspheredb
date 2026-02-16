@@ -83,7 +83,7 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
         $disks = $db->fetchAll($db->select()->from('vm_disk_usage', [
             'disk_path',
             'capacity',
-            'free_space',
+            'free_space'
         ])->where('vm_disk_usage.vm_uuid = ?', $object->getConnection()->quoteBinary($object->get('uuid'))));
 
         $instanceSettings = [];
@@ -112,12 +112,12 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
         return [
             'disk_path_filter' => ['text', [
                 'label' => $this->translate('Apply to specific disks only'),
-                'placeholder' => 'e.g. C:\\, /var/*, C:\\|D:\\|E:\\',
+                'placeholder' => 'e.g. C:\\, /var/*, C:\\|D:\\|E:\\'
             ]],
             'disk_path_ignore' => ['text', [
                 'label' => $this->translate('Ignore specific disks'),
-                'placeholder' => 'e.g. C:\\, */volume-subpaths/*|/var/lib/kubelet/*',
-            ]],
+                'placeholder' => 'e.g. C:\\, */volume-subpaths/*|/var/lib/kubelet/*'
+            ]]
         ] + MemoryUsageHelper::getParameters();
     }
 }

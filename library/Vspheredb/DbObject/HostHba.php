@@ -18,7 +18,7 @@ class HostHba extends BaseVmHardwareDbObject
         'pci'             => null,
         'status'          => null,
         'storage_protocol' => 'scsi',
-        'vcenter_uuid'    => null,
+        'vcenter_uuid'    => null
     ];
 
     protected array $propertyMap = [
@@ -28,6 +28,6 @@ class HostHba extends BaseVmHardwareDbObject
         'model'           => 'model',
         'pci'             => 'pci',
         'status'          => 'status',
-        'storageProtocol' => 'storage_protocol',
+        'storageProtocol' => 'storage_protocol'
     ];
 }

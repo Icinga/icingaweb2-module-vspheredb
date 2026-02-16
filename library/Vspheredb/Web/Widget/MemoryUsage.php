@@ -12,7 +12,7 @@ class MemoryUsage extends UsageBar
 
     protected array $colors = [
         'used' => 'rgba(0, 149, 191, 0.75)',
-        'host' => 'rgba(160, 200, 211, 0.75)',
+        'host' => 'rgba(160, 200, 211, 0.75)'
     ];
 
     public function __construct(int|float|null $usedMb, int|float|null $capacityMb, int|float|null $usedHostMb = null)

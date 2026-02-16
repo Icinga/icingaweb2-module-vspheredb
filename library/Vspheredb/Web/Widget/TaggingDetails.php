@@ -96,7 +96,7 @@ class TaggingDetails extends HtmlDocument
                 // Other example, for DistributedVirtualPortgroup: has "SYSTEM/DVS.UPLINKPG" for dvUplink Portgroup
             }
             $table->addNameValueRow([
-                Html::tag('i', $this->translate('Internal')),
+                Html::tag('i', $this->translate('Internal'))
             ], Html::tag('ul', Html::wrapEach($internal, 'li')));
         }
     }
@@ -109,28 +109,28 @@ class TaggingDetails extends HtmlDocument
             TaggingTag::create([
                 'category_uuid' => $uuidCat1,
                 'name' => 'Prod',
-                'description' => 'Our production environment',
+                'description' => 'Our production environment'
             ]),
             TaggingTag::create([
                 'category_uuid' => $uuidCat2,
-                'name' => 'Another Corp.',
+                'name' => 'Another Corp.'
             ]),
             TaggingTag::create([
                 'category_uuid' => $uuidCat2,
-                'name' => 'Contoso Inc',
-            ]),
+                'name' => 'Contoso Inc'
+            ])
         ];
         $this->categories = [
             $uuidCat1 => TaggingCategory::create([
                 'uuid' => $uuidCat1,
                 'name' => 'Environment',
-                'cardinality' => 'SINGLE',
+                'cardinality' => 'SINGLE'
             ]),
             $uuidCat2 => TaggingCategory::create([
                 'uuid' => $uuidCat2,
                 'name' => 'Customer',
-                'cardinality' => 'MULTIPLE',
-            ]),
+                'cardinality' => 'MULTIPLE'
+            ])
         ];
     }
 }

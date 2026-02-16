@@ -29,7 +29,7 @@ class VmQuickStatsPropertySet implements PropertySet
                 'summary.quickStats.staticCpuEntitlement',
                 'summary.quickStats.staticMemoryEntitlement',
                 'summary.quickStats.swappedMemory',
-                'summary.quickStats.uptimeSeconds',
+                'summary.quickStats.uptimeSeconds'
             ])
         ];
     }

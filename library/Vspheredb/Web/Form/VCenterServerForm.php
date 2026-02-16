@@ -44,7 +44,7 @@ class VCenterServerForm extends Form
                 . ' HTTP(s) ports'
             ),
             'class' => 'autofocus',
-            'required' => true,
+            'required' => true
         ]);
 
         $this->addElement('select', 'scheme', [
@@ -52,11 +52,11 @@ class VCenterServerForm extends Form
             'description' => $this->translate('Whether to use encryption when talking to your vCenter'),
             'multiOptions' => [
                 'https' => $this->translate('HTTPS (strongly recommended)'),
-                'http'  => $this->translate('HTTP (this is plaintext!)'),
+                'http'  => $this->translate('HTTP (this is plaintext!)')
             ],
             'class' => 'autosubmit',
             'value' => 'https',
-            'required' => true,
+            'required' => true
         ]);
 
         $ssl = $this->getValue('scheme', 'https') === 'https';
@@ -64,7 +64,7 @@ class VCenterServerForm extends Form
             'label'       => $this->translate('Enabled'),
             'description' => $this->translate('Whether the background daemon should actively poll this node.'),
             'required'    => true,
-            'value'       => 'y',
+            'value'       => 'y'
         ]);
 
         if ($ssl) {
@@ -75,7 +75,7 @@ class VCenterServerForm extends Form
                     . ' been signed by a trusted CA. This is strongly recommended.'
                 ),
                 'required'    => true,
-                'value'       => 'y',
+                'value'       => 'y'
             ]);
             $this->addElement('boolean', 'ssl_verify_host', [
                 'label'       => $this->translate('Verify Host'),
@@ -83,25 +83,25 @@ class VCenterServerForm extends Form
                     'Whether we should check that the certificate matches the configured host'
                 ),
                 'value'       => 'y',
-                'required'    => true,
+                'required'    => true
             ]);
         }
 
         $this->addElement('text', 'username', [
             'label'       => $this->translate('Username'),
             'description' => $this->translate('Will be used for SOAP authentication against your vCenter'),
-            'required'    => true,
+            'required'    => true
         ]);
 
         if ($this->isNew()) {
             $this->addElement('password', 'password', [
                 'label' => $this->translate('Password'),
-                'required' => true,
+                'required' => true
             ]);
         } else {
             $this->addElement('password', 'password', [
                 'label' => $this->translate('Password'),
-                'placeholder' => $this->translate('(keep as stored)'),
+                'placeholder' => $this->translate('(keep as stored)')
             ]);
         }
 
@@ -114,7 +114,7 @@ class VCenterServerForm extends Form
             'multiOptions' => [
                 '' => $this->translate('- please choose -'),
                 'HTTP' => $this->translate('HTTP proxy'),
-                'SOCKS5' => $this->translate('SOCKS5 proxy'),
+                'SOCKS5' => $this->translate('SOCKS5 proxy')
             ],
             'class' => 'autosubmit'
         ]);
@@ -125,7 +125,7 @@ class VCenterServerForm extends Form
             $this->addElement('text', 'proxy_address', [
                 'label' => $this->translate('Proxy Address'),
                 'description' => $this->translate('Hostname, IP or <host>:<port>'),
-                'required' => true,
+                'required' => true
             ]);
             if ($proxyType === 'HTTP') {
                 $this->addElement('text', 'proxy_user', [

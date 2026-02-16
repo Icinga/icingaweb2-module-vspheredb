@@ -18,7 +18,7 @@ class ComputeResource extends BaseDbObject
         'effective_hosts'          => null,
         'hosts'                    => null,
         'total_cpu_mhz'            => null,
-        'total_memory_size_mb'     => null,
+        'total_memory_size_mb'     => null
     ];
 
     protected array $propertyMap = [
@@ -30,6 +30,6 @@ class ComputeResource extends BaseDbObject
         'summary.numHosts'          => 'hosts',
         // 'summary.overallStatus' => '',
         'summary.totalCpu'          => 'total_cpu_mhz',
-        'summary.totalMemory'       => 'total_memory_size_mb',
+        'summary.totalMemory'       => 'total_memory_size_mb'
     ];
 }

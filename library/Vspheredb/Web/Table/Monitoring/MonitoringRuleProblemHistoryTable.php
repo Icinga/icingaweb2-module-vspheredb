@@ -25,7 +25,7 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
 
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     public function filterEntityUuid(string $uuid): static
@@ -44,7 +44,7 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
             $output = [
                 CheckPluginHelper::colorizeOutput($this->translate('[OK] Check has no longer been executed')),
                 ' ',
-                CheckPluginHelper::colorizeOutput($formerState),
+                CheckPluginHelper::colorizeOutput($formerState)
             ];
         } else {
             $lines = preg_split("/\r?\n/", $row->output);
@@ -102,7 +102,7 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
             'ph.former_state',
             'ph.rule_name',
             'ph.ts_changed_ms',
-            'ph.output',
+            'ph.output'
         ])->join(
             ['o' => 'object'],
             'o.uuid = ph.uuid',

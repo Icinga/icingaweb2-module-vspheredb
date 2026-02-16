@@ -21,7 +21,7 @@ class FullObjectListPropertySet implements PropertySet
             'VirtualApp',
             'Network',
             'DistributedVirtualSwitch',
-            'DistributedVirtualPortgroup',
+            'DistributedVirtualPortgroup'
         ], ['name', 'parent', 'overallStatus', 'tag']);
     }
 

@@ -30,7 +30,7 @@ class SwitchesTable extends ObjectsTable
             $this->createObjectNameColumn(),
             $this->createColumn('num_hosts', $this->translate('Hosts'), 'vds.num_hosts'),
             $this->createColumn('num_ports', $this->translate('Ports'), 'vds.num_ports'),
-            $this->createColumn('max_ports', $this->translate('Max Ports'), 'vds.max_ports'),
+            $this->createColumn('max_ports', $this->translate('Max Ports'), 'vds.max_ports')
         ]);
     }
 

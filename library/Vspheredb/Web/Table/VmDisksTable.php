@@ -70,7 +70,7 @@ class VmDisksTable extends ZfQueryBasedTable
                     Html::tag('br'),
                     $device,
                     Html::tag('br'),
-                    Format::bytes($row->capacity),
+                    Format::bytes($row->capacity)
                 ], ['class' => 'vm-disks-with-perf-image']),
                 $this->prepareImgColumn($device)
             ]);
@@ -95,7 +95,7 @@ class VmDisksTable extends ZfQueryBasedTable
             return $this::td([
                 RrdImg::vmDiskSeeks($this->moref, $device),
                 RrdImg::vmDiskReadWrites($this->moref, $device),
-                RrdImg::vmDiskTotalLatency($this->moref, $device),
+                RrdImg::vmDiskTotalLatency($this->moref, $device)
             ]);
         }
 
@@ -111,7 +111,7 @@ class VmDisksTable extends ZfQueryBasedTable
             'hardware_key'        => 'vmhw.hardware_key',
             'hardware_bus_number' => 'vmhc.bus_number',
             'hardware_unit_nmber' => 'vmhw.unit_number',
-            'capacity'            => 'vmd.capacity',
+            'capacity'            => 'vmd.capacity'
         ])
         ->join(['vmhw' => 'vm_hardware'], 'vmd.vm_uuid = vmhw.vm_uuid AND vmd.hardware_key = vmhw.hardware_key', [])
         ->join(['vmhc' => 'vm_hardware'], 'vmhw.vm_uuid = vmhc.vm_uuid AND vmhw.controller_key = vmhc.hardware_key', [])
