@@ -56,9 +56,7 @@ class InfluxDbConnectionForm extends Form
         $this->addElement('select', 'api_version', [
             'label' => $this->translate('API Version'),
             'class' => 'autosubmit',
-            'description' => $this->translate(
-                'InfluxDB API version, autodetect should work fine'
-            ),
+            'description' => $this->translate('InfluxDB API version, autodetect should work fine'),
             'options' => [
                 '' => $this->translate('Autodetect'),
                 'v1' => 'v1',
@@ -119,9 +117,7 @@ class InfluxDbConnectionForm extends Form
     protected function getDetectedApiVersion(): ?string
     {
         if ($this->detectedApiVersion === null) {
-            $this->detectedApiVersion = $this->getApiVersionForVersionString(
-                $this->getInfluxDbVersion()
-            );
+            $this->detectedApiVersion = $this->getApiVersionForVersionString($this->getInfluxDbVersion());
         }
 
         return $this->detectedApiVersion;
@@ -157,10 +153,7 @@ class InfluxDbConnectionForm extends Form
 
     protected function markUrlAsValidated(): static
     {
-        $this
-            ->getUrlElement()
-            ->getElement()
-            ->addAttributes(Attributes::create(['class' => 'validated']));
+        $this->getUrlElement()->getElement()->addAttributes(Attributes::create(['class' => 'validated']));
 
         return $this;
     }
@@ -180,25 +173,17 @@ class InfluxDbConnectionForm extends Form
         $element = $this->getElement('api_version');
         assert($element instanceof SelectElement);
         $autoOption = $element->getOption(null);
-        $autoOption->setLabel(sprintf(
-            $this->translate('Autodetect: %s API, Version is %s'),
-            $apiVersion,
-            $detectedVersion
-        ));
+        $autoOption->setLabel(
+            sprintf($this->translate('Autodetect: %s API, Version is %s'), $apiVersion, $detectedVersion)
+        );
         $selectedOption = $element->getOption($apiVersion);
-        $selectedOption->setLabel(sprintf(
-            $this->translate('%s (detected %s)'),
-            $apiVersion,
-            $detectedVersion
-        ));
+        $selectedOption->setLabel(sprintf($this->translate('%s (detected %s)'), $apiVersion, $detectedVersion));
         // $element->setValue($apiVersion);
     }
 
     protected function addV1Credentials(): void
     {
-        $this->addElement('text', 'username', [
-            'label'       => $this->translate('Username'),
-        ]);
+        $this->addElement('text', 'username', ['label' => $this->translate('Username')]);
         $this->addElement('password', 'password', [
             'label'       => $this->translate('Password'),
             'required'    => $this->hasElementValue('username'),
@@ -224,9 +209,7 @@ class InfluxDbConnectionForm extends Form
             return null;
         }
         try {
-            $version = $this->remoteRequest('influxdb.discoverVersion', [
-                'baseUrl' => $baseUrl,
-            ]);
+            $version = $this->remoteRequest('influxdb.discoverVersion', ['baseUrl' => $baseUrl]);
             $version = ltrim($version, 'v');
             if ($this->versionIsFine($version)) {
                 $this->checkedNow = true;

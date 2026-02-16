@@ -10,9 +10,7 @@ use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
 
 class SnapshotsRuleDefinition extends MonitoringRuleDefinition
 {
-    public const SUPPORTED_OBJECT_TYPES = [
-        ObjectType::VIRTUAL_MACHINE,
-    ];
+    public const SUPPORTED_OBJECT_TYPES = [ObjectType::VIRTUAL_MACHINE];
 
     public static function getIdentifier(): string
     {
@@ -76,9 +74,7 @@ class SnapshotsRuleDefinition extends MonitoringRuleDefinition
                 date('Y-m-d H:i', $info->ts_oldest)
             );
         }
-        return [
-            new SingleCheckResult($state, $output)
-        ];
+        return [new SingleCheckResult($state, $output)];
     }
 
     public function getParameters(): array

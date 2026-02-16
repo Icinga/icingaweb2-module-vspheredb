@@ -63,9 +63,7 @@ class PerformanceCounterTable extends BaseTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['c' => 'performance_counter']
-        );
+        $query = $this->db()->select()->from(['c' => 'performance_counter']);
         // ->order('group_name')->order('name')->order('unit_name');
 
         if ($this->vCenter !== null) {

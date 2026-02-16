@@ -86,10 +86,7 @@ class VmHardwareSyncStore extends SyncStore
     protected function assertValidDeviceKey($device): void
     {
         if (! is_int($device->key)) {
-            throw new InvalidArgumentException(
-                'Got invalid device key "%s", integer expected',
-                $device->key
-            );
+            throw new InvalidArgumentException('Got invalid device key "%s", integer expected', $device->key);
         }
     }
 }

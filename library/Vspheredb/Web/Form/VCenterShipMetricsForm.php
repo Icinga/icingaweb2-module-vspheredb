@@ -104,9 +104,7 @@ class VCenterShipMetricsForm extends ObjectForm
             'value' => $consumer,
             'class' => 'autosubmit',
         ]);
-        $this->addHidden('enabled', [
-            'value' => 'y'
-        ]);
+        $this->addHidden('enabled', ['value' => 'y']);
 
         $value = $this->getValue('consumer') ?? '';
         if (isset($consumers[$value])) {

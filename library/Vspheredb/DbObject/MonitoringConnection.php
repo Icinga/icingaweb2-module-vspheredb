@@ -42,10 +42,7 @@ class MonitoringConnection extends BaseDbObject
     {
         $db = $vCenter->getConnection();
         if (static::exists($vCenter->getUuid(), $db)) {
-            return static::load(
-                $vCenter->getUuid(),
-                $db
-            )->getMonitoring();
+            return static::load($vCenter->getUuid(), $db)->getMonitoring();
         } else {
             return null;
         }

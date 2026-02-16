@@ -38,9 +38,7 @@ class VmSnapshotTable extends ZfQueryBasedTable
     {
         parent::assemble();
         if (count($this) === 0) {
-            $this->prepend(
-                Html::tag('p', null, $this->translate('No snapshots have been created for this VM'))
-            );
+            $this->prepend(Html::tag('p', null, $this->translate('No snapshots have been created for this VM')));
         }
         $this->prepend(new SubTitle($this->translate('Snapshots'), 'history'));
     }

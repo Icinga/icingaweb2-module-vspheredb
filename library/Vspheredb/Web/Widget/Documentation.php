@@ -66,15 +66,9 @@ class Documentation
         ?string $title = null
     ): Link|HtmlElement {
         if ($title !== null) {
-            $title = sprintf(
-                $this->translate('Click to read our documentation: %s'),
-                $title
-            );
+            $title = sprintf($this->translate('Click to read our documentation: %s'), $title);
         }
-        $baseParams = [
-            'class' => 'icon-book',
-            'title' => $title,
-        ];
+        $baseParams = ['class' => 'icon-book', 'title' => $title];
         if ($this->hasAccessToDocumentationModule()) {
             return Link::create(
                 $label,
@@ -84,14 +78,9 @@ class Documentation
             );
         }
 
-        $baseParams = [
-            'target' => '_blank',
-            'rel'    => 'noreferrer',
-        ];
+        $baseParams = ['target' => '_blank', 'rel' => 'noreferrer'];
         if ($this->linkToGitHub || ! isset(self::PUBLIC_URL_MAP[$module])) {
-            return Html::tag('a', [
-                    'href' => $this->githubDocumentationUrl($module, $chapter),
-                ] + $baseParams, $label);
+            return Html::tag('a', ['href' => $this->githubDocumentationUrl($module, $chapter)] + $baseParams, $label);
         }
 
         return Html::tag('a', [
@@ -128,7 +117,6 @@ class Documentation
 
     protected function hasAccessToDocumentationModule(): bool
     {
-        return $this->app->getModuleManager()->hasLoaded('doc')
-            && $this->auth->hasPermission('module/doc');
+        return $this->app->getModuleManager()->hasLoaded('doc') && $this->auth->hasPermission('module/doc');
     }
 }

@@ -37,9 +37,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         if ($object instanceof VirtualMachine) {
             $what = 'Virtual Machine';
             if ($object->get('template') === 'y') {
-                return [
-                    new SingleCheckResult(new CheckPluginState(), 'This is a VM template')
-                ];
+                return [new SingleCheckResult(new CheckPluginState(), 'This is a VM template')];
             }
         } elseif ($object instanceof HostSystem) {
             $what = 'Host System';
@@ -55,9 +53,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         }
         $message = $this->getStatusMessageForPowerState($powerState, $what);
 
-        $results = [
-            new SingleCheckResult($state, $message)
-        ];
+        $results = [new SingleCheckResult($state, $message)];
 
         if ($powerState === 'poweredOn') {
             $uptimeState = new CheckPluginState();

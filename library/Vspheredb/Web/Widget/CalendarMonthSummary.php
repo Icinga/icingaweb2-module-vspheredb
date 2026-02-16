@@ -214,9 +214,7 @@ class CalendarMonthSummary extends Table
         $row = Table::tr();
 
         if ($this->showWeekNumbers) {
-            $row->add(Table::th(sprintf('%02d', $cw), [
-                'title' => sprintf($this->translate('Calendar Week %d'), $cw)
-            ]));
+            $row->add(Table::th(sprintf('%02d', $cw), ['title' => sprintf($this->translate('Calendar Week %d'), $cw)]));
         }
 
         return $row;

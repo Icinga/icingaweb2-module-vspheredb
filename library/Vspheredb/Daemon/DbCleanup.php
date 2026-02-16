@@ -79,9 +79,7 @@ QUERY;
     protected function optimizeWhenDeleted(int $result): void
     {
         if ($result > 0) {
-            $this->logger->info(
-                "Removed $result outdated daemon log lines, optimizing table"
-            );
+            $this->logger->info("Removed $result outdated daemon log lines, optimizing table");
             $this->db->query('OPTIMIZE TABLE vspheredb_daemonlog')->execute();
         }
     }

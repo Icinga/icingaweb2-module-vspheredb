@@ -345,8 +345,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
      */
     protected function getManagedObjectClass(): string
     {
-        return 'Icinga\\Module\\Vspheredb\\DbObject\\'
-            . $this->getSetting('object_type');
+        return 'Icinga\\Module\\Vspheredb\\DbObject\\' . $this->getSetting('object_type');
     }
 
     /**

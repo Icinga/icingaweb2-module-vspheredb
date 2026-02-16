@@ -44,9 +44,7 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
 
     public function getColumnsToBeRendered(): array
     {
-        return [
-            $this->translate('Object'),
-        ];
+        return [$this->translate('Object')];
     }
 
     public function renderRow($row): array
@@ -63,19 +61,14 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
             }
         }
 
-        $link = Link::create($label, $url, [
-            'uuid' => Uuid::fromBytes($row->uuid)->toString()
-        ]);
+        $link = Link::create($label, $url, ['uuid' => Uuid::fromBytes($row->uuid)->toString()]);
         $output = $result->getOutput();
         $output = explode(PHP_EOL, $output);
         $output[0] = $output[0] . ': ' . 'LINK!TO!OBJECT';
         $output = CheckPluginHelper::colorizeOutput(implode(PHP_EOL, $output))->render();
         $output = preg_replace('/LINK!TO!OBJECT/', $link->render(), $output);
-        $output = new HtmlString($output);
 
-        return [[
-            Html::tag('pre', ['class' => 'logOutput'], $output)
-        ]];
+        return [[Html::tag('pre', ['class' => 'logOutput'], new HtmlString($output))]];
     }
 
     protected function prepareQuery(): Select|Zend_Db_Select

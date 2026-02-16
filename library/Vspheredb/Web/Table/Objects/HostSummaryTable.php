@@ -18,9 +18,7 @@ abstract class HostSummaryTable extends ObjectsTable
 
     protected string $baseUrlHosts = 'vspheredb/hosts';
 
-    protected $searchColumns = [
-        'name',
-    ];
+    protected $searchColumns = ['name'];
 
     protected string $groupByAlias = 'name';
 

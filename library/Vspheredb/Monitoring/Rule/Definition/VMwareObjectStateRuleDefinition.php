@@ -38,9 +38,7 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
         }
         $state = MonitoringStateTrigger::getMonitoringState($settings->get("trigger_on_$color"));
 
-        return [
-            new SingleCheckResult($state, $message)
-        ];
+        return [new SingleCheckResult($state, $message)];
     }
 
     protected function getStatusMessageForColor($color): string

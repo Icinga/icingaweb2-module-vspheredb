@@ -66,10 +66,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
             if (empty($enabled)) {
                 $this->originalQuery->where('1 = 0');
             } else {
-                $this->originalQuery->where(
-                    $this->param . ' IN (?)',
-                    $enabled
-                );
+                $this->originalQuery->where($this->param . ' IN (?)', $enabled);
             }
         }
     }
@@ -77,10 +74,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
     protected function assemble(): void
     {
         $link = Link::create($this->getListLabel(), '#', null, ['class' => 'icon-' . $this->iconMain]);
-        $this->add([
-            $link,
-            $this->createLinkList($this->toggleColumnsOptions($link))
-        ]);
+        $this->add([$link, $this->createLinkList($this->toggleColumnsOptions($link))]);
     }
 
     protected function toggleColumnsOptions(Link $mainLink): array
@@ -94,10 +88,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
         if ($enabled === null) {
             $enabled = $default;
         } else {
-            $mainLink->getAttributes()->set(
-                'class',
-                'modified icon-' . $this->iconModified
-            );
+            $mainLink->getAttributes()->set('class', 'modified icon-' . $this->iconModified);
             $links[] = $this->geturlReset();
             $enabled = $this->splitUrlOptions($enabled);
         }

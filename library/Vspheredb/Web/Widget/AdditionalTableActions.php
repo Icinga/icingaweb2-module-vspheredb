@@ -83,15 +83,9 @@ class AdditionalTableActions
     protected function createShowSqlToggle(): Link
     {
         if ($this->url->getParam('format') === 'sql') {
-            $link = Link::create(
-                $this->translate('Hide SQL'),
-                $this->url->without('format')
-            );
+            $link = Link::create($this->translate('Hide SQL'), $this->url->without('format'));
         } else {
-            $link = Link::create(
-                $this->translate('Show SQL'),
-                $this->url->with('format', 'sql')
-            );
+            $link = Link::create($this->translate('Show SQL'), $this->url->with('format', 'sql'));
         }
 
         return $link;
@@ -126,9 +120,7 @@ class AdditionalTableActions
             if (in_array($alias, $enabled)) {
                 $links[] = Link::create(
                     $title,
-                    $url->with('columns', implode(',', array_diff($enabled, [
-                        $alias
-                    ]))),
+                    $url->with('columns', implode(',', array_diff($enabled, [$alias]))),
                     null,
                     ['class' => 'icon-ok']
                 );
@@ -136,9 +128,7 @@ class AdditionalTableActions
                 $disabled[] = $alias;
                 $links[] = Link::create(
                     $title,
-                    $url->with('columns', implode(',', array_merge($enabled, [
-                        $alias
-                    ]))),
+                    $url->with('columns', implode(',', array_merge($enabled, [$alias]))),
                     null,
                     ['class' => 'icon-plus']
                 );

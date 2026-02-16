@@ -37,11 +37,7 @@ class CalendarForEvents extends HtmlDocument
         } else {
             $maxPerDay = max($events);
             $total = array_sum($events);
-            $this->add(Hint::ok(
-                $this->translate('%s events, max %s per day'),
-                $total,
-                $maxPerDay
-            ));
+            $this->add(Hint::ok($this->translate('%s events, max %s per day'), $total, $maxPerDay));
         }
 
         $eventsPerMonth = [];
@@ -49,9 +45,7 @@ class CalendarForEvents extends HtmlDocument
             $month = substr($day, 0, 7);
             $eventsPerMonth[$month][$day] = $count;
         }
-        $div = Html::tag('div', [
-            'class' => 'event-heatmap-calendars',
-        ]);
+        $div = Html::tag('div', ['class' => 'event-heatmap-calendars']);
 
         $months = $this->prepareMonthList();
         $colors = $this->colors;

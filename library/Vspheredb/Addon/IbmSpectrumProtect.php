@@ -146,8 +146,7 @@ class IbmSpectrumProtect implements BackupTool
         $begin = $beginPos + strlen(static::OPEN_TAG) + 1;
         $end = strpos($annotation, static::CLOSE_TAG, $begin);
 
-        $annotation = substr($annotation, 0, $beginPos)
-            . substr($annotation, $end + strlen(static::CLOSE_TAG));
+        $annotation = substr($annotation, 0, $beginPos) . substr($annotation, $end + strlen(static::CLOSE_TAG));
     }
 
     /**
@@ -176,16 +175,8 @@ class IbmSpectrumProtect implements BackupTool
      */
     public static function parseDuration(string $value): float|int|null
     {
-        if (
-            preg_match(
-                '/^(\d{2}):(\d{2}):(\d{2})$/',
-                static::parseString($value),
-                $match
-            )
-        ) {
-            return intval($match[1]) * 3600
-                + intval($match[2]) * 60
-                + intval($match[3]);
+        if (preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', static::parseString($value), $match)) {
+            return intval($match[1]) * 3600 + intval($match[2]) * 60 + intval($match[3]);
         } else {
             return null;
         }

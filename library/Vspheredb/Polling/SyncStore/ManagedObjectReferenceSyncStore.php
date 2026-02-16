@@ -88,14 +88,9 @@ class ManagedObjectReferenceSyncStore extends SyncStore
         /** @var string $parentName */
         foreach ($idToParent as $uuid => $parentName) {
             if (array_key_exists($parentName, $nameUuids)) {
-                $objects[$uuid]->setParent(
-                    $objects[$nameUuids[$parentName]]
-                );
+                $objects[$uuid]->setParent($objects[$nameUuids[$parentName]]);
             } else {
-                $this->logger->error(sprintf(
-                    "Could not find parent $parentName for %s",
-                    $fetched[$uuid]
-                ));
+                $this->logger->error(sprintf("Could not find parent $parentName for %s", $fetched[$uuid]));
             }
         }
 

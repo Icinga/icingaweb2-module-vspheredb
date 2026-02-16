@@ -17,9 +17,7 @@ use Zend_Db_Select;
 
 class VmsOnDatastoreTable extends ZfQueryBasedTable
 {
-    protected $searchColumns = [
-        'object_name',
-    ];
+    protected $searchColumns = ['object_name'];
 
     /** @var ?Datastore */
     protected ?Datastore $datastore = null;
@@ -67,10 +65,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
             $row->object_name,
             'vspheredb/vm',
             Util::uuidParams($row->uuid),
-            ['title' => sprintf(
-                $this->translate('Virtual Machine: %s'),
-                $row->object_name
-            )]
+            ['title' => sprintf($this->translate('Virtual Machine: %s'), $row->object_name)]
         );
 
         $usage = new DatastoreUsage($this->datastore);

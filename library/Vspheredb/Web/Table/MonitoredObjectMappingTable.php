@@ -88,10 +88,7 @@ class MonitoredObjectMappingTable extends BaseTable
 
     public function renderRow($row): BaseHtmlElement
     {
-        return $this->xaddSortPriorityButtons(
-            parent::renderRow($row),
-            $row
-        );
+        return $this->xaddSortPriorityButtons(parent::renderRow($row), $row);
     }
 
     public function render(): string

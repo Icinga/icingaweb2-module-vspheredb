@@ -41,10 +41,7 @@ class ApiClassMap
             return $map[$type];
         }
 
-        throw new RuntimeException(sprintf(
-            'Type "%s" has no class mapping',
-            $type
-        ));
+        throw new RuntimeException(sprintf('Type "%s" has no class mapping', $type));
     }
 
     public static function prepareMap()

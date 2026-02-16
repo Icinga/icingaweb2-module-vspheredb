@@ -118,12 +118,7 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
 
     protected function makeUrl(object $row): string
     {
-        return sprintf(
-            '%s://%s@%s',
-            $row->scheme,
-            rawurlencode($row->username),
-            $row->host
-        );
+        return sprintf('%s://%s@%s', $row->scheme, rawurlencode($row->username), $row->host);
     }
 
     public function prepareQuery(): Select|Zend_Db_Select

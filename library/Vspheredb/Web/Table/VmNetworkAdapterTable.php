@@ -49,10 +49,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         //     new GrafanaVmPanel($this->vm->object(), [1, 3], $row->label, 'All')
         // ]));
         if ($this->withPerfImages) {
-            return $this::row([
-                $this->formatMultiLine($row),
-                $this->prepareRowImages($row),
-            ]);
+            return $this::row([$this->formatMultiLine($row), $this->prepareRowImages($row)]);
         } else {
             return $this::row([$this->formatSimple($row)]);
         }
