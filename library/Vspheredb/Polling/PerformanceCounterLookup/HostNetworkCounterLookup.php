@@ -17,7 +17,7 @@ class HostNetworkCounterLookup extends DefaultCounterLookup
         'host_moref'   => 'o.moref',
         'host_name'    => 'o.object_name',
         // 'pnic_key'     => 'hpn.nic_key', -> key-vim.host.PhysicalNic-vmnic0, ugly
-        'device_label' => 'hpn.device',
+        'device_label' => 'hpn.device'
     ];
 
     protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
@@ -25,7 +25,7 @@ class HostNetworkCounterLookup extends DefaultCounterLookup
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
                 'o.moref',
-                'device' => "GROUP_CONCAT(hpn.device SEPARATOR ',')",
+                'device' => "GROUP_CONCAT(hpn.device SEPARATOR ',')"
             ])
             ->group('hs.uuid')
             ->order('hs.uuid')

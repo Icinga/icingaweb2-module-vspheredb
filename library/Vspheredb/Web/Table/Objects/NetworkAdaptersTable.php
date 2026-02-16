@@ -52,7 +52,7 @@ class NetworkAdaptersTable extends ObjectsTable
             $this->createOverallStatusColumn(),
             $this->createColumn('port_key', $this->translate('Port'), 'vna.port_key'),
             $this->createObjectNameColumn(),
-            $this->createColumn('label', $this->translate('Interface'), ['vh.label']),
+            $this->createColumn('label', $this->translate('Interface'), ['vh.label'])
         ]);
     }
 

@@ -88,7 +88,7 @@ class VmDiskUsageSyncStore extends SyncStore
                         'vcenter_uuid' => $vCenterUuid,
                         'disk_path'    => $path,
                         'capacity'     => $info->capacity,
-                        'free_space'   => $info->freeSpace,
+                        'free_space'   => $info->freeSpace
                     ], $connection);
                 }
             }

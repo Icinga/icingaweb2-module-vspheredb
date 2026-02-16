@@ -18,6 +18,6 @@ class DatastorePerformanceSet extends DefaultPerformanceSet
         'datastoreReadIops',
         'datastoreWriteIops',
         'totalReadLatency',
-        'totalWriteLatency',
+        'totalWriteLatency'
     ];
 }

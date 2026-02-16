@@ -43,7 +43,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'custom_values'           => 'h.custom_values',
         'tags'                    => '(NULL)',
         'internal_tags'           => 'o.tags',
-        'path'                    => '(NULL)',
+        'path'                    => '(NULL)'
     ];
 
     protected array $vmColumns = [
@@ -70,7 +70,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'tags'                => '(NULL)',
         'internal_tags'       => 'o.tags',
         'path'                => '(NULL)',
-        'resource_pool'       => 'rp.object_name',
+        'resource_pool'       => 'rp.object_name'
     ];
 
     protected array $computeResourceColumns = [
@@ -89,7 +89,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'total_memory_size_mb'     => 'cr.total_memory_size_mb',
         'tags'                     => '(NULL)',
         'internal_tags'            => 'o.tags',
-        'path'                     => '(NULL)',
+        'path'                     => '(NULL)'
     ];
 
     protected array $datastoreColumns = [
@@ -102,7 +102,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'multiple_host_access' => 'ds.multiple_host_access',
         'tags'                 => '(NULL)',
         'internal_tags'        => 'o.tags',
-        'path'                 => '(NULL)',
+        'path'                 => '(NULL)'
     ];
 
     /** @var ?array */
@@ -124,24 +124,24 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
                 'host_system'      => mt('vspheredb', 'Host Systems'),
                 'virtual_machine'  => mt('vspheredb', 'Virtual Machine'),
                 'compute_resource' => mt('vspheredb', 'Compute Resource'),
-                'datastore'        => mt('vspheredb', 'Datastore'),
+                'datastore'        => mt('vspheredb', 'Datastore')
             ]),
             'class'    => 'autosubmit',
             'required' => true
         ]);
         $form->addElement('select', 'vcenter_uuid', [
             'label' => mt('vspheredb', 'vCenter'),
-            'multiOptions' => ['' => mt('vspheredb', '- any -')] + self::enumVCenters(),
+            'multiOptions' => ['' => mt('vspheredb', '- any -')] + self::enumVCenters()
         ]);
         $type = $form->getSentOrObjectSetting('object_type');
         if ($type === 'virtual_machine') {
             $form->addBoolean('skip_powered_off', [
                 'label' => mt('vspheredb', 'Skip powered off VMs'),
-                'value' => 'n',
+                'value' => 'n'
             ]);
             $form->addBoolean('skip_templates', [
                 'label' => mt('vspheredb', 'Skip Templates'),
-                'value' => 'y',
+                'value' => 'y'
             ]);
         }
     }
@@ -155,7 +155,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         $pairs = $db->fetchPairs(
             $db->select()->from(['vc' => 'vcenter'], [
                 'uuid' => 'LOWER(HEX(vc.instance_uuid))',
-                'name' => "vc.name || ' (' || REPLACE(vc.api_name, 'VMware ', '') || ')'",
+                'name' => "vc.name || ' (' || REPLACE(vc.api_name, 'VMware ', '') || ')'"
             ])->order('vc.name')
         );
         $enum = [];

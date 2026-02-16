@@ -25,7 +25,7 @@ class ManagedObject extends VspheredbDbObject
         'overall_status' => null,
         'level'          => null,
         'parent_uuid'    => null,
-        'tags'           => null,
+        'tags'           => null
     ];
 
     /** @var ?ManagedObject */

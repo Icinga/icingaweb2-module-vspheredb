@@ -15,11 +15,11 @@ class HostSensor extends BaseDbObject
         'base_units'      => null,
         'rate_units'      => null,
         'sensor_type'     => null,
-        'vcenter_uuid'    => null,
+        'vcenter_uuid'    => null
     ];
 
     protected array $objectReferences = [
-        'host_uuid',
+        'host_uuid'
     ];
 
     protected array $propertyMap = [
@@ -29,7 +29,7 @@ class HostSensor extends BaseDbObject
         'unitModifier'   => 'unit_modifier',
         'baseUnits'      => 'base_units',
         'rateUnits'      => 'rate_units',
-        'sensorType'     => 'sensor_type',
+        'sensorType'     => 'sensor_type'
     ];
 
     // TODO: HostNumericSensorInfo has 'id' since v6.5

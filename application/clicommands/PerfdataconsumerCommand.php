@@ -37,7 +37,7 @@ class PerfdataconsumerCommand extends Command
             'name'           => $name,
             'enabled'        => $enabled ? 'y' : 'n',
             'implementation' => $implementation,
-            'submit'         => 'Create',
+            'submit'         => 'Create'
         ] + $this->params->getParams();
         if ($this->submitForm($params)) {
             echo "'$name' has been created\n";

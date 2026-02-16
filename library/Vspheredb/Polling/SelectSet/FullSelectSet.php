@@ -29,7 +29,7 @@ class FullSelectSet implements SelectSet
                 GenericSpec::TRAVERSE_DC_VIRTUAL_MACHINES,
                 self::TRAVERSE_CR1,
                 self::TRAVERSE_CR2,
-                self::TRAVERSE_STORAGE_POD,
+                self::TRAVERSE_STORAGE_POD
             ]),
             GenericSpec::traverse(self::TRAVERSE_STORAGE_POD, 'StoragePod', 'childEntity'),
             GenericSpec::traverse(self::TRAVERSE_CR1, 'ComputeResource', 'resourcePool', [
@@ -39,7 +39,7 @@ class FullSelectSet implements SelectSet
                 // TraverseCR1 needs an array of two SelectionSpec objects, named
                 // TraverseRP1 and TraverseRP2
                 SelectionSpec::reference(self::TRAVERSE_RP1),
-                SelectionSpec::reference(self::TRAVERSE_RP2),
+                SelectionSpec::reference(self::TRAVERSE_RP2)
             ]),
             // TraverseCR2 can lead only to a HostSystem object, so there is no
             // need for it to have a selectSet array
@@ -49,9 +49,9 @@ class FullSelectSet implements SelectSet
                 // two paths out of ResourcePool, so it needs an array of two
                 // SelectionSpec objects, named TraverseRP1 and TraverseRP2
                 SelectionSpec::reference(self::TRAVERSE_RP1),
-                SelectionSpec::reference(self::TRAVERSE_RP2),
+                SelectionSpec::reference(self::TRAVERSE_RP2)
             ]),
-            GenericSpec::traverse(self::TRAVERSE_RP2, 'ResourcePool', 'vm'),
+            GenericSpec::traverse(self::TRAVERSE_RP2, 'ResourcePool', 'vm')
         ];
     }
 }

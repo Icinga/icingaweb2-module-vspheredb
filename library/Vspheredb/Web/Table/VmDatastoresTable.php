@@ -55,7 +55,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
             $this->translate('Datastore'),
             $this->translate('Size'),
             $this->translate('Usage'),
-            $this->translate('On Datastore'),
+            $this->translate('On Datastore')
         ];
     }
 
@@ -89,7 +89,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
             $this::td($caption, ['class' => 'vm-datastore-caption']),
             $this::td(Format::bytes($size), ['class' => 'vm-datastore-size']),
             $this::td($usage, ['class' => 'vm-datastore-usage']),
-            $this::td($dsUsage, ['class' => 'vm-datastore-on-datastore']),
+            $this::td($dsUsage, ['class' => 'vm-datastore-on-datastore'])
         ]);
     }
 
@@ -102,7 +102,7 @@ class VmDatastoresTable extends ZfQueryBasedTable
                 'overall_status' => 'o.overall_status',
                 'object_name'    => 'o.object_name',
                 'committed'      => 'vdu.committed',
-                'uncommitted'    => 'vdu.uncommitted',
+                'uncommitted'    => 'vdu.uncommitted'
             ]
         )->join(
             ['vdu' => 'vm_datastore_usage'],

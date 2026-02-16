@@ -25,7 +25,7 @@ class OverviewTree extends BaseHtmlElement
 
     protected $defaultAttributes = [
         'class'            => 'tree',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected ?string $typeFilter;
@@ -105,7 +105,7 @@ class OverviewTree extends BaseHtmlElement
         $main = $db->select()
             ->from(['o' => 'object'], [
                 'o.*',
-                'parent_object_type' => 'po.object_type',
+                'parent_object_type' => 'po.object_type'
             ])
             ->joinLeft(['po' => 'object'], 'po.uuid = o.parent_uuid', [])
             ->where(' o.object_type NOT IN (?)', ['VirtualMachine', 'HostSystem', 'Datastore']);
@@ -120,7 +120,7 @@ class OverviewTree extends BaseHtmlElement
                 'cnt_host'    => 'hc.cnt',
                 'cnt_vm'      => 'vc.cnt',
                 'cnt_ds'      => 'dc.cnt',
-                'cnt_network' => 'nc.cnt',
+                'cnt_network' => 'nc.cnt'
             ])
             ->joinLeft(['vc' => $vmCnt], 'vc.parent_uuid = f.uuid', [])
             ->joinLeft(['hc' => $hostCnt], 'hc.parent_uuid = f.uuid', [])

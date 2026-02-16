@@ -23,7 +23,7 @@ class VCenterServer extends BaseDbObject
         'proxy_pass'      => null,
         'ssl_verify_peer' => null,
         'ssl_verify_host' => null,
-        'enabled'         => null,
+        'enabled'         => null
     ];
 
     /**

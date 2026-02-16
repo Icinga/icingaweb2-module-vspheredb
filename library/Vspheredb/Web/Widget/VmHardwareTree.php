@@ -22,7 +22,7 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected $defaultAttributes = [
         'class'            => 'tree',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected $tree;
@@ -181,7 +181,7 @@ class VmHardwareTree extends BaseHtmlElement
                 [
                     'uuid'        => 'o.uuid',
                     'object_name' => 'o.object_name',
-                    'cnt_nics'    => 'COUNT(*)',
+                    'cnt_nics'    => 'COUNT(*)'
                 ]
             )->join(
                 ['vna' => 'vm_network_adapter'],
@@ -216,14 +216,14 @@ class VmHardwareTree extends BaseHtmlElement
             "COALESCE(value_minus3, '0')",
             "COALESCE(value_minus2, '0')",
             "COALESCE(value_minus1, '0')",
-            'value_last',
+            'value_last'
         ]) . ')';
 
         $query = $db->select()->from('counter_300x5', [
             // 'name' => 'object_uuid',
             'instance',
             'counter_key',
-            'value' => $values,
+            'value' => $values
         ])->where('object_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
         ->where('counter_key IN (?)', [171, 172]);
 

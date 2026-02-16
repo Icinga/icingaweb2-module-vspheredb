@@ -17,6 +17,6 @@ class HostCpuPerformanceSet extends DefaultPerformanceSet
         'readiness',
         'usage',
         'usagemhz',
-        'utilization',
+        'utilization'
     ];
 }

@@ -199,7 +199,7 @@ class IbmSpectrumProtect implements BackupTool
             'KB' => 1024,
             'MB' => 1024 * 1024,
             'GB' => 1024 * 1024 * 1024,
-            'TB' => 1024 * 1024 * 1024 * 1024,
+            'TB' => 1024 * 1024 * 1024 * 1024
         ];
 
         if (preg_match('/^([0-9\.]+)\s+(B|KB|MB|GB|TB)$/', $value, $match)) {

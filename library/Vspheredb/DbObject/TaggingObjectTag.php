@@ -13,11 +13,11 @@ class TaggingObjectTag extends BaseDbObject
     protected ?array $defaultProperties = [
         'object_uuid'  => null,
         'tag_uuid'     => null,
-        'vcenter_uuid' => null,
+        'vcenter_uuid' => null
     ];
 
     protected array $propertyMap = [
         'object_uuid' => 'object_uuid',
-        'tag_uuid'    => 'tag_uuid',
+        'tag_uuid'    => 'tag_uuid'
     ];
 }

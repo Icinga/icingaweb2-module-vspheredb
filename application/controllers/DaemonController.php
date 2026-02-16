@@ -231,7 +231,7 @@ class DaemonController extends Controller
                 fn($row) => [
                     'vCenterId' => $row->vCenterId,
                     'server'    => $row->server,
-                    'state'     => $row->state . (isset($row->lastErrorMessage) ? ': ' . $row->lastErrorMessage : ''),
+                    'state'     => $row->state . (isset($row->lastErrorMessage) ? ': ' . $row->lastErrorMessage : '')
                 ],
                 $this->syncRpcCall('vsphere.getApiConnections')
             ));

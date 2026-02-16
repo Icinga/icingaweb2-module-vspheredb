@@ -19,7 +19,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
 {
     public const SUPPORTED_OBJECT_TYPES = [
         ObjectType::HOST_SYSTEM,
-        ObjectType::VIRTUAL_MACHINE,
+        ObjectType::VIRTUAL_MACHINE
     ];
 
     public static function getIdentifier(): string
@@ -72,7 +72,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
             foreach (
                 [
                 'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING,
-                'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL,
+                'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL
                 ] as $setting => $errorState
             ) {
                 $min = $settings->get($setting);
@@ -88,7 +88,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
             foreach (
                 [
                  'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING,
-                 'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL,
+                 'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL
                 ] as $setting => $errorState
             ) {
                 $min = $settings->get($setting);
@@ -156,7 +156,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
             'trigger_on_poweredOff' => MonitoringStateTrigger::RAISE_CRITICAL,
             'trigger_on_suspended'  => MonitoringStateTrigger::RAISE_CRITICAL,
             'trigger_on_unknown'    => MonitoringStateTrigger::RAISE_UNKNOWN,
-            'warning_for_uptime_less_than' => 900,
+            'warning_for_uptime_less_than' => 900
         ];
     }
 
@@ -164,31 +164,31 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
     {
         return [
             'trigger_on_poweredOff' => ['state_trigger', [
-                'label' => $this->translate('When powered off'),
+                'label' => $this->translate('When powered off')
             ]],
             'trigger_on_suspended' => ['state_trigger', [
-                'label' => $this->translate('When suspended'),
+                'label' => $this->translate('When suspended')
             ]],
             'trigger_on_unknown' => ['state_trigger', [
                 'label'       => $this->translate('When unknown'),
-                'description' => $this->translate('Might be disconnected'),
+                'description' => $this->translate('Might be disconnected')
             ]],
             'warning_for_uptime_less_than' => ['number', [
                 'label'       => $this->translate('Raise WARNING for uptime less than'),
-                'description' => $this->translate('Please provide the uptime in seconds'),
+                'description' => $this->translate('Please provide the uptime in seconds')
             ]],
             'critical_for_uptime_less_than' => ['number', [
                 'label'       => $this->translate('Raise CRITICAL for uptime less than'),
-                'description' => $this->translate('Please provide the uptime in seconds'),
+                'description' => $this->translate('Please provide the uptime in seconds')
             ]],
             'warning_for_uptime_greater_than_days' => ['number', [
                 'label'       => $this->translate('Raise WARNING for uptime greater than'),
-                'description' => $this->translate('Please provide the uptime in days'),
+                'description' => $this->translate('Please provide the uptime in days')
             ]],
             'critical_for_uptime_greater_than_days' => ['number', [
                 'label'       => $this->translate('Raise CRITICAL for uptime greater than'),
-                'description' => $this->translate('Please provide the uptime in days'),
-            ]],
+                'description' => $this->translate('Please provide the uptime in days')
+            ]]
         ];
     }
 }

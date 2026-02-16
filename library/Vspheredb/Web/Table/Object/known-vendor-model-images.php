@@ -15,7 +15,7 @@ return [
         'UCSC-C480-M5' => 'https://www.cisco.com/c/dam/en/us/products/collateral/servers-unified-computing/'
             . 'ucs-c-series-rack-servers/datasheet-c78-739291.docx/_jcr_content/renditions/datasheet-c78-739291_0.png',
         'UCSC-C240-M6S' => 'https://www.cisco.com/content/dam/en/us/products/collateral/servers-unified-computing/'
-            . 'ucs-c-series-rack-servers/images/cisco-ucs-c240-m6-rack-server.png',
+            . 'ucs-c-series-rack-servers/images/cisco-ucs-c240-m6-rack-server.png'
     ],
     'Dell Inc.' => [
         'PowerEdge R610' => 'https://i.dell.com/is/image/DellContent/content/dam/'
@@ -57,7 +57,7 @@ return [
             . 'c6525/global_spi/ng/enterprise-server-poweredge-r7515-lf-bestof-500-ng.psd?fmt=png-alpha',
         'PowerEdge R7525' => 'https://i.dell.com/is/image/DellContent/content/dam/'
             . 'global-site-design/product_images/dell_enterprise_products/enterprise_systems/poweredge/'
-            . 'poweredge_r7525/global_spi/ng/enterprise-servers-poweredge-r7525-lf-bestof-500-ng.psd?fmt=png-alpha',
+            . 'poweredge_r7525/global_spi/ng/enterprise-servers-poweredge-r7525-lf-bestof-500-ng.psd?fmt=png-alpha'
     ],
     'HPE' => [
         // End of life, found no HPE URL:
@@ -69,19 +69,19 @@ return [
         'ProLiant DL360 Gen10'              => 'https://assets.ext.hpe.com/is/image/hpedam/s00005869?$zoom$#.png',
         'ProLiant DL380 Gen10'              => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00009709?$zoom$#.png',
-            'class' => 'vendor-model-hpe-proliant-dl380-gen10',
+            'class' => 'vendor-model-hpe-proliant-dl380-gen10'
         ],
         'ProLiant DL380 Gen10 Plus'         => [
-            'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00009868?$zoom$#.png',
+            'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00009868?$zoom$#.png'
         ],
         'ProLiant DL385 Gen10 Plus'         => 'https://assets.ext.hpe.com/is/image/hpedam/s00009923?$zoom$#.png',
         'ProLiant DL560 Gen10'              => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00002844?$zoom$#.png',
-            'class' => 'vendor-model-hpe-proliant-dl560-gen10',
+            'class' => 'vendor-model-hpe-proliant-dl560-gen10'
         ],
         'ProLiant DL580 Gen10'              => [
             'url' => 'https://assets.ext.hpe.com/is/image/hpedam/s00005353?$zoom$#.png',
-            'class' => 'vendor-model-hpe-proliant-dl580-gen10',
+            'class' => 'vendor-model-hpe-proliant-dl580-gen10'
         ],
 
         'Synergy 480 Gen10'                 => 'https://assets.ext.hpe.com/is/image/hpedam/s00002866?$zoom$#.png',
@@ -96,7 +96,7 @@ return [
         // 'ProLiant DL580 Gen10'           => 'https://assets.ext.hpe.com/is/image/hpedam/s00001910?$zoom$#.png',
 
         // Variant:
-        // 'ProLiant DL560 Gen10' => 'https://assets.ext.hpe.com/is/image/hpedam/s00004976?$zoom$#.png',
+        // 'ProLiant DL560 Gen10' => 'https://assets.ext.hpe.com/is/image/hpedam/s00004976?$zoom$#.png'
     ],
     'HP' => [
         'ProLiant DL580 Gen9' => 'https://support.hpe.com/hpesc/public/api/document/c04683220/'
@@ -106,7 +106,7 @@ return [
         'ProLiant DL380 Gen9' => [
             'url' => 'https://techlibrary.hpe.com/docs/enterprise/servers/DL380Gen9/'
             . 'DL380Gen9-setup/system_setup_overview/222457.png',
-            'class' => 'vendor-model-hp-proliant-dl380-gen9',
+            'class' => 'vendor-model-hp-proliant-dl380-gen9'
         ],
         'ProLiant BL460c Gen9' => 'https://techlibrary.hpe.com/docs/enterprise/servers/BL460cGen9/'
             . 'BL460cGen9-setup/de/system_setup_overview/189999.png'
@@ -124,7 +124,7 @@ return [
         'ThinkAgile HX7520 Appliance -[7X84CTO6WW]-' => 'https://lenovopress.lenovo.com/assets/images/LP0730/'
             . 'HX7520-overview.png',
         'Lenovo ThinkAgile HX7520 Appliance -[7X84CTO6WW]-' => 'https://lenovopress.lenovo.com/assets/images/LP0730/'
-            . 'HX7520-overview.png',
+            . 'HX7520-overview.png'
     ],
     'FUJITSU' => [
         'PRIMERGY CX2560 M5' => 'https://www.fujitsu.com/de/imagesgig5/W-DK43300_tcm20-4285182_tcm20-5309118-32.png',
@@ -132,7 +132,7 @@ return [
             . '.png',
         'PRIMERGY RX2540 M2' => 'https://www.fujitsu.com/de/Images/W-DK42852_tcm20-3057159.png',
         'PRIMERGY RX2540 M3' => 'https://www.fujitsu.com/de/Images/W-DK42852_tcm20-3057159.png',
-        'PRIMERGY RX2540 M4' => 'https://www.fujitsu.com/de/Images/W-DK42852_tcm20-3057159.png',
+        'PRIMERGY RX2540 M4' => 'https://www.fujitsu.com/de/Images/W-DK42852_tcm20-3057159.png'
     ],
     'IBM' => [
         '/^(?:System )?x3850 X6/' => 'https://lenovopress.com/assets/images/tips1084/0.212C.jpg',
@@ -146,6 +146,6 @@ return [
     ],
     'Nutanix' => [
         'NX-3170-G8' => 'https://download.nutanix.com/documentation/NX-hardware/images/'
-        . 'front-panel-callouts-nx3170g8-nx8170g8.png',
-    ],
+        . 'front-panel-callouts-nx3170g8-nx8170g8.png'
+    ]
 ];

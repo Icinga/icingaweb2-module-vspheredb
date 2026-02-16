@@ -20,7 +20,7 @@ class Documentation
 
     protected const PUBLIC_URL_MAP = [
         'vspheredb' => 'icinga-vsphere-integration',
-        'director'  => 'icinga-director',
+        'director'  => 'icinga-director'
     ];
 
     protected ApplicationBootstrap $app;
@@ -82,7 +82,7 @@ class Documentation
         }
 
         return Html::tag('a', [
-                'href' => $this->icingaDocumentationUrl(self::PUBLIC_URL_MAP[$module], $chapter),
+                'href' => $this->icingaDocumentationUrl(self::PUBLIC_URL_MAP[$module], $chapter)
             ] + $baseParams, $label);
     }
 

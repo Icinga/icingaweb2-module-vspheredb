@@ -17,7 +17,7 @@ abstract class CounterMap
             ->select()
             ->from('performance_counter', [
                 'v' => 'counter_key',
-                'k' => 'name',
+                'k' => 'name'
             ])
             ->where('vcenter_uuid = ?', $vCenterUuid->getBytes())
             ->where('group_name = ?', $set->getCountersGroup())

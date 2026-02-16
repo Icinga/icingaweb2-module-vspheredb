@@ -9,13 +9,13 @@ class Severity
     protected static $colorToStateMap = [
         'green'  => 'Normal',
         'yellow' => 'Warning',
-        'red'    => 'Alert',
+        'red'    => 'Alert'
     ];
 
     protected static $stateToColorMap = [
         'Normal'  => 'green',
         'Warning' => 'yellow',
-        'Alert'   => 'red',
+        'Alert'   => 'red'
     ];
 
     /**

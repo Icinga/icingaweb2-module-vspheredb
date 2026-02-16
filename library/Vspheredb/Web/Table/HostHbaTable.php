@@ -16,7 +16,7 @@ class HostHbaTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     /** @var HostSystem */
@@ -71,7 +71,7 @@ class HostHbaTable extends ZfQueryBasedTable
                 'hh.driver',
                 'hh.status',
                 'hh.model',
-                'hh.pci',
+                'hh.pci'
             ]
         )->where('hh.host_uuid = ?', $this->host->get('uuid'))->order('hh.device ASC');
 

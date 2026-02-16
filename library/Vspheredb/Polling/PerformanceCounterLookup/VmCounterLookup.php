@@ -13,7 +13,7 @@ class VmCounterLookup extends DefaultCounterLookup
         'vm_uuid' => 'o.uuid',
         'vm_name' => 'o.object_name',
         'vm_guest_host_name' => 'vm.guest_host_name',
-        'vm_moref' => 'o.moref',
+        'vm_moref' => 'o.moref'
     ];
 
     protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
@@ -21,7 +21,7 @@ class VmCounterLookup extends DefaultCounterLookup
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
                 'o.moref',
-                'nix' => '(NULL)',
+                'nix' => '(NULL)'
             ]);
     }
 

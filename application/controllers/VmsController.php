@@ -16,7 +16,7 @@ class VmsController extends ObjectsController
 {
     protected array $otherTabActions = [
         'diskusage' => 'index',
-        'snapshot'  => 'index',
+        'snapshot'  => 'index'
     ];
 
     public function indexAction(): void
@@ -43,7 +43,7 @@ class VmsController extends ObjectsController
                 'vspheredb/vms/snapshot',
                 $urlParams,
                 ['class' => 'icon-database']
-            ),
+            )
         ]);
 
         $this->setAutorefreshInterval(15);
@@ -81,7 +81,7 @@ class VmsController extends ObjectsController
                 'vspheredb/vms/snapshot',
                 $urlParams,
                 ['class' => 'icon-database']
-            ),
+            )
         ]);
         $table = new VmsGuestDiskUsageTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
@@ -105,7 +105,7 @@ class VmsController extends ObjectsController
                 'vspheredb/vms',
                 $urlParams,
                 ['class' => 'icon-left-small']
-            ),
+            )
         ]);
         $table = new VmsSnapshotsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))

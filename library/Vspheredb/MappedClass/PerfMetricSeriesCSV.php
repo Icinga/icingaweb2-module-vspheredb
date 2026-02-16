@@ -33,7 +33,7 @@ class PerfMetricSeriesCSV implements JsonSerialization
     {
         return (object) [
             'id'    => $this->id,
-            'value' => $this->value,
+            'value' => $this->value
         ];
     }
 }

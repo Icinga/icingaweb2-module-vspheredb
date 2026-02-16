@@ -27,7 +27,7 @@ trait CheckPluginHelper
         'OK'       => 0,
         'WARNING'  => 1,
         'CRITICAL' => 2,
-        'UNKNOWN'  => 3,
+        'UNKNOWN'  => 3
     ];
 
     /** @var array */
@@ -35,14 +35,14 @@ trait CheckPluginHelper
         'OK',
         'WARNING',
         'CRITICAL',
-        'UNKNOWN',
+        'UNKNOWN'
     ];
 
     protected array $stateColors = [
         'OK'       => 'green',
         'WARNING'  => 'brown',
         'CRITICAL' => 'red',
-        'UNKNOWN'  => 'purple',
+        'UNKNOWN'  => 'purple'
     ];
 
     /** @var array */

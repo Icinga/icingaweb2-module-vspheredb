@@ -47,7 +47,7 @@ class GrafanaVmPanel extends HtmlDocument
                 'src' => $this->panelUrl($id),
                 'width' => $width . '%',
                 'height' => 200,
-                'frameborder' => 0,
+                'frameborder' => 0
             ]));
         }
     }
@@ -69,7 +69,7 @@ class GrafanaVmPanel extends HtmlDocument
             'theme' => 'light',
             'panelId' => $panelId,
             'from' => 1636834044566,
-            'to'   => 1636843374647,
+            'to'   => 1636843374647
         ];
 
         return $url . '?' . build_query($params);

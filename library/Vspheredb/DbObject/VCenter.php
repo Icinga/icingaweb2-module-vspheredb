@@ -37,7 +37,7 @@ class VCenter extends BaseDbObject
         'license_product_name'    => null,
         'license_product_version' => null,
         'locale_build'            => null,
-        'locale_version'          => null,
+        'locale_version'          => null
     ];
 
     protected array $propertyMap = [
@@ -53,7 +53,7 @@ class VCenter extends BaseDbObject
         'licenseProductName'    => 'license_product_name',
         'licenseProductVersion' => 'license_product_version',
         'localeBuild'           => 'locale_build',
-        'localeVersion'         => 'locale_version',
+        'localeVersion'         => 'locale_version'
     ];
 
     /**

@@ -13,17 +13,17 @@ class VmNetworkAdapter extends BaseVmHardwareDbObject
         'port_key'       => null,
         'mac_address'    => null,
         'address_type'   => null,
-        'vcenter_uuid'   => null,
+        'vcenter_uuid'   => null
     ];
 
     protected array $objectReferences = [
-        'portgroup_uuid',
+        'portgroup_uuid'
     ];
 
     protected array $propertyMap = [
         'backing.port.portgroupKey' => 'portgroup_uuid',
         'backing.port.portKey'      => 'port_key',
         'macAddress'                => 'mac_address', // binary(6)? new xxeuid?
-        'addressType'               => 'address_type',
+        'addressType'               => 'address_type'
     ];
 }

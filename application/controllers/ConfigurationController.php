@@ -152,7 +152,7 @@ class ConfigurationController extends Controller
             null,
             [
                 'class'            => 'icon-plus',
-                'data-base-target' => '_next',
+                'data-base-target' => '_next'
             ]
         ));
         $this->addTitle($this->translate('Monitoring Integration'));

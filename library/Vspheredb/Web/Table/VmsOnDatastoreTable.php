@@ -52,7 +52,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
             $this->translate('Virtual Machine'),
             $this->translate('Size'),
             $this->translate('Usage'),
-            $this->translate('On Datastore'),
+            $this->translate('On Datastore')
         ];
     }
 
@@ -106,7 +106,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
                 'object_name' => 'o.object_name',
                 'committed'   => 'vdu.committed',
                 'uncommitted' => 'vdu.uncommitted',
-                'ts_updated'  => 'vdu.ts_updated',
+                'ts_updated'  => 'vdu.ts_updated'
             ]
         )->join(
             ['vdu' => 'vm_datastore_usage'],

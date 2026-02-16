@@ -17,7 +17,7 @@ class DistributedVirtualPortgroup extends BaseDbObject
         'distributed_virtual_switch_uuid' => null,
         'vlan'         => null,
         'vlan_ranges'  => null,
-        'num_ports'    => null,
+        'num_ports'    => null
     ];
 
     protected array $objectReferences = [
@@ -28,7 +28,7 @@ class DistributedVirtualPortgroup extends BaseDbObject
         'config.defaultPortConfig' => 'defaultPortConfig',
         'config.numPorts' => 'num_ports',
         'config.type'     => 'portgroup_type',
-        'config.distributedVirtualSwitch' => 'distributed_virtual_switch_uuid',
+        'config.distributedVirtualSwitch' => 'distributed_virtual_switch_uuid'
     ];
 
     /**
@@ -56,7 +56,7 @@ class DistributedVirtualPortgroup extends BaseDbObject
             foreach ($vlan as $range) {
                 $ranges[] = (object) [
                     'end'   => $range->end,
-                    'start' => $range->start,
+                    'start' => $range->start
                 ];
             }
             $this->set('vlan_ranges', json_encode($ranges));

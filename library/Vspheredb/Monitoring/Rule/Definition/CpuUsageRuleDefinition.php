@@ -18,7 +18,7 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
 {
     public const SUPPORTED_OBJECT_TYPES = [
         ObjectType::HOST_SYSTEM,
-        ObjectType::VIRTUAL_MACHINE,
+        ObjectType::VIRTUAL_MACHINE
     ];
 
     public static function getIdentifier(): string
@@ -103,12 +103,12 @@ class CpuUsageRuleDefinition extends MonitoringRuleDefinition
         return [
             'warning_if_less_than_percent_free' => ['number', [
                 'label' => $this->translate('Raise Warning with less than X percent free'),
-                'placeholder' => '30',
+                'placeholder' => '30'
             ]],
             'critical_if_less_than_percent_free' => ['number', [
                 'label' => $this->translate('Raise Critical with less than X percent free'),
-                'placeholder' => '10',
-            ]],
+                'placeholder' => '10'
+            ]]
         ];
     }
 }

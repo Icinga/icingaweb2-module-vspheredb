@@ -15,7 +15,7 @@ class VmSnapshotTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => ['common-table', 'day-time-table'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     /** @var VirtualMachine */

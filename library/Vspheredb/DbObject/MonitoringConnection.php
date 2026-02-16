@@ -24,7 +24,7 @@ class MonitoringConnection extends BaseDbObject
         'host_property'               => null,
         'monitoring_host_property'    => null,
         'vm_property'                 => null,
-        'monitoring_vm_host_property' => null,
+        'monitoring_vm_host_property' => null
     ];
 
     /** @var ?Ido */

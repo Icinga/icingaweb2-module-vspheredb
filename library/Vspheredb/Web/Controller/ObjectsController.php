@@ -187,7 +187,7 @@ class ObjectsController extends Controller
             }
             $path->add(Link::create($name, $url, [
                 'parent'          => Util::niceUuid($uuid),
-                'showDescendants' => true,
+                'showDescendants' => true
             ]));
         }
 
@@ -205,15 +205,15 @@ class ObjectsController extends Controller
         $this->tabs()->add('vms', [
             'label'     => $this->translate('Virtual Machine'),
             'url'       => 'vspheredb/vms',
-            'urlParams' => $urlParams,
+            'urlParams' => $urlParams
         ])->add('hosts', [
             'label'     => $this->translate('Hosts'),
             'url'       => 'vspheredb/hosts',
-            'urlParams' => $urlParams,
+            'urlParams' => $urlParams
         ])->add('datastores', [
             'label'     => $this->translate('Datastores'),
             'url'       => 'vspheredb/datastores',
-            'urlParams' => $urlParams,
+            'urlParams' => $urlParams
         ])
         // ->add('switches', [
         //     'label'     => $this->translate('Switches'),

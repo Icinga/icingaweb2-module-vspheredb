@@ -55,7 +55,7 @@ class PerfdataController extends Controller
         $this->addTitle($this->translate('Performance Data Consumers'));
         $this->actions()->add(Link::create($this->translate('Add'), 'vspheredb/perfdata/consumer', null, [
             'data-base-target' => '_next',
-            'class'            => 'icon-plus',
+            'class'            => 'icon-plus'
         ]));
         $table = new PerfDataConsumerTable($this->db()->getDbAdapter());
         if (count($table) === 0) {

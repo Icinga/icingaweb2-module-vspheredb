@@ -15,7 +15,7 @@ class ResourcePoolsTable extends ObjectsTable
             $this->createOverallStatusColumn(),
             $this->createObjectNameColumn(),
             $this->createColumn('cnt_vms', $this->translate('VMs'), 'COUNT(*)')
-                ->setDefaultSortDirection('DESC'),
+                ->setDefaultSortDirection('DESC')
         ]);
     }
 
@@ -24,7 +24,7 @@ class ResourcePoolsTable extends ObjectsTable
         return [
             'overall_status',
             'object_name',
-            'cnt_vms',
+            'cnt_vms'
         ];
     }
 

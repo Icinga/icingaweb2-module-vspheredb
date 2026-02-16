@@ -20,19 +20,19 @@ class ObjectType
     public const TYPES = [
         self::HOST_SYSTEM,
         self::VIRTUAL_MACHINE,
-        self::DATASTORE,
+        self::DATASTORE
     ];
 
     public const TYPE_CLASSES = [
         self::HOST_SYSTEM => HostSystem::class,
         self::VIRTUAL_MACHINE => VirtualMachine::class,
-        self::DATASTORE => Datastore::class,
+        self::DATASTORE => Datastore::class
     ];
 
     public const DB_CLASS_TYPE = [
         HostSystem::class     => self::HOST_SYSTEM,
         VirtualMachine::class => self::VIRTUAL_MACHINE,
-        Datastore::class      => self::DATASTORE,
+        Datastore::class      => self::DATASTORE
     ];
 
     public static function getDbObjectType(BaseDbObject $object): string

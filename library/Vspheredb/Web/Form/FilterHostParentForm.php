@@ -72,7 +72,7 @@ class FilterHostParentForm extends Form
         } else {
             $this->addElement('select', 'parent', [
                 'options' => ['' => $this->translate('- filter by parent -')] + $parents,
-                'class' => 'autosubmit',
+                'class' => 'autosubmit'
             ]);
         }
     }

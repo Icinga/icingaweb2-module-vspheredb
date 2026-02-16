@@ -19,6 +19,6 @@ class HostMemoryPerformanceSet extends DefaultPerformanceSet
         'swapout',
         'swapinRate',
         'swapoutRate',
-        'vmmemctl',
+        'vmmemctl'
     ];
 }

@@ -14,7 +14,7 @@ class RuleSetRegistry implements JsonSerialization
         ComputeResourceUsageRuleSet::class,
         DiskHealthRuleSet::class,
         DatastoreHealthRuleSet::class,
-        ConfigurationPolicyRuleSet::class,
+        ConfigurationPolicyRuleSet::class
     ];
 
     /** @var MonitoringRuleSetDefinition[] */

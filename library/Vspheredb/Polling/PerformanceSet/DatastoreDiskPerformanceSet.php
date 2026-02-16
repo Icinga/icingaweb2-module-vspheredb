@@ -14,6 +14,6 @@ class DatastoreDiskPerformanceSet extends DefaultPerformanceSet
         'capacity',
         'used',
         'provisioned',
-        'deltaused',
+        'deltaused'
     ];
 }

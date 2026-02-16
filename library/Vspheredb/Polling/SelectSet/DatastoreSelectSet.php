@@ -11,10 +11,10 @@ class DatastoreSelectSet implements SelectSet
         return [
             GenericSpec::traverseFolder([
                 GenericSpec::TRAVERSE_DC_DATA_STORES,
-                self::TRAVERSE_STORAGE_POD,
+                self::TRAVERSE_STORAGE_POD
             ]),
             GenericSpec::traverseDatacenterDataStores(),
-            GenericSpec::traverse(self::TRAVERSE_STORAGE_POD, 'StoragePod', 'childEntity'),
+            GenericSpec::traverse(self::TRAVERSE_STORAGE_POD, 'StoragePod', 'childEntity')
         ];
     }
 }

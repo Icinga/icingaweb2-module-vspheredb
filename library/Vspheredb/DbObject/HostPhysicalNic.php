@@ -18,7 +18,7 @@ class HostPhysicalNic extends BaseVmHardwareDbObject
         'link_duplex'              => null,
         'mac_address'              => null,
         'pci'                      => null,
-        'vcenter_uuid'             => null,
+        'vcenter_uuid'             => null
     ];
 
     protected array $propertyMap = [
@@ -28,11 +28,11 @@ class HostPhysicalNic extends BaseVmHardwareDbObject
         'linkSpeed.speedMb'      => 'link_speed_mb',
         'linkSpeed.duplex'       => 'link_duplex',
         'mac'                    => 'mac_address',
-        'autoNegotiateSupported' => 'auto_negotiate_supported',
+        'autoNegotiateSupported' => 'auto_negotiate_supported'
     ];
 
     protected array $booleanProperties = [
         'auto_negotiate_supported',
-        'link_duplex',
+        'link_duplex'
     ];
 }

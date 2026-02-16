@@ -19,23 +19,23 @@ class GuestToolsStatusRenderer extends Html
         return match ($state) {
             'toolsNotInstalled' => Icon::create('block', [
                 'class' => 'red',
-                'title' => $this->translate('Guest Tools are NOT installed'),
+                'title' => $this->translate('Guest Tools are NOT installed')
             ]),
             'toolsNotRunning'   => Icon::create('warning-empty', [
                 'class' => 'red',
-                'title' => $this->translate('Guest Tools are NOT running'),
+                'title' => $this->translate('Guest Tools are NOT running')
             ]),
             'toolsOld'          => Icon::create('thumbs-down', [
                 'class' => 'yellow',
-                'title' => $this->translate('Guest Tools are outdated'),
+                'title' => $this->translate('Guest Tools are outdated')
             ]),
             'toolsOk'           => Icon::create('ok', [
                 'class' => 'green',
-                'title' => $this->translate('Guest Tools are up to date and running'),
+                'title' => $this->translate('Guest Tools are up to date and running')
             ]),
             default             => Icon::create('help', [
                 'class' => 'gray',
-                'title' => $this->translate('Guest Tools status is now known'),
+                'title' => $this->translate('Guest Tools status is now known')
             ])
         };
     }

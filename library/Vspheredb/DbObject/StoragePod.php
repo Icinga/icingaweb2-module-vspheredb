@@ -13,12 +13,12 @@ class StoragePod extends BaseDbObject
         'vcenter_uuid' => null,
         'pod_name'     => null,
         'free_space'   => null,
-        'capacity'     => null,
+        'capacity'     => null
     ];
 
     protected array $propertyMap = [
         'name'              => 'pod_name',
         'summary.capacity'  => 'capacity',
-        'summary.freeSpace' => 'free_space',
+        'summary.freeSpace' => 'free_space'
     ];
 }

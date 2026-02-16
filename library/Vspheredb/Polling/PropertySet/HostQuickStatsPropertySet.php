@@ -14,7 +14,7 @@ class HostQuickStatsPropertySet implements PropertySet
                 'summary.quickStats.distributedMemoryFairness',
                 'summary.quickStats.overallCpuUsage',
                 'summary.quickStats.overallMemoryUsage',
-                'summary.quickStats.uptime',
+                'summary.quickStats.uptime'
             ])
         ];
     }
