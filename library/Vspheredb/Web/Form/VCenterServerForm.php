@@ -203,11 +203,7 @@ class VCenterServerForm extends Form
      */
     public function getObject(): VCenterServer
     {
-        if ($this->object === null) {
-            $this->object = VCenterServer::create([], $this->db);
-        }
-
-        return $this->object;
+        return $this->object ??= VCenterServer::create([], $this->db);
     }
 
     public function hasBeenDeleted(): bool

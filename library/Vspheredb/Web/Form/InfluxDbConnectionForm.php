@@ -116,11 +116,7 @@ class InfluxDbConnectionForm extends Form
 
     protected function getDetectedApiVersion(): ?string
     {
-        if ($this->detectedApiVersion === null) {
-            $this->detectedApiVersion = $this->getApiVersionForVersionString($this->getInfluxDbVersion());
-        }
-
-        return $this->detectedApiVersion;
+        return $this->detectedApiVersion ??= $this->getApiVersionForVersionString($this->getInfluxDbVersion());
     }
 
     protected function getApiVersion(): string

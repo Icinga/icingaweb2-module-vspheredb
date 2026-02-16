@@ -141,11 +141,7 @@ trait CheckPluginHelper
 
     protected function getOutputScreen(): AnsiScreen|Screen
     {
-        if ($this->outputScreen === null) {
-            $this->outputScreen = Screen::factory();
-        }
-
-        return $this->outputScreen;
+        return $this->outputScreen ??= Screen::factory();
     }
 
     /**

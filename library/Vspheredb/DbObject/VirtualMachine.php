@@ -128,11 +128,7 @@ class VirtualMachine extends BaseDbObject
             $this->runtimeHost = null;
         }
 
-        if ($this->runtimeHost === null) {
-            $this->runtimeHost = HostSystem::load($uuid, $this->connection);
-        }
-
-        return $this->runtimeHost;
+        return $this->runtimeHost ??= HostSystem::load($uuid, $this->connection);
     }
 
     /**
@@ -174,9 +170,7 @@ class VirtualMachine extends BaseDbObject
     public function setPaused(string|bool|null $value): static
     {
         // powered off?
-        if ($value === null) {
-            $value = 'n';
-        }
+        $value ??= 'n';
 
         if (is_bool($value)) {
             $value = DbProperty::booleanToDb($value);

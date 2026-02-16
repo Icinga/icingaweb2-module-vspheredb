@@ -13,15 +13,7 @@ class Configuration
 
     public static function getSocketPath(): string
     {
-        if (self::$controlSocket === null) {
-            if ($path = getenv('VSPHEREDB_SOCKET')) {
-                static::setControlSocket($path);
-            } else {
-                static::setControlSocket(self::DEFAULT_SOCKET);
-            }
-        }
-
-        return self::$controlSocket;
+        return self::$controlSocket ??= getenv('VSPHEREDB_SOCKET') ?: self::DEFAULT_SOCKET;
     }
 
     /**
