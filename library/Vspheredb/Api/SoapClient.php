@@ -78,7 +78,7 @@ class SoapClient
         return $this->curl->send($request, $this->curlOptions)
             ->then(function (ResponseInterface $response) use ($method) {
                 try {
-                    $result = $this->decoder->decode($method, (string)$response->getBody());
+                    $result = $this->decoder->decode($method, (string) $response->getBody());
                     $this->checkResponseForCookies($response);
 
                     return $result;

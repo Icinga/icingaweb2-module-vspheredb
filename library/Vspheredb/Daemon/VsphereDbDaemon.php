@@ -148,11 +148,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $daemonState = new DaemonState();
         $daemonState->setComponentStates($this->componentStates);
         $daemonState->on(DaemonState::ON_CHANGE, function ($processTitle, $statusSummary) use ($daemonState) {
-            if (strlen($statusSummary) === 0) {
-                Process::setTitle($processTitle);
-            } else {
-                Process::setTitle("$processTitle: $statusSummary");
+            $title = $processTitle;
+            if (strlen($statusSummary !== 0)) {
+                $title .= ": $statusSummary";
             }
+
+            Process::setTitle($title);
 
             if ($this->systemd && strlen($statusSummary) > 0) {
                 $this->systemd->setStatus($statusSummary);
@@ -797,7 +798,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                 'process_info' => json_encode($this->getProcessInfo())
             ], $db->quoteInto('instance_uuid = ?', DbUtil::quoteBinaryCompat($this->processInfo->instance_uuid, $db)));
 
-            if (!$updated) {
+            if (! $updated) {
                 $this->insertMyState($db);
             }
         } catch (Exception $e) {

@@ -138,6 +138,7 @@ class HostSensorsTable extends ZfQueryBasedTable
             ->group('health_state')
             ->order('sensor_type')
             ->order('health_state');
+
         if ($this->host) {
             $query->where('host_uuid = ?', $this->host->get('uuid'));
         }

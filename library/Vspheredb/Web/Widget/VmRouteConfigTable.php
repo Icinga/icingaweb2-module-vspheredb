@@ -29,10 +29,11 @@ class VmRouteConfigTable extends HtmlDocument
         } else {
             $table = new Table();
             foreach ($stacks as $stack) {
-                $table->add(Table::row([
-                    $this->translate('Network'),
-                    $this->translate('Gateway')
-                ], ['class' => 'text-left'], 'th'));
+                $table->add(Table::row(
+                    [$this->translate('Network'), $this->translate('Gateway')],
+                    ['class' => 'text-left'],
+                    'th'
+                ));
                 if (! isset($stack->ipRouteConfig->ipRoute)) {
                     continue;
                 }

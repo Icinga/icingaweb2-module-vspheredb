@@ -242,8 +242,8 @@ class EventHistoryTable extends ZfQueryBasedTable
         if ($this->parent !== null) {
             $query->join(
                 ['o' => 'object'],
-                '(o.uuid = vh.vm_uuid OR o.uuid = vh.host_uuid OR o.uuid = vh.datastore_uuid)'
-                . ' AND o.parent_uuid = ' . DbUtil::quoteBinaryCompat($this->parent->getBytes(), $this->db()),
+                '(o.uuid = vh.vm_uuid OR o.uuid = vh.host_uuid OR o.uuid = vh.datastore_uuid) AND o.parent_uuid = '
+                . DbUtil::quoteBinaryCompat($this->parent->getBytes(), $this->db()),
                 []
             );
         }

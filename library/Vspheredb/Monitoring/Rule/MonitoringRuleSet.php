@@ -78,8 +78,11 @@ class MonitoringRuleSet
         foreach ($db->fetchAll($db->select()->from(MonitoringRuleSet::TABLE)) as $row) {
             $uuid = $row->object_uuid;
             $folder = $row->object_folder;
-            self::$preloadCache[self::makeKey($uuid, $folder)]
-                = new static($uuid, $folder, Settings::fromSerialization(JsonString::decode($row->settings)));
+            self::$preloadCache[self::makeKey($uuid, $folder)] = new static(
+                $uuid,
+                $folder,
+                Settings::fromSerialization(JsonString::decode($row->settings))
+            );
         }
     }
 

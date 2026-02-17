@@ -55,11 +55,11 @@ class Ido
             return false;
         }
 
-        return $this->db->fetchOne(
-            $this->db->select()->from('icinga_objects', [
-                'host_name' => 'name1'
-            ])->where('name1 = ? AND is_active = 1 AND objecttype_id = 1', $hostname)
-        ) === $hostname;
+        return $hostname === $this->db->fetchOne(
+            $this->db->select()
+                ->from('icinga_objects', ['host_name' => 'name1'])
+                ->where('name1 = ? AND is_active = 1 AND objecttype_id = 1', $hostname)
+        );
     }
 
     public function getHostState(string $hostname)

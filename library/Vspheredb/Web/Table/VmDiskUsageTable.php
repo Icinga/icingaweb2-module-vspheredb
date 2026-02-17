@@ -139,11 +139,14 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $this::th(Html::tag('strong', null, $this->translate('Total'))),
             $this::th(Format::bytes($this->totalSize), ['class' => 'vm-disk-usage-capacity']),
             $this::th($free, ['class' => 'vm-disk-usage-free']),
-            $this::th($this->makeDisk((object) [
-                'disk_path' => $this->translate('Total'),
-                'capacity'  => $this->totalSize,
-                'free_space' => $this->totalFree
-            ]), ['class' => 'vm-disk-usage-usage'])
+            $this::th(
+                $this->makeDisk((object) [
+                    'disk_path'  => $this->translate('Total'),
+                    'capacity'   => $this->totalSize,
+                    'free_space' => $this->totalFree
+                ]),
+                ['class' => 'vm-disk-usage-usage']
+            )
         ]));
     }
 

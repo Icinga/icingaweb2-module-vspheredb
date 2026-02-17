@@ -255,9 +255,12 @@ class VCenterSummaryTable extends ObjectsTable
             foreach (['red', 'yellow', 'gray', 'green'] as $state) {
                 $column = "hosts_cnt_overall_$state";
                 if ($row->$column > 0) {
-                    $result[] = Link::create($row->$column, 'vspheredb/hosts', $params + [
-                            'overall_status' => $state
-                        ], ['class' => ['state', $state]]);
+                    $result[] = Link::create(
+                        $row->$column,
+                        'vspheredb/hosts',
+                        $params + ['overall_status' => $state],
+                        ['class' => ['state', $state]]
+                    );
                 }
             }
         }
