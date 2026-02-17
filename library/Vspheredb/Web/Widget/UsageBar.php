@@ -52,7 +52,7 @@ class UsageBar extends BaseHtmlElement
         $style = (new StyleWithNonce())
             ->setModule('vspheredb')
             ->addFor($usage, [
-                'width' => sprintf('%0.3F%%', $percent * 100),
+                'width'            => sprintf('%0.3F%%', $percent * 100),
                 'background-color' => $color
             ]);
 

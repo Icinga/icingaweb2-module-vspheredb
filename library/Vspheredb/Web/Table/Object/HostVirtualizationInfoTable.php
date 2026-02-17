@@ -45,7 +45,7 @@ class HostVirtualizationInfoTable extends NameValueTable
         $this->addNameValuePairs([
             $this->translate('vCenter')     => new VCenterLink($this->vCenter),
             $this->translate('Path')        => PathToObjectRenderer::render($host),
-            $this->translate('Vms') => Link::create(
+            $this->translate('Vms')         => Link::create(
                 $host->countVms(),
                 'vspheredb/host/vms',
                 Util::uuidParams($uuid)

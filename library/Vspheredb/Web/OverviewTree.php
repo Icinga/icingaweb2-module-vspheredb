@@ -142,7 +142,7 @@ class OverviewTree extends BaseHtmlElement
         }
 
         if ($level === 0) {
-            $li->add(Html::tag('a', ['name'  => $tree->object_name, 'class' => 'icon-globe'], $tree->object_name));
+            $li->add(Html::tag('a', ['name' => $tree->object_name, 'class' => 'icon-globe'], $tree->object_name));
         } else {
             $count = $tree->cnt_vm + $tree->cnt_host + $tree->cnt_ds;
             if ($count) {

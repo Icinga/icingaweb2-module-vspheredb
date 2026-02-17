@@ -224,13 +224,13 @@ class VmsTable extends ObjectsTable
         $end = floor((time() - $rand) / 300) * 300;
         $start = $end - $rand;
         $params = [
-            'file'     => sprintf('%s/iface%s.rrd', $moref, $hardwareKey),
-            'height'   => $height,
-            'width'    => $width,
-            'rnd'      => floor(time() / 20),
-            'format'   => 'png',
-            'start'    => $start,
-            'end'      => $end
+            'file'   => sprintf('%s/iface%s.rrd', $moref, $hardwareKey),
+            'height' => $height,
+            'width'  => $width,
+            'rnd'    => floor(time() / 20),
+            'format' => 'png',
+            'start'  => $start,
+            'end'    => $end
         ];
         $attrs = [
             'height' => $height,
