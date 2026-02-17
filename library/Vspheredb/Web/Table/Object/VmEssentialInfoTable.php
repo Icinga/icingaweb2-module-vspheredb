@@ -84,7 +84,6 @@ class VmEssentialInfoTable extends NameValueTable
     protected function assemble(): void
     {
         $vm = $this->vm;
-        $uuid = $vm->get('uuid');
         $this->addNameValueRow($this->translate('Tools'), $this->prepareTools($vm));
         if ($annotation = $vm->get('annotation')) {
             $this->addNameValueRow($this->translate('Annotation'), $this->formatAnnotation($annotation));
@@ -144,7 +143,7 @@ class VmEssentialInfoTable extends NameValueTable
                 Link::create(
                     $this->translate('VMotion attempt(s)'),
                     'vspheredb/vm/events',
-                    Util::uuidParams($uuid)
+                    Util::uuidParams($vm->get('uuid'))
                 )
             )
         );
@@ -187,8 +186,7 @@ class VmEssentialInfoTable extends NameValueTable
                 )
             )];
         } else {
-            $renderer = new GuestToolsVersionRenderer();
-            $info = $renderer($info);
+            $info = (new GuestToolsVersionRenderer())($info);
         }
 
         return $info;

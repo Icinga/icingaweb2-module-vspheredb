@@ -83,15 +83,14 @@ class VmDatastoresTable extends ZfQueryBasedTable
         $dsUsage->getAttributes()->add('class', 'compact');
 
         $renderStatus = $this->renderStatus;
-        $tr = $this::tr([
+
+        return $this::tr([
             $this::td($renderStatus($row->overall_status)),
             $this::td($caption, ['class' => 'vm-datastore-caption']),
             $this::td(Format::bytes($size), ['class' => 'vm-datastore-size']),
             $this::td($usage, ['class' => 'vm-datastore-usage']),
             $this::td($dsUsage, ['class' => 'vm-datastore-on-datastore']),
         ]);
-
-        return $tr;
     }
 
     public function prepareQuery(): Select|Zend_Db_Select

@@ -36,9 +36,7 @@ class AlarmHistoryTable extends ZfQueryBasedTable
         }
         $content[] = $row->full_message;
 
-        $tr = $this::row($content);
-
-        return $tr;
+        return $this::row($content);
     }
 
     protected function timeSince(int $ms): ?string

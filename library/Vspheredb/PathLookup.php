@@ -36,8 +36,7 @@ class PathLookup
             ->from(['o' => 'object'], ['object_name', 'object_type'])
             ->where('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db));
 
-        $row = $this->db->fetchRow($query);
-        if ($row) {
+        if ($row = $this->db->fetchRow($query)) {
             return Link::create(
                 $row->object_name,
                 $this->getBaseUrlByType($row->object_type),

@@ -51,7 +51,7 @@ class MobLink extends HtmlDocument
             } else {
                 $this->add($this->createBaseLink($server, $this->label));
             }
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             $this->add([
                 Icon::create('warning-empty', ['class' => 'red']),
                 ' ',

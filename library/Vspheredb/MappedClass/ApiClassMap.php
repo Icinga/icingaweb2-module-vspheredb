@@ -47,7 +47,7 @@ class ApiClassMap
     public static function prepareMap()
     {
         // Hint: put more specific classes on top, otherwise a more generic one might match
-        $map = [
+        return [
             'RetrieveResult'             => RetrieveResult::class,
             'RetrievePropertiesResponse' => RetrievePropertiesResponse::class,
             'DynamicData'          => DynamicData::class,
@@ -236,7 +236,5 @@ class ApiClassMap
             'GuestNicInfo'                            => GuestNicInfo::class,
             'NetDnsConfigInfo'                        => NetDnsConfigInfo::class,
         ];
-
-        return $map;
     }
 }

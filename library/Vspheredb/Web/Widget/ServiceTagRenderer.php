@@ -38,18 +38,15 @@ class ServiceTagRenderer extends Html
         if ($serviceTag === null) {
             return null;
         }
-        $urlPattern = 'http://www.dell.com/support/home/product-support/servicetag/%s/drivers';
-
-        $url = sprintf(
-            $urlPattern,
-            strtolower($serviceTag)
-        );
 
         return Html::tag('a', [
-                'href'   => $url,
-                'target' => '_blank',
-                'title'  => $this->translate('Dell Support Page'),
-                'rel'    => 'noreferrer'
+            'href'   => sprintf(
+                'http://www.dell.com/support/home/product-support/servicetag/%s/drivers',
+                strtolower($serviceTag)
+            ),
+            'target' => '_blank',
+            'title'  => $this->translate('Dell Support Page'),
+            'rel'    => 'noreferrer'
         ], [Icon::create('forward'), $serviceTag]);
     }
 }

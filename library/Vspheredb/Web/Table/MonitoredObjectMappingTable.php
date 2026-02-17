@@ -75,15 +75,13 @@ class MonitoredObjectMappingTable extends BaseTable
     // cloned from ZfSortablePriority, added data-base-target
     protected function xaddSortPriorityButtons(BaseHtmlElement $tr, object $row): BaseHtmlElement
     {
-        $tr->add(
+        return $tr->add(
             Html::tag(
                 'td',
                 ['data-base-target' => '_self'],
                 $this->createUpDownButtons($row->{$this->getKeyColumn()})
             )
         );
-
-        return $tr;
     }
 
     public function renderRow($row): BaseHtmlElement

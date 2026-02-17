@@ -32,7 +32,7 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
         try {
             $color = $object->object()->get('overall_status');
             $message = $this->getStatusMessageForColor($color);
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             $color = 'gray';
             $message = 'Could not find the related Managed Object, please check my vCenter permissions';
         }

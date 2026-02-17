@@ -33,8 +33,7 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
 
     public static function create(Datastore $datastore): VmsOnDatastoreTable
     {
-        $tbl = new static($datastore->getConnection());
-        return $tbl->setDatastore($datastore);
+        return (new static($datastore->getConnection()))->setDatastore($datastore);
     }
 
     protected function setDatastore(Datastore $datastore): static

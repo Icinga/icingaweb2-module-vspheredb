@@ -163,22 +163,17 @@ class HostSystemInfoTable extends NameValueTable
         if ($serviceTag === null) {
             return '-';
         }
-        $urlPattern = 'http://www.dell.com/support/home/product-support/servicetag/%s/drivers';
 
-        $url = sprintf(
-            $urlPattern,
-            strtolower($serviceTag)
-        );
+        $attributes = [
+            'href'   => sprintf(
+                'http://www.dell.com/support/home/product-support/servicetag/%s/drivers',
+                strtolower($serviceTag)
+            ),
+            'target' => '_blank',
+            'title'  => $this->translate('Dell Support Page'),
+            'rel'    => 'noreferrer'
+        ];
 
-        return Html::tag(
-            'a',
-            [
-                'href'   => $url,
-                'target' => '_blank',
-                'title'  => $this->translate('Dell Support Page'),
-                'rel'    => 'noreferrer'
-            ],
-            $serviceTag
-        );
+        return Html::tag('a', $attributes, $serviceTag);
     }
 }

@@ -18,14 +18,11 @@ class VCenterHeader extends HtmlDocument
 
     protected function assemble(): void
     {
-        $vCenter = $this->vCenter;
-        $title = Html::tag('h1', [
-            $vCenter->get('name'),
-            ' ',
-            Html::tag('small', '(' . $vCenter->getFullName() . ')'),
-        ]);
         $this->add([
-            $title,
+            Html::tag(
+                'h1',
+                [$this->vCenter->get('name'), ' ', Html::tag('small', '(' . $this->vCenter->getFullName() . ')')]
+            )
         ]);
     }
 }

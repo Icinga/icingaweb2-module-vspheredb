@@ -168,8 +168,7 @@ class Summaries extends BaseHtmlElement
      */
     protected function createSummaryLink(string $value, string $property): ?Link
     {
-        $stats = $this->stats();
-        $count = (int) $stats->{"cnt_$value"};
+        $count = (int) $this->stats()->{"cnt_$value"};
 
         if ($count === 0) {
             return null;

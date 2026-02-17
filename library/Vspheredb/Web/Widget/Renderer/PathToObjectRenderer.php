@@ -25,9 +25,7 @@ class PathToObjectRenderer
 
     public static function render(BaseDbObject $object): HtmlElement
     {
-        $instance = new static();
-
-        return $instance($object);
+        return (new static())($object);
     }
 
     public function __invoke(BaseDbObject $object): HtmlElement

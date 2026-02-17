@@ -42,7 +42,7 @@ class VmrcLink extends HtmlDocument
                 'title' => $this->translate('Open VMware Remote Console (VMRC)'),
                 'class' => 'icon-host',
             ], $this->label));
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             $this->add([
                 Icon::create('warning-empty', ['class' => 'red']),
                 ' ',

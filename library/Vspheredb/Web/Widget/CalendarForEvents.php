@@ -32,8 +32,8 @@ class CalendarForEvents extends HtmlDocument
     {
         $events = $this->calendars->getEvents();
         if (empty($events)) {
+            $maxPerDay = 0;
             $this->add(Hint::warning($this->translate('No events found')));
-            $maxPerDay = $total = 0;
         } else {
             $maxPerDay = max($events);
             $total = array_sum($events);

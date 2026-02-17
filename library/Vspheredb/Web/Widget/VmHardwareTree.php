@@ -152,18 +152,17 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected function renderNic(object $nic, object $device, object $controller): Link|array
     {
-        $desc = $device->label;
-
         $parts[] = $nic->mac_address;
         if ($device->summary !== $device->label) {
             // $parts[] = $device->summary;
         }
 
-        $desc = $desc . ': ' . implode(', ', $parts);
-
-        $result = Link::create($desc, '#', null, [
-            'class' => 'icon-sitemap',
-        ]);
+        $result = Link::create(
+            $device->label . ': ' . implode(', ', $parts),
+            '#',
+            null,
+            ['class' => 'icon-sitemap']
+        );
 
         if ($nic->portgroup_uuid === null) {
             return $result;

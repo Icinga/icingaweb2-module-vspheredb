@@ -63,9 +63,7 @@ class HostMonitoringInfo extends HtmlDocument
      */
     protected function prepareInfo(): false|array
     {
-        $host = $this->host;
-        $name = $host->get('host_name');
-        $statusRenderer = new IcingaHostStatusRenderer();
+        $name = $this->host->get('host_name');
 
         try {
             // $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
@@ -74,7 +72,7 @@ class HostMonitoringInfo extends HtmlDocument
                 $monitoringState = $monitoring->getHostState($name);
                 return [
                     // TODO: is_acknowledged, is_in_downtime
-                    $statusRenderer($monitoringState->current_state),
+                    (new IcingaHostStatusRenderer())($monitoringState->current_state),
                     ' ',
                     $monitoringState->output,
                     ' ',
