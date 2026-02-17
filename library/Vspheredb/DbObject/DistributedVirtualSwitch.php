@@ -75,12 +75,12 @@ class DistributedVirtualSwitch extends BaseDbObject
         var_dump('HOSTMEMBERS');
         var_dump($hostMembers);
 
-        return;
-
-        $newSum = $this->calculateMorefsChecksum($hostMembers);
-        if ($this->get('hostmembers_checksum') !== $newSum) {
-            $this->scheduleNewPortgroupRefs($hostMembers);
-        }
+//        return;
+//
+//        $newSum = $this->calculateMorefsChecksum($hostMembers);
+//        if ($this->get('hostmembers_checksum') !== $newSum) {
+//            $this->scheduleNewPortgroupRefs($hostMembers);
+//        }
     }
 
     /**
@@ -95,13 +95,13 @@ class DistributedVirtualSwitch extends BaseDbObject
 
     protected function onStore(): void
     {
-        if (false && $this->unstoredPortGroupRefs) {
-            $this->replaceMoRefs(
-                $this->get('uuid'),
-                'distributed_switch_portgroup',
-                $this->unstoredPortGroupRefs
-            );
-        }
+//        if (false && $this->unstoredPortGroupRefs) {
+//            $this->replaceMoRefs(
+//                $this->get('uuid'),
+//                'distributed_switch_portgroup',
+//                $this->unstoredPortGroupRefs
+//            );
+//        }
     }
 
     /**

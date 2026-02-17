@@ -76,7 +76,7 @@ class RrdImg
         $width = 340;
         $height = 180;
         $end = floor(time() / 300) * 300;
-        $start = $end - 86400;
+        // $start = $end - 86400;
         $start = $end - 14400;
         $params = [
             'file'     => sprintf('%s/%s.rrd', $moref, $device),
