@@ -43,17 +43,13 @@ class UsageBar extends BaseHtmlElement
      */
     protected function makeSegment(float|int $percent, string $title, string $color = 'used'): array
     {
-        if (isset($this->colors[$color])) {
-            $color = $this->colors[$color];
-        }
-
         $usage = Html::tag('div', ['class' => 'usage', 'title' => $title]);
 
         $style = (new StyleWithNonce())
             ->setModule('vspheredb')
             ->addFor($usage, [
                 'width'            => sprintf('%0.3F%%', $percent * 100),
-                'background-color' => $color
+                'background-color' => $this->colors[$color] ?? $color
             ]);
 
         return [$usage, $style];

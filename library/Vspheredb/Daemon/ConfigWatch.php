@@ -106,11 +106,8 @@ class ConfigWatch
     protected function loadDbResourceName(): ?string
     {
         $parsed = @parse_ini_file($this->configFile, true);
-        if (isset($parsed['db']['resource'])) {
-            return $parsed['db']['resource'];
-        } else {
-            return null;
-        }
+
+        return $parsed['db']['resource'] ?? null;
     }
 
     /**

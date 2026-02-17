@@ -254,12 +254,7 @@ abstract class BaseTable extends ZfQueryBasedTable
 
         $this->sortParam = $sortParam;
         $this->baseUrl = $url;
-        $sort = $url->getParam($sortParam);
-        if (null === $sort) {
-            $this->sortBy($this->getDefaultSortColumns());
-        } else {
-            $this->sortBy($sort);
-        }
+        $this->sortBy($url->getParam($sortParam) ?? $this->getDefaultColumnNames());
 
         return $this;
     }

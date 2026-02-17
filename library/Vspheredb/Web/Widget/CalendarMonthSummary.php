@@ -72,11 +72,7 @@ class CalendarMonthSummary extends Table
             return $this;
         }
 
-        if ($this->forcedMax === null) {
-            $max = max($events);
-        } else {
-            $max = $this->forcedMax;
-        }
+        $max = $this->forcedMax ?? max($events);
 
         foreach ($events as $day => $count) {
             if (! $this->hasDay($day)) {
@@ -105,10 +101,7 @@ class CalendarMonthSummary extends Table
 
     public function markNow(?int $now = null): static
     {
-        if ($now === null) {
-            $now = time();
-        }
-        $this->today = date('Y-m-d', $now);
+        $this->today = date('Y-m-d', $now ?? time());
 
         return $this;
     }

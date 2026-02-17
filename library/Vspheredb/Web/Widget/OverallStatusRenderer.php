@@ -13,11 +13,7 @@ class OverallStatusRenderer extends Html
     public function __invoke($state)
     {
         if (is_object($state)) {
-            if (isset($state->runtime_power_state)) {
-                $powerState = $state->runtime_power_state;
-            } else {
-                $powerState = null;
-            }
+            $powerState = $state->runtime_power_state ?? null;
             $state = $state->overall_status;
         } else {
             $powerState = null;
