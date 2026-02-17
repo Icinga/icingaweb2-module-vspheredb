@@ -46,16 +46,12 @@ class AlarmHistoryTable extends ZfQueryBasedTable
 
     protected function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from([
-            'ah' => 'alarm_history'
-        ])->order('ts_event_ms DESC');
+        $query = $this->db()->select()
+            ->from(['ah' => 'alarm_history'])
+            ->order('ts_event_ms DESC');
 
         if ($this->entityUuid === null) {
-            $query->join(
-                ['o' => 'object'],
-                'o.uuid = ah.entity_uuid',
-                []
-            );
+            $query->join(['o' => 'object'], 'o.uuid = ah.entity_uuid', []);
         } else {
             $query->where('ah.entity_uuid = ?', $this->entityUuid);
         }

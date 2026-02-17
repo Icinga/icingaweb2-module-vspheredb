@@ -26,11 +26,14 @@ class AlarmHeatmap
     protected function prepareQuery(): ZfSelect
     {
         $maxDays = 400;
-        return $this->db->select()->from('alarm_history', [
-            // TODO: / 86400 + offset
-            'day' => 'DATE(FROM_UNIXTIME(ts_event_ms / 1000))',
-            'cnt' => 'COUNT(*)'
-        ])->where('ts_event_ms > ?', time() * 1000 - 86400 * $maxDays * 1000)->group('day');
+        return $this->db->select()
+            ->from('alarm_history', [
+                // TODO: / 86400 + offset
+                'day' => 'DATE(FROM_UNIXTIME(ts_event_ms / 1000))',
+                'cnt' => 'COUNT(*)'
+            ])
+            ->where('ts_event_ms > ?', time() * 1000 - 86400 * $maxDays * 1000)
+            ->group('day');
     }
 
     protected function getQuery(): ZfSelect

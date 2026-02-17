@@ -224,17 +224,9 @@ class MonitoringConnectionForm extends Form
         $dba = $db->getDbAdapter();
 
         $vars = $dba->fetchPairs(
-            $dba->select()->from(
-                ['cvs' => 'customvar'],
-                [
-                    'varname'   => 'cvs.name',
-                    'varcount' => 'COUNT(*)'
-                ]
-            )->join(
-                ['o' => 'host_customvar'],
-                'o.customvar_id = cvs.id',
-                []
-            )
+            $dba->select()
+                ->from(['cvs' => 'customvar'], ['varname' => 'cvs.name', 'varcount' => 'COUNT(*)'])
+                ->join(['o' => 'host_customvar'], 'o.customvar_id = cvs.id', [])
                 ->group('varname')
                 ->order('varname')
         );
@@ -252,19 +244,11 @@ class MonitoringConnectionForm extends Form
         $dba = $db->getDbAdapter();
 
         $vars = $dba->fetchPairs(
-            $dba->select()->from(
-                ['cvs' => 'icinga_customvariablestatus'],
-                [
-                    'varname'   => 'cvs.varname',
-                    'varcount' => 'COUNT(*)'
-                ]
-            )->join(
-                ['o' => 'icinga_objects'],
-                'o.object_id = cvs.object_id AND o.is_active = 1',
-                []
-            )
-            ->group('varname')
-            ->order('varname')
+            $dba->select()
+                ->from(['cvs' => 'icinga_customvariablestatus'], ['varname' => 'cvs.varname', 'varcount' => 'COUNT(*)'])
+                ->join(['o' => 'icinga_objects'], 'o.object_id = cvs.object_id AND o.is_active = 1', [])
+                ->group('varname')
+                ->order('varname')
         );
 
         $result = [];
@@ -277,22 +261,20 @@ class MonitoringConnectionForm extends Form
 
     /**
      * UNUSED
+     *
      * @return array
      */
     protected function enumHostParents(): array
     {
         $db = $this->db;
-        $query = $db->select()->from(
-            ['p' => 'object'],
-            ['p.uuid', 'p.object_name']
-        )->join(
-            ['c' => 'object'],
-            'c.parent_uuid = p.uuid AND '
-            . $db->quoteInto('c.object_type = ?', 'HostSystem')
-            . ' AND '
-            . $db->quoteInto('p.object_type = ?', 'ClusterComputeResource'),
-            []
-        )->group('p.uuid')->order('p.object_name');
+        $query = $db->select()
+            ->from(['p' => 'object'], ['p.uuid', 'p.object_name'])
+            ->join(['c' => 'object'], sprintf(
+                'c.parent_uuid = p.uuid AND %s AND %s',
+                $db->quoteInto('c.object_type = ?', 'HostSystem'),
+                $db->quoteInto('p.object_type = ?', 'ClusterComputeResource')
+            ), [])
+            ->group('p.uuid')->order('p.object_name');
 
         return $this->makeNiceUuidKeys($db->fetchPairs($query));
     }
@@ -323,10 +305,9 @@ class MonitoringConnectionForm extends Form
     protected function enumVCenters(): array
     {
         return $this->makeNiceUuidKeys($this->db->fetchPairs(
-            $this->db->select()->from(['vc' => 'vcenter'], [
-                'uuid' => 'vc.instance_uuid',
-                'name' => 'vc.name'
-            ])->order('vc.name')
+            $this->db->select()
+                ->from(['vc' => 'vcenter'], ['uuid' => 'vc.instance_uuid', 'name' => 'vc.name'])
+                ->order('vc.name')
         ));
     }
 

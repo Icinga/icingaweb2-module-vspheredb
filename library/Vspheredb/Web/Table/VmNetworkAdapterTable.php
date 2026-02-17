@@ -140,9 +140,8 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['vna' => 'vm_network_adapter'],
-            [
+        return $this->db()->select()
+            ->from(['vna' => 'vm_network_adapter'], [
                 'vh.label',
                 'vna.hardware_key',
                 'vna.port_key',
@@ -150,17 +149,9 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
                 'vna.address_type',
                 'vna.portgroup_uuid',
                 'portgroup_name' => 'pgo.object_name'
-            ]
-        )->join(
-            ['vh' => 'vm_hardware'],
-            'vh.vm_uuid = vna.vm_uuid AND vh.hardware_key = vna.hardware_key',
-            []
-        )->joinLeft(
-            ['pgo' => 'object'],
-            'pgo.uuid = vna.portgroup_uuid',
-            []
-        )->where('vna.vm_uuid = ?', $this->vm->get('uuid'))->order('vh.label ASC');
-
-        return $query;
+            ])
+            ->join(['vh' => 'vm_hardware'], 'vh.vm_uuid = vna.vm_uuid AND vh.hardware_key = vna.hardware_key', [])
+            ->joinLeft(['pgo' => 'object'], 'pgo.uuid = vna.portgroup_uuid', [])
+            ->where('vna.vm_uuid = ?', $this->vm->get('uuid'))->order('vh.label ASC');
     }
 }

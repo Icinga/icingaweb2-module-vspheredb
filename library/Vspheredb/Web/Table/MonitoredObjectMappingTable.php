@@ -96,9 +96,8 @@ class MonitoredObjectMappingTable extends BaseTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            ['mc' => 'monitoring_connection'],
-            $this->getRequiredDbColumns()
-        )->order('priority');
+        return $this->db()->select()
+            ->from(['mc' => 'monitoring_connection'], $this->getRequiredDbColumns())
+            ->order('priority');
     }
 }

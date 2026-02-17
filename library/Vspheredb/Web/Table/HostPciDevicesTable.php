@@ -49,9 +49,9 @@ class HostPciDevicesTable extends ZfQueryBasedTable
 
     protected function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from([
-            'hpd' => 'host_pci_device'
-        ])->order('id ASC')->limit(1000);
+        $query = $this->db()->select()
+            ->from(['hpd' => 'host_pci_device'])
+            ->order('id ASC')->limit(1000);
 
         if ($this->host) {
             $query->where('host_uuid = ?', $this->host->get('uuid'));

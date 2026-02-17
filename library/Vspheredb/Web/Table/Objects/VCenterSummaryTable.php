@@ -281,9 +281,8 @@ class VCenterSummaryTable extends ObjectsTable
 
     protected function prepareHostsQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            ['h' => 'host_system'],
-            [
+        return $this->db()->select()
+            ->from(['h' => 'host_system'], [
                 'vcenter_uuid'             => 'h.vcenter_uuid',
                 'hosts_cnt'                => 'COUNT(DISTINCT h.uuid)',
                 'hosts_cnt_overall_gray'   => "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
@@ -301,31 +300,23 @@ class VCenterSummaryTable extends ObjectsTable
                 'memory_total_mb'          => 'SUM(h.hardware_memory_size_mb)',
                 'overall_memory_usage'     => 'SUM(hqs.overall_memory_usage_mb)',
                 'hardware_memory_mb'       => 'SUM(h.hardware_memory_size_mb)'
-            ]
-        )->join(
-            ['ho' => 'object'],
-            'ho.uuid = h.uuid',
-            []
-        )->join(
-            ['hqs' => 'host_quick_stats'],
-            'hqs.uuid = h.uuid',
-            []
-        )
+            ])
+            ->join(['ho' => 'object'], 'ho.uuid = h.uuid', [])
+            ->join(['hqs' => 'host_quick_stats'], 'hqs.uuid = h.uuid', [])
             ->group('h.vcenter_uuid');
     }
 
     protected function prepareDatastoreQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            // TODO: Join object?
-            ['ds' => 'datastore'],
-            [
+        // TODO: Join object?
+        return $this->db()->select()
+            ->from(['ds' => 'datastore'], [
                 'vcenter_uuid'   => 'ds.vcenter_uuid',
                 'ds_capacity'    => 'SUM(ds.capacity)',
                 'ds_free_space'  => 'SUM(ds.free_space)',
                 'ds_uncommitted' => 'SUM(ds.uncommitted)'
-            ]
-        )->group('ds.vcenter_uuid');
+            ])
+            ->group('ds.vcenter_uuid');
     }
 
     protected function prepareQuery(): Select|Zend_Db_Select
@@ -338,18 +329,10 @@ class VCenterSummaryTable extends ObjectsTable
             'software_version' => 'vc.version'
         ];
 
-        return $this->db()->select()->from(
-            ['vc' => 'vcenter'],
-            $vCenterColumns + ['h.*', 'ds.*']
-        )->joinLeft(
-            ['ds' => $this->prepareDatastoreQuery()],
-            'vc.instance_uuid = ds.vcenter_uuid',
-            []
-        )->joinLeft(
-            ['h' => $this->prepareHostsQuery()],
-            'vc.instance_uuid = h.vcenter_uuid',
-            []
-        );
+        return $this->db()->select()
+            ->from(['vc' => 'vcenter'], $vCenterColumns + ['h.*', 'ds.*'])
+            ->joinLeft(['ds' => $this->prepareDatastoreQuery()], 'vc.instance_uuid = ds.vcenter_uuid', [])
+            ->joinLeft(['h' => $this->prepareHostsQuery()], 'vc.instance_uuid = h.vcenter_uuid', []);
     }
 
     protected function getGroupingTitle(): string

@@ -47,14 +47,14 @@ class ResourceUsageLoader
     public function fetch(): ResourceUsage
     {
         $db = $this->db;
-        $query = $db->select()->from(['h' => 'host_system'], [
-            'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
-            'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
-            'used_mb'   => 'SUM(hqs.overall_memory_usage_mb)',
-            'total_mb'  => 'SUM(h.hardware_memory_size_mb)'
-        ])->join([
-            'hqs' => 'host_quick_stats'
-        ], 'h.uuid = hqs.uuid', []);
+        $query = $db->select()
+            ->from(['h' => 'host_system'], [
+                'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
+                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
+                'used_mb'   => 'SUM(hqs.overall_memory_usage_mb)',
+                'total_mb'  => 'SUM(h.hardware_memory_size_mb)'
+            ])
+            ->join(['hqs' => 'host_quick_stats'], 'h.uuid = hqs.uuid', []);
         $compute = $db->fetchRow($this->applyFilters($query, 'h'));
 
         $query = $db->select()->from(['ds' => 'datastore'], [

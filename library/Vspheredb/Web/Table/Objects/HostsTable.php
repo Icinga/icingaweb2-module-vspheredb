@@ -152,9 +152,8 @@ class HostsTable extends ObjectsTable
 
     protected function createVmSubQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            ['vc' => 'virtual_machine'],
-            [
+        return $this->db()->select()
+            ->from(['vc' => 'virtual_machine'], [
                 'cnt'                    => 'COUNT(*)',
                 'cnt_cpu'                => 'SUM(vc.hardware_numcpu)',
                 'memorymb'               => 'SUM(vc.hardware_memorymb)',
@@ -163,12 +162,9 @@ class HostsTable extends ObjectsTable
                 'vms_cnt_overall_green'  => "SUM(CASE WHEN vo.overall_status = 'green' THEN 1 ELSE 0 END)",
                 'vms_cnt_overall_yellow' => "SUM(CASE WHEN vo.overall_status = 'yellow' THEN 1 ELSE 0 END)",
                 'vms_cnt_overall_red'    => "SUM(CASE WHEN vo.overall_status = 'red' THEN 1 ELSE 0 END)"
-            ]
-        )->join(
-            ['vo' => 'object'],
-            'vo.uuid = vc.uuid',
-            []
-        )->group('vc.runtime_host_uuid');
+            ])
+            ->join(['vo' => 'object'], 'vo.uuid = vc.uuid', [])
+            ->group('vc.runtime_host_uuid');
     }
 
     public function prepareQuery(): Select|Zend_Db_Select
@@ -186,18 +182,10 @@ class HostsTable extends ObjectsTable
             }
         }
 
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $columns
-        )->join(
-            ['h' => 'host_system'],
-            'o.uuid = h.uuid',
-            []
-        )->joinLeft(
-            ['hqs' => 'host_quick_stats'],
-            'h.uuid = hqs.uuid',
-            []
-        );
+        $query = $this->db()->select()
+            ->from(['o' => 'object'], $columns)
+            ->join(['h' => 'host_system'], 'o.uuid = h.uuid', [])
+            ->joinLeft(['hqs' => 'host_quick_stats'], 'h.uuid = hqs.uuid', []);
 
         if ($wantsVms) {
             $query->joinLeft(['vms' => $this->createVmSubQuery()], 'vms.runtime_host_uuid = h.uuid', []);

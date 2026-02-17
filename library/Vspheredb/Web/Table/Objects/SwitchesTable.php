@@ -11,16 +11,9 @@ class SwitchesTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['vds' => 'distributed_virtual_switch'],
-            'o.uuid = vds.uuid',
-            []
-        );
-
-        return $query;
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['vds' => 'distributed_virtual_switch'], 'o.uuid = vds.uuid', []);
     }
 
     protected function initialize(): void

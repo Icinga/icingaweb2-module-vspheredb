@@ -30,10 +30,9 @@ class ResourcePoolsTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->where('object_type = ?', 'ResourcePool');
+        $query = $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->where('object_type = ?', 'ResourcePool');
 
         if ($this->hasColumn('cnt_vms')) {
             $query->joinLeft(['vm' => 'virtual_machine'], 'vm.resource_pool_uuid = o.uuid', [])->group('o.uuid');

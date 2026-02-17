@@ -39,9 +39,8 @@ class PerfDataConsumerTable extends BaseTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            ['pc' => 'perfdata_consumer'],
-            $this->getRequiredDbColumns()
-        )->order('name');
+        return $this->db()->select()
+            ->from(['pc' => 'perfdata_consumer'], $this->getRequiredDbColumns())
+            ->order('name');
     }
 }

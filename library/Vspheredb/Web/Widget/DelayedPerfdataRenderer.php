@@ -185,13 +185,15 @@ class DelayedPerfdataRenderer
                 'value_last'
             ]) . ')';
 
-        $query = $db->select()->from('counter_300x5', [
-            'name' => 'object_uuid',
-            'instance',
-            'counter_key',
-            'value' => $values,
-            'value_last'
-        ])->where('object_uuid IN (?)', $this->requiredVms)
+        $query = $db->select()
+            ->from('counter_300x5', [
+                'name'  => 'object_uuid',
+                'instance',
+                'counter_key',
+                'value' => $values,
+                'value_last'
+            ])
+            ->where('object_uuid IN (?)', $this->requiredVms)
             ->where('instance IN (?)', ['', 'scsi0:0'])
             ->where('counter_key IN (?)', array_keys($this->counters));
 
