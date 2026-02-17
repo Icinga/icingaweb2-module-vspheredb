@@ -77,10 +77,9 @@ class Settings extends SettingsDataType
         }
         $prefix = $set::getIdentifier() . self::KEY_SEPARATOR;
         if ($rule) {
-            if ($instance === null) {
-                $prefix .= $rule::getIdentifier() . self::KEY_SEPARATOR;
-            } else {
-                $prefix .= $rule::getIdentifier() . self::KEY_SEPARATOR . $instance->toString() . self::KEY_SEPARATOR;
+            $prefix .= $rule::getIdentifier() . self::KEY_SEPARATOR;
+            if ($instance !== null) {
+                $prefix .= $instance->toString() . self::KEY_SEPARATOR;
             }
         } elseif ($instance) {
             throw new InvalidArgumentException('Rule instance requires a rule');

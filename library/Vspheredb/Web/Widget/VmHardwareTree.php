@@ -283,12 +283,11 @@ class VmHardwareTree extends BaseHtmlElement
         }
 
         $li = Html::tag('li');
-        if (! $hasChildren) {
-            $li->getAttributes()->add('class', 'collapsed');
-        }
 
         if ($hasChildren) {
             $li->add(Html::tag('span', ['class' => 'handle']));
+        } else {
+            $li->getAttributes()->add('class', 'collapsed');
         }
 
         /** @var int|string $controllerKey */

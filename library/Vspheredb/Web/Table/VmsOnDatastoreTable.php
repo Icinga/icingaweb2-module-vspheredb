@@ -68,13 +68,13 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
             ['title' => sprintf($this->translate('Virtual Machine: %s'), $row->object_name)]
         );
 
-        $usage = new DatastoreUsage($this->datastore);
-        $usage->setCapacity($size);
+        $usage = (new DatastoreUsage($this->datastore))
+            ->setCapacity($size)
+            ->addDiskFromDbRow($row);
         $usage->getAttributes()->add('class', 'compact');
-        $usage->addDiskFromDbRow($row);
-        $dsUsage = new DatastoreUsage($this->datastore);
+        $dsUsage = (new DatastoreUsage($this->datastore))
+            ->addDiskFromDbRow($row);
         $dsUsage->getAttributes()->add('class', 'compact');
-        $dsUsage->addDiskFromDbRow($row);
 
         $tr = $this::tr([
             $this::td($caption, ['class' => 'vm-on-datastore-caption']),

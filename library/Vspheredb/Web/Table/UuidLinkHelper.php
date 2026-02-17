@@ -42,7 +42,7 @@ trait UuidLinkHelper
             );
         });
 
-        return $result->setEscaped(true);
+        return $result->setEscaped();
     }
 
     protected function getUuidBaseUrl($uuid): ?string

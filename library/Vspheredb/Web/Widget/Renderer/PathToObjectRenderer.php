@@ -55,8 +55,7 @@ class PathToObjectRenderer
                 ['data-base-target' => '_main']
             );
         }
-        $path->add($parts);
 
-        return $path;
+        return $path->add($parts);
     }
 }

@@ -8,7 +8,6 @@ use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use Throwable;
-use Exception;
 
 class WebUtil
 {
@@ -16,8 +15,6 @@ class WebUtil
     {
         try {
             $callback();
-        } catch (Exception $e) {
-            $parent->add(HtmlError::show($e));
         } catch (Throwable $e) {
             $parent->add(HtmlError::show($e));
         }

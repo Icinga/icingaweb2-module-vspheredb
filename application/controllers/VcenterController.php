@@ -121,11 +121,9 @@ class VcenterController extends Controller
         $form->on(Form::ON_SUBMIT, function (VCenterServerForm $form) {
             $object = $form->getObject();
             if ($object->hasBeenModified()) {
-                $msg = sprintf(
-                    $object->hasBeenLoadedFromDb()
-                        ? $this->translate('The Connection has successfully been stored')
-                        : $this->translate('A new Connection has successfully been created')
-                );
+                $msg = $object->hasBeenLoadedFromDb()
+                    ? $this->translate('The Connection has successfully been stored')
+                    : $this->translate('A new Connection has successfully been created');
                 $object->store();
                 $msg .= '. ' . $this->sendServerInfoToSocket();
             } else {
