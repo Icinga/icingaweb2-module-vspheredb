@@ -57,13 +57,13 @@ class OverviewTree extends BaseHtmlElement
         $tree = [];
         $all = [];
         foreach ($this->fetchTree() as $item) {
-            if (
-                $this->typeFilter
-                && (string) $item->parent_object_type === 'Datacenter'
-                && $item->object_name !== $this->typeFilter
-            ) {
+//            if (
+//                $this->typeFilter
+//                && (string) $item->parent_object_type === 'Datacenter'
+//                && $item->object_name !== $this->typeFilter
+//            ) {
                 // continue; // see #260
-            }
+//            }
             $item->children = [];
 
             /** @var string $uuid */

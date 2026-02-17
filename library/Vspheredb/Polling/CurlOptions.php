@@ -23,7 +23,7 @@ class CurlOptions
     {
         $host = $server->get('host');
         if (preg_match('/^(.+?):(\d{1,5})$/', $host, $match)) {
-            $host = $match[1];
+            // $host = $match[1];
             $port = (int) $match[2];
         } else {
             $port = null;
