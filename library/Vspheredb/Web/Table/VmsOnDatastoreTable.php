@@ -99,21 +99,15 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            [
+        return $this->db()->select()
+            ->from(['o' => 'object'], [
                 'uuid'        => 'o.uuid',
                 'object_name' => 'o.object_name',
                 'committed'   => 'vdu.committed',
                 'uncommitted' => 'vdu.uncommitted',
                 'ts_updated'  => 'vdu.ts_updated'
-            ]
-        )->join(
-            ['vdu' => 'vm_datastore_usage'],
-            'vdu.vm_uuid = o.uuid',
-            []
-        )->where('vdu.datastore_uuid = ?', $this->uuid)->order('object_name ASC');
-
-        return $query;
+            ])
+            ->join(['vdu' => 'vm_datastore_usage'], 'vdu.vm_uuid = o.uuid', [])
+            ->where('vdu.datastore_uuid = ?', $this->uuid)->order('object_name ASC');
     }
 }

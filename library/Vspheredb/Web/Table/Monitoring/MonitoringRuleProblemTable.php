@@ -88,10 +88,8 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
 
     protected function prepareQuery(): Select|Zend_Db_Select
     {
-        $db = $this->db();
-        return $db->select()->from(
-            ['p' => 'monitoring_rule_problem'],
-            [
+        return $this->db()->select()
+            ->from(['p' => 'monitoring_rule_problem'], [
                 'vcenter_uuid' => 'vc.instance_uuid',
                 'vcenter_name' => 'vc.name',
                 // 'object_type' => 'o.object_type',
@@ -100,16 +98,14 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
                 'cnt_critical' => "SUM(CASE WHEN p.current_state = 'CRITICAL' THEN 1 ELSE 0 END)",
                 'cnt_unknown' => "SUM(CASE WHEN p.current_state = 'UNKNOWN' THEN 1 ELSE 0 END)",
                 'cnt_warning' => "SUM(CASE WHEN p.current_state = 'WARNING' THEN 1 ELSE 0 END)"
-            ]
-        )
-        ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
-        ->join(['vc' => 'vcenter'], 'o.vcenter_uuid = vc.instance_uuid', [])
+            ])
+            ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
+            ->join(['vc' => 'vcenter'], 'o.vcenter_uuid = vc.instance_uuid', [])
             ->group('vc.name')
             ->group('o.object_type')
             ->group('p.rule_name')
             ->order('vc.name')
             ->order('o.object_type')
-            ->order('p.rule_name')
-        ;
+            ->order('p.rule_name');
     }
 }

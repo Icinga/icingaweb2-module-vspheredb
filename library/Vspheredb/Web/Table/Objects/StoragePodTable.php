@@ -105,19 +105,10 @@ class StoragePodTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['sp' => 'storage_pod'],
-            'o.uuid = sp.uuid',
-            []
-        )->joinLeft(
-            ['dso' => 'object'],
-            'dso.parent_uuid= o.uuid',
-            []
-        )->group('o.uuid');
-
-        return $query;
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['sp' => 'storage_pod'], 'o.uuid = sp.uuid', [])
+            ->joinLeft(['dso' => 'object'], 'dso.parent_uuid= o.uuid', [])
+            ->group('o.uuid');
     }
 }

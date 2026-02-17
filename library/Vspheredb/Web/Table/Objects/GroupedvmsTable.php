@@ -27,31 +27,13 @@ class GroupedvmsTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['vm' => 'virtual_machine'],
-            'o.uuid = vm.uuid',
-            []
-        )->group($this->groupByAlias);
-
-        $query->join(
-            ['h' => 'host_system'],
-            'vm.runtime_host_uuid = h.uuid',
-            []
-        )->join(
-            ['ho' => 'object'],
-            'ho.uuid = h.uuid',
-            []
-        );
-        $query->join(
-            ['vqs' => 'vm_quick_stats'],
-            'vqs.uuid = vm.uuid',
-            []
-        );
-
-        return $query;
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
+            ->group($this->groupByAlias)
+            ->join(['h' => 'host_system'], 'vm.runtime_host_uuid = h.uuid', [])
+            ->join(['ho' => 'object'], 'ho.uuid = h.uuid', [])
+            ->join(['vqs' => 'vm_quick_stats'], 'vqs.uuid = vm.uuid', []);
     }
 
     protected function createGroupingColumn(): SimpleColumn

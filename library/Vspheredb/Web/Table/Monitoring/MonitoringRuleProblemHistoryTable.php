@@ -92,22 +92,19 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
     protected function prepareQuery(): Select|Zend_Db_Select
     {
         // uuid, current_state, former_state, rule_name, ts_changed_ms, output
-        $query = $this->db()->select()->from([
-            'ph' => 'monitoring_rule_problem_history'
-        ], [
-            'o.object_name',
-            'o.object_type',
-            'ph.uuid',
-            'ph.current_state',
-            'ph.former_state',
-            'ph.rule_name',
-            'ph.ts_changed_ms',
-            'ph.output'
-        ])->join(
-            ['o' => 'object'],
-            'o.uuid = ph.uuid',
-            []
-        )->order('ts_changed_ms DESC');
+        $query = $this->db()->select()
+            ->from(['ph' => 'monitoring_rule_problem_history'], [
+                'o.object_name',
+                'o.object_type',
+                'ph.uuid',
+                'ph.current_state',
+                'ph.former_state',
+                'ph.rule_name',
+                'ph.ts_changed_ms',
+                'ph.output'
+            ])
+            ->join(['o' => 'object'], 'o.uuid = ph.uuid', [])
+            ->order('ts_changed_ms DESC');
 
         if ($this->entityUuid !== null) {
             $query->where('ph.uuid = ?', $this->entityUuid);

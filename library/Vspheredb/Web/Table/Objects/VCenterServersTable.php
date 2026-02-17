@@ -123,14 +123,8 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            ['vcs' => 'vcenter_server'],
-            $this->getRequiredDbColumns()
-        )->joinLeft(
-            ['vc' => 'vcenter'],
-            // 'vc.instance_uuid = vcs.vcenter_uuid',
-            'vc.id = vcs.vcenter_id',
-            []
-        );
+        return $this->db()->select()
+            ->from(['vcs' => 'vcenter_server'], $this->getRequiredDbColumns())
+            ->joinLeft(['vc' => 'vcenter'], /* 'vc.instance_uuid = vcs.vcenter_uuid',*/ 'vc.id = vcs.vcenter_id', []);
     }
 }

@@ -62,14 +62,9 @@ class VmsTable extends ObjectsTable
             }
         }
 
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $columns
-        )->join(
-            ['vm' => 'virtual_machine'],
-            'o.uuid = vm.uuid',
-            []
-        );
+        $query = $this->db()->select()
+            ->from(['o' => 'object'], $columns)
+            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', []);
 
         if ($wantsStats) {
             $query->join(['vqs' => 'vm_quick_stats'], 'vqs.uuid = vm.uuid', []);
@@ -83,18 +78,21 @@ class VmsTable extends ObjectsTable
             $query->joinLeft(['h' => 'host_system'], 'vm.runtime_host_uuid = h.uuid', []);
         }
         if ($wantsDataStores) {
-            $sub = $this->db()->select()->from('vm_datastore_usage', [
-                'vm_uuid' => 'vm_uuid',
-                'datastore_capacity' => 'SUM(committed + uncommitted)',
-                'datastore_usage' => 'SUM(committed)'
-            ])->group('vm_uuid');
+            $sub = $this->db()->select()
+                ->from('vm_datastore_usage', [
+                    'vm_uuid'            => 'vm_uuid',
+                    'datastore_capacity' => 'SUM(committed + uncommitted)',
+                    'datastore_usage'    => 'SUM(committed)'
+                ])
+                ->group('vm_uuid');
+
             $query->joinLeft(['vdu' => $sub], 'vdu.vm_uuid = o.uuid', []);
         }
         if ($wantsDisks) {
-            $sub = $this->db()->select()->from('vm_disk', [
-                'vm_uuid' => 'vm_uuid',
-                'disk_capacity' => 'SUM(capacity)'
-            ])->group('vm_uuid');
+            $sub = $this->db()->select()
+                ->from('vm_disk', ['vm_uuid' => 'vm_uuid', 'disk_capacity' => 'SUM(capacity)'])
+                ->group('vm_uuid');
+
             $query->joinLeft(['vmd' => $sub], 'vmd.vm_uuid = o.uuid', []);
         }
 

@@ -218,20 +218,20 @@ class EventHistoryTable extends ZfQueryBasedTable
      */
     protected function prepareQuery(): Zend_Db_Select
     {
-        $query = $this->db()->select()->from([
-            'vh' => 'vm_event_history'
-        ], [
-            'vh.ts_event_ms',
-            'vh.event_type',
-            'vh.vm_uuid',
-            'vh.host_uuid',
-            'vh.user_name',
-            'vh.datastore_uuid',
-            'vh.destination_host_uuid',
-            'vh.destination_datastore_uuid',
-            'vh.full_message',
-            'vh.fault_reason'
-        ])->order('ts_event_ms DESC');
+        $query = $this->db()->select()
+            ->from(['vh' => 'vm_event_history'], [
+                'vh.ts_event_ms',
+                'vh.event_type',
+                'vh.vm_uuid',
+                'vh.host_uuid',
+                'vh.user_name',
+                'vh.datastore_uuid',
+                'vh.destination_host_uuid',
+                'vh.destination_datastore_uuid',
+                'vh.full_message',
+                'vh.fault_reason'
+            ])
+            ->order('ts_event_ms DESC');
 
         if (is_string($this->eventType) && strlen($this->eventType)) {
             $query->where('event_type = ?', $this->eventType);

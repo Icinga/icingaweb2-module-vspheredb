@@ -127,11 +127,12 @@ class HostSensorsTable extends ZfQueryBasedTable
         $db = $this->db();
 
         $sums = [];
-        $query = $db->select()->from(['hs' => 'host_sensor'], [
-            'sensor_type'  => 'sensor_type',
-            'health_state' => 'health_state',
-            'cnt'          => 'COUNT(*)'
-        ])
+        $query = $db->select()
+            ->from(['hs' => 'host_sensor'], [
+                'sensor_type'  => 'sensor_type',
+                'health_state' => 'health_state',
+                'cnt'          => 'COUNT(*)'
+            ])
             ->where('base_units IS NOT NULL')
             ->group('sensor_type')
             ->group('health_state')
@@ -164,12 +165,13 @@ class HostSensorsTable extends ZfQueryBasedTable
      */
     protected function prepareQuery(): Zend_Db_Select
     {
-        $query = $this->db()->select()->from([
-            'hpd' => 'host_sensor'
-        ])->order('sensor_type')->order('name')->limit(1000);
-
-        $query->where('base_units IS NOT NULL');
-        // $query->where('health_state != ?', 'unknown');
+        $query = $this->db()->select()
+            ->from(['hpd' => 'host_sensor'])
+            ->order('sensor_type')
+            ->order('name')
+            ->limit(1000)
+            ->where('base_units IS NOT NULL');
+        //    ->where('health_state != ?', 'unknown');
 
         if ($this->host) {
             $query->where('host_uuid = ?', $this->host->get('uuid'));

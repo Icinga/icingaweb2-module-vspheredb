@@ -104,7 +104,8 @@ class PathLookup
 
     protected function fetchChildFolderListFor(string $uuid): array
     {
-        $query = $this->db->select()->from('object', 'uuid')
+        $query = $this->db->select()
+            ->from('object', 'uuid')
             ->where('parent_uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db))
             ->where('object_type NOT IN (?)', ['HostSystem', 'VirtualMachine']);
 

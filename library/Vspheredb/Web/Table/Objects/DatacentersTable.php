@@ -27,11 +27,8 @@ class DatacentersTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->where('object_type = ?', 'Datacenter');
-
-        return $query;
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->where('object_type = ?', 'Datacenter');
     }
 }

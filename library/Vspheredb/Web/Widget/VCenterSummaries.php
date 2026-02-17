@@ -73,10 +73,11 @@ class VCenterSummaries extends BaseHtmlElement
         );
         $this->addCountlet(
             $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
+                $db->select()
+                    ->from(['o' => 'object'], $columns)
                     ->join(['vm' => 'virtual_machine'], 'vm.uuid = o.uuid', [])
                     ->where('vm.template = ?', 'n')
-                    ->where('vm.vcenter_uuid = ?', $connection->quoteBinary($vCenterUuid))
+                    ->where('vm.vcenter_uuid = ?', $connection->quoteBinary($this->vCenter->getUuid()))
             ),
             'Virtual Machines',
             'vspheredb/vms'
