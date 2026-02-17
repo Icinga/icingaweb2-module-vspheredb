@@ -125,13 +125,11 @@ class VmsTable extends ObjectsTable
         $powerStateRenderer = new PowerStateRenderer();
         $guestToolsStatusRenderer = new GuestToolsStatusRenderer();
         $guestToolsVersionRenderer = new GuestToolsVersionRenderer();
-        $memoryRenderer = function ($row) {
-            return new MemoryUsage(
-                $row->guest_memory_usage_mb,
-                $row->hardware_memorymb,
-                $row->host_memory_usage_mb
-            );
-        };
+        $memoryRenderer = fn($row) => new MemoryUsage(
+            $row->guest_memory_usage_mb,
+            $row->hardware_memorymb,
+            $row->host_memory_usage_mb
+        );
         $memoryColumns = [
             'guest_memory_usage_mb' => 'vqs.guest_memory_usage_mb',
             'host_memory_usage_mb'  => 'vqs.host_memory_usage_mb',
