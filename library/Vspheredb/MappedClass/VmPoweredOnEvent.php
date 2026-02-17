@@ -18,8 +18,10 @@ class VmPoweredOnEvent extends VmEvent
     {
         parent::store($db, $vCenter);
 
-        $db->update('virtual_machine', [
-            'runtime_power_state' => 'poweredOn'
-        ], $db->quoteInto('uuid = ?', $vCenter->makeBinaryGlobalUuid($this->vm->vm->_)));
+        $db->update(
+            'virtual_machine',
+            ['runtime_power_state' => 'poweredOn'],
+            $db->quoteInto('uuid = ?', $vCenter->makeBinaryGlobalUuid($this->vm->vm->_))
+        );
     }
 }

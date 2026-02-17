@@ -29,7 +29,6 @@ abstract class ObjectForm extends Form
     public function __construct(Store $store)
     {
         $this->store = $store;
-        $this->setMethod('POST');
     }
 
     public function setObject(StorableInterface $object): static

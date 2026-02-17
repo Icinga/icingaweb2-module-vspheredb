@@ -49,8 +49,8 @@ class GuestUtilitiesRuleDefinition extends MonitoringRuleDefinition
             $state->raiseState(Trigger::getMonitoringState($settings->get('version_2147483647')));
         } elseif (
             $version !== null && (
-            preg_match('/^([89])(\d{1})(\d{2})$/', $version, $m)
-            || preg_match('/^(1\d)(\d{1})(\d{2})$/', $version, $m)
+                preg_match('/^([89])(\d{1})(\d{2})$/', $version, $m)
+                || preg_match('/^(1\d)(\d{1})(\d{2})$/', $version, $m)
             )
         ) {
             $version = sprintf('%d.%d.%d', $m[1], $m[2], $m[3]);

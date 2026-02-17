@@ -81,9 +81,11 @@ class Documentation
             return Html::tag('a', ['href' => $this->githubDocumentationUrl($module, $chapter)] + $baseParams, $label);
         }
 
-        return Html::tag('a', [
-                'href' => $this->icingaDocumentationUrl(self::PUBLIC_URL_MAP[$module], $chapter)
-            ] + $baseParams, $label);
+        return Html::tag(
+            'a',
+            ['href' => $this->icingaDocumentationUrl(self::PUBLIC_URL_MAP[$module], $chapter)] + $baseParams,
+            $label
+        );
     }
 
     protected function getModuleDocumentationUrl(string $moduleName, string $chapter): string
