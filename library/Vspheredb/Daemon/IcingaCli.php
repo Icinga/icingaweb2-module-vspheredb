@@ -22,10 +22,7 @@ class IcingaCli
 
     public function __construct(?IcingaCliRunner $runner = null)
     {
-        if ($runner === null) {
-            $runner = IcingaCliRunner::forArgv();
-        }
-        $this->runner = $runner;
+        $this->runner = $runner ?? IcingaCliRunner::forArgv();
         $this->init();
     }
 

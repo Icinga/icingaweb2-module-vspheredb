@@ -23,12 +23,7 @@ class VmrcLink extends HtmlDocument
     public function __construct(VCenter $vCenter, VirtualMachine $vm, ?string $label = null)
     {
         $this->vCenter = $vCenter;
-        if ($label === null) {
-            $this->label = $vm->object()->get('object_name');
-        } else {
-            $this->label = $label;
-        }
-
+        $this->label = $label ?? $vm->object()->get('object_name');
         $this->moRef = $vm->object()->get('moref');
     }
 

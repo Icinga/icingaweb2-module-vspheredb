@@ -75,10 +75,8 @@ class ObjectsController extends Controller
         WebUrl|string $url,
         ?string $defaultTitle = null
     ): void {
-        $parent = $this->params->get('parent');
-        if ($parent === null) {
-            $parent = $this->params->get('uuid');
-        }
+        $parent = $this->params->get('parent') ?? $this->params->get('uuid');
+
         if ($parent !== null) {
             $parent = Uuid::fromString($parent)->getBytes();
         }

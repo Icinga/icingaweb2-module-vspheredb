@@ -19,12 +19,7 @@ class KnowledgeBaseLink extends BaseHtmlElement
     public function __construct(int $id, ?string $title = null, ?string $label = null)
     {
         $this->id = $id;
-        if ($label === null) {
-            $this->setContent("KB $id");
-        } else {
-            $this->setContent($label);
-        }
-
+        $this->setContent($label ?? "KB $id");
         $this->setAttribute('title', $title);
         $this->setAttribute('href', 'https://kb.vmware.com/s/article/' . rawurlencode($id));
     }

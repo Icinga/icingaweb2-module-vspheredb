@@ -31,15 +31,8 @@ class MobLink extends HtmlDocument
         if ($object) {
             $this->moRef = $object->object()->get('moref');
         }
-        if ($label === null) {
-            if ($this->moRef) {
-                $this->label = $this->moRef;
-            } else {
-                $this->label = 'MOB';
-            }
-        } else {
-            $this->label = $label;
-        }
+
+        $this->label = $label ?? ($this->moRef ?: 'MOB');
     }
 
     protected function assemble(): void
