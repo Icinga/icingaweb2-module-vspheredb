@@ -20,87 +20,85 @@ class DatastoreTable extends ObjectsTable
         $this->addAttributes(Attributes::create(['class' => 'datastores-table']));
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
+
             $this->createColumn('object_name', $this->translate('Name'), [
-                'overall_status'       => 'o.overall_status',
-                'object_name'          => 'o.object_name',
-                'uuid'                 => 'o.uuid',
-                'capacity'             => 'ds.capacity',
-                'free_space'           => 'ds.free_space',
-                'uncommitted'          => 'ds.uncommitted',
-                'free_space_percent'   => '(ds.free_space / ds.capacity) * 100',
-                'uncommitted_percent'  => '(ds.uncommitted / ds.capacity) * 100'
-            ])->setRenderer(function ($row) {
-                $row->object_name = Anonymizer::anonymizeString($row->object_name);
-                if (in_array('overall_status', $this->getChosenColumnNames())) {
-                    $result = [];
-                } else {
-                    $statusRenderer = $this->overallStatusRenderer();
-                    $result = [$statusRenderer($row)];
-                }
-                $title = sprintf(
+                'overall_status'      => 'o.overall_status',
+                'object_name'         => 'o.object_name',
+                'uuid'                => 'o.uuid',
+                'capacity'            => 'ds.capacity',
+                'free_space'          => 'ds.free_space',
+                'uncommitted'         => 'ds.uncommitted',
+                'free_space_percent'  => '(ds.free_space / ds.capacity) * 100',
+                'uncommitted_percent' => '(ds.uncommitted / ds.capacity) * 100'
+            ])
+                ->setRenderer(function ($row) {
+                    $row->object_name = Anonymizer::anonymizeString($row->object_name);
+                    if (in_array('overall_status', $this->getChosenColumnNames())) {
+                        $result = [];
+                    } else {
+                        $statusRenderer = $this->overallStatusRenderer();
+                        $result = [$statusRenderer($row)];
+                    }
+                    $title = sprintf(
                     // '%d VM(s), %s of %s used, %s uncommitted',
-                    '%s of %s used, %s uncommitted',
-                    // $row->cnt_vm,
-                    $this->formatBytesPercent($row, 'free_space'),
-                    Format::bytes($row->capacity, Format::STANDARD_IEC),
-                    $this->formatBytesPercent($row, 'uncommitted')
-                );
+                        '%s of %s used, %s uncommitted',
+                        // $row->cnt_vm,
+                        $this->formatBytesPercent($row, 'free_space'),
+                        Format::bytes($row->capacity, Format::STANDARD_IEC),
+                        $this->formatBytesPercent($row, 'uncommitted')
+                    );
 
-                $result[] = Link::create(
-                    $row->object_name,
-                    'vspheredb/datastore',
-                    ['uuid' => Uuid::fromBytes($row->uuid)->toString()],
-                    ['title' => $title]
-                );
+                    $result[] = Link::create(
+                        $row->object_name,
+                        'vspheredb/datastore',
+                        ['uuid' => Uuid::fromBytes($row->uuid)->toString()],
+                        ['title' => $title]
+                    );
 
-                return $result;
-            }),
+                    return $result;
+                }),
+
             $this->createColumn('vcenter_name', $this->translate('vCenter / ESXi'), 'vc.name'),
-            $this->createColumn(
-                'multiple_host_access',
-                $this->translate('Multiple Hosts'),
-                'ds.multiple_host_access'
-            )->setRenderer(function ($row) {
-                return $row->multiple_host_access === 'y' ? $this->translate('Yes') : $this->translate('No');
-            }),
-            $this->createColumn('free_space', $this->translate('Free'), 'ds.free_space')
-                ->setRenderer(function ($row) {
-                    return Format::bytes($row->free_space, Format::STANDARD_IEC);
-                }),
-            $this->createColumn('free_space_percent', $this->translate('Free (%)'), [
-                'free_space_percent'  => '(ds.free_space / ds.capacity) * 100'
-            ])->setRenderer(function ($row) {
-                return $this->formatPercent($row->free_space_percent);
-            }),
-            $this->createColumn('uncommitted', $this->translate('Uncommitted'), 'ds.uncommitted')
-                ->setRenderer(function ($row) {
-                    return Format::bytes($row->uncommitted, Format::STANDARD_IEC);
-                }),
-            $this->createColumn('uncommitted_percent', $this->translate('Uncommitted (%)'), [
-                'uncommitted_percent'  => '(ds.uncommitted / ds.capacity) * 100'
-            ])->setRenderer(function ($row) {
-                return $this->formatPercent($row->uncommitted_percent);
-            }),
-            $this->createColumn('size', $this->translate('Size'), 'ds.capacity')
-                ->setRenderer(function ($row) {
-                    return Format::bytes($row->capacity, Format::STANDARD_IEC);
-                }),
-            $this->createColumn('cnt_vms', $this->translate('VMs'), [
-                'cnt_vms' => 'COALESCE(vdu.cnt_vms, 0)'
-            ])->setDefaultSortDirection('DESC'),
-            $this->createColumn('usage', $this->translate('Usage'), [
-                'uuid' => 'o.uuid'
-            ])->setRenderer(function ($row) {
-                /** @var Db $connection */
-                $connection = $this->connection();
-                $usage = new DatastoreUsage(Datastore::load($row->uuid, $connection));
-                $usage->getAttributes()->add('class', 'compact');
-                $usage->loadAllVmDisks()->addFreeDatastoreSpace();
 
-                return $usage;
-            })->setSortExpression(
-                '1 - (ds.free_space / ds.capacity)'
-            )->setDefaultSortDirection('DESC')
+            $this->createColumn('multiple_host_access', $this->translate('Multiple Hosts'), 'ds.multiple_host_access')
+                ->setRenderer(
+                    fn($row) => $row->multiple_host_access === 'y' ? $this->translate('Yes') : $this->translate('No')
+                ),
+
+            $this->createColumn('free_space', $this->translate('Free'), 'ds.free_space')
+                ->setRenderer(fn($row) => Format::bytes($row->free_space, Format::STANDARD_IEC)),
+
+            $this->createColumn('free_space_percent', $this->translate('Free (%)'), [
+                'free_space_percent' => '(ds.free_space / ds.capacity) * 100'
+            ])
+                ->setRenderer(fn($row) => $this->formatPercent($row->free_space_percent)),
+
+            $this->createColumn('uncommitted', $this->translate('Uncommitted'), 'ds.uncommitted')
+                ->setRenderer(fn($row) => Format::bytes($row->uncommitted, Format::STANDARD_IEC)),
+
+            $this->createColumn('uncommitted_percent', $this->translate('Uncommitted (%)'), [
+                'uncommitted_percent' => '(ds.uncommitted / ds.capacity) * 100'
+            ])
+                ->setRenderer(fn($row) => $this->formatPercent($row->uncommitted_percent)),
+
+            $this->createColumn('size', $this->translate('Size'), 'ds.capacity')
+                ->setRenderer(fn($row) => Format::bytes($row->capacity, Format::STANDARD_IEC)),
+
+            $this->createColumn('cnt_vms', $this->translate('VMs'), ['cnt_vms' => 'COALESCE(vdu.cnt_vms, 0)'])
+                ->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('usage', $this->translate('Usage'), ['uuid' => 'o.uuid'])
+                ->setRenderer(function ($row) {
+                    /** @var Db $connection */
+                    $connection = $this->connection();
+                    $usage = new DatastoreUsage(Datastore::load($row->uuid, $connection));
+                    $usage->getAttributes()->add('class', 'compact');
+                    $usage->loadAllVmDisks()->addFreeDatastoreSpace();
+
+                    return $usage;
+                })
+                ->setSortExpression('1 - (ds.free_space / ds.capacity)')
+                ->setDefaultSortDirection('DESC')
         ]);
     }
 

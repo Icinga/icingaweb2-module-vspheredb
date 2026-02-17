@@ -31,28 +31,22 @@ class VmsSnapshotsTable extends ObjectsTable
                 'object_name'     => 'o.object_name',
                 'uuid'            => 'vm.uuid',
                 'guest_host_name' => 'vm.guest_host_name'
-            ])->setRenderer(function ($row) {
-                if ($row->guest_host_name === null || $row->guest_host_name === $row->object_name) {
-                    $name = $row->object_name;
-                } else {
-                    $name = sprintf('%s (%s)', $row->object_name, $row->guest_host_name);
-                }
-
-                return Link::create(
-                    $name,
+            ])
+                ->setRenderer(fn($row) => Link::create(
+                    $row->guest_host_name === null || $row->guest_host_name === $row->object_name
+                        ? $row->object_name
+                        : sprintf('%s (%s)', $row->object_name, $row->guest_host_name),
                     $this->baseUrl,
                     Util::uuidParams($row->uuid)
-                );
-            }),
+                )),
+
             $this->createColumn('cnt', $this->translate('Snapshots'), 'COUNT(*)'),
+
             $this->createColumn('ts_oldest', $this->translate('Oldest'), 'MIN(vms.ts_create)')
-                ->setRenderer(function ($row) {
-                    return DateFormatter::formatDate($row->ts_oldest / 1000);
-                }),
+                ->setRenderer(fn($row) => DateFormatter::formatDate($row->ts_oldest / 1000)),
+
             $this->createColumn('ts_newest', $this->translate('Newest'), 'MAX(vms.ts_create)')
-                ->setRenderer(function ($row) {
-                    return DateFormatter::formatDate($row->ts_newest / 1000);
-                })
+                ->setRenderer(fn($row) => DateFormatter::formatDate($row->ts_newest / 1000))
         ]);
     }
 

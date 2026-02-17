@@ -30,45 +30,33 @@ class MonitoredObjectMappingTable extends BaseTable
                 'source_resource_name' => 'mc.source_resource_name',
                 'id'                   => 'mc.id',
                 'priority'             => 'mc.priority'
-            ]))->setRenderer(function ($row) {
-                return Link::create(sprintf(
-                    '%s: %s',
-                    $row->source_type,
-                    $row->source_resource_name
-                ), 'vspheredb/configuration/monitoringconfig', [
-                    'id' => $row->id
-                ], [
-                    'data-base-target' => '_next'
-                ]);
-            }),
+            ]))
+                ->setRenderer(fn($row) => Link::create(
+                    sprintf('%s: %s', $row->source_type, $row->source_resource_name),
+                    'vspheredb/configuration/monitoringconfig',
+                    ['id' => $row->id],
+                    ['data-base-target' => '_next']
+                )),
+
             (new SimpleColumn('host_mapping', $this->translate('Host Mapping'), [
                 'host_property'            => 'mc.host_property',
                 'monitoring_host_property' => 'mc.monitoring_host_property'
-            ]))->setRenderer(function ($row) {
-                if ($row->host_property === null) {
-                    return null;
-                } else {
-                    return sprintf(
-                        '%s -> %s',
-                        $row->monitoring_host_property,
-                        $row->host_property
-                    );
-                }
-            }),
+            ]))
+                ->setRenderer(fn($row) => $row->host_property === null ? null : sprintf(
+                    '%s -> %s',
+                    $row->monitoring_host_property,
+                    $row->host_property
+                )),
+
             (new SimpleColumn('vm_mapping', $this->translate('VM Mapping'), [
                 'vm_property'                 => 'mc.vm_property',
                 'monitoring_vm_host_property' => 'mc.monitoring_vm_host_property'
-            ]))->setRenderer(function ($row) {
-                if ($row->host_property === null) {
-                    return null;
-                } else {
-                    return sprintf(
-                        '%s -> %s',
-                        $row->monitoring_vm_host_property,
-                        $row->vm_property
-                    );
-                }
-            })
+            ]))
+                ->setRenderer(fn($row) => $row->host_property === null ? null : sprintf(
+                    '%s -> %s',
+                    $row->monitoring_vm_host_property,
+                    $row->vm_property
+                ))
         ]);
     }
 

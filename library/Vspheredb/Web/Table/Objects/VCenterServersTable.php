@@ -15,6 +15,7 @@ use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use ipl\Html\Attributes;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend_Db_Select;
 
@@ -70,39 +71,36 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
                 'scheme'   => 'vcs.scheme',
                 'enabled'  => 'vcs.enabled',
                 'vcenter'  => 'vc.name'
-            ]))->setRenderer(function ($row) {
-                $td = Html::tag('td', ['class' => 'column-server']);
-                $td->add(Link::create($this->makeUrl($row), 'vspheredb/vcenter/server', ['id' => $row->id]));
-                $td->add(Html::tag('br'));
-                $td->add($row->vcenter);
+            ]))
+                ->setRenderer(function ($row) {
+                    return Html::tag('td', ['class' => 'column-server'])
+                        ->addHtml(
+                            Link::create($this->makeUrl($row), 'vspheredb/vcenter/server', ['id' => $row->id]),
+                            Html::tag('br'),
+                            new Text($row->vcenter)
+                        );
+                })
+                ->setDefaultSortDirection('DESC'),
+            (new SimpleColumn('enabled', $this->translate('Status'), ['vcs.enabled', 'vcs.id']))
+                ->setRenderer(function ($row) {
+                    $form = $row->enabled === 'y'
+                        ? new DisableServerForm($row->id, $this->db())
+                        : new EnableServerForm($row->id, $this->db());
 
-                return $td;
-            })->setDefaultSortDirection('DESC'),
-            (new SimpleColumn('enabled', $this->translate('Status'), [
-                'vcs.enabled',
-                'vcs.id'
-            ]))->setRenderer(function ($row) {
-                if ($row->enabled === 'y') {
-                    $form = new DisableServerForm($row->id, $this->db());
-                } else {
-                    $form = new EnableServerForm($row->id, $this->db());
-                }
-                $form->addAttributes([
-                    'data-base-target' => '_self'
-                ]);
-                $form->on($form::ON_SUCCESS, function () {
-                    $this->emit(self::ON_FORM_ACTION);
-                });
-                $form->handleRequest($this->request);
-                $form->ensureAssembled();
-                $td = Html::tag('td', [
-                    'class' => 'column-enabled'
-                ], $form);
-                if ($this->serverConnections !== null) {
-                    $td->add([' ', $this->getConnectionStatusIcon($row->id, $row->enabled === 'y'), ' ']);
-                }
-                return $td;
-            })
+                    $form->addAttributes(Attributes::create(['data-base-target' => '_self']))
+                        ->on($form::ON_SUBMIT, function () {
+                            $this->emit(self::ON_FORM_ACTION);
+                        })
+                        ->handleRequest($this->request)
+                        ->ensureAssembled();
+
+                    $td = Html::tag('td', ['class' => 'column-enabled'], $form);
+                    if ($this->serverConnections !== null) {
+                        $td->add([' ', $this->getConnectionStatusIcon($row->id, $row->enabled === 'y'), ' ']);
+                    }
+
+                    return $td;
+                })
         ]);
     }
 
