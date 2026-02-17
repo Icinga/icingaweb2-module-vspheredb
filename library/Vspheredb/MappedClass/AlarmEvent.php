@@ -29,9 +29,11 @@ abstract class AlarmEvent extends KnownEvent
 
         // TODO: don't do so if it is old
         if (isset($this->to) && isset($this->entity)) {
-            $db->update('object', [
-                'overall_status' => $this->to
-            ], $db->quoteInto('uuid = ?', $vCenter->makeBinaryGlobalUuid($this->entity->entity->_)));
+            $db->update(
+                'object',
+                ['overall_status' => $this->to],
+                $db->quoteInto('uuid = ?', $vCenter->makeBinaryGlobalUuid($this->entity->entity->_))
+            );
         }
     }
 

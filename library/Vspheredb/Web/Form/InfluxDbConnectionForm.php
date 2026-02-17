@@ -81,7 +81,7 @@ class InfluxDbConnectionForm extends Form
 
     protected function validateCredentials(): void
     {
-        if (!$this->checkedNow) {
+        if (! $this->checkedNow) {
             return;
         }
         $username = $this->getValue('username');

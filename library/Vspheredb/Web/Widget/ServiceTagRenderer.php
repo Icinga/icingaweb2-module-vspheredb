@@ -14,7 +14,7 @@ class ServiceTagRenderer extends Html
 
     public function __invoke($host): HtmlElement|string|null
     {
-        if (! $host instanceof  HostSystem) {
+        if (! $host instanceof HostSystem) {
             $host = HostSystem::create([
                 'service_tag'    => $host->service_tag,
                 'sysinfo_vendor' => $host->sysinfo_vendor

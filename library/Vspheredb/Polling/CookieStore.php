@@ -39,7 +39,7 @@ class CookieStore
      */
     public function hasCookies(): bool
     {
-        return !empty($this->cookies);
+        return ! empty($this->cookies);
     }
 
     public function setCookies(array $cookies): void

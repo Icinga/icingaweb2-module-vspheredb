@@ -13,6 +13,8 @@ class FilterVCenterForm extends Form
 {
     use TranslationHelper;
 
+    protected $method = 'GET';
+
     /** @var Auth */
     protected Auth $auth;
 
@@ -33,7 +35,6 @@ class FilterVCenterForm extends Form
     public function __construct(Db $connection, Auth $auth)
     {
         $this->db = $connection->getDbAdapter();
-        $this->setMethod('GET');
         $this->auth = $auth;
         $this->connection = $connection;
     }

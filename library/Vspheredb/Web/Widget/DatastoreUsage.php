@@ -48,9 +48,9 @@ class DatastoreUsage extends BaseHtmlElement
 
     public function __construct(Datastore $datastore)
     {
-        $this->datastore   = $datastore;
-        $this->uuid        = $datastore->get('uuid');
-        $this->capacity    = (int) $datastore->get('capacity');
+        $this->datastore = $datastore;
+        $this->uuid = $datastore->get('uuid');
+        $this->capacity = (int) $datastore->get('capacity');
         $this->uncommitted = (int) $datastore->get('uncommitted');
         $this->db = $datastore->getDb();
     }

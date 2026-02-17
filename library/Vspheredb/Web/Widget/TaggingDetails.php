@@ -96,9 +96,10 @@ class TaggingDetails extends HtmlDocument
                 }
                 // Other example, for DistributedVirtualPortgroup: has "SYSTEM/DVS.UPLINKPG" for dvUplink Portgroup
             }
-            $table->addNameValueRow([
-                Html::tag('i', $this->translate('Internal'))
-            ], Html::tag('ul', Html::wrapEach($internal, 'li')));
+            $table->addNameValueRow(
+                [Html::tag('i', $this->translate('Internal'))],
+                Html::tag('ul', Html::wrapEach($internal, 'li'))
+            );
         }
     }
 
