@@ -39,8 +39,7 @@ class ResourceUsageLoader
 
     public function filterByParentUuid(string $uuid): static
     {
-        $lookup = new PathLookup($this->db);
-        $this->parentUuids = $lookup->listFoldersBelongingTo($uuid);
+        $this->parentUuids = (new PathLookup($this->db))->listFoldersBelongingTo($uuid);
 
         return $this;
     }

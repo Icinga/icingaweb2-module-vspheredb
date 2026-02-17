@@ -344,7 +344,7 @@ class DbRunner
         $this->logger->debug('Connecting to DB');
         try {
             $this->disconnect();
-        } catch (Exception $e) {
+        } catch (Exception) {
             // Ignore disconnection errors
         }
         $this->connection = new Db(new ConfigObject((array) $config));

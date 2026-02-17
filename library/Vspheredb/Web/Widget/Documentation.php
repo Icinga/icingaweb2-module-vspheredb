@@ -46,9 +46,7 @@ class Documentation
      */
     public static function link(string $label, string $module, string $chapter, ?string $title = null): Link|HtmlElement
     {
-        $doc = new static(Icinga::app(), Auth::getInstance());
-
-        return $doc->getModuleLink($label, $module, $chapter, $title);
+        return (new static(Icinga::app(), Auth::getInstance()))->getModuleLink($label, $module, $chapter, $title);
     }
 
     /**

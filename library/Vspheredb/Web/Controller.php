@@ -47,7 +47,7 @@ class Controller extends CompatController
                 if (! $migrations->hasSchema()) {
                     $this->redirectToConfiguration();
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $this->redirectToConfiguration();
             }
         }

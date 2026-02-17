@@ -19,7 +19,7 @@ class BiosInfo extends HtmlDocument
     {
         $host = $this->host;
         $version = $host->get('bios_version');
-        if ($releaseDate = $host->get('bios_release_date')) {
+        if ($host->get('bios_release_date')) {
             $releaseDate = date('Y-m-d', strtotime($host->get('bios_release_date')));
             $this->add(sprintf('%s (%s)', $version, $releaseDate));
         }

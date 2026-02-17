@@ -174,7 +174,7 @@ trait HostDetailExtensionTrait
                 try {
                     $object = $this->lookup->findOneBy($type, $filter);
                     assert($object instanceof HostSystem || $object instanceof VirtualMachine);
-                } catch (NotFoundError $_) {
+                } catch (NotFoundError) {
                     continue;
                 }
 

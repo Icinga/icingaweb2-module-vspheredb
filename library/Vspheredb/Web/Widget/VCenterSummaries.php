@@ -30,25 +30,17 @@ class VCenterSummaries extends BaseHtmlElement
     protected function selectObject(array|string $type, array $columns): Zend_Db_Select
     {
         $connection = $this->vCenter->getConnection();
-        $db = $connection->getDbAdapter();
-        $vCenterUuid = $this->vCenter->getUuid();
 
-        $query = $db->select()->from(['o' => 'object'], $columns);
-        if (is_array($type)) {
-            $query->where('object_type IN (?)', $type);
-        } else {
-            $query->where('object_type = ?', $type);
-        }
-        $query->where('vcenter_uuid = ?', $connection->quoteBinary($vCenterUuid));
-
-        return $query;
+        return $connection->getDbAdapter()->select()
+            ->from(['o' => 'object'], $columns)
+            ->where('object_type ' . (is_array($type) ? 'IN (?)' : '= ?'), $type)
+            ->where('vcenter_uuid = ?', $connection->quoteBinary($this->vCenter->getUuid()));
     }
 
     protected function assemble(): void
     {
         $connection = $this->vCenter->getConnection();
         $db = $connection->getDbAdapter();
-        $vCenterUuid = $this->vCenter->getUuid();
 
         $columns = [
             'total'  => 'COUNT(*)',

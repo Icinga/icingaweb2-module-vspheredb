@@ -66,7 +66,7 @@ class VmLocationInfoTable extends NameValueTable
                     ConnectionStateDetails::getFor($vm->get('connection_state')),
                 ];
                 $hostResources = $this->prepareHostInfo($host, $quickStats);
-            } catch (NotFoundError $e) {
+            } catch (NotFoundError) {
                 $hostResources = '-';
                 $hostInfo = Html::tag('span', ['class' => 'error'], $this->translate('Failed to load related host'));
             }

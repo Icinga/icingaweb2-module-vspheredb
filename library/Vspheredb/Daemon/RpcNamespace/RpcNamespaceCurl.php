@@ -22,11 +22,6 @@ class RpcNamespaceCurl
      */
     public function getPendingConnectionsRequest(): array
     {
-        $handles = [];
-        foreach ($this->curl->getPendingCurlHandles() as $idx => $curl) {
-            $handles[$idx] = curl_getinfo($curl);
-        }
-
-        return $handles;
+        return array_map(fn ($curl) => curl_getinfo($curl), $this->curl->getPendingCurlHandles());
     }
 }

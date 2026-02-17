@@ -78,13 +78,7 @@ abstract class DefaultCounterLookup implements CounterLookup
 
     protected static function explodeInstances($queryResult): array
     {
-        $result = [];
-
-        foreach ($queryResult as $key => $value) {
-            $result[$key] = explode(',', $value);
-        }
-
-        return $result;
+        return array_map(fn ($value) => explode(',', $value), $queryResult);
     }
 
     protected function getTagColumns(): array

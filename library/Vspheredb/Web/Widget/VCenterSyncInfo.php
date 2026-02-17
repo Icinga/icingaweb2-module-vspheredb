@@ -62,13 +62,11 @@ class VCenterSyncInfo extends BaseHtmlElement
 
     protected function getVersionInfoString(): string
     {
-        $c = $this->vCenter;
-
         return sprintf(
             '%s %s build-%s',
-            $c->get('api_type'),
-            $c->get('version'),
-            $c->get('build')
+            $this->vCenter->get('api_type'),
+            $this->vCenter->get('version'),
+            $this->vCenter->get('build')
         );
     }
 

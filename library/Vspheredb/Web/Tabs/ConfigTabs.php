@@ -28,7 +28,7 @@ class ConfigTabs extends Tabs
         } else {
             try {
                 $migrations = Db::migrationsForDb(Db::newConfiguredInstance());
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $migrations = null;
             }
         }
