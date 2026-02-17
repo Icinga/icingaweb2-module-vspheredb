@@ -65,7 +65,7 @@ class NetBackupRunDetails extends NameValueTable
             $vm = $lookup->findOneBy('VirtualMachine', ['guest_host_name' => $name]);
 
             return Link::create($name, 'vspheredb/vm', Util::uuidParams($vm->get('uuid')));
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             return $name;
         }
     }

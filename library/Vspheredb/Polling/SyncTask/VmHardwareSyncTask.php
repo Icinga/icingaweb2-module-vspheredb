@@ -52,7 +52,7 @@ class VmHardwareSyncTask extends SyncTask
             'thinProvisioned',
         ];
         // $unset = []; // used only when looking for new properties
-        foreach ($result as $key => $value) {
+        foreach ($result as $value) {
             if (isset($value['config.hardware']->device)) {
                 foreach ($value['config.hardware']->device as $device) {
                     foreach (array_keys((array) $device) as $k) {

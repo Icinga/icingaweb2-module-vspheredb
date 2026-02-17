@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
-use Icinga\Data\Db\DbConnection;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
@@ -53,10 +52,7 @@ class MonitoringConnection extends BaseDbObject
      */
     public function getIdoDb(): Zend_Db_Adapter_Abstract
     {
-        /** @var DbConnection $resource */
-        $resource = $this->getMonitoringBackend()->getResource();
-
-        return $resource->getDbAdapter();
+        return $this->getMonitoringBackend()->getResource()->getDbAdapter();
     }
 
     /**

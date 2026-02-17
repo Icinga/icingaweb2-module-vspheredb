@@ -29,7 +29,7 @@ class VmEventHistorySyncStore extends SyncStore
             $this->lastEventKey = $this->getLastEventKey();
             $this->lastEventTimestamp = $this->getLastEventTimeStamp();
             $stats->setFromApi(count($result));
-            foreach ($result as $key => $event) {
+            foreach ($result as $event) {
                 if (! isset($event->__class)) {
                     $this->logger->error(json_encode($event));
                     return;

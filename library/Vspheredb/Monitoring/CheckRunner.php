@@ -202,7 +202,7 @@ class CheckRunner
         $registry = $this->getRegistry();
         try {
             $settings = $this->getSettingsForObject($object, $registry, $type);
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             // Fake Set with just a global state
             $ruleSetResult = new CheckResultSet((new ObjectStateRuleSet())->getLabel());
             $ruleResult = new CheckResultSet((new VMwareObjectStateRuleDefinition())->getLabel());

@@ -33,7 +33,7 @@ class MainTabs extends Tabs
         } else {
             try {
                 $connection = Db::newConfiguredInstance();
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $connection = null;
             }
         }

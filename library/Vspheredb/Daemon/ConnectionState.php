@@ -101,8 +101,7 @@ class ConnectionState
     {
         $t = StaticTranslator::get();
         $state = $info->getState();
-        $label = $info->serverName;
-        $label = Anonymizer::anonymizeString($label);
+        $label = Anonymizer::anonymizeString($info->serverName);
         $lastError = $info->apiConnection ? $info->apiConnection->lastErrorMessage : null;
         if ($lastError) {
             $lastError = ": $lastError";

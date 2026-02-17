@@ -61,12 +61,7 @@ class VCenterShipMetricsForm extends ObjectForm
 
     protected function enumConsumers($consumers): array
     {
-        $result = [];
-        foreach ($consumers as $uuid => $consumer) {
-            $result[$uuid] = $consumer->get('name');
-        }
-
-        return $result;
+        return array_map(fn ($consumer) => $consumer->get('name'), $consumers);
     }
 
     public function assemble(): void

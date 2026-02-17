@@ -279,11 +279,7 @@ class EventHistoryTable extends ZfQueryBasedTable
             }
         }
 
-        $content = new DeferredText(function () use ($row) {
-            return $this->showMotionPath($row);
-        });
-
-        return $content->setEscaped();
+        return (new DeferredText(fn() => $this->showMotionPath($row)))->setEscaped();
     }
 
     /**
@@ -295,11 +291,7 @@ class EventHistoryTable extends ZfQueryBasedTable
     {
         $this->requiredUuids[$uuid ?? ''] = $uuid;
 
-        $content = new DeferredText(function () use ($uuid) {
-            return $this->getUuidName($uuid);
-        });
-
-        return $content->setEscaped();
+        return (new DeferredText(fn() => $this->getUuidName($uuid)))->setEscaped();
     }
 
     /**

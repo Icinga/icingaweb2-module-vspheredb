@@ -842,7 +842,6 @@ abstract class DbObject
         try {
             if ($this->hasBeenLoadedFromDb()) {
                 if ($this->updateDb() !== false) {
-                    $result = true;
                     $this->onUpdate();
                 } else {
                     throw new RuntimeException(sprintf('FAILED storing %s "%s"', $table, $this->getLogId()));
@@ -868,7 +867,6 @@ abstract class DbObject
                     }
                     // $this->log(sprintf('New %s "%s" has been stored', $table, $id));
                     $this->onInsert();
-                    $result = true;
                 } else {
                     throw new RuntimeException(sprintf('FAILED to store new %s "%s"', $table, $this->getLogId()));
                 }
@@ -889,7 +887,7 @@ abstract class DbObject
         $this->onStore();
         $this->loadedFromDb = true;
 
-        return $result;
+        return true;
     }
 
     /**

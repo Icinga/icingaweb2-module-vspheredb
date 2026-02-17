@@ -832,13 +832,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         global $argv;
         /** @var int $pid */
         $pid = $this->processInfo->pid;
-        $info = (object) [$pid => (object) [
+
+        return (object) [$pid => (object) [
             'command' => implode(' ', $argv),
             'running' => true,
             'memory'  => Memory::getUsageForPid($pid)
         ]];
-
-        return $info;
     }
 
     /**

@@ -266,8 +266,7 @@ abstract class BaseTable extends ZfQueryBasedTable
 
     protected function getDefaultSortColumns(): array|string
     {
-        $columns = $this->getChosenColumnNames();
-        return $columns[0];
+        return $this->getChosenColumnNames()[0];
     }
 
     /**

@@ -149,7 +149,7 @@ class AdditionalTableActions
 
     protected function moreOptions(array $links): HtmlElement
     {
-        $options = $this->ul([
+        return $this->ul([
             /*$this->li([
                 Link::create('Columns', '#', null, ['class' => 'icon-th-list']),
                 $this->linkList($this->toggleColumnsOptions())
@@ -159,8 +159,6 @@ class AdditionalTableActions
                 $this->linkList($links)
             ]),
         ], ['class' => 'nav']);
-
-        return $options;
     }
 
     protected function linkList(array $links): HtmlElement

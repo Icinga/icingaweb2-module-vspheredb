@@ -64,11 +64,10 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
         $cell[] = "\n";
         $cell[] = $output;
 
-        $tr = $this::row([Html::tag('pre', [
-            'class' => 'logOutput'
-        ], $cell), DateFormatter::formatTime($row->ts_changed_ms / 1000)]);
-
-        return $tr;
+        return $this::row([
+            Html::tag('pre', ['class' => 'logOutput'], $cell),
+            DateFormatter::formatTime($row->ts_changed_ms / 1000)
+        ]);
     }
 
     protected function linkToObject($row): Link

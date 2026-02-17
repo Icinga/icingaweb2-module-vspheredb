@@ -26,9 +26,7 @@ class Util
 
     public static function timeStringToUnixMs(string $string): int
     {
-        $time = new DateTime($string);
-
-        return (int) (1000 * $time->format('U.u'));
+        return (int) (1000 * (new DateTime($string))->format('U.u'));
     }
 
     /**
