@@ -122,25 +122,20 @@ class VmsTable extends ObjectsTable
 
             $this->createObjectNameColumn(),
 
-            $this->createColumn(
-                'guest_tools_status',
-                $this->translate('Guest Tools'),
-                'vm.guest_tools_status'
-            )->setRenderer($guestToolsStatusRenderer)->setSortExpression('vm.guest_tools_status'),
+            $this->createColumn('guest_tools_status', $this->translate('Guest Tools'), 'vm.guest_tools_status')
+                ->setRenderer($guestToolsStatusRenderer)
+                ->setSortExpression('vm.guest_tools_status'),
 
-            $this->createColumn(
-                'guest_tools_version',
-                $this->translate('Tools Version'),
-                'vm.guest_tools_version'
-            )
-            ->setRenderer($guestToolsVersionRenderer)
-            ->setSortExpression(
-                "CAST("
-                . "CASE WHEN guest_tools_version = '2147483647' THEN '1' ELSE guest_tools_version END"
-                . " AS SIGNED INTEGER)"
-            ),
+            $this->createColumn('guest_tools_version', $this->translate('Tools Version'), 'vm.guest_tools_version')
+                ->setRenderer($guestToolsVersionRenderer)
+                ->setSortExpression(
+                    "CAST("
+                    . "CASE WHEN guest_tools_version = '2147483647' THEN '1' ELSE guest_tools_version END"
+                    . " AS SIGNED INTEGER)"
+                ),
 
             $this->createColumn('host_name', $this->translate('Host'), 'h.host_name'),
+
             $this->createColumn('vcenter_name', $this->translate('vCenter / ESXi'), 'vc.name'),
 
             $this->createColumn('guest_ip_address', $this->translate('Guest IP'), 'vm.guest_ip_address'),
@@ -149,30 +144,25 @@ class VmsTable extends ObjectsTable
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('cpu_usage', $this->translate('CPU Usage'), 'vqs.overall_cpu_usage')
-                ->setRenderer(function ($row) {
-                    return Format::mhz($row->cpu_usage);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::mhz($row->cpu_usage))
+                ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('hardware_memorymb', $this->translate('Memory'), 'vm.hardware_memorymb')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->hardware_memorymb);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::mBytes($row->hardware_memorymb))
+                ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('guest_memory_usage_mb', $this->translate('Active Memory'), 'vqs.guest_memory_usage_mb')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->guest_memory_usage_mb);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::mBytes($row->guest_memory_usage_mb))
+                ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('host_memory_usage_mb', $this->translate('Host Memory'), 'vqs.host_memory_usage_mb')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->host_memory_usage_mb);
-                })->setSortExpression('vqs.host_memory_usage_mb')
+                ->setRenderer(fn($row) => Format::mBytes($row->host_memory_usage_mb))
+                ->setSortExpression('vqs.host_memory_usage_mb')
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('ballooned_memory_mb', $this->translate('Balloon'), 'vqs.ballooned_memory_mb')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->ballooned_memory_mb);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::mBytes($row->ballooned_memory_mb))
+                ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('memory_usage', $this->translate('Memory Usage'), $memoryColumns)
                 ->setRenderer($memoryRenderer)
@@ -180,29 +170,19 @@ class VmsTable extends ObjectsTable
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('disk_capacity', $this->translate('Disks'), 'vmd.disk_capacity')
-                ->setRenderer(function ($row) {
-                    return Format::bytes($row->disk_capacity ?: 0);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::bytes($row->disk_capacity ?: 0))
+                ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('datastore_capacity', $this->translate('Datastore'), 'vdu.datastore_capacity')
-                ->setRenderer(function ($row) {
-                    return Format::bytes($row->datastore_capacity ?: 0);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::bytes($row->datastore_capacity ?: 0))
+                ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('datastore_usage', $this->translate('DS Usage'), 'vdu.datastore_usage')
-                ->setRenderer(function ($row) {
-                    return Format::bytes($row->datastore_usage ?: 0);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::bytes($row->datastore_usage ?: 0))
+                ->setDefaultSortDirection('DESC'),
 
-            $this->createColumn('uptime', $this->translate('Uptime'), [
-                'uptime' => 'vqs.uptime'
-            ])->setRenderer(function ($row) {
-                if ($row->uptime === null) {
-                    return null;
-                }
-
-                return DateFormatter::formatDuration($row->uptime);
-            }),
+            $this->createColumn('uptime', $this->translate('Uptime'), ['uptime' => 'vqs.uptime'])
+                ->setRenderer(fn($row) => $row->uptime === null ? null : DateFormatter::formatDuration($row->uptime))
             /*
             TODO: Not yet
             $this->createColumn('ifTraffic', $this->translate('NIC Usage'), [
@@ -275,24 +255,23 @@ class VmsTable extends ObjectsTable
             'runtime_power_state' => 'vm.runtime_power_state',
             'template'            => 'vm.template',
             'uuid'                => 'o.uuid'
-        ])->setRenderer(function ($row) {
-            if (in_array('overall_status', $this->getChosenColumnNames())) {
-                $result = [];
-            } else {
-                $statusRenderer = $this->overallStatusRenderer();
-                $result = [$statusRenderer($row)];
-            }
-            $name = Anonymizer::anonymizeString($row->object_name);
-            if ($row->template === 'y') {
-                $name = [$name, Html::tag('i', ' (' . $this->translate('Template') . ')')];
-            }
-            if ($this->baseUrl === null) {
-                $result[] = $name;
-            } else {
-                $result[] = Link::create($name, $this->baseUrl, ['uuid' => Uuid::fromBytes($row->uuid)->toString()]);
-            }
+        ])
+            ->setRenderer(function ($row) {
+                if (in_array('overall_status', $this->getChosenColumnNames())) {
+                    $result = [];
+                } else {
+                    $statusRenderer = $this->overallStatusRenderer();
+                    $result = [$statusRenderer($row)];
+                }
+                $name = Anonymizer::anonymizeString($row->object_name);
+                if ($row->template === 'y') {
+                    $name = [$name, Html::tag('i', ' (' . $this->translate('Template') . ')')];
+                }
+                $result[] = $this->baseUrl === null
+                    ? $name
+                    : Link::create($name, $this->baseUrl, ['uuid' => Uuid::fromBytes($row->uuid)->toString()]);
 
-            return $result;
-        });
+                return $result;
+            });
     }
 }

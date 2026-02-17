@@ -34,26 +34,12 @@ class PerformanceCounterTable extends BaseTable
     protected function initialize(): void
     {
         $this->addAvailableColumns([
-            $this->createColumn('key', $this->translate('Key'), [
-                'group_name',
-                'name'
-            ])->setRenderer(function ($row) {
-                return sprintf(
-                    '%s.%s',
-                    $row->group_name,
-                    $row->name
-                );
-            }),
-            $this->createColumn('name', $this->translate('Name'), [
-                'group_name',
-                'name'
-            ])->setRenderer(function ($row) {
-                return sprintf(
-                    '%s.%s',
-                    $row->label,
-                    $row->summary
-                );
-            }),
+            $this->createColumn('key', $this->translate('Key'), ['group_name', 'name'])
+                ->setRenderer(fn($row) => sprintf('%s.%s', $row->group_name, $row->name)),
+
+            $this->createColumn('name', $this->translate('Name'), ['group_name', 'name'])
+                ->setRenderer(fn($row) => sprintf('%s.%s', $row->label, $row->summary)),
+
             $this->createColumn('unit_name', $this->translate('Unit')),
             $this->createColumn('stats_type', $this->translate('Stats')),
             $this->createColumn('rollup_type', $this->translate('Rollup')),
