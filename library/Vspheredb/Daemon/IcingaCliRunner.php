@@ -39,13 +39,14 @@ class IcingaCliRunner
     }
 
     /**
-     * @param mixed array|...$arguments
+     * @param mixed $arguments array|...string
+     *
      * @return Process
      */
-    public function command($arguments = null)
+    public function command(...$arguments): Process
     {
-        if (! is_array($arguments)) {
-            $arguments = func_get_args();
+        if (count($arguments) === 1 && is_array($arguments[0])) {
+            $arguments = $arguments[0];
         }
 
         return new Process(
