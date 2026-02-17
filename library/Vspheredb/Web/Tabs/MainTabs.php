@@ -44,8 +44,8 @@ class MainTabs extends Tabs
 
             if ($migrations->hasSchema()) {
                 $this->add('vcenters', [
-                    'label'     => $this->translate('vCenters'),
-                    'url'       => 'vspheredb/vcenters'
+                    'label' => $this->translate('vCenters'),
+                    'url'   => 'vspheredb/vcenters'
                 ]);
             }
         } else {
@@ -55,7 +55,7 @@ class MainTabs extends Tabs
         if ($isAdmin && $migrations && $migrations->hasSchema()) {
             $this->add('daemon', [
                 'label' => $this->translate('Daemon'),
-                'url' => 'vspheredb/daemon'
+                'url'   => 'vspheredb/daemon'
             ]);
         }
     }

@@ -186,7 +186,7 @@ abstract class HostSummaryTable extends ObjectsTable
     protected function getHostCountColumns(): array
     {
         return [
-            'hosts_cnt' => 'COUNT(*)',
+            'hosts_cnt'                => 'COUNT(*)',
             'hosts_cnt_overall_gray'   => "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
             'hosts_cnt_overall_green'  => "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
             'hosts_cnt_overall_yellow' => "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",

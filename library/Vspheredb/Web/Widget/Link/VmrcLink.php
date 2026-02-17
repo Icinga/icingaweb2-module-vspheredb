@@ -39,8 +39,8 @@ class VmrcLink extends HtmlDocument
             $this->add(Html::tag('a', [
                 'href'   => sprintf('vmrc://%s/?moid=%s', $server->get('host'), rawurlencode($this->moRef)),
                 'target' => '_self',
-                'title' => $this->translate('Open VMware Remote Console (VMRC)'),
-                'class' => 'icon-host'
+                'title'  => $this->translate('Open VMware Remote Console (VMRC)'),
+                'class'  => 'icon-host'
             ], $this->label));
         } catch (NotFoundError) {
             $this->add([

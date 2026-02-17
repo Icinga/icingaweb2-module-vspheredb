@@ -185,21 +185,21 @@ class InfluxDbConnectionForm extends Form
     {
         $this->addElement('text', 'username', ['label' => $this->translate('Username')]);
         $this->addElement('password', 'password', [
-            'label'       => $this->translate('Password'),
-            'required'    => $this->hasElementValue('username')
+            'label'    => $this->translate('Password'),
+            'required' => $this->hasElementValue('username')
         ]);
     }
 
     protected function addV2Credentials(): void
     {
         $this->addElement('text', 'username', [
-            'label'       => $this->translate('Organisation'),
-            'required'    => true
+            'label'    => $this->translate('Organisation'),
+            'required' => true
         ]);
         $this->addElement('text', 'password', [
-            'label'       => $this->translate('Token'),
+            'label'    => $this->translate('Token'),
             // 'description' => $this->translate('InfluxDB Token (InfluxDB -> Data -> Tokens'),
-            'required'    => true
+            'required' => true
         ]);
     }
 
@@ -230,10 +230,10 @@ class InfluxDbConnectionForm extends Form
     protected function tryCredentials(string $baseUrl, string $apiVersion, string $username, string $password): mixed
     {
         return $this->remoteRequest('influxdb.testConnection', [
-            'baseUrl'  => $baseUrl,
+            'baseUrl'    => $baseUrl,
             'apiVersion' => $apiVersion,
-            'username' => $username,
-            'password' => $password
+            'username'   => $username,
+            'password'   => $password
         ]);
     }
 

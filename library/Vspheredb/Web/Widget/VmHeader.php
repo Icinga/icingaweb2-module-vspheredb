@@ -46,7 +46,7 @@ class VmHeader extends BaseHtmlElement
         if ($vm->get('template') === 'y') {
             $cpu = Html::tag('div', ['class' => 'vm-template'], Icon::create('upload', [
                 'title' => $this->translate('This is a template'),
-                'class' => [ 'state' ]
+                'class' => ['state']
             ]));
 
             $mem = $this->translate('This is a template');

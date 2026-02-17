@@ -90,14 +90,14 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
     {
         return $this->db()->select()
             ->from(['p' => 'monitoring_rule_problem'], [
-                'vcenter_uuid' => 'vc.instance_uuid',
-                'vcenter_name' => 'vc.name',
+                'vcenter_uuid'     => 'vc.instance_uuid',
+                'vcenter_name'     => 'vc.name',
                 // 'object_type' => 'o.object_type',
                 // 'rule_name' => 'p.rule_name',
                 'object_rule_name' => "o.object_type || '/' || p.rule_name",
-                'cnt_critical' => "SUM(CASE WHEN p.current_state = 'CRITICAL' THEN 1 ELSE 0 END)",
-                'cnt_unknown' => "SUM(CASE WHEN p.current_state = 'UNKNOWN' THEN 1 ELSE 0 END)",
-                'cnt_warning' => "SUM(CASE WHEN p.current_state = 'WARNING' THEN 1 ELSE 0 END)"
+                'cnt_critical'     => "SUM(CASE WHEN p.current_state = 'CRITICAL' THEN 1 ELSE 0 END)",
+                'cnt_unknown'      => "SUM(CASE WHEN p.current_state = 'UNKNOWN' THEN 1 ELSE 0 END)",
+                'cnt_warning'      => "SUM(CASE WHEN p.current_state = 'WARNING' THEN 1 ELSE 0 END)"
             ])
             ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
             ->join(['vc' => 'vcenter'], 'o.vcenter_uuid = vc.instance_uuid', [])

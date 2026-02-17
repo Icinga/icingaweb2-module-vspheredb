@@ -26,7 +26,7 @@ class OverallStatusRenderer extends Html
         if ($powerState === null || $powerState === 'poweredOn') {
             return Icon::create($state === 'green' ? 'ok' : 'warning-empty', [
                 'title' => $this->getStatusDescription($state),
-                'class' => [ 'state', $state ]
+                'class' => ['state', $state]
             ]);
         }
 
