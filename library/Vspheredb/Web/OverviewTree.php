@@ -137,12 +137,11 @@ class OverviewTree extends BaseHtmlElement
         $hasChildren = ! empty($tree->children);
         $type = $tree->object_type;
         $li = Html::tag('li');
-        if (! $hasChildren) {
-            $li->getAttributes()->add('class', 'collapsed');
-        }
 
         if ($hasChildren) {
             $li->add(Html::tag('span', ['class' => 'handle']));
+        } else {
+            $li->getAttributes()->add('class', 'collapsed');
         }
 
         if ($level === 0) {

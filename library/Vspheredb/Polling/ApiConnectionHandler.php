@@ -184,10 +184,9 @@ class ApiConnectionHandler implements EventEmitterInterface
                 });
         });
         $apiConnection->on(ApiConnection::ON_ERROR, function (ApiConnection $connection) use ($server, $deferred) {
+            $message = 'Initialization failed';
             if ($error = $connection->getLastErrorMessage()) {
-                $message = "Initialization failed: $error";
-            } else {
-                $message = 'Initialization failed';
+                $message .= ": $error";
             }
             $deferred->reject(new Exception($message));
             $this->setFailed($server, $message);

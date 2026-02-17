@@ -135,15 +135,14 @@ class DatastoreUsage extends BaseHtmlElement
         if ($this->capacity === 0) {
             return $this;
         }
-        $title = sprintf('Free space');
+        $title = 'Free space';
         $free = $this->datastore->get('free_space');
         if ($this->uncommitted < $free) {
             $class = 'free';
         } elseif ($this->uncommitted > 2 * $this->capacity) {
-            $title = sprintf('Committed space');
+            $title = 'Committed space';
             $class = 'free overcommitted-twice';
         } else {
-            $title = sprintf('Free space');
             $class = 'free overcommitted';
         }
 
@@ -200,9 +199,8 @@ class DatastoreUsage extends BaseHtmlElement
             $style->addFor($link, ['background-color' => $color]);
             $this->diskLinks[$vmUuid] = $link;
         }
-        $this->add([$link, $style]);
 
-        return $this;
+        return $this->add([$link, $style]);
     }
 
     protected function makeDisk(object $dbRow): ?object

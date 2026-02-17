@@ -464,12 +464,8 @@ abstract class DbObject
     {
         $props = [];
         foreach (array_keys($this->modifiedProperties) as $key) {
-            if ($key === $this->autoincKeyName) {
-                if ($this->protectAutoinc) {
-                    continue;
-                } elseif ($this->properties[$key] === null) {
-                    continue;
-                }
+            if ($key === $this->autoincKeyName && ($this->protectAutoinc || $this->properties[$key] === null)) {
+                continue;
             }
 
             $props[$key] = $this->properties[$key];
@@ -1208,7 +1204,6 @@ abstract class DbObject
         $rows = $db->fetchAll($select);
 
         foreach ($rows as $row) {
-            /** @var DbObject $obj */
             $obj = new static();
             $obj->setConnection($connection)->setDbProperties($row);
             if ($keyColumn === null) {
