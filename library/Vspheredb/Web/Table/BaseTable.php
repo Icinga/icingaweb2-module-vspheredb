@@ -122,7 +122,7 @@ abstract class BaseTable extends ZfQueryBasedTable
     protected function renderTitleColumns(): ?HtmlElement
     {
         $columns = $this->getColumnsToBeRendered();
-        if (isset($columns) && count($columns)) {
+        if (count($columns)) {
             if ($this->baseUrl) {
                 $tr = $this::tr()->setAttributes(['data-base-target' => '_self']);
                 $this->addSortHeadersTo($tr);

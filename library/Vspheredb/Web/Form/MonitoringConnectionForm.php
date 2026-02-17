@@ -190,10 +190,8 @@ class MonitoringConnectionForm extends Form
 
     public function getId(): ?int
     {
-        if ($this->id === null) {
-            if ($id = QueryParams::fromRequest($this->getRequest())->get('id')) {
-                $this->id = (int) $id;
-            }
+        if ($this->id === null && $id = QueryParams::fromRequest($this->getRequest())->get('id')) {
+            $this->id = (int) $id;
         }
 
         return $this->id;

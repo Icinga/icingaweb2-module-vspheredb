@@ -114,7 +114,6 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     public static function createConsumerInstance(PerfdataConsumer $consumer, LoopInterface $loop): static
     {
         $class = static::getClass($consumer->get('implementation'));
-        /** @var PerfDataConsumerHook $instance */
 
         return $class::initialize($loop, $consumer->settings());
     }
