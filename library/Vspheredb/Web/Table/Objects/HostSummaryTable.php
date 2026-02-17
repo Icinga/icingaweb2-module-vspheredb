@@ -85,88 +85,91 @@ abstract class HostSummaryTable extends ObjectsTable
     {
         $this->addAvailableColumns([
             $this->createGroupingColumn(),
-            $this->createColumn('cnt_hosts', $this->translate('Hosts'), 'COUNT(*)')
-                ->setRenderer(function ($row) {
-                    return Html::tag('td', ['class' => 'text-right'], $row->cnt_hosts);
-                })
-                ->setDefaultSortDirection('DESC'),
-            $this->createColumn(
-                'hosts_status',
-                $this->translate('Hosts Status'),
-                $this->getHostCountColumns()
-            )->setRenderer(function ($row) {
-                $result = [];
-                $uuid = Uuid::fromBytes($row->uuid)->toString();
-                foreach (['green', 'gray', 'yellow', 'red'] as $state) {
-                    $column = "hosts_cnt_overall_$state";
-                    if ($row->$column > 0) {
-                        $result[] = Link::create($row->$column, $this->baseUrlHosts, [
-                            'vcenter'        => $uuid,
-                            'overall_status' => $state
-                        ], ['class' => ['state', $state]]);
-                    }
-                }
 
-                if (empty($result)) {
-                    return '-';
-                } else {
+            $this->createColumn('cnt_hosts', $this->translate('Hosts'), 'COUNT(*)')
+                ->setRenderer(fn($row) => Html::tag('td', ['class' => 'text-right'], $row->cnt_hosts))
+                ->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('hosts_status', $this->translate('Hosts Status'), $this->getHostCountColumns())
+                ->setRenderer(function ($row) {
+                    $result = [];
+                    $uuid = Uuid::fromBytes($row->uuid)->toString();
+                    foreach (['green', 'gray', 'yellow', 'red'] as $state) {
+                        $column = "hosts_cnt_overall_$state";
+                        if ($row->$column > 0) {
+                            $result[] = Link::create($row->$column, $this->baseUrlHosts, [
+                                'vcenter'        => $uuid,
+                                'overall_status' => $state
+                            ], ['class' => ['state', $state]]);
+                        }
+                    }
+
+                    if (empty($result)) {
+                        return '-';
+                    }
+
                     return $result;
-                }
-            })->setSortExpression([
-                "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
-                "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
-                "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
-                "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)"
-            ])->setDefaultSortDirection('DESC'),
+                })
+                ->setSortExpression([
+                    "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
+                    "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
+                    "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
+                    "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)"
+                ])
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('cpu', $this->translate('CPU'), [
                 'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
                 'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
-            ])->setRenderer(function ($row) {
-                $bar = new CpuUsage($row->used_mhz, $row->total_mhz);
-                if ($this->hasChosenColumn('overall_cpu_usage') || $this->hasChosenColumn('hardware_cpu_mhz')) {
-                    $bar->showLabels(false);
-                }
-                return $bar;
-            })->setSortExpression(
-                'SUM(hqs.overall_cpu_usage) / SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
-            )->setDefaultSortDirection('DESC'),
-            $this->createColumn('overall_cpu_usage', $this->translate('Used'), 'SUM(hqs.overall_cpu_usage)')
+            ])
                 ->setRenderer(function ($row) {
-                    return Format::mhz($row->overall_cpu_usage);
-                })->setDefaultSortDirection('DESC'),
+                    $bar = new CpuUsage($row->used_mhz, $row->total_mhz);
+                    if ($this->hasChosenColumn('overall_cpu_usage') || $this->hasChosenColumn('hardware_cpu_mhz')) {
+                        $bar->showLabels(false);
+                    }
+
+                    return $bar;
+                })
+                ->setSortExpression('SUM(hqs.overall_cpu_usage) / SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)')
+                ->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('overall_cpu_usage', $this->translate('Used'), 'SUM(hqs.overall_cpu_usage)')
+                ->setRenderer(fn($row) => Format::mhz($row->overall_cpu_usage))
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn(
                 'hardware_cpu_mhz',
                 $this->translate('Capacity'),
                 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
-            )->setRenderer(function ($row) {
-                return Format::mhz($row->hardware_cpu_mhz);
-            })->setDefaultSortDirection('DESC'),
+            )
+                ->setRenderer(fn($row) => Format::mhz($row->hardware_cpu_mhz))
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('hardware_cpu_cores', $this->translate('Cores'), 'SUM(h.hardware_cpu_cores)')
-                ->setRenderer(function ($row) {
-                    return Html::tag('td', ['class' => 'text-right'], $row->hardware_cpu_cores);
-                })
+                ->setRenderer(fn($row) => Html::tag('td', ['class' => 'text-right'], $row->hardware_cpu_cores))
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('memory', $this->translate('Memory'), [
                 'used_mb'  => 'SUM(hqs.overall_memory_usage_mb)',
                 'total_mb' => 'SUM(h.hardware_memory_size_mb)'
-            ])->setRenderer(function ($row) {
-                $bar = new MemoryUsage($row->used_mb, $row->total_mb);
-                if ($this->hasChosenColumn('overall_memory_usage') || $this->hasChosenColumn('hardware_memorymb')) {
-                    $bar->showLabels(false);
-                }
-                return $bar;
-            })->setSortExpression(
-                'AVG(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)'
-            )->setDefaultSortDirection('DESC'),
+            ])
+                ->setRenderer(function ($row) {
+                    $bar = new MemoryUsage($row->used_mb, $row->total_mb);
+                    if ($this->hasChosenColumn('overall_memory_usage') || $this->hasChosenColumn('hardware_memorymb')) {
+                        $bar->showLabels(false);
+                    }
+                    return $bar;
+                })
+                ->setSortExpression('AVG(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)')
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('overall_memory_usage', $this->translate('Used'), 'SUM(hqs.overall_memory_usage_mb)')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->overall_memory_usage);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::mBytes($row->overall_memory_usage))
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('hardware_memorymb', $this->translate('Capacity'), 'SUM(h.hardware_memory_size_mb)')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->hardware_memorymb);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::mBytes($row->hardware_memorymb))
+                ->setDefaultSortDirection('DESC')
 
             /*
              // Not yet, this was an early prototype based no monitoring vars

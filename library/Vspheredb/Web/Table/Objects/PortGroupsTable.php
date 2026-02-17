@@ -43,29 +43,30 @@ class PortGroupsTable extends ObjectsTable
             $this->createColumn('vlan', $this->translate('VLAN'), [
                 'vdp.vlan',
                 'vdp.vlan_ranges'
-            ])->setRenderer(function ($row) {
-                if ($row->vlan === null) {
+            ])
+                ->setRenderer(function ($row) {
+                    if ($row->vlan !== null) {
+                        return $row->vlan;
+                    }
+
                     if ($row->vlan_ranges === null) {
                         return '-';
-                    } else {
-                        $ranges = [];
-                        foreach (JsonString::decode($row->vlan_ranges) as $range) {
-                            if (! empty($ranges)) {
-                                $ranges[] = Html::tag('br');
-                            }
-                            $ranges[] = sprintf(
-                                '%s - %s',
-                                $range->start,
-                                $range->end
-                            );
-                        }
-
-                        return $ranges;
                     }
-                } else {
-                    return $row->vlan;
-                }
-            }),
+
+                    $ranges = [];
+                    foreach (JsonString::decode($row->vlan_ranges) as $range) {
+                        if (! empty($ranges)) {
+                            $ranges[] = Html::tag('br');
+                        }
+                        $ranges[] = sprintf(
+                            '%s - %s',
+                            $range->start,
+                            $range->end
+                        );
+                    }
+
+                    return $ranges;
+                }),
             $this->createColumn('num_ports', $this->translate('Ports'), 'vdp.num_ports')
         ]);
     }
