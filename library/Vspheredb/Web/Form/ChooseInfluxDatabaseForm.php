@@ -73,9 +73,7 @@ class ChooseInfluxDatabaseForm extends Form
         try {
             $this->dbList = array_filter(
                 (array) $this->remoteRequest('influxdb.listDatabases', $this->prepareParams()),
-                function ($value) {
-                    return $value[0] !== '_';
-                }
+                fn ($value) => $value[0] !== '_'
             );
         } catch (Exception) {
             // Hint: we no longer refresh if it's false

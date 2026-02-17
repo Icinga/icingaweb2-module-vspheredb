@@ -7,10 +7,10 @@ use gipfl\IcingaWeb2\Icon;
 use gipfl\Json\JsonString;
 use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Vspheredb\Web\Form\LogLevelForm;
-use Icinga\Module\Vspheredb\Web\Form\RestartDaemonForm;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Form\LogLevelForm;
+use Icinga\Module\Vspheredb\Web\Form\RestartDaemonForm;
 use Icinga\Module\Vspheredb\Web\Table\VsphereApiConnectionTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\WebUtil;
@@ -230,13 +230,14 @@ class DaemonController extends Controller
     protected function prepareVsphereConnectionTable(): Hint|VsphereApiConnectionTable
     {
         try {
-            $table = new VsphereApiConnectionTable(array_map(function ($row) {
-                return [
+            $table = new VsphereApiConnectionTable(array_map(
+                fn($row) => [
                     'vCenterId' => $row->vCenterId,
                     'server'    => $row->server,
-                    'state'     =>  $row->state . (isset($row->lastErrorMessage) ? ': ' . $row->lastErrorMessage : ''),
-                ];
-            }, $this->syncRpcCall('vsphere.getApiConnections')));
+                    'state'     => $row->state . (isset($row->lastErrorMessage) ? ': ' . $row->lastErrorMessage : ''),
+                ],
+                $this->syncRpcCall('vsphere.getApiConnections')
+            ));
             if ($table->count() === 0) {
                 return Hint::info($this->translate('The vSphereDB Daemon is currently not polling any vCenter'));
             }
