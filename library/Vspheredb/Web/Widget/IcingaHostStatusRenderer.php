@@ -18,7 +18,7 @@ class IcingaHostStatusRenderer extends Html
 
         return Icon::create('eye', [
             'title' => $this->getStatusDescription($state),
-            'class' => [ 'state', $state ]
+            'class' => ['state', $state]
         ]);
     }
 

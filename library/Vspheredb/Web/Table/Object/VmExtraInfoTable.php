@@ -37,7 +37,7 @@ class VmExtraInfoTable extends NameValueTable
         $this->addNameValuePairs([
             $this->translate('UUID') => Html::tag('pre', $this->vm->get('bios_uuid')),
             $this->translate('Instance UUID') => Html::tag('pre', $this->vm->get('instance_uuid')),
-            $this->translate('CPUs')   => $this->vm->get('hardware_numcpu'),
+            $this->translate('CPUs') => $this->vm->get('hardware_numcpu'),
             $this->translate('Version') => $this->vm->get('version')
         ]);
     }

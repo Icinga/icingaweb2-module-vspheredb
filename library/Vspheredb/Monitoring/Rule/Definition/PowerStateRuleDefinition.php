@@ -71,8 +71,8 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
 
             foreach (
                 [
-                'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING,
-                'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL
+                    'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING,
+                    'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL
                 ] as $setting => $errorState
             ) {
                 $min = $settings->get($setting);
@@ -87,8 +87,8 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
             }
             foreach (
                 [
-                 'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING,
-                 'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL
+                    'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING,
+                    'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL
                 ] as $setting => $errorState
             ) {
                 $min = $settings->get($setting);
@@ -153,9 +153,9 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
     public function getInternalDefaults(): array
     {
         return [
-            'trigger_on_poweredOff' => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_suspended'  => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_unknown'    => MonitoringStateTrigger::RAISE_UNKNOWN,
+            'trigger_on_poweredOff'        => MonitoringStateTrigger::RAISE_CRITICAL,
+            'trigger_on_suspended'         => MonitoringStateTrigger::RAISE_CRITICAL,
+            'trigger_on_unknown'           => MonitoringStateTrigger::RAISE_UNKNOWN,
             'warning_for_uptime_less_than' => 900
         ];
     }

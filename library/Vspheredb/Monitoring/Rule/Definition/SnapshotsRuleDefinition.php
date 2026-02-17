@@ -25,9 +25,9 @@ class SnapshotsRuleDefinition extends MonitoringRuleDefinition
     public function getInternalDefaults(): array
     {
         return [
-            'warning_if_more_than'  => 1,
-            'critical_if_more_than' => 5,
-            'warning_if_older_than' => 7, // Days
+            'warning_if_more_than'   => 1,
+            'critical_if_more_than'  => 5,
+            'warning_if_older_than'  => 7, // Days
             'critical_if_older_than' => 30
         ];
     }

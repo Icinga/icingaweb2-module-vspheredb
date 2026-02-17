@@ -206,15 +206,15 @@ class DatastoreUsage extends BaseHtmlElement
         }
 
         $share = (object) [
-            'vm_uuid' => $dbRow->uuid,
-            'name'  => $dbRow->object_name,
-            'size'  => $size,
-            'used'  => $dbRow->committed,
+            'vm_uuid'             => $dbRow->uuid,
+            'name'                => $dbRow->object_name,
+            'size'                => $size,
+            'used'                => $dbRow->committed,
             'used_percent'        => ($dbRow->committed / $size) * 100,
             'datastore_percent'   => ($dbRow->committed / $this->capacity) * 100,
             'uncommitted'         => $dbRow->uncommitted,
             'uncommitted_percent' => $this->uncommitted > 0 ? ($dbRow->uncommitted / $this->uncommitted) * 100 : 0,
-            'extra-class' => null
+            'extra-class'         => null
         ];
         $share->title = sprintf(
             '%s (%.2f%% of %s) used by %s',

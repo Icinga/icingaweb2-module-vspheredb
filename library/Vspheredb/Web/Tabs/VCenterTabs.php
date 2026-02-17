@@ -25,16 +25,16 @@ class VCenterTabs extends Tabs
     {
         $hexUuid = Uuid::fromBytes($this->vCenter->getUuid())->toString();
         $this->add('vcenter', [
-            'label' => $this->translate('vCenter'),
-            'url'   => 'vspheredb/vcenter',
+            'label'     => $this->translate('vCenter'),
+            'url'       => 'vspheredb/vcenter',
             'urlParams' => ['vcenter' => $hexUuid]
         ])->add('clusters', [
-            'label' => $this->translate('Clusters'),
-            'url'   => 'vspheredb/resources/clusters',
+            'label'     => $this->translate('Clusters'),
+            'url'       => 'vspheredb/resources/clusters',
             'urlParams' => ['vcenter' => $hexUuid]
         ])->add('perfcounters', [
-            'label' => $this->translate('Counters'),
-            'url'   => 'vspheredb/perfdata/counters',
+            'label'     => $this->translate('Counters'),
+            'url'       => 'vspheredb/perfdata/counters',
             'urlParams' => ['vcenter' => $hexUuid]
         ]);
     }
