@@ -75,28 +75,22 @@ class VmsWithDuplicateProperty extends ZfQueryBasedTable
 
         $property = $this->property;
         $this->searchColumns[] = $property;
-        $duplicateQuery = $db->select()->from('virtual_machine', $property)
+        $duplicateQuery = $db->select()
+            ->from('virtual_machine', $property)
             ->where("$property IS NOT NULL")
             ->group($property)
             ->having('(COUNT(*) > 1)');
 
-        return $db->select()->from(
-            ['vm' => 'virtual_machine'],
-            [
+        return $db->select()
+            ->from(['vm' => 'virtual_machine'], [
                 'o.uuid',
                 'vm.guest_host_name',
                 "vm.$property",
                 'vm.runtime_power_state',
                 'o.overall_status'
-            ]
-        )->join(
-            ['o' => 'object'],
-            'o.uuid = vm.uuid',
-            ['o.object_name']
-        )->join(
-            ['dup' => $duplicateQuery],
-            "vm.$property = dup.$property",
-            []
-        )->order($property)->order('object_name');
+            ])
+            ->join(['o' => 'object'], 'o.uuid = vm.uuid', ['o.object_name'])
+            ->join(['dup' => $duplicateQuery], "vm.$property = dup.$property", [])
+            ->order($property)->order('object_name');
     }
 }

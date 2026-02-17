@@ -34,10 +34,11 @@ class VMotionHeatmap
 
     public function filterParent(string $uuid): static
     {
-        $this->getQuery()->join(['h' => 'object'], $this->db->quoteInto(
-            'h.uuid = veh.host_uuid AND h.parent_uuid = ?',
-            $uuid
-        ), []);
+        $this->getQuery()->join(
+            ['h' => 'object'],
+            $this->db->quoteInto('h.uuid = veh.host_uuid AND h.parent_uuid = ?', $uuid),
+            []
+        );
 
         return $this;
     }
@@ -45,11 +46,14 @@ class VMotionHeatmap
     protected function prepareQuery(): ZfSelect
     {
         $maxDays = 400;
-        $query = $this->db->select()->from(['veh' => 'vm_event_history'], [
-            // TODO: / 86400 + offset
-            'day' => 'DATE(FROM_UNIXTIME(veh.ts_event_ms / 1000))',
-            'cnt' => 'COUNT(*)'
-        ])->where('veh.ts_event_ms > ?', time() * 1000 - 86400 * $maxDays * 1000)->group('day');
+        $query = $this->db->select()
+            ->from(['veh' => 'vm_event_history'], [
+                // TODO: / 86400 + offset
+                'day' => 'DATE(FROM_UNIXTIME(veh.ts_event_ms / 1000))',
+                'cnt' => 'COUNT(*)'
+            ])
+            ->where('veh.ts_event_ms > ?', time() * 1000 - 86400 * $maxDays * 1000)
+            ->group('day');
 
         if ($this->eventType !== null && $this->eventType !== '') {
             $query->where('veh.event_type = ?', $this->eventType);

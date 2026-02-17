@@ -152,15 +152,10 @@ class DatastoreTable extends ObjectsTable
         }
 
         if ($this->hasColumn('cnt_vms')) {
-            $vduQuery = $this->db()->select()->from('vm_datastore_usage', [
-                'cnt_vms' => 'COUNT(*)',
-                'ds_uuid' => 'datastore_uuid'
-            ])->group('datastore_uuid');
-            $query->joinLeft(
-                ['vdu' => $vduQuery],
-                'vdu.ds_uuid = o.uuid',
-                []
-            );
+            $vduQuery = $this->db()->select()
+                ->from('vm_datastore_usage', ['cnt_vms' => 'COUNT(*)', 'ds_uuid' => 'datastore_uuid'])
+                ->group('datastore_uuid');
+            $query->joinLeft(['vdu' => $vduQuery], 'vdu.ds_uuid = o.uuid', []);
         }
         if ($wantsVCenter) {
             $query->join(['vc' => 'vcenter'], 'vc.instance_uuid = ds.vcenter_uuid', []);

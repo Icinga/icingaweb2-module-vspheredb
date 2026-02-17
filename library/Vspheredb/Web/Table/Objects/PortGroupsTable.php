@@ -17,14 +17,9 @@ class PortGroupsTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['vdp' => 'distributed_virtual_portgroup'],
-            'o.uuid = vdp.uuid',
-            []
-        );
+        $query = $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['vdp' => 'distributed_virtual_portgroup'], 'o.uuid = vdp.uuid', []);
 
         if ($this->switch) {
             $query->where('distributed_virtual_switch_uuid = ?', $this->switch->get('uuid'));

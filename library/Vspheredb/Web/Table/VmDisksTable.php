@@ -104,20 +104,22 @@ class VmDisksTable extends ZfQueryBasedTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $uuid = $this->vm->get('uuid');
-        $query = $this->db()->select()->from(['vmd' => 'vm_disk'], [
-            'controller_label'    => 'vmhc.label',
-            'hardware_label'      => 'vmhw.label',
-            'hardware_key'        => 'vmhw.hardware_key',
-            'hardware_bus_number' => 'vmhc.bus_number',
-            'hardware_unit_nmber' => 'vmhw.unit_number',
-            'capacity'            => 'vmd.capacity'
-        ])
-        ->join(['vmhw' => 'vm_hardware'], 'vmd.vm_uuid = vmhw.vm_uuid AND vmd.hardware_key = vmhw.hardware_key', [])
-        ->join(['vmhc' => 'vm_hardware'], 'vmhw.vm_uuid = vmhc.vm_uuid AND vmhw.controller_key = vmhc.hardware_key', [])
-        ->where('vmd.vm_uuid = ?', $uuid)
-        ->order('hardware_label');
-
-        return $query;
+        return $this->db()->select()
+            ->from(['vmd' => 'vm_disk'], [
+                'controller_label'    => 'vmhc.label',
+                'hardware_label'      => 'vmhw.label',
+                'hardware_key'        => 'vmhw.hardware_key',
+                'hardware_bus_number' => 'vmhc.bus_number',
+                'hardware_unit_nmber' => 'vmhw.unit_number',
+                'capacity'            => 'vmd.capacity'
+            ])
+            ->join(['vmhw' => 'vm_hardware'], 'vmd.vm_uuid = vmhw.vm_uuid AND vmd.hardware_key = vmhw.hardware_key', [])
+            ->join(
+                ['vmhc' => 'vm_hardware'],
+                'vmhw.vm_uuid = vmhc.vm_uuid AND vmhw.controller_key = vmhc.hardware_key',
+                []
+            )
+            ->where('vmd.vm_uuid = ?', $this->vm->get('uuid'))
+            ->order('hardware_label');
     }
 }

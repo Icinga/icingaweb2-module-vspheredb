@@ -85,28 +85,25 @@ class OverviewTree extends BaseHtmlElement
     protected function fetchTree(): ?array
     {
         $db = $this->db->getDbAdapter();
-        $hostCnt = $db->select()->from('object', [
-            'cnt'         => 'COUNT(*)',
-            'parent_uuid' => 'parent_uuid'
-        ])->where('object_type = ?', 'HostSystem')->group('parent_uuid');
-        $vmCnt = $db->select()->from('object', [
-            'cnt'         => 'COUNT(*)',
-            'parent_uuid' => 'parent_uuid'
-        ])->where('object_type = ?', 'VirtualMachine')->group('parent_uuid');
-        $dsCnt = $db->select()->from('object', [
-            'cnt'         => 'COUNT(*)',
-            'parent_uuid' => 'parent_uuid'
-        ])->where('object_type = ?', 'Datastore')->group('parent_uuid');
-        $networkCnt = $db->select()->from('object', [
-            'cnt'         => 'COUNT(*)',
-            'parent_uuid' => 'parent_uuid'
-        ])->where('object_type = ?', 'DistributedVirtualSwitch')->group('parent_uuid');
+        $hostCnt = $db->select()
+            ->from('object', ['cnt' => 'COUNT(*)', 'parent_uuid' => 'parent_uuid'])
+            ->where('object_type = ?', 'HostSystem')
+            ->group('parent_uuid');
+        $vmCnt = $db->select()
+            ->from('object', ['cnt' => 'COUNT(*)', 'parent_uuid' => 'parent_uuid'])
+            ->where('object_type = ?', 'VirtualMachine')
+            ->group('parent_uuid');
+        $dsCnt = $db->select()
+            ->from('object', ['cnt' => 'COUNT(*)', 'parent_uuid' => 'parent_uuid'])
+            ->where('object_type = ?', 'Datastore')
+            ->group('parent_uuid');
+        $networkCnt = $db->select()
+            ->from('object', ['cnt' => 'COUNT(*)', 'parent_uuid' => 'parent_uuid'])
+            ->where('object_type = ?', 'DistributedVirtualSwitch')
+            ->group('parent_uuid');
 
         $main = $db->select()
-            ->from(['o' => 'object'], [
-                'o.*',
-                'parent_object_type' => 'po.object_type'
-            ])
+            ->from(['o' => 'object'], ['o.*', 'parent_object_type' => 'po.object_type'])
             ->joinLeft(['po' => 'object'], 'po.uuid = o.parent_uuid', [])
             ->where(' o.object_type NOT IN (?)', ['VirtualMachine', 'HostSystem', 'Datastore']);
         $this->restrictionHelper->filterQuery($hostCnt);

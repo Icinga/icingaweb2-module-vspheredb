@@ -101,21 +101,10 @@ class VmsGuestDiskUsageTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $columns = $this->getRequiredDbColumns();
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $columns
-        )->join(
-            ['vc' => 'virtual_machine'],
-            'o.uuid = vc.uuid',
-            []
-        )->join(
-            ['vdu' => 'vm_disk_usage'],
-            'vc.uuid = vdu.vm_uuid',
-            []
-        );
-
-        return $query;
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['vc' => 'virtual_machine'], 'o.uuid = vc.uuid', [])
+            ->join(['vdu' => 'vm_disk_usage'], 'vc.uuid = vdu.vm_uuid', []);
     }
 
     public function getDefaultColumnNames(): array

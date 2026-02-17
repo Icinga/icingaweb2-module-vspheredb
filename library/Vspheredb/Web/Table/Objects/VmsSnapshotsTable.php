@@ -58,21 +58,11 @@ class VmsSnapshotsTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $columns = $this->getRequiredDbColumns();
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $columns
-        )->join(
-            ['vm' => 'virtual_machine'],
-            'o.uuid = vm.uuid',
-            []
-        )->join(
-            ['vms' => 'vm_snapshot'],
-            'vms.vm_uuid = vm.uuid',
-            []
-        )->group('vm.uuid');
-
-        return $query;
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
+            ->join(['vms' => 'vm_snapshot'], 'vms.vm_uuid = vm.uuid', [])
+            ->group('vm.uuid');
     }
 
     public function XXgetDefaultColumnNames(): array

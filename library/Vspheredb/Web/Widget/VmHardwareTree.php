@@ -176,20 +176,15 @@ class VmHardwareTree extends BaseHtmlElement
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
         $info = $db->fetchRow(
-            $db->select()->from(
-                ['o' => 'object'],
-                [
+            $db->select()
+                ->from(['o' => 'object'], [
                     'uuid'        => 'o.uuid',
                     'object_name' => 'o.object_name',
                     'cnt_nics'    => 'COUNT(*)'
-                ]
-            )->join(
-                ['vna' => 'vm_network_adapter'],
-                'vna.portgroup_uuid = o.uuid',
-                []
-            )
-            ->where('o.uuid = ?', $connection->quoteBinary($uuid))
-            ->group('o.uuid')
+                ])
+                ->join(['vna' => 'vm_network_adapter'], 'vna.portgroup_uuid = o.uuid', [])
+                ->where('o.uuid = ?', $connection->quoteBinary($uuid))
+                ->group('o.uuid')
         );
 
         if (false === $info) {
@@ -219,13 +214,15 @@ class VmHardwareTree extends BaseHtmlElement
             'value_last'
         ]) . ')';
 
-        $query = $db->select()->from('counter_300x5', [
-            // 'name' => 'object_uuid',
-            'instance',
-            'counter_key',
-            'value' => $values
-        ])->where('object_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
-        ->where('counter_key IN (?)', [171, 172]);
+        $query = $db->select()
+            ->from('counter_300x5', [
+                // 'name' => 'object_uuid',
+                'instance',
+                'counter_key',
+                'value' => $values
+            ])
+            ->where('object_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
+            ->where('counter_key IN (?)', [171, 172]);
 
         $rows = $db->fetchAll($query);
         $result = [];

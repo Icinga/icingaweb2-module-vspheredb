@@ -32,22 +32,12 @@ abstract class HostSummaryTable extends ObjectsTable
 
     protected function prepareUnGroupedQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['ho' => 'object'],
-            'ho.parent_uuid = o.uuid',
-            []
-        )->join(
-            ['h' => 'host_system'],
-            'ho.uuid = h.uuid',
-            []
-        )->join(
-            ['hqs' => 'host_quick_stats'],
-            'hqs.uuid = h.uuid',
-            []
-        )->where('h.runtime_power_state = ?', 'poweredOn');
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['ho' => 'object'], 'ho.parent_uuid = o.uuid', [])
+            ->join(['h' => 'host_system'], 'ho.uuid = h.uuid', [])
+            ->join(['hqs' => 'host_quick_stats'], 'hqs.uuid = h.uuid', [])
+            ->where('h.runtime_power_state = ?', 'poweredOn');
     }
 
     public function prepareQuery(): Select|Zend_Db_Select

@@ -57,14 +57,9 @@ class VmSnapshotTable extends ZfQueryBasedTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            'vm_snapshot'
-        )->order('ts_create DESC');
-
-        if ($this->vm) {
-            $query->where('vm_uuid = ?', $this->vm->get('uuid'));
-        }
-
-        return $query;
+        return $this->db()->select()
+            ->from('vm_snapshot')
+            ->where('vm_uuid = ?', $this->vm->get('uuid'))
+            ->order('ts_create DESC');
     }
 }

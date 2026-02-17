@@ -32,7 +32,8 @@ class TaggingDetails extends HtmlDocument
         $this->object = $object;
         $connection = $object->getConnection();
         $db = $connection->getDbAdapter();
-        $where = $db->select()->from(['tt' => TaggingTag::TABLE], 'tt.*')
+        $where = $db->select()
+            ->from(['tt' => TaggingTag::TABLE], 'tt.*')
             ->join(['tot' => TaggingObjectTag::TABLE], 'tot.tag_uuid = tt.uuid', [])
             ->where('tot.object_uuid = ?', $object->get('uuid'))
             ->order('tt.name');

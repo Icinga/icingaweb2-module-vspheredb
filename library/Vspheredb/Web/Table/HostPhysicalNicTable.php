@@ -76,9 +76,8 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['hpn' => 'host_physical_nic'],
-            [
+        return $this->db()->select()
+            ->from(['hpn' => 'host_physical_nic'], [
                 'hpn.nic_key',
                 'hpn.auto_negotiate_supported',
                 'hpn.device',
@@ -87,9 +86,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
                 'hpn.link_duplex',
                 'hpn.mac_address',
                 'hpn.pci'
-            ]
-        )->where('hpn.host_uuid = ?', $this->host->get('uuid'))->order('hpn.device ASC');
-
-        return $query;
+            ])
+            ->where('hpn.host_uuid = ?', $this->host->get('uuid'))->order('hpn.device ASC');
     }
 }

@@ -75,15 +75,16 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
     {
         $objectTable = MonitoringRuleLookup::getTableForObjectType($this->objectType);
         $db = $this->db();
-        return $db->select()->from(['p' => 'monitoring_rule_problem'], [
-            'uuid'      => 'o.uuid',
-            'rule_name' => 'p.rule_name'
-        ])
-        ->where('o.vcenter_uuid = ?', DbUtil::quoteBinaryCompat($this->vCenter->get('uuid'), $db))
-        ->where('p.rule_name = ?', sprintf('%s/%s', $this->ruleSet, $this->rule))
-        ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
-        ->join(['ot' => $objectTable], 'o.uuid = ot.uuid', [])
-        ->order('p.current_state DESC')
-        ->order('o.object_name');
+        return $db->select()
+            ->from(['p' => 'monitoring_rule_problem'], [
+                'uuid'      => 'o.uuid',
+                'rule_name' => 'p.rule_name'
+            ])
+            ->where('o.vcenter_uuid = ?', DbUtil::quoteBinaryCompat($this->vCenter->get('uuid'), $db))
+            ->where('p.rule_name = ?', sprintf('%s/%s', $this->ruleSet, $this->rule))
+            ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
+            ->join(['ot' => $objectTable], 'o.uuid = ot.uuid', [])
+            ->order('p.current_state DESC')
+            ->order('o.object_name');
     }
 }

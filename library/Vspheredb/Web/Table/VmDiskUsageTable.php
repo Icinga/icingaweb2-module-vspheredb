@@ -161,12 +161,9 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            'vm_disk_usage',
-            ['disk_path', 'capacity', 'free_space']
-        )->where(
-            'vm_uuid = ?',
-            $this->uuid
-        )->order('disk_path');
+        return $this->db()->select()
+            ->from('vm_disk_usage', ['disk_path', 'capacity', 'free_space'])
+            ->where('vm_uuid = ?', $this->uuid)
+            ->order('disk_path');
     }
 }

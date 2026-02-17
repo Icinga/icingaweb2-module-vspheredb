@@ -72,14 +72,9 @@ class DatastoreUsage extends BaseHtmlElement
     public function loadAllVmDisks(): static
     {
         $query = $this->db->select()
-            ->from(
-                ['vdu' => 'vm_datastore_usage'],
-                ['o.uuid', 'o.object_name', 'vdu.committed', 'vdu.uncommitted']
-            )->join(
-                ['o' => 'object'],
-                'o.uuid = vdu.vm_uuid',
-                []
-            )->where('vdu.datastore_uuid = ?', $this->datastore->get('uuid'))
+            ->from(['vdu' => 'vm_datastore_usage'], ['o.uuid', 'o.object_name', 'vdu.committed', 'vdu.uncommitted'])
+            ->join(['o' => 'object'], 'o.uuid = vdu.vm_uuid', [])
+            ->where('vdu.datastore_uuid = ?', $this->datastore->get('uuid'))
             // ->order('o.object_name');
             ->order('vdu.committed DESC');
 

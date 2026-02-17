@@ -15,22 +15,15 @@ class NetworkAdaptersTable extends ObjectsTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['vm' => 'virtual_machine'],
-            'o.uuid = vm.uuid',
-            []
-        )->join(
-            ['vh' => 'vm_hardware'],
-            'vh.vm_uuid = vm.uuid',
-            []
-        )->join(
-            ['vna' => 'vm_network_adapter'],
-            'vna.vm_uuid = vh.vm_uuid AND vna.hardware_key = vh.hardware_key',
-            []
-        );
+        $query = $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
+            ->join(['vh' => 'vm_hardware'], 'vh.vm_uuid = vm.uuid', [])
+            ->join(
+                ['vna' => 'vm_network_adapter'],
+                'vna.vm_uuid = vh.vm_uuid AND vna.hardware_key = vh.hardware_key',
+                []
+            );
 
         if ($this->portGroup) {
             $query->where('portgroup_uuid = ?', $this->portGroup->get('uuid'));

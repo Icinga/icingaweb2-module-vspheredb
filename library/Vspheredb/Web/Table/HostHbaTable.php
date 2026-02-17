@@ -63,18 +63,8 @@ class HostHbaTable extends ZfQueryBasedTable
 
     public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['hh' => 'host_hba'],
-            [
-                'hh.hba_key',
-                'hh.device',
-                'hh.driver',
-                'hh.status',
-                'hh.model',
-                'hh.pci'
-            ]
-        )->where('hh.host_uuid = ?', $this->host->get('uuid'))->order('hh.device ASC');
-
-        return $query;
+        return $this->db()->select()
+            ->from(['hh' => 'host_hba'], ['hh.hba_key', 'hh.device', 'hh.driver', 'hh.status', 'hh.model', 'hh.pci'])
+            ->where('hh.host_uuid = ?', $this->host->get('uuid'))->order('hh.device ASC');
     }
 }
