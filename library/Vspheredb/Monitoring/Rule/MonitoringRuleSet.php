@@ -34,11 +34,7 @@ class MonitoringRuleSet
     public function __construct(string $binaryUuid, string $objectFolder, ?Settings $settings = null)
     {
         $this->binaryUuid = $binaryUuid;
-        if ($settings === null) {
-            $this->settings = new Settings();
-        } else {
-            $this->settings = $settings;
-        }
+        $this->settings = $settings ?? new Settings();
         $this->objectFolder = $objectFolder;
     }
 

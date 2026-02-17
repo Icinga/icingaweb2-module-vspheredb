@@ -67,11 +67,7 @@ class RemoteClient
     protected function connection(): PromiseInterface
     {
         if ($this->connection === null) {
-            if ($this->pendingConnection === null) {
-                return $this->connect();
-            }
-
-            return $this->pendingConnection;
+            return $this->pendingConnection ?? $this->connect();
         }
 
         return resolve($this->connection);

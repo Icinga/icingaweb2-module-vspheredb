@@ -55,7 +55,7 @@ abstract class ObjectForm extends Form
 
     public function isNew(): bool
     {
-        return $this->object === null || $this->object->isNew();
+        return $this->object?->isNew() ?? true;
     }
 
     protected function getObjectClass(): string
