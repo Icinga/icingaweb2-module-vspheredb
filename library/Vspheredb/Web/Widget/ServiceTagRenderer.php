@@ -28,9 +28,9 @@ class ServiceTagRenderer extends Html
     {
         if ($host->get('sysinfo_vendor') === 'Dell Inc.') {
             return $this->linkToDellSupport($host->get('service_tag'));
-        } else {
-            return $host->get('service_tag');
         }
+
+        return $host->get('service_tag');
     }
 
     protected function linkToDellSupport(?string $serviceTag): ?HtmlElement

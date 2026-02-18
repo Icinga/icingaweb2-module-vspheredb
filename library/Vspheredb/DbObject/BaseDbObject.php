@@ -184,11 +184,13 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     {
         if (empty($value)) {
             return null;
-        } elseif ($value instanceof ManagedObjectReference) {
-            return $vCenter->makeBinaryGlobalMoRefUuid($value);
-        } else {
-            return $vCenter->makeBinaryGlobalUuid($value);
         }
+
+        if ($value instanceof ManagedObjectReference) {
+            return $vCenter->makeBinaryGlobalMoRefUuid($value);
+        }
+
+        return $vCenter->makeBinaryGlobalUuid($value);
     }
 
     /**

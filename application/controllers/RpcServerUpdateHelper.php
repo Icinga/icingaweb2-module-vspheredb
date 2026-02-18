@@ -19,9 +19,9 @@ trait RpcServerUpdateHelper
                 ])
             ) {
                 return $this->translate('Daemon configuration has been refreshed');
-            } else {
-                return $this->translate('Daemon configuration has NOT been refreshed');
             }
+
+            return $this->translate('Daemon configuration has NOT been refreshed');
         } catch (Exception $e) {
             return $this->translate('Daemon configuration refresh FAILED: ' . $e->getMessage());
         }

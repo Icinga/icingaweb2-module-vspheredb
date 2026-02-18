@@ -80,9 +80,9 @@ class HostSystemInfoTable extends NameValueTable
         }
         if ($this->host->get('sysinfo_vendor') === 'Dell Inc.') {
             return $this->linkToDellSupport($tag);
-        } else {
-            return $tag;
         }
+
+        return $tag;
     }
 
     protected function prepareTools(HostSystem $host): Hint|array

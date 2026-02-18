@@ -80,9 +80,9 @@ class CustomValues implements JsonSerializable
     {
         if ($this->has($key)) {
             return $this->values[$key];
-        } else {
-            return $default;
         }
+
+        return $default;
     }
 
     #[ReturnTypeWillChange]
@@ -109,8 +109,8 @@ class CustomValues implements JsonSerializable
     {
         if ($values === null) {
             return;
-        } else {
-            $this->values = $values;
         }
+
+        $this->values = $values;
     }
 }

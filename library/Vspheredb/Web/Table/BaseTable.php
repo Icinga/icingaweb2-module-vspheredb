@@ -97,9 +97,9 @@ abstract class BaseTable extends ZfQueryBasedTable
     {
         if (array_key_exists($alias, $this->availableColumns)) {
             return $this->availableColumns[$alias];
-        } else {
-            throw new InvalidArgumentException(sprintf('No column named "%s" is available', $alias));
         }
+
+        throw new InvalidArgumentException(sprintf('No column named "%s" is available', $alias));
     }
 
     public function assertInitialized(): void
@@ -131,9 +131,9 @@ abstract class BaseTable extends ZfQueryBasedTable
             }
 
             return $tr;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     protected function initialize(): void
@@ -335,9 +335,9 @@ abstract class BaseTable extends ZfQueryBasedTable
 
         if ($column->getDefaultSortDirection() === 'ASC') {
             return $string;
-        } else {
-            return "$string DESC";
         }
+
+        return "$string DESC";
     }
 
     /**
