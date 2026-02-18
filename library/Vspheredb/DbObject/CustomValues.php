@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use gipfl\Json\JsonString;
 use JsonSerializable;
+use ReturnTypeWillChange;
 
 class CustomValues implements JsonSerializable
 {
@@ -45,7 +46,7 @@ class CustomValues implements JsonSerializable
      */
     public function has(string $key): bool
     {
-        return \array_key_exists($key, $this->values);
+        return array_key_exists($key, $this->values);
     }
 
     /**
@@ -84,7 +85,7 @@ class CustomValues implements JsonSerializable
         }
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     /**
      * @return object
      */

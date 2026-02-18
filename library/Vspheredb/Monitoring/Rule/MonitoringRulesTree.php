@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Monitoring\Rule;
 
 use gipfl\Translation\TranslationHelper;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 
@@ -101,7 +102,7 @@ class MonitoringRulesTree
     }
 
     /**
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
     public function getInheritedSettingsFor(BaseDbObject $object): InheritedSettings
     {

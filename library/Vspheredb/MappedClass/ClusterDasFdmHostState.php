@@ -2,8 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
 use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use ReturnTypeWillChange;
 
 /**
  * https://www.vmware.com/support/developer/converter-sdk/conv61_apireference/vim.cluster.DasFdmHostState.html
@@ -38,7 +40,7 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  * restarting VMs as required. All FDMs provide the VM/Application Health
  * Monitoring Service.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class ClusterDasFdmHostState implements JsonSerialization
 {
     /**
@@ -108,7 +110,7 @@ class ClusterDasFdmHostState implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object) [

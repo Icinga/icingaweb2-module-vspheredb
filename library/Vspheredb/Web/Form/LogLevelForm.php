@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form\Feature\NextConfirmCancel;
 use gipfl\Web\InlineForm;
@@ -41,7 +42,7 @@ class LogLevelForm extends InlineForm
         try {
             $currentLevel = await($this->client->request('logger.getLogLevel'));
             $this->talkedToSocket = true;
-        } catch (\Exception $e) {
+        } catch (Exception) {
             $this->talkedToSocket = false;
 
             return;

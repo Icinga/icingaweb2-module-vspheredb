@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use stdClass;
 
 class VmDiskUsageSyncStore extends SyncStore
 {
@@ -53,7 +54,7 @@ class VmDiskUsageSyncStore extends SyncStore
                         $base = $root;
                     }
 
-                    /** @var \stdClass $base */
+                    /** @var stdClass $base */
                     if (
                         $info->capacity === $base->capacity
                         && $info->freeSpace === $base->freeSpace

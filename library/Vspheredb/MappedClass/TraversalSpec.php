@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * The TraversalSpec data object type specifies how to derive a new set of
  * objects to add to the filter.
@@ -12,7 +14,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  *
  * This data object can also be named, using the "name" field in the base type.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class TraversalSpec extends SelectionSpec
 {
     /** @var string Name of the property to use in order to select additional objects */

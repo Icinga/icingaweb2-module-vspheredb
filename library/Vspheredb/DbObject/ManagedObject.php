@@ -2,9 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Module\Vspheredb\Db\DbUtil;
+use Icinga\Module\Vspheredb\Exception\DuplicateKeyException;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
@@ -35,7 +37,7 @@ class ManagedObject extends VspheredbDbObject
      *
      * @return static
      *
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
     public static function loadWithUuid(string $uuid, Db $connection): ManagedObject
     {
@@ -51,7 +53,7 @@ class ManagedObject extends VspheredbDbObject
     /**
      * @returns void
      *
-     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
+     * @throws DuplicateKeyException
      */
     protected function beforeStore(): void
     {

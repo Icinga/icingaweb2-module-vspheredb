@@ -28,12 +28,15 @@ use Icinga\Module\Vspheredb\Polling\SelectSet\HostSystemSelectSet;
 use Icinga\Module\Vspheredb\Polling\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\SafeCacheDir;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
+use RuntimeException;
+use SoapFault;
 
 use function React\Promise\reject;
 use function React\Promise\resolve;
@@ -239,7 +242,7 @@ class VsphereApi
                 }
                 $ref = $serviceContent->$property;
                 if (! $ref instanceof ManagedObjectReference) {
-                    return reject(new \InvalidArgumentException(
+                    return reject(new InvalidArgumentException(
                         "ServiceContent.$property is no a ManagedObjectReference"
                     ));
                 }
@@ -404,10 +407,10 @@ class VsphereApi
                     [PropertySpec::create('HostSystem', ['hardware.systemInfo.uuid'])]
                 )])->then(function ($result) {
                     if (empty($result)) {
-                        throw new \RuntimeException('Unable to fetch host object for ESXi system');
+                        throw new RuntimeException('Unable to fetch host object for ESXi system');
                     }
                     if (count($result) > 1) {
-                        throw new \RuntimeException(sprintf(
+                        throw new RuntimeException(sprintf(
                             'Expected to get one host from an ESXi system, got %d',
                             count($result)
                         ));
@@ -416,7 +419,7 @@ class VsphereApi
                         return Uuid::fromString($result[0]['hardware.systemInfo.uuid']);
                     }
 
-                    throw new \RuntimeException('Got no hardware.systemInfo.uuid from ESXi host');
+                    throw new RuntimeException('Got no hardware.systemInfo.uuid from ESXi host');
                 });
             } else {
                 return Uuid::fromString($content->about->instanceUuid);
@@ -552,7 +555,7 @@ class VsphereApi
                 });
             }
 
-            throw new \RuntimeException('EventCollector reference expected, got ' . var_export($result, 1));
+            throw new RuntimeException('EventCollector reference expected, got ' . var_export($result, 1));
         });
     }
 
@@ -571,12 +574,12 @@ class VsphereApi
 
                 return [];
             }, function (Exception $e) {
-                if ($e instanceof \SoapFault) {
+                if ($e instanceof SoapFault) {
                     if (isset($e->detail)) {
                         $details = (array)$e->detail;
                         if (current($details)->enc_stype === 'ManagedObjectNotFound') {
                             $this->eventCollector = null;
-                            throw new \RuntimeException(
+                            throw new RuntimeException(
                                 'Dropping formerly known EventCollector: ' . $e->getMessage(),
                                 $e->getCode(),
                                 $e

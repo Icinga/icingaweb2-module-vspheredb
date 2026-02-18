@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\VmwareDataType;
 
 use gipfl\Json\JsonSerialization;
+use ReturnTypeWillChange;
 
 /**
  * #[AllowDynamicProperties]
@@ -24,7 +25,7 @@ class ManagedObjectReference implements JsonSerialization
         return $this->type . '[' . $this->_ . ']';
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     /**
      * @return object
      */

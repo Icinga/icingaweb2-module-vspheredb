@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Api\Protocol;
 
 use SoapClient;
+use ReturnTypeWillChange;
 use RingCentral\Psr7\Request;
 use SoapFault;
 
@@ -48,7 +49,7 @@ final class ClientEncoder extends SoapClient
      *
      * @see SoapClient::__doRequest()
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function __doRequest($request, $location, $action, $version, $oneWay = 0, $uriParserClass = null)
     {
         $headers = [];

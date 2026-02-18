@@ -42,9 +42,9 @@ class VCenterInfo
         $self = new static();
         $self->id = (int) $row->id;
         $self->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
-        $self->software = \sprintf(
+        $self->software = sprintf(
             '%s (%s)',
-            \preg_replace('/^VMware /', '', $row->software_name),
+            preg_replace('/^VMware /', '', $row->software_name),
             $row->software_version
         );
         $self->softwareName = $row->software_name;

@@ -196,7 +196,8 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
      */
     protected static function getClassBaseName(string $class): ?string
     {
-        $parts = \explode('\\', $class);
+        $parts = explode('\\', $class);
+
         return array_pop($parts);
     }
 
@@ -207,10 +208,10 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
      */
     protected static function getModuleFromClassName(string $class): string
     {
-        $parts = \explode('\\', ltrim($class, '\\'));
+        $parts = explode('\\', ltrim($class, '\\'));
         if (count($parts) >= 3) {
             if ($parts[0] === 'Icinga' && $parts[1] === 'Module') {
-                return \lcfirst($parts[2]);
+                return lcfirst($parts[2]);
             }
         }
 

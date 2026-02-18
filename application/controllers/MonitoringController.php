@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Exception;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
@@ -252,7 +253,7 @@ class MonitoringController extends Controller
                         'Current problems have NOT been recalculated, they will be applied with a short delay'
                     ));
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Notification::info(
                     $this->translate(
                         'Error when triggering problem recalculation, changes will be applied with a short delay'

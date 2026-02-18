@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
@@ -99,12 +100,12 @@ class InfluxDbConnectionForm extends Form
             ) {
                 $this->getElement('password')->getAttributes()->add('class', 'validated');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->getElement('password')->addMessage($this->getExceptionMessageWithoutPhpFile($e));
         }
     }
 
-    protected function getExceptionMessageWithoutPhpFile(\Exception $e): string
+    protected function getExceptionMessageWithoutPhpFile(Exception $e): string
     {
         return preg_replace('/\sin\s.+?\.php\(\d+\)/', '', $e->getMessage());
     }
@@ -178,13 +179,13 @@ class InfluxDbConnectionForm extends Form
         $element = $this->getElement('api_version');
         assert($element instanceof SelectElement);
         $autoOption = $element->getOption(null);
-        $autoOption->setLabel(\sprintf(
+        $autoOption->setLabel(sprintf(
             $this->translate('Autodetect: %s API, Version is %s'),
             $apiVersion,
             $detectedVersion
         ));
         $selectedOption = $element->getOption($apiVersion);
-        $selectedOption->setLabel(\sprintf(
+        $selectedOption->setLabel(sprintf(
             $this->translate('%s (detected %s)'),
             $apiVersion,
             $detectedVersion
@@ -233,9 +234,9 @@ class InfluxDbConnectionForm extends Form
 
                 return $version;
             } else {
-                throw new \Exception("Version $version is not supported");
+                throw new Exception("Version $version is not supported");
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->triggerElementError('base_url', $e->getMessage());
 
             return false;
@@ -260,7 +261,7 @@ class InfluxDbConnectionForm extends Form
 
     protected function versionIsFine(string $version): bool
     {
-        return \version_compare($version, static::INFLUXDB_MIN_SUPPORTED_VERSION, 'ge');
+        return version_compare($version, static::INFLUXDB_MIN_SUPPORTED_VERSION, 'ge');
     }
 
     protected function getApiVersionForVersionString(?string $version): ?string
@@ -269,6 +270,6 @@ class InfluxDbConnectionForm extends Form
             return null;
         }
 
-        return \version_compare($version, '1.999.999', 'gt') ? 'v2' : 'v1';
+        return version_compare($version, '1.999.999', 'gt') ? 'v2' : 'v1';
     }
 }

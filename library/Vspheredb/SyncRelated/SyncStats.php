@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\SyncRelated;
 
 use gipfl\Json\JsonSerialization;
+use ReturnTypeWillChange;
 
 class SyncStats implements JsonSerialization
 {
@@ -78,7 +79,7 @@ class SyncStats implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     /**
      * @return object
      */

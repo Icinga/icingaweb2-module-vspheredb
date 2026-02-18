@@ -59,7 +59,7 @@ class NetBackup extends SimpleBackupTool
     protected function parseLastBackup(string $string): void
     {
         // Sun Sep 13 00:27:42 2020 +0200,backuphost.name,jobname
-        $parts = \explode(',', $string);
+        $parts = explode(',', $string);
         $attributes = [];
         if (count($parts) === 3) {
             $attributes['Time'] = strtotime($parts[0]);

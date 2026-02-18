@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget\Renderer;
 
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
+use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -32,10 +33,10 @@ class PathToObjectRenderer
     public function __invoke(BaseDbObject $object): HtmlElement
     {
         $uuid = $object->get('uuid');
-        /** @var \Icinga\Module\Vspheredb\Db $connection */
+        /** @var Db $connection */
         $connection = $object->getConnection();
         $lookup =  new PathLookup($connection->getDbAdapter());
-        $class = \get_class($object);
+        $class = get_class($object);
         if (isset($this->classLinkMap[$class])) {
             $baseUrl = $this->classLinkMap[$class];
         } else {

@@ -7,6 +7,7 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
+use RuntimeException;
 
 use function in_array;
 
@@ -67,7 +68,7 @@ abstract class MonitoringRuleDefinition
     {
         $type = ObjectType::getDbClassType(get_class($object));
         if (!static::supportsObjectType($type)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 "'%s' is not supported. Supported: %s",
                 $type,
                 implode(', ', static::SUPPORTED_OBJECT_TYPES)

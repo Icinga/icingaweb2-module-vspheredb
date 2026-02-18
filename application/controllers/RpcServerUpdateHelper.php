@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Exception;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use Icinga\Module\Vspheredb\Polling\ServerSet;
 
@@ -21,7 +22,7 @@ trait RpcServerUpdateHelper
             } else {
                 return $this->translate('Daemon configuration has NOT been refreshed');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->translate('Daemon configuration refresh FAILED: ' . $e->getMessage());
         }
     }

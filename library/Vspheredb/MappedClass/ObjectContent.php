@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\MappedClass;
 
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use ReturnTypeWillChange;
 
 // https://www.vmware.com/support/developer/converter-sdk/conv61_apireference/vmodl.query.PropertyCollector.ObjectContent.html
 
@@ -93,7 +94,7 @@ class ObjectContent
         return $obj;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $obj = [

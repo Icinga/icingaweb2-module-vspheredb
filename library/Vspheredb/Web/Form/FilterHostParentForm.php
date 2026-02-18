@@ -12,6 +12,8 @@ class FilterHostParentForm extends Form
 {
     use TranslationHelper;
 
+    protected $method = 'GET';
+
     protected $useFormName = false;
 
     protected $useCsrf = false;
@@ -21,7 +23,6 @@ class FilterHostParentForm extends Form
     public function __construct(Db $connection)
     {
         $this->db = $connection->getDbAdapter();
-        $this->setMethod('GET');
     }
 
     public function hasDefaultElementDecorator(): false
@@ -37,7 +38,7 @@ class FilterHostParentForm extends Form
             'VmBeingHotMigratedEvent',
             'VmEmigratingEvent',
             'VmMigratedEvent',
-            'VmFailedMigrateEvent',
+            'VmFailedMigrateEvent'
         ];
 
         $otherKnownEvents = [
@@ -58,11 +59,10 @@ class FilterHostParentForm extends Form
         ];
 
         $this->addElement('select', 'type', [
-            'options' => [
-                '' => $this->translate('- filter by event type -')
-            ] + array_combine($vMotionEvents, $vMotionEvents)
+            'options' => ['' => $this->translate('- filter by event type -')]
+                + array_combine($vMotionEvents, $vMotionEvents)
                 + array_combine($otherKnownEvents, $otherKnownEvents),
-            'class' => 'autosubmit',
+            'class' => 'autosubmit'
         ]);
         $parents = $this->enumHostParents();
         if (empty($parents)) {
@@ -103,15 +103,13 @@ class FilterHostParentForm extends Form
     protected function enumHostParents(): array
     {
         $db = $this->db;
-        $query = $db->select()->from(
-            ['p' => 'object'],
-            ['p.uuid', 'p.object_name']
-        )->join(
+        $query = $db->select()->from(['p' => 'object'], ['p.uuid', 'p.object_name'])->join(
             ['c' => 'object'],
-            'c.parent_uuid = p.uuid AND '
-            . $db->quoteInto('c.object_type = ?', 'HostSystem')
-            . ' AND '
-            . $db->quoteInto('p.object_type = ?', 'ClusterComputeResource'),
+            sprintf(
+                'c.parent_uuid = p.uuid AND %s AND %s',
+                $db->quoteInto('c.object_type = ?', 'HostSystem'),
+                $db->quoteInto('p.object_type = ?', 'ClusterComputeResource')
+            ),
             []
         )->group('p.uuid')->order('p.object_name');
 

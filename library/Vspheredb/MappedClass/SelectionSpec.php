@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * The SelectionSpec is the base type for data object types that specify what
  * additional objects to filter.
@@ -18,7 +20,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  *
  * Names are meaningful only within the same FilterSpec.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class SelectionSpec
 {
     /** @var ?string Name of the selection specification */

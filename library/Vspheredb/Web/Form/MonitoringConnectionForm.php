@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Decorator\DdDtDecorator;
@@ -98,7 +99,7 @@ class MonitoringConnectionForm extends Form
                 } else {
                     throw new InvalidArgumentException("Resource '$resourceName' is not a DbConnection");
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->getElement('source_resource_name')->addMessage($e->getMessage());
 
                 return;
@@ -118,7 +119,7 @@ class MonitoringConnectionForm extends Form
                 } else {
                     throw new InvalidArgumentException("Resource '$resourceName' is not a DbConnection");
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->getElement('source_resource_name')->addMessage($e->getMessage());
 
                 return;
