@@ -20,6 +20,7 @@ use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\UsageSummary;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterHeader;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Notification;
 use Ramsey\Uuid\Uuid;
 
@@ -102,7 +103,7 @@ class VcenterController extends Controller
     }
 
     /**
-     * @throws \Icinga\Security\SecurityException
+     * @throws SecurityException
      */
     public function serverAction(): void
     {

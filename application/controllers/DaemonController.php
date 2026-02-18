@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Exception;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\Json\JsonString;
 use gipfl\Web\Widget\Hint;
@@ -241,7 +242,7 @@ class DaemonController extends Controller
             }
 
             return $table;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return Hint::error($exception->getMessage());
         }
     }

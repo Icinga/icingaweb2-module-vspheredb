@@ -33,7 +33,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         $this->moref = $this->host->object()->get('moref');
         parent::__construct($host->getConnection());
 
-        $this->prepend(new SubTitle(\sprintf(
+        $this->prepend(new SubTitle(sprintf(
             $this->translate('Network Interfaces (%s)'),
             // Hint: we could also count given NICs, but this helps to spot
             // eventual inconsistencies
@@ -55,7 +55,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         if ($row->link_speed_mb === null) {
             $speedInfo = $this->translate('Link is down');
         } else {
-            $speedInfo = \sprintf(
+            $speedInfo = sprintf(
                 '%s %s',
                 Format::linkSpeedMb($row->link_speed_mb),
                 $row->link_duplex === 'y'

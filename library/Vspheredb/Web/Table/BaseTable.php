@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
+use RuntimeException;
 
 abstract class BaseTable extends ZfQueryBasedTable
 {
@@ -103,7 +104,7 @@ abstract class BaseTable extends ZfQueryBasedTable
     public function assertInitialized(): void
     {
         if ($this->isInitialized === null) {
-            throw new \RuntimeException('Table initialization loop, this is a bug in your table');
+            throw new RuntimeException('Table initialization loop, this is a bug in your table');
         }
         if ($this->isInitialized === false) {
             $this->isInitialized = null;
@@ -184,7 +185,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         foreach ($this->getChosenColumns() as $column) {
             foreach ($column->getRequiredDbColumns() as $alias => $dbExpression) {
                 if (isset($columns[$alias]) && $columns[$alias] !== $dbExpression) {
-                    throw new \RuntimeException(sprintf(
+                    throw new RuntimeException(sprintf(
                         'Setting the same table alias twice, once for %s and once for %s',
                         $columns[$alias],
                         $dbExpression
@@ -249,7 +250,7 @@ abstract class BaseTable extends ZfQueryBasedTable
     public function handleUrl(Url $url, string $sortParam = 'sort'): static
     {
         if ($this->isInitialized) {
-            throw new \RuntimeException('Sort Url is late');
+            throw new RuntimeException('Sort Url is late');
         }
         $this->assertInitialized();
         $this->prepareColumnToggle($url);

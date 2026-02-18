@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Daemon\RpcNamespace;
 use Exception;
 use gipfl\Cli\Process;
 use Icinga\Data\ConfigObject;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Application\MemoryLimit;
 use Icinga\Module\Vspheredb\Daemon\DbCleanup;
 use Icinga\Module\Vspheredb\Db;
@@ -20,6 +21,7 @@ use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
 use RuntimeException;
+use Throwable;
 use Zend_Db_Adapter_Abstract;
 
 use function React\Promise\reject;
@@ -75,7 +77,7 @@ class DbRunner
             if ($this->connection) {
                 try {
                     $this->refreshMonitoringRuleProblemsRequest();
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $this->logger->error($e->getMessage());
                 }
             }
@@ -184,7 +186,7 @@ class DbRunner
      *
      * @return int
      *
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
     public function getLastEventTimeStampRequest(int $vCenterId): int
     {
@@ -217,7 +219,7 @@ class DbRunner
         try {
             $this->requireSyncStoreForVCenterInstance($vCenterId, $storeClass)
                 ->store($result, $objectClass, $stats);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error(sprintf(
                 'Task %s failed. %s: %s (%d)',
                 $taskLabel,
@@ -256,7 +258,7 @@ class DbRunner
             $this->logger->debug(sprintf('Refreshing Monitoring Rule problems took %.2Fs', $duration));
 
             return true;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Refreshing Rule Problems failed: ' . $e->getMessage());
 
             return false;
@@ -298,7 +300,8 @@ class DbRunner
      * @param string $class
      *
      * @return SyncStore
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @throws NotFoundError
      */
     protected function requireSyncStoreForVCenterInstance(int $vCenterId, string $class): SyncStore
     {
@@ -321,7 +324,8 @@ class DbRunner
      * @param int $id
      *
      * @return VCenter
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @throws NotFoundError
      */
     protected function requireVCenter(int $id): VCenter
     {

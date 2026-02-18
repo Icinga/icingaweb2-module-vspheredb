@@ -6,6 +6,7 @@ use gipfl\Json\JsonSerialization;
 use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use InvalidArgumentException;
+use stdClass;
 
 use function array_key_exists;
 
@@ -78,7 +79,7 @@ class ServerInfo implements JsonSerialization
         throw new InvalidArgumentException("Trying to access invalid property: '$key'");
     }
 
-    public function jsonSerialize(): \stdClass
+    public function jsonSerialize(): stdClass
     {
         ksort($this->properties);
 

@@ -2,13 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * AboutInfo
  *
  * This data object type describes system information including the name, type,
  * version, and build number.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class AboutInfo
 {
     /**

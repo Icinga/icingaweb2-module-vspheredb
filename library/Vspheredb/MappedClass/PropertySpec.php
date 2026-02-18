@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * Within a PropertyFilterSpec, A PropertySpec specifies which properties
  * should be reported to the client for objects of the given managed object
@@ -15,7 +17,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * of a RetrieveResult, where there may be an applicable PropertySpec in more
  * than one filter.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class PropertySpec
 {
     /**

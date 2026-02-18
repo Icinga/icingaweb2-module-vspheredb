@@ -4,6 +4,8 @@ namespace Icinga\Module\Vspheredb\Controllers;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Table\NameValueTable;
+use Icinga\Exception\MissingParameterException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\PathLookup;
@@ -21,8 +23,8 @@ class DatastoreController extends Controller
     use SingleObjectMonitoring;
 
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
     public function indexAction(): void
     {
@@ -64,8 +66,8 @@ class DatastoreController extends Controller
     }
 
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
     public function eventsAction(): void
     {
@@ -82,8 +84,9 @@ class DatastoreController extends Controller
 
     /**
      * @return Datastore
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
     protected function addDatastore(): Datastore
     {

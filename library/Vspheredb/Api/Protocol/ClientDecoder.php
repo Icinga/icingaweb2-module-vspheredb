@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Api\Protocol;
 
+use ReturnTypeWillChange;
 use SoapClient;
 use SoapFault;
 
@@ -50,7 +51,7 @@ final class ClientDecoder extends SoapClient
      *
      * @see SoapClient::__doRequest()
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function __doRequest($request, $location, $action, $version, $oneWay = 0, $uriParserClass = null)
     {
         // the actual result doesn't actually matter, just return the given result

@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * Specify the property data that is included in a filter.
  *
@@ -9,7 +11,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * related managed objects in an inventory hierarchy - for example, to collect
  * updates from all virtual machines in a given folder.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class PropertyFilterSpec
 {
     /**

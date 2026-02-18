@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Daemon\RpcNamespace;
 
 use Icinga\Module\Vspheredb\Daemon\DbProcessRunner;
 use React\Promise\PromiseInterface;
+use RuntimeException;
 
 class RpcNamespaceDbProxy
 {
@@ -41,12 +42,12 @@ class RpcNamespaceDbProxy
     {
         if (preg_match('/Request$/', $method)) {
             if ($this->runner === null) {
-                throw new \RuntimeException('DB runner is not ready');
+                throw new RuntimeException('DB runner is not ready');
             }
 
             return $this->runner->request($this->prefix . substr($method, 0, -7), $params);
         }
 
-        throw new \RuntimeException('Got no such method: ' . $method);
+        throw new RuntimeException('Got no such method: ' . $method);
     }
 }

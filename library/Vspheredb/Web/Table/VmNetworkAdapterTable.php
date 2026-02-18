@@ -63,7 +63,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         if ($row->port_key === null) {
             return ''; // TODO: explain (no portgroup -> ESXi?)
         } elseif ($row->portgroup_uuid === null) {
-            return \sprintf($this->translate('Port %s'), $row->port_key);
+            return sprintf($this->translate('Port %s'), $row->port_key);
         } else {
             return Html::sprintf(
                 'Port %s on %s',

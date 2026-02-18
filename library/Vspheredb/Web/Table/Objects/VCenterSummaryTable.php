@@ -222,9 +222,9 @@ class VCenterSummaryTable extends ObjectsTable
                 'software_version' => 'vc.version',
             ])->setRenderer(function ($row) {
                 // VMware ESXi -> ESXi
-                return \sprintf(
+                return sprintf(
                     '%s (%s)',
-                    \preg_replace('/^VMware /', '', $row->software_name),
+                    preg_replace('/^VMware /', '', $row->software_name),
                     $row->software_version
                 );
             }),

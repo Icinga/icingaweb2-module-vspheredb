@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Exception\IcingaException;
+
 class HostPciDevice extends BaseDbObject
 {
     protected ?string $table = 'host_pci_device';
@@ -77,7 +79,7 @@ class HostPciDevice extends BaseDbObject
      *
      * @return static[]
      *
-     * @throws \Icinga\Exception\IcingaException
+     * @throws IcingaException
      */
     public static function loadAllForVCenter(VCenter $vCenter): array
     {

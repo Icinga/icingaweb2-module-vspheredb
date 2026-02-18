@@ -2,12 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+use ReturnTypeWillChange;
+
 /***
  * Result of RetrievePropertiesEx and ContinueRetrievePropertiesEx
  *
  * https://www.vmware.com/support/developer/converter-sdk/conv61_apireference/vmodl.query.PropertyCollector.RetrieveResult.html
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class RetrieveResult
 {
     /** @var ObjectContent[] retrieved objects */
@@ -58,7 +61,7 @@ class RetrieveResult
         return $result;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $result = [];

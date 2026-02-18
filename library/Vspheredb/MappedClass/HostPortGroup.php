@@ -2,12 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * This data object type is used to describe port groups. Port groups are used
  * to group virtual network adapters on a virtual switch, associating them with
  * networks and network policies
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class HostPortGroup
 {
     /**

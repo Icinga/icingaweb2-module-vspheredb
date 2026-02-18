@@ -6,6 +6,7 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use RuntimeException;
 
 class ObjectType
 {
@@ -50,6 +51,6 @@ class ObjectType
             return self::DB_CLASS_TYPE[$dbClass];
         }
 
-        throw new \RuntimeException("'$dbClass' is not supported (1)");
+        throw new RuntimeException("'$dbClass' is not supported (1)");
     }
 }

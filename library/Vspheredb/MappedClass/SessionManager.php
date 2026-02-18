@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * SessionManager
  *
@@ -9,7 +11,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * clients, determining which clients are currently logged on, and forcing
  * clients to log off.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class SessionManager
 {
     /**

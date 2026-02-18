@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class RetrieveOptions
 {
     /**

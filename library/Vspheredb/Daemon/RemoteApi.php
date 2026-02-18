@@ -22,6 +22,7 @@ use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceLogger;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceSystem;
 use Icinga\Module\Vspheredb\Daemon\RpcNamespace\RpcNamespaceVsphere;
 use Icinga\Module\Vspheredb\Polling\ApiConnectionHandler;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
@@ -100,7 +101,7 @@ class RemoteApi implements EventEmitterInterface
     protected function initializeControlSocket(string $path): void
     {
         if (empty($path)) {
-            throw new \InvalidArgumentException('Control socket path expected, got none');
+            throw new InvalidArgumentException('Control socket path expected, got none');
         }
         $this->logger->info("[socket] launching control socket in $path");
         $socket = new ControlSocket($path);

@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
+use InvalidArgumentException;
 
 class MemoryUsageRuleDefinition extends MonitoringRuleDefinition
 {
@@ -58,7 +59,7 @@ class MemoryUsageRuleDefinition extends MonitoringRuleDefinition
             $quickStats = VmQuickStats::loadFor($object);
             $capacity = $object->get('hardware_memorymb') * MemoryUsageHelper::MEGA_BYTE;
         } else {
-            throw new \InvalidArgumentException('Cannot load QuickStats for ' . get_class($object));
+            throw new InvalidArgumentException('Cannot load QuickStats for ' . get_class($object));
         }
         $used = $this->getUsedMemory($quickStats);
         $free = $capacity - $used;

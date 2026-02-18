@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\Json\JsonSerialization;
+use ReturnTypeWillChange;
 
 class ResourceUsage implements JsonSerialization
 {
@@ -34,7 +35,7 @@ class ResourceUsage implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
         return [

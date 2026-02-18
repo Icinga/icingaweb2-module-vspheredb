@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Api;
 
+use Exception;
 use gipfl\Curl\CurlAsync;
 use gipfl\Json\JsonEncodeException;
 use gipfl\Json\JsonString;
@@ -84,7 +85,7 @@ class SoapClient
                     $this->checkResponseForCookies($response);
 
                     return $result;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     if ($e instanceof SoapFault) {
                         if ($e->getMessage() === 'looks like we got no XML document') {
                             throw new SoapFault(
@@ -115,7 +116,7 @@ class SoapClient
                     $status = $response->getStatusCode();
 
                     if ($status > 199 && $status <= 299) {
-                        throw new \Exception($response->getReasonPhrase());
+                        throw new Exception($response->getReasonPhrase());
                     }
 
                     $this->logger->error(

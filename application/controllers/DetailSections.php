@@ -16,7 +16,7 @@ trait DetailSections
     protected function section(mixed $content): ?HtmlElement
     {
         $content = Html::wantHtml($content)->render();
-        if (\strlen($content) === 0) {
+        if (strlen($content) === 0) {
             return null;
         }
 

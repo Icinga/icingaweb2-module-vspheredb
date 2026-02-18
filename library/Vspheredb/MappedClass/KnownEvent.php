@@ -2,10 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
 use DateTime;
 use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use ReturnTypeWillChange;
 use Zend_Db_Adapter_Abstract as ZfDbAdapter;
+use Zend_Db_Adapter_Exception;
 
 /**
  * KnownEvent
@@ -13,7 +16,7 @@ use Zend_Db_Adapter_Abstract as ZfDbAdapter;
  * We use this as a base class for all vim.event.Event implementations
  * handled by us
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 abstract class KnownEvent implements JsonSerialization
 {
     /** @var int The parent or group ID */
@@ -79,7 +82,8 @@ abstract class KnownEvent implements JsonSerialization
     /**
      * @param ZfDbAdapter $db
      * @param VCenter $vCenter
-     * @throws \Zend_Db_Adapter_Exception
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
     public function store(ZfDbAdapter $db, VCenter $vCenter)
     {
@@ -106,7 +110,7 @@ abstract class KnownEvent implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         // TODO: serialize without (un)serialize(), as this needs to work across nodes

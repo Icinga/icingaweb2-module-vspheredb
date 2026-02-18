@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * A Port data object type is a runtime representation of network connectivity
  * between a network service or virtual machine and a virtual switch. This is
@@ -9,7 +11,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * configuration aspects of the network connection. The Port object provides
  * runtime statistics.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class HostPortGroupPort
 {
     /**

@@ -2,10 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * Non-localized key/value pair
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class KeyValue
 {
     /**

@@ -9,6 +9,7 @@ use React\EventLoop\Loop;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
 use RuntimeException;
+use Throwable;
 use Zend_Db_Adapter_Abstract;
 
 class VCenterCleanup
@@ -84,11 +85,11 @@ class VCenterCleanup
         try {
             $this->db->query($query[0], $query[1]);
             Loop::futureTick(fn () => $this->tick());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $deferred = $this->deferred;
             $this->scheduledQueries = [];
             $this->deferred = null;
-            $deferred->reject(new \Exception(sprintf(
+            $deferred->reject(new Exception(sprintf(
                 "Query %s failed: %s",
                 $query[0],
                 $e->getMessage()

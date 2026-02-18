@@ -26,6 +26,6 @@ class KnowledgeBaseLink extends BaseHtmlElement
         }
 
         $this->setAttribute('title', $title);
-        $this->setAttribute('href', 'https://kb.vmware.com/s/article/' . \rawurlencode($id));
+        $this->setAttribute('href', 'https://kb.vmware.com/s/article/' . rawurlencode($id));
     }
 }

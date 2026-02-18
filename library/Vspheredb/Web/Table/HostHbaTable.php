@@ -31,7 +31,7 @@ class HostHbaTable extends ZfQueryBasedTable
         $this->moref = $this->host->object()->get('moref');
         parent::__construct($host->getConnection());
 
-        $this->prepend(new SubTitle(\sprintf(
+        $this->prepend(new SubTitle(sprintf(
             $this->translate('HBA (%s)'),
             // Hint: we could also count given HBAs, but this helps to spot
             // eventual inconsistencies

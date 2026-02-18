@@ -163,7 +163,7 @@ class VmEssentialInfoTable extends NameValueTable
         }
         $tools[] = new VmrcLink($this->vCenter, $vm, 'VMRC');
         $tools[] = ' ';
-        if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
+        if (version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
             $tools[] = new Html5UiLink($this->vCenter, $vm, 'HTML5 UI');
             $tools[] = ' ';
         }

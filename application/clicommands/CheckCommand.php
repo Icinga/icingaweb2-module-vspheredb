@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Exception;
 use gipfl\Cli\Screen;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
@@ -66,7 +67,7 @@ class CheckCommand extends Command
                         $this->prependMessage('There are problems with some vCenters/ESXi Host connections');
                     }
                 }
-            }, function (\Exception $e) {
+            }, function (Exception $e) {
                 $message = $e->getMessage();
                 if (preg_match('/^Unable to connect/', $message)) {
                     $message = "Daemon not running? $message";

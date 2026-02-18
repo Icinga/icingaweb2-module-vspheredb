@@ -75,11 +75,11 @@ class RrdImg
         // Disk was 300x140, Net 340x180
         $width = 340;
         $height = 180;
-        $end = \floor(\time() / 300) * 300;
+        $end = floor(time() / 300) * 300;
         $start = $end - 86400;
         $start = $end - 14400;
         $params = [
-            'file'     => \sprintf('%s/%s.rrd', $moref, $device),
+            'file'     => sprintf('%s/%s.rrd', $moref, $device),
             'height'   => $height,
             'width'    => $width,
             'rnd'      => floor(time() / 20),

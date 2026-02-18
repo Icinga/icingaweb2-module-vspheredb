@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Exception;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
@@ -16,6 +17,7 @@ use Icinga\Module\Vspheredb\Web\Widget\ResourceUsageLoader;
 use Icinga\Module\Vspheredb\Web\Widget\UsageSummary;
 use Icinga\Module\Vspheredb\WebUtil;
 use ipl\Html\Html;
+use Zend_Db_Select_Exception;
 
 class VcentersController extends ObjectsController
 {
@@ -28,7 +30,7 @@ class VcentersController extends ObjectsController
     {
         try {
             $connections = $this->syncRpcCall('vsphere.getApiConnections');
-        } catch (\Exception $e) {
+        } catch (Exception) {
             return null;
         }
         $connectionState = new ConnectionState($connections, $this->db()->getDbAdapter());
@@ -36,7 +38,7 @@ class VcentersController extends ObjectsController
     }
 
     /**
-     * @throws \Zend_Db_Select_Exception
+     * @throws Zend_Db_Select_Exception
      */
     public function indexAction(): void
     {
@@ -102,8 +104,10 @@ class VcentersController extends ObjectsController
 
     /**
      * @param VCenterSummaryTable $table
+     *
      * @return CpuAbsoluteUsage
-     * @throws \Zend_Db_Select_Exception
+     *
+     * @throws Zend_Db_Select_Exception
      */
     protected function cpuSummary(VCenterSummaryTable $table): CpuAbsoluteUsage
     {

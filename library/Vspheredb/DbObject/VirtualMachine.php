@@ -6,6 +6,7 @@ use gipfl\Json\JsonString;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\MappedClass\GuestNicInfo;
 use Icinga\Module\Vspheredb\Util;
+use InvalidArgumentException;
 use stdClass;
 
 class VirtualMachine extends BaseDbObject
@@ -114,7 +115,8 @@ class VirtualMachine extends BaseDbObject
 
     /**
      * @return HostSystem
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @throws NotFoundError
      */
     public function getRuntimeHost(): HostSystem
     {
@@ -140,7 +142,10 @@ class VirtualMachine extends BaseDbObject
      * writing, this does NOT change VM properties.
      *
      * @param HostSystem|null $host
+     *
      * @return void
+     *
+     * @throws InvalidArgumentException
      */
     public function setRuntimeHost(?HostSystem $host): void
     {
@@ -151,7 +156,7 @@ class VirtualMachine extends BaseDbObject
         }
 
         if ($host->get('uuid') !== $this->get('runtime_host_uuid')) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Cannot set runtime host with UUID %s, expected %s',
                 Util::niceUuid($host->get('uuid')),
                 Util::niceUuid($this->get('runtime_host_uuid'))

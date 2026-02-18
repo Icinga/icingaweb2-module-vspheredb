@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use gipfl\Json\JsonEncodeException;
 use gipfl\Json\JsonString;
 
 trait CustomValueSupport
@@ -11,7 +12,7 @@ trait CustomValueSupport
      *
      * @return void
      *
-     * @throws \gipfl\Json\JsonEncodeException
+     * @throws JsonEncodeException
      */
     protected function setCustomValues(mixed $value): void
     {

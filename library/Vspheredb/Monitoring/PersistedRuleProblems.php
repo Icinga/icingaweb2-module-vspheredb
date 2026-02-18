@@ -15,6 +15,7 @@ use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRuleSet;
 use Icinga\Module\Vspheredb\Util;
 use Throwable;
+use Zend_Db_Adapter_Exception;
 
 class PersistedRuleProblems
 {
@@ -156,8 +157,10 @@ class PersistedRuleProblems
 
     /**
      * @param array<string,array<string,CheckResultSet>> $results
+     *
      * @return array
-     * @throws \Zend_Db_Adapter_Exception
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
     protected function processCheckedObjects(array $results): array
     {

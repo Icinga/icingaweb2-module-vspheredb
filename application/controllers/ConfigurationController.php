@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Exception;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Db;
@@ -12,6 +13,7 @@ use Icinga\Module\Vspheredb\Web\Table\MonitoredObjectMappingTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\ConfigTabs;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
@@ -78,7 +80,7 @@ class ConfigurationController extends Controller
     }
 
     /**
-     * @throws \Icinga\Security\SecurityException
+     * @throws SecurityException
      */
     public function serversAction(): void
     {
@@ -104,7 +106,7 @@ class ConfigurationController extends Controller
                 }
             }
             $this->setAutorefreshInterval(5);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $connections = null;
             $this->content()->add(
                 Hint::warning($this->translate('Got no connection information. Is the Damon running?'))

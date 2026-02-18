@@ -59,13 +59,13 @@ trait CheckPluginHelper
         /** @var Command $this */
         $this->loop()->futureTick(function () use ($callable) {
             $result = null;
-            if (\is_callable($callable)) {
+            if (is_callable($callable)) {
                 try {
                     $result = $callable();
                 } catch (Exception $e) {
                     $this->addProblem('UNKNOWN', $this->stripNonUtf8Characters($e->getMessage()));
                     $this->showOptionalTrace($e);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $this->addProblem('UNKNOWN', $this->stripNonUtf8Characters($e->getMessage()));
                     $this->showOptionalTrace($e);
                 }

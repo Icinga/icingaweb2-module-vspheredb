@@ -11,6 +11,7 @@ use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Psr\Log\LoggerInterface;
 use React\Promise\PromiseInterface;
+use Zend_Db_Adapter_Abstract;
 
 use function React\Promise\all;
 use function React\Promise\resolve;
@@ -118,7 +119,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
         return all($pending);
     }
 
-    protected function makeWhere(\Zend_Db_Adapter_Abstract $db, $vmUuid, $dsUuid): string
+    protected function makeWhere(Zend_Db_Adapter_Abstract $db, $vmUuid, $dsUuid): string
     {
         return $db->quoteInto('vm_uuid = ?', $vmUuid)
             . $db->quoteInto(' AND datastore_uuid = ?', $dsUuid);
