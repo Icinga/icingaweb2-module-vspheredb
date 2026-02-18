@@ -88,9 +88,9 @@ class DelayedPerfdataRenderer
     {
         if ($num > 500) {
             return sprintf('%0.2Fms', $num / 1000);
-        } else {
-            return sprintf('%dµs', $num);
         }
+
+        return sprintf('%dµs', $num);
     }
 
     protected function formatKiloBytesPerSecond(int $num): string
@@ -168,9 +168,9 @@ class DelayedPerfdataRenderer
             && array_key_exists($counter, $this->perf[$name][$instance])
         ) {
             return $this->perf[$name][$instance][$counter];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     protected function fetchPerf(): array

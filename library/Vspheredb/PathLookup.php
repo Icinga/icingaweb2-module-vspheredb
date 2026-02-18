@@ -44,9 +44,9 @@ class PathLookup
                 ['uuid' => Uuid::fromBytes($uuid)->toString()],
                 ['data-base-target' => '_next']
             );
-        } else {
-            return '-';
         }
+
+        return '-';
     }
 
     protected function getBaseUrlByType(string $type): string

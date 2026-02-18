@@ -49,9 +49,9 @@ class Anonymizer
                 self::$instance = false;
 
                 return null;
-            } else {
-                self::$instance = $instance;
             }
+
+            self::$instance = $instance;
         } elseif (self::$instance === false) {
             return null;
         }

@@ -28,11 +28,9 @@ class OverallStatusRenderer extends Html
                 'title' => $this->getStatusDescription($state),
                 'class' => [ 'state', $state ]
             ]);
-        } else {
-            $powerInfo = new PowerStateRenderer();
-
-            return $powerInfo($powerState);
         }
+
+        return (new PowerStateRenderer())($powerState);
     }
 
     /**

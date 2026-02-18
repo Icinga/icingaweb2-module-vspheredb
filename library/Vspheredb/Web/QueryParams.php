@@ -34,9 +34,9 @@ class QueryParams
     {
         if ($this->has($key)) {
             return $this->params[$key];
-        } else {
-            return $default;
         }
+
+        return $default;
     }
 
     /**
@@ -48,8 +48,8 @@ class QueryParams
     {
         if ($this->has($key)) {
             return $this->params[$key];
-        } else {
-            throw new InvalidArgumentException("Parameter '$key' is required");
         }
+
+        throw new InvalidArgumentException("Parameter '$key' is required");
     }
 }

@@ -48,9 +48,9 @@ class HostSensor extends BaseDbObject
         // $value = \preg_replace('/\s---\s.+$/', '', $value);
         if ($value === $this->get('name')) {
             return $this;
-        } else {
-            return $this->reallySet('name', $value);
         }
+
+        return $this->reallySet('name', $value);
     }
 
     public function setHealth_state($healthState): void // phpcs:ignore

@@ -115,9 +115,9 @@ trait CheckPluginHelper
     {
         if ($state === null) {
             return $this->stateNameMap[$this->state];
-        } else {
-            return $this->stateNameMap[$this->wantNumericState($state)];
         }
+
+        return $this->stateNameMap[$this->wantNumericState($state)];
     }
 
     /**
@@ -205,16 +205,16 @@ trait CheckPluginHelper
         if (is_int($state) || ctype_digit($state)) {
             if (array_key_exists($state, $this->stateNameMap)) {
                 return (int) $state;
-            } else {
-                throw new InvalidArgumentException(sprintf('%d is not a valid numeric state', $state));
             }
-        } else {
-            if (array_key_exists($state, $this->nameStateMap)) {
-                return $this->nameStateMap[$state];
-            } else {
-                throw new InvalidArgumentException(sprintf('%s is not a valid state name', $state));
-            }
+
+            throw new InvalidArgumentException(sprintf('%d is not a valid numeric state', $state));
         }
+
+        if (array_key_exists($state, $this->nameStateMap)) {
+            return $this->nameStateMap[$state];
+        }
+
+        throw new InvalidArgumentException(sprintf('%s is not a valid state name', $state));
     }
 
     protected function getMessages(): array

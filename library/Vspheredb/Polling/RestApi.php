@@ -161,12 +161,11 @@ class RestApi
                         //   "user":"username@VSPHERE.LOCAL"
                         // }
                         return true;
-                    } else {
-                        $this->logger->debug('REST API Session is no longer valid');
-                        $this->sidStore->forgetCookies();
-
-                        return false;
                     }
+                    $this->logger->debug('REST API Session is no longer valid');
+                    $this->sidStore->forgetCookies();
+
+                    return false;
                 }
             );
         }
