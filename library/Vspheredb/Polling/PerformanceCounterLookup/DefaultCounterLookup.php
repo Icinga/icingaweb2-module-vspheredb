@@ -67,9 +67,9 @@ abstract class DefaultCounterLookup implements CounterLookup
     {
         if ($this->hasInstanceKey()) {
             return static::explodeInstances($this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid)));
-        } else {
-            return $this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid));
         }
+
+        return $this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid));
     }
 
     abstract protected function prepareBaseQuery(UuidInterface $vCenterUuid): Zend_Db_Select;

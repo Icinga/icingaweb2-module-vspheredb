@@ -73,21 +73,22 @@ trait UuidLinkHelper
 
         if (array_key_exists($uuid, $this->fetchedUuids)) {
             return $this->fetchedUuids[$uuid]->$property;
-        } else {
-            return '[UNKNOWN]' . $uuid;
         }
+
+        return '[UNKNOWN]' . $uuid;
     }
 
     protected function fetchUuidObjectDetails(): void
     {
-        if (method_exists($this, 'db')) {
-            /** @var \Zend_Db_Adapter_Abstract $db */
-            $db = $this->db();
-        } else {
+        if (! method_exists($this, 'db')) {
             $this->fetchedUuids = [];
 
             return;
         }
+
+        /** @var Zend_Db_Adapter_Abstract $db */
+        $db = $this->db();
+
         if (empty($this->requiredUuids)) {
             $this->fetchedUuids = [];
 

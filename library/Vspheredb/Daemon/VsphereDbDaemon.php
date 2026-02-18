@@ -650,9 +650,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                 $this->logger->error('[db] clearing DB config failed: ' . $e->getMessage());
                 $this->setDbState(self::STATE_FAILED);
             });
-        } else {
-            return $this->dbRunner->request('db.setDbConfig', ['config' => $this->dbConfig]);
         }
+
+        return $this->dbRunner->request('db.setDbConfig', ['config' => $this->dbConfig]);
     }
 
     /**
@@ -753,16 +753,13 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                 $this->logger->error('[configwatch] Got no valid DB configuration');
 
                 return;
-            } else {
-                $this->logger->error('[configwatch] There is no longer a valid DB configuration');
-                $this->dbConfig = $config;
-                $sent = $this->sendDbConfigToRunner();
             }
+            $this->logger->error('[configwatch] There is no longer a valid DB configuration');
         } else {
             $this->logger->notice('[configwatch] DB configuration loaded');
-            $this->dbConfig = $config;
-            $sent = $this->sendDbConfigToRunner();
         }
+        $this->dbConfig = $config;
+        $sent = $this->sendDbConfigToRunner();
         $sent->then(function () {
             $this->stopComponent(self::COMPONENT_API);
             $this->setDbState(self::STATE_READY);

@@ -76,9 +76,9 @@ class VmEssentialInfoTable extends NameValueTable
 
         if (! str_contains($annotation, "\n")) {
             return $annotation;
-        } else {
-            return Html::tag('pre', null, $annotation);
         }
+
+        return Html::tag('pre', null, $annotation);
     }
 
     protected function assemble(): void
@@ -220,9 +220,9 @@ class VmEssentialInfoTable extends NameValueTable
                         ['class' => 'icon-right-small']
                     )
                 ];
-            } else {
-                return [Html::sprintf("There is no monitored Host mapped to this VM")];
             }
+
+            return [Html::sprintf("There is no monitored Host mapped to this VM")];
         } catch (Exception $e) {
             return [
                 Hint::error(

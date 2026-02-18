@@ -83,12 +83,10 @@ class AdditionalTableActions
     protected function createShowSqlToggle(): Link
     {
         if ($this->url->getParam('format') === 'sql') {
-            $link = Link::create($this->translate('Hide SQL'), $this->url->without('format'));
-        } else {
-            $link = Link::create($this->translate('Show SQL'), $this->url->with('format', 'sql'));
+            return Link::create($this->translate('Hide SQL'), $this->url->without('format'));
         }
 
-        return $link;
+        return Link::create($this->translate('Show SQL'), $this->url->with('format', 'sql'));
     }
 
     protected function toggleColumnsOptions(): array

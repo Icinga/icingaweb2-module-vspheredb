@@ -26,15 +26,15 @@ class MemoryUsage extends UsageBar
     {
         if ($this->usedHost === null) {
             return parent::getLabelUsed();
-        } else {
-            return sprintf(
-                '%s: %s (%s: %s)',
-                $this->translate('Active'),
-                $this->format($this->used),
-                $this->translate('Host'),
-                $this->format($this->usedHost)
-            );
         }
+
+        return sprintf(
+            '%s: %s (%s: %s)',
+            $this->translate('Active'),
+            $this->format($this->used),
+            $this->translate('Host'),
+            $this->format($this->usedHost)
+        );
     }
 
     protected function assembleBar(BaseHtmlElement $bar): void

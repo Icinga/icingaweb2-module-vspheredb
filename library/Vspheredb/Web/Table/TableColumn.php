@@ -32,9 +32,9 @@ abstract class TableColumn
         $column = $this->getColumn();
         if (is_array($column)) {
             return $column;
-        } else {
-            return [$this->getAlias() => $column];
         }
+
+        return [$this->getAlias() => $column];
     }
 
     public function getMainColumnExpression(): array|string|null
@@ -42,9 +42,9 @@ abstract class TableColumn
         $column = $this->getColumn();
         if (is_array($column)) {
             return array_shift($column);
-        } else {
-            return $column;
         }
+
+        return $column;
     }
 
     public function setRenderer(callable $callback): static
@@ -138,12 +138,12 @@ abstract class TableColumn
             $column = $this->getColumn();
             if (is_array($column)) {
                 return current($column);
-            } else {
-                return $column;
             }
-        } else {
-            return $this->sortExpression;
+
+            return $column;
         }
+
+        return $this->sortExpression;
     }
 
     /**

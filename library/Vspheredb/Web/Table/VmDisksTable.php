@@ -74,9 +74,9 @@ class VmDisksTable extends ZfQueryBasedTable
                 ], ['class' => 'vm-disks-with-perf-image']),
                 $this->prepareImgColumn($device)
             ]);
-        } else {
-            return $this->row([$this->formatSimple($row, $device)]);
         }
+
+        return $this->row([$this->formatSimple($row, $device)]);
     }
 
     protected function formatSimple(object $row, string $device): FormattedString
@@ -97,9 +97,9 @@ class VmDisksTable extends ZfQueryBasedTable
                 RrdImg::vmDiskReadWrites($this->moref, $device),
                 RrdImg::vmDiskTotalLatency($this->moref, $device),
             ]);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     public function prepareQuery(): Select|Zend_Db_Select

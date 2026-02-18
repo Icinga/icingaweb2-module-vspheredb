@@ -254,9 +254,9 @@ class VmHardwareTree extends BaseHtmlElement
 
         if ($level === 0) {
             return $result;
-        } else {
-            return Html::tag('ul', null, $result);
         }
+
+        return Html::tag('ul', null, $result);
     }
 
     protected function renderNode(object $device, int $level = 0): HtmlElement

@@ -69,12 +69,12 @@ class RemoteClient
         if ($this->connection === null) {
             if ($this->pendingConnection === null) {
                 return $this->connect();
-            } else {
-                return $this->pendingConnection;
             }
-        } else {
-            return resolve($this->connection);
+
+            return $this->pendingConnection;
         }
+
+        return resolve($this->connection);
     }
 
     /**

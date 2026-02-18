@@ -78,19 +78,18 @@ class DaemonController extends Controller
                     "Daemon keep-alive is outdated in our database, last refresh was %s",
                     WebUtil::timeAgo($daemon->ts_last_refresh / 1000)
                 ));
-            } else {
-                $restartForm = new RestartDaemonForm($this->remoteClient(), $this->loop());
-                $restartForm->on($restartForm::ON_SUBMIT, function () {
-                    Notification::success('Daemon has been asked to restart');
-                    $this->redirectNow($this->url());
-                });
-                $restartForm->handleRequest($this->getServerRequest());
-
-                return [$restartForm, $this->prepareProcessTable(JsonString::decode($daemon->process_info))];
             }
-        } else {
-            return Hint::error($this->translate('Daemon is either not running or not connected to the Database'));
+            $restartForm = new RestartDaemonForm($this->remoteClient(), $this->loop());
+            $restartForm->on($restartForm::ON_SUBMIT, function () {
+                Notification::success('Daemon has been asked to restart');
+                $this->redirectNow($this->url());
+            });
+            $restartForm->handleRequest($this->getServerRequest());
+
+            return [$restartForm, $this->prepareProcessTable(JsonString::decode($daemon->process_info))];
         }
+
+        return Hint::error($this->translate('Daemon is either not running or not connected to the Database'));
     }
 
     /**

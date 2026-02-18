@@ -575,10 +575,9 @@ abstract class DbObject
             }
 
             return $id;
-        } else {
-            if (isset($this->properties[$keyName])) {
-                return $this->properties[$keyName];
-            }
+        }
+        if (isset($this->properties[$keyName])) {
+            return $this->properties[$keyName];
         }
 
         return null;
@@ -651,9 +650,8 @@ abstract class DbObject
         if (empty($properties)) {
             if (is_array($this->getKeyName())) {
                 throw new NotFoundError('Failed to load %s for %s', $this->table, $this->createWhere());
-            } else {
-                throw new NotFoundError('Failed to load %s "%s"', $this->table, $this->getLogId());
             }
+            throw new NotFoundError('Failed to load %s "%s"', $this->table, $this->getLogId());
         }
 
         return $this->setDbProperties($properties);
@@ -994,12 +992,11 @@ abstract class DbObject
             }
 
             return implode(' AND ', $where);
+        }
+        if ($this->hasBeenLoadedFromDb()) {
+            return $this->createQuotedWhere($key, $this->loadedProperties[$key]);
         } else {
-            if ($this->hasBeenLoadedFromDb()) {
-                return $this->createQuotedWhere($key, $this->loadedProperties[$key]);
-            } else {
-                return $this->createQuotedWhere($key, $this->properties[$key]);
-            }
+            return $this->createQuotedWhere($key, $this->properties[$key]);
         }
     }
 
@@ -1027,9 +1024,9 @@ abstract class DbObject
     {
         if ($this->isBinaryColumn($column)) {
             return $this->connection->quoteBinary($value);
-        } else {
-            return $value;
         }
+
+        return $value;
     }
 
     /**

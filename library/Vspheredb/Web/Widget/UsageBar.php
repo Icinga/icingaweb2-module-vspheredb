@@ -76,11 +76,9 @@ class UsageBar extends BaseHtmlElement
     {
         if ($this->formatter === null) {
             return $value;
-        } else {
-            $formatter = $this->formatter;
-
-            return $formatter($value);
         }
+
+        return ($this->formatter)($value);
     }
 
     protected function getTitleUsed(): string

@@ -130,9 +130,9 @@ class ConfigWatch
             ksort($section);
 
             return $section;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -145,8 +145,8 @@ class ConfigWatch
             $this->resourceConfig = $resource;
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }

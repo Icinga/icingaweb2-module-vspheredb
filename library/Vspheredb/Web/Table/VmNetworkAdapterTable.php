@@ -50,9 +50,9 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         // ]));
         if ($this->withPerfImages) {
             return $this::row([$this->formatMultiLine($row), $this->prepareRowImages($row)]);
-        } else {
-            return $this::row([$this->formatSimple($row)]);
         }
+
+        return $this::row([$this->formatSimple($row)]);
     }
 
     protected function linkToPortGroup($row): string|FormattedString
@@ -61,21 +61,17 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
             return ''; // TODO: explain (no portgroup -> ESXi?)
         } elseif ($row->portgroup_uuid === null) {
             return sprintf($this->translate('Port %s'), $row->port_key);
-        } else {
-            return Html::sprintf(
-                'Port %s on %s',
-                $row->port_key,
-                $row->portgroup_name
-                /* // TODO:
-                // Link::create(
-                //     $row->portgroup_name,
-                //     'vspheredb/portgroup',
-                //     ['uuid' => Util::niceUuid($row->portgroup_uuid)],
-                //     ['data-base-target' => '_next']
-                // )
-                */
-            );
         }
+
+        return Html::sprintf('Port %s on %s', $row->port_key, $row->portgroup_name);
+        /* // TODO:
+        // Link::create(
+        //     $row->portgroup_name,
+        //     'vspheredb/portgroup',
+        //     ['uuid' => Util::niceUuid($row->portgroup_uuid)],
+        //     ['data-base-target' => '_next']
+        // )
+        */
     }
 
     protected function formatSimple($row): FormattedString

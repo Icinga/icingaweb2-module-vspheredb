@@ -117,14 +117,14 @@ trait SingleObjectMonitoring
                 null,
                 ['class' => 'icon-left-big']
             );
-        } else {
-            return Link::create(
-                $this->translate('Inspect'),
-                $this->url()->with('inspect', true),
-                null,
-                ['class' => 'icon-services']
-            );
         }
+
+        return Link::create(
+            $this->translate('Inspect'),
+            $this->url()->with('inspect', true),
+            null,
+            ['class' => 'icon-services']
+        );
     }
 
     /**
@@ -141,13 +141,13 @@ trait SingleObjectMonitoring
                 null,
                 ['class' => 'icon-left-big']
             );
-        } else {
-            return Link::create(
-                $this->translate('Show history'),
-                $this->url()->with('history', true),
-                null,
-                ['class' => 'icon-history']
-            );
         }
+
+        return Link::create(
+            $this->translate('Show history'),
+            $this->url()->with('history', true),
+            null,
+            ['class' => 'icon-history']
+        );
     }
 }

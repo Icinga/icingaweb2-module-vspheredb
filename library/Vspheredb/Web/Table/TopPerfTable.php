@@ -55,9 +55,9 @@ class TopPerfTable extends Table
     {
         if ($num > 500) {
             return sprintf('%0.2Fms', $num / 1000);
-        } else {
-            return sprintf('%dµs', $num);
         }
+
+        return sprintf('%dµs', $num);
     }
 
     protected function formatKiloBytesPerSecond(int $num): string

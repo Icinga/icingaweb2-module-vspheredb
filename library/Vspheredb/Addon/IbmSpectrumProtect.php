@@ -162,10 +162,10 @@ class IbmSpectrumProtect implements BackupTool
 
         if (preg_match("/^'(.*)'$/", $string, $match)) {
             return $match[1];
-        } else {
-            // Be strict. Otherwise we could of course return $string.
-            return null;
         }
+
+        // Be strict. Otherwise we could of course return $string.
+        return null;
     }
 
     /**
@@ -177,9 +177,9 @@ class IbmSpectrumProtect implements BackupTool
     {
         if (preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', static::parseString($value), $match)) {
             return intval($match[1]) * 3600 + intval($match[2]) * 60 + intval($match[3]);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -204,9 +204,9 @@ class IbmSpectrumProtect implements BackupTool
 
         if (preg_match('/^([0-9\.]+)\s+(B|KB|MB|GB|TB)$/', $value, $match)) {
             return (int) (sscanf($match[1], '%f')[0] * $byteMultipliers[$match[2]]);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

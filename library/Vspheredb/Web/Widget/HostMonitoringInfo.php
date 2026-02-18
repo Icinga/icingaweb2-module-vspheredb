@@ -85,9 +85,9 @@ class HostMonitoringInfo extends HtmlDocument
                         ['class' => 'icon-right-small']
                     )
                 ];
-            } else {
-                return false;
             }
+
+            return false;
         } catch (Exception $e) {
             return [Hint::error($this->translate('Unable to check monitoring state: %s'), $e->getMessage())];
         }

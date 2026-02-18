@@ -182,12 +182,12 @@ class ChooseDbResourceForm extends Form
             $resources = $this->enumResources();
             if (in_array($resource, $resources)) {
                 return $resource;
-            } else {
-                return null;
             }
-        } else {
-            return $this->config()->get('db', 'resource');
+
+            return null;
         }
+
+        return $this->config()->get('db', 'resource');
     }
 
     public function getDb(): Db

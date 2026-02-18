@@ -187,9 +187,9 @@ class EventHistoryTable extends ZfQueryBasedTable
 
         if (array_key_exists($uuid, $this->fetchedUuids)) {
             return $this->fetchedUuids[$uuid];
-        } else {
-            return '[UNKNOWN]';
         }
+
+        return '[UNKNOWN]';
     }
 
     protected function fetchUuidNames(): void
@@ -358,22 +358,22 @@ class EventHistoryTable extends ZfQueryBasedTable
                 ),
                 Icon::create('right-big')
             );
-        } else {
-            return Html::sprintf(
-                '%s %s %s',
-                Link::create(
-                    $this->getUuidName($row->host_uuid),
-                    'vspheredb/host',
-                    ['uuid' => Util::niceUuid($row->host_uuid)]
-                ),
-                Icon::create('right-big'),
-                Link::create(
-                    $this->getUuidName($row->destination_host_uuid),
-                    'vspheredb/host',
-                    ['uuid' => Util::niceUuid($row->destination_host_uuid)]
-                )
-            );
         }
+
+        return Html::sprintf(
+            '%s %s %s',
+            Link::create(
+                $this->getUuidName($row->host_uuid),
+                'vspheredb/host',
+                ['uuid' => Util::niceUuid($row->host_uuid)]
+            ),
+            Icon::create('right-big'),
+            Link::create(
+                $this->getUuidName($row->destination_host_uuid),
+                'vspheredb/host',
+                ['uuid' => Util::niceUuid($row->destination_host_uuid)]
+            )
+        );
     }
 
     /**

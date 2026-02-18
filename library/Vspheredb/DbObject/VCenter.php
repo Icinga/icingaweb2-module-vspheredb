@@ -144,21 +144,15 @@ class VCenter extends BaseDbObject
                     ->limit(1)
             );
             if ($serverId) {
-                throw new NotFoundError(
-                    'All server connections configured for this vCenter have been disabled'
-                );
-            } else {
-                throw new NotFoundError(
-                    'Found no server for vCenterId=' . $this->get('id')
-                );
+                throw new NotFoundError('All server connections configured for this vCenter have been disabled');
             }
+
+            throw new NotFoundError('Found no server for vCenterId=' . $this->get('id'));
         } elseif ($required) {
-            throw new NotFoundError(
-                'Found no server for vCenterId=' . $this->get('id')
-            );
-        } else {
-            return null;
+            throw new NotFoundError('Found no server for vCenterId=' . $this->get('id'));
         }
+
+        return null;
     }
 
     /**
@@ -170,11 +164,13 @@ class VCenter extends BaseDbObject
     {
         if ($moRefId instanceof ManagedObjectReference || $moRefId instanceof stdClass) {
             return $this->makeBinaryGlobalMoRefUuid($moRefId);
-        } elseif (is_string($moRefId)) {
-            return Uuid::uuid5(Uuid::fromBytes($this->get('uuid')), $moRefId)->getBytes();
-        } else {
-            throw new RuntimeException('MoRef expected, got ' . gettype($moRefId));
         }
+
+        if (is_string($moRefId)) {
+            return Uuid::uuid5(Uuid::fromBytes($this->get('uuid')), $moRefId)->getBytes();
+        }
+
+        throw new RuntimeException('MoRef expected, got ' . gettype($moRefId));
     }
 
     /**
