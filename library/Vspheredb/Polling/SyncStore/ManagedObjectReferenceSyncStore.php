@@ -79,9 +79,9 @@ class ManagedObjectReferenceSyncStore extends SyncStore
         }
 
         if (! empty($vmUuidsWithNoParent)) {
-            $this->logger->debug(\sprintf(
+            $this->logger->debug(sprintf(
                 'There are %d VMs without parent',
-                \count($vmUuidsWithNoParent)
+                count($vmUuidsWithNoParent)
             ));
         }
 

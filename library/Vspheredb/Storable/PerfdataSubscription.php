@@ -8,6 +8,7 @@ use gipfl\ZfDbStore\DbStorableInterface;
 use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 
 class PerfdataSubscription implements DbStorableInterface
 {
@@ -65,7 +66,7 @@ class PerfdataSubscription implements DbStorableInterface
         }
 
         if (count($uuids) > 1) {
-            throw new \RuntimeException('More then one consumer per vCenter is currently not supported');
+            throw new RuntimeException('More then one consumer per vCenter is currently not supported');
         }
 
         return static::load($store, $uuids[0]);

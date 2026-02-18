@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\ComputeCluster;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
@@ -17,7 +18,7 @@ class ComputeClusterHeader extends HtmlDocument
     }
 
     /**
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
     protected function assemble(): void
     {

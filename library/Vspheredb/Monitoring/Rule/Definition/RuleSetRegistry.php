@@ -3,7 +3,9 @@
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
 use gipfl\Json\JsonSerialization;
+use InvalidArgumentException;
 use RuntimeException;
+use stdClass;
 
 class RuleSetRegistry implements JsonSerialization
 {
@@ -45,7 +47,7 @@ class RuleSetRegistry implements JsonSerialization
             }
         }
 
-        throw new \InvalidArgumentException("There is no Rule Set named '$name'");
+        throw new InvalidArgumentException("There is no Rule Set named '$name'");
     }
 
     public static function default(): static
@@ -70,7 +72,7 @@ class RuleSetRegistry implements JsonSerialization
         return new static((array) $any);
     }
 
-    public function jsonSerialize(): \stdClass
+    public function jsonSerialize(): stdClass
     {
         $result = [];
         foreach ($this->sets as $set) {

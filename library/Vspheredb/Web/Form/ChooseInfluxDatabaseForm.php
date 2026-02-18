@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
@@ -70,13 +71,13 @@ class ChooseInfluxDatabaseForm extends Form
     protected function refreshDbList(): void
     {
         try {
-            $this->dbList = \array_filter(
+            $this->dbList = array_filter(
                 (array) $this->remoteRequest('influxdb.listDatabases', $this->prepareParams()),
                 function ($value) {
                     return $value[0] !== '_';
                 }
             );
-        } catch (\Exception $e) {
+        } catch (Exception) {
             // Hint: we no longer refresh if it's false
             $this->dbList = false;
         }
@@ -106,7 +107,7 @@ class ChooseInfluxDatabaseForm extends Form
             if ($element instanceof SelectElement) {
                 $element->setOptions($dbOptions);
             }
-            if (\in_array($name, $dbOptions)) {
+            if (in_array($name, $dbOptions)) {
                 $element->setValue($name);
             } else {
                 $this->triggerElementError(
@@ -115,7 +116,7 @@ class ChooseInfluxDatabaseForm extends Form
                     $name
                 );
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $element->addMessage($e->getMessage());
         }
     }
@@ -123,7 +124,7 @@ class ChooseInfluxDatabaseForm extends Form
     protected function getDbOptions(): array
     {
         return ['' => $this->translate('Please choose')]
-        + \array_combine($this->dbList, $this->dbList)
+        + array_combine($this->dbList, $this->dbList)
         + ['_new' => ' -> ' . $this->translate('Create a new Database')];
     }
 

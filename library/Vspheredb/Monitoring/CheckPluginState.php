@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Monitoring;
 
 use InvalidArgumentException;
+use RuntimeException;
 
 class CheckPluginState
 {
@@ -89,7 +90,7 @@ class CheckPluginState
     {
         $formerState = array_shift($states);
         if ($formerState === null) {
-            throw new \RuntimeException('Comparing an empty state list is not possible');
+            throw new RuntimeException('Comparing an empty state list is not possible');
         }
         while ($state = array_shift($states)) {
             if (self::compare($formerState, $state) === 1) {
@@ -104,7 +105,7 @@ class CheckPluginState
     {
         $formerState = array_shift($states);
         if ($formerState === null) {
-            throw new \RuntimeException('Comparing an empty state list is not possible');
+            throw new RuntimeException('Comparing an empty state list is not possible');
         }
         while ($state = array_shift($states)) {
             if (self::compare($formerState, $state) === -1) {

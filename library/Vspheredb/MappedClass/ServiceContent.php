@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
 /**
@@ -16,7 +17,7 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  * For this reason, use the method RetrieveServiceContent to retrieve the
  * ServiceContent object.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class ServiceContent
 {
     /** @var AboutInfo */

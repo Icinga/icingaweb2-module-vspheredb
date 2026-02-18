@@ -16,6 +16,7 @@ use ipl\Html\FormElement\TextElement;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use RuntimeException;
 
 class RuleForm extends Form
 {
@@ -263,7 +264,7 @@ class RuleForm extends Form
                 return false;
         }
 
-        throw new \RuntimeException("'$value' is not a valid boolean value");
+        throw new RuntimeException("'$value' is not a valid boolean value");
     }
 
     protected function addEnabledSetting(string $prefix): void

@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Db;
 
+use Exception;
 use gipfl\Json\JsonString;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
@@ -12,6 +13,7 @@ use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use stdClass;
 use Zend_Db_Adapter_Abstract;
+use Zend_Db_Adapter_Exception;
 use Zend_Db_Exception;
 use Zend_Db_Expr;
 use Zend_Db_Select;
@@ -765,7 +767,7 @@ abstract class DbObject
      *
      * @return int|true Anzahl der geänderten Zeilen
      *
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Adapter_Exception
      */
     protected function updateDb(): int|true
     {
@@ -788,7 +790,7 @@ abstract class DbObject
      *
      * @return int Anzahl der betroffenen Zeilen
      *
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Adapter_Exception
      */
     protected function insertIntoDb(): int
     {
@@ -1068,7 +1070,7 @@ abstract class DbObject
             }
             try {
                 return JsonString::encode($id);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return 'Key encoding failed: ' . $e->getMessage();
             }
         }

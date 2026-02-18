@@ -16,6 +16,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Link\Html5UiLink;
 use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class HostSystemInfoTable extends NameValueTable
 {
@@ -69,7 +70,8 @@ class HostSystemInfoTable extends NameValueTable
 
     /**
      * @param HostSystem $host
-     * @return \ipl\Html\HtmlElement|mixed
+     *
+     * @return HtmlElement|mixed
      */
     protected function getFormattedServiceTag(HostSystem $host): mixed
     {
@@ -90,7 +92,7 @@ class HostSystemInfoTable extends NameValueTable
         if ($this->vCenter->getFirstServer(false, false) === null) {
             return Hint::warning($this->translate('There is no configured connection for this vCenter'));
         }
-        if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
+        if (version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
             $tools[] = new Html5UiLink($this->vCenter, $host, 'HTML5 UI');
             $tools[] = ' ';
         }

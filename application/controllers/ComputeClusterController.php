@@ -3,6 +3,8 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use Icinga\Authentication\Auth;
+use Icinga\Exception\MissingParameterException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\ComputeCluster;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Objects\HostsTable;
@@ -13,8 +15,8 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 class ComputeClusterController extends Controller
 {
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
     public function indexAction(): void
     {
@@ -33,8 +35,8 @@ class ComputeClusterController extends Controller
     /**
      * @return ComputeCluster
      *
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
     protected function addComputeCluster(): ComputeCluster
     {
@@ -52,7 +54,7 @@ class ComputeClusterController extends Controller
      *
      * @return void
      *
-     * @throws \Icinga\Exception\MissingParameterException
+     * @throws MissingParameterException
      */
     protected function handleTabs(ComputeCluster $computeCluster): void
     {

@@ -52,7 +52,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
 
     protected function getDefaultSelection(): array
     {
-        return \array_keys($this->getOptions());
+        return array_keys($this->getOptions());
     }
 
     protected function setEnabled(array $enabled, array $all): void
@@ -106,13 +106,13 @@ abstract class ToggleFlagList extends BaseHtmlElement
         $disabled = [];
         foreach ($this->getOptions() as $option => $label) {
             $all[] = $option;
-            if (\in_array($option, $enabled)) {
-                $urlOptions = \array_diff($enabled, [$option]);
+            if (in_array($option, $enabled)) {
+                $urlOptions = array_diff($enabled, [$option]);
                 $icon = 'check';
                 $title = $this->translate('Click to hide');
             } else {
                 $disabled[] = $option;
-                $urlOptions = \array_merge($enabled, [$option]);
+                $urlOptions = array_merge($enabled, [$option]);
                 $icon = 'plus';
                 $title = $this->translate('Click to show');
             }
@@ -122,7 +122,7 @@ abstract class ToggleFlagList extends BaseHtmlElement
             ]);
         }
         if (! empty($disabled) && $all !== $default) {
-            \array_unshift($links, Link::create(
+            array_unshift($links, Link::create(
                 $this->translate('All'),
                 $url->with($param, $this->joinUrlOptions($all)),
                 null,
@@ -156,12 +156,12 @@ abstract class ToggleFlagList extends BaseHtmlElement
 
     protected function joinUrlOptions($value): string
     {
-        return \implode(',', $value);
+        return implode(',', $value);
     }
 
     protected function splitUrlOptions($value): array
     {
-        return \preg_split('/,/', $value, -1, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $value, -1, PREG_SPLIT_NO_EMPTY);
     }
 
     protected function createLinkList($links): HtmlElement

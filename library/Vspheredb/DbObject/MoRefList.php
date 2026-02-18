@@ -2,7 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Exception;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use Zend_Db_Adapter_Exception;
 
 abstract class MoRefList
 {
@@ -65,10 +67,10 @@ abstract class MoRefList
                 ]);
             }
             $db->commit();
-        } catch (\Zend_Db_Adapter_Exception $e) {
+        } catch (Zend_Db_Adapter_Exception $e) {
             try {
                 $db->rollBack();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // There is nothing we can do about this
             }
 

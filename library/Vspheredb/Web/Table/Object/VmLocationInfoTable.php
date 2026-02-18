@@ -6,6 +6,7 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
+use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbConnection;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -47,7 +48,7 @@ class VmLocationInfoTable extends NameValueTable
     protected function assemble(): void
     {
         $vm = $this->vm;
-        /** @var \Icinga\Module\Vspheredb\Db $connection */
+        /** @var Db $connection */
         $connection = $vm->getConnection();
         $lookup =  new PathLookup($connection->getDbAdapter());
         $hostUuid = $vm->get('runtime_host_uuid');
@@ -94,13 +95,13 @@ class VmLocationInfoTable extends NameValueTable
             'class' => 'resource-info-small'
         ], Html::tag('div', [
             new CpuUsage($cpuUsed, $cpuCapacity),
-            \sprintf(
+            sprintf(
                 $this->translate('Free CPU: %s'),
                 Format::mhz($cpuCapacity - $cpuUsed)
             ),
             Html::tag('br'),
             new MemoryUsage($memUsed, $memCapacity),
-            \sprintf(
+            sprintf(
                 $this->translate('Free Memory: %s'),
                 Format::mBytes($memCapacity - $memUsed)
             ),

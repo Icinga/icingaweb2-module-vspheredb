@@ -34,7 +34,7 @@ class ChooseDbResourceForm extends Form
         $this->addResourceConfigElements();
 
         if (
-            !$this->config()->get('db', 'resource')
+            ! $this->config()->get('db', 'resource')
             || ($this->config()->get('db', 'resource') !== $this->getResourceName())
         ) {
             return;
@@ -58,8 +58,7 @@ class ChooseDbResourceForm extends Form
                 $resource = $this->getResource();
                 $db = $resource->getDbAdapter();
             } catch (Exception $e) {
-                $this->getElement('resource')
-                    ->addMessage('Resource failed: ' . $e->getMessage());
+                $this->getElement('resource')->addMessage('Resource failed: ' . $e->getMessage());
 
                 return;
             }
@@ -67,8 +66,7 @@ class ChooseDbResourceForm extends Form
             try {
                 $db->fetchOne('SELECT 1');
             } catch (Exception $e) {
-                $this->getElement('resource')
-                    ->addMessage('Could not connect to database: ' . $e->getMessage());
+                $this->getElement('resource')->addMessage('Could not connect to database: ' . $e->getMessage());
 
                 $this->add(Hint::info($this->translate(
                     'Please make sure that your database exists and your user has'
@@ -91,7 +89,7 @@ class ChooseDbResourceForm extends Form
             'value'         => $config->get('db', 'resource')
         ]);
 
-        if (!$this->getResourceName()) {
+        if (! $this->getResourceName()) {
             $this->add(Hint::info($this->translate(
                 'No database resource has been configured yet. Please choose a'
                 . ' resource to complete your config'
@@ -131,7 +129,7 @@ class ChooseDbResourceForm extends Form
             Notification::success($this->translate('Configuration has been stored'));
 
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->getElement('resource')->addMessage(
                 sprintf(
                     $this->translate(
@@ -167,10 +165,7 @@ class ChooseDbResourceForm extends Form
             }
         }
 
-        if (
-            $this->getSubmitLabel() === $this->createDbLabel
-            || $this->getSubmitLabel() === $this->migrateDbLabel
-        ) {
+        if ($this->getSubmitLabel() === $this->createDbLabel || $this->getSubmitLabel() === $this->migrateDbLabel) {
             $this->migrations()->applyPendingMigrations();
         }
     }

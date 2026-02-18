@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Zend_Db_Adapter_Abstract as ZfDbAdapter;
+use Zend_Db_Adapter_Exception;
 
 abstract class AlarmEvent extends KnownEvent
 {
@@ -19,7 +20,8 @@ abstract class AlarmEvent extends KnownEvent
     /**
      * @param ZfDbAdapter $db
      * @param VCenter $vCenter
-     * @throws \Zend_Db_Adapter_Exception
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
     public function store(ZfDbAdapter $db, VCenter $vCenter)
     {

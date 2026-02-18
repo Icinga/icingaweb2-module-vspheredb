@@ -7,6 +7,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use RuntimeException;
 use stdClass;
 
 /**
@@ -62,7 +63,7 @@ class VCenter extends BaseDbObject
     {
         return sprintf(
             '%s %s build-%s',
-            \preg_replace('/^VMware /', '', $this->get('api_name')),
+            preg_replace('/^VMware /', '', $this->get('api_name')),
             $this->get('version'),
             $this->get('build')
         );
@@ -172,7 +173,7 @@ class VCenter extends BaseDbObject
         } elseif (is_string($moRefId)) {
             return Uuid::uuid5(Uuid::fromBytes($this->get('uuid')), $moRefId)->getBytes();
         } else {
-            throw new \RuntimeException('MoRef expected, got ' . gettype($moRefId));
+            throw new RuntimeException('MoRef expected, got ' . gettype($moRefId));
         }
     }
 

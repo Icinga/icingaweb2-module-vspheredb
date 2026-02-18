@@ -4,11 +4,14 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\MappedClass\ElementDescription;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
+use ReturnTypeWillChange;
 
 abstract class BaseDbObject extends VspheredbDbObject implements JsonSerialization
 {
@@ -35,7 +38,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
      *
      * @return static
      *
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
     public static function loadWithUuid(string $uuid, Db $connection): static
     {
@@ -115,7 +118,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
                     // Like HostNumericSensorInfo.healthState
                     // Hint: lcfirst -> issue #179, vSphere 7 ships 'Green' instead of 'green',
                     //       at least on that specific system
-                    $value = \lcfirst($value->key);
+                    $value = lcfirst($value->key);
                 }
                 if ($property === 'customValues') {
                     if (empty((array) $value)) {
@@ -132,7 +135,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         return $this;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     /**
      * @return object
      */
@@ -191,7 +194,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     /**
      * @return ManagedObject|null
      *
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
     public function object(): ?ManagedObject
     {
@@ -216,7 +219,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
         }
 
         if ($object->get('uuid') !== $this->get('uuid')) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Cannot set ManagedObject UUID %s, expected %s',
                 Uuid::fromBytes($object->get('uuid'))->toString(),
                 Uuid::fromBytes($this->get('uuid'))->toString()

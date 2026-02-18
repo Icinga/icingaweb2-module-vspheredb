@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Feature\NextConfirmCancel;
@@ -73,7 +74,7 @@ class DeleteVCenterForm extends Form
             } else {
                 Notification::success($this->translate('Failed to trigger vCenter data cleanup'));
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Notification::error($e->getMessage());
         }
     }

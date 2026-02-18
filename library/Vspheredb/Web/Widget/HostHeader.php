@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -47,7 +48,7 @@ class HostHeader extends BaseHtmlElement
     }
 
     /**
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
     protected function assemble(): void
     {

@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Icon;
 use gipfl\Translation\TranslationHelper;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
@@ -33,7 +34,7 @@ class VmHeader extends BaseHtmlElement
     }
 
     /**
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws NotFoundError
      */
     protected function assemble(): void
     {

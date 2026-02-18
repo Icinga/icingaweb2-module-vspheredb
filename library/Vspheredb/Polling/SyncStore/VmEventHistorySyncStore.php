@@ -2,12 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
+use gipfl\ZfDb\Exception\SelectException;
 use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\MappedClass\KnownEvent;
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use RuntimeException;
 use Zend_Db_Adapter_Abstract;
+use Zend_Db_Select_Exception;
 
 class VmEventHistorySyncStore extends SyncStore
 {
@@ -73,6 +75,8 @@ class VmEventHistorySyncStore extends SyncStore
     /**
      * @return int
      *
+     * @throws Zend_Db_Select_Exception
+     * @throws SelectException
      */
     protected function getLastEventKey(): int
     {
@@ -82,6 +86,8 @@ class VmEventHistorySyncStore extends SyncStore
     /**
      * @return int
      *
+     * @throws Zend_Db_Select_Exception
+     * @throws SelectException
      */
     public function getLastEventTimeStamp(): int
     {
