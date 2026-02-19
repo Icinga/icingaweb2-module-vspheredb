@@ -9,7 +9,8 @@ use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use ipl\Html\FormElement\SelectElement;
 use React\EventLoop\LoopInterface;
 
-use function Clue\React\Block\await;
+use function React\Async\await;
+use function React\Promise\Timer\timeout;
 
 class InfluxDbConnectionForm extends Form
 {
@@ -111,7 +112,7 @@ class InfluxDbConnectionForm extends Form
 
     protected function remoteRequest($request, $params = [])
     {
-        return await($this->client->request($request, $params), $this->loop, 5);
+        return await(timeout($this->client->request($request, $params), 5, $this->loop));
     }
 
     protected function getDetectedApiVersion()

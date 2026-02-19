@@ -10,7 +10,7 @@ use ipl\Html\FormElement\SelectElement;
 use Psr\Log\LogLevel;
 use React\EventLoop\LoopInterface;
 
-use function Clue\React\Block\await;
+use function React\Async\await;
 
 class LogLevelForm extends InlineForm
 {
@@ -39,7 +39,7 @@ class LogLevelForm extends InlineForm
     protected function assemble()
     {
         try {
-            $currentLevel = await($this->client->request('logger.getLogLevel'), $this->loop);
+            $currentLevel = await($this->client->request('logger.getLogLevel'));
             $this->talkedToSocket = true;
         } catch (\Exception $e) {
             $this->talkedToSocket = false;

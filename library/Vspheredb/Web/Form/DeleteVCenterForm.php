@@ -14,7 +14,7 @@ use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 use React\EventLoop\LoopInterface;
 
-use function Clue\React\Block\await;
+use function React\Async\await;
 
 class DeleteVCenterForm extends Form
 {
