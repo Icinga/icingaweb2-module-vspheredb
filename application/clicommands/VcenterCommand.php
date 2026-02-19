@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Clicommands;
 
 use Icinga\Module\Vspheredb\Db;
+use React\EventLoop\Loop;
 use Throwable;
 
 class VcenterCommand extends Command
@@ -15,97 +16,60 @@ class VcenterCommand extends Command
         $this->fail("Command has been deprecated, please check our documentation");
     }
 
-    public function cleanupAction()
+    /**
+     * List orphaned vCenter IDs
+     *
+     * USAGE
+     *
+     * icingacli vspheredb orphaned
+     */
+    public function orphanedAction(): void
     {
-        $tables = [
-            "vspheredb_daemonlog",
-            "vcenter_sync",
-            "compute_resource",
-            "host_system",
-            "host_pci_device",
-            "host_sensor",
-            "host_physical_nic",
-            "host_virtual_nic",
-            "host_hba",
-            "virtual_machine",
-            "storage_pod",
-            "distributed_virtual_switch",
-            "distributed_virtual_portgroup",
-            "datastore",
-            "vm_snapshot",
-            "vm_datastore_usage",
-            "vm_hardware",
-            "vm_disk",
-            "vm_disk_usage",
-            "vm_network_adapter",
-            "host_quick_stats",
-            "vm_quick_stats",
-            "alarm_history",
-            "vm_event_history",
-            "counter_300x5",
-            "performance_counter",
-            "performance_unit",
-            "performance_group",
-            "performance_collection_interval",
-            "perfdata_subscription",
-            "tagging_category",
-            "tagging_tag",
-            "tagging_object_tag"
-        ];
-
         $db = Db::newConfiguredInstance();
         $adapter = $db->getDbAdapter();
-
         $vcenterIds = $adapter->fetchCol(
-            $adapter->select()->distinct()->from("vcenter_server", ["vcenter_id"])->where("vcenter_id IS NOT NULL")
+            $adapter->select()->distinct()->from('vcenter_server', ['vcenter_id'])->where('vcenter_id IS NOT NULL')
         );
-        $q = $adapter->select()->from("vcenter", ["instance_uuid"]);
+        $q = $adapter->select()->from('vcenter', ['instance_uuid', 'id']);
         if (! empty($vcenterIds)) {
-            $q->where("id NOT IN (?)", $vcenterIds);
+            $q->where('id NOT IN (?)', $vcenterIds);
         }
-        $orphanedInstanceUuids = $adapter->fetchCol($q);
+        $orphanedInstanceUuids = $adapter->fetchPairs($q);
         if (empty($orphanedInstanceUuids)) {
-            echo "No orphaned vcenter uuids were found\n";
+            echo "No orphaned vCenter IDs were found\n";
             exit(0);
         }
         echo sprintf(
-            "Found %d orphaned vcenter uuids: %s\n",
+            "Found %d orphaned vCenter IDs:\n%s\n",
             count($orphanedInstanceUuids),
-            implode(", ", array_map("bin2hex", $orphanedInstanceUuids))
+            implode("\n", $orphanedInstanceUuids)
+//            implode("\n", array_map('bin2hex', array_keys($orphanedInstanceUuids)))
         );
+    }
 
-        $adapter->beginTransaction();
-        try {
-            foreach ($tables as $table) {
-                $deleted = $adapter->delete(
-                    $table,
-                    $adapter->quoteInto("vcenter_uuid IN (?)", $db->quoteBinary($orphanedInstanceUuids))
-                );
-
-                echo sprintf("Removed %d orphaned rows from table $table\n", $deleted);
+    /**
+     * Cleanup orphaned vCenter data from the database
+     *
+     * USAGE
+     *
+     * icingacli vspheredb cleanup --vCenter <ID>
+     */
+    public function cleanupAction(): void
+    {
+        $db = Db::newConfiguredInstance();
+        $vCenterId = (int) $this->requiredParam('vCenter');
+        $cleanup = new Db\VCenterCleanup($db, $vCenterId);
+        $cleanup->run()->then(function () use ($db, $vCenterId) {
+            $adapter = $db->getDbAdapter();
+            try {
+                $adapter->delete('vcenter_server', $adapter->quoteInto('vcenter_id = ?', $vCenterId));
+            } catch (Throwable $e) {
+                $this->fail($e->getMessage());
             }
-
-            $adapter->query("SET SESSION foreign_key_checks=0");
-            $deleted = $adapter->delete(
-                "object",
-                $adapter->quoteInto("vcenter_uuid IN (?)", $db->quoteBinary($orphanedInstanceUuids))
-            );
-            echo sprintf("Removed %d orphaned rows from table object\n", $deleted);
-            $adapter->query("SET SESSION foreign_key_checks=1");
-
-            $deleted = $adapter->delete(
-                "vcenter",
-                $adapter->quoteInto("instance_uuid IN (?)", $db->quoteBinary($orphanedInstanceUuids))
-            );
-            echo sprintf("Removed %d orphaned rows from table vcenter\n", $deleted);
-
-            $adapter->commit();
-        } catch (Throwable $e) {
-            $adapter->rollBack();
-
+            echo "Successfully cleaned up vCenter with ID $vCenterId\n";
+        }, function (Throwable $e) {
             $this->fail($e->getMessage());
-        }
-
-        // Note that monitoring_rule_set might still contain data.
+        });
+        Loop::run();
     }
 }
