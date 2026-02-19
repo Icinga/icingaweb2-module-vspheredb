@@ -48,11 +48,9 @@ class VmDisk extends BaseVmHardwareDbObject
     /**
      * @param $value
      * @return VmDisk
-     * @codingStandardsIgnoreStart
      */
-    public function setDisk_uuid($value)
+    public function setDisk_uuid($value) // phpcs:ignore
     {
-        // @codingStandardsIgnoreEnd
         if ($value !== null && strlen($value) > 16) {
             $value = Uuid::fromString($value)->getBytes();
         }

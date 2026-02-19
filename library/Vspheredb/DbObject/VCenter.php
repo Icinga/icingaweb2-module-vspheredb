@@ -173,11 +173,9 @@ class VCenter extends BaseDbObject
 
     /**
      * @param $value
-     * @codingStandardsIgnoreStart
      */
-    public function setInstance_uuid($value)
+    public function setInstance_uuid($value) // phpcs:ignore
     {
-        // @codingStandardsIgnoreEnd
         if (strlen($value) > 16) {
             $this->reallySet('instance_uuid', Uuid::fromString($value)->getBytes());
         } else {
