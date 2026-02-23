@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2020 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 ALTER TABLE host_pci_device CHANGE
   `function` device_function BINARY(1) NOT NULL;
 

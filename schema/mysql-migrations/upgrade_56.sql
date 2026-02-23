@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 DELETE FROM monitoring_rule_problem WHERE rule_name NOT LIKE '%/%';
 
 CREATE TABLE monitoring_rule_problem_history (

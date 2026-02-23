@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2020 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 CREATE TABLE compute_resource (
   uuid VARBINARY(20) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,

@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2020 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 ALTER TABLE vcenter
   ADD COLUMN api_name VARCHAR(64) DEFAULT NULL AFTER os_type;
 
