@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 UPDATE vm_event_history
   SET datacenter_uuid = UNHEX(CONCAT(
     SUBSTR(HEX(datacenter_uuid), 1, 8),

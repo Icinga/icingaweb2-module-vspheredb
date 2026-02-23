@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 UPDATE alarm_history
   SET entity_uuid = UNHEX(CONCAT(
     SUBSTR(HEX(entity_uuid), 1, 8),

@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 UPDATE host_pci_device
   SET host_uuid = UNHEX(CONCAT(
     SUBSTR(HEX(host_uuid), 1, 8),

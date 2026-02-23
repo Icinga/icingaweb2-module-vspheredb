@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2020 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 DROP TABLE vspheredb_daemonlog;
 
 CREATE TABLE vspheredb_daemonlog (

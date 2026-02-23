@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2023 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 ALTER TABLE virtual_machine
     ADD COLUMN guest_ip_addresses TEXT DEFAULT NULL AFTER boot_order;
 ALTER TABLE virtual_machine

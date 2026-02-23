@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 DROP TABLE IF EXISTS monitoring_connection;
 
 CREATE TABLE monitoring_connection (

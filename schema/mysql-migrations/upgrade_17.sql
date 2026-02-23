@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 
 ALTER TABLE host_system
   MODIFY sysinfo_vendor VARCHAR(64) NULL DEFAULT NULL,

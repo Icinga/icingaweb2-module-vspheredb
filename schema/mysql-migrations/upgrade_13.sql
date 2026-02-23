@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 ALTER TABLE virtual_machine
   MODIFY COLUMN hardware_memorymb INT UNSIGNED NULL DEFAULT NULL,
   MODIFY COLUMN hardware_numcpu TINYINT UNSIGNED NULL DEFAULT NULL,
