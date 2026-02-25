@@ -63,9 +63,7 @@ class LogLevelForm extends InlineForm
 
     protected function onSuccess()
     {
-        await($this->client->request('logger.setLogLevel', [
-            'level' => $this->getValue('log_level')
-        ]), $this->loop);
+        await($this->client->request('logger.setLogLevel', ['level' => $this->getValue('log_level')]));
     }
 
     protected function listLogLevels()

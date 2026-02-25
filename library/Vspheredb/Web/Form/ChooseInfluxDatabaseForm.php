@@ -91,7 +91,7 @@ class ChooseInfluxDatabaseForm extends Form
         $promise = $this->client->request('influxdb.createDatabase', $this->prepareParams() + [
             'dbName' => $name
         ]);
-        $result = await($promise, $this->loop);
+        $result = await($promise);
         Notification::info("DON $name");
 
         return $result;
