@@ -72,9 +72,10 @@ class CheckPlugin
     /**
      * @param int|string $state
      * @param string $message
+     *
      * @return $this
      */
-    protected function addProblem($state, $message)
+    protected function addProblem(int|string $state, string $message): static
     {
         $this->raiseState($state);
         $stateName = $this->getStateName($state);
@@ -120,9 +121,10 @@ class CheckPlugin
 
     /**
      * @param int|string $state
+     *
      * @return $this
      */
-    protected function raiseState($state)
+    protected function raiseState(int|string $state): static
     {
         $state = $this->wantNumericState($state);
         if ($this->sortingStateMap[$state] > $this->sortingStateMap[$this->state]) {
@@ -141,10 +143,11 @@ class CheckPlugin
     }
 
     /**
-     * @param $state
+     * @param int|string $state
+     *
      * @return int
      */
-    protected function wantNumericState($state)
+    protected function wantNumericState(int|string $state): int
     {
         if (is_int($state) || ctype_digit($state)) {
             if (array_key_exists($state, $this->stateNameMap)) {

@@ -37,7 +37,14 @@ class UsageBar extends BaseHtmlElement
         $this->capacity = $capacity;
     }
 
-    protected function makeSegment($percent, $title, $color = 'used')
+    /**
+     * @param $percent
+     * @param $title
+     * @param string $color
+     *
+     * @return array
+     */
+    protected function makeSegment($percent, $title, string $color = 'used'): array
     {
         if (isset($this->colors[$color])) {
             $color = $this->colors[$color];

@@ -76,7 +76,12 @@ class ApiConnectionHandler implements EventEmitterInterface
         }
     }
 
-    public function getConnectionForVcenterId($id): ?ApiConnection
+    /**
+     * @param int $id
+     *
+     * @return ?ApiConnection
+     */
+    public function getConnectionForVcenterId(int $id): ?ApiConnection
     {
         if (isset($this->apiConnections[$id])) {
             return $this->apiConnections[$id];

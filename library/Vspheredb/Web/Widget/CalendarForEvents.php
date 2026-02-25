@@ -71,7 +71,10 @@ class CalendarForEvents extends HtmlDocument
         $this->add($div);
     }
 
-    protected function prepareMonthList()
+    /**
+     * @return string[]
+     */
+    protected function prepareMonthList(): array
     {
         $today = date('Y-m-15');
         $months = [substr($today, 0, 7)];

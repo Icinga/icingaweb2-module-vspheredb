@@ -110,7 +110,13 @@ class WsdlLoader
         }
     }
 
-    protected function processFileResult(ResponseInterface $response, $file)
+    /**
+     * @param ResponseInterface $response
+     * @param string $file
+     *
+     * @return void
+     */
+    protected function processFileResult(ResponseInterface $response, string $file): void
     {
         // Ignore unwanted delayed responses
         if (isset($this->pending[$file])) {
@@ -121,7 +127,13 @@ class WsdlLoader
         }
     }
 
-    protected function processFileFailure(Exception $e, $file)
+    /**
+     * @param Exception $e
+     * @param string $file
+     *
+     * @return void
+     */
+    protected function processFileFailure(Exception $e, string $file): void
     {
         if (isset($this->pending[$file])) {
             $logUrl = $this->url($file);

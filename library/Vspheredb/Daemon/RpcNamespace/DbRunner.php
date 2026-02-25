@@ -149,9 +149,10 @@ class DbRunner
     /**
      * @param int $vCenterId
      * @param array $map
+     *
      * @return bool
      */
-    public function setCustomFieldsMapRequest($vCenterId, $map)
+    public function setCustomFieldsMapRequest(int $vCenterId, array $map): bool
     {
         $vCenter = $this->requireVCenter($vCenterId);
         $this->vCenterSyncStores[$vCenterId][ObjectSyncStore::class] = new ObjectSyncStore(
@@ -264,12 +265,13 @@ class DbRunner
     }
 
     /**
-     * @param $vCenterId
-     * @param $class
+     * @param int $vCenterId
+     * @param string $class
+     *
      * @return SyncStore
      * @throws \Icinga\Exception\NotFoundError
      */
-    protected function requireSyncStoreForVCenterInstance($vCenterId, $class)
+    protected function requireSyncStoreForVCenterInstance(int $vCenterId, string $class): SyncStore
     {
         $vCenter = $this->requireVCenter($vCenterId);
         if (! isset($this->vCenterSyncStores[$vCenterId])) {
@@ -287,11 +289,12 @@ class DbRunner
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
      * @return VCenter
      * @throws \Icinga\Exception\NotFoundError
      */
-    protected function requireVCenter($id)
+    protected function requireVCenter(int $id): VCenter
     {
         if (! isset($this->vCenters[$id])) {
             $this->vCenters[$id] = VCenter::loadWithAutoIncId($id, $this->connection);

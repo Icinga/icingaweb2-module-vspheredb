@@ -24,7 +24,13 @@ class QueryParams
         return \array_key_exists($key, $this->params);
     }
 
-    public function get($key, $default = null)
+    /**
+     * @param string $key
+     * @param $default
+     *
+     * @return mixed|null
+     */
+    public function get(string $key, $default = null): mixed
     {
         if ($this->has($key)) {
             return $this->params[$key];
@@ -33,7 +39,12 @@ class QueryParams
         }
     }
 
-    public function getRequired($key)
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getRequired(string $key): mixed
     {
         if ($this->has($key)) {
             return $this->params[$key];

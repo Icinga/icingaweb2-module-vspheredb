@@ -164,7 +164,15 @@ class DatastoreUsage extends BaseHtmlElement
         return $this;
     }
 
-    public function addVmDisk($title, $percent, $vmUuid = null, $attributes = [])
+    /**
+     * @param $title
+     * @param $percent
+     * @param ?string $vmUuid
+     * @param array $attributes
+     *
+     * @return $this
+     */
+    public function addVmDisk($title, $percent, ?string $vmUuid = null, array $attributes = []): static
     {
         if ($vmUuid) {
             $url = $this->baseUrl;
@@ -190,7 +198,7 @@ class DatastoreUsage extends BaseHtmlElement
         $link->addAttributes($attributes);
 
         if ($vmUuid) {
-            $alpha = (20 + (crc32(sha1((string) $vmUuid . $this->uuid)) % 60)) / 100;
+            $alpha = (20 + (crc32(sha1($vmUuid . $this->uuid)) % 60)) / 100;
             $color = sprintf('rgba(70, 128, 255, %.2F);', $alpha);
             $style->addFor($link, ['background-color' => $color]);
             $this->diskLinks[$vmUuid] = $link;

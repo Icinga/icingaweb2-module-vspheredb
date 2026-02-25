@@ -100,10 +100,11 @@ class CheckRelatedLookup
     }
 
     /**
-     * @param $type
-     * @return string|BaseDbObject IDE hint, it's a string
+     * @param string $type
+     *
+     * @return string
      */
-    private static function getClassForType($type)
+    private static function getClassForType(string $type): string
     {
         $classes = [
             'VirtualMachine' => VirtualMachine::class,

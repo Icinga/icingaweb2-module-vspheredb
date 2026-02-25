@@ -155,24 +155,35 @@ class CalendarMonthSummary extends Table
     }
 
     /**
-     * @param $day
+     * @param string $day
      *
      * @return HtmlElement
      */
-    protected function getDay($day)
+    protected function getDay(string $day): HtmlElement
     {
         $this->ensureAssembled();
+
         return $this->days[$day];
     }
 
-    protected function hasDay($day)
+    /**
+     * @param string $day
+     *
+     * @return bool
+     */
+    protected function hasDay(string $day): bool
     {
         $this->ensureAssembled();
 
         return isset($this->days[$day]);
     }
 
-    protected function createDay($day)
+    /**
+     * @param string $day
+     *
+     * @return HtmlElement
+     */
+    protected function createDay(string $day): HtmlElement
     {
         $otherMonth = substr($day, 0, 7) !== $this->strMonth;
         $title = (int) substr($day, -2);

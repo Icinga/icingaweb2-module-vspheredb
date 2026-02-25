@@ -232,9 +232,15 @@ abstract class DbObject
         return $this->properties[$property];
     }
 
-    public function getProperty($key)
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getProperty(string $key): mixed
     {
         $this->assertPropertyExists($key);
+
         return $this->properties[$key];
     }
 
@@ -326,7 +332,13 @@ abstract class DbObject
         return $this->reallySet($key, $value);
     }
 
-    protected function reallySet($key, $value)
+    /**
+     * @param string $key
+     * @param $value
+     *
+     * @return $this
+     */
+    protected function reallySet(string $key, $value): static
     {
         if ($value === $this->properties[$key]) {
             return $this;
@@ -335,6 +347,7 @@ abstract class DbObject
         $this->hasBeenModified = true;
         $this->modifiedProperties[$key] = true;
         $this->properties[$key] = $value;
+
         return $this;
     }
 
@@ -378,9 +391,10 @@ abstract class DbObject
      * Magic unsetter
      *
      * @param string $key
+     *
      * @return void
      */
-    public function __unset($key)
+    public function __unset(string $key): void
     {
         if (! array_key_exists($key, $this->properties)) {
             throw new InvalidArgumentException('Trying to unset invalid key');
@@ -490,9 +504,9 @@ abstract class DbObject
     /**
      * Unique key name
      *
-     * @return string
+     * @return string[]|string
      */
-    public function getKeyName()
+    public function getKeyName(): array|string
     {
         return $this->keyName;
     }
@@ -671,7 +685,12 @@ abstract class DbObject
         return $this->loadedProperties;
     }
 
-    public function getOriginalProperty($key)
+    /**
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    public function getOriginalProperty(string $key): mixed
     {
         $this->assertPropertyExists($key);
         if ($this->hasBeenLoadedFromDb()) {
@@ -681,7 +700,12 @@ abstract class DbObject
         return null;
     }
 
-    public function resetProperty($key)
+    /**
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function resetProperty(string $key): static
     {
         $this->set($key, $this->getOriginalProperty($key));
         if ($this->listModifiedProperties() === [$key]) {
@@ -859,11 +883,12 @@ abstract class DbObject
     }
 
     /**
-     * @param string $key
+     * @param string[]|string $key
+     *
      * @return self
      * @throws InvalidArgumentException
      */
-    protected function setKey($key)
+    protected function setKey(array|string $key)
     {
         $keyname = $this->getKeyName();
         if (is_array($keyname)) {
@@ -975,7 +1000,10 @@ abstract class DbObject
         return $this->getReadableProperty($this->keyName);
     }
 
-    protected function getReadableProperty($name)
+    /**
+     * @param string $name
+     */
+    protected function getReadableProperty(string $name)
     {
         if (isset($this->properties[$name])) {
             $value = $this->properties[$name];

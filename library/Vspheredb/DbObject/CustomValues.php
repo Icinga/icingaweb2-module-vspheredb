@@ -29,17 +29,34 @@ class CustomValues implements JsonSerializable
         return \array_key_exists($key, $this->values);
     }
 
-    public function remove($key)
+    /**
+     * @param string $key
+     *
+     * @return void
+     */
+    public function remove(string $key): void
     {
         unset($this->values[$key]);
     }
 
-    public function set($key, $value)
+    /**
+     * @param string $key
+     * @param $value
+     *
+     * @return void
+     */
+    public function set(string $key, $value): void
     {
         $this->values[$key] = $value;
     }
 
-    public function get($key, $default = null)
+    /**
+     * @param string $key
+     * @param $default
+     *
+     * @return mixed|null
+     */
+    public function get(string $key, $default = null): mixed
     {
         if ($this->has($key)) {
             return $this->values[$key];

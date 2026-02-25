@@ -38,7 +38,12 @@ class MonitoringRulesTree
         return $this->baseObjectFolderName;
     }
 
-    public function getNameForUuid($uuid): string
+    /**
+     * @param string $uuid
+     *
+     * @return string
+     */
+    public function getNameForUuid(string $uuid): string
     {
         if ($uuid === MonitoringRuleSet::NO_OBJECT) {
             return $this->translate('All vCenters');
@@ -47,7 +52,12 @@ class MonitoringRulesTree
         return $this->allNodes[$uuid]->object_name;
     }
 
-    public function listParentUuidsFor($uuid): array
+    /**
+     * @param string $uuid
+     *
+     * @return array
+     */
+    public function listParentUuidsFor(string $uuid): array
     {
         if ($uuid === MonitoringRuleSet::NO_OBJECT) {
             return [];
@@ -76,7 +86,12 @@ class MonitoringRulesTree
         ];
     }
 
-    public function hasConfigurationForUuid($uuid): bool
+    /**
+     * @param string $uuid
+     *
+     * @return bool
+     */
+    public function hasConfigurationForUuid(string $uuid): bool
     {
         if ($this->configList === null) {
             $this->configList = $this->listAllConfiguredRuleSets();

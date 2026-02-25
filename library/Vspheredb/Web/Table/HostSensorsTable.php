@@ -71,10 +71,11 @@ class HostSensorsTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $type
-     * @return mixed
+     * @param string $type
+     *
+     * @return array
      */
-    protected function getSummaryByType($type)
+    protected function getSummaryByType(string $type): array
     {
         if ($this->summaries === null) {
             $this->summaries = $this->fetchSummaries();

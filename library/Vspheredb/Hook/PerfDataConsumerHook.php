@@ -47,7 +47,10 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
         return $this;
     }
 
-    public function getSetting($name, $default = null)
+    /**
+     * @param string $name
+     */
+    public function getSetting(string $name, $default = null)
     {
         if (array_key_exists($name, $this->settings)) {
             return $this->settings[$name];

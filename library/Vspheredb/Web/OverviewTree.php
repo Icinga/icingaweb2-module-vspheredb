@@ -185,7 +185,12 @@ class OverviewTree extends BaseHtmlElement
         return $li;
     }
 
-    protected function getClassByType($type)
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getClassByType(string $type): string
     {
         $typeClasses = [
             'ComputeResource'        => 'cubes',

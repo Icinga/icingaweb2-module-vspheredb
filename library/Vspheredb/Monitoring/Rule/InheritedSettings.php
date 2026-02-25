@@ -54,7 +54,12 @@ class InheritedSettings extends Settings
         return $this->inheritedFromUuids[$key];
     }
 
-    public function getInheritedFromName($key): ?string
+    /**
+     * @param string $key
+     *
+     * @return ?string
+     */
+    public function getInheritedFromName(string $key): ?string
     {
         if ($key === '') {
             return 'Fake root';
@@ -124,7 +129,14 @@ class InheritedSettings extends Settings
         }
     }
 
-    public function setInherited($name, $value, $inheritedFrom = null)
+    /**
+     * @param string $name
+     * @param $value
+     * @param $inheritedFrom
+     *
+     * @return void
+     */
+    public function setInherited(string $name, $value, $inheritedFrom = null): void
     {
         if ($this->get($name) !== null) {
             return;

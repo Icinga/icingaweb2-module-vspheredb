@@ -58,11 +58,12 @@ class ServerInfo implements JsonSerialization
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param null $default
+     *
      * @return mixed|null
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null): mixed
     {
         if (array_key_exists($key, $this->properties)) {
             if ($this->properties[$key] === null) {

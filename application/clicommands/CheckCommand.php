@@ -350,7 +350,12 @@ class CheckCommand extends Command
         }
     }
 
-    protected function getStateForColor($color): string
+    /**
+     * @param string $color
+     *
+     * @return string
+     */
+    protected function getStateForColor(string $color): string
     {
         $colors = [
             'green'  => 'OK',

@@ -22,7 +22,12 @@ class IcingaHostStatusRenderer extends Html
         ]);
     }
 
-    protected function getStatusDescription($status)
+    /**
+     * @param string $status
+     *
+     * @return string
+     */
+    protected function getStatusDescription(string $status): string
     {
         $descriptions = [
             'UP'   => $this->translate('This system is up'),

@@ -8,6 +8,7 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 use function preg_replace;
 use function rawurlencode;
@@ -34,13 +35,30 @@ class Documentation
         $this->auth = $auth;
     }
 
-    public static function link($label, $module, $chapter, $title = null)
+    /**
+     * @param $label
+     * @param string $module
+     * @param $chapter
+     * @param $title
+     *
+     * @return Link|HtmlElement
+     */
+    public static function link($label, string $module, $chapter, $title = null): Link|HtmlElement
     {
         $doc = new static(Icinga::app(), Auth::getInstance());
+
         return $doc->getModuleLink($label, $module, $chapter, $title);
     }
 
-    public function getModuleLink($label, $module, $chapter, $title = null)
+    /**
+     * @param $label
+     * @param string $module
+     * @param $chapter
+     * @param $title
+     *
+     * @return Link|HtmlElement
+     */
+    public function getModuleLink($label, string $module, $chapter, $title = null): Link|HtmlElement
     {
         if ($title !== null) {
             $title = sprintf(

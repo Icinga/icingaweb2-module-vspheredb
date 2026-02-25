@@ -13,10 +13,11 @@ trait UuidLinkHelper
     protected $fetchedUuids;
 
     /**
-     * @param $uuid
+     * @param ?string $uuid
+     *
      * @return DeferredText
      */
-    public function linkToUuid($uuid)
+    public function linkToUuid(?string $uuid): DeferredText
     {
         $this->requiredUuids[$uuid] = $uuid;
         $result = new DeferredText(function () use ($uuid) {
@@ -60,7 +61,13 @@ trait UuidLinkHelper
         }
     }
 
-    protected function getUuidProperty($uuid, $property)
+    /**
+     * @param ?string $uuid
+     * @param $property
+     *
+     * @return string
+     */
+    protected function getUuidProperty(?string $uuid, $property): string
     {
         if ($uuid === null) {
             return '[NULL]';

@@ -65,7 +65,12 @@ class CheckRunner
         $this->inspect = $inspect;
     }
 
-    public function preloadTreeFor($type)
+    /**
+     * @param string $type
+     *
+     * @return void
+     */
+    public function preloadTreeFor(string $type): void
     {
         $this->preloadedTrees[$type] = new MonitoringRulesTree($this->db, $type);
     }

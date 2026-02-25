@@ -86,9 +86,12 @@ abstract class BaseTable extends ZfQueryBasedTable
 
     /**
      * @param string $alias
+     *
      * @return TableColumn
+     *
+     * @throws InvalidArgumentException
      */
-    public function getAvailableColumn($alias)
+    public function getAvailableColumn(string $alias): TableColumn
     {
         if (array_key_exists($alias, $this->availableColumns)) {
             return $this->availableColumns[$alias];

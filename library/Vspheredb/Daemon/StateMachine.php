@@ -27,9 +27,10 @@ trait StateMachine
      * @param string|array $fromState
      * @param string $toState
      * @param callable $callback
+     *
      * @return $this
      */
-    public function onTransition($fromState, $toState, $callback)
+    public function onTransition(string|array $fromState, string $toState, callable $callback): static
     {
         if (is_array($fromState)) {
             foreach ($fromState as $state) {
@@ -43,7 +44,13 @@ trait StateMachine
         return $this;
     }
 
-    public function allowTransition($fromState, $toState)
+    /**
+     * @param string $fromState
+     * @param string $toState
+     *
+     * @return $this
+     */
+    public function allowTransition(string $fromState, string $toState): static
     {
         if (! isset($this->allowedTransitions[$fromState][$toState])) {
             $this->allowedTransitions[$fromState][$toState] = [];
@@ -53,11 +60,12 @@ trait StateMachine
     }
 
     /**
-     * @param $state
-     * @param $callback
+     * @param string $state
+     * @param callable $callback
+     *
      * @return $this
      */
-    public function onState($state, $callback)
+    public function onState(string $state, callable $callback): static
     {
         if (! isset($this->onState[$state])) {
             $this->onState[$state] = [];
@@ -68,7 +76,10 @@ trait StateMachine
         return $this;
     }
 
-    public function getState()
+    /**
+     * @return string
+     */
+    public function getState(): string
     {
         if ($this->currentState === null) {
             throw new RuntimeException('StateMachine has not been initialized');
@@ -77,7 +88,12 @@ trait StateMachine
         return $this->currentState;
     }
 
-    public function setState($state)
+    /**
+     * @param string $state
+     *
+     * @return void
+     */
+    public function setState(string $state): void
     {
         $fromState = $this->getState();
         if ($fromState === $state && $state === self::STATE_FAILING) {
@@ -97,7 +113,13 @@ trait StateMachine
         }
     }
 
-    private function runStateTransition($fromState, $toState)
+    /**
+     * @param string $fromState
+     * @param string $toState
+     *
+     * @return void
+     */
+    private function runStateTransition(string $fromState, string $toState): void
     {
         if (isset($this->allowedTransitions[$fromState][$toState])) {
             foreach ($this->allowedTransitions[$fromState][$toState] as $callback) {
@@ -111,7 +133,13 @@ trait StateMachine
         }
     }
 
-    public function canTransit($fromState, $toState)
+    /**
+     * @param string $fromState
+     * @param string $toState
+     *
+     * @return bool
+     */
+    public function canTransit(string $fromState, string $toState): bool
     {
         return isset($this->allowedTransitions[$fromState][$toState]);
     }

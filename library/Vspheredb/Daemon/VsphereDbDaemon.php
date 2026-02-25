@@ -468,7 +468,12 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->stopApiTasksByConnectionIdx(spl_object_hash($connection));
     }
 
-    protected function stopApiTasksByConnectionIdx($idx)
+    /**
+     * @param string $idx
+     *
+     * @return void
+     */
+    protected function stopApiTasksByConnectionIdx(string $idx): void
     {
         if (isset($this->runningTasks[$idx])) {
             /** @var DaemonTask $task */
