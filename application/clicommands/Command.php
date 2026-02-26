@@ -15,14 +15,10 @@ use Icinga\Cli\Command as CliCommand;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use React\EventLoop\Loop;
-use React\EventLoop\LoopInterface;
 use React\Stream\WritableResourceStream;
 
 class Command extends CliCommand
 {
-    /** @var LoopInterface */
-    private $loop;
-
     private $loopStarted = false;
 
     protected $logger;
