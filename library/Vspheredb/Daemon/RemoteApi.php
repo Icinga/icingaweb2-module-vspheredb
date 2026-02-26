@@ -100,8 +100,9 @@ class RemoteApi implements EventEmitterInterface
             return true;
         }
 
-        $uid = $peer->getUid();
-        return in_array($myGid, array_map('intval', explode(' ', `id -G $uid`)));
+        $uid = escapeshellarg($peer->getUid());
+
+        return in_array($myGid, array_map('intval', explode(' ', shell_exec("id -G $uid"))));
     }
 
     protected function addSocketEventHandlers(ControlSocket $socket)

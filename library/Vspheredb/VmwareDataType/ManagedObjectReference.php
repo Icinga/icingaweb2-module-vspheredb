@@ -9,11 +9,7 @@ use gipfl\Json\JsonSerialization;
  */
 class ManagedObjectReference implements JsonSerialization
 {
-    /**
-     * @codingStandardsIgnoreStart
-     */
-    public $_;
-    // codingStandardsIgnoreEnd
+    public $_; // phpcs:ignore
 
     public $type;
 

@@ -9,12 +9,12 @@ use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
+use RuntimeException;
 use SoapClient;
 use SoapFault;
 
 use function file_exists;
 use function file_put_contents;
-use function React\Promise\reject;
 use function unlink;
 
 class WsdlLoader
@@ -88,7 +88,7 @@ class WsdlLoader
             $pending = $this->pending;
             $this->deferred = null;
             $this->pending = [];
-            $deferred->reject();
+            $deferred->reject(new RuntimeException());
             foreach ($pending as $promise) {
                 $promise->cancel();
             }
@@ -110,7 +110,13 @@ class WsdlLoader
         }
     }
 
-    protected function processFileResult(ResponseInterface $response, $file)
+    /**
+     * @param ResponseInterface $response
+     * @param string $file
+     *
+     * @return void
+     */
+    protected function processFileResult(ResponseInterface $response, string $file): void
     {
         // Ignore unwanted delayed responses
         if (isset($this->pending[$file])) {
@@ -121,7 +127,13 @@ class WsdlLoader
         }
     }
 
-    protected function processFileFailure(Exception $e, $file)
+    /**
+     * @param Exception $e
+     * @param string $file
+     *
+     * @return void
+     */
+    protected function processFileFailure(Exception $e, string $file): void
     {
         if (isset($this->pending[$file])) {
             $logUrl = $this->url($file);
@@ -145,6 +157,7 @@ class WsdlLoader
         $this->pending = [];
         $curl = $this->curl;
         $dir = $this->cacheDir;
+        /** @var string $file */
         foreach ($this->requiredFiles as $file) {
             if (! file_exists("$dir/$file")) {
                 $this->logger->debug("Fetching $file");

@@ -55,6 +55,7 @@ class CalendarForEvents extends HtmlDocument
 
         $months = $this->prepareMonthList();
         $colors = $this->colors;
+        /** @var string $yearMonth */
         foreach (array_reverse($months) as $yearMonth) {
             $year = (int) substr($yearMonth, 0, 4);
             $month = (int) substr($yearMonth, -2);
@@ -71,7 +72,10 @@ class CalendarForEvents extends HtmlDocument
         $this->add($div);
     }
 
-    protected function prepareMonthList()
+    /**
+     * @return string[]
+     */
+    protected function prepareMonthList(): array
     {
         $today = date('Y-m-15');
         $months = [substr($today, 0, 7)];

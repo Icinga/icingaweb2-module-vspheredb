@@ -12,7 +12,8 @@ use ipl\Html\FormElement\BaseFormElement;
 use ipl\Html\FormElement\SelectElement;
 use React\EventLoop\LoopInterface;
 
-use function Clue\React\Block\await;
+use function React\Async\await;
+use function React\Promise\Timer\timeout;
 
 class ChooseInfluxDatabaseForm extends Form
 {
@@ -66,7 +67,7 @@ class ChooseInfluxDatabaseForm extends Form
 
     protected function remoteRequest($request, $params = [])
     {
-        return await($this->client->request($request, $params), $this->loop, 5);
+        return await(timeout($this->client->request($request, $params), 5, $this->loop));
     }
 
     protected function refreshDbList()
@@ -90,7 +91,7 @@ class ChooseInfluxDatabaseForm extends Form
         $promise = $this->client->request('influxdb.createDatabase', $this->prepareParams() + [
             'dbName' => $name
         ]);
-        $result = await($promise, $this->loop);
+        $result = await($promise);
         Notification::info("DON $name");
 
         return $result;
@@ -124,7 +125,7 @@ class ChooseInfluxDatabaseForm extends Form
 
     protected function getDbOptions()
     {
-        return [null => $this->translate('Please choose')]
+        return ['' => $this->translate('Please choose')]
         + \array_combine($this->dbList, $this->dbList)
         + ['_new' => ' -> ' . $this->translate('Create a new Database')];
     }

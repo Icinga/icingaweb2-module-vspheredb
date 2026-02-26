@@ -58,8 +58,10 @@ class CheckPluginState
 
     /**
      * @param CheckPluginState|int|string $state
+     *
+     * @return void
      */
-    public function raiseState($state)
+    public function raiseState(CheckPluginState|int|string $state): void
     {
         if ($state instanceof CheckPluginState) {
             $state = $state->getState();
@@ -135,9 +137,10 @@ class CheckPluginState
 
     /**
      * @param string|int $state
+     *
      * @return int
      */
-    protected static function wantNumericState($state): int
+    protected static function wantNumericState(string|int $state): int
     {
         if (is_int($state) || ctype_digit($state)) {
             if (array_key_exists($state, self::STATE_NAME_MAP)) {

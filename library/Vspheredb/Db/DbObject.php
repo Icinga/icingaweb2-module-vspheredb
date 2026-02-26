@@ -232,9 +232,15 @@ abstract class DbObject
         return $this->properties[$property];
     }
 
-    public function getProperty($key)
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getProperty(string $key): mixed
     {
         $this->assertPropertyExists($key);
+
         return $this->properties[$key];
     }
 
@@ -326,7 +332,13 @@ abstract class DbObject
         return $this->reallySet($key, $value);
     }
 
-    protected function reallySet($key, $value)
+    /**
+     * @param string $key
+     * @param $value
+     *
+     * @return $this
+     */
+    protected function reallySet(string $key, $value): static
     {
         if ($value === $this->properties[$key]) {
             return $this;
@@ -335,6 +347,7 @@ abstract class DbObject
         $this->hasBeenModified = true;
         $this->modifiedProperties[$key] = true;
         $this->properties[$key] = $value;
+
         return $this;
     }
 
@@ -378,9 +391,10 @@ abstract class DbObject
      * Magic unsetter
      *
      * @param string $key
+     *
      * @return void
      */
-    public function __unset($key)
+    public function __unset(string $key): void
     {
         if (! array_key_exists($key, $this->properties)) {
             throw new InvalidArgumentException('Trying to unset invalid key');
@@ -490,9 +504,9 @@ abstract class DbObject
     /**
      * Unique key name
      *
-     * @return string
+     * @return string[]|string
      */
-    public function getKeyName()
+    public function getKeyName(): array|string
     {
         return $this->keyName;
     }
@@ -500,9 +514,9 @@ abstract class DbObject
     /**
      * Autoinc key name
      *
-     * @return string
+     * @return ?string
      */
-    public function getAutoincKeyName()
+    public function getAutoincKeyName(): ?string
     {
         return $this->autoincKeyName;
     }
@@ -512,6 +526,7 @@ abstract class DbObject
         $params = [];
         $key = $this->getKeyName();
         if (is_array($key)) {
+            /** @var string $k */
             foreach ($key as $k) {
                 $params[$k] = $this->get($k);
             }
@@ -533,9 +548,11 @@ abstract class DbObject
      */
     public function getId()
     {
-        if (is_array($this->keyName)) {
+        $keyName = $this->getKeyName();
+        if (is_array($keyName)) {
             $id = [];
-            foreach ($this->keyName as $key) {
+            /** @var string $key */
+            foreach ($keyName as $key) {
                 if (isset($this->properties[$key])) {
                     $id[$key] = $this->properties[$key];
                 }
@@ -547,8 +564,8 @@ abstract class DbObject
 
             return $id;
         } else {
-            if (isset($this->properties[$this->keyName])) {
-                return $this->properties[$this->keyName];
+            if (isset($this->properties[$keyName])) {
+                return $this->properties[$keyName];
             }
         }
         return null;
@@ -561,16 +578,18 @@ abstract class DbObject
      */
     public function getAutoincId()
     {
-        if (isset($this->properties[$this->autoincKeyName])) {
-            return (int) $this->properties[$this->autoincKeyName];
+        $autoincKeyName = $this->getAutoincKeyName();
+        if ($autoincKeyName !== null && isset($this->properties[$autoincKeyName])) {
+            return (int) $this->properties[$autoincKeyName];
         }
         return null;
     }
 
     protected function forgetAutoincId()
     {
-        if (isset($this->properties[$this->autoincKeyName])) {
-            $this->properties[$this->autoincKeyName] = null;
+        $autoincKeyName = $this->getAutoincKeyName();
+        if ($autoincKeyName !== null && isset($this->properties[$autoincKeyName])) {
+            $this->properties[$autoincKeyName] = null;
         }
 
         return $this;
@@ -671,7 +690,12 @@ abstract class DbObject
         return $this->loadedProperties;
     }
 
-    public function getOriginalProperty($key)
+    /**
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    public function getOriginalProperty(string $key): mixed
     {
         $this->assertPropertyExists($key);
         if ($this->hasBeenLoadedFromDb()) {
@@ -681,7 +705,12 @@ abstract class DbObject
         return null;
     }
 
-    public function resetProperty($key)
+    /**
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function resetProperty(string $key): static
     {
         $this->set($key, $this->getOriginalProperty($key));
         if ($this->listModifiedProperties() === [$key]) {
@@ -727,9 +756,10 @@ abstract class DbObject
     protected function insertIntoDb()
     {
         $properties = $this->getPropertiesForDb();
-        if ($this->autoincKeyName !== null) {
-            if ($this->protectAutoinc || $properties[$this->autoincKeyName] === null) {
-                unset($properties[$this->autoincKeyName]);
+        $autoincKeyName = $this->getAutoincKeyName();
+        if ($autoincKeyName !== null) {
+            if ($this->protectAutoinc || $properties[$autoincKeyName] === null) {
+                unset($properties[$autoincKeyName]);
             }
         }
         // TODO: Remove this!
@@ -791,11 +821,12 @@ abstract class DbObject
                     ));
                 }
             } else {
+                $autoincKeyName = $this->getAutoincKeyName();
                 if ($id && $this->existsInDb()) {
                     $logId = '"' . $this->getLogId() . '"';
 
                     if ($autoId = $this->getAutoincId()) {
-                        $logId .= sprintf(', %s=%s', $this->autoincKeyName, $autoId);
+                        $logId .= sprintf(', %s=%s', $autoincKeyName, $autoId);
                     }
                     throw new DuplicateKeyException(
                         'Trying to recreate %s (%s)',
@@ -805,14 +836,11 @@ abstract class DbObject
                 }
 
                 if ($this->insertIntoDb()) {
-                    if ($this->autoincKeyName && $this->getProperty($this->autoincKeyName) === null) {
+                    if ($autoincKeyName && $this->getProperty($autoincKeyName) === null) {
                         if ($this->connection->isPgsql()) {
-                            $this->properties[$this->autoincKeyName] = $this->db->lastInsertId(
-                                $table,
-                                $this->autoincKeyName
-                            );
+                            $this->properties[$autoincKeyName] = $this->db->lastInsertId($table, $autoincKeyName);
                         } else {
-                            $this->properties[$this->autoincKeyName] = $this->db->lastInsertId();
+                            $this->properties[$autoincKeyName] = $this->db->lastInsertId();
                         }
                     }
                     // $this->log(sprintf('New %s "%s" has been stored', $table, $id));
@@ -859,11 +887,12 @@ abstract class DbObject
     }
 
     /**
-     * @param string $key
+     * @param string[]|string $key
+     *
      * @return self
      * @throws InvalidArgumentException
      */
-    protected function setKey($key)
+    protected function setKey(array|string $key)
     {
         $keyname = $this->getKeyName();
         if (is_array($keyname)) {
@@ -873,6 +902,7 @@ abstract class DbObject
                     $this->table
                 ));
             }
+            /** @var string $k */
             foreach ($keyname as $k) {
                 if (! array_key_exists($k, $key)) {
                     // We allow for null in multicolumn keys:
@@ -913,6 +943,7 @@ abstract class DbObject
 
         if (is_array($key) && ! empty($key)) {
             $where = [];
+            /** @var string $k */
             foreach ($key as $k) {
                 if ($this->hasBeenLoadedFromDb()) {
                     if ($this->loadedProperties[$k] === null) {
@@ -960,6 +991,7 @@ abstract class DbObject
     {
         if (is_array($this->keyName)) {
             $id = [];
+            /** @var string $key */
             foreach ($this->keyName as $key) {
                 if (isset($this->properties[$key])) {
                     $id[$key] = $this->getReadableProperty($key);
@@ -975,7 +1007,10 @@ abstract class DbObject
         return $this->getReadableProperty($this->keyName);
     }
 
-    protected function getReadableProperty($name)
+    /**
+     * @param string $name
+     */
+    protected function getReadableProperty(string $name)
     {
         if (isset($this->properties[$name])) {
             $value = $this->properties[$name];

@@ -51,6 +51,7 @@ class BulkPathLookup
         ])->join(['o' => 'object'], 'o.parent_uuid = p.uuid', []);
         QueryHelper::applyOptionalVCenterFilter($db, $query, 'o.vcenter_uuid', $this->vCenterFilterUuids);
         $result = [];
+        /** @var object{uuid: string} $row */
         foreach ($db->fetchAll($query) as $row) {
             $result[$row->uuid] = $row;
         }

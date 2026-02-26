@@ -67,6 +67,7 @@ class VCenterInfo
     public static function fetchAll($db): array
     {
         $result = [];
+        /** @var object{id: int} $row */
         foreach ($db->fetchAll(static::prepareQuery($db)) as $row) {
             $result[$row->id] = VCenterInfo::fromDbRow($row);
         }

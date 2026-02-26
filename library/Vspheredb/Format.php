@@ -16,6 +16,7 @@ class Format
         }
 
         // max() deals with $value < 1, 1000 instead of base is to fit into %.3G
+        /** @var int|float $pow */
         $pow = max(0, floor(log($value, 1000)));
         $result = $value / pow($base, $pow);
 

@@ -63,6 +63,7 @@ class VmHardwareTree extends BaseHtmlElement
             ->where('vm_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
             ->order('hardware_key');
 
+        /** @var object{hardware_key: int} $disk */
         foreach ($db->fetchAll($query) as $disk) {
             $this->disks[$disk->hardware_key] = $disk;
         }
@@ -77,6 +78,7 @@ class VmHardwareTree extends BaseHtmlElement
             ->where('vm_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
             ->order('hardware_key');
 
+        /** @var object{hardware_key: int} $nic */
         foreach ($db->fetchAll($query) as $nic) {
             $this->nics[$nic->hardware_key] = $nic;
         }
@@ -94,12 +96,13 @@ class VmHardwareTree extends BaseHtmlElement
             ->where('vm_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
             ->order('hardware_key');
 
+        /** @var object{hardware_key: int, controller_key: ?int, unit_number: ?int} $row */
         foreach ($db->fetchAll($query) as $row) {
             $this->devices[$row->hardware_key] = $row;
             if ($row->controller_key === null) {
                 $this->parents[$row->hardware_key] = $row;
             } else {
-                $this->children[$row->controller_key][$row->unit_number] = $row;
+                $this->children[$row->controller_key][$row->unit_number ?? ''] = $row;
             }
         }
     }
@@ -226,6 +229,7 @@ class VmHardwareTree extends BaseHtmlElement
 
         $rows = $db->fetchAll($query);
         $result = [];
+        /** @var object{counter_key: int, instance: string, value: string} $row */
         foreach ($rows as $row) {
             $result[$row->instance][$row->counter_key] = $row->value;
         }
@@ -256,6 +260,7 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected function renderNode($device, $level = 0)
     {
+        /** @var int $key */
         $key = $device->hardware_key;
         $desc = $device->label;
         if ($device->summary !== $device->label) {
@@ -285,11 +290,13 @@ class VmHardwareTree extends BaseHtmlElement
             $li->add(Html::tag('span', ['class' => 'handle']));
         }
 
+        /** @var int|string $controllerKey */
+        $controllerKey = $device->controller_key ?? '';
         if ($isDisk) {
-            $li->add($this->renderDisk($this->disks[$key], $device, $this->devices[$device->controller_key]));
+            $li->add($this->renderDisk($this->disks[$key], $device, $this->devices[$controllerKey]));
         } elseif ($isNic) {
             if (array_key_exists($key, $this->nics)) {
-                $li->add($this->renderNic($this->nics[$key], $device, $this->devices[$device->controller_key]));
+                $li->add($this->renderNic($this->nics[$key], $device, $this->devices[$controllerKey]));
             } else {
                 $li->add(Link::create($desc, '#', null, ['class' => $class, 'title' => 'No more details available']));
             }

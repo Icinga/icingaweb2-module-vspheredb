@@ -47,7 +47,7 @@ class VCenterSummaryTable extends ObjectsTable
         }
 
         $icons = Html::tag('span', ['class' => 'vcenter-summary-icon']);
-        $vcenterId = $row->vcenter_id;
+        $vcenterId = $row->vcenter_id ?? '';
         if (isset($this->connections[$vcenterId])) {
             foreach ($this->connections[$vcenterId] as $connection) {
                 $icons->add(VCenterConnectionStatusIcon::create($connection));

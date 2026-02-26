@@ -8,7 +8,7 @@ use gipfl\Web\InlineForm;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use React\EventLoop\LoopInterface;
 
-use function Clue\React\Block\await;
+use function React\Async\await;
 
 class RestartDaemonForm extends InlineForm
 {
@@ -39,6 +39,6 @@ class RestartDaemonForm extends InlineForm
 
     protected function onSuccess()
     {
-        await($this->client->request('process.restart'), $this->loop);
+        await($this->client->request('process.restart'));
     }
 }

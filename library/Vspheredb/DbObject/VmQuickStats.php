@@ -73,12 +73,9 @@ class VmQuickStats extends BaseDbObject
     /**
      * Valid are values from 0 to max allowed memory, but I've met -1 on an
      * ESXi host in the wild (6.7)
-     *
-     * @codingStandardsIgnoreStart
      */
-    public function setHost_memory_usage_mb($value)
+    public function setHost_memory_usage_mb($value) // phpcs:ignore
     {
-        // @codingStandardsIgnoreEnd
         if ((int) $value === -1) {
             $value = null;
         }
@@ -92,7 +89,8 @@ class VmQuickStats extends BaseDbObject
     {
         if ($object->hasBeenLoadedFromDb()) {
             $connection = $object->getConnection();
-            $uuid = $object->get('uuid');
+            /** @var string $uuid */
+            $uuid = $object->get('uuid') ?? '';
             if (self::$preloadCache === null) {
                 if (static::exists($uuid, $connection)) {
                     return static::load($uuid, $connection);

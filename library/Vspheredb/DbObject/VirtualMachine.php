@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use gipfl\Json\JsonString;
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Vspheredb\MappedClass\GuestNicInfo;
 use Icinga\Module\Vspheredb\Util;
 
 class VirtualMachine extends BaseDbObject
@@ -213,6 +214,7 @@ class VirtualMachine extends BaseDbObject
             return;
         }
         $addresses = [];
+        /** @var GuestNicInfo $nic */
         foreach ($value->GuestNicInfo as $nic) {
             $key = $nic->deviceConfigId; // matches hardware_key
             if (! isset($addresses[$key])) {

@@ -105,7 +105,15 @@ class DelayedPerfdataRenderer
         }
     }
 
-    protected function createKbInOut($uuid, $instance, $c1, $c2)
+    /**
+     * @param string $uuid
+     * @param string $instance
+     * @param int $c1
+     * @param int $c2
+     *
+     * @return DeferredText
+     */
+    protected function createKbInOut(string $uuid, string $instance, int $c1, int $c2): DeferredText
     {
         return DeferredText::create(function () use ($uuid, $instance, $c1, $c2) {
             $in = explode(',', $this->getVmValues($uuid, $instance, $c1));
@@ -125,7 +133,15 @@ class DelayedPerfdataRenderer
         })->setEscaped();
     }
 
-    protected function createPerfInOut($uuid, $instance, $c1, $c2)
+    /**
+     * @param string $uuid
+     * @param string $instance
+     * @param int $c1
+     * @param int $c2
+     *
+     * @return DeferredText
+     */
+    protected function createPerfInOut(string $uuid, string $instance, int $c1, int $c2): DeferredText
     {
         return DeferredText::create(function () use ($uuid, $instance, $c1, $c2) {
             return new CompactInOutSparkline(
@@ -135,7 +151,14 @@ class DelayedPerfdataRenderer
         })->setEscaped();
     }
 
-    protected function getVmValues($name, $instance, $counter)
+    /**
+     * @param string $name
+     * @param string $instance
+     * @param int $counter
+     *
+     * @return ?array
+     */
+    protected function getVmValues(string $name, string $instance, int $counter): ?array
     {
         if ($this->perf === null) {
             $this->perf = $this->fetchPerf();
@@ -177,6 +200,7 @@ class DelayedPerfdataRenderer
         $rows = $db->fetchAll($query);
 
         $result = [];
+        /** @var object{name: string, instance: string, counter_key: int, value: string} $row */
         foreach ($rows as $row) {
             $result[$row->name][$row->instance][$row->counter_key] = $row->value;
         }

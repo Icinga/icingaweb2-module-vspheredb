@@ -85,7 +85,7 @@ class ChooseDbResourceForm extends Form
         $this->addElement('select', 'resource', [
             'required'      => true,
             'label'         => $this->translate('DB Resource'),
-            'multiOptions'  => [null => $this->translate('- please choose -')] + $resources,
+            'multiOptions'  => ['' => $this->translate('- please choose -')] + $resources,
             'class'         => 'autosubmit',
             'value'         => $config->get('db', 'resource')
         ]);

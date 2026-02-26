@@ -71,10 +71,11 @@ class HostSensorsTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $type
-     * @return mixed
+     * @param string $type
+     *
+     * @return array
      */
-    protected function getSummaryByType($type)
+    protected function getSummaryByType(string $type): array
     {
         if ($this->summaries === null) {
             $this->summaries = $this->fetchSummaries();
@@ -146,6 +147,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         }
 
         $rows = $db->fetchAll($query);
+        /** @var object{sensor_type: string, health_state: string, cnt: int} $row */
         foreach ($rows as $row) {
             if (! array_key_exists($row->sensor_type, $sums)) {
                 $sums[$row->sensor_type] = [

@@ -10,7 +10,7 @@ use ipl\Html\FormElement\SelectElement;
 use Psr\Log\LogLevel;
 use React\EventLoop\LoopInterface;
 
-use function Clue\React\Block\await;
+use function React\Async\await;
 
 class LogLevelForm extends InlineForm
 {
@@ -39,7 +39,7 @@ class LogLevelForm extends InlineForm
     protected function assemble()
     {
         try {
-            $currentLevel = await($this->client->request('logger.getLogLevel'), $this->loop);
+            $currentLevel = await($this->client->request('logger.getLogLevel'));
             $this->talkedToSocket = true;
         } catch (\Exception $e) {
             $this->talkedToSocket = false;
@@ -54,7 +54,7 @@ class LogLevelForm extends InlineForm
             NextConfirmCancel::buttonCancel($this->translate('Cancel'))
         );
         $toggle->showWithConfirm(new SelectElement('log_level', [
-            'options'  => [null => $this->translate('- please choose -')] + $this->listLogLevels(),
+            'options'  => ['' => $this->translate('- please choose -')] + $this->listLogLevels(),
             'required' => true,
             'value'    => $currentLevel,
         ]));
@@ -63,9 +63,7 @@ class LogLevelForm extends InlineForm
 
     protected function onSuccess()
     {
-        await($this->client->request('logger.setLogLevel', [
-            'level' => $this->getValue('log_level')
-        ]), $this->loop);
+        await($this->client->request('logger.setLogLevel', ['level' => $this->getValue('log_level')]));
     }
 
     protected function listLogLevels()

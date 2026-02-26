@@ -36,23 +36,27 @@ class TagLookup
             return (object) [];
         }
         $result = [];
+        /** @var string $tagUuid */
         foreach ($this->assignments[$objectUuid] as $tagUuid) {
             if (! isset($this->tags[$tagUuid])) { // DB inconsistency, might happen during sync
                 continue;
             }
             $tag = $this->tags[$tagUuid];
+            /** @var string $categoryUuid */
             $categoryUuid = $tag->get('category_uuid');
             if (! isset($this->categories[$categoryUuid])) {
                 continue;
             }
             $category = $this->categories[$categoryUuid];
+            /** @var string $categoryName */
+            $categoryName = $category->get('name') ?? '';
             if ($category->cardinalityIsSingle()) {
-                $result[$category->get('name')] = $tag->get('name');
+                $result[$categoryName] = $tag->get('name');
             } else {
-                if (isset($result[$category->get('name')])) {
-                    $result[$category->get('name')] = [$tag->get('name')];
+                if (isset($result[$categoryName])) {
+                    $result[$categoryName] = [$tag->get('name')];
                 } else {
-                    $result[$category->get('name')][] = $tag->get('name');
+                    $result[$categoryName][] = $tag->get('name');
                 }
             }
         }
@@ -72,6 +76,7 @@ class TagLookup
         $db = $this->db->getDbAdapter();
         $query = $db->select()->from(TaggingObjectTag::TABLE, ['object_uuid', 'tag_uuid']);
         $result = [];
+        /** @var object{object_uuid: string, tag_uuid: string} $row */
         foreach ($db->fetchAll($query) as $row) {
             if (isset($result[$row->object_uuid])) {
                 $result[$row->object_uuid][] = $row->tag_uuid;

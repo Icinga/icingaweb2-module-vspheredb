@@ -45,7 +45,7 @@ class ConnectionStateDetails
             ),
         ];
 
-        return $infos[$state];
+        return $infos[$state ?? ''];
     }
 
     /**

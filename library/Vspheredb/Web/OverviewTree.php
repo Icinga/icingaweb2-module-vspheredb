@@ -64,11 +64,17 @@ class OverviewTree extends BaseHtmlElement
                 // continue; // see #260
             }
             $item->children = [];
-            $all[$item->uuid] = $item;
-            if ($item->parent_uuid === null) {
-                $tree[$item->uuid] = $item;
+
+            /** @var string $uuid */
+            $uuid = $item->uuid;
+            /** @var ?string $parentUuid */
+            $parentUuid = $item->parent_uuid;
+
+            $all[$uuid] = $item;
+            if ($parentUuid === null) {
+                $tree[$uuid] = $item;
             } else {
-                $all[$item->parent_uuid]->children[$item->uuid] = $item;
+                $all[$parentUuid]->children[$uuid] = $item;
             }
         }
 
@@ -185,7 +191,12 @@ class OverviewTree extends BaseHtmlElement
         return $li;
     }
 
-    protected function getClassByType($type)
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getClassByType(string $type): string
     {
         $typeClasses = [
             'ComputeResource'        => 'cubes',

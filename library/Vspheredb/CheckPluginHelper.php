@@ -77,7 +77,7 @@ trait CheckPluginHelper
                 }, function (Exception $e) {
                     $this->addProblem('UNKNOWN', $e->getMessage());
                     $this->showOptionalTrace($e);
-                })->always(function () {
+                })->finally(function () {
                     $this->shutdown();
                 });
             } else {
@@ -104,10 +104,10 @@ trait CheckPluginHelper
     }
 
     /**
-     * @param null $state
-     * @return mixed
+     * @param int|string|null $state
+     * @return string
      */
-    protected function getStateName($state = null)
+    protected function getStateName(int|string|null $state = null): string
     {
         if ($state === null) {
             return $this->stateNameMap[$this->state];
@@ -121,7 +121,7 @@ trait CheckPluginHelper
      * @param string $message
      * @return $this
      */
-    protected function addProblem($state, $message)
+    protected function addProblem(int|string $state, string $message): static
     {
         $this->raiseState($state);
         $stateName = $this->getStateName($state);
@@ -169,7 +169,7 @@ trait CheckPluginHelper
      * @param int|string $state
      * @return $this
      */
-    protected function raiseState($state)
+    protected function raiseState(int|string $state): static
     {
         $state = $this->wantNumericState($state);
         if ($this->sortingStateMap[$state] > $this->sortingStateMap[$this->state]) {
@@ -188,10 +188,10 @@ trait CheckPluginHelper
     }
 
     /**
-     * @param $state
+     * @param int|string $state
      * @return int
      */
-    protected function wantNumericState($state)
+    protected function wantNumericState(int|string $state): int
     {
         if (is_int($state) || ctype_digit($state)) {
             if (array_key_exists($state, $this->stateNameMap)) {

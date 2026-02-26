@@ -19,12 +19,22 @@ class ApiClassMap
         return self::$map;
     }
 
-    public static function hasTypeMap($type)
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    public static function hasTypeMap(string $type): bool
     {
         return isset(static::getMap()[$type]);
     }
 
-    public static function requireTypeMap($type)
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    public static function requireTypeMap(string $type): string
     {
         $map = static::getMap();
         if (isset($map[$type])) {

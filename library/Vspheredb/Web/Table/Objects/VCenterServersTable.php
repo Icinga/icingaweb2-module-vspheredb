@@ -37,9 +37,10 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
     /**
      * @param int $serverId
      * @param boolean $enabled
+     *
      * @return Icon
      */
-    protected function getConnectionStatusIcon($serverId, $enabled)
+    protected function getConnectionStatusIcon(int $serverId, bool $enabled): Icon
     {
         if (isset($this->serverConnections[$serverId])) {
             $conn = end($this->serverConnections[$serverId]);

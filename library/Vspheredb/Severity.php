@@ -18,7 +18,14 @@ class Severity
         'Alert'   => 'red',
     ];
 
-    public static function colorToSeverity($color)
+    /**
+     * @param string $color
+     *
+     * @return string
+     *
+     * @throws ProgrammingError
+     */
+    public static function colorToSeverity(string $color): string
     {
         if (array_key_exists($color, self::$colorToStateMap)) {
             return self::$colorToStateMap[$color];
@@ -27,7 +34,14 @@ class Severity
         }
     }
 
-    public static function severityToColor($severity)
+    /**
+     * @param string $severity
+     *
+     * @return string
+     *
+     * @throws ProgrammingError
+     */
+    public static function severityToColor(string $severity): string
     {
         if (array_key_exists($severity, self::$stateToColorMap)) {
             return self::$stateToColorMap[$severity];

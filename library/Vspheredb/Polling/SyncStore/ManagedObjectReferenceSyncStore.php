@@ -50,7 +50,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
                 return;
             }
             $fetched[$uuid] = $name;
-            $nameUuids[$moRef->_] = $uuid;
+            $nameUuids[$moRef->_ ?? ''] = $uuid;
             if (array_key_exists($uuid, $objects)) {
                 $object = $objects[$uuid];
                 $object->set('moref', $moRef->_);
@@ -84,6 +84,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
             ));
         }
 
+        /** @var string $parentName */
         foreach ($idToParent as $uuid => $parentName) {
             if (array_key_exists($parentName, $nameUuids)) {
                 $objects[$uuid]->setParent(

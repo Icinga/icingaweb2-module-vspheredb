@@ -57,7 +57,7 @@ class FilterHostParentForm extends Form
 
         $this->addElement('select', 'type', [
             'options' => [
-                null => $this->translate('- filter by event type -')
+                '' => $this->translate('- filter by event type -')
             ] + array_combine($vMotionEvents, $vMotionEvents)
                 + array_combine($otherKnownEvents, $otherKnownEvents),
             'class' => 'autosubmit',
@@ -69,9 +69,7 @@ class FilterHostParentForm extends Form
             $this->registerElement($element);
         } else {
             $this->addElement('select', 'parent', [
-                'options' => [
-                        null => $this->translate('- filter by parent -')
-                    ] + $parents,
+                'options' => ['' => $this->translate('- filter by parent -')] + $parents,
                 'class' => 'autosubmit',
             ]);
         }
@@ -95,12 +93,9 @@ class FilterHostParentForm extends Form
             'VmBeingCreatedEvent' => [119, 170, 255],
         ];
 
-        $type = $this->getElement('type')->getValue();
-        if (isset($colors[$type])) {
-            return $colors[$type];
-        } else {
-            return $colors['VmReconfiguredEvent'];
-        }
+        $type = $this->getElement('type')->getValue() ?? '';
+
+        return $colors[$type] ?? $colors['VmReconfiguredEvent'];
     }
 
     protected function enumHostParents()

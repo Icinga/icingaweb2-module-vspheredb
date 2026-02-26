@@ -30,12 +30,12 @@ class CheckRelatedLookup
             ->order('object_name');
 
         $result = [];
+        /** @var object{uuid: string, overall_status: string, object_name: string} $row */
         foreach ($db->fetchAll($select) as $row) {
-            $status = $row->overall_status;
-            if (isset($result[$status])) {
-                $result[$status][$row->uuid] = $row->object_name;
+            if (isset($result[$row->overall_status])) {
+                $result[$row->overall_status][$row->uuid] = $row->object_name;
             } else {
-                $result[$status] = [$row->uuid => $row->object_name];
+                $result[$row->overall_status] = [$row->uuid => $row->object_name];
             }
         }
 
@@ -100,10 +100,11 @@ class CheckRelatedLookup
     }
 
     /**
-     * @param $type
-     * @return string|BaseDbObject IDE hint, it's a string
+     * @param string $type
+     *
+     * @return string
      */
-    private static function getClassForType($type)
+    private static function getClassForType(string $type): string
     {
         $classes = [
             'VirtualMachine' => VirtualMachine::class,

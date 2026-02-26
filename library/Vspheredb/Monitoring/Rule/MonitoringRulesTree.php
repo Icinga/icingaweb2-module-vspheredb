@@ -38,7 +38,12 @@ class MonitoringRulesTree
         return $this->baseObjectFolderName;
     }
 
-    public function getNameForUuid($uuid): string
+    /**
+     * @param string $uuid
+     *
+     * @return string
+     */
+    public function getNameForUuid(string $uuid): string
     {
         if ($uuid === MonitoringRuleSet::NO_OBJECT) {
             return $this->translate('All vCenters');
@@ -47,7 +52,12 @@ class MonitoringRulesTree
         return $this->allNodes[$uuid]->object_name;
     }
 
-    public function listParentUuidsFor($uuid): array
+    /**
+     * @param string $uuid
+     *
+     * @return array
+     */
+    public function listParentUuidsFor(string $uuid): array
     {
         if ($uuid === MonitoringRuleSet::NO_OBJECT) {
             return [];
@@ -59,7 +69,7 @@ class MonitoringRulesTree
 
         $parents = [];
         while (isset($this->allNodes[$uuid]->parent)) {
-            $parents[] = $uuid = $this->allNodes[$uuid]->parent->uuid;
+            $parents[] = $uuid = $this->allNodes[$uuid]->parent->uuid ?? '';
         }
         $parents[] = MonitoringRuleSet::NO_OBJECT;
 
@@ -76,7 +86,12 @@ class MonitoringRulesTree
         ];
     }
 
-    public function hasConfigurationForUuid($uuid): bool
+    /**
+     * @param string $uuid
+     *
+     * @return bool
+     */
+    public function hasConfigurationForUuid(string $uuid): bool
     {
         if ($this->configList === null) {
             $this->configList = $this->listAllConfiguredRuleSets();
@@ -162,15 +177,15 @@ class MonitoringRulesTree
         $all = [];
         $root = [];
         foreach ($vCenters as $folder) {
-            $uuid = $folder->uuid;
+            $uuid = $folder->uuid ?? '';
             $folder->children = [];
             $root[$uuid] = $folder;
             $all[$uuid] = &$root[$uuid];
             $root[$uuid] = &$all[$uuid];
         }
         foreach (array_merge($baseFolders, $allSubFolders) as $folder) {
-            $parent = $folder->parent_uuid;
-            $uuid = $folder->uuid;
+            $parent = $folder->parent_uuid ?? '';
+            $uuid = $folder->uuid ?? '';
             if (isset($all[$parent])) {
                 $folder->children = [];
                 $folder->parent = &$all[$parent];

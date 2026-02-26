@@ -222,7 +222,12 @@ class EventHistoryTable extends ZfQueryBasedTable
         return $this;
     }
 
-    protected function getUuidName($uuid)
+    /**
+     * @param ?string $uuid
+     *
+     * @return string
+     */
+    protected function getUuidName(?string $uuid): string
     {
         if ($uuid === null) {
             return '[NULL]';
@@ -333,9 +338,14 @@ class EventHistoryTable extends ZfQueryBasedTable
         return $content->setEscaped();
     }
 
-    protected function deferredObjectName($uuid)
+    /**
+     * @param ?string $uuid
+     *
+     * @return DeferredText
+     */
+    protected function deferredObjectName(?string $uuid): DeferredText
     {
-        $this->requiredUuids[$uuid] = $uuid;
+        $this->requiredUuids[$uuid ?? ''] = $uuid;
 
         $content = new DeferredText(function () use ($uuid) {
             return $this->getUuidName($uuid);

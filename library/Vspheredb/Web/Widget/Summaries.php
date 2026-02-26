@@ -160,7 +160,13 @@ class Summaries extends BaseHtmlElement
         return $this;
     }
 
-    protected function createSummaryLink($value, $property)
+    /**
+     * @param string $value
+     * @param string $property
+     *
+     * @return ?Link
+     */
+    protected function createSummaryLink(string $value, string $property): ?Link
     {
         $stats = $this->stats();
         $count = (int) $stats->{"cnt_$value"};
@@ -183,7 +189,13 @@ class Summaries extends BaseHtmlElement
         );
     }
 
-    protected function addSummaryLinks($column, $variants)
+    /**
+     * @param string $column
+     * @param string[] $variants
+     *
+     * @return void
+     */
+    protected function addSummaryLinks(string $column, array $variants): void
     {
         $span = Html::tag('div', ['class' => 'state-group']);
         foreach ($variants as $value) {

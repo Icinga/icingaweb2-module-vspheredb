@@ -321,7 +321,7 @@ class MonitoringConnectionForm extends Form
     {
         $resource = Config::module('icingadb')->get('icingadb', 'resource');
 
-        return [$resource => $resource];
+        return [$resource ?? '' => $resource];
     }
 
     protected function enumIdoResourceNames(): array
@@ -333,7 +333,7 @@ class MonitoringConnectionForm extends Form
                 if ($name !== $resourceName) {
                     $name = sprintf('%s (%s)', $name, $resourceName);
                 }
-                $resources[$resourceName] = $name;
+                $resources[$resourceName ?? ''] = $name;
             }
         }
 
@@ -362,8 +362,6 @@ class MonitoringConnectionForm extends Form
 
     protected function optionalEnum($values): array
     {
-        return [
-            null => $this->translate('- please choose -'),
-        ] + $values;
+        return ['' => $this->translate('- please choose -')] + $values;
     }
 }

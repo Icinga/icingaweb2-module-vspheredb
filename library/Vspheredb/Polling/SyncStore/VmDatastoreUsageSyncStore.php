@@ -101,7 +101,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
     public static function refreshOutdatedVms(VsphereApi $api, $vms, LoggerInterface $logger)
     {
         if (empty($vms)) {
-            return resolve();
+            return resolve(null);
         }
 
         $logger->info(sprintf(

@@ -44,7 +44,8 @@ class HostQuickStats extends BaseDbObject
     {
         if ($object->hasBeenLoadedFromDb()) {
             $connection = $object->getConnection();
-            $uuid = $object->get('uuid');
+            /** @var string $uuid */
+            $uuid = $object->get('uuid') ?? '';
             if (self::$preloadCache === null) {
                 if (static::exists($uuid, $connection)) {
                     return static::load($uuid, $connection);

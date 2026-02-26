@@ -84,7 +84,7 @@ class VmLiveCountersTable extends NameValueTable
                     sprintf(
                         '%s (%s)',
                         $data->id->instance,
-                        $info[$data->id->counterId]
+                        $info[$data->id->counterId ?? '']
                     ),
                     [
                         Html::tag('span', [
@@ -98,7 +98,7 @@ class VmLiveCountersTable extends NameValueTable
                         Html::tag('span', [
                             'class' => 'sparkinfo'
                         ]),
-                        Html::tag('span', null, ' ' . $units[$data->id->counterId])
+                        Html::tag('span', null, ' ' . $units[$data->id->counterId ?? ''])
                     ]
                 );
             }
@@ -133,6 +133,7 @@ class VmLiveCountersTable extends NameValueTable
         $rows = $db->fetchAll($query);
 
         $result = [];
+        /** @var object{instance: string, counter_key: int, value: string} $row */
         foreach ($rows as $row) {
             $result[$row->instance][$row->counter_key] = $row->value;
         }

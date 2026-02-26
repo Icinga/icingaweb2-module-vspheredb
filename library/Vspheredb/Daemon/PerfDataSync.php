@@ -86,7 +86,7 @@ class PerfDataSync implements DaemonTask
             $this->initialize();
         });
 
-        return resolve();
+        return resolve(null);
     }
 
     public function stop()
@@ -96,20 +96,20 @@ class PerfDataSync implements DaemonTask
         }
         $this->timers = [];
 
-        return resolve();
+        return resolve(null);
     }
 
     protected function loadWriterConfig()
     {
         if ($this->loadingWriterConfig) {
-            return resolve();
+            return resolve(null);
         }
         $this->loadingWriterConfig = true;
         $loader = InfluxConnectionForVcenterLoader::load($this->vCenter, $this->curl, $this->loop);
         if (! $loader) {
             $this->stopRunningInfluxDbInstances();
             $this->loadingWriterConfig = false;
-            return resolve();
+            return resolve(null);
         }
         return $loader->then(function (?ChunkedInfluxDbWriter $writer) {
             $this->loadingWriterConfig = false;
@@ -265,7 +265,7 @@ class PerfDataSync implements DaemonTask
             return $this->api->fetchSingleObject($content->perfManager);
         })->then(function ($result) {
             $this->storeCounterInfo($result);
-            return resolve();
+            return resolve(null);
         });
     }
 

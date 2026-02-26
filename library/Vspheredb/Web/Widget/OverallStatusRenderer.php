@@ -35,7 +35,12 @@ class OverallStatusRenderer extends Html
         }
     }
 
-    protected function getStatusDescription($status)
+    /**
+     * @param string $status
+     *
+     * @return string
+     */
+    protected function getStatusDescription(string $status): string
     {
         $descriptions = [
             'gray'   => $this->translate('Gray - status is unknown'),

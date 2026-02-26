@@ -130,9 +130,18 @@ class HostSystemInfoTable extends NameValueTable
         return $model;
     }
 
-    protected function findVendorModel($vendor, $model)
+    /**
+     * @param ?string $vendor
+     * @param ?string $model
+     *
+     * @return ?string
+     */
+    protected function findVendorModel(?string $vendor, ?string $model): ?string
     {
         $images = include __DIR__ . '/known-vendor-model-images.php';
+        if ($vendor === null || $model === null) {
+            return null;
+        }
         if (isset($images[$vendor][$model])) {
             return $images[$vendor][$model];
         }

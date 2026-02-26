@@ -37,7 +37,12 @@ class ObjectType
         return static::getDbClassType(get_class($object));
     }
 
-    public static function getDbClassType($dbClass): string
+    /**
+     * @param string $dbClass
+     *
+     * @return string
+     */
+    public static function getDbClassType(string $dbClass): string
     {
         if (isset(self::DB_CLASS_TYPE[$dbClass])) {
             return self::DB_CLASS_TYPE[$dbClass];
