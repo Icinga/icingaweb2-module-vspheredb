@@ -9,6 +9,7 @@ use ipl\Html\FormElement\SelectElement;
 use ipl\I18n\Translation;
 use Psr\Log\LogLevel;
 use React\EventLoop\LoopInterface;
+use Zend_Db_Adapter_Abstract;
 
 use function React\Async\await;
 
@@ -22,13 +23,17 @@ class LogLevelForm extends InlineForm
     /** @var LoopInterface */
     protected $loop;
 
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
+
     /** @var boolean */
     protected $talkedToSocket;
 
-    public function __construct(RemoteClient $client, LoopInterface $loop)
+    public function __construct(RemoteClient $client, LoopInterface $loop, Zend_Db_Adapter_Abstract $db)
     {
         $this->client = $client;
         $this->loop = $loop;
+        $this->db = $db;
     }
 
     public function talkedToSocket()
@@ -63,7 +68,24 @@ class LogLevelForm extends InlineForm
 
     protected function onSuccess()
     {
-        await($this->client->request('logger.setLogLevel', ['level' => $this->getValue('log_level')]));
+        $logLevel = $this->getValue('log_level');
+        await(
+            $this->client->request('logger.setLogLevel', ['level' => $logLevel])
+                ->then(function () use ($logLevel) {
+                    $query = $this->db->select()
+                        ->from('daemon_config', ['key'])
+                        ->where('`key` = ?', 'log_level');
+                    if ($this->db->query($query)->rowCount()) {
+                        $this->db->update(
+                            'daemon_config',
+                            ['value' => $logLevel],
+                            $this->db->quoteInto('`key` = ?', 'log_level')
+                        );
+                    } else {
+                        $this->db->insert('daemon_config', ['`key`' => 'log_level', 'value' => $logLevel]);
+                    }
+                })
+        );
     }
 
     protected function listLogLevels()
