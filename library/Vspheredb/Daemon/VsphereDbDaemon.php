@@ -118,7 +118,6 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->loop = $loop;
         $logger = $this->logger;
         $this->daemonState = $this->initializeDaemonState();
-        $this->setInitialDaemonState();
         $this->detectProcessInfo();
         $this->initializeDbLogger($logger); // TODO: move to sub process. Hint: needs no DB, has a queue
         $this->prepareApi($loop, $logger);
@@ -152,15 +151,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             }
             $this->componentStates = $daemonState->getComponentStates();
         });
-
-        return $daemonState;
-    }
-
-    protected function setInitialDaemonState()
-    {
-        $daemonState = $this->daemonState;
         $daemonState->setProcessTitle(self::PROCESS_NAME);
         $daemonState->setState(self::STATE_STARTING);
+
+        return $daemonState;
     }
 
     protected function onComponentChange($component, $formerState, $currentState)
