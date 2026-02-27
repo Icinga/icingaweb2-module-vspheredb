@@ -168,77 +168,79 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                 $this->daemonState->getComponentState($component)
             ));
         }
-        if ($component === self::COMPONENT_DB) {
-            if ($formerState === self::STATE_READY) {
-                $this->stopConfigWatch();
-                $this->stopComponent(self::COMPONENT_API);
-                $this->stopComponent(self::COMPONENT_LOCALDB);
-            } elseif ($currentState === self::STATE_IDLE) {
-                $this->runConfigWatch();
-            } elseif ($currentState === self::STATE_READY) {
-                $this->setLocalDbState(self::STATE_STARTING);
-            }
-            if ($currentState === self::STATE_FAILED) {
-                $this->loop->addTimer(10, function () {
-                    $this->stopDbProcess();
+        switch ($component) {
+            case self::COMPONENT_DB:
+                if ($formerState === self::STATE_READY) {
                     $this->stopConfigWatch();
-                    if ($this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_FAILED) {
-                        $this->initializeDbProcess();
-                    }
-                });
-            }
-        }
-        if ($component === self::COMPONENT_LOCALDB) {
-            if ($formerState === self::STATE_READY) {
-                $this->stopComponent(self::COMPONENT_API);
-            }
-            switch ($currentState) {
-                case self::STATE_STARTING:
-                    $this->reconnectToDb();
-                    break;
-                case self::STATE_FAILED:
-                    $this->logger->error('Failed. Will try to reconnect to the Database');
-                    $this->eventuallyDisconnectFromDb();
-                    $delay = $this->delayOnFailed;
-                    $this->logger->warning("Failed. Reconnecting in {$delay}s");
-                    $this->loop->addTimer($delay, function () {
-                        if ($this->getLocalDbState() === self::STATE_FAILED) {
-                            $this->setLocalDbState(self::STATE_STARTING);
+                    $this->stopComponent(self::COMPONENT_API);
+                    $this->stopComponent(self::COMPONENT_LOCALDB);
+                } elseif ($currentState === self::STATE_IDLE) {
+                    $this->runConfigWatch();
+                } elseif ($currentState === self::STATE_READY) {
+                    $this->setLocalDbState(self::STATE_STARTING);
+                }
+                if ($currentState === self::STATE_FAILED) {
+                    $this->loop->addTimer(10, function () {
+                        $this->stopDbProcess();
+                        $this->stopConfigWatch();
+                        if ($this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_FAILED) {
+                            $this->initializeDbProcess();
                         }
                     });
-                    break;
-                case self::STATE_READY:
-                    $this->setApiState(self::STATE_STARTING);
-                    break;
-                case self::STATE_STOPPING:
-                    $this->eventuallyDisconnectFromDb();
+                }
+                break;
+            case self::COMPONENT_LOCALDB:
+                if ($formerState === self::STATE_READY) {
                     $this->stopComponent(self::COMPONENT_API);
-                    $this->setLocalDbState(self::STATE_STOPPED);
-                    break;
-            }
-        }
-        if ($component === self::COMPONENT_API) {
-            switch ($currentState) {
-                case self::STATE_STARTING:
-                    $this->apiConnectionHandler->run($this->loop);
-                    $this->setApiState(self::STATE_READY);
-                    break;
-                case self::STATE_READY:
-                    $this->refreshConfiguredServers();
-                    $this->daemonState->setState(self::STATE_READY);
-                    break;
-                case self::STATE_FAILED:
-                    $this->logger->error('[api] failed');
+                }
+                switch ($currentState) {
+                    case self::STATE_STARTING:
+                        $this->reconnectToDb();
+                        break;
+                    case self::STATE_FAILED:
+                        $this->logger->error('Failed. Will try to reconnect to the Database');
+                        $this->eventuallyDisconnectFromDb();
+                        $delay = $this->delayOnFailed;
+                        $this->logger->warning("Failed. Reconnecting in {$delay}s");
+                        $this->loop->addTimer($delay, function () {
+                            if ($this->getLocalDbState() === self::STATE_FAILED) {
+                                $this->setLocalDbState(self::STATE_STARTING);
+                            }
+                        });
+                        break;
+                    case self::STATE_READY:
+                        $this->setApiState(self::STATE_STARTING);
+                        break;
+                    case self::STATE_STOPPING:
+                        $this->eventuallyDisconnectFromDb();
+                        $this->stopComponent(self::COMPONENT_API);
+                        $this->setLocalDbState(self::STATE_STOPPED);
+                        break;
+                }
+                break;
+            case self::COMPONENT_API:
+                switch ($currentState) {
+                    case self::STATE_STARTING:
+                        $this->apiConnectionHandler->run($this->loop);
+                        $this->setApiState(self::STATE_READY);
+                        break;
+                    case self::STATE_READY:
+                        $this->refreshConfiguredServers();
+                        $this->daemonState->setState(self::STATE_READY);
+                        break;
+                    case self::STATE_FAILED:
+                        $this->logger->error('[api] failed');
                     // Intentional fall-through:
                     // no break
-                case self::STATE_STOPPING:
-                    if ($this->apiConnectionHandler) {
-                        $this->apiConnectionHandler->stop();
-                    }
-                    $this->stopAllApiTasks();
-                    $this->setApiState(self::STATE_STOPPED);
-                    break;
-            }
+                    case self::STATE_STOPPING:
+                        if ($this->apiConnectionHandler) {
+                            $this->apiConnectionHandler->stop();
+                        }
+                        $this->stopAllApiTasks();
+                        $this->setApiState(self::STATE_STOPPED);
+                        break;
+                }
+                break;
         }
     }
 
