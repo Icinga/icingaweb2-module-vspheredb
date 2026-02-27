@@ -21,7 +21,7 @@ class Command extends CliCommand
 {
     private $loopStarted = false;
 
-    protected $logger;
+    protected Logger $logger;
 
     /** @var RemoteClient */
     protected $remoteClient;
