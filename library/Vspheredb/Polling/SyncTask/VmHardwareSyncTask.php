@@ -40,6 +40,7 @@ class VmHardwareSyncTask extends SyncTask
             'addressType',
 
             // Disk:
+            'diskObjectId',
             // 'backing', // exists in Nic: too
             'capacityInBytes',
             'split',
