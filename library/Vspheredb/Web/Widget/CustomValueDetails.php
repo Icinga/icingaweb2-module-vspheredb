@@ -4,6 +4,8 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
+use Icinga\Module\Vspheredb\Addon\CohesityBackup;
+use Icinga\Module\Vspheredb\Addon\DellNetworker;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\NetBackup;
@@ -59,6 +61,8 @@ class CustomValueDetails extends HtmlDocument
     protected function stripBackupToolCustomValues(CustomValues $values)
     {
         $tools = [
+            new CohesityBackup(),
+            new DellNetworker(),
             new IbmSpectrumProtect(),
             new NetBackup(),
             new VRangerBackup(),
