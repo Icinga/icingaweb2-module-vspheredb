@@ -7,42 +7,32 @@ use InvalidArgumentException;
 class DbProperty
 {
     /**
-     * @param ?boolean $value
-     * @return null|string
+     * @param ?bool $value
+     *
+     * @return ?string
      */
-    public static function booleanToDb($value)
+    public static function booleanToDb(?bool $value): ?string
     {
-        if ($value === true) {
-            return 'y';
-        } elseif ($value === false) {
-            return 'n';
-        } elseif ($value === null) {
-            return null;
-        } else {
-            throw new InvalidArgumentException(
-                'Boolean expected, got %s',
-                var_export($value, 1)
-            );
-        }
+        return match ($value) {
+            true    => 'y',
+            false   => 'n',
+            null    => null,
+            default => throw new InvalidArgumentException(sprintf('Boolean expected, got %s', var_export($value, 1)))
+        };
     }
 
     /**
      * @param ?string $value
-     * @return bool|null
+     *
+     * @return ?bool
      */
-    public static function dbToBoolean($value)
+    public static function dbToBoolean(?string $value): ?bool
     {
-        if ($value === 'y') {
-            return true;
-        } elseif ($value === 'n') {
-            return false;
-        } elseif ($value === null) {
-            return null;
-        } else {
-            throw new InvalidArgumentException(
-                'Boolean expected, got %s',
-                var_export($value, 1)
-            );
-        }
+        return match ($value) {
+            'y'     => true,
+            'n'     => false,
+            null    => null,
+            default => throw new InvalidArgumentException(sprintf('Boolean expected, got %s', var_export($value, 1)))
+        };
     }
 }

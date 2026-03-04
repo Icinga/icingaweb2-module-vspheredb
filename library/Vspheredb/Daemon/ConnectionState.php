@@ -8,20 +8,21 @@ use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Monitoring\Health\ApiConnectionInfo;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
+use Zend_Db_Adapter_Abstract;
 
 class ConnectionState
 {
     /** @var array */
-    protected $daemonApiConnections;
+    protected array $daemonApiConnections;
 
-    /** @var Adapter|\Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Adapter|Zend_Db_Adapter_Abstract */
+    protected Adapter|Zend_Db_Adapter_Abstract $db;
 
     /**
      * @param ApiConnectionInfo[] $daemonApiConnections
-     * @param Adapter|\Zend_Db_Adapter_Abstract $db
+     * @param Zend_Db_Adapter_Abstract|Adapter $db
      */
-    public function __construct(array $daemonApiConnections, $db)
+    public function __construct(array $daemonApiConnections, Zend_Db_Adapter_Abstract|Adapter $db)
     {
         $this->daemonApiConnections = [];
         foreach ($daemonApiConnections as $connection) {
@@ -57,6 +58,9 @@ class ConnectionState
         return $connectionsByVCenter;
     }
 
+    /**
+     * @return array
+     */
     protected function getConfiguredServersByVCenter(): array
     {
         $db = $this->db;
@@ -88,17 +92,22 @@ class ConnectionState
         return $result;
     }
 
+    /**
+     * @param ServerConnectionInfo $info
+     *
+     * @return string
+     */
     public static function describe(ServerConnectionInfo $info): string
     {
         $t = StaticTranslator::get();
         $state = $info->getState();
-        $label = $info->serverName;
-        $label = Anonymizer::anonymizeString($label);
-        $lastError = $info->apiConnection ? $info->apiConnection->lastErrorMessage : null;
+        $label = Anonymizer::anonymizeString($info->serverName);
+        $lastError = $info->apiConnection?->lastErrorMessage;
         if ($lastError) {
             $lastError = ": $lastError";
             $lastError = Anonymizer::anonymizeString($lastError);
         }
+
         switch ($state) {
             case 'unknown':
                 return sprintf(
@@ -106,41 +115,26 @@ class ConnectionState
                     $label
                 ) . $lastError;
             case 'disabled':
-                return sprintf(
-                    $t->translate('Connections to %s have been disabled'),
-                    $label
-                );
+                return sprintf($t->translate('Connections to %s have been disabled'), $label);
             case ApiConnection::STATE_CONNECTED:
-                return sprintf(
-                    $t->translate('API connection with %s is fine'),
-                    $label
-                );
+                return sprintf($t->translate('API connection with %s is fine'), $label);
             case ApiConnection::STATE_LOGIN:
-                return sprintf(
-                    $t->translate('Trying to log in to %s'),
-                    $label
-                ) . $lastError;
+                return sprintf($t->translate('Trying to log in to %s'), $label) . $lastError;
             case ApiConnection::STATE_INIT:
-                return sprintf(
-                    $t->translate('Initializing API connection with %s'),
-                    $label
-                ) . $lastError;
+                return sprintf($t->translate('Initializing API connection with %s'), $label) . $lastError;
             case ApiConnection::STATE_FAILING:
-                return sprintf(
-                    $t->translate('API connection with %s is failing'),
-                    $label
-                ) . $lastError;
+                return sprintf($t->translate('API connection with %s is failing'), $label) . $lastError;
             case ApiConnection::STATE_STOPPING:
-                return sprintf(
-                    $t->translate('Stopping API connection with %s'),
-                    $label
-                ) . $lastError;
+                return sprintf($t->translate('Stopping API connection with %s'), $label) . $lastError;
             default:
                 return $t->translate("Unknown API connection state: $state") . $lastError;
         }
     }
 
-    public static function describeNoServer()
+    /**
+     * @return string
+     */
+    public static function describeNoServer(): string
     {
         return StaticTranslator::get()->translate('There is no configured server for this vCenter');
     }

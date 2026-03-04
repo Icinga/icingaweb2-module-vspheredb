@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 
 class HostQuickStatsSyncTask extends SyncTask
 {
-    protected $label = 'Host Quick Stats';
-    protected $tableName = 'host_quick_stats';
-    protected $objectClass = HostQuickStats::class;
-    protected $selectSetClass = HostSystemSelectSet::class;
-    protected $propertySetClass = HostQuickStatsPropertySet::class;
-    protected $syncStoreClass = ObjectSyncStore::class;
+    protected string $label = 'Host Quick Stats';
+
+    protected string $tableName = 'host_quick_stats';
+
+    protected string $objectClass = HostQuickStats::class;
+
+    protected string $selectSetClass = HostSystemSelectSet::class;
+
+    protected string $propertySetClass = HostQuickStatsPropertySet::class;
+
+    protected string $syncStoreClass = ObjectSyncStore::class;
 }

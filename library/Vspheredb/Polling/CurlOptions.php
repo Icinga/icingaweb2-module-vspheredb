@@ -16,14 +16,14 @@ class CurlOptions
     /** @var array */
     public const PROXY_TYPES = [
         'HTTP'   => CURLPROXY_HTTP,
-        'SOCKS5' => CURLPROXY_SOCKS5,
+        'SOCKS5' => CURLPROXY_SOCKS5
     ];
 
-    public static function forServerInfo(ServerInfo $server)
+    public static function forServerInfo(ServerInfo $server): array
     {
         $host = $server->get('host');
         if (preg_match('/^(.+?):(\d{1,5})$/', $host, $match)) {
-            $host = $match[1];
+            // $host = $match[1];
             $port = (int) $match[2];
         } else {
             $port = null;
@@ -33,7 +33,7 @@ class CurlOptions
                 // Host header disabled for now, see #496
                 // "Host: $host",
                 'Expect:',
-                'User-Agent: Icinga-vSphereDB/1.8',
+                'User-Agent: Icinga-vSphereDB/1.8'
             ]
         ];
 
@@ -70,7 +70,7 @@ class CurlOptions
         return $options;
     }
 
-    protected static function wantCurlProxyType($type)
+    protected static function wantCurlProxyType(int|string $type): int
     {
         if (is_int($type)) {
             if (in_array($type, self::PROXY_TYPES, true)) {

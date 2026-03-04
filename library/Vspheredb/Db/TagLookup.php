@@ -11,17 +11,20 @@ use stdClass;
 class TagLookup
 {
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     /** @var array */
-    protected $assignments;
+    protected array $assignments;
 
     /** @var TaggingTag[] */
-    protected $tags;
+    protected array $tags;
 
     /** @var TaggingCategory[] */
-    protected $categories;
+    protected array $categories;
 
+    /**
+     * @param Db $db
+     */
     public function __construct(Db $db)
     {
         $this->db = $db;
@@ -30,6 +33,11 @@ class TagLookup
         $this->categories = TaggingCategory::loadAll($this->db, null, 'uuid');
     }
 
+    /**
+     * @param string $objectUuid
+     *
+     * @return stdClass
+     */
     public function getTags(string $objectUuid): stdClass
     {
         if (!isset($this->assignments[$objectUuid])) {
@@ -71,6 +79,9 @@ class TagLookup
         return (object) $result;
     }
 
+    /**
+     * @return array
+     */
     protected function fetchAllAssignments(): array
     {
         $db = $this->db->getDbAdapter();

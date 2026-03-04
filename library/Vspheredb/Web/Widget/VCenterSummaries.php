@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use Zend_Db_Select;
 
 class VCenterSummaries extends BaseHtmlElement
 {
@@ -19,42 +20,34 @@ class VCenterSummaries extends BaseHtmlElement
     ];
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)
     {
         $this->vCenter = $vCenter;
     }
 
-    protected function selectObject($type, $columns)
+    protected function selectObject(array|string $type, array $columns): Zend_Db_Select
     {
         $connection = $this->vCenter->getConnection();
-        $db = $connection->getDbAdapter();
-        $vCenterUuid = $this->vCenter->getUuid();
 
-        $query = $db->select()->from(['o' => 'object'], $columns);
-        if (is_array($type)) {
-            $query->where('object_type IN (?)', $type);
-        } else {
-            $query->where('object_type = ?', $type);
-        }
-        $query->where('vcenter_uuid = ?', $connection->quoteBinary($vCenterUuid));
-
-        return $query;
+        return $connection->getDbAdapter()->select()
+            ->from(['o' => 'object'], $columns)
+            ->where('object_type ' . (is_array($type) ? 'IN (?)' : '= ?'), $type)
+            ->where('vcenter_uuid = ?', $connection->quoteBinary($this->vCenter->getUuid()));
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $connection = $this->vCenter->getConnection();
         $db = $connection->getDbAdapter();
-        $vCenterUuid = $this->vCenter->getUuid();
 
         $columns = [
             'total'  => 'COUNT(*)',
             'red'    => "SUM(CASE WHEN o.overall_status = 'red' THEN 1 ELSE 0 END)",
             'yellow' => "SUM(CASE WHEN o.overall_status = 'yellow' THEN 1 ELSE 0 END)",
             'green'  => "SUM(CASE WHEN o.overall_status = 'green' THEN 1 ELSE 0 END)",
-            'gray'   => "SUM(CASE WHEN o.overall_status = 'gray' THEN 1 ELSE 0 END)",
+            'gray'   => "SUM(CASE WHEN o.overall_status = 'gray' THEN 1 ELSE 0 END)"
         ];
 
         $this->addCountlet(
@@ -80,10 +73,11 @@ class VCenterSummaries extends BaseHtmlElement
         );
         $this->addCountlet(
             $db->fetchRow(
-                $db->select()->from(['o' => 'object'], $columns)
+                $db->select()
+                    ->from(['o' => 'object'], $columns)
                     ->join(['vm' => 'virtual_machine'], 'vm.uuid = o.uuid', [])
                     ->where('vm.template = ?', 'n')
-                    ->where('vm.vcenter_uuid = ?', $connection->quoteBinary($vCenterUuid))
+                    ->where('vm.vcenter_uuid = ?', $connection->quoteBinary($this->vCenter->getUuid()))
             ),
             'Virtual Machines',
             'vspheredb/vms'
@@ -143,7 +137,7 @@ class VCenterSummaries extends BaseHtmlElement
         );
     }
 
-    protected function getWorstState($counters)
+    protected function getWorstState(object $counters): string
     {
         foreach (['red', 'yellow', 'gray', 'green'] as $color) {
             if ($counters->$color > 0) {
@@ -155,17 +149,14 @@ class VCenterSummaries extends BaseHtmlElement
         return 'gray';
     }
 
-    protected function addCountlet($counters, $title, $url)
+    protected function addCountlet(object $counters, string $title, string $url): void
     {
         if ((int) $counters->total === 0) {
             return;
         }
         $url = Url::fromPath($url)->with('vcenter', Util::niceUuid($this->vCenter->getUuid()));
         $state = $this->getWorstState($counters);
-        $title = Html::tag('h3', [
-            Link::create($title, $url),
-            ' (' . $counters->total . ')'
-        ]);
+        $title = Html::tag('h3', [Link::create($title, $url), ' (' . $counters->total . ')']);
         $cell = Html::tag('div', ['class' => ['summary-countlet', "state-$state"]]);
         $cell->add($title);
 

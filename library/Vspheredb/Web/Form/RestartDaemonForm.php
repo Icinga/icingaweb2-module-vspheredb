@@ -15,10 +15,10 @@ class RestartDaemonForm extends InlineForm
     use TranslationHelper;
 
     /** @var RemoteClient */
-    protected $client;
+    protected RemoteClient $client;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
     public function __construct(RemoteClient $client, LoopInterface $loop)
     {
@@ -26,18 +26,18 @@ class RestartDaemonForm extends InlineForm
         $this->loop = $loop;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         (new NextConfirmCancel(
             NextConfirmCancel::buttonNext($this->translate('Restart'), [
-                'title' => $this->translate('Click to restart the vSphereDB background daemon'),
+                'title' => $this->translate('Click to restart the vSphereDB background daemon')
             ]),
             NextConfirmCancel::buttonConfirm($this->translate('Yes, please restart')),
             NextConfirmCancel::buttonCancel($this->translate('Cancel'))
         ))->addToForm($this);
     }
 
-    protected function onSuccess()
+    protected function onSuccess(): void
     {
         await($this->client->request('process.restart'));
     }

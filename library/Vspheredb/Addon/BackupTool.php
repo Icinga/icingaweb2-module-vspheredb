@@ -2,9 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Addon;
 
-use Icinga\Module\Vspheredb\DbObject\CustomValues;
-use ipl\Html\HtmlDocument;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use ipl\Html\HtmlDocument;
 
 /**
  * Interface BackupTool
@@ -20,21 +19,24 @@ interface BackupTool
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @param VirtualMachine $vm
+     *
      * @return bool
      */
-    public function wants(VirtualMachine $vm);
+    public function wants(VirtualMachine $vm): bool;
 
     /**
      * @param VirtualMachine $vm
+     *
+     * @return void
      */
-    public function handle(VirtualMachine $vm);
+    public function handle(VirtualMachine $vm): void;
 
     /**
-     * @return HtmlDocument|null
+     * @return ?HtmlDocument
      */
-    public function getInfoRenderer();
+    public function getInfoRenderer(): ?HtmlDocument;
 }

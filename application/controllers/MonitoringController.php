@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Exception;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
@@ -21,21 +22,23 @@ use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemTable;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Icinga\Module\Vspheredb\Web\Widget\Documentation;
 use Icinga\Web\Notification;
+use ipl\Html\Attributes;
+use ipl\Html\Contract\Form;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
-use RuntimeException;
 
 class MonitoringController extends Controller
 {
     use AsyncControllerHelper;
 
-    protected $vCenterFilterForm;
+    /** @var ?FilterVCenterForm */
+    protected ?FilterVCenterForm $vCenterFilterForm = null;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $action = $this->getRequest()->getActionName();
-        if (preg_match('/tree$/', $action) || in_array($action, ['index', 'configuration', 'history'])) {
+        if (str_ends_with($action, 'tree') || in_array($action, ['index', 'configuration', 'history'])) {
             $tabs = $this->tabs();
             $tabs->add('index', [
                 'label' => $this->translate('Monitoring'),
@@ -61,7 +64,7 @@ class MonitoringController extends Controller
             }
             $tabs->activate($action);
         }
-        if (preg_match('/tree$/', $action)) {
+        if (str_ends_with($action, 'tree')) {
             $this->actions()->add(
                 Link::create($this->translate('Back to overview'), 'vspheredb/monitoring', null, [
                     'class' => 'icon-left-small'
@@ -74,7 +77,7 @@ class MonitoringController extends Controller
         }
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->addTitle($this->translate('Monitoring Rules'));
         $this->setAutorefreshInterval(20);
@@ -83,7 +86,7 @@ class MonitoringController extends Controller
         $table->renderTo($this);
     }
 
-    public function problemsAction()
+    public function problemsAction(): void
     {
         $this->addSingleTab($this->translate('Current Problems'));
         $vCenter = $this->requireVCenter();
@@ -97,7 +100,7 @@ class MonitoringController extends Controller
         $table->renderTo($this);
     }
 
-    public function historyAction()
+    public function historyAction(): void
     {
         $this->addTitle($this->translate('Monitoring Rules - Problem History'));
         $this->setAutorefreshInterval(20);
@@ -106,13 +109,11 @@ class MonitoringController extends Controller
         $table->renderTo($this);
     }
 
-    public function configurationAction()
+    public function configurationAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring Rules'));
-        $this->content()->addAttributes([
-            'class' => 'overview-chapter'
-        ]);
+        $this->content()->addAttributes(Attributes::create(['class' => 'overview-chapter']));
         $this->content()->add([
             Hint::info(Html::sprintf($this->translate(
                 'The Icinga vSphere%s Integration ships a lot of data, state and sensor values.'
@@ -143,45 +144,55 @@ class MonitoringController extends Controller
         ]);
     }
 
-    public function hostrulesAction()
+    public function hostrulesAction(): void
     {
         $this->showType(ObjectType::HOST_SYSTEM);
     }
 
-    public function hosttreeAction()
+    public function hosttreeAction(): void
     {
         $this->showTree(ObjectType::HOST_SYSTEM);
     }
 
-    public function vmrulesAction()
+    public function vmrulesAction(): void
     {
         $this->showType(ObjectType::VIRTUAL_MACHINE);
     }
 
-    public function vmtreeAction()
+    public function vmtreeAction(): void
     {
         $this->showTree(ObjectType::VIRTUAL_MACHINE);
     }
 
-    public function datastorerulesAction()
+    public function datastorerulesAction(): void
     {
         $this->showType(ObjectType::DATASTORE);
     }
 
-    public function datastoretreeAction()
+    public function datastoretreeAction(): void
     {
         $this->showTree(ObjectType::DATASTORE);
     }
 
-    public function showTree($chosenType)
+    /**
+     * @param ObjectType $chosenType
+     *
+     * @return void
+     */
+    public function showTree(ObjectType $chosenType): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addTitle($this->translate('Monitoring'));
-        $tree = new MonitoringRulesTree($this->db(), $chosenType);
-        $this->content()->add(new MonitoringRulesTreeRenderer($tree, "vspheredb/monitoring/{$chosenType}rules"));
+        $tree = new MonitoringRulesTree($this->db(), $chosenType->value);
+        $this->content()->add(new MonitoringRulesTreeRenderer($tree, "vspheredb/monitoring/{$chosenType->value}rules"));
     }
 
-    public function showType($chosenType)
+    /**
+     * @param ObjectType $chosenType
+     *
+     * @return void
+     */
+    public function showType(ObjectType $chosenType): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('Rules'));
@@ -222,12 +233,12 @@ class MonitoringController extends Controller
             }
         }
         $this->addTitle($title);
-        $tree = new MonitoringRulesTree($db, $chosenType);
-        $storedConfig = MonitoringRuleSet::loadOptionalForUuid($binaryUuid, $chosenType, $db);
+        $tree = new MonitoringRulesTree($db, $chosenType->value);
+        $storedConfig = MonitoringRuleSet::loadOptionalForUuid($binaryUuid, $chosenType->value, $db);
         $inherited = InheritedSettings::loadFor($binaryUuid, $tree, $db);
         $inherited->setInternalDefaults(RuleSetRegistry::default());
         $form = new RuleForm($chosenType, $binaryUuid, $db, $inherited, $storedConfig);
-        $form->on(RuleForm::ON_SUCCESS, function (RuleForm $form) use ($title) {
+        $form->on(Form::ON_SUBMIT, function (RuleForm $form) use ($title) {
             if ($form->hasNotBeenModified()) {
                 Notification::info($this->translate('No change has been applied'));
                 $this->redirectNow($this->url());
@@ -241,7 +252,7 @@ class MonitoringController extends Controller
                         'Current problems have NOT been recalculated, they will be applied with a short delay'
                     ));
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Notification::info(
                     $this->translate(
                         'Error when triggering problem recalculation, changes will be applied with a short delay'
@@ -267,22 +278,28 @@ class MonitoringController extends Controller
         ]);
     }
 
-    protected function getTypeLabelForObjectType(string $type): string
+    /**
+     * @param ObjectType $type
+     *
+     * @return string
+     */
+    protected function getTypeLabelForObjectType(ObjectType $type): string
     {
-        switch ($type) {
-            case 'host':
-                return $this->translate('Host Systems');
-            case 'vm':
-                return $this->translate('Virtual Machines');
-            case 'datastore':
-                return $this->translate('Datastores');
-        }
-
-        throw new RuntimeException("Unexpected object type: '$type'");
+        return match ($type) {
+            ObjectType::HOST_SYSTEM     => $this->translate('Host Systems'),
+            ObjectType::VIRTUAL_MACHINE => $this->translate('Virtual Machines'),
+            ObjectType::DATASTORE       => $this->translate('Datastores')
+        };
     }
 
-    // Duplicated from ObjectsController
-    protected function filterByVCenterIfRequired(TableWithVCenterFilter $table)
+    /**
+     * Duplicated from ObjectsController
+     *
+     * @param TableWithVCenterFilter $table
+     *
+     * @return void
+     */
+    protected function filterByVCenterIfRequired(TableWithVCenterFilter $table): void
     {
         $this->getRestrictionHelper()->restrictTable($table);
         $this->controls()->prepend($this->getVCenterFilterForm());
@@ -292,7 +309,11 @@ class MonitoringController extends Controller
         }
     }
 
-    // Duplicated from ObjectsController
+    /**
+     * Duplicated from ObjectsController
+     *
+     * @return FilterVCenterForm
+     */
     protected function getVCenterFilterForm(): FilterVCenterForm
     {
         if ($this->vCenterFilterForm === null) {

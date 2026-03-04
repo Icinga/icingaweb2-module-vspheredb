@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Polling\PerformanceSet;
 
 class VmNetworkPerformanceSet extends DefaultPerformanceSet
 {
-    protected $name = 'VirtualNetworkAdapter';
-    protected $objectType = 'VirtualMachine';
-    protected $countersGroup = 'net';
-    protected $counters = [
+    protected ?string $name = 'VirtualNetworkAdapter';
+
+    protected ?string $objectType = 'VirtualMachine';
+
+    protected ?string $countersGroup = 'net';
+
+    protected ?array $counters = [
         'bytesRx', // rate / average / kiloBytesPerSecond
         'bytesTx',
         'packetsRx',
@@ -17,6 +20,6 @@ class VmNetworkPerformanceSet extends DefaultPerformanceSet
         'multicastRx',
         'multicastTx',
         'droppedRx',
-        'droppedTx',
+        'droppedTx'
     ];
 }

@@ -9,9 +9,7 @@ use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
 
 class DiskUsageRuleDefinition extends MonitoringRuleDefinition
 {
-    public const SUPPORTED_OBJECT_TYPES = [
-        ObjectType::VIRTUAL_MACHINE,
-    ];
+    public const SUPPORTED_OBJECT_TYPES = [ObjectType::VIRTUAL_MACHINE];
 
     public static function getIdentifier(): string
     {
@@ -65,7 +63,7 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
 
     protected static function stringMatches(string $filterString, string $string): bool
     {
-        if (strpos($filterString, '*') === false) {
+        if (! str_contains($filterString, '*')) {
             return $string === $filterString;
         }
 
@@ -85,7 +83,7 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
         $disks = $db->fetchAll($db->select()->from('vm_disk_usage', [
             'disk_path',
             'capacity',
-            'free_space',
+            'free_space'
         ])->where('vm_disk_usage.vm_uuid = ?', $object->getConnection()->quoteBinary($object->get('uuid'))));
 
         $instanceSettings = [];
@@ -114,12 +112,12 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
         return [
             'disk_path_filter' => ['text', [
                 'label' => $this->translate('Apply to specific disks only'),
-                'placeholder' => 'e.g. C:\\, /var/*, C:\\|D:\\|E:\\',
+                'placeholder' => 'e.g. C:\\, /var/*, C:\\|D:\\|E:\\'
             ]],
             'disk_path_ignore' => ['text', [
                 'label' => $this->translate('Ignore specific disks'),
-                'placeholder' => 'e.g. C:\\, */volume-subpaths/*|/var/lib/kubelet/*',
-            ]],
+                'placeholder' => 'e.g. C:\\, */volume-subpaths/*|/var/lib/kubelet/*'
+            ]]
         ] + MemoryUsageHelper::getParameters();
     }
 }

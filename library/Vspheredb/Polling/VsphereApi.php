@@ -28,12 +28,15 @@ use Icinga\Module\Vspheredb\Polling\SelectSet\HostSystemSelectSet;
 use Icinga\Module\Vspheredb\Polling\SelectSet\SelectSet;
 use Icinga\Module\Vspheredb\SafeCacheDir;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
+use RuntimeException;
+use SoapFault;
 
 use function React\Promise\reject;
 use function React\Promise\resolve;
@@ -41,39 +44,40 @@ use function React\Promise\resolve;
 class VsphereApi
 {
     /** @var ServerInfo */
-    protected $server;
+    protected ServerInfo $server;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /** @var CurlAsync */
-    private $curl;
+    private CurlAsync $curl;
 
     /** @var SoapClient */
     private $soapClient;
 
     /** @var ManagedObjectReference */
-    private $serviceInstanceRef;
+    private ManagedObjectReference $serviceInstanceRef;
 
-    private $initialWsdlFile;
+    /** @var ?string */
+    private ?string $initialWsdlFile;
 
     /** @var ServiceContent */
     private $serviceInstance;
 
     /** @var CookieStore */
-    private $cookieStore;
+    private CookieStore $cookieStore;
 
     /** @var LoopInterface */
-    private $loop;
+    private LoopInterface $loop;
 
     /** @var ?ManagedObjectReference */
-    private $eventCollector;
+    private ?ManagedObjectReference $eventCollector = null;
 
-    /** @var int */
-    private $lastEventTimestamp;
+    /** @var ?int */
+    private ?int $lastEventTimestamp = null;
 
     public function __construct(
-        $initialWsdlFile,
+        ?string $initialWsdlFile,
         ServerInfo $server,
         CurlAsync $curl,
         LoopInterface $loop,
@@ -100,11 +104,7 @@ class VsphereApi
      */
     public function getServiceInstance(): PromiseInterface
     {
-        if ($this->serviceInstance === null) {
-            $this->serviceInstance = $this->retrieveServiceContent();
-        }
-
-        return resolve($this->serviceInstance);
+        return resolve($this->serviceInstance ??= $this->retrieveServiceContent());
     }
 
     /**
@@ -121,6 +121,7 @@ class VsphereApi
      * Really fetch the ServiceInstance
      *
      * @return PromiseInterface<ServiceContent>
+     *
      * @see getServiceInstance()
      *
      */
@@ -156,6 +157,7 @@ class VsphereApi
                 }
                 $this->logger->notice($message);
                 $this->cookieStore->forgetCookies();
+
                 return $this->login();
             });
         } else {
@@ -167,6 +169,7 @@ class VsphereApi
      * API login
      *
      * This will retrieve a session cookie and pass it with subsequent requests
+     *
      * @return PromiseInterface<UserSession>
      */
     public function login(): PromiseInterface
@@ -174,7 +177,7 @@ class VsphereApi
         $this->logger->debug(sprintf('Sending Login request to %s', $this->makeLocation()));
         return $this->callOnServiceInstanceObject('sessionManager', 'Login', [
             'userName' => $this->server->get('username'),
-            'password' => $this->server->get('password'),
+            'password' => $this->server->get('password')
         ])->then(function ($result) {
             return $result->returnval;
         });
@@ -210,19 +213,23 @@ class VsphereApi
 
     /**
      * @param ManagedObjectReference $self
-     * @param $method
+     * @param string $method
      * @param array $arguments
+     *
      * @return PromiseInterface
      */
-    public function call(ManagedObjectReference $self, $method, $arguments = []): PromiseInterface
+    public function call(ManagedObjectReference $self, string $method, array $arguments = []): PromiseInterface
     {
         return $this->soapClient->call($method, [[
                 '_this' => $self
             ] + $arguments]);
     }
 
-    public function callOnServiceInstanceObject($serviceInstanceObjectName, $method, $arguments = [])
-    {
+    public function callOnServiceInstanceObject(
+        string $serviceInstanceObjectName,
+        string $method,
+        array $arguments = []
+    ): PromiseInterface {
         $property = $serviceInstanceObjectName;
         return $this->getServiceInstance()
             ->then(function (ServiceContent $serviceContent) use ($property, $method, $arguments) {
@@ -231,7 +238,7 @@ class VsphereApi
                 }
                 $ref = $serviceContent->$property;
                 if (! $ref instanceof ManagedObjectReference) {
-                    return reject(new \InvalidArgumentException(
+                    return reject(new InvalidArgumentException(
                         "ServiceContent.$property is no a ManagedObjectReference"
                     ));
                 }
@@ -242,11 +249,14 @@ class VsphereApi
 
     /**
      * @param ManagedObjectReference $object
-     * @param array|null $properties
+     * @param ?array $properties
+     *
      * @return PromiseInterface<?ManagedObject>
      */
-    public function requireSingleObjectProperties(ManagedObjectReference $object, $properties = null): PromiseInterface
-    {
+    public function requireSingleObjectProperties(
+        ManagedObjectReference $object,
+        ?array $properties = null
+    ): PromiseInterface {
         return $this->fetchSingleObject($object, $properties)->then(function ($resultObject) use ($object) {
             if ($resultObject) {
                 return $resultObject;
@@ -261,10 +271,11 @@ class VsphereApi
 
     /**
      * @param ManagedObjectReference $object
-     * @param array|null $properties
+     * @param ?array $properties
+     *
      * @return PromiseInterface<?ManagedObject>
      */
-    public function fetchSingleObject(ManagedObjectReference $object, $properties = null): PromiseInterface
+    public function fetchSingleObject(ManagedObjectReference $object, ?array $properties = null): PromiseInterface
     {
         return $this->retrieveProperties([$this->singleObjectSpecSet($object, $properties)])
             ->then(function (RetrieveResult $result) use ($object) {
@@ -283,7 +294,7 @@ class VsphereApi
             });
     }
 
-    public function fetchCustomFieldsManager()
+    public function fetchCustomFieldsManager(): PromiseInterface
     {
         return $this->getServiceInstance()->then(function (ServiceContent $serviceContent) {
             if (! isset($serviceContent->customFieldsManager)) {
@@ -297,11 +308,14 @@ class VsphereApi
 
     /**
      * @param ManagedObjectReference $object
-     * @param array|null $properties
+     * @param ?array $properties
+     *
      * @return PromiseInterface<?ObjectContent>
      */
-    public function fetchSingleObjectProperties(ManagedObjectReference $object, $properties = null): PromiseInterface
-    {
+    public function fetchSingleObjectProperties(
+        ManagedObjectReference $object,
+        ?array $properties = null
+    ): PromiseInterface {
         return $this->retrieveProperties([$this->singleObjectSpecSet($object, $properties)])
             ->then(function (RetrieveResult $result) use ($object) {
                 if (empty($result->objects)) {
@@ -314,6 +328,7 @@ class VsphereApi
                         $object->getLogName()
                     )));
                 }
+
                 return $result->objects[0];
             });
     }
@@ -321,6 +336,7 @@ class VsphereApi
      * TODO: Can be used for mass requests once we deal with the token in the RetrieveResult
      *
      * @param PropertyFilterSpec[] $specSet
+     *
      * @return PromiseInterface<RetrieveResult>
      */
     public function retrieveProperties(array $specSet): PromiseInterface
@@ -341,18 +357,19 @@ class VsphereApi
                     }
                     $result = new RetrieveResult();
                     $result->objects = $objects;
+
                     return $result;
                 });
             });
         });
     }
 
-    public function getCurrentSession()
+    public function getCurrentSession(): PromiseInterface
     {
         return $this->getServiceInstance()->then(function (ServiceContent $content) {
             return $this->fetchSingleObject($content->sessionManager, [
                 'currentSession',
-                'defaultLocale',
+                'defaultLocale'
             ])->then(function (SessionManager $manager) {
                 if (isset($manager->currentSession)) {
                     return $manager->currentSession;
@@ -386,10 +403,10 @@ class VsphereApi
                     [PropertySpec::create('HostSystem', ['hardware.systemInfo.uuid'])]
                 )])->then(function ($result) {
                     if (empty($result)) {
-                        throw new \RuntimeException('Unable to fetch host object for ESXi system');
+                        throw new RuntimeException('Unable to fetch host object for ESXi system');
                     }
                     if (count($result) > 1) {
-                        throw new \RuntimeException(sprintf(
+                        throw new RuntimeException(sprintf(
                             'Expected to get one host from an ESXi system, got %d',
                             count($result)
                         ));
@@ -398,7 +415,7 @@ class VsphereApi
                         return Uuid::fromString($result[0]['hardware.systemInfo.uuid']);
                     }
 
-                    throw new \RuntimeException('Got no hardware.systemInfo.uuid from ESXi host');
+                    throw new RuntimeException('Got no hardware.systemInfo.uuid from ESXi host');
                 });
             } else {
                 return Uuid::fromString($content->about->instanceUuid);
@@ -406,14 +423,14 @@ class VsphereApi
         });
     }
 
-    public function setLastEventTimestamp($timestamp)
+    public function setLastEventTimestamp(?int $timestamp): static
     {
         $this->lastEventTimestamp = $timestamp;
 
         return $this;
     }
 
-    protected function fetchFullResult(RetrieveResult $result, &$objects)
+    protected function fetchFullResult(RetrieveResult $result, array &$objects): PromiseInterface
     {
         $deferred = new Deferred();
         if ($result->hasMoreResults()) {
@@ -437,7 +454,7 @@ class VsphereApi
         return $deferred->promise();
     }
 
-    protected function getPropertyCollector()
+    protected function getPropertyCollector(): PromiseInterface
     {
         return $this->getServiceInstance()->then(function (ServiceContent $serviceContent) {
             return $serviceContent->propertyCollector;
@@ -458,7 +475,7 @@ class VsphereApi
         return $result;
     }
 
-    protected function continueFetchProperties($token)
+    protected function continueFetchProperties($token): PromiseInterface
     {
         return $this->callOnServiceInstanceObject('propertyCollector', 'ContinueRetrievePropertiesEx', [
             'token' => $token
@@ -467,7 +484,7 @@ class VsphereApi
         });
     }
 
-    protected function singleObjectSpecSet(ManagedObjectReference $moRef, $properties = null)
+    protected function singleObjectSpecSet(ManagedObjectReference $moRef, ?array $properties = null): PropertyFilterSpec
     {
         return PropertyFilterSpec::create(
             [ObjectSpec::create($moRef, null, false)],
@@ -475,7 +492,7 @@ class VsphereApi
         );
     }
 
-    protected function fetchSpecSet(array $specSet)
+    protected function fetchSpecSet(array $specSet): PromiseInterface
     {
         return $this->retrieveProperties($specSet)->then(function (RetrieveResult $result) {
             return $result->jsonSerialize();
@@ -483,12 +500,15 @@ class VsphereApi
     }
 
     /**
-     * @param string|SelectSet $selectSetClass It's a string, SelectSet helps the IDE
-     * @param string|PropertySet $propertySetClass It's a string, PropertySet helps the IDE
+     * @param class-string<SelectSet> $selectSetClass
+     * @param class-string<PropertySet> $propertySetClass
+     *
      * @return PromiseInterface
      */
-    public function fetchBySelectAndPropertySetClass($selectSetClass, $propertySetClass)
-    {
+    public function fetchBySelectAndPropertySetClass(
+        string $selectSetClass,
+        string $propertySetClass
+    ): PromiseInterface {
         return $this->getRootFolder()->then(function ($rootFolder) use ($selectSetClass, $propertySetClass) {
             return $this->fetchSpecSet([PropertyFilterSpec::create(
                 [ObjectSpec::create($rootFolder, $selectSetClass::create(), false)],
@@ -497,26 +517,26 @@ class VsphereApi
         });
     }
 
-    public function readNextEvents()
+    public function readNextEvents(): PromiseInterface
     {
         return $this->callOnEventCollector('ReadNextEvents', [
-            'maxCount' => 1000,
+            'maxCount' => 1000
         ]);
     }
 
-    public function rewindEventCollector()
+    public function rewindEventCollector(): PromiseInterface
     {
         return $this->callOnEventCollector('RewindCollector');
     }
 
-    public function fetchPerformanceManager()
+    public function fetchPerformanceManager(): PromiseInterface
     {
         return $this->getServiceInstance()->then(function (ServiceContent $serviceContent) {
             return $this->fetchSingleObject($serviceContent->perfManager);
         });
     }
 
-    protected function getEventCollector()
+    protected function getEventCollector(): PromiseInterface|ManagedObjectReference
     {
         if ($this->eventCollector) {
             return resolve($this->eventCollector);
@@ -531,11 +551,11 @@ class VsphereApi
                 });
             }
 
-            throw new \RuntimeException('EventCollector reference expected, got ' . var_export($result, 1));
+            throw new RuntimeException('EventCollector reference expected, got ' . var_export($result, 1));
         });
     }
 
-    protected function callOnEventCollector($method, $arguments = [])
+    protected function callOnEventCollector($method, $arguments = []): PromiseInterface
     {
         // Sample:
         // $collector = new ManagedObjectReference(
@@ -550,12 +570,12 @@ class VsphereApi
 
                 return [];
             }, function (Exception $e) {
-                if ($e instanceof \SoapFault) {
+                if ($e instanceof SoapFault) {
                     if (isset($e->detail)) {
                         $details = (array)$e->detail;
                         if (current($details)->enc_stype === 'ManagedObjectNotFound') {
                             $this->eventCollector = null;
-                            throw new \RuntimeException(
+                            throw new RuntimeException(
                                 'Dropping formerly known EventCollector: ' . $e->getMessage(),
                                 $e->getCode(),
                                 $e
@@ -568,7 +588,7 @@ class VsphereApi
         });
     }
 
-    protected function createEventCollector($lastEventTimestamp = null)
+    protected function createEventCollector($lastEventTimestamp = null): PromiseInterface
     {
         $spec = new EventFilterSpec();
         $spec->type = $this->getRequiredEventTypes();
@@ -584,7 +604,7 @@ class VsphereApi
     /**
      * @throws Exception e.g.: SOAP-ERROR: Parsing Schema: can't import schema from '/tmp/[..]/vim-types.xsd
      */
-    protected function prepareSoapClient()
+    protected function prepareSoapClient(): void
     {
         $this->soapClient = new SoapClient($this->curl, $this->initialWsdlFile, [
             'trace'              => true,
@@ -594,7 +614,7 @@ class VsphereApi
             'classmap'           => ApiClassMap::getMap(),
             'features'           => SOAP_SINGLE_ELEMENT_ARRAYS | SOAP_USE_XSI_ARRAY_TYPE,
             'cache_wsdl'         => WSDL_CACHE_NONE,
-            'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+            'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP
         ], CurlOptions::forServerInfo($this->server), $this->logger);
         $this->soapClient->setCookieStore($this->cookieStore);
     }
@@ -604,12 +624,12 @@ class VsphereApi
      *
      * @return string
      */
-    protected function makeLocation()
+    protected function makeLocation(): string
     {
         return $this->server->getUrl() . '/sdk';
     }
 
-    protected function getRequiredEventTypes()
+    protected function getRequiredEventTypes(): array
     {
         return [
             'AlarmAcknowledgedEvent',
@@ -642,7 +662,7 @@ class VsphereApi
             'VmBeingClonedEvent',
             'VmBeingClonedNoFolderEvent',
             'VmClonedEvent',
-            'VmCloneFailedEvent',
+            'VmCloneFailedEvent'
         ];
     }
 }

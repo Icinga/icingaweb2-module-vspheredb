@@ -13,8 +13,11 @@ class RpcNamespaceProcess implements EventEmitterInterface
     public const ON_RESTART = 'restart';
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
+    /**
+     * @param LoopInterface $loop
+     */
     public function __construct(LoopInterface $loop)
     {
         $this->loop = $loop;
@@ -33,7 +36,7 @@ class RpcNamespaceProcess implements EventEmitterInterface
 
         return (object) [
             'state'   => $this->daemon->getProcessState()->getInfo(),
-            'details' => (object) $details,
+            'details' => (object) $details
         ];
     }
     */
@@ -41,7 +44,7 @@ class RpcNamespaceProcess implements EventEmitterInterface
     /**
      * @return bool
      */
-    public function restartRequest()
+    public function restartRequest(): bool
     {
         // Grant some time to ship the response
         $this->loop->addTimer(0.1, function () {

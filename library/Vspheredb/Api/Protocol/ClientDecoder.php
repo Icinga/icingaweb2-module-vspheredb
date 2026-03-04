@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Api\Protocol;
 
+use ReturnTypeWillChange;
 use SoapClient;
 use SoapFault;
 
@@ -13,17 +14,19 @@ use SoapFault;
  */
 final class ClientDecoder extends SoapClient
 {
-    private $response = null;
+    private ?string $response = null;
 
     /**
      * Decodes the SOAP response / return value from the given SOAP envelope (HTTP response body)
      *
      * @param string $function
      * @param string $response
+     *
      * @return mixed
+     *
      * @throws SoapFault if response indicates a fault (error condition) or is invalid
      */
-    public function decode($function, $response)
+    public function decode(string $function, string $response): mixed
     {
         // Temporarily save response internally for further processing
         $this->response = $response;
@@ -48,7 +51,7 @@ final class ClientDecoder extends SoapClient
      *
      * @see SoapClient::__doRequest()
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function __doRequest($request, $location, $action, $version, $oneWay = 0, $uriParserClass = null)
     {
         // the actual result doesn't actually matter, just return the given result

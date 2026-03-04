@@ -10,9 +10,13 @@ abstract class SimpleBackupTool implements BackupTool
 {
     public const PREFIX = 'no-such-prefix';
 
-    protected $lastAttributes;
+    /**
+     * @var ?array
+     */
+    protected ?array $lastAttributes = null;
 
-    protected $customValues = [];
+    /** @var string[] */
+    protected array $customValues = [];
 
     /**
      * @return string[]
@@ -24,17 +28,20 @@ abstract class SimpleBackupTool implements BackupTool
 
     /**
      * @param $annotation
+     *
      * @return bool
      */
-    public function wantsAnnotation($annotation)
+    public function wantsAnnotation($annotation): bool
     {
-        return $annotation !== null && strpos($annotation, static::PREFIX) !== false;
+        return $annotation !== null && str_contains($annotation, static::PREFIX);
     }
 
     /**
      * @param VirtualMachine $vm
+     *
+     * @return void
      */
-    public function handle(VirtualMachine $vm)
+    public function handle(VirtualMachine $vm): void
     {
         $this->parseAnnotation($vm->get('annotation'));
         $this->parseCustomValues($vm->customValues());
@@ -45,7 +52,7 @@ abstract class SimpleBackupTool implements BackupTool
      *
      * @param CustomValues $values
      */
-    protected function parseCustomValues(CustomValues $values)
+    protected function parseCustomValues(CustomValues $values): void
     {
         $attributes = [];
         foreach ($this->getCustomValues() as $name) {
@@ -61,9 +68,10 @@ abstract class SimpleBackupTool implements BackupTool
 
     /**
      * @param VirtualMachine $vm
+     *
      * @return bool
      */
-    public function wants(VirtualMachine $vm)
+    public function wants(VirtualMachine $vm): bool
     {
         $values = $vm->customValues();
         foreach ($this->getCustomValues() as $name) {
@@ -76,9 +84,9 @@ abstract class SimpleBackupTool implements BackupTool
     }
 
     /**
-     * @return array|null
+     * @return ?array
      */
-    public function getAttributes()
+    public function getAttributes(): ?array
     {
         return $this->lastAttributes;
     }
@@ -86,7 +94,7 @@ abstract class SimpleBackupTool implements BackupTool
     /**
      * @return array
      */
-    public function requireParsedAttributes()
+    public function requireParsedAttributes(): array
     {
         $attributes = $this->getAttributes();
         if ($attributes === null) {
@@ -96,7 +104,12 @@ abstract class SimpleBackupTool implements BackupTool
         return $attributes;
     }
 
-    protected function parseAnnotation($annotation)
+    /**
+     * @param ?string $annotation
+     *
+     * @return void
+     */
+    protected function parseAnnotation(?string $annotation): void
     {
         if ($annotation === null) {
             return;
@@ -119,7 +132,7 @@ abstract class SimpleBackupTool implements BackupTool
         $parts = preg_split('/],\s/', rtrim($match, ']'));
         $attributes = [];
         foreach ($parts as $part) {
-            if (strpos($part, ': [') === false) {
+            if (! str_contains($part, ': [')) {
                 continue;
             }
             [$key, $value] = preg_split('/:\s\[/', $part, 2);
@@ -131,7 +144,12 @@ abstract class SimpleBackupTool implements BackupTool
         $this->lastAttributes = $attributes;
     }
 
-    public function stripAnnotation(&$annotation)
+    /**
+     * @param string $annotation
+     *
+     * @return void
+     */
+    public function stripAnnotation(string &$annotation): void
     {
         $begin = strpos($annotation, static::PREFIX);
         if ($begin === false) {
@@ -143,18 +161,27 @@ abstract class SimpleBackupTool implements BackupTool
             $end = strlen($annotation);
         }
 
-        $annotation = substr($annotation, 0, $begin)
-        . substr($annotation, $end);
+        $annotation = substr($annotation, 0, $begin) . substr($annotation, $end);
     }
 
-    public function stripCustomValues(CustomValues $values)
+    /**
+     * @param CustomValues $values
+     *
+     * @return void
+     */
+    public function stripCustomValues(CustomValues $values): void
     {
         foreach ($this->getCustomValues() as $name) {
             $values->remove($name);
         }
     }
 
-    public function removeCustomValues(CustomValues $values)
+    /**
+     * @param CustomValues $values
+     *
+     * @return void
+     */
+    public function removeCustomValues(CustomValues $values): void
     {
         foreach ($this->getCustomValues() as $name) {
             $values->remove($name);

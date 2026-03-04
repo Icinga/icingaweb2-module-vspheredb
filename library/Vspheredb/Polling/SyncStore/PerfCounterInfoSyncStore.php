@@ -14,7 +14,7 @@ class PerfCounterInfoSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         if (! $result instanceof PerformanceManager) {
             throw new InvalidArgumentException('PerformanceManager expected, got: ' . var_export($result, 1));
@@ -27,9 +27,13 @@ class PerfCounterInfoSyncStore extends SyncStore
      * TODO: really sync
      *
      * @param PerfCounterInfo[] $infos
+     * @param SyncStats $stats
+     *
+     * @return void
+     *
      * @throws Exception
      */
-    protected function processCounterInfo(array $infos, SyncStats $stats)
+    protected function processCounterInfo(array $infos, SyncStats $stats): void
     {
         $uuid = $this->vCenter->get('uuid');
         $db = $this->vCenter->getDb();
@@ -47,7 +51,7 @@ class PerfCounterInfoSyncStore extends SyncStore
                     'vcenter_uuid' => $uuid,
                     'name'    => $group,
                     'label'   => $info->groupInfo->label,
-                    'summary' => $info->groupInfo->summary,
+                    'summary' => $info->groupInfo->summary
                 ];
             }
             if (! array_key_exists($unit, $units)) {
@@ -55,7 +59,7 @@ class PerfCounterInfoSyncStore extends SyncStore
                     'vcenter_uuid' => $uuid,
                     'name'    => $unit,
                     'label'   => $info->unitInfo->label,
-                    'summary' => $info->unitInfo->summary,
+                    'summary' => $info->unitInfo->summary
                 ];
             }
             $counter = [
@@ -66,10 +70,10 @@ class PerfCounterInfoSyncStore extends SyncStore
                 'unit_name'        => $unit,
                 'label'            => $info->nameInfo->label,
                 'summary'          => $info->nameInfo->summary,
-                'rollup_type'      => (string) $info->rollupType,
-                'stats_type'       => (string) $info->statsType,
+                'rollup_type'      => $info->rollupType,
+                'stats_type'       => $info->statsType,
                 'level'            => $info->level ?? 0, // ESXi? Check docs!
-                'per_device_level' => $info->perDeviceLevel ?? 0,
+                'per_device_level' => $info->perDeviceLevel ?? 0
             ];
             $counters[] = $counter;
         }

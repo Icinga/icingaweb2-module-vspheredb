@@ -2,10 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
+use ipl\Html\Attributes;
 use ipl\Html\FormElement\SelectElement;
 use React\EventLoop\LoopInterface;
 
@@ -19,19 +21,18 @@ class InfluxDbConnectionForm extends Form
     public const INFLUXDB_MIN_SUPPORTED_VERSION = '1.6.0';
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
-    protected $detectedApiVersion;
+    protected ?string $detectedApiVersion = null;
 
-    protected $influxDbVersion;
+    protected ?string $influxDbVersion = null;
 
-    protected $baseUrlElement;
-    /**
-     * @var RemoteClient
-     */
-    protected $client;
+    protected ?TextWithActionButton $baseUrlElement = null;
 
-    protected $checkedNow = false;
+    /** @var RemoteClient */
+    protected RemoteClient $client;
+
+    protected bool $checkedNow = false;
 
     public function __construct(LoopInterface $loop, RemoteClient $client)
     {
@@ -39,14 +40,14 @@ class InfluxDbConnectionForm extends Form
         $this->client = $client;
     }
 
-    public function assemble()
+    protected function assemble(): void
     {
         $this->addHidden('checked_url', ['ignore' => true]);
         $this->addHidden('checked_api_version', ['ignore' => true]);
         $this->baseUrlElement = new TextWithActionButton('base_url', [
             'label'       => $this->translate('Base URL'),
             'description' => $this->translate('InfluxDB base URL, like http://influxdb.example.com:8086'),
-            'required'    => true,
+            'required'    => true
         ], [
             'label' => $this->translate('Verify'),
             'title' => $this->translate('Attempt to establish a connection to your InfluxDB instance')
@@ -55,20 +56,18 @@ class InfluxDbConnectionForm extends Form
         $this->addElement('select', 'api_version', [
             'label' => $this->translate('API Version'),
             'class' => 'autosubmit',
-            'description' => $this->translate(
-                'InfluxDB API version, autodetect should work fine'
-            ),
+            'description' => $this->translate('InfluxDB API version, autodetect should work fine'),
             'options' => [
                 '' => $this->translate('Autodetect'),
                 'v1' => 'v1',
-                'v2' => 'v2',
-            ],
+                'v2' => 'v2'
+            ]
         ]);
         $this->appendVersionInformation($this->getDetectedApiVersion(), $this->getInfluxDbVersion());
         $this->addCredentials();
     }
 
-    protected function addCredentials()
+    protected function addCredentials(): static
     {
         if ($this->getApiVersion() === 'v2') {
             $this->addV2Credentials();
@@ -80,9 +79,9 @@ class InfluxDbConnectionForm extends Form
         return $this;
     }
 
-    protected function validateCredentials()
+    protected function validateCredentials(): void
     {
-        if (!$this->checkedNow) {
+        if (! $this->checkedNow) {
             return;
         }
         $username = $this->getValue('username');
@@ -100,38 +99,32 @@ class InfluxDbConnectionForm extends Form
             ) {
                 $this->getElement('password')->getAttributes()->add('class', 'validated');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->getElement('password')->addMessage($this->getExceptionMessageWithoutPhpFile($e));
         }
     }
 
-    protected function getExceptionMessageWithoutPhpFile(\Exception $e)
+    protected function getExceptionMessageWithoutPhpFile(Exception $e): string
     {
         return preg_replace('/\sin\s.+?\.php\(\d+\)/', '', $e->getMessage());
     }
 
-    protected function remoteRequest($request, $params = [])
+    protected function remoteRequest(string $request, array $params = []): mixed
     {
         return await(timeout($this->client->request($request, $params), 5, $this->loop));
     }
 
-    protected function getDetectedApiVersion()
+    protected function getDetectedApiVersion(): ?string
     {
-        if ($this->detectedApiVersion === null) {
-            $this->detectedApiVersion = $this->getApiVersionForVersionString(
-                $this->getInfluxDbVersion()
-            );
-        }
-
-        return $this->detectedApiVersion;
+        return $this->detectedApiVersion ??= $this->getApiVersionForVersionString($this->getInfluxDbVersion());
     }
 
-    protected function getApiVersion()
+    protected function getApiVersion(): string
     {
         return $this->getValue('api_version', $this->getDetectedApiVersion());
     }
 
-    protected function getInfluxDbVersion()
+    protected function getInfluxDbVersion(): ?string
     {
         if ($this->influxDbVersion === null) {
             $element = $this->getUrlElement();
@@ -147,31 +140,28 @@ class InfluxDbConnectionForm extends Form
     }
 
     /**
-     * @return TextWithActionButton
+     * @return ?TextWithActionButton
      */
-    protected function getUrlElement()
+    protected function getUrlElement(): ?TextWithActionButton
     {
         return $this->baseUrlElement;
     }
 
-    protected function markUrlAsValidated()
+    protected function markUrlAsValidated(): static
     {
-        $this
-            ->getUrlElement()
-            ->getElement()
-            ->addAttributes(['class' => 'validated']);
+        $this->getUrlElement()->getElement()->addAttributes(Attributes::create(['class' => 'validated']));
 
         return $this;
     }
 
-    protected function autodetectIsUpToDate()
+    protected function autodetectIsUpToDate(): bool
     {
         $baseUrl = $this->getValue('base_url');
 
         return $baseUrl && $this->getValue('checked_url') === $baseUrl;
     }
 
-    protected function appendVersionInformation($apiVersion, $detectedVersion)
+    protected function appendVersionInformation(?string $apiVersion, ?string $detectedVersion): void
     {
         if (empty($apiVersion) || empty($detectedVersion)) {
             return;
@@ -179,95 +169,87 @@ class InfluxDbConnectionForm extends Form
         $element = $this->getElement('api_version');
         assert($element instanceof SelectElement);
         $autoOption = $element->getOption(null);
-        $autoOption->setLabel(\sprintf(
-            $this->translate('Autodetect: %s API, Version is %s'),
-            $apiVersion,
-            $detectedVersion
-        ));
+        $autoOption->setLabel(
+            sprintf($this->translate('Autodetect: %s API, Version is %s'), $apiVersion, $detectedVersion)
+        );
         $selectedOption = $element->getOption($apiVersion);
-        $selectedOption->setLabel(\sprintf(
-            $this->translate('%s (detected %s)'),
-            $apiVersion,
-            $detectedVersion
-        ));
+        $selectedOption->setLabel(sprintf($this->translate('%s (detected %s)'), $apiVersion, $detectedVersion));
         // $element->setValue($apiVersion);
     }
 
-    protected function addV1Credentials()
+    protected function addV1Credentials(): void
     {
-        $this->addElement('text', 'username', [
-            'label'       => $this->translate('Username'),
-        ]);
+        $this->addElement('text', 'username', ['label' => $this->translate('Username')]);
         $this->addElement('password', 'password', [
-            'label'       => $this->translate('Password'),
-            'required'    => $this->hasElementValue('username'),
+            'label'    => $this->translate('Password'),
+            'required' => $this->hasElementValue('username')
         ]);
     }
 
-    protected function addV2Credentials()
+    protected function addV2Credentials(): void
     {
         $this->addElement('text', 'username', [
-            'label'       => $this->translate('Organisation'),
-            'required'    => true,
+            'label'    => $this->translate('Organisation'),
+            'required' => true
         ]);
         $this->addElement('text', 'password', [
-            'label'       => $this->translate('Token'),
+            'label'    => $this->translate('Token'),
             // 'description' => $this->translate('InfluxDB Token (InfluxDB -> Data -> Tokens'),
-            'required'    => true,
+            'required' => true
         ]);
     }
 
-    protected function detectInfluxDbVersion($baseUrl)
+    protected function detectInfluxDbVersion($baseUrl): false|string|null
     {
         if ($this->getValue('base_url') === null) {
             return null;
         }
         try {
-            $version = $this->remoteRequest('influxdb.discoverVersion', [
-                'baseUrl' => $baseUrl,
-            ]);
+            $version = $this->remoteRequest('influxdb.discoverVersion', ['baseUrl' => $baseUrl]);
             $version = ltrim($version, 'v');
             if ($this->versionIsFine($version)) {
                 $this->checkedNow = true;
                 $this->setCheckedApiVersionFor($baseUrl, $version);
                 $this->markUrlAsValidated();
+
                 return $version;
-            } else {
-                throw new \Exception("Version $version is not supported");
             }
-        } catch (\Exception $e) {
+
+            throw new Exception("Version $version is not supported");
+        } catch (Exception $e) {
             $this->triggerElementError('base_url', $e->getMessage());
+
             return false;
         }
     }
 
-    protected function tryCredentials($baseUrl, $apiVersion, $username, $password)
+    protected function tryCredentials(string $baseUrl, string $apiVersion, string $username, string $password): mixed
     {
         return $this->remoteRequest('influxdb.testConnection', [
-            'baseUrl'  => $baseUrl,
+            'baseUrl'    => $baseUrl,
             'apiVersion' => $apiVersion,
-            'username' => $username,
-            'password' => $password,
+            'username'   => $username,
+            'password'   => $password
         ]);
     }
 
-    protected function setCheckedApiVersionFor($baseUrl, $version)
+    protected function setCheckedApiVersionFor(string $baseUrl, string $version): void
     {
         $this->getElement('checked_url')->setValue($baseUrl);
         $this->setElementValue('checked_api_version', $version);
     }
 
-    protected function versionIsFine($version)
+    protected function versionIsFine(string $version): bool
     {
-        return \version_compare($version, static::INFLUXDB_MIN_SUPPORTED_VERSION, 'ge');
+        return version_compare($version, static::INFLUXDB_MIN_SUPPORTED_VERSION, 'ge');
     }
 
-    protected function getApiVersionForVersionString($version)
+    protected function getApiVersionForVersionString(?string $version): ?string
     {
         if ($version === null) {
             return null;
         }
 
-        return \version_compare($version, '1.999.999', 'gt') ? 'v2' : 'v1';
+        return version_compare($version, '1.999.999', 'gt') ? 'v2' : 'v1';
     }
 }

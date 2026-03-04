@@ -17,25 +17,26 @@ class MonitoringRulesTreeRenderer extends BaseHtmlElement
 
     protected $defaultAttributes = [
         'class'            => 'tree',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     /** @var MonitoringRulesTree */
-    protected $tree;
-    protected $url;
+    protected MonitoringRulesTree $tree;
 
-    public function __construct(MonitoringRulesTree $tree, $url)
+    protected string $url;
+
+    public function __construct(MonitoringRulesTree $tree, string $url)
     {
         $this->tree = $tree;
         $this->url = $url;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->add($this->buildTree($this->tree->getRootNode()));
     }
 
-    protected function buildTree($node, $level = 0): HtmlElement
+    protected function buildTree(object $node, $level = 0): HtmlElement
     {
         $hasChildren = ! empty($node->children);
         $li = Html::tag('li');
@@ -63,14 +64,8 @@ class MonitoringRulesTreeRenderer extends BaseHtmlElement
         return $li;
     }
 
-    protected function createLink($label, $uuid = null, $attributes = []): Link
+    protected function createLink(string $label, ?string $uuid = null, array $attributes = []): Link
     {
-        if ($uuid === null) {
-            $params = [];
-        } else {
-            $params = Util::uuidParams($uuid);
-        }
-
-        return Link::create($label, $this->url, $params, $attributes);
+        return Link::create($label, $this->url, $uuid === null ? [] : Util::uuidParams($uuid), $attributes);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Exception;
 use gipfl\Cli\Screen;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
@@ -12,10 +13,10 @@ use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
 use Icinga\Module\Vspheredb\Monitoring\Health\ServerConnectionInfo;
 use Icinga\Module\Vspheredb\Monitoring\Health\VCenterInfo;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
 use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 
@@ -28,18 +29,21 @@ class CheckCommand extends Command
 {
     use CheckPluginHelper;
 
-    /** @var Db */
-    protected $db;
+    /** @var ?Db */
+    protected ?Db $db = null;
 
     /**
      * Check vSphereDB daemon health
+     *
+     * @return void
      */
-    public function healthAction()
+    public function healthAction(): void
     {
         $this->run(function () {
             $migrations = Db::migrationsForDb($this->db());
             if (! $migrations->hasSchema()) {
                 $this->addProblem('CRITICAL', 'Database has no vSphereDB schema');
+
                 return resolve(null);
             }
             if ($migrations->hasPendingMigrations()) {
@@ -57,15 +61,15 @@ class CheckCommand extends Command
                 }
 
                 if (count($vCenters) > 1) {
-                    if ($this->getState() === 0) {
-                        $this->prependMessage('All vCenters/ESXi Hosts are connected');
-                    } else {
-                        $this->prependMessage('There are problems with some vCenters/ESXi Host connections');
-                    }
+                    $this->prependMessage(
+                        $this->getState() === 0
+                            ? 'All vCenters/ESXi Hosts are connected'
+                            : 'There are problems with some vCenters/ESXi Host connections'
+                    );
                 }
-            }, function (\Exception $e) {
+            }, function (Exception $e) {
                 $message = $e->getMessage();
-                if (preg_match('/^Unable to connect/', $message)) {
+                if (str_starts_with($message, 'Unable to connect')) {
                     $message = "Daemon not running? $message";
                 }
                 $this->addProblem('CRITICAL', $message);
@@ -82,8 +86,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check vcenterconnection --vCenter <id>
+     *
+     * @return void
      */
-    public function vcenterconnectionAction()
+    public function vcenterconnectionAction(): void
     {
         $this->run(function () {
             $vcenter = VCenterInfo::fetchOne(
@@ -105,20 +111,16 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check host [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
+     *
+     * @return void
      */
-    public function hostAction()
+    public function hostAction(): void
     {
         $this->run(function () {
             $uuid = $this->params->get('uuid');
-            if ($uuid !== null) {
-                $params = [
-                    'uuid' => Uuid::fromString($uuid)->getBytes()
-                ];
-            } else {
-                $params = [
-                    'host_name' => $this->params->getRequired('name')
-                ];
-            }
+            $params = $uuid !== null
+                ? ['uuid' => Uuid::fromString($uuid)->getBytes()]
+                : ['host_name' => $this->params->getRequired('name')];
             $host = $this->lookup()->findOneBy('HostSystem', $params);
             $this->runChecks($host);
         });
@@ -130,8 +132,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check hosts
+     *
+     * @return void
      */
-    public function hostsAction()
+    public function hostsAction(): void
     {
         $this->showOverallStatusForProblems(
             $this->lookup()->listNonGreenObjects('HostSystem')
@@ -144,8 +148,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check vm [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
+     *
+     * @return void
      */
-    public function vmAction()
+    public function vmAction(): void
     {
         $this->run(function () {
             $uuid = $this->params->get('uuid');
@@ -174,8 +180,10 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check vms
+     *
+     * @return void
      */
-    public function vmsAction()
+    public function vmsAction(): void
     {
         $this->showOverallStatusForProblems(
             $this->lookup()->listNonGreenObjects('VirtualMachine')
@@ -188,20 +196,16 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check datastore [--name <name>|--uuid <uuid>] [--ruleset <set>] [--rule [<ruleset>/]<rule>]
+     *
+     * @return void
      */
-    public function datastoreAction()
+    public function datastoreAction(): void
     {
         $this->run(function () {
             $uuid = $this->params->get('uuid');
-            if ($uuid !== null) {
-                $params = [
-                    'uuid' => Uuid::fromString($uuid)->getBytes()
-                ];
-            } else {
-                $params = [
-                    'object_name' => $this->params->getRequired('name')
-                ];
-            }
+            $params = $uuid !== null
+                ? ['uuid' => Uuid::fromString($uuid)->getBytes()]
+                : ['object_name' => $this->params->getRequired('name')];
             $datastore = $this->lookup()->findOneBy('Datastore', $params);
             $this->runChecks($datastore);
         });
@@ -213,15 +217,22 @@ class CheckCommand extends Command
      * USAGE
      *
      * icingacli vspheredb check datastores
+     *
+     * @return void
      */
-    public function datastoresAction()
+    public function datastoresAction(): void
     {
         $this->showOverallStatusForProblems(
             $this->lookup()->listNonGreenObjects('Datastore')
         );
     }
 
-    protected function runChecks(BaseDbObject $object)
+    /**
+     * @param BaseDbObject $object
+     *
+     * @return never
+     */
+    protected function runChecks(BaseDbObject $object): never
     {
         $runner = new CheckRunner($this->db());
         if ($section = $this->params->get(CheckRunner::RULESET_NAME_PARAMETER)) {
@@ -244,10 +255,19 @@ class CheckCommand extends Command
         }
         $result = $runner->check($object);
         echo $this->colorizeOutput($result->getOutput()) . PHP_EOL;
+
         exit($result->getState()->getExitCode());
     }
 
-    protected static function assertString($string, string $label)
+    /**
+     * @param mixed $string
+     * @param string $label
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException
+     */
+    protected static function assertString(mixed $string, string $label): void
     {
         if (! is_string($string)) {
             throw new InvalidArgumentException("$label must be a string");
@@ -257,9 +277,10 @@ class CheckCommand extends Command
     /**
      * @param VCenterInfo $vcenter
      * @param array<int, array<int, ServerConnectionInfo>> $connections
+     *
      * @return void
      */
-    protected function checkVCenterConnection(VCenterInfo $vcenter, array $connections)
+    protected function checkVCenterConnection(VCenterInfo $vcenter, array $connections): void
     {
         $vcenterId = $vcenter->id;
         $prefix = sprintf('%s, %s: ', $vcenter->name, $vcenter->software);
@@ -282,7 +303,10 @@ class CheckCommand extends Command
         }
     }
 
-    protected function checkDaemonStatus()
+    /**
+     * @return void
+     */
+    protected function checkDaemonStatus(): void
     {
         $db = $this->db()->getDbAdapter();
         $daemon = $db->fetchRow(
@@ -301,16 +325,26 @@ class CheckCommand extends Command
         }
     }
 
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
     protected function colorizeOutput(string $string): string
     {
         $screen = Screen::factory();
         $pattern = '/\[(OK|WARNING|CRITICAL|UNKNOWN)]\s/';
         return preg_replace_callback($pattern, function ($match) use ($screen) {
-            return '[' . $screen->colorize($match[1], (new CheckPluginState($match[1]))->getColor()) . '] ';
+            return '[' . $screen->colorize($match[1], CheckPluginState::from($match[1])->color()) . '] ';
         }, $string);
     }
 
-    protected function showOverallStatusForProblems($problems)
+    /**
+     * @param array $problems
+     *
+     * @return void
+     */
+    protected function showOverallStatusForProblems(array $problems): void
     {
         $this->run(function () use ($problems) {
             if (empty($problems)) {
@@ -324,7 +358,13 @@ class CheckCommand extends Command
         });
     }
 
-    protected function addProblematicObjectNames($color, $objects)
+    /**
+     * @param string $color
+     * @param array $objects
+     *
+     * @return void
+     */
+    protected function addProblematicObjectNames(string $color, array $objects): void
     {
         $showMax = 5;
         $stateName = $this->getStateForColor($color);
@@ -357,27 +397,26 @@ class CheckCommand extends Command
      */
     protected function getStateForColor(string $color): string
     {
-        $colors = [
-            'green'  => 'OK',
-            'gray'   => 'CRITICAL',
-            'yellow' => 'WARNING',
-            'red'    => 'CRITICAL',
-        ];
-
-        return $colors[$color];
+        return match ($color) {
+            'green'       => 'OK',
+            'gray', 'red' => 'CRITICAL',
+            'yellow'      => 'WARNING'
+        };
     }
 
+    /**
+     * @return CheckRelatedLookup
+     */
     protected function lookup(): CheckRelatedLookup
     {
         return new CheckRelatedLookup($this->db());
     }
 
+    /**
+     * @return Db
+     */
     protected function db(): Db
     {
-        if ($this->db === null) {
-            $this->db = Db::newConfiguredInstance();
-        }
-
-        return $this->db;
+        return $this->db ??= Db::newConfiguredInstance();
     }
 }

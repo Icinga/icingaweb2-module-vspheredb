@@ -3,34 +3,36 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
 use Icinga\Module\Vspheredb\Web\Widget\OverallStatusRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Util\Format;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class VmDisksTable extends ZfQueryBasedTable
 {
-    protected $searchColumns = [
-        'object_name',
-    ];
+    protected $searchColumns = ['object_name'];
 
     protected $parentIds;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
-    /** @var string */
-    protected $uuid;
+    /** @var ?string */
+    protected ?string $uuid = null;
 
-    /** @var string */
-    protected $moref;
+    /** @var ?string */
+    protected ?string $moref = null;
 
     /** @var OverallStatusRenderer */
-    protected $renderStatus;
+    protected OverallStatusRenderer $renderStatus;
 
-    protected $withPerfImages = false;
+    protected bool $withPerfImages = false;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -40,7 +42,7 @@ class VmDisksTable extends ZfQueryBasedTable
         $this->setVm($vm);
     }
 
-    protected function setVm(VirtualMachine $vm)
+    protected function setVm(VirtualMachine $vm): static
     {
         $this->vm = $vm;
         $this->uuid = $vm->get('uuid');
@@ -49,7 +51,7 @@ class VmDisksTable extends ZfQueryBasedTable
         return $this;
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $device = sprintf(
             '%s%d:%d',
@@ -68,18 +70,16 @@ class VmDisksTable extends ZfQueryBasedTable
                     Html::tag('br'),
                     $device,
                     Html::tag('br'),
-                    Format::bytes($row->capacity),
+                    Format::bytes($row->capacity)
                 ], ['class' => 'vm-disks-with-perf-image']),
                 $this->prepareImgColumn($device)
             ]);
-        } else {
-            return $this->row([
-                $this->formatSimple($row, $device)
-            ]);
         }
+
+        return $this->row([$this->formatSimple($row, $device)]);
     }
 
-    protected function formatSimple($row, $device)
+    protected function formatSimple(object $row, string $device): FormattedString
     {
         return Html::sprintf(
             '%s (%s): %s',
@@ -89,35 +89,37 @@ class VmDisksTable extends ZfQueryBasedTable
         );
     }
 
-    protected function prepareImgColumn($device)
+    protected function prepareImgColumn($device): ?HtmlElement
     {
         if ($this->withPerfImages) {
             return $this::td([
                 RrdImg::vmDiskSeeks($this->moref, $device),
                 RrdImg::vmDiskReadWrites($this->moref, $device),
-                RrdImg::vmDiskTotalLatency($this->moref, $device),
+                RrdImg::vmDiskTotalLatency($this->moref, $device)
             ]);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
-        $uuid = $this->vm->get('uuid');
-        $query = $this->db()->select()->from(['vmd' => 'vm_disk'], [
-            'controller_label'    => 'vmhc.label',
-            'hardware_label'      => 'vmhw.label',
-            'hardware_key'        => 'vmhw.hardware_key',
-            'hardware_bus_number' => 'vmhc.bus_number',
-            'hardware_unit_nmber' => 'vmhw.unit_number',
-            'capacity'            => 'vmd.capacity',
-        ])
-        ->join(['vmhw' => 'vm_hardware'], 'vmd.vm_uuid = vmhw.vm_uuid AND vmd.hardware_key = vmhw.hardware_key', [])
-        ->join(['vmhc' => 'vm_hardware'], 'vmhw.vm_uuid = vmhc.vm_uuid AND vmhw.controller_key = vmhc.hardware_key', [])
-        ->where('vmd.vm_uuid = ?', $uuid)
-        ->order('hardware_label');
-
-        return $query;
+        return $this->db()->select()
+            ->from(['vmd' => 'vm_disk'], [
+                'controller_label'    => 'vmhc.label',
+                'hardware_label'      => 'vmhw.label',
+                'hardware_key'        => 'vmhw.hardware_key',
+                'hardware_bus_number' => 'vmhc.bus_number',
+                'hardware_unit_nmber' => 'vmhw.unit_number',
+                'capacity'            => 'vmd.capacity'
+            ])
+            ->join(['vmhw' => 'vm_hardware'], 'vmd.vm_uuid = vmhw.vm_uuid AND vmd.hardware_key = vmhw.hardware_key', [])
+            ->join(
+                ['vmhc' => 'vm_hardware'],
+                'vmhw.vm_uuid = vmhc.vm_uuid AND vmhw.controller_key = vmhc.hardware_key',
+                []
+            )
+            ->where('vmd.vm_uuid = ?', $this->vm->get('uuid'))
+            ->order('hardware_label');
     }
 }

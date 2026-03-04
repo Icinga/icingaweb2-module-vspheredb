@@ -2,33 +2,35 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
-use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PerformanceData\IcingaRrd\RrdImg;
-use Icinga\Module\Vspheredb\Web\Widget\GrafanaVmPanel;
 use Icinga\Module\Vspheredb\Web\Widget\MacAddress;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use stdClass;
+use Zend_Db_Select;
 
 class VmNetworkAdapterTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
-    /** @var string */
-    protected $moref;
+    /** @var ?string */
+    protected ?string $moref;
 
-    protected $withPerfImages = false;
-    /**
-     * @var array
-     */
-    protected $ipAddresses;
+    protected bool $withPerfImages = false;
+
+    /** @var stdClass */
+    protected stdClass $ipAddresses;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -39,45 +41,38 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         parent::__construct($vm->getConnection());
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         // $this->add($this::row([
         //     new GrafanaVmPanel($this->vm->object(), [1, 3], $row->label, 'All')
         // ]));
         if ($this->withPerfImages) {
-            return $this::row([
-                $this->formatMultiLine($row),
-                $this->prepareRowImages($row),
-            ]);
-        } else {
-            return $this::row([$this->formatSimple($row)]);
+            return $this::row([$this->formatMultiLine($row), $this->prepareRowImages($row)]);
         }
+
+        return $this::row([$this->formatSimple($row)]);
     }
 
-    protected function linkToPortGroup($row)
+    protected function linkToPortGroup($row): string|FormattedString
     {
         if ($row->port_key === null) {
             return ''; // TODO: explain (no portgroup -> ESXi?)
         } elseif ($row->portgroup_uuid === null) {
-            return \sprintf($this->translate('Port %s'), $row->port_key);
-        } else {
-            return Html::sprintf(
-                'Port %s on %s',
-                $row->port_key,
-                $row->portgroup_name
-                /* // TODO:
-                // Link::create(
-                //     $row->portgroup_name,
-                //     'vspheredb/portgroup',
-                //     ['uuid' => Util::niceUuid($row->portgroup_uuid)],
-                //     ['data-base-target' => '_next']
-                // )
-                */
-            );
+            return sprintf($this->translate('Port %s'), $row->port_key);
         }
+
+        return Html::sprintf('Port %s on %s', $row->port_key, $row->portgroup_name);
+        /* // TODO:
+        // Link::create(
+        //     $row->portgroup_name,
+        //     'vspheredb/portgroup',
+        //     ['uuid' => Util::niceUuid($row->portgroup_uuid)],
+        //     ['data-base-target' => '_next']
+        // )
+        */
     }
 
-    protected function formatSimple($row)
+    protected function formatSimple($row): FormattedString
     {
         $ipInfo = $this->ipAddresses->{$row->hardware_key} ?? null;
         if ($ipInfo) {
@@ -93,17 +88,11 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
             $aIpInfo = [];
             foreach ($ipInfo->addresses as $address) {
                 // Explicit check for isset, as WP had a workaround skipping the property
-                if (! isset($address->state) || $address->state === null) {
-                    $aIpInfo[] = sprintf('%s/%s', $address->address, $address->prefixLength);
-                } else {
-                    $aIpInfo[] = sprintf('%s/%s (%s)', $address->address, $address->prefixLength, $address->state);
-                }
+                $aIpInfo = ! isset($address->state)
+                    ? sprintf('%s/%s', $address->address, $address->prefixLength)
+                    : sprintf('%s/%s (%s)', $address->address, $address->prefixLength, $address->state);
             }
-            if (empty($aIpInfo)) {
-                $aIpInfo = '';
-            } else {
-                $aIpInfo = implode(', ', $aIpInfo);
-            }
+            $aIpInfo = empty($aIpInfo) ? '' : implode(', ', $aIpInfo);
         } else {
             $mainIpInfo = '';
             $aIpInfo = '';
@@ -121,7 +110,7 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         );
     }
 
-    protected function formatMultiLine($row)
+    protected function formatMultiLine($row): array
     {
         return [
             Html::tag('strong', $row->label),
@@ -133,37 +122,28 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         ];
     }
 
-    protected function prepareRowImages($row)
+    protected function prepareRowImages($row): array
     {
         return [
             RrdImg::vmIfTraffic($this->moref, $row->hardware_key),
-            RrdImg::vmIfPackets($this->moref, $row->hardware_key),
+            RrdImg::vmIfPackets($this->moref, $row->hardware_key)
         ];
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['vna' => 'vm_network_adapter'],
-            [
+        return $this->db()->select()
+            ->from(['vna' => 'vm_network_adapter'], [
                 'vh.label',
                 'vna.hardware_key',
                 'vna.port_key',
                 'vna.mac_address',
                 'vna.address_type',
                 'vna.portgroup_uuid',
-                'portgroup_name' => 'pgo.object_name',
-            ]
-        )->join(
-            ['vh' => 'vm_hardware'],
-            'vh.vm_uuid = vna.vm_uuid AND vh.hardware_key = vna.hardware_key',
-            []
-        )->joinLeft(
-            ['pgo' => 'object'],
-            'pgo.uuid = vna.portgroup_uuid',
-            []
-        )->where('vna.vm_uuid = ?', $this->vm->get('uuid'))->order('vh.label ASC');
-
-        return $query;
+                'portgroup_name' => 'pgo.object_name'
+            ])
+            ->join(['vh' => 'vm_hardware'], 'vh.vm_uuid = vna.vm_uuid AND vh.hardware_key = vna.hardware_key', [])
+            ->joinLeft(['pgo' => 'object'], 'pgo.uuid = vna.portgroup_uuid', [])
+            ->where('vna.vm_uuid = ?', $this->vm->get('uuid'))->order('vh.label ASC');
     }
 }

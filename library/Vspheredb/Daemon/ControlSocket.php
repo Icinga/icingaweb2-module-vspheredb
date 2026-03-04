@@ -17,27 +17,38 @@ class ControlSocket implements EventEmitterInterface
     use EventEmitterTrait;
 
     /** @var string */
-    protected $path;
+    protected string $path;
 
-    /** @var LoopInterface */
-    protected $loop;
+    /** @var ?LoopInterface */
+    protected ?LoopInterface $loop = null;
 
-    /** @var UnixServer */
-    protected $server;
+    /** @var ?UnixServer */
+    protected ?UnixServer $server = null;
 
-    public function __construct($path)
+    /**
+     * @param string $path
+     */
+    public function __construct(string $path)
     {
         $this->path = $path;
         $this->eventuallyRemoveSocketFile();
     }
 
-    public function run(LoopInterface $loop)
+    /**
+     * @param LoopInterface $loop
+     *
+     * @return void
+     */
+    public function run(LoopInterface $loop): void
     {
         $this->loop = $loop;
         $this->listen();
     }
 
-    protected function listen()
+    /**
+     * @return void
+     */
+    protected function listen(): void
     {
         $old = umask(0000);
         $server = new UnixServer('unix://' . $this->path, $this->loop);
@@ -46,17 +57,21 @@ class ControlSocket implements EventEmitterInterface
         $this->server = $server;
     }
 
-    public function shutdown()
+    /**
+     * @return void
+     */
+    public function shutdown(): void
     {
-        if ($this->server) {
-            $this->server->close();
-            $this->server = null;
-        }
+        $this->server?->close();
+        $this->server = null;
 
         $this->eventuallyRemoveSocketFile();
     }
 
-    protected function eventuallyRemoveSocketFile()
+    /**
+     * @return void
+     */
+    protected function eventuallyRemoveSocketFile(): void
     {
         if (file_exists($this->path)) {
             unlink($this->path);

@@ -7,7 +7,7 @@ use ipl\Html\Table;
 class RulesTable extends Table
 {
     /** @var MonitoringRuleSet[] */
-    protected $ruleSets;
+    protected array $ruleSets;
 
     /**
      * @param MonitoringRuleSet[] $ruleSets
@@ -17,12 +17,10 @@ class RulesTable extends Table
         $this->ruleSets = $ruleSets;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         foreach ($this->ruleSets as $set) {
-            $this->add(Table::row([
-                $set->getDefinition()::getIdentifier()
-            ]));
+            $this->add(Table::row([$set->getDefinition()::getIdentifier()]));
         }
     }
 }

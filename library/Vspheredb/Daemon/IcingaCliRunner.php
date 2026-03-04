@@ -7,24 +7,28 @@ use React\ChildProcess\Process;
 class IcingaCliRunner
 {
     /** @var string */
-    protected $binary;
+    protected string $binary;
 
-    /** @var string|null */
-    protected $cwd;
+    /** @var ?string */
+    protected ?string $cwd = null;
 
-    /** @var array|null */
-    protected $env;
+    /** @var ?array */
+    protected ?array $env = null;
 
-    public function __construct($binary)
+    /**
+     * @param string $binary
+     */
+    public function __construct(string $binary)
     {
         $this->binary = $binary;
     }
 
     /**
-     * @param array|null $argv
+     * @param ?array $argv
+     *
      * @return IcingaCliRunner
      */
-    public static function forArgv(?array $argv = null)
+    public static function forArgv(?array $argv = null): IcingaCliRunner
     {
         if ($argv === null) {
             global $argv;
@@ -35,13 +39,14 @@ class IcingaCliRunner
     }
 
     /**
-     * @param mixed array|...$arguments
+     * @param mixed $arguments array|...string
+     *
      * @return Process
      */
-    public function command($arguments = null)
+    public function command(...$arguments): Process
     {
-        if (! is_array($arguments)) {
-            $arguments = func_get_args();
+        if (count($arguments) === 1 && is_array($arguments[0])) {
+            $arguments = $arguments[0];
         }
 
         return new Process(
@@ -52,43 +57,36 @@ class IcingaCliRunner
     }
 
     /**
-     * @param string|null $cwd
+     * @param ?string $cwd
+     *
+     * @return void
      */
-    public function setCwd($cwd)
+    public function setCwd(?string $cwd): void
     {
-        if ($cwd === null) {
-            $this->cwd = $cwd;
-        } else {
-            $this->cwd = (string) $cwd;
-        }
+        $this->cwd = $cwd;
     }
 
     /**
-     * @param array|null $env
+     * @param ?array $env
+     *
+     * @return void
      */
-    public function setEnv($env)
+    public function setEnv(?array $env): void
     {
-        if ($env === null) {
-            $this->env = $env;
-        } else {
-            $this->env = (array) $env;
-        }
+        $this->env = $env;
     }
 
     /**
-     * @param $arguments
+     * @param array $arguments
+     *
      * @return string
      */
-    protected function escapedCommand($arguments)
+    protected function escapedCommand(array $arguments): string
     {
         $command = ['exec', escapeshellcmd($this->binary)];
 
         foreach ($arguments as $argument) {
-            if (ctype_alnum(preg_replace('/^\-{1,2}/', '', $argument))) {
-                $command[] = $argument;
-            } else {
-                $command[] = escapeshellarg($argument);
-            }
+            $command[] = ctype_alnum(preg_replace('/^\-{1,2}/', '', $argument)) ? $argument : escapeshellarg($argument);
         }
 
         return implode(' ', $command);

@@ -2,8 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\Api\Protocol;
 
-use SoapClient;
+use ReturnTypeWillChange;
 use RingCentral\Psr7\Request;
+use SoapClient;
 use SoapFault;
 
 /**
@@ -14,17 +15,19 @@ use SoapFault;
  */
 final class ClientEncoder extends SoapClient
 {
-    private $request = null;
+    private ?Request $request = null;
 
     /**
      * Encodes the given RPC function name and arguments as a SOAP request
      *
      * @param string $name
      * @param array $args
+     *
      * @return Request
+     *
      * @throws SoapFault if request is invalid according to WSDL
      */
-    public function encode($name, $args)
+    public function encode(string $name, array $args): Request
     {
         $this->__soapCall($name, $args);
 
@@ -46,7 +49,7 @@ final class ClientEncoder extends SoapClient
      *
      * @see SoapClient::__doRequest()
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function __doRequest($request, $location, $action, $version, $oneWay = 0, $uriParserClass = null)
     {
         $headers = [];

@@ -6,6 +6,7 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\CheckRunner;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Web\Table\Monitoring\MonitoringRuleProblemHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
@@ -13,7 +14,12 @@ use Ramsey\Uuid\Uuid;
 
 trait SingleObjectMonitoring
 {
-    protected function showMonitoringDetails(BaseDbObject $object)
+    /**
+     * @param BaseDbObject $object
+     *
+     * @return void
+     */
+    protected function showMonitoringDetails(BaseDbObject $object): void
     {
         $history = $this->params->get('history');
         if ($history) {
@@ -37,7 +43,12 @@ trait SingleObjectMonitoring
         }
     }
 
-    protected function showMonitoringHistory(BaseDbObject $object)
+    /**
+     * @param BaseDbObject $object
+     *
+     * @return void
+     */
+    protected function showMonitoringHistory(BaseDbObject $object): void
     {
         $this->setAutorefreshInterval(20);
         $table = new MonitoringRuleProblemHistoryTable($this->db()->getDbAdapter());
@@ -46,21 +57,20 @@ trait SingleObjectMonitoring
         $table->renderTo($this);
     }
 
-    protected function showRuleConfigurationHint(BaseDbObject $object)
+    /**
+     * @param BaseDbObject $object
+     *
+     * @return void
+     */
+    protected function showRuleConfigurationHint(BaseDbObject $object): void
     {
-        switch ($object->getTableName()) {
-            case 'virtual_machine':
-                $tab = 'vmtree';
-                break;
-            case 'host_system':
-                $tab = 'hosttree';
-                break;
-            case 'datastore':
-                $tab = 'datastoretree';
-                break;
-            default:
-                $tab = null;
-        }
+        $tab = match ($object->getTableName()) {
+            'virtual_machine' => 'vmtree',
+            'host_system'     => 'hosttree',
+            'datastore'       => 'datastoretree',
+            default           => null,
+        };
+
         if ($tab) {
             $this->content()->add(Html::tag('p', [Html::tag('br'), Html::sprintf(
                 $this->translate('Please click %s to configure related Monitoring Rules'),
@@ -69,6 +79,12 @@ trait SingleObjectMonitoring
         }
     }
 
+    /**
+     * @param BaseDbObject $object
+     * @param ?bool $inspect
+     *
+     * @return Hint
+     */
     protected function createMonitoringHint(BaseDbObject $object, ?bool $inspect = null): Hint
     {
         return Hint::info(Html::sprintf(
@@ -81,13 +97,18 @@ trait SingleObjectMonitoring
                 'class' => 'logOutput'
             ], sprintf(
                 'icingacli vspheredb check %s --uuid %s%s',
-                CheckRunner::getCheckTypeForObject($object),
+                ObjectType::fromDbObject($object)->value,
                 Uuid::fromBytes($object->get('uuid'))->toString(),
                 $inspect ? ' --inspect' : ''
             ))
         ));
     }
 
+    /**
+     * @param ?bool $inspect
+     *
+     * @return Link
+     */
     protected function createMonitoringInspectionLink(?bool $inspect = null): Link
     {
         if ($inspect) {
@@ -97,16 +118,21 @@ trait SingleObjectMonitoring
                 null,
                 ['class' => 'icon-left-big']
             );
-        } else {
-            return Link::create(
-                $this->translate('Inspect'),
-                $this->url()->with('inspect', true),
-                null,
-                ['class' => 'icon-services']
-            );
         }
+
+        return Link::create(
+            $this->translate('Inspect'),
+            $this->url()->with('inspect', true),
+            null,
+            ['class' => 'icon-services']
+        );
     }
 
+    /**
+     * @param ?bool $inspect
+     *
+     * @return Link
+     */
     protected function createMonitoringHistoryLink(?bool $inspect = null): Link
     {
         if ($inspect) {
@@ -116,13 +142,13 @@ trait SingleObjectMonitoring
                 null,
                 ['class' => 'icon-left-big']
             );
-        } else {
-            return Link::create(
-                $this->translate('Show history'),
-                $this->url()->with('history', true),
-                null,
-                ['class' => 'icon-history']
-            );
         }
+
+        return Link::create(
+            $this->translate('Show history'),
+            $this->url()->with('history', true),
+            null,
+            ['class' => 'icon-history']
+        );
     }
 }

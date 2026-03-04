@@ -2,27 +2,28 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use ipl\Html\Html;
-use ipl\Html\HtmlDocument;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Url;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
+use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
 
 class AdditionalTableActions
 {
     use TranslationHelper;
 
     /** @var Auth */
-    protected $auth;
+    protected Auth $auth;
 
     /** @var Url */
-    protected $url;
+    protected Url $url;
 
     /** @var BaseTable */
-    protected $table;
+    protected BaseTable $table;
 
     public function __construct(BaseTable $table, Auth $auth, Url $url)
     {
@@ -31,7 +32,7 @@ class AdditionalTableActions
         $this->table = $table;
     }
 
-    public function appendTo(HtmlDocument $parent)
+    public function appendTo(HtmlDocument $parent): static
     {
         $links = [];
         if ($this->hasPermission('vspheredb/export') && $this->urlAllowsExport($this->url)) {
@@ -75,28 +76,20 @@ class AdditionalTableActions
         return in_array($url->getPath(), [
             'vspheredb/vms',
             'vspheredb/hosts',
-            'vspheredb/datastores',
+            'vspheredb/datastores'
         ]);
     }
 
-    protected function createShowSqlToggle()
+    protected function createShowSqlToggle(): Link
     {
         if ($this->url->getParam('format') === 'sql') {
-            $link = Link::create(
-                $this->translate('Hide SQL'),
-                $this->url->without('format')
-            );
-        } else {
-            $link = Link::create(
-                $this->translate('Show SQL'),
-                $this->url->with('format', 'sql')
-            );
+            return Link::create($this->translate('Hide SQL'), $this->url->without('format'));
         }
 
-        return $link;
+        return Link::create($this->translate('Show SQL'), $this->url->with('format', 'sql'));
     }
 
-    protected function toggleColumnsOptions()
+    protected function toggleColumnsOptions(): array
     {
         $links = [];
         $table = $this->table;
@@ -125,9 +118,7 @@ class AdditionalTableActions
             if (in_array($alias, $enabled)) {
                 $links[] = Link::create(
                     $title,
-                    $url->with('columns', implode(',', array_diff($enabled, [
-                        $alias
-                    ]))),
+                    $url->with('columns', implode(',', array_diff($enabled, [$alias]))),
                     null,
                     ['class' => 'icon-ok']
                 );
@@ -135,9 +126,7 @@ class AdditionalTableActions
                 $disabled[] = $alias;
                 $links[] = Link::create(
                     $title,
-                    $url->with('columns', implode(',', array_merge($enabled, [
-                        $alias
-                    ]))),
+                    $url->with('columns', implode(',', array_merge($enabled, [$alias]))),
                     null,
                     ['class' => 'icon-plus']
                 );
@@ -158,9 +147,9 @@ class AdditionalTableActions
         return $links;
     }
 
-    protected function moreOptions($links)
+    protected function moreOptions(array $links): HtmlElement
     {
-        $options = $this->ul([
+        return $this->ul([
             /*$this->li([
                 Link::create('Columns', '#', null, ['class' => 'icon-th-list']),
                 $this->linkList($this->toggleColumnsOptions())
@@ -168,13 +157,11 @@ class AdditionalTableActions
             $this->li([
                 Link::create(Icon::create('down-open'), '#'),
                 $this->linkList($links)
-            ]),
+            ])
         ], ['class' => 'nav']);
-
-        return $options;
     }
 
-    protected function linkList($links)
+    protected function linkList(array $links): HtmlElement
     {
         $ul = Html::tag('ul');
 
@@ -185,22 +172,22 @@ class AdditionalTableActions
         return $ul;
     }
 
-    protected function ulLi($content)
+    protected function ulLi($content): HtmlElement
     {
         return $this->ul($this->li($content));
     }
 
-    protected function ul($content, $attributes = null)
+    protected function ul(mixed $content, ?array $attributes = null): HtmlElement
     {
         return Html::tag('ul', $attributes, $content);
     }
 
-    protected function li($content)
+    protected function li(mixed $content): HtmlElement
     {
         return Html::tag('li', null, $content);
     }
 
-    protected function hasPermission($permission)
+    protected function hasPermission($permission): bool
     {
         return $this->auth->hasPermission($permission);
     }

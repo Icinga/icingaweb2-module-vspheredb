@@ -13,6 +13,7 @@ use Icinga\Module\Vspheredb\Web\Form\FilterVCenterForm;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use Icinga\Module\Vspheredb\Web\Table\TableWithParentFilter;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
+use Icinga\Web\Url as WebUrl;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 
@@ -20,13 +21,16 @@ class ObjectsController extends Controller
 {
     use RestApi;
 
-    protected $otherTabActions = [];
+    /** @var array */
+    protected array $otherTabActions = [];
 
-    /** @var PathLookup */
-    protected $pathLookup;
-    protected $vCenterFilterForm;
+    /** @var ?PathLookup */
+    protected ?PathLookup $pathLookup = null;
 
-    protected function linkBackToOverview($type)
+    /** @var ?FilterVCenterForm */
+    protected ?FilterVCenterForm $vCenterFilterForm = null;
+
+    protected function linkBackToOverview($type): static
     {
         $this->actions()->add(
             Link::create(
@@ -43,7 +47,7 @@ class ObjectsController extends Controller
         return $this;
     }
 
-    protected function addTreeViewToggle()
+    protected function addTreeViewToggle(): void
     {
         if ($this->params->get('render') === 'tree') {
             $this->actions()->add(
@@ -66,12 +70,13 @@ class ObjectsController extends Controller
         }
     }
 
-    protected function eventuallyFilterByParent(TableWithParentFilter $table, $url, $defaultTitle = null)
-    {
-        $parent = $this->params->get('parent');
-        if ($parent === null) {
-            $parent = $this->params->get('uuid');
-        }
+    protected function eventuallyFilterByParent(
+        TableWithParentFilter $table,
+        WebUrl|string $url,
+        ?string $defaultTitle = null
+    ): void {
+        $parent = $this->params->get('parent') ?? $this->params->get('uuid');
+
         if ($parent !== null) {
             $parent = Uuid::fromString($parent)->getBytes();
         }
@@ -79,11 +84,7 @@ class ObjectsController extends Controller
         if ($parent) {
             $lookup = $this->pathLookup();
             $name = $lookup->getObjectName($parent);
-            if ($name) {
-                $this->addTitle($name);
-            } else {
-                $this->addTitle($defaultTitle);
-            }
+            $this->addTitle($name ?: $defaultTitle);
             if ($this->params->get('showDescendants')) {
                 $uuids = $lookup->listFoldersBelongingTo($parent);
                 $table->filterParentUuids($uuids);
@@ -96,7 +97,7 @@ class ObjectsController extends Controller
         }
     }
 
-    protected function eventuallyFilterByVCenter(TableWithVCenterFilter $table)
+    protected function eventuallyFilterByVCenter(TableWithVCenterFilter $table): void
     {
         $this->getRestrictionHelper()->restrictTable($table);
         $this->getVCenterFilterForm();
@@ -119,7 +120,7 @@ class ObjectsController extends Controller
         return $this->vCenterFilterForm;
     }
 
-    protected function showTable(ObjectsTable $table, $url, $defaultTitle = null)
+    protected function showTable(ObjectsTable $table, WebUrl|string $url, ?string $defaultTitle = null): static
     {
         $this->eventuallyFilterByParent($table, $url, $defaultTitle);
         $this->eventuallyFilterByVCenter($table);
@@ -129,7 +130,7 @@ class ObjectsController extends Controller
         return $this;
     }
 
-    protected function renderTableWithCount(ObjectsTable $table, $title = null)
+    protected function renderTableWithCount(ObjectsTable $table, ?string $title = null): void
     {
         $total = count($table);
         $table->renderTo($this);
@@ -137,14 +138,14 @@ class ObjectsController extends Controller
             return;
         }
         $found = count($table);
-        if ($total === $found) {
-            $this->content()->prepend(sprintf('%d %s', $total, $title));
-        } else {
-            $this->content()->prepend(sprintf('%d out of %d %s', $found, $total, $title));
-        }
+        $this->content()->prepend(
+            $total === $found
+                ? sprintf('%d %s', $total, $title)
+                : sprintf('%d out of %d %s', $found, $total, $title)
+        );
     }
 
-    protected function downloadTable(ObjectsTable $table, string $title)
+    protected function downloadTable(ObjectsTable $table, string $title): void
     {
         $this->eventuallyFilterByParent($table, Url::fromPath(''), $title);
         $this->eventuallyFilterByVCenter($table);
@@ -156,7 +157,7 @@ class ObjectsController extends Controller
         $this->downloadJson($this->getResponse(), $rows, "$title.json");
     }
 
-    protected function sendExport($type)
+    protected function sendExport($type): void
     {
         $import = new ImportSource();
         $import->setSettings([
@@ -167,7 +168,7 @@ class ObjectsController extends Controller
         $this->downloadJson($this->getResponse(), $import->fetchData(), $type . 's.json');
     }
 
-    protected function addPathTo($parent, $url)
+    protected function addPathTo(string $parent, WebUrl|string $url): void
     {
         $lookup = $this->pathLookup();
         $path = Html::tag('span', ['class' => 'dc-path']);
@@ -180,14 +181,14 @@ class ObjectsController extends Controller
             }
             $path->add(Link::create($name, $url, [
                 'parent'          => Util::niceUuid($uuid),
-                'showDescendants' => true,
+                'showDescendants' => true
             ]));
         }
 
         $this->content()->add($path);
     }
 
-    protected function handleTabs()
+    protected function handleTabs(): void
     {
         $action = $this->getRequest()->getControllerName();
         if (isset($this->otherTabActions[$action])) {
@@ -198,15 +199,15 @@ class ObjectsController extends Controller
         $this->tabs()->add('vms', [
             'label'     => $this->translate('Virtual Machine'),
             'url'       => 'vspheredb/vms',
-            'urlParams' => $urlParams,
+            'urlParams' => $urlParams
         ])->add('hosts', [
             'label'     => $this->translate('Hosts'),
             'url'       => 'vspheredb/hosts',
-            'urlParams' => $urlParams,
+            'urlParams' => $urlParams
         ])->add('datastores', [
             'label'     => $this->translate('Datastores'),
             'url'       => 'vspheredb/datastores',
-            'urlParams' => $urlParams,
+            'urlParams' => $urlParams
         ])
         // ->add('switches', [
         //     'label'     => $this->translate('Switches'),
@@ -229,10 +230,6 @@ class ObjectsController extends Controller
 
     protected function pathLookup(): PathLookup
     {
-        if ($this->pathLookup === null) {
-            $this->pathLookup = new PathLookup($this->db()->getDbAdapter());
-        }
-
-        return $this->pathLookup;
+        return $this->pathLookup ??= new PathLookup($this->db()->getDbAdapter());
     }
 }

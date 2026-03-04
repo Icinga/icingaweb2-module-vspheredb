@@ -2,8 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class CompactInOutSparkline extends BaseHtmlElement
 {
@@ -11,33 +13,34 @@ class CompactInOutSparkline extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'sparks'];
 
-    public function __construct($in, $out)
+    public function __construct(array|string|null $in, array|string|null $out)
     {
         if ($in !== null) {
             $this->add(
                 $this->makeSparkLine($in)
-                    ->addAttributes(['class' => 'in'])
+                    ->addAttributes(Attributes::create(['class' => 'in']))
             );
         }
 
         if ($out !== null && $out !== '0,0,0,0,0') {
             $this->add(
                 $this->makeSparkLine($this->negateString($out))
-                    ->addAttributes(['class' => 'out'])
+                    ->addAttributes(Attributes::create(['class' => 'out']))
             );
         }
     }
 
-    protected function negateString($valueString)
+    protected function negateString(string $valueString): string
     {
         return '-' . implode(',-', explode(',', $valueString));
     }
 
-    protected function makeSparkLine($values)
+    protected function makeSparkLine($values): ?HtmlElement
     {
         if ($values === null) {
             return null;
         }
+
         return Html::tag('span', [
             'class'            => 'sparkline',
             'sparkType'        => 'bar',

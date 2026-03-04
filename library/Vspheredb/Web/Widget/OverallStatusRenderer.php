@@ -13,11 +13,7 @@ class OverallStatusRenderer extends Html
     public function __invoke($state)
     {
         if (is_object($state)) {
-            if (isset($state->runtime_power_state)) {
-                $powerState = $state->runtime_power_state;
-            } else {
-                $powerState = null;
-            }
+            $powerState = $state->runtime_power_state ?? null;
             $state = $state->overall_status;
         } else {
             $powerState = null;
@@ -26,13 +22,11 @@ class OverallStatusRenderer extends Html
         if ($powerState === null || $powerState === 'poweredOn') {
             return Icon::create($state === 'green' ? 'ok' : 'warning-empty', [
                 'title' => $this->getStatusDescription($state),
-                'class' => [ 'state', $state ]
+                'class' => ['state', $state]
             ]);
-        } else {
-            $powerInfo = new PowerStateRenderer();
-
-            return $powerInfo($powerState);
         }
+
+        return (new PowerStateRenderer())($powerState);
     }
 
     /**
@@ -42,13 +36,11 @@ class OverallStatusRenderer extends Html
      */
     protected function getStatusDescription(string $status): string
     {
-        $descriptions = [
+        return match ($status) {
             'gray'   => $this->translate('Gray - status is unknown'),
             'green'  => $this->translate('Green - everything is fine'),
             'yellow' => $this->translate('Yellow - there are warnings'),
-            'red'    => $this->translate('Red - there is a problem'),
-        ];
-
-        return $descriptions[$status];
+            'red'    => $this->translate('Red - there is a problem')
+        };
     }
 }

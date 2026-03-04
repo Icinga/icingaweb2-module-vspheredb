@@ -6,49 +6,47 @@ use gipfl\IcingaWeb2\Icon;
 use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class ServiceTagRenderer extends Html
 {
     use TranslationHelper;
 
-    public function __invoke($host)
+    public function __invoke($host): HtmlElement|string|null
     {
-        if (! $host instanceof  HostSystem) {
+        if (! $host instanceof HostSystem) {
             $host = HostSystem::create([
                 'service_tag'    => $host->service_tag,
-                'sysinfo_vendor' => $host->sysinfo_vendor,
+                'sysinfo_vendor' => $host->sysinfo_vendor
             ]);
         }
 
         return $this->getFormattedServiceTag($host);
     }
 
-    protected function getFormattedServiceTag(HostSystem $host)
+    protected function getFormattedServiceTag(HostSystem $host): HtmlElement|string|null
     {
         if ($host->get('sysinfo_vendor') === 'Dell Inc.') {
             return $this->linkToDellSupport($host->get('service_tag'));
-        } else {
-            return $host->get('service_tag');
         }
+
+        return $host->get('service_tag');
     }
 
-    protected function linkToDellSupport($serviceTag)
+    protected function linkToDellSupport(?string $serviceTag): ?HtmlElement
     {
         if ($serviceTag === null) {
             return null;
         }
-        $urlPattern = 'http://www.dell.com/support/home/product-support/servicetag/%s/drivers';
-
-        $url = sprintf(
-            $urlPattern,
-            strtolower($serviceTag)
-        );
 
         return Html::tag('a', [
-                'href'   => $url,
-                'target' => '_blank',
-                'title'  => $this->translate('Dell Support Page'),
-                'rel'    => 'noreferrer'
+            'href'   => sprintf(
+                'http://www.dell.com/support/home/product-support/servicetag/%s/drivers',
+                strtolower($serviceTag)
+            ),
+            'target' => '_blank',
+            'title'  => $this->translate('Dell Support Page'),
+            'rel'    => 'noreferrer'
         ], [Icon::create('forward'), $serviceTag]);
     }
 }

@@ -3,12 +3,14 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Url;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Zend_Db_Select;
 
 class PerformanceCounterTable extends BaseTable
 {
-    /** @var VCenter */
-    protected $vCenter;
+    /** @var ?VCenter */
+    protected ?VCenter $vCenter;
 
     protected $searchColumns = [
         'counter_key',
@@ -18,9 +20,9 @@ class PerformanceCounterTable extends BaseTable
         'label',
         'summary',
         'stats_type',
-        'rollup_type',
+        'rollup_type'
         // TODO: disabled, Director breaks this right now for security reasons
-        // "(c.group_name || '.' || c.name)",
+        // "(c.group_name || '.' || c.name)"
     ];
 
     public function __construct($db, ?Url $url = null, ?VCenter $vCenter = null)
@@ -29,41 +31,25 @@ class PerformanceCounterTable extends BaseTable
         parent::__construct($db, $url);
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
-            $this->createColumn('key', $this->translate('Key'), [
-                'group_name',
-                'name'
-            ])->setRenderer(function ($row) {
-                return sprintf(
-                    '%s.%s',
-                    $row->group_name,
-                    $row->name
-                );
-            }),
-            $this->createColumn('name', $this->translate('Name'), [
-                'group_name',
-                'name'
-            ])->setRenderer(function ($row) {
-                return sprintf(
-                    '%s.%s',
-                    $row->label,
-                    $row->summary
-                );
-            }),
+            $this->createColumn('key', $this->translate('Key'), ['group_name', 'name'])
+                ->setRenderer(fn($row) => sprintf('%s.%s', $row->group_name, $row->name)),
+
+            $this->createColumn('name', $this->translate('Name'), ['group_name', 'name'])
+                ->setRenderer(fn($row) => sprintf('%s.%s', $row->label, $row->summary)),
+
             $this->createColumn('unit_name', $this->translate('Unit')),
             $this->createColumn('stats_type', $this->translate('Stats')),
             $this->createColumn('rollup_type', $this->translate('Rollup')),
-            $this->createColumn('counter_key', $this->translate('ID')),
+            $this->createColumn('counter_key', $this->translate('ID'))
         ]);
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['c' => 'performance_counter']
-        );
+        $query = $this->db()->select()->from(['c' => 'performance_counter']);
         // ->order('group_name')->order('name')->order('unit_name');
 
         if ($this->vCenter !== null) {

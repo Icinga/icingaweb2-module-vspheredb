@@ -26,9 +26,11 @@ trait HostDetailExtensionTrait
 {
     use Translation;
 
-    protected Db $db;
+    /** @var ?Db */
+    protected ?Db $db = null;
 
-    protected CheckRelatedLookup $lookup;
+    /** @var ?CheckRelatedLookup */
+    protected ?CheckRelatedLookup $lookup = null;
 
     /**
      * @param object<IcingaDBHost|MonitoringHost> $host
@@ -38,7 +40,7 @@ trait HostDetailExtensionTrait
      */
     abstract protected function getCustomVar(object $host, string $customVar): ?string;
 
-    public function init()
+    public function init(): void
     {
         $this->db = Db::newConfiguredInstance();
         $this->lookup = new CheckRelatedLookup($this->db);
@@ -49,7 +51,7 @@ trait HostDetailExtensionTrait
      *
      * @return ValidHtml
      */
-    public function renderVObject($vObject): ValidHtml
+    public function renderVObject(VirtualMachine|HostSystem $vObject): ValidHtml
     {
         $container = new HtmlElement('div', new Attributes([
             'class' => [
@@ -71,6 +73,11 @@ trait HostDetailExtensionTrait
         return $container;
     }
 
+    /**
+     * @param HostSystem $host
+     *
+     * @return ValidHtml
+     */
     protected function renderHostSystem(HostSystem $host): ValidHtml
     {
         $stats = HostQuickStats::loadFor($host);
@@ -92,6 +99,11 @@ trait HostDetailExtensionTrait
             ));
     }
 
+    /**
+     * @param VirtualMachine $vm
+     *
+     * @return ValidHtml
+     */
     protected function renderVirtualMachine(VirtualMachine $vm): ValidHtml
     {
         $stats = VmQuickStats::loadFor($vm);
@@ -123,7 +135,7 @@ trait HostDetailExtensionTrait
      *
      * @return HostSystem|VirtualMachine|null
      */
-    protected function find(object $host, string $sourceType)
+    protected function find(object $host, string $sourceType): VirtualMachine|HostSystem|null
     {
         $spec = [
             'HostSystem'     => ['host', 'host_system', 'host'],
@@ -145,11 +157,10 @@ trait HostDetailExtensionTrait
                     continue;
                 }
 
-                if (substr($property, 0, 5) === 'vars.') {
-                    $value = $this->getCustomVar($host, substr($property, 5));
-                } else {
-                    $value = $host->$property;
-                }
+                $value = str_starts_with($property, 'vars.')
+                    ? $this->getCustomVar($host, substr($property, 5))
+                    : $host->$property;
+
                 if (! $value) {
                     continue;
                 }
@@ -162,7 +173,7 @@ trait HostDetailExtensionTrait
                 try {
                     $object = $this->lookup->findOneBy($type, $filter);
                     assert($object instanceof HostSystem || $object instanceof VirtualMachine);
-                } catch (NotFoundError $_) {
+                } catch (NotFoundError) {
                     continue;
                 }
 

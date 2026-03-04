@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class VmHardwarePropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             PropertySpec::create('VirtualMachine', [
-                'config.hardware',
+                'config.hardware'
             ])
         ];
     }

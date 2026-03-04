@@ -8,34 +8,36 @@ use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\Web\Widget\ToggleTableColumns;
 use InvalidArgumentException;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
+use RuntimeException;
 
 abstract class BaseTable extends ZfQueryBasedTable
 {
     /** @var TableColumn[] */
-    private $availableColumns = [];
+    private array $availableColumns = [];
 
-    /** @var TableColumn[] */
-    private $chosenColumns;
+    /** @var ?TableColumn[] */
+    private ?array $chosenColumns = null;
 
-    /** @var bool */
-    private $isInitialized = false;
+    /** @var ?bool */
+    private ?bool $isInitialized = false;
 
-    /** @var Url */
-    private $baseUrl;
+    /** @var ?Url */
+    private ?Url $baseUrl = null;
 
-    /** @var string */
-    private $sortParam;
+    /** @var ?string */
+    private ?string $sortParam = null;
 
     /** @var array */
-    private $sortColums = [];
+    private array $sortColums = [];
 
-    /** @var BaseHtmlElement|null */
-    private $columnToggle;
+    /** @var ?BaseHtmlElement */
+    private ?BaseHtmlElement $columnToggle = null;
 
-    protected $allowToCustomizeColumns = true;
+    protected bool $allowToCustomizeColumns = true;
 
     public function __construct($db, ?Url $url = null)
     {
@@ -46,7 +48,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         }
     }
 
-    public function chooseColumns(array $columnNames)
+    public function chooseColumns(array $columnNames): static
     {
         $this->assertInitialized();
         if ($columnNames === ['___ALL___']) {
@@ -66,7 +68,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this;
     }
 
-    public function getColumnsToBeRendered()
+    public function getColumnsToBeRendered(): array
     {
         return $this->getChosenTitles();
     }
@@ -74,12 +76,12 @@ abstract class BaseTable extends ZfQueryBasedTable
     /**
      * @return TableColumn[]
      */
-    public function getAvailableColumns()
+    public function getAvailableColumns(): array
     {
         return $this->availableColumns;
     }
 
-    public function hasColumn($name)
+    public function hasColumn(string $name): bool
     {
         return array_key_exists($name, $this->availableColumns);
     }
@@ -95,15 +97,15 @@ abstract class BaseTable extends ZfQueryBasedTable
     {
         if (array_key_exists($alias, $this->availableColumns)) {
             return $this->availableColumns[$alias];
-        } else {
-            throw new InvalidArgumentException(sprintf('No column named "%s" is available', $alias));
         }
+
+        throw new InvalidArgumentException(sprintf('No column named "%s" is available', $alias));
     }
 
-    public function assertInitialized()
+    public function assertInitialized(): void
     {
         if ($this->isInitialized === null) {
-            throw new \RuntimeException('Table initialization loop, this is a bug in your table');
+            throw new RuntimeException('Table initialization loop, this is a bug in your table');
         }
         if ($this->isInitialized === false) {
             $this->isInitialized = null;
@@ -112,36 +114,33 @@ abstract class BaseTable extends ZfQueryBasedTable
         }
     }
 
-    public function nextHeader()
+    public function nextHeader(): HtmlElement
     {
-        return parent::nextHeader()->setAttributes([
-            'data-base-target' => '_self'
-        ]);
+        return parent::nextHeader()->setAttributes(['data-base-target' => '_self']);
     }
 
-    protected function renderTitleColumns()
+    protected function renderTitleColumns(): ?HtmlElement
     {
         $columns = $this->getColumnsToBeRendered();
-        if (isset($columns) && count($columns)) {
+        if (count($columns)) {
             if ($this->baseUrl) {
-                $tr = $this::tr()->setAttributes([
-                    'data-base-target' => '_self'
-                ]);
+                $tr = $this::tr()->setAttributes(['data-base-target' => '_self']);
                 $this->addSortHeadersTo($tr);
             } else {
                 $tr = $this::row($columns, null, 'th');
             }
+
             return $tr;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
     }
 
-    protected function getChosenColumns()
+    protected function getChosenColumns(): ?array
     {
         $this->assertInitialized();
         // TODO: I do not want to call this:
@@ -150,12 +149,12 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this->chosenColumns;
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return array_keys($this->getAvailableColumns());
     }
 
-    public function getChosenColumnNames()
+    public function getChosenColumnNames(): array
     {
         $this->assertInitialized();
         if ($this->chosenColumns === null) {
@@ -165,7 +164,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         return array_keys($this->chosenColumns);
     }
 
-    protected function getChosenTitles()
+    protected function getChosenTitles(): array
     {
         $titles = [];
 
@@ -176,14 +175,14 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $titles;
     }
 
-    protected function getRequiredDbColumns()
+    protected function getRequiredDbColumns(): array
     {
         $columns = [];
 
         foreach ($this->getChosenColumns() as $column) {
             foreach ($column->getRequiredDbColumns() as $alias => $dbExpression) {
                 if (isset($columns[$alias]) && $columns[$alias] !== $dbExpression) {
-                    throw new \RuntimeException(sprintf(
+                    throw new RuntimeException(sprintf(
                         'Setting the same table alias twice, once for %s and once for %s',
                         $columns[$alias],
                         $dbExpression
@@ -210,7 +209,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $tr;
     }
 
-    public function addAvailableColumn(TableColumn $column)
+    public function addAvailableColumn(TableColumn $column): static
     {
         $this->availableColumns[$column->getAlias()] = $column;
 
@@ -219,9 +218,10 @@ abstract class BaseTable extends ZfQueryBasedTable
 
     /**
      * @param TableColumn[] $columns
+     *
      * @return $this
      */
-    public function addAvailableColumns($columns)
+    public function addAvailableColumns(array $columns): static
     {
         foreach ($columns as $column) {
             $this->addAvailableColumn($column);
@@ -230,51 +230,47 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this;
     }
 
-    protected function createColumn($alias, $title = null, $column = null)
-    {
+    protected function createColumn(
+        string $alias,
+        ?string $title = null,
+        array|string|null $column = null
+    ): SimpleColumn {
         return new SimpleColumn($alias, $title, $column);
     }
 
     /**
      * @param Url $url
      * @param string $sortParam
+     *
      * @return $this
      */
-    public function handleUrl(Url $url, $sortParam = 'sort')
+    public function handleUrl(Url $url, string $sortParam = 'sort'): static
     {
         if ($this->isInitialized) {
-            throw new \RuntimeException('Sort Url is late');
+            throw new RuntimeException('Sort Url is late');
         }
         $this->assertInitialized();
         $this->prepareColumnToggle($url);
 
         $this->sortParam = $sortParam;
         $this->baseUrl = $url;
-        $sort = $url->getParam($sortParam);
-        if (null === $sort) {
-            $this->sortBy($this->getDefaultSortColumns());
-        } else {
-            $this->sortBy($sort);
-        }
+        $this->sortBy($url->getParam($sortParam) ?? $this->getDefaultColumnNames());
 
         return $this;
     }
 
-    protected function getDefaultSortColumns()
+    protected function getDefaultSortColumns(): array|string
     {
-        $columns = $this->getChosenColumnNames();
-        return $columns[0];
+        return $this->getChosenColumnNames()[0];
     }
 
     /**
-     * @param string|array $columns
+     * @param array|string $columns
+     *
      * @return $this
      */
-    public function sortBy($columns)
+    public function sortBy(array|string $columns): static
     {
-        if ($columns === null) {
-            return $this;
-        }
         $this->assertInitialized();
         if (! is_array($columns)) {
             $columns = [$columns];
@@ -306,11 +302,11 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $this;
     }
 
-    protected function addSortIcon(TableColumn $column, BaseHtmlElement $element)
+    protected function addSortIcon(TableColumn $column, BaseHtmlElement $element): BaseHtmlElement
     {
         $icons = [
             'ASC'  => 'up-dir',
-            'DESC' => 'down-dir',
+            'DESC' => 'down-dir'
         ];
         if (array_key_exists($column->getAlias(), $this->sortColums)) {
             $element->add(Icon::create($icons[$this->sortColums[$column->getAlias()]]));
@@ -319,7 +315,7 @@ abstract class BaseTable extends ZfQueryBasedTable
         return $element;
     }
 
-    protected function getNextSortLinkString(TableColumn $column)
+    protected function getNextSortLinkString(TableColumn $column): string
     {
         $string = $column->getAlias();
         if (array_key_exists($column->getAlias(), $this->sortColums)) {
@@ -333,18 +329,19 @@ abstract class BaseTable extends ZfQueryBasedTable
 
         if ($column->getDefaultSortDirection() === 'ASC') {
             return $string;
-        } else {
-            return "$string DESC";
         }
+
+        return "$string DESC";
     }
 
     /**
      * TODO: we should consider introducing TablePlugins for similar tasks
      *
      * @param HtmlElement $parent
+     *
      * @return HtmlElement
      */
-    protected function addSortHeadersTo(HtmlElement $parent)
+    protected function addSortHeadersTo(HtmlElement $parent): HtmlElement
     {
         // Hint: MUST be set
         $url = $this->baseUrl;
@@ -365,13 +362,13 @@ abstract class BaseTable extends ZfQueryBasedTable
 
         if ($this->columnToggle !== null && $lastTh !== null) {
             $lastTh->add(Html::tag('ul', ['class' => 'nav'], $this->columnToggle));
-            $lastTh->addAttributes(['class' => 'with-column-selector']);
+            $lastTh->addAttributes(Attributes::create(['class' => 'with-column-selector']));
         }
 
         return $parent;
     }
 
-    protected function prepareColumnToggle($url)
+    protected function prepareColumnToggle(Url $url): void
     {
         if ($this->allowToCustomizeColumns) {
             $this->columnToggle = (new ToggleTableColumns($this, $url))->ensureAssembled();

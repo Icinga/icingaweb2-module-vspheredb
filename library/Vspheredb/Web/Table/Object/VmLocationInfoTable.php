@@ -6,6 +6,8 @@ use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
+use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\DbConnection;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -19,16 +21,17 @@ use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\Renderer\PathToObjectRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class VmLocationInfoTable extends NameValueTable
 {
     use TranslationHelper;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VirtualMachine $vm, VCenter $vCenter)
     {
@@ -37,15 +40,15 @@ class VmLocationInfoTable extends NameValueTable
         $this->vCenter = $vCenter;
     }
 
-    protected function getDb()
+    protected function getDb(): ?DbConnection
     {
         return $this->vm->getConnection();
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $vm = $this->vm;
-        /** @var \Icinga\Module\Vspheredb\Db $connection */
+        /** @var Db $connection */
         $connection = $vm->getConnection();
         $lookup =  new PathLookup($connection->getDbAdapter());
         $hostUuid = $vm->get('runtime_host_uuid');
@@ -60,14 +63,12 @@ class VmLocationInfoTable extends NameValueTable
                 $hostInfo = [
                     $lookup->linkToObject($hostUuid),
                     Html::tag('br'),
-                    ConnectionStateDetails::getFor($vm->get('connection_state')),
+                    ConnectionStateDetails::getFor($vm->get('connection_state'))
                 ];
                 $hostResources = $this->prepareHostInfo($host, $quickStats);
-            } catch (NotFoundError $e) {
+            } catch (NotFoundError) {
                 $hostResources = '-';
-                $hostInfo = Html::tag('span', [
-                    'class' => 'error'
-                ], $this->translate('Failed to load related host'));
+                $hostInfo = Html::tag('span', ['class' => 'error'], $this->translate('Failed to load related host'));
             }
         }
 
@@ -77,31 +78,29 @@ class VmLocationInfoTable extends NameValueTable
             $this->translate('Host Resources') => $hostResources,
             $this->translate('Resource Pool') => $lookup->linkToObject($vm->get('resource_pool_uuid')),
             $this->translate('Path') => PathToObjectRenderer::render($vm),
-            $this->translate('vCenter') => new VCenterLink($this->vCenter),
+            $this->translate('vCenter') => new VCenterLink($this->vCenter)
         ]);
     }
 
-    protected function prepareHostInfo(HostSystem $host, HostQuickStats $quickStats)
+    protected function prepareHostInfo(HostSystem $host, HostQuickStats $quickStats): HtmlElement
     {
         $cpuCapacity = $host->get('hardware_cpu_cores') * $host->get('hardware_cpu_mhz');
         $cpuUsed = $quickStats->get('overall_cpu_usage');
         $memCapacity = $host->get('hardware_memory_size_mb');
         $memUsed = $quickStats->get('overall_memory_usage_mb');
 
-        return Html::tag('div', [
-            'class' => 'resource-info-small'
-        ], Html::tag('div', [
+        return Html::tag('div', ['class' => 'resource-info-small'], Html::tag('div', [
             new CpuUsage($cpuUsed, $cpuCapacity),
-            \sprintf(
+            sprintf(
                 $this->translate('Free CPU: %s'),
                 Format::mhz($cpuCapacity - $cpuUsed)
             ),
             Html::tag('br'),
             new MemoryUsage($memUsed, $memCapacity),
-            \sprintf(
+            sprintf(
                 $this->translate('Free Memory: %s'),
                 Format::mBytes($memCapacity - $memUsed)
-            ),
+            )
         ]));
     }
 }

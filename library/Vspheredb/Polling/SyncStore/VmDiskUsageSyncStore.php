@@ -5,12 +5,13 @@ namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use stdClass;
 
 class VmDiskUsageSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $vCenter = $this->vCenter;
         $vCenterUuid = $vCenter->getUuid();
@@ -22,11 +23,9 @@ class VmDiskUsageSyncStore extends SyncStore
         $skipUuids = [];
         foreach ($result as $object) {
             $object = (object) $object;
-            if ($object->obj instanceof ManagedObjectReference) {
-                $uuid = $vCenter->makeBinaryGlobalMoRefUuid($object->obj);
-            } else {
-                $uuid = $vCenter->makeBinaryGlobalMoRefUuid(ManagedObjectReference::fromSerialization($object->obj));
-            }
+            $uuid = $object->obj instanceof ManagedObjectReference
+                ? $vCenter->makeBinaryGlobalMoRefUuid($object->obj)
+                : $vCenter->makeBinaryGlobalMoRefUuid(ManagedObjectReference::fromSerialization($object->obj));
             if (! property_exists($object->{'guest.disk'}, 'GuestDiskInfo')) {
                 $skipUuids[] = $uuid;
                 // Preserve former disks. Should we flag them as outdated?
@@ -47,17 +46,10 @@ class VmDiskUsageSyncStore extends SyncStore
                 } elseif ($path === '/var') {
                     $var = $info;
                 } elseif (is_object($root) && in_array($path, ['/tmp', '/var/tmp'])) {
-                    if ($path === '/var/tmp' && is_object($var)) {
-                        $base = $var;
-                    } else {
-                        $base = $root;
-                    }
+                    $base = $path === '/var/tmp' && is_object($var) ? $var : $root;
 
-                    /** @var \stdClass $base */
-                    if (
-                        $info->capacity === $base->capacity
-                        && $info->freeSpace === $base->freeSpace
-                    ) {
+                    /** @var stdClass $base */
+                    if ($info->capacity === $base->capacity && $info->freeSpace === $base->freeSpace) {
                         continue;
                     }
                 }
@@ -90,7 +82,7 @@ class VmDiskUsageSyncStore extends SyncStore
                         'vcenter_uuid' => $vCenterUuid,
                         'disk_path'    => $path,
                         'capacity'     => $info->capacity,
-                        'free_space'   => $info->freeSpace,
+                        'free_space'   => $info->freeSpace
                     ], $connection);
                 }
             }

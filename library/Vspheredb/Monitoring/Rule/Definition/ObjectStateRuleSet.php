@@ -6,7 +6,7 @@ class ObjectStateRuleSet extends MonitoringRuleSetDefinition
 {
     public const RULE_CLASSES = [
         VMwareObjectStateRuleDefinition::class,
-        PowerStateRuleDefinition::class,
+        PowerStateRuleDefinition::class
     ];
 
     public function getLabel(): string

@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Polling\SyncTask;
 
-use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\VmHardware;
 use Icinga\Module\Vspheredb\Polling\PropertySet\VmHardwarePropertySet;
 use Icinga\Module\Vspheredb\Polling\SelectSet\VirtualMachineSelectSet;
@@ -10,14 +9,19 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\VmHardwareSyncStore;
 
 class VmHardwareSyncTask extends SyncTask
 {
-    protected $label = 'VM Hardware';
-    protected $tableName = 'vm_hardware';
-    protected $objectClass = VmHardware::class;
-    protected $selectSetClass = VirtualMachineSelectSet::class;
-    protected $propertySetClass = VmHardwarePropertySet::class;
-    protected $syncStoreClass = VmHardwareSyncStore::class;
+    protected string $label = 'VM Hardware';
 
-    public function tweakResult($result)
+    protected string $tableName = 'vm_hardware';
+
+    protected string $objectClass = VmHardware::class;
+
+    protected string $selectSetClass = VirtualMachineSelectSet::class;
+
+    protected string $propertySetClass = VmHardwarePropertySet::class;
+
+    protected string $syncStoreClass = VmHardwareSyncStore::class;
+
+    public function tweakResult($result): void
     {
         $whitelist = [
             // Problem with config.hardware: some properties are binary,
@@ -44,10 +48,10 @@ class VmHardwareSyncTask extends SyncTask
             'capacityInBytes',
             'split',
             'writeThrough',
-            'thinProvisioned',
+            'thinProvisioned'
         ];
         // $unset = []; // used only when looking for new properties
-        foreach ($result as $key => $value) {
+        foreach ($result as $value) {
             if (isset($value['config.hardware']->device)) {
                 foreach ($value['config.hardware']->device as $device) {
                     foreach (array_keys((array) $device) as $k) {

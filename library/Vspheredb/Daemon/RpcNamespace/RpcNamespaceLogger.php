@@ -9,8 +9,11 @@ use gipfl\Log\LogLevel;
 class RpcNamespaceLogger
 {
     /** @var Logger */
-    protected $logger;
+    protected Logger $logger;
 
+    /**
+     * @param Logger $logger
+     */
     public function __construct(Logger $logger)
     {
         $this->logger = $logger;
@@ -19,16 +22,17 @@ class RpcNamespaceLogger
     /**
      * @return string
      */
-    public function getLogLevelRequest()
+    public function getLogLevelRequest(): string
     {
         return LogLevel::mapNumericToName($this->getCurrentNumericLogLevel());
     }
 
     /**
      * @param string $level
+     *
      * @return bool
      */
-    public function setLogLevelRequest($level)
+    public function setLogLevelRequest(string $level): bool
     {
         $formerLevel = $this->getCurrentNumericLogLevel();
         $numericLevel = LogLevel::mapNameToNumeric($level);
@@ -56,7 +60,10 @@ class RpcNamespaceLogger
         return true;
     }
 
-    protected function getCurrentNumericLogLevel()
+    /**
+     * @return int
+     */
+    protected function getCurrentNumericLogLevel(): int
     {
         $level = LogLevel::LEVEL_DEBUG;
         foreach ($this->logger->getFilters() as $filter) {

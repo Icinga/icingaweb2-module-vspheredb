@@ -2,10 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Format;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use gipfl\Translation\TranslationHelper;
 
 class CpuAbsoluteUsage extends BaseHtmlElement
 {
@@ -13,19 +14,15 @@ class CpuAbsoluteUsage extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'cpu'
-    ];
+    protected $defaultAttributes = ['class' => 'cpu'];
 
-    public function __construct($mhz, $cores = null, $perCore = 2000)
+    public function __construct(int $mhz, ?int $cores = null, int $perCore = 2000)
     {
         $class = null;
         if ($cores !== null) {
-            if (false) {
-                $this->add(Html::tag('span', [
-                    'class' => 'cpu-count'
-                ], sprintf($this->translate('%d CPUs'), $cores)));
-            }
+//            if (false) {
+//                $this->add(Html::tag('span', ['class' => 'cpu-count'], sprintf($this->translate('%d CPUs'), $cores)));
+//            }
             $usedPerCore = $mhz / $cores;
             if ($usedPerCore / $perCore > 0.7) {
                 $class = 'critical';
@@ -35,16 +32,12 @@ class CpuAbsoluteUsage extends BaseHtmlElement
         }
 
         if ($class !== null) {
-            $this->addAttributes(['class' => $class]);
+            $this->addAttributes(Attributes::create(['class' => $class]));
         }
         [$value, $unit] = Format::mhzWithSeparateUnit($mhz);
         $this->add([
-            Html::tag('span', [
-                'class' => 'cpu-consumption'
-            ], $value),
-            Html::tag('span', [
-                'class' => 'cpu-unit'
-            ], $unit),
+            Html::tag('span', ['class' => 'cpu-consumption'], $value),
+            Html::tag('span', ['class' => 'cpu-unit'], $unit)
         ])->setSeparator("\n");
     }
 }

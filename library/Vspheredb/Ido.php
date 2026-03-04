@@ -4,17 +4,18 @@ namespace Icinga\Module\Vspheredb;
 
 use Icinga\Data\Db\DbConnection;
 use Icinga\Data\ResourceFactory;
+use Zend_Db_Adapter_Abstract;
 
 class Ido
 {
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var ?Zend_Db_Adapter_Abstract */
+    protected ?Zend_Db_Adapter_Abstract $db = null;
 
     protected function __construct()
     {
     }
 
-    public static function createByResourceName($name)
+    public static function createByResourceName(string $name): static
     {
         $self = new static();
         /** @var DbConnection $resource */
@@ -24,66 +25,61 @@ class Ido
         return $self;
     }
 
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         // TODO: check program state
         return $this->db !== null;
     }
 
-    public function getAllHostStates()
+    public function getAllHostStates(): ?array
     {
-        $query = $this->db->select()->from(
-            ['o' => 'icinga_objects'],
-            [
+        $query = $this->db->select()
+            ->from(['o' => 'icinga_objects'], [
                 'host_name'       => 'o.name1',
                 'current_state'   => "(CASE WHEN has_been_checked = 1 THEN"
                     . " CASE hs.current_state WHEN 0 THEN 'UP' WHEN 1 THEN 'DOWN'"
                     . " WHEN 2 THEN 'UNREACHABLE' END"
                     . " ELSE 'PENDING' END)",
                 'is_in_downtime'  => "(CASE WHEN hs.scheduled_downtime_depth > 0 THEN 'y' ELSE 'n' END)",
-                'is_acknowledged' => "(CASE WHEN hs.problem_has_been_acknowledged = 1 THEN 'y' ELSE 'n' END)",
-            ]
-        )->join(
-            ['hs' => 'icinga_hoststatus'],
-            'o.object_id = hs.host_object_id',
-            []
-        )->where('o.is_active = 1');
+                'is_acknowledged' => "(CASE WHEN hs.problem_has_been_acknowledged = 1 THEN 'y' ELSE 'n' END)"
+            ])
+            ->join(['hs' => 'icinga_hoststatus'], 'o.object_id = hs.host_object_id', [])
+            ->where('o.is_active = 1');
 
         return $this->db->fetchAll($query);
     }
 
-    public function hasHost($hostname)
+    public function hasHost(?string $hostname): bool
     {
         if (null === $hostname) {
             return false;
         }
 
-        return $this->db->fetchOne(
-            $this->db->select()->from('icinga_objects', [
-                'host_name' => 'name1',
-            ])->where('name1 = ? AND is_active = 1 AND objecttype_id = 1', $hostname)
-        ) === $hostname;
+        return $hostname === $this->db->fetchOne(
+            $this->db->select()
+                ->from('icinga_objects', ['host_name' => 'name1'])
+                ->where('name1 = ? AND is_active = 1 AND objecttype_id = 1', $hostname)
+        );
     }
 
-    public function getHostState($hostname)
+    public function getHostState(string $hostname)
     {
-        $query = $this->db->select()->from(
-            ['o' => 'icinga_objects'],
-            [
-                'host_name'       => 'o.name1',
-                'current_state'   => "(CASE WHEN has_been_checked = 1 THEN"
-                    . " CASE hs.current_state WHEN 0 THEN 'UP' WHEN 1 THEN 'DOWN'"
-                    . " WHEN 2 THEN 'UNREACHABLE' END"
-                    . " ELSE 'PENDING' END)",
-                'is_in_downtime'  => "(CASE WHEN hs.scheduled_downtime_depth > 0 THEN 'y' ELSE 'n' END)",
-                'is_acknowledged' => "(CASE WHEN hs.problem_has_been_acknowledged = 1 THEN 'y' ELSE 'n' END)",
-                'output'          => "hs.output",
-            ]
-        )->join(
-            ['hs' => 'icinga_hoststatus'],
-            'o.object_id = hs.host_object_id',
-            []
-        )->where('name1 = ? AND is_active = 1 AND objecttype_id = 1', $hostname);
+        $query = $this->db->select()
+            ->from(
+                ['o' => 'icinga_objects'],
+                [
+                    'host_name'       => 'o.name1',
+                    'current_state'   => "(CASE WHEN has_been_checked = 1 THEN"
+                        . " CASE hs.current_state WHEN 0 THEN 'UP' WHEN 1 THEN 'DOWN'"
+                        . " WHEN 2 THEN 'UNREACHABLE' END"
+                        . " ELSE 'PENDING' END)",
+                    'is_in_downtime'  => "(CASE WHEN hs.scheduled_downtime_depth > 0 THEN 'y' ELSE 'n' END)",
+                    'is_acknowledged' => "(CASE WHEN hs.problem_has_been_acknowledged = 1 THEN 'y' ELSE 'n' END)",
+                    'output'          => "hs.output"
+                ]
+            )
+            ->join(['hs' => 'icinga_hoststatus'], 'o.object_id = hs.host_object_id', [])
+            ->where('name1 = ? AND is_active = 1 AND objecttype_id = 1', $hostname);
 
         return $this->db->fetchRow($query);
     }

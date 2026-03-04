@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Monitoring;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\Db\DbUtil;
@@ -13,26 +14,28 @@ use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use Icinga\Module\Vspheredb\Web\Table\UuidLinkHelper;
 use Icinga\Module\Vspheredb\Web\Widget\CheckPluginHelper;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements TableWithVCenterFilter
 {
     use UuidLinkHelper;
 
-    protected $entityUuid;
+    protected ?string $entityUuid = null;
 
     protected $defaultAttributes = [
         'class' => ['common-table', 'table-row-selectable'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
-    public function filterEntityUuid($uuid)
+    public function filterEntityUuid(string $uuid): static
     {
         $this->entityUuid = $uuid;
 
         return $this;
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $this->renderDayIfNew($row->ts_changed_ms / 1000);
 
@@ -41,7 +44,7 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
             $output = [
                 CheckPluginHelper::colorizeOutput($this->translate('[OK] Check has no longer been executed')),
                 ' ',
-                CheckPluginHelper::colorizeOutput($formerState),
+                CheckPluginHelper::colorizeOutput($formerState)
             ];
         } else {
             $lines = preg_split("/\r?\n/", $row->output);
@@ -49,26 +52,23 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
             $output = CheckPluginHelper::colorizeOutput(implode("\n", $lines));
         }
 
-        if ($this->entityUuid) {
-            $cell[] = Html::tag('strong', $row->rule_name);
-        } else {
-            $cell[] = Html::sprintf(
+        $cell[] = $this->entityUuid
+            ? Html::tag('strong', $row->rule_name)
+            : Html::sprintf(
                 $this->translate("%s on %s"),
                 Html::tag('strong', $row->rule_name),
                 $this->linkToObject($row) // No link if entityUuid!!
             );
-        }
         $cell[] = "\n";
         $cell[] = $output;
 
-        $tr = $this::row([Html::tag('pre', [
-            'class' => 'logOutput'
-        ], $cell), DateFormatter::formatTime($row->ts_changed_ms / 1000)]);
-
-        return $tr;
+        return $this::row([
+            Html::tag('pre', ['class' => 'logOutput'], $cell),
+            DateFormatter::formatTime($row->ts_changed_ms / 1000)
+        ]);
     }
 
-    protected function linkToObject($row)
+    protected function linkToObject($row): Link
     {
         return Link::create(
             Anonymizer::anonymizeString($row->object_name),
@@ -79,37 +79,30 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
 
     protected function getBaseUrl($row): ?string
     {
-        switch ($row->object_type) {
-            case 'HostSystem':
-                return 'vspheredb/host';
-            case 'VirtualMachine':
-                return 'vspheredb/vm';
-            case 'Datastore':
-                return 'vspheredb/datastore';
-            default:
-                return null;
-        }
+        return match ($row->object_type) {
+            'HostSystem'     => 'vspheredb/host',
+            'VirtualMachine' => 'vspheredb/vm',
+            'Datastore'      => 'vspheredb/datastore',
+            default          => null
+        };
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): Select|Zend_Db_Select
     {
         // uuid, current_state, former_state, rule_name, ts_changed_ms, output
-        $query = $this->db()->select()->from([
-            'ph' => 'monitoring_rule_problem_history'
-        ], [
-            'o.object_name',
-            'o.object_type',
-            'ph.uuid',
-            'ph.current_state',
-            'ph.former_state',
-            'ph.rule_name',
-            'ph.ts_changed_ms',
-            'ph.output',
-        ])->join(
-            ['o' => 'object'],
-            'o.uuid = ph.uuid',
-            []
-        )->order('ts_changed_ms DESC');
+        $query = $this->db()->select()
+            ->from(['ph' => 'monitoring_rule_problem_history'], [
+                'o.object_name',
+                'o.object_type',
+                'ph.uuid',
+                'ph.current_state',
+                'ph.former_state',
+                'ph.rule_name',
+                'ph.ts_changed_ms',
+                'ph.output'
+            ])
+            ->join(['o' => 'object'], 'o.uuid = ph.uuid', [])
+            ->order('ts_changed_ms DESC');
 
         if ($this->entityUuid !== null) {
             $query->where('ph.uuid = ?', $this->entityUuid);
@@ -118,15 +111,16 @@ class MonitoringRuleProblemHistoryTable extends ZfQueryBasedTable implements Tab
         return $query;
     }
 
-    public function filterVCenter(VCenter $vCenter): self
+    public function filterVCenter(VCenter $vCenter): static
     {
         return $this->filterVCenterUuids([$vCenter->getUuid()]);
     }
 
-    public function filterVCenterUuids(array $uuids): self
+    public function filterVCenterUuids(array $uuids): static
     {
         if (empty($uuids)) {
             $this->getQuery()->where('1 = 0');
+
             return $this;
         }
 

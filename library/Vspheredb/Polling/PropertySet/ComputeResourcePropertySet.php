@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class ComputeResourcePropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             PropertySpec::create('ComputeResource', [
@@ -18,7 +18,7 @@ class ComputeResourcePropertySet implements PropertySet
                 'summary.numHosts',
                 // 'summary.overallStatus',
                 'summary.totalCpu',
-                'summary.totalMemory',
+                'summary.totalMemory'
             ])
         ];
     }

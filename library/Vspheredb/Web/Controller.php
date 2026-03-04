@@ -9,22 +9,20 @@ use Icinga\Module\Vspheredb\Auth\RestrictionHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Util\Csp;
+use ipl\Html\Attributes;
 use Zend_Controller_Request_Abstract as ZfRequest;
 use Zend_Controller_Response_Abstract as ZfResponse;
 
 class Controller extends CompatController
 {
-    /** @var Db */
-    private $db;
+    /** @var ?Db */
+    private ?Db $db = null;
 
     /** @var ?RestrictionHelper */
-    private $restrictionHelper;
+    private ?RestrictionHelper $restrictionHelper = null;
 
-    public function __construct(
-        ZfRequest $request,
-        ZfResponse $response,
-        array $invokeArgs = array()
-    ) {
+    public function __construct(ZfRequest $request, ZfResponse $response, array $invokeArgs = array())
+    {
         parent::__construct($request, $response, $invokeArgs);
 
         if (! $this->isXhr() && Config::app()->get('security', 'use_strict_csp', false)) {
@@ -32,17 +30,15 @@ class Controller extends CompatController
         }
     }
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         if ($this->view->compact) {
-            $this->controls()->addAttributes([
-                'class' => 'show-compact'
-            ]);
+            $this->controls()->addAttributes(Attributes::create(['class' => 'show-compact']));
         }
     }
 
-    protected function db()
+    protected function db(): Db
     {
         if ($this->db === null) {
             try {
@@ -51,7 +47,7 @@ class Controller extends CompatController
                 if (! $migrations->hasSchema()) {
                     $this->redirectToConfiguration();
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $this->redirectToConfiguration();
             }
         }
@@ -61,21 +57,18 @@ class Controller extends CompatController
 
     protected function getRestrictionHelper(): RestrictionHelper
     {
-        if ($this->restrictionHelper === null) {
-            $this->restrictionHelper = new RestrictionHelper($this->Auth(), $this->db());
-        }
-
-        return $this->restrictionHelper;
+        return $this->restrictionHelper ??= new RestrictionHelper($this->Auth(), $this->db());
     }
 
     protected function requireVCenter($paramName = 'vcenter'): VCenter
     {
         $vCenter = VCenter::loadWithUuid($this->params->getRequired($paramName), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($vCenter->get('instance_uuid'));
+
         return $vCenter;
     }
 
-    protected function redirectToConfiguration()
+    protected function redirectToConfiguration(): void
     {
         if (
             $this->getRequest()->getControllerName() !== 'configuration'

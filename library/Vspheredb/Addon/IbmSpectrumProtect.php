@@ -12,26 +12,33 @@ class IbmSpectrumProtect implements BackupTool
 
     public const CLOSE_TAG = '</Last Backup>';
 
-    protected $lastAttributes;
+    /** @var ?array */
+    protected ?array $lastAttributes = null;
 
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return 'IBM Spectrum Protect';
     }
 
     /**
      * @param VirtualMachine $vm
+     *
      * @return bool
      */
-    public function wants(VirtualMachine $vm)
+    public function wants(VirtualMachine $vm): bool
     {
         return $this->wantsAnnotation($vm->get('annotation'));
     }
 
     /**
      * @param VirtualMachine $vm
+     *
+     * @return void
      */
-    public function handle(VirtualMachine $vm)
+    public function handle(VirtualMachine $vm): void
     {
         $this->parseAnnotation($vm->get('annotation'));
     }
@@ -39,24 +46,25 @@ class IbmSpectrumProtect implements BackupTool
     /**
      * @return IbmSpectrumProtectBackupRunDetails
      */
-    public function getInfoRenderer()
+    public function getInfoRenderer(): IbmSpectrumProtectBackupRunDetails
     {
         return new IbmSpectrumProtectBackupRunDetails($this);
     }
 
     /**
      * @param $annotation
+     *
      * @return bool
      */
-    public function wantsAnnotation($annotation)
+    public function wantsAnnotation($annotation): bool
     {
-        return $annotation !== null && strpos($annotation, static::OPEN_TAG) !== false;
+        return $annotation !== null && str_contains($annotation, static::OPEN_TAG);
     }
 
     /**
      * @return array
      */
-    public function requireParsedAttributes()
+    public function requireParsedAttributes(): array
     {
         $attributes = $this->getAttributes();
         if ($attributes === null) {
@@ -67,14 +75,19 @@ class IbmSpectrumProtect implements BackupTool
     }
 
     /**
-     * @return array|null
+     * @return ?array
      */
-    public function getAttributes()
+    public function getAttributes(): ?array
     {
         return $this->lastAttributes;
     }
 
-    protected function parseAnnotation($annotation)
+    /**
+     * @param string $annotation
+     *
+     * @return void
+     */
+    protected function parseAnnotation(string $annotation): void
     {
         $beginPos = strpos($annotation, static::OPEN_TAG);
         if ($beginPos === false) {
@@ -104,25 +117,27 @@ class IbmSpectrumProtect implements BackupTool
         ];
 
         foreach ($lines as $line) {
-            if (strpos($line, '=') === false) {
+            if (! str_contains($line, '=')) {
                 continue;
             }
-            [$key, $value] = preg_split('/=/', $line, 2);
-            if ($key === 'Last Run Time') {
-                $attributes[$key] = static::parseTime($value);
-            } elseif ($key === 'Data Transmitted') {
-                $attributes[$key] = static::parseBytes($value);
-            } elseif ($key === 'Duration') {
-                $attributes[$key] = static::parseDuration($value);
-            } else {
-                $attributes[$key] = static::parseString($value);
-            }
+            [$key, $value] = explode('=', $line, 2);
+            $attributes[$key] = match ($key) {
+                'Last Run Time'    => static::parseTime($value),
+                'Data Transmitted' => static::parseBytes($value),
+                'Duration'         => static::parseDuration($value),
+                default            => static::parseString($value)
+            };
         }
 
         $this->lastAttributes = $attributes;
     }
 
-    public function stripAnnotation(&$annotation)
+    /**
+     * @param string $annotation
+     *
+     * @return void
+     */
+    public function stripAnnotation(string &$annotation): void
     {
         $beginPos = strpos($annotation, static::OPEN_TAG);
         if ($beginPos === false) {
@@ -131,15 +146,15 @@ class IbmSpectrumProtect implements BackupTool
         $begin = $beginPos + strlen(static::OPEN_TAG) + 1;
         $end = strpos($annotation, static::CLOSE_TAG, $begin);
 
-        $annotation = substr($annotation, 0, $beginPos)
-            . substr($annotation, $end + strlen(static::CLOSE_TAG));
+        $annotation = substr($annotation, 0, $beginPos) . substr($annotation, $end + strlen(static::CLOSE_TAG));
     }
 
     /**
-     * @param $string
-     * @return string|null
+     * @param string $string
+     *
+     * @return ?string
      */
-    public static function parseString($string)
+    public static function parseString(string $string): ?string
     {
         if (strlen($string) < 2) {
             return $string;
@@ -147,30 +162,32 @@ class IbmSpectrumProtect implements BackupTool
 
         if (preg_match("/^'(.*)'$/", $string, $match)) {
             return $match[1];
-        } else {
-            // Be strict. Otherwise we could of course return $string.
-            return null;
         }
+
+        // Be strict. Otherwise we could of course return $string.
+        return null;
     }
 
-    public static function parseDuration($value)
+    /**
+     * @param string $value
+     *
+     * @return float|int|null
+     */
+    public static function parseDuration(string $value): float|int|null
     {
-        if (
-            preg_match(
-                '/^(\d{2}):(\d{2}):(\d{2})$/',
-                static::parseString($value),
-                $match
-            )
-        ) {
-            return intval($match[1]) * 3600
-                + intval($match[2]) * 60
-                + intval($match[3]);
-        } else {
-            return null;
+        if (preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', static::parseString($value), $match)) {
+            return intval($match[1]) * 3600 + intval($match[2]) * 60 + intval($match[3]);
         }
+
+        return null;
     }
 
-    public static function parseBytes($value)
+    /**
+     * @param string $value
+     *
+     * @return ?int
+     */
+    public static function parseBytes(string $value): ?int
     {
         $value = static::parseString($value);
         if ($value === null) {
@@ -182,21 +199,22 @@ class IbmSpectrumProtect implements BackupTool
             'KB' => 1024,
             'MB' => 1024 * 1024,
             'GB' => 1024 * 1024 * 1024,
-            'TB' => 1024 * 1024 * 1024 * 1024,
+            'TB' => 1024 * 1024 * 1024 * 1024
         ];
 
         if (preg_match('/^([0-9\.]+)\s+(B|KB|MB|GB|TB)$/', $value, $match)) {
             return (int) (sscanf($match[1], '%f')[0] * $byteMultipliers[$match[2]]);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
      * @param $time
-     * @return int|null
+     *
+     * @return ?int
      */
-    public static function parseTime($time)
+    public static function parseTime($time): ?int
     {
         $time = strtotime(static::parseString($time));
         if ($time === false) {

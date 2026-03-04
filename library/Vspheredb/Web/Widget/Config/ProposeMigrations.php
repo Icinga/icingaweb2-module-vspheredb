@@ -9,6 +9,7 @@ use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Form\ApplyMigrationsForm;
+use ipl\Html\Contract\Form;
 use ipl\Html\HtmlDocument;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -28,19 +29,19 @@ class ProposeMigrations extends HtmlDocument
     use TranslationHelper;
 
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     /** @var ServerRequestInterface */
-    protected $request;
+    protected ServerRequestInterface $request;
 
     /** @var Auth */
-    protected $auth;
+    protected Auth $auth;
 
-    protected $requiredPermission = 'vspheredb/admin';
+    protected string $requiredPermission = 'vspheredb/admin';
 
-    protected $appliedMigrations = false;
+    protected bool $appliedMigrations = false;
 
-    protected $failed = false;
+    protected bool $failed = false;
 
     public function __construct(Db $db, Auth $auth, ServerRequestInterface $request)
     {
@@ -54,9 +55,10 @@ class ProposeMigrations extends HtmlDocument
      *
      * @return bool
      */
-    public function hasAppliedMigrations()
+    public function hasAppliedMigrations(): bool
     {
         $this->ensureAssembled();
+
         return $this->appliedMigrations;
     }
 
@@ -65,13 +67,14 @@ class ProposeMigrations extends HtmlDocument
      *
      * @return bool
      */
-    public function hasFailed()
+    public function hasFailed(): bool
     {
         $this->ensureAssembled();
+
         return $this->failed;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         try {
             if ($this->auth->hasPermission($this->requiredPermission)) {
@@ -84,15 +87,14 @@ class ProposeMigrations extends HtmlDocument
         }
     }
 
-    protected function showEventualProblems(Db $db)
+    protected function showEventualProblems(Db $db): void
     {
         $migrations = Db::migrationsForDb($db);
 
         if ($migrations->hasSchema()) {
             if ($migrations->hasPendingMigrations()) {
                 $this->add(Hint::warning($this->translate(
-                    'There are pending Database Schema Migrations. Please ask'
-                    . ' an Administrator to apply them now!'
+                    'There are pending Database Schema Migrations. Please ask an Administrator to apply them now!'
                 )));
             }
         } else {
@@ -103,15 +105,14 @@ class ProposeMigrations extends HtmlDocument
         }
     }
 
-    protected function showMigrations(Db $db)
+    protected function showMigrations(Db $db): void
     {
         $migrations = Db::migrationsForDb($db);
 
         if ($migrations->hasSchema()) {
             if ($migrations->hasPendingMigrations()) {
                 $this->add(Hint::warning($this->translate(
-                    'There are pending Database Schema Migrations. Please apply'
-                    . ' them now!'
+                    'There are pending Database Schema Migrations. Please apply them now!'
                 )));
                 $this->addForm($migrations);
             }
@@ -137,11 +138,11 @@ class ProposeMigrations extends HtmlDocument
         }
     }
 
-    protected function addForm(Migrations $migrations)
+    protected function addForm(Migrations $migrations): void
     {
         $this->add(
             (new ApplyMigrationsForm($migrations))
-                ->on(ApplyMigrationsForm::ON_SUCCESS, function () {
+                ->on(Form::ON_SUBMIT, function () {
                     $this->appliedMigrations = true;
                 })
                 ->handleRequest($this->request)

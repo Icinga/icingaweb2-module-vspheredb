@@ -7,20 +7,21 @@ use gipfl\Curl\CurlAsync;
 class RpcNamespaceCurl
 {
     /** @var CurlAsync */
-    protected $curl;
+    protected CurlAsync $curl;
 
+    /**
+     * @param CurlAsync $curl
+     */
     public function __construct(CurlAsync $curl)
     {
         $this->curl = $curl;
     }
 
-    public function getPendingConnectionsRequest()
+    /**
+     * @return array
+     */
+    public function getPendingConnectionsRequest(): array
     {
-        $handles = [];
-        foreach ($this->curl->getPendingCurlHandles() as $idx => $curl) {
-            $handles[$idx] = curl_getinfo($curl);
-        }
-
-        return $handles;
+        return array_map(fn ($curl) => curl_getinfo($curl), $this->curl->getPendingCurlHandles());
     }
 }

@@ -16,22 +16,22 @@ class SimpleUsageBar extends BaseHtmlElement
     ];
 
     /** @var int */
-    protected $used;
+    protected int $used;
 
     /** @var int */
-    protected $total;
+    protected int $total;
 
     /** @var string */
-    protected $title;
+    protected string $title;
 
-    public function __construct($used, $total, $title)
+    public function __construct(int $used, int $total, string $title)
     {
         $this->used = $used;
         $this->total = $total;
         $this->title = $title;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $usedPercent = $this->used / $this->total;
 

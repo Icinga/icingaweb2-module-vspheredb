@@ -45,23 +45,25 @@ use function React\Promise\resolve;
 class ObjectSync implements DaemonTask
 {
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     /** @var VsphereApi */
-    protected $api;
+    protected VsphereApi $api;
 
     /** @var LoopInterface */
     protected $loop;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    protected $fastTasks = [
+    /** @var string[] */
+    protected array $fastTasks = [
         HostQuickStatsSyncTask::class,
-        VmQuickStatsSyncTask::class,
+        VmQuickStatsSyncTask::class
     ];
 
-    protected $normalTasks = [
+    /** @var string[] */
+    protected array $normalTasks = [
         ManagedObjectReferenceSyncTask::class,
         HostSystemSyncTask::class,
         VirtualMachineSyncTask::class,
@@ -70,40 +72,51 @@ class ObjectSync implements DaemonTask
         ComputeResourceSyncTask::class,
         VmDiskUsageSyncTask::class,
         VmDatastoreUsageSyncTask::class,
-        VmSnapshotSyncTask::class,
+        VmSnapshotSyncTask::class
     ];
 
-    protected $slowTasks = [
+    /** @var string[] */
+    protected array $slowTasks = [
         HostHardwareSyncTask::class,
         HostSensorSyncTask::class,
         HostHbaSyncTask::class,
         HostPhysicalNicSyncTask::class,
         HostVirtualNicSyncTask::class,
-        VmHardwareSyncTask::class,
+        VmHardwareSyncTask::class
     ];
 
-    protected $taggingTasks = [
+    /** @var string[] */
+    protected array $taggingTasks = [
         TaggingTagSyncTask::class,
         TaggingObjectTagSyncTask::class,
-        TaggingCategorySyncTask::class,
+        TaggingCategorySyncTask::class
     ];
 
     /** @var TimerInterface[]  */
-    protected $timers = [];
+    protected array $timers = [];
 
     /** @var PromiseInterface[] */
-    protected $runningTasks = [];
+    protected array $runningTasks = [];
 
-    protected $ready = false;
+    /** @var bool */
+    protected bool $ready = false;
 
     /** @var DbProcessRunner */
-    protected $dbRunner;
+    protected DbProcessRunner $dbRunner;
 
     /** @var RestApi */
-    protected $restApi;
+    protected RestApi $restApi;
 
-    protected $logTaskNames = false;
+    /** @var bool */
+    protected bool $logTaskNames = false;
 
+    /**
+     * @param VCenter $vCenter
+     * @param VsphereApi $api
+     * @param RestApi $restApi
+     * @param DbProcessRunner $dbRunner
+     * @param LoggerInterface $logger
+     */
     public function __construct(
         VCenter $vCenter,
         VsphereApi $api,
@@ -121,20 +134,32 @@ class ObjectSync implements DaemonTask
         $this->dbRunner = $dbRunner;
     }
 
-    protected function removeVCenterOnlyTasks()
+    /**
+     * @return void
+     */
+    protected function removeVCenterOnlyTasks(): void
     {
         $this->normalTasks = array_filter($this->normalTasks, function ($task) {
             return $task !== StoragePodSyncTask::class;
         });
     }
 
-    public function start(LoopInterface $loop)
+    /**
+     * @param LoopInterface $loop
+     *
+     * @return PromiseInterface
+     */
+    public function start(LoopInterface $loop): PromiseInterface
     {
         $this->loop = $loop;
+
         return $this->initialize();
     }
 
-    public function stop()
+    /**
+     * @return PromiseInterface
+     */
+    public function stop(): PromiseInterface
     {
         $this->ready = false;
         foreach ($this->timers as $timer) {
@@ -149,7 +174,10 @@ class ObjectSync implements DaemonTask
         return resolve(null);
     }
 
-    protected function initialize()
+    /**
+     * @return PromiseInterface
+     */
+    protected function initialize(): PromiseInterface
     {
         return $this->prepareSyncResultHandler()->then(function () {
             return $this->prepareEventPolling();
@@ -162,7 +190,10 @@ class ObjectSync implements DaemonTask
         });
     }
 
-    protected function scheduleTasks()
+    /**
+     * @return void
+     */
+    protected function scheduleTasks(): void
     {
         $this->timers[] = $this->loop->addPeriodicTimer(600, function () {
             // There might be new CustomValue definitions
@@ -192,7 +223,10 @@ class ObjectSync implements DaemonTask
         });
     }
 
-    protected function refreshOutdatedDatastores()
+    /**
+     * @return void
+     */
+    protected function refreshOutdatedDatastores(): void
     {
         $idx = VmDatastoreUsageSyncStore::class;
         $label = 'Refresh outdated VMs';
@@ -220,14 +254,22 @@ class ObjectSync implements DaemonTask
         }
     }
 
-    protected function runTasks(array $tasks)
+    /**
+     * @param array $tasks
+     *
+     * @return void
+     */
+    protected function runTasks(array $tasks): void
     {
         foreach ($tasks as $task) {
             $this->runTask(new $task());
         }
     }
 
-    protected function runAllTasks()
+    /**
+     * @return void
+     */
+    protected function runAllTasks(): void
     {
         $this->runTasks(array_merge($this->fastTasks, $this->normalTasks, $this->slowTasks));
         $this->restApi->requireSession()->then(function () {
@@ -235,7 +277,12 @@ class ObjectSync implements DaemonTask
         });
     }
 
-    protected function runTask(SyncTask $task)
+    /**
+     * @param SyncTask $task
+     *
+     * @return void
+     */
+    protected function runTask(SyncTask $task): void
     {
         $label = $task->getLabel();
         $idx = get_class($task);
@@ -274,7 +321,7 @@ class ObjectSync implements DaemonTask
                 'result'      => $result,
                 'taskLabel'   => $task->getLabel(),
                 'storeClass'  => $task->getSyncStoreClass(),
-                'objectClass' => $task->getObjectClass(),
+                'objectClass' => $task->getObjectClass()
             ])->then(function ($stats) use ($idx, $label) {
                 $stats = SyncStats::fromSerialization($stats);
                 if ($stats->hasChanges()) {
@@ -298,7 +345,10 @@ class ObjectSync implements DaemonTask
         });
     }
 
-    protected function prepareEventPolling()
+    /**
+     * @return PromiseInterface
+     */
+    protected function prepareEventPolling(): PromiseInterface
     {
         return $this->dbRunner->request('db.getLastEventTimeStamp', [
             'vCenterId' => $this->vCenter->get('id')
@@ -310,9 +360,9 @@ class ObjectSync implements DaemonTask
     /**
      * Refreshes the custom fields map in the DB process
      *
-     * @return \React\Promise\PromiseInterface
+     * @return PromiseInterface
      */
-    protected function prepareSyncResultHandler()
+    protected function prepareSyncResultHandler(): PromiseInterface
     {
         return $this->api->fetchCustomFieldsManager()->then(function (?CustomFieldsManager $manager = null) {
             if ($manager === null) {
@@ -321,7 +371,7 @@ class ObjectSync implements DaemonTask
 
             return $this->dbRunner->request('db.setCustomFieldsMap', [
                 'vCenterId' => $this->vCenter->get('id'),
-                'map'       => $manager->requireMap(),
+                'map'       => $manager->requireMap()
             ]);
         });
     }

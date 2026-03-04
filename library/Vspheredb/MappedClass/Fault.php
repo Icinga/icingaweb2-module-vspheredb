@@ -2,7 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
-#[\AllowDynamicProperties]
+use AllowDynamicProperties;
+
+#[AllowDynamicProperties]
 abstract class Fault
 {
     abstract public function getMessage();

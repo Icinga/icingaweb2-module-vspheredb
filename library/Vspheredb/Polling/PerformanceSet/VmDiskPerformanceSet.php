@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Polling\PerformanceSet;
 
 class VmDiskPerformanceSet extends DefaultPerformanceSet
 {
-    protected $name = 'VirtualDisk';
-    protected $objectType = 'VirtualMachine';
-    protected $countersGroup = 'virtualDisk';
-    protected $counters = [
+    protected ?string $name = 'VirtualDisk';
+
+    protected ?string $objectType = 'VirtualMachine';
+
+    protected ?string $countersGroup = 'virtualDisk';
+
+    protected ?array $counters = [
         // 'busResets', -> not per instance
         // 'commandsAborted',  -> not per instance
         'numberReadAveraged', // rate, average

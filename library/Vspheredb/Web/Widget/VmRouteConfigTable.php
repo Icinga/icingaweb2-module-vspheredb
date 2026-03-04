@@ -12,14 +12,14 @@ class VmRouteConfigTable extends HtmlDocument
     use TranslationHelper;
 
     /** @var VirtualMachine */
-    protected $object;
+    protected VirtualMachine $object;
 
     public function __construct(VirtualMachine $object)
     {
         $this->object = $object;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $object = $this->object;
         $this->prepend(new SubTitle($this->translate('Guest Routing Table'), 'sitemap'));
@@ -29,10 +29,11 @@ class VmRouteConfigTable extends HtmlDocument
         } else {
             $table = new Table();
             foreach ($stacks as $stack) {
-                $table->add(Table::row([
-                    $this->translate('Network'),
-                    $this->translate('Gateway')
-                ], ['class' => 'text-left'], 'th'));
+                $table->add(Table::row(
+                    [$this->translate('Network'), $this->translate('Gateway')],
+                    ['class' => 'text-left'],
+                    'th'
+                ));
                 if (! isset($stack->ipRouteConfig->ipRoute)) {
                     continue;
                 }
@@ -48,10 +49,7 @@ class VmRouteConfigTable extends HtmlDocument
                     if (empty($gateway)) {
                         $gateway[] = '-';
                     }
-                    $table->add(Table::row([
-                        $route->network . '/' . $route->prefixLength,
-                        implode(', ', $gateway),
-                    ]));
+                    $table->add(Table::row([$route->network . '/' . $route->prefixLength, implode(', ', $gateway)]));
                 }
             }
             $this->add($table);

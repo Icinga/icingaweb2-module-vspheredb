@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * IP Route Configuration. All IPv4 addresses, subnet addresses, and netmasks
  * are specified as strings using dotted decimal notation. For example, "192.0.2.1".
@@ -11,7 +13,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * to represent multiple 16-bit groups of contiguous 0's only once in an address
  * as described in RFC 2373.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class HostIpRouteConfig
 {
     /**

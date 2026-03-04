@@ -10,19 +10,19 @@ class PerfdataConsumer implements DbStorableInterface
 {
     use DbStorable;
 
-    protected $tableName = 'perfdata_consumer';
+    protected string $tableName = 'perfdata_consumer';
 
-    protected $keyProperty = 'uuid';
+    protected string $keyProperty = 'uuid';
 
-    protected $defaultProperties = [
+    protected array $defaultProperties = [
         'uuid'             => null,
         'name'             => null,
         'implementation'   => null,
         'settings'         => null,
-        'enabled'          => null,
+        'enabled'          => null
     ];
 
-    public function settings()
+    public function settings(): mixed
     {
         $settings = $this->get('settings');
         if ($settings === null) {

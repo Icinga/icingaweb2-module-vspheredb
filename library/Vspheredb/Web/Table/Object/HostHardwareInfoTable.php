@@ -16,10 +16,10 @@ class HostHardwareInfoTable extends NameValueTable
     use TranslationHelper;
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
     /** @var HostQuickStats */
-    protected $quickStats;
+    protected HostQuickStats $quickStats;
 
     public function __construct(HostSystem $host, HostQuickStats $quickStats)
     {
@@ -27,13 +27,13 @@ class HostHardwareInfoTable extends NameValueTable
         $this->quickStats = $quickStats;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->prepend(new SubTitle($this->translate('Hardware Information'), 'th-thumb-empty'));
         $host = $this->host;
         $this->addNameValuePairs([
             $this->translate('CPU') => [
-                \sprintf(
+                sprintf(
                     $this->translate('%d Packages, %d Cores, %d Threads'),
                     $host->get('hardware_cpu_packages'),
                     $host->get('hardware_cpu_cores'),
@@ -50,7 +50,7 @@ class HostHardwareInfoTable extends NameValueTable
                 $this->quickStats->get('overall_memory_usage_mb'),
                 $host->get('hardware_memory_size_mb')
             ),
-            $this->translate('HBAs') => $host->get('hardware_num_hba'),
+            $this->translate('HBAs') => $host->get('hardware_num_hba')
         ]);
     }
 }

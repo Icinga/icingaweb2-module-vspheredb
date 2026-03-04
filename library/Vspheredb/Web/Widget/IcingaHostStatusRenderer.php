@@ -10,7 +10,7 @@ class IcingaHostStatusRenderer extends Html
 {
     use TranslationHelper;
 
-    public function __invoke($state)
+    public function __invoke($state): Icon
     {
         if (is_object($state)) {
             $state = $state->overall_status;
@@ -18,7 +18,7 @@ class IcingaHostStatusRenderer extends Html
 
         return Icon::create('eye', [
             'title' => $this->getStatusDescription($state),
-            'class' => [ 'state', $state ]
+            'class' => ['state', $state]
         ]);
     }
 
@@ -29,13 +29,11 @@ class IcingaHostStatusRenderer extends Html
      */
     protected function getStatusDescription(string $status): string
     {
-        $descriptions = [
-            'UP'   => $this->translate('This system is up'),
+        return match ($status) {
+            'UP'          => $this->translate('This system is up'),
             'DOWN'        => $this->translate('This system is down'),
             'UNREACHABLE' => $this->translate('Unreachable - another device might be responsible for this outage'),
-            'PENDING'     => $this->translate('Pending - this host has never been checked'),
-        ];
-
-        return $descriptions[$status];
+            'PENDING'     => $this->translate('Pending - this host has never been checked')
+        };
     }
 }

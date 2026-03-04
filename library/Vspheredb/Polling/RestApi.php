@@ -24,26 +24,22 @@ use function React\Promise\resolve;
 class RestApi
 {
     /** @var CurlAsync */
-    protected $curl;
+    protected CurlAsync $curl;
 
     /** @var CookieStore */
-    protected $sidStore;
+    protected CookieStore $sidStore;
 
     /** @var ServerInfo */
-    protected $server;
+    protected ServerInfo $server;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /** @var array[] */
-    protected $curlOptions;
-    /**
-     * @var VCenter
-     */
-    protected $vCenter;
+    protected array $curlOptions;
 
-    /** @var \Closure Will become obsolete with PHP 8.1 */
-    private $normalizeBatchResult;
+    /** @var VCenter */
+    protected VCenter $vCenter;
 
     public function __construct(
         ServerInfo $server,
@@ -57,10 +53,6 @@ class RestApi
         $this->curl = $curl;
         $this->logger = $logger;
         $this->curlOptions = CurlOptions::forServerInfo($server);
-        $this->normalizeBatchResult = function ($result) {
-            // print_r($result);
-            return $this->normalizeBatchResult($result);
-        };
     }
 
     /**
@@ -169,11 +161,11 @@ class RestApi
                         //   "user":"username@VSPHERE.LOCAL"
                         // }
                         return true;
-                    } else {
-                        $this->logger->debug('REST API Session is no longer valid');
-                        $this->sidStore->forgetCookies();
-                        return false;
                     }
+                    $this->logger->debug('REST API Session is no longer valid');
+                    $this->sidStore->forgetCookies();
+
+                    return false;
                 }
             );
         }
@@ -188,7 +180,7 @@ class RestApi
     {
         $request = new Request('POST', $this->apiUrl('session'), [
             'Accept' => 'application/json',
-            'Authorization' => $this->generateBasicAuthHeaderLine(),
+            'Authorization' => $this->generateBasicAuthHeaderLine()
         ]);
 
         return $this->curl->send($request, $this->curlOptions)
@@ -264,7 +256,7 @@ class RestApi
         return $this->curl->send($request, $this->curlOptions);
     }
 
-    public function getUsedCategories()
+    public function getUsedCategories(): PromiseInterface
     {
         // Test only, doesn't work
         return $this->post("cis/tagging/category?action=list-used-categories");
@@ -279,40 +271,36 @@ class RestApi
     protected function get(string $url): PromiseInterface
     {
         return $this->send($this->request('GET', $this->apiUrl($url)))
-            ->then([$this, 'decodeResponse']);
+            ->then($this->decodeResponse(...));
     }
 
     protected function post(string $url, $body = null): PromiseInterface
     {
         return $this->send($this->request('POST', $this->apiUrl($url), $body))
-            ->then([$this, 'decodeResponse']);
+            ->then($this->decodeResponse(...));
     }
 
     protected function taggingBatchLegacy(string $action, $body = null): PromiseInterface
     {
         return $this->postLegacy("cis/tagging/batch?~action=$action", $body)
-            ->then($this->normalizeBatchResult);
+            ->then($this->normalizeBatchResult(...));
     }
 
     protected function getLegacy(string $url): PromiseInterface
     {
         return $this->send($this->request('GET', $this->legacyUrl($url)))
-            ->then([$this, 'decodeResponse'])
-            ->then([$this, 'requireValueProperty']);
+            ->then($this->decodeResponse(...))
+            ->then($this->requireValueProperty(...));
     }
 
     protected function postLegacy(string $url, $body = null): PromiseInterface
     {
         return $this->send($this->request('POST', $this->legacyUrl($url), $body))
-            ->then([$this, 'decodeResponse'])
-            ->then([$this, 'requireValueProperty']);
+            ->then($this->decodeResponse(...))
+            ->then($this->requireValueProperty(...));
     }
 
-    /**
-     * Will become protected, once we have ->decodeResponse(...) on 8.1
-     * @internal
-     */
-    public function decodeResponse(ResponseInterface $response)
+    protected function decodeResponse(ResponseInterface $response)
     {
         if ($response->getStatusCode() > 299) {
             throw new RuntimeException(
@@ -336,23 +324,18 @@ class RestApi
 
     protected function addSessionIdToRequest(RequestInterface $request): RequestInterface
     {
-        if ($this->sidStore && $this->sidStore->hasCookies()) {
+        if ($this->sidStore->hasCookies()) {
             foreach ($this->sidStore->getCookies() as $sid) {
-                if (str_starts_with($request->getUri()->getPath(), '/rest/')) {
-                    $request = $request->withAddedHeader('cookie', "vmware-api-session-id=$sid");
-                } else {
-                    $request = $request->withAddedHeader('vmware-api-session-id', $sid);
-                }
+                $request = str_starts_with($request->getUri()->getPath(), '/rest/')
+                    ? $request->withAddedHeader('cookie', "vmware-api-session-id=$sid")
+                    : $request->withAddedHeader('vmware-api-session-id', $sid);
             }
         }
 
         return $request;
     }
 
-    /**
-     * @internal Will become protected with 8.1
-     */
-    public function requireValueProperty(stdClass $result)
+    protected function requireValueProperty(stdClass $result)
     {
         if (isset($result->error_type)) {
             // {
@@ -377,7 +360,7 @@ class RestApi
     protected function request(string $method, string $url, $body = null): RequestInterface
     {
         $headers = [
-            'Accept' => 'application/json',
+            'Accept' => 'application/json'
         ];
         if ($body) {
             $headers['Content-type'] = 'application/json';

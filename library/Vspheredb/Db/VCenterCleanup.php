@@ -3,23 +3,41 @@
 namespace Icinga\Module\Vspheredb\Db;
 
 use Exception;
-use gipfl\ZfDb\Adapter\Adapter;
 use Icinga\Module\Vspheredb\Db;
 use InvalidArgumentException;
 use React\EventLoop\Loop;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
+use RuntimeException;
+use Throwable;
+use Zend_Db_Adapter_Abstract;
 
 class VCenterCleanup
 {
+    /** @var Db */
     protected Db $connection;
-    protected int $vCenterId;
-    protected array $scheduledQueries = [];
-    protected string $vCenterUuid;
-    protected ?Deferred $deferred = null;
-    /** @var \Zend_Db_Adapter_Abstract|Adapter */
-    protected $db;
 
+    /** @var int */
+    protected int $vCenterId;
+
+    /** @var array */
+    protected array $scheduledQueries = [];
+
+    /** @var string */
+    protected string $vCenterUuid;
+
+    /** @var ?Deferred */
+    protected ?Deferred $deferred = null;
+
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
+
+    /**
+     * @param Db $connection
+     * @param int $vCenterId
+     *
+     * @throws InvalidArgumentException
+     */
     public function __construct(Db $connection, int $vCenterId)
     {
         $this->connection = $connection;
@@ -33,6 +51,11 @@ class VCenterCleanup
         $this->vCenterUuid = $uuid;
     }
 
+    /**
+     * @return PromiseInterface
+     *
+     * @throws RuntimeException
+     */
     public function run(): PromiseInterface
     {
         if ($this->deferred !== null) {
@@ -45,25 +68,27 @@ class VCenterCleanup
         return $this->deferred->promise();
     }
 
+    /**
+     * @return void
+     */
     protected function tick(): void
     {
         $query = array_shift($this->scheduledQueries);
         if ($query === null) {
-            if ($this->deferred) {
-                // Should never be null, this is just a safety measure
-                $this->deferred->resolve(true);
-            }
+            // Should never be null, this is just a safety measure
+            $this->deferred?->resolve(true);
+
             return;
         }
 
         try {
             $this->db->query($query[0], $query[1]);
             Loop::futureTick(fn () => $this->tick());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $deferred = $this->deferred;
             $this->scheduledQueries = [];
             $this->deferred = null;
-            $deferred->reject(new \Exception(sprintf(
+            $deferred->reject(new Exception(sprintf(
                 "Query %s failed: %s",
                 $query[0],
                 $e->getMessage()
@@ -71,6 +96,9 @@ class VCenterCleanup
         }
     }
 
+    /**
+     * @return void
+     */
     protected function scheduleQueries(): void
     {
         $uuid = $this->vCenterUuid;
@@ -158,7 +186,7 @@ class VCenterCleanup
             ['DELETE FROM object WHERE vcenter_uuid = ? ORDER BY level DESC;', [$uuid]],
             ['OPTIMIZE TABLE object', []],
             ['DELETE FROM vcenter WHERE id = ?;', [$this->vCenterId]],
-            ['OPTIMIZE TABLE vcenter', []],
+            ['OPTIMIZE TABLE vcenter', []]
         ];
     }
 }

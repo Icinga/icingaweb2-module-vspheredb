@@ -18,65 +18,37 @@ abstract class VmEvent extends KnownEvent
 
     protected function getDatacenterUuid(VCenter $vCenter)
     {
-        if ($this->datacenter) {
-            return $vCenter->makeBinaryGlobalUuid($this->datacenter->datacenter);
-        } else {
-            return null;
-        }
+        return $this->datacenter ? $vCenter->makeBinaryGlobalUuid($this->datacenter->datacenter) : null;
     }
 
     protected function getDatastoreUuid(VCenter $vCenter)
     {
-        if ($this->ds) {
-            return $vCenter->makeBinaryGlobalUuid($this->ds->datastore);
-        } else {
-            return null;
-        }
+        return $this->ds ? $vCenter->makeBinaryGlobalUuid($this->ds->datastore) : null;
     }
 
     protected function getComputeResourceUuid(VCenter $vCenter)
     {
-        if ($this->computeResource) {
-            return $vCenter->makeBinaryGlobalUuid($this->computeResource->computeResource);
-        } else {
-            return null;
-        }
+        return $this->computeResource ? $vCenter->makeBinaryGlobalUuid($this->computeResource->computeResource) : null;
     }
 
     protected function getHostUuid(VCenter $vCenter)
     {
-        if ($this->host) {
-            return $vCenter->makeBinaryGlobalUuid($this->host->host);
-        } else {
-            return null;
-        }
+        return $this->host ? $vCenter->makeBinaryGlobalUuid($this->host->host) : null;
     }
 
     protected function getVmUuid(VCenter $vCenter)
     {
-        if ($this->vm) {
-            return $vCenter->makeBinaryGlobalUuid($this->vm->vm);
-        } else {
-            return null;
-        }
+        return $this->vm ? $vCenter->makeBinaryGlobalUuid($this->vm->vm) : null;
     }
 
     protected function getConfigSpec(VCenter $vCenter)
     {
-        if (isset($this->configSpec)) {
-            return \json_encode($this->configSpec);
-        } else {
-            return null;
-        }
+        return isset($this->configSpec) ? json_encode($this->configSpec) : null;
     }
 
     protected function getConfigChanges(VCenter $vCenter)
     {
-        if (isset($this->configChanges)) {
-            return \json_encode($this->configChanges);
-        } else {
-            return null;
-        }
+        return isset($this->configChanges) ? json_encode($this->configChanges) : null;
     }
 
     protected function getVmEventDetails(VCenter $vCenter)
@@ -90,7 +62,7 @@ abstract class VmEvent extends KnownEvent
             'vm_uuid'               => $this->getVmUuid($vCenter),
             'compute_resource_uuid' => $this->getComputeResourceUuid($vCenter),
             'config_spec'           => $this->getConfigSpec($vCenter),
-            'config_changes'        => $this->getConfigChanges($vCenter),
+            'config_changes'        => $this->getConfigChanges($vCenter)
         ];
     }
 }

@@ -4,25 +4,27 @@ namespace Icinga\Module\Vspheredb\Web\Table\Monitoring;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Table\TableWithVCenterFilter;
 use ipl\Html\Html;
+use Zend_Db_Select;
 
 class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithVCenterFilter
 {
-    protected $formerVCenter = null;
+    protected ?string $formerVCenter = null;
 
     public function getColumnsToBeRendered(): array
     {
         return [
             $this->translate('VCenter'),
-            $this->translate('Problems / Monitoring Rule'),
+            $this->translate('Problems / Monitoring Rule')
         ];
     }
 
-    public function renderRow($row)
+    public function renderRow($row): array
     {
         if ($row->vcenter_name === $this->formerVCenter) {
             $row->vcenter_name = null;
@@ -37,10 +39,7 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
                 if (! empty($states)) {
                     $states[] = ' ';
                 }
-                $states[] = Html::tag('span', ['class' => [
-                    'badge',
-                    "state-$state"
-                ]], $row->$property);
+                $states[] = Html::tag('span', ['class' => ['badge', "state-$state"]], $row->$property);
             }
             unset($row->$property);
         }
@@ -56,22 +55,23 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
             'vcenter'    => Util::niceUuid($row->vcenter_uuid),
             'objectType' => $objectType,
             'ruleSet'    => $ruleSet,
-            'rule'       => $rule,
+            'rule'       => $rule
         ])];
         unset($row->vcenter_uuid);
 
         return (array) $row;
     }
 
-    public function filterVCenter(VCenter $vCenter): self
+    public function filterVCenter(VCenter $vCenter): static
     {
         return $this->filterVCenterUuids([$vCenter->getUuid()]);
     }
 
-    public function filterVCenterUuids(array $uuids): self
+    public function filterVCenterUuids(array $uuids): static
     {
         if (empty($uuids)) {
             $this->getQuery()->where('1 = 0');
+
             return $this;
         }
 
@@ -86,30 +86,26 @@ class MonitoringRuleProblemTable extends ZfQueryBasedTable implements TableWithV
         return $this;
     }
 
-    protected function prepareQuery()
+    protected function prepareQuery(): Select|Zend_Db_Select
     {
-        $db = $this->db();
-        return $db->select()->from(
-            ['p' => 'monitoring_rule_problem'],
-            [
-                'vcenter_uuid' => 'vc.instance_uuid',
-                'vcenter_name' => 'vc.name',
+        return $this->db()->select()
+            ->from(['p' => 'monitoring_rule_problem'], [
+                'vcenter_uuid'     => 'vc.instance_uuid',
+                'vcenter_name'     => 'vc.name',
                 // 'object_type' => 'o.object_type',
                 // 'rule_name' => 'p.rule_name',
                 'object_rule_name' => "o.object_type || '/' || p.rule_name",
-                'cnt_critical' => "SUM(CASE WHEN p.current_state = 'CRITICAL' THEN 1 ELSE 0 END)",
-                'cnt_unknown' => "SUM(CASE WHEN p.current_state = 'UNKNOWN' THEN 1 ELSE 0 END)",
-                'cnt_warning' => "SUM(CASE WHEN p.current_state = 'WARNING' THEN 1 ELSE 0 END)",
-            ]
-        )
-        ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
-        ->join(['vc' => 'vcenter'], 'o.vcenter_uuid = vc.instance_uuid', [])
+                'cnt_critical'     => "SUM(CASE WHEN p.current_state = 'CRITICAL' THEN 1 ELSE 0 END)",
+                'cnt_unknown'      => "SUM(CASE WHEN p.current_state = 'UNKNOWN' THEN 1 ELSE 0 END)",
+                'cnt_warning'      => "SUM(CASE WHEN p.current_state = 'WARNING' THEN 1 ELSE 0 END)"
+            ])
+            ->join(['o' => 'object'], 'o.uuid = p.uuid', [])
+            ->join(['vc' => 'vcenter'], 'o.vcenter_uuid = vc.instance_uuid', [])
             ->group('vc.name')
             ->group('o.object_type')
             ->group('p.rule_name')
             ->order('vc.name')
             ->order('o.object_type')
-            ->order('p.rule_name')
-        ;
+            ->order('p.rule_name');
     }
 }

@@ -35,36 +35,45 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
+use React\Promise\PromiseInterface;
 use stdClass;
 use Throwable;
+use Zend_Db_Adapter_Abstract;
 
 use function React\Promise\resolve;
 
 class PerfDataSync implements DaemonTask
 {
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     /** @var VsphereApi */
-    protected $api;
+    protected VsphereApi $api;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /** @var CurlAsync */
-    protected $curl;
+    protected CurlAsync $curl;
 
-    /** @var ChunkedInfluxDbWriter */
-    protected $influxDbWriter;
+    /** @var ?ChunkedInfluxDbWriter */
+    protected ?ChunkedInfluxDbWriter $influxDbWriter = null;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
     /** @var TimerInterface[]  */
-    protected $timers = [];
+    protected array $timers = [];
 
-    protected $loadingWriterConfig = false;
+    protected bool $loadingWriterConfig = false;
 
+    /**
+     * @param VCenter $vCenter
+     * @param VsphereApi $api
+     * @param CurlAsync $curl
+     * @param LoopInterface $loop
+     * @param LoggerInterface $logger
+     */
     public function __construct(
         VCenter $vCenter,
         VsphereApi $api,
@@ -79,7 +88,12 @@ class PerfDataSync implements DaemonTask
         $this->logger = $logger;
     }
 
-    public function start(LoopInterface $loop)
+    /**
+     * @param LoopInterface $loop
+     *
+     * @return PromiseInterface
+     */
+    public function start(LoopInterface $loop): PromiseInterface
     {
         $this->loop = $loop;
         $loop->futureTick(function () {
@@ -89,7 +103,10 @@ class PerfDataSync implements DaemonTask
         return resolve(null);
     }
 
-    public function stop()
+    /**
+     * @return PromiseInterface
+     */
+    public function stop(): PromiseInterface
     {
         foreach ($this->timers as $timer) {
             $this->loop->cancelTimer($timer);
@@ -99,7 +116,10 @@ class PerfDataSync implements DaemonTask
         return resolve(null);
     }
 
-    protected function loadWriterConfig()
+    /**
+     * @return PromiseInterface
+     */
+    protected function loadWriterConfig(): PromiseInterface
     {
         if ($this->loadingWriterConfig) {
             return resolve(null);
@@ -109,6 +129,7 @@ class PerfDataSync implements DaemonTask
         if (! $loader) {
             $this->stopRunningInfluxDbInstances();
             $this->loadingWriterConfig = false;
+
             return resolve(null);
         }
         return $loader->then(function (?ChunkedInfluxDbWriter $writer) {
@@ -129,15 +150,19 @@ class PerfDataSync implements DaemonTask
         });
     }
 
-    protected function stopRunningInfluxDbInstances()
+    /**
+     * @return void
+     */
+    protected function stopRunningInfluxDbInstances(): void
     {
-        if ($this->influxDbWriter) {
-            $this->influxDbWriter->stop();
-            $this->influxDbWriter = null;
-        }
+        $this->influxDbWriter?->stop();
+        $this->influxDbWriter = null;
     }
 
-    protected function initialize()
+    /**
+     * @return void
+     */
+    protected function initialize(): void
     {
         $this->syncCounterInfo()->then(function () {
             $this->loadWriterConfig();
@@ -149,15 +174,17 @@ class PerfDataSync implements DaemonTask
 
     /**
      * @param $spec
-     * @return \React\Promise\PromiseInterface <PerfEntityMetricCSV[]>
+     *
+     * @return PromiseInterface <PerfEntityMetricCSV[]>
      */
-    protected function queryPerf($spec)
+    protected function queryPerf($spec): PromiseInterface
     {
         return $this->api->callOnServiceInstanceObject('perfManager', 'QueryPerf', [
             'querySpec' => $spec
         ])->then(function ($result) {
             if (!isset($result->returnval)) {
                 $this->logger->warning('Got no returnval when fetching performance data');
+
                 return [];
             }
 
@@ -165,22 +192,33 @@ class PerfDataSync implements DaemonTask
         });
     }
 
+    /**
+     * @param Zend_Db_Adapter_Abstract $db
+     * @param UuidInterface $vCenterUuid
+     * @param PerformanceSet $set
+     * @param CounterLookup $counterLookup
+     * @param ?int $count
+     *
+     * @return void
+     */
     protected function fetchPerf(
-        $db,
+        Zend_Db_Adapter_Abstract $db,
         UuidInterface $vCenterUuid,
         PerformanceSet $set,
         CounterLookup $counterLookup,
-        $count
-    ) {
+        ?int $count
+    ): void {
         $tags = $counterLookup->fetchTags($vCenterUuid);
         $counterMap = CounterMap::fetchCounters($db, $set, $vCenterUuid);
         if (empty($counterMap)) {
             $this->logger->notice('Got no counters, nothing to do');
+
             return;
         }
         $instances = $counterLookup->fetchRequiredMetricInstances($vCenterUuid);
         if (empty($instances)) {
             $this->logger->notice('Got no instances to fetch, nothing to do');
+
             return;
         }
         $spec = PerformanceQuerySpecHelper::prepareQuerySpec(
@@ -191,6 +229,7 @@ class PerfDataSync implements DaemonTask
         );
         if ($this->influxDbWriter === null) {
             $this->logger->notice('No more InfluxDB writer available, nothing to do');
+
             return;
         }
 
@@ -214,7 +253,12 @@ class PerfDataSync implements DaemonTask
         });
     }
 
-    protected function sync($count = null)
+    /**
+     * @param ?int $count
+     *
+     * @return void
+     */
+    protected function sync(?int $count = null): void
     {
         $db = $this->vCenter->getConnection()->getDbAdapter();
         $uuid = Uuid::fromBytes($this->vCenter->getUuid());
@@ -244,7 +288,10 @@ class PerfDataSync implements DaemonTask
         $this->fetchPerf($db, $uuid, $set, $counterLookup, $count);
     }
 
-    protected function scheduleTasks()
+    /**
+     * @return void
+     */
+    protected function scheduleTasks(): void
     {
         $this->timers[] = $this->loop->addPeriodicTimer(120, function () {
             $this->loadWriterConfig()->then(function () {
@@ -259,17 +306,26 @@ class PerfDataSync implements DaemonTask
         });
     }
 
-    protected function syncCounterInfo()
+    /**
+     * @return PromiseInterface
+     */
+    protected function syncCounterInfo(): PromiseInterface
     {
         return $this->api->getServiceInstance()->then(function (ServiceContent $content) {
             return $this->api->fetchSingleObject($content->perfManager);
         })->then(function ($result) {
             $this->storeCounterInfo($result);
+
             return resolve(null);
         });
     }
 
-    protected function storeCounterInfo($result)
+    /**
+     * @param mixed $result
+     *
+     * @return void
+     */
+    protected function storeCounterInfo(mixed $result): void
     {
         $store = new PerfCounterInfoSyncStore(
             $this->vCenter->getConnection()->getDbAdapter(),

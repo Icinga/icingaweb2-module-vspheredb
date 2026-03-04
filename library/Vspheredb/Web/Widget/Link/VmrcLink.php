@@ -14,43 +14,32 @@ class VmrcLink extends HtmlDocument
 {
     use TranslationHelper;
 
-    protected $vCenter;
+    protected VCenter $vCenter;
 
-    protected $label;
+    protected ?string $label;
 
-    protected $moRef;
+    protected ?string $moRef;
 
-    public function __construct(VCenter $vCenter, VirtualMachine $vm, $label = null)
+    public function __construct(VCenter $vCenter, VirtualMachine $vm, ?string $label = null)
     {
         $this->vCenter = $vCenter;
-        if ($label === null) {
-            $this->label = $vm->object()->get('object_name');
-        } else {
-            $this->label = $label;
-        }
-
+        $this->label = $label ?? $vm->object()->get('object_name');
         $this->moRef = $vm->object()->get('moref');
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         try {
             $server = $this->vCenter->getFirstServer(false);
             $this->add(Html::tag('a', [
-                'href' => sprintf(
-                    'vmrc://%s/?moid=%s',
-                    $server->get('host'),
-                    \rawurlencode($this->moRef)
-                ),
+                'href'   => sprintf('vmrc://%s/?moid=%s', $server->get('host'), rawurlencode($this->moRef)),
                 'target' => '_self',
-                'title' => $this->translate('Open VMware Remote Console (VMRC)'),
-                'class' => 'icon-host',
+                'title'  => $this->translate('Open VMware Remote Console (VMRC)'),
+                'class'  => 'icon-host'
             ], $this->label));
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             $this->add([
-                Icon::create('warning-empty', [
-                    'class' => 'red'
-                ]),
+                Icon::create('warning-empty', ['class' => 'red']),
                 ' ',
                 $this->translate('No related vServer has been configured')
             ]);

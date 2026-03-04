@@ -7,12 +7,11 @@ use gipfl\Cli\Screen;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
-use Icinga\Module\Vspheredb\DbObject\Datastore;
-use Icinga\Module\Vspheredb\DbObject\HostSystem;
-use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\ObjectStateRuleSet;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\VMwareObjectStateRuleDefinition;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\InheritedSettings;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRulesTree;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
@@ -22,24 +21,25 @@ use RuntimeException;
 class CheckRunner
 {
     public const RULESET_NAME_PARAMETER = 'ruleset';
+
     public const RULE_NAME_PARAMETER = 'rule';
 
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     /** @var Screen */
-    protected $screen;
+    protected Screen $screen;
 
-    /** @var string */
-    protected $ruleSetName;
+    /** @var ?string */
+    protected ?string $ruleSetName = null;
 
-    /** @var string */
-    protected $ruleName;
+    /** @var ?string */
+    protected ?string $ruleName = null;
 
     /** @var bool */
-    protected $inspect = false;
+    protected bool $inspect = false;
 
-    protected $preloadedTrees = [];
+    protected array $preloadedTrees = [];
 
     public function __construct(Db $db)
     {
@@ -66,22 +66,22 @@ class CheckRunner
     }
 
     /**
-     * @param string $type
+     * @param ObjectType $type
      *
      * @return void
      */
-    public function preloadTreeFor(string $type): void
+    public function preloadTreeFor(ObjectType $type): void
     {
-        $this->preloadedTrees[$type] = new MonitoringRulesTree($this->db, $type);
+        $this->preloadedTrees[$type->value] = new MonitoringRulesTree($this->db, $type->value);
     }
 
     public function check(BaseDbObject $object): CheckResultSet
     {
-        $type = self::getCheckTypeForObject($object);
+        $type = ObjectType::fromDbObject($object);
         $registry = $this->getRegistry();
         $settings = $this->getSettingsForObject($object, $registry, $type);
 
-        $all = new CheckResultSet(sprintf('%s, according configured rules', $this->getTypeLabelForObject($object)));
+        $all = new CheckResultSet(sprintf('%s, according configured rules', $type->label()));
         $final = $this->ruleSetName === null ? $all : null;
         foreach ($registry->getSets() as $set) {
             if ($settings->isDisabled($set)) {
@@ -123,7 +123,7 @@ class CheckRunner
                         throw new RuntimeException(sprintf(
                             'Cannot run checks for Rule "%s", it does not support "%s" objects',
                             $this->ruleName,
-                            $type
+                            $type->value
                         ));
                     }
                     continue;
@@ -150,9 +150,7 @@ class CheckRunner
                 try {
                     $results = $rule->checkObject($object, $ruleSettings);
                 } catch (Exception $e) {
-                    $results = [
-                        new SingleCheckResult(new CheckPluginState(CheckPluginState::UNKNOWN), $e->getMessage())
-                    ];
+                    $results = [new SingleCheckResult(CheckPluginState::UNKNOWN, $e->getMessage())];
                 }
                 foreach ($results as $result) {
                     $ruleResult->addResult($result);
@@ -168,11 +166,7 @@ class CheckRunner
 
     protected function getRegistry(): RuleSetRegistry
     {
-        if ($this->ruleSetName) {
-            return RuleSetRegistry::byName($this->ruleSetName);
-        } else {
-            return RuleSetRegistry::default();
-        }
+        return $this->ruleSetName ? RuleSetRegistry::byName($this->ruleSetName) : RuleSetRegistry::default();
     }
 
     /**
@@ -181,9 +175,9 @@ class CheckRunner
     protected function getSettingsForObject(
         BaseDbObject $object,
         RuleSetRegistry $registry,
-        string $type
+        ObjectType $type
     ): InheritedSettings {
-        $tree = $this->preloadedTrees[$type] ?? new MonitoringRulesTree($this->db, $type);
+        $tree = $this->preloadedTrees[$type->value] ?? new MonitoringRulesTree($this->db, $type->value);
         $settings = $tree->getInheritedSettingsFor($object);
         $settings->setInternalDefaults($registry);
 
@@ -192,20 +186,21 @@ class CheckRunner
 
     /**
      * @param BaseDbObject $object
+     *
      * @return array<string, CheckResultSet>
      */
     public function checkForDb(BaseDbObject $object): array
     {
-        $type = self::getCheckTypeForObject($object);
+        $type = ObjectType::fromDbObject($object);
         $registry = $this->getRegistry();
         try {
             $settings = $this->getSettingsForObject($object, $registry, $type);
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             // Fake Set with just a global state
             $ruleSetResult = new CheckResultSet((new ObjectStateRuleSet())->getLabel());
             $ruleResult = new CheckResultSet((new VMwareObjectStateRuleDefinition())->getLabel());
             $ruleResult->addResult(new SingleCheckResult(
-                new CheckPluginState(CheckPluginState::UNKNOWN),
+                CheckPluginState::UNKNOWN,
                 'Could not find the related Managed Object, please check my vCenter permissions'
             ));
             $ruleSetResult->addResult($ruleResult);
@@ -239,32 +234,6 @@ class CheckRunner
         }
 
         return $results;
-    }
-
-    protected function getTypeLabelForObject(BaseDbObject $object): string
-    {
-        if ($object instanceof HostSystem) {
-            return 'Host System';
-        } elseif ($object instanceof VirtualMachine) {
-            return 'Virtual Machine';
-        } elseif ($object instanceof Datastore) {
-            return 'Datastore';
-        }
-
-        return 'Object';
-    }
-
-    public static function getCheckTypeForObject(BaseDbObject $object): string
-    {
-        if ($object instanceof HostSystem) {
-            return 'host';
-        } elseif ($object instanceof VirtualMachine) {
-            return 'vm';
-        } elseif ($object instanceof Datastore) {
-            return 'datastore';
-        }
-
-        throw new InvalidArgumentException('Check commands are not supported for ' . get_class($object));
     }
 
     protected function light(string $string): string

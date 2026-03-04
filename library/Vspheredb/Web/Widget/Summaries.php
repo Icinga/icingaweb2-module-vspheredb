@@ -4,13 +4,14 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Url;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use RuntimeException;
+use Zend_Db_Adapter_Abstract;
 use Zend_Db_Select as ZfSelect;
 use Zend_Db_Select_Exception;
 
@@ -20,22 +21,20 @@ class Summaries extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'object-summaries',
-    ];
+    protected $defaultAttributes = ['class' => 'object-summaries'];
 
-    /** @var \Zend_Db_Select */
-    protected $query;
+    /** @var ?ZfSelect */
+    protected ?ZfSelect $query = null;
 
-    protected $stats;
+    protected ?object $stats = null;
 
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
 
     /** @var Url */
-    protected $baseUrl;
+    protected Url $baseUrl;
 
-    protected $wantsPowerState = false;
+    protected bool $wantsPowerState = false;
 
     /**
      * Summaries constructor.
@@ -56,9 +55,10 @@ class Summaries extends BaseHtmlElement
 
     /**
      * @param ObjectsTable $table
-     * @throws \Zend_Db_Select_Exception
+     *
+     * @throws Zend_Db_Select_Exception
      */
-    protected function setTable(ObjectsTable $table)
+    protected function setTable(ObjectsTable $table): void
     {
         $this->setQueryFromTable($table);
         $this->addColumn('o.overall_status', ['gray', 'green', 'yellow', 'red']);
@@ -72,7 +72,7 @@ class Summaries extends BaseHtmlElement
                 'poweredOff',
                 'unknown',
                 'standby',
-                'suspended',
+                'suspended'
             ]);
 
             $this->wantsPowerState = true;
@@ -81,7 +81,7 @@ class Summaries extends BaseHtmlElement
         $this->applyUrlFilters($table);
     }
 
-    protected function applyUrlFilters(ObjectsTable $table)
+    protected function applyUrlFilters(ObjectsTable $table): void
     {
         foreach ($this->baseUrl->getParams()->toArray() as $param) {
             if ($table->hasColumn($param[0])) {
@@ -102,9 +102,10 @@ class Summaries extends BaseHtmlElement
 
     /**
      * @param ObjectsTable $table
-     * @throws \Zend_Db_Select_Exception
+     *
+     * @throws Zend_Db_Select_Exception
      */
-    protected function setQueryFromTable(ObjectsTable $table)
+    protected function setQueryFromTable(ObjectsTable $table): void
     {
         $query = clone($table->getQuery());
         $query->reset(ZfSelect::LIMIT_COUNT);
@@ -114,9 +115,7 @@ class Summaries extends BaseHtmlElement
 
         // This works, but is not as general-purpose as it should be
         if (count($query->getPart(ZfSelect::GROUP)) > 0) {
-            $query = $query->getAdapter()->select()->from([
-                'o' => $query->columns('o.overall_status')
-            ], []);
+            $query = $query->getAdapter()->select()->from(['o' => $query->columns('o.overall_status')], []);
         }
 
         $this->query = $query;
@@ -125,9 +124,10 @@ class Summaries extends BaseHtmlElement
     /**
      * @param $column
      * @param $variants
-     * @throws \Zend_Db_Select_Exception
+     *
+     * @throws Zend_Db_Select_Exception
      */
-    protected function addColumn($column, $variants)
+    protected function addColumn($column, $variants): void
     {
         $columns = [];
         foreach ($variants as $value) {
@@ -136,26 +136,22 @@ class Summaries extends BaseHtmlElement
         $this->query->columns($columns);
     }
 
-    protected function makeColumnAlias($column)
+    protected function makeColumnAlias($column): string
     {
         return 'cnt_' . strtolower(preg_replace('/^.+?\./', '', $column));
     }
 
-    protected function countFiltered($column, $value)
+    protected function countFiltered($column, $value): string
     {
         return "SUM(CASE WHEN $column = '$value' THEN 1 ELSE 0 END)";
     }
 
     protected function stats()
     {
-        if ($this->stats === null) {
-            $this->stats = $this->db->fetchRow($this->query);
-        }
-
-        return $this->stats;
+        return $this->stats ??= $this->db->fetchRow($this->query);
     }
 
-    public function addPowerState()
+    public function addPowerState(): static
     {
         return $this;
     }
@@ -168,8 +164,7 @@ class Summaries extends BaseHtmlElement
      */
     protected function createSummaryLink(string $value, string $property): ?Link
     {
-        $stats = $this->stats();
-        $count = (int) $stats->{"cnt_$value"};
+        $count = (int) $this->stats()->{"cnt_$value"};
 
         if ($count === 0) {
             return null;
@@ -205,16 +200,11 @@ class Summaries extends BaseHtmlElement
         $this->add($span);
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->setSeparator(' ');
         $this->add([Icon::create('ok'), $this->translate('Status') . ': ']);
-        $this->addSummaryLinks('overall_status', [
-            'red',
-            'yellow',
-            'gray',
-            'green'
-        ]);
+        $this->addSummaryLinks('overall_status', ['red', 'yellow', 'gray', 'green']);
         if ($this->wantsPowerState) {
             $this->add([Icon::create('off'), $this->translate('Power') . ': ']);
             $this->addSummaryLinks('runtime_power_state', [

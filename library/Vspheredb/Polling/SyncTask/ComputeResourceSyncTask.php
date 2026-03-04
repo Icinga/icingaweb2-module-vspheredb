@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 
 class ComputeResourceSyncTask extends SyncTask
 {
-    protected $label = 'Compute Resources';
-    protected $tableName = 'compute_resource';
-    protected $objectClass = ComputeResource::class;
-    protected $selectSetClass = ComputeResourceSelectSet::class;
-    protected $propertySetClass = ComputeResourcePropertySet::class;
-    protected $syncStoreClass = ObjectSyncStore::class;
+    protected string $label = 'Compute Resources';
+
+    protected string $tableName = 'compute_resource';
+
+    protected string $objectClass = ComputeResource::class;
+
+    protected string $selectSetClass = ComputeResourceSelectSet::class;
+
+    protected string $propertySetClass = ComputeResourcePropertySet::class;
+
+    protected string $syncStoreClass = ObjectSyncStore::class;
 }

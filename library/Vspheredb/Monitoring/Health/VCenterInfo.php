@@ -7,33 +7,44 @@ use gipfl\ZfDb\Select;
 use gipfl\ZfDbStore\NotFoundError;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
+use Zend_Db_Adapter_Abstract;
+use Zend_Db_Select;
 
 class VCenterInfo
 {
     // Hint: these should become readonly properties
 
-    /** @var UuidInterface */
-    public $uuid;
-    /** @var int */
-    public $id;
-    /** @var string */
-    public $name;
-    /** @var string */
-    public $software;
-    /** @var string */
-    public $softwareName;
-    /** @var string */
-    public $softwareVersion;
+    /** @var ?string */
+    public ?string $uuid = null;
 
-    public static function fromDbRow($row): VCenterInfo
+    /** @var ?int */
+    public ?int $id = null;
+
+    /** @var ?string */
+    public ?string $name = null;
+
+    /** @var ?string */
+    public ?string $software = null;
+
+    /** @var ?string */
+    public ?string $softwareName = null;
+
+    /** @var ?string */
+    public ?string $softwareVersion = null;
+
+    /**
+     * @param object $row
+     *
+     * @return VCenterInfo
+     */
+    public static function fromDbRow(object $row): VCenterInfo
     {
         $self = new static();
         $self->id = (int) $row->id;
         $self->uuid = Uuid::fromBytes(DbUtil::binaryResult($row->uuid))->toString();
-        $self->software = \sprintf(
+        $self->software = sprintf(
             '%s (%s)',
-            \preg_replace('/^VMware /', '', $row->software_name),
+            preg_replace('/^VMware /', '', $row->software_name),
             $row->software_version
         );
         $self->softwareName = $row->software_name;
@@ -44,27 +55,29 @@ class VCenterInfo
     }
 
     /**
-     * @var Adapter|\Zend_Db_Adapter_Abstract $db
-     * @return Select|\Zend_Db_Select
+     * @param Zend_Db_Adapter_Abstract|Adapter $db
+     *
+     * @return Select|Zend_Db_Select
      */
-    public static function prepareQuery($db)
+    public static function prepareQuery(Zend_Db_Adapter_Abstract|Adapter $db): Select|Zend_Db_Select
     {
         $columns = [
             'uuid'             => 'vc.instance_uuid',
             'id'               => 'vc.id',
             'name'             => 'vc.name',
             'software_name'    => 'vc.api_name',
-            'software_version' => 'vc.version',
+            'software_version' => 'vc.version'
         ];
 
         return $db->select()->from(['vc' => 'vcenter'], $columns)->order('name');
     }
 
     /**
-     * @var Adapter|\Zend_Db_Adapter_Abstract $db
+     * @param Zend_Db_Adapter_Abstract|Adapter $db
+     *
      * @return VCenterInfo[]
      */
-    public static function fetchAll($db): array
+    public static function fetchAll(Zend_Db_Adapter_Abstract|Adapter $db): array
     {
         $result = [];
         /** @var object{id: int} $row */
@@ -77,11 +90,13 @@ class VCenterInfo
 
     /**
      * @param int $id
+     * @param Zend_Db_Adapter_Abstract|Adapter $db
+     *
      * @return VCenterInfo
+     *
      * @throws NotFoundError
-     * @var Adapter|\Zend_Db_Adapter_Abstract $db
      */
-    public static function fetchOne(int $id, $db): VCenterInfo
+    public static function fetchOne(int $id, Zend_Db_Adapter_Abstract|Adapter $db): VCenterInfo
     {
         if ($row = $db->fetchRow(static::prepareQuery($db)->where('id = ?', $id))) {
             return VCenterInfo::fromDbRow($row);
