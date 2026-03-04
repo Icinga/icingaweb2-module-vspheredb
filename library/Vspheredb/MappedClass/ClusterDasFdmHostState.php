@@ -98,7 +98,7 @@ class ClusterDasFdmHostState implements JsonSerialization
      */
     public $state;
 
-    /** @var ManagedObjectReference|null */
+    /** @var ?ManagedObjectReference */
     public $stateReporter;
 
     public static function fromSerialization($any)

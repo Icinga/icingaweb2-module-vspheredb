@@ -15,7 +15,7 @@ abstract class DefaultCounterLookup implements CounterLookup
      */
     protected Zend_Db_Adapter_Abstract $db;
 
-    /** @var string[]|null */
+    /** @var ?string[] */
     protected ?array $tagColumns = null;
 
     protected ?string $objectKey = null;

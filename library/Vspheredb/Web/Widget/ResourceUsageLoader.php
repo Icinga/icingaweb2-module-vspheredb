@@ -27,7 +27,7 @@ class ResourceUsageLoader
     }
 
     /**
-     * @param UuidInterface|null $vCenterUuid
+     * @param ?UuidInterface $vCenterUuid
      * @return $this
      */
     public function filterVCenterUuid(?UuidInterface $vCenterUuid = null): static

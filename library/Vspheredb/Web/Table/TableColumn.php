@@ -55,7 +55,7 @@ abstract class TableColumn
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     public function getAlias(): ?string
     {
@@ -94,7 +94,7 @@ abstract class TableColumn
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     public function getTitle(): ?string
     {

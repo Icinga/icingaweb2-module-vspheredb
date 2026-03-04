@@ -36,7 +36,7 @@ interface BackupTool
     public function handle(VirtualMachine $vm): void;
 
     /**
-     * @return HtmlDocument|null
+     * @return ?HtmlDocument
      */
     public function getInfoRenderer(): ?HtmlDocument;
 }

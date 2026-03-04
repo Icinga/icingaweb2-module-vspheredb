@@ -84,7 +84,7 @@ class RemoteApi implements EventEmitterInterface
     }
 
     /**
-     * @param DbProcessRunner|null $dbProcessRunner
+     * @param ?DbProcessRunner $dbProcessRunner
      *
      * @return void
      */

@@ -11,7 +11,7 @@ abstract class MonitoringRuleSetDefinition
     /** @var class-string<MonitoringRuleDefinition>[] */
     public const RULE_CLASSES = [];
 
-    /** @var MonitoringRuleDefinition[]|null */
+    /** @var ?MonitoringRuleDefinition[] */
     protected ?array $rules = null;
 
     /**

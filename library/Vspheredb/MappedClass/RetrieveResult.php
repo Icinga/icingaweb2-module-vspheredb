@@ -31,7 +31,7 @@ class RetrieveResult
      *  _this => PropertyCollector (ref)
      * token => string
      *
-     * @var string|null
+     * @var ?string
      */
     public $token;
 

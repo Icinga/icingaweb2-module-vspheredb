@@ -12,7 +12,7 @@ class CustomValues implements JsonSerializable
     protected array $values = [];
 
     /**
-     * @param array|null $values
+     * @param ?array $values
      *
      * @return static
      */
@@ -22,7 +22,7 @@ class CustomValues implements JsonSerializable
     }
 
     /**
-     * @param string|null $string $string
+     * @param ?string $string $string
      *
      * @return static
      */
@@ -74,7 +74,7 @@ class CustomValues implements JsonSerializable
      * @param string $key
      * @param mixed $default
      *
-     * @return mixed|null
+     * @return ?mixed
      */
     public function get(string $key, mixed $default = null): mixed
     {
@@ -103,7 +103,7 @@ class CustomValues implements JsonSerializable
     }
 
     /**
-     * @param array|null $values
+     * @param ?array $values
      */
     protected function __construct(?array $values = null)
     {

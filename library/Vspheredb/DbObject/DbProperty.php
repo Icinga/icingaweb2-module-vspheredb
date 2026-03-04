@@ -7,9 +7,9 @@ use InvalidArgumentException;
 class DbProperty
 {
     /**
-     * @param bool|null $value
+     * @param ?bool $value
      *
-     * @return string|null
+     * @return ?string
      */
     public static function booleanToDb(?bool $value): ?string
     {
@@ -22,9 +22,9 @@ class DbProperty
     }
 
     /**
-     * @param string|null $value
+     * @param ?string $value
      *
-     * @return bool|null
+     * @return ?bool
      */
     public static function dbToBoolean(?string $value): ?bool
     {

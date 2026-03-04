@@ -169,9 +169,9 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     /**
      * @param string $name
      *
-     * @return string|null
+     * @return ?string
      */
-    public static function getClass(string $name): string|null
+    public static function getClass(string $name): ?string
     {
         // TODO: module/Name for foreign ones?
         /** @var static $instance */
@@ -187,7 +187,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
     /**
      * @param string $class
      *
-     * @return string|null
+     * @return ?string
      */
     protected static function getClassBaseName(string $class): ?string
     {

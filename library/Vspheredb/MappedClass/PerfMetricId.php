@@ -32,7 +32,7 @@ class PerfMetricId
      *   - DELTAFILE, for virtual machine snapshot overhead files
      *   - OTHERFILE, for all other files of a virtual machine
      *
-     * @var string|null
+     * @var ?string
      */
     public $instance;
 

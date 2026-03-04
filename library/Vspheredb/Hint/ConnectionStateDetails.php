@@ -14,7 +14,7 @@ class ConnectionStateDetails
     /**
      * @param string $state
      *
-     * @return string|null
+     * @return ?string
      */
     public static function getFor(string $state): ?string
     {
@@ -24,7 +24,7 @@ class ConnectionStateDetails
     /**
      * @param string $state
      *
-     * @return string|null
+     * @return ?string
      */
     protected function getConnectionStateDetails(string $state): ?string
     {

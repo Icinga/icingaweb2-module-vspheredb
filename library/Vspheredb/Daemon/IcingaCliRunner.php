@@ -24,7 +24,7 @@ class IcingaCliRunner
     }
 
     /**
-     * @param array|null $argv
+     * @param ?array $argv
      *
      * @return IcingaCliRunner
      */
@@ -57,7 +57,7 @@ class IcingaCliRunner
     }
 
     /**
-     * @param string|null $cwd
+     * @param ?string $cwd
      *
      * @return void
      */
@@ -67,7 +67,7 @@ class IcingaCliRunner
     }
 
     /**
-     * @param array|null $env
+     * @param ?array $env
      *
      * @return void
      */

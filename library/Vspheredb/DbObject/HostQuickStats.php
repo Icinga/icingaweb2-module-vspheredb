@@ -28,7 +28,7 @@ class HostQuickStats extends BaseDbObject
         'summary.quickStats.uptime'                    => 'uptime'
     ];
 
-    /** @var static[]|null */
+    /** @var ?static[] */
     protected static ?array $preloadCache = null;
 
     /**

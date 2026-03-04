@@ -28,7 +28,7 @@ class QueryParams
      * @param string $key
      * @param mixed $default
      *
-     * @return mixed|null
+     * @return ?mixed
      */
     public function get(string $key, mixed $default = null): mixed
     {

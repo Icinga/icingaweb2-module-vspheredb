@@ -146,7 +146,7 @@ class MonitoringRuleSet
     }
 
     /**
-     * @return MonitoringRuleSetDefinition|null
+     * @return ?MonitoringRuleSetDefinition
      */
     public function getDefinition(): ?MonitoringRuleSetDefinition
     {

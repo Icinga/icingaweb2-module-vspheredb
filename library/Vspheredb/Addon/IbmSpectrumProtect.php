@@ -12,7 +12,7 @@ class IbmSpectrumProtect implements BackupTool
 
     public const CLOSE_TAG = '</Last Backup>';
 
-    /** @var array|null */
+    /** @var ?array */
     protected ?array $lastAttributes = null;
 
     /**
@@ -75,7 +75,7 @@ class IbmSpectrumProtect implements BackupTool
     }
 
     /**
-     * @return array|null
+     * @return ?array
      */
     public function getAttributes(): ?array
     {
@@ -152,7 +152,7 @@ class IbmSpectrumProtect implements BackupTool
     /**
      * @param string $string
      *
-     * @return string|null
+     * @return ?string
      */
     public static function parseString(string $string): ?string
     {
@@ -185,7 +185,7 @@ class IbmSpectrumProtect implements BackupTool
     /**
      * @param string $value
      *
-     * @return int|null
+     * @return ?int
      */
     public static function parseBytes(string $value): ?int
     {
@@ -212,7 +212,7 @@ class IbmSpectrumProtect implements BackupTool
     /**
      * @param $time
      *
-     * @return int|null
+     * @return ?int
      */
     public static function parseTime($time): ?int
     {

@@ -140,7 +140,7 @@ class InfluxDbConnectionForm extends Form
     }
 
     /**
-     * @return TextWithActionButton|null
+     * @return ?TextWithActionButton
      */
     protected function getUrlElement(): ?TextWithActionButton
     {

@@ -43,7 +43,7 @@ class DaemonController extends Controller
     }
 
     /**
-     * @return array|null
+     * @return ?array
      */
     protected function prepareLogSettings(): ?array
     {

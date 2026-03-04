@@ -85,7 +85,7 @@ abstract class DbObject
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     public function getTableName(): ?string
     {
@@ -192,7 +192,7 @@ abstract class DbObject
     /**
      * Set database connection
      *
-     * @param DbConnection|null $connection Database connection
+     * @param ?DbConnection $connection Database connection
      *
      * @return $this
      */
@@ -439,7 +439,7 @@ abstract class DbObject
     }
 
     /**
-     * @return array|null
+     * @return ?array
      */
     protected function getPropertiesForDb(): ?array
     {
@@ -581,7 +581,7 @@ abstract class DbObject
     /**
      * Get the autoinc value if set
      *
-     * @return int|null
+     * @return ?int
      */
     public function getAutoincId(): ?int
     {
@@ -609,7 +609,7 @@ abstract class DbObject
     /**
      * Returns the used database handle
      *
-     * @return Zend_Db_Adapter_Abstract|null
+     * @return ?Zend_Db_Adapter_Abstract
      */
     public function getDb(): ?Zend_Db_Adapter_Abstract
     {
@@ -622,7 +622,7 @@ abstract class DbObject
     }
 
     /**
-     * @return DbConnection|null
+     * @return ?DbConnection
      */
     public function getConnection(): ?DbConnection
     {
@@ -699,7 +699,7 @@ abstract class DbObject
     }
 
     /**
-     * @return array|null
+     * @return ?array
      */
     public function getOriginalProperties(): ?array
     {
@@ -709,7 +709,7 @@ abstract class DbObject
     /**
      * @param string $key
      *
-     * @return mixed|null
+     * @return ?mixed
      */
     public function getOriginalProperty(string $key): mixed
     {
@@ -808,7 +808,7 @@ abstract class DbObject
     /**
      * Store object to database
      *
-     * @param DbConnection|null $db
+     * @param ?DbConnection $db
      *
      * @return true Whether storing succeeded
      *
@@ -1115,7 +1115,7 @@ abstract class DbObject
 
     /**
      * @param array $properties
-     * @param DbConnection|null $connection
+     * @param ?DbConnection $connection
      *
      * @return static
      */
@@ -1131,7 +1131,7 @@ abstract class DbObject
 
     /**
      * @param int|string $id
-     * @param DbConnection|null $connection
+     * @param ?DbConnection $connection
      *
      * @return static
      *
@@ -1173,8 +1173,8 @@ abstract class DbObject
 
     /**
      * @param DbConnection $connection
-     * @param Zend_Db_Select|null $query
-     * @param string|null $keyColumn
+     * @param ?Zend_Db_Select $query
+     * @param ?string $keyColumn
      *
      * @return static[]
      */

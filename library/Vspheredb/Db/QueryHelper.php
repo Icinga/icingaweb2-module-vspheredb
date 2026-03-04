@@ -11,7 +11,7 @@ class QueryHelper
      * @param ZfDb $db
      * @param Zend_Db_Select $query
      * @param string $column
-     * @param array|null $vCenterFilterUuids
+     * @param ?array $vCenterFilterUuids
      *
      * @return void
      */
