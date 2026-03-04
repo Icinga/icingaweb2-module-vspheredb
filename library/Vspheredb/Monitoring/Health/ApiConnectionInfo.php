@@ -77,7 +77,7 @@ class ApiConnectionInfo implements JsonSerialization
 
     /**
      * @param ServerInfo $server
-     * @param string     $message
+     * @param string $message
      *
      * @return ApiConnectionInfo
      */
@@ -123,10 +123,10 @@ class ApiConnectionInfo implements JsonSerialization
     }
 
     /**
-     * @param string      $state
-     * @param string      $server
-     * @param int         $serverId
-     * @param int         $vCenterId
+     * @param string $state
+     * @param string $server
+     * @param int $serverId
+     * @param int $vCenterId
      * @param string|null $lastErrorMessage
      *
      * @throws InvalidArgumentException

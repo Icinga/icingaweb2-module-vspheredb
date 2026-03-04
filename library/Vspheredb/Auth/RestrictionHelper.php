@@ -26,7 +26,7 @@ class RestrictionHelper
 
     /**
      * @param Auth $auth
-     * @param Db   $connection
+     * @param Db $connection
      */
     public function __construct(Auth $auth, Db $connection)
     {
@@ -49,7 +49,7 @@ class RestrictionHelper
 
     /**
      * @param Zend_Db_Select $query
-     * @param string         $vCenterColumn
+     * @param string $vCenterColumn
      *
      * @return void
      */

@@ -12,7 +12,7 @@ class SubTitle extends BaseHtmlElement
     /**
      * SubTitle constructor.
      *
-     * @param string      $title
+     * @param string $title
      * @param string|null $icon
      */
     public function __construct(string $title, ?string $icon = null)

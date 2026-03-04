@@ -96,8 +96,8 @@ class VmEventHistorySyncStore extends SyncStore
 
     /**
      * @param Zend_Db_Adapter_Abstract $db
-     * @param string                   $vCenterUuid
-     * @param string                   $column
+     * @param string $vCenterUuid
+     * @param string $column
      *
      * @return int
      */

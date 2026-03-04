@@ -118,7 +118,7 @@ class PersistedRuleProblems
 
     /**
      * @param BaseDbObject[] $objects
-     * @param ObjectType     $folderType
+     * @param ObjectType $folderType
      *
      * @return void
      *

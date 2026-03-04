@@ -54,9 +54,9 @@ class RemoteApi implements EventEmitterInterface
 
     /**
      * @param ApiConnectionHandler $apiConnectionHandler
-     * @param CurlAsync            $curl
-     * @param LoopInterface        $loop
-     * @param LoggerInterface      $logger
+     * @param CurlAsync $curl
+     * @param LoopInterface $loop
+     * @param LoggerInterface $logger
      */
     public function __construct(
         ApiConnectionHandler $apiConnectionHandler,
@@ -72,7 +72,7 @@ class RemoteApi implements EventEmitterInterface
     }
 
     /**
-     * @param string        $socketPath
+     * @param string $socketPath
      * @param LoopInterface $loop
      *
      * @return void

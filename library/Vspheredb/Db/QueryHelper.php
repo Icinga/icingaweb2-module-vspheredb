@@ -8,10 +8,10 @@ use Zend_Db_Select;
 class QueryHelper
 {
     /**
-     * @param ZfDb           $db
+     * @param ZfDb $db
      * @param Zend_Db_Select $query
-     * @param string         $column
-     * @param array|null     $vCenterFilterUuids
+     * @param string $column
+     * @param array|null $vCenterFilterUuids
      *
      * @return void
      */

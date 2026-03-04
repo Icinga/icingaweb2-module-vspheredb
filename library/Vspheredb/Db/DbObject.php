@@ -103,7 +103,7 @@ abstract class DbObject
      * the object. Please note that the method is public and allows to check
      * object consistence at any time.
      *
-     * @return boolean  Whether this object is valid
+     * @return boolean Whether this object is valid
      */
     public function validate(): bool
     {
@@ -286,7 +286,7 @@ abstract class DbObject
      * Generic setter
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return $this|null
      */
@@ -654,7 +654,7 @@ abstract class DbObject
 
     /**
      * @param object $row
-     * @param Db     $db
+     * @param Db $db
      *
      * @return static
      */
@@ -890,7 +890,7 @@ abstract class DbObject
     /**
      * Delete item from DB
      *
-     * @return int  Affected rows
+     * @return int Affected rows
      */
     protected function deleteFromDb(): int
     {
@@ -989,7 +989,7 @@ abstract class DbObject
 
     /**
      * @param string $column
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return string
      */
@@ -1002,7 +1002,7 @@ abstract class DbObject
     }
 
     /**
-     * @param mixed  $value
+     * @param mixed $value
      * @param string $column
      *
      * @return array|mixed|string|Zend_Db_Expr
@@ -1114,7 +1114,7 @@ abstract class DbObject
     }
 
     /**
-     * @param array             $properties
+     * @param array $properties
      * @param DbConnection|null $connection
      *
      * @return static
@@ -1156,7 +1156,7 @@ abstract class DbObject
     }
 
     /**
-     * @param string       $id
+     * @param string $id
      * @param DbConnection $connection
      *
      * @return static
@@ -1172,9 +1172,9 @@ abstract class DbObject
     }
 
     /**
-     * @param DbConnection        $connection
+     * @param DbConnection $connection
      * @param Zend_Db_Select|null $query
-     * @param string|null         $keyColumn
+     * @param string|null $keyColumn
      *
      * @return static[]
      */

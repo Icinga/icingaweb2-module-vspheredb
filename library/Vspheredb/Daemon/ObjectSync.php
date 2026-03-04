@@ -111,9 +111,9 @@ class ObjectSync implements DaemonTask
     protected bool $logTaskNames = false;
 
     /**
-     * @param VCenter         $vCenter
-     * @param VsphereApi      $api
-     * @param RestApi         $restApi
+     * @param VCenter $vCenter
+     * @param VsphereApi $api
+     * @param RestApi $restApi
      * @param DbProcessRunner $dbRunner
      * @param LoggerInterface $logger
      */

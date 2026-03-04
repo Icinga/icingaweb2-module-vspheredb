@@ -12,7 +12,7 @@ trait SyncHelper
 {
     /**
      * @param Zend_Db_Adapter_Abstract $db
-     * @param callable                 $callback
+     * @param callable $callback
      */
     protected static function runAsTransaction(Zend_Db_Adapter_Abstract $db, callable $callback): void
     {
@@ -33,9 +33,9 @@ trait SyncHelper
 
     /**
      * @param Zend_Db_Adapter_Abstract $db
-     * @param DbObject[]               $dbObjects
-     * @param array                    $apiObjects
-     * @param SyncStats                $stats
+     * @param DbObject[] $dbObjects
+     * @param array $apiObjects
+     * @param SyncStats $stats
      *
      * @return void
      *
@@ -82,8 +82,8 @@ trait SyncHelper
 
     /**
      * @param class-string<BaseDbObject> $class
-     * @param string                     $table
-     * @param VCenter                    $vCenter
+     * @param string $table
+     * @param VCenter $vCenter
      *
      * @return array
      *

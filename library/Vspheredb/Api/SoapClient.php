@@ -38,10 +38,10 @@ class SoapClient
     protected LoggerInterface $logger;
 
     /**
-     * @param CurlAsync            $curl
-     * @param string|null          $wsdl
-     * @param array                $options
-     * @param array                $curlOptions
+     * @param CurlAsync $curl
+     * @param string|null $wsdl
+     * @param array $options
+     * @param array $curlOptions
      * @param LoggerInterface|null $logger
      *
      * @throws SoapFault
@@ -67,7 +67,7 @@ class SoapClient
 
     /**
      * @param string $method
-     * @param array  $args
+     * @param array $args
      *
      * @return PromiseInterface<ResponseInterface>
      */

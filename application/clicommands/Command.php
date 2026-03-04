@@ -161,9 +161,9 @@ class Command extends CliCommand
     }
 
     /**
-     * @param string           $task
+     * @param string $task
      * @param Exception|string $error
-     * @param string|null      $subject
+     * @param string|null $subject
      *
      * @return void
      */
@@ -193,7 +193,7 @@ class Command extends CliCommand
 
     /**
      * @param string $message
-     * @param int    $length
+     * @param int $length
      *
      * @return string
      */

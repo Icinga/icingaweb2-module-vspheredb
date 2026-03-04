@@ -34,7 +34,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
 
     /**
      * @param string $uuid
-     * @param Db     $connection
+     * @param Db $connection
      *
      * @return static
      *
@@ -91,7 +91,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     }
 
     /**
-     * @param object  $properties
+     * @param object $properties
      * @param VCenter $vCenter
      *
      * @return $this
@@ -171,7 +171,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     }
 
     /**
-     * @param mixed   $value
+     * @param mixed $value
      * @param VCenter $vCenter
      *
      * @return string|null

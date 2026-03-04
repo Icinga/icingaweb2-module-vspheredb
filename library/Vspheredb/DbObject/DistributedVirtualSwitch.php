@@ -107,7 +107,7 @@ class DistributedVirtualSwitch extends BaseDbObject
     /**
      * @param string $uuid
      * @param string $table
-     * @param array  $refs
+     * @param array $refs
      *
      * @return void
      */

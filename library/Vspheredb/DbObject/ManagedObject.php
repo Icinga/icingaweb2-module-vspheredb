@@ -33,7 +33,7 @@ class ManagedObject extends VspheredbDbObject
 
     /**
      * @param string $uuid
-     * @param Db     $connection
+     * @param Db $connection
      *
      * @return static
      *

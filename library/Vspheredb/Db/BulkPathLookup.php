@@ -18,7 +18,7 @@ class BulkPathLookup
     protected ?array $vCenterFilterUuids;
 
     /**
-     * @param Db         $db
+     * @param Db $db
      * @param array|null $vCenterUuids
      */
     public function __construct(Db $db, ?array $vCenterUuids = null)

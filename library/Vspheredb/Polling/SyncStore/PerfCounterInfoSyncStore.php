@@ -27,7 +27,7 @@ class PerfCounterInfoSyncStore extends SyncStore
      * TODO: really sync
      *
      * @param PerfCounterInfo[] $infos
-     * @param SyncStats         $stats
+     * @param SyncStats $stats
      *
      * @return void
      *

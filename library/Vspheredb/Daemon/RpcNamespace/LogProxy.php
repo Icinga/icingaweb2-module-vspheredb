@@ -35,7 +35,7 @@ class LogProxy
     /**
      * @param string $level
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return void
      */
