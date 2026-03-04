@@ -43,7 +43,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
     /**
      * @param string $instanceUuid
      * @param string $fqdn
-     * @param int    $pid
+     * @param int $pid
      */
     public function __construct(string $instanceUuid, string $fqdn, int $pid)
     {
@@ -71,7 +71,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
     /**
      * @param string $level
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return void
      */
@@ -104,10 +104,10 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
     }
 
     /**
-     * @param int    $timestamp
+     * @param int $timestamp
      * @param string $level
      * @param string $message
-     * @param array  $context
+     * @param array $context
      *
      * @return void
      */

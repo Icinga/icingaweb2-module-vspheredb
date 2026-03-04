@@ -53,7 +53,7 @@ class CheckRelatedLookup
 
     /**
      * @param string $type
-     * @param array  $filter
+     * @param array $filter
      *
      * @return BaseDbObject
      *
@@ -80,7 +80,7 @@ class CheckRelatedLookup
 
     /**
      * @param string $type
-     * @param array  $filter
+     * @param array $filter
      *
      * @return array
      */

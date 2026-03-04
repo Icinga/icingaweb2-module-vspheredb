@@ -260,7 +260,7 @@ class CheckCommand extends Command
     }
 
     /**
-     * @param mixed  $string
+     * @param mixed $string
      * @param string $label
      *
      * @return void
@@ -275,7 +275,7 @@ class CheckCommand extends Command
     }
 
     /**
-     * @param VCenterInfo                                  $vcenter
+     * @param VCenterInfo $vcenter
      * @param array<int, array<int, ServerConnectionInfo>> $connections
      *
      * @return void
@@ -360,7 +360,7 @@ class CheckCommand extends Command
 
     /**
      * @param string $color
-     * @param array  $objects
+     * @param array $objects
      *
      * @return void
      */

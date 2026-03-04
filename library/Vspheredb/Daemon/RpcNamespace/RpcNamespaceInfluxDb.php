@@ -25,8 +25,8 @@ class RpcNamespaceInfluxDb
     protected CurlAsync $curl;
 
     /**
-     * @param CurlAsync       $curl
-     * @param LoopInterface   $loop
+     * @param CurlAsync $curl
+     * @param LoopInterface $loop
      * @param LoggerInterface $logger
      */
     public function __construct(CurlAsync $curl, LoopInterface $loop, LoggerInterface $logger)
@@ -49,10 +49,10 @@ class RpcNamespaceInfluxDb
     }
 
     /**
-     * @param string      $baseUrl    Base URL
+     * @param string $baseUrl Base URL
      * @param string|null $apiVersion v1/v2
-     * @param string|null $username   username / organization
-     * @param string|null $password   password / token
+     * @param string|null $username username / organization
+     * @param string|null $password password / token
      *
      * @return PromiseInterface
      */
@@ -68,10 +68,10 @@ class RpcNamespaceInfluxDb
     }
 
     /**
-     * @param string      $baseUrl    Base URL
+     * @param string $baseUrl Base URL
      * @param string|null $apiVersion v1/v2
-     * @param string|null $username   username / organization
-     * @param string|null $password   password / token
+     * @param string|null $username username / organization
+     * @param string|null $password password / token
      *
      * @return PromiseInterface
      */
@@ -89,10 +89,10 @@ class RpcNamespaceInfluxDb
 
     /**
      * @param string $dbName
-     * @param string $baseUrl    Base URL
+     * @param string $baseUrl Base URL
      * @param string $apiVersion v1/v2
-     * @param string $username   username / organization
-     * @param string $password   password / token
+     * @param string $username username / organization
+     * @param string $password password / token
      *
      * @return PromiseInterface
      */
@@ -112,7 +112,7 @@ class RpcNamespaceInfluxDb
     }
 
     /**
-     * @param string      $baseUrl
+     * @param string $baseUrl
      * @param string|null $apiVersion
      * @param string|null $username
      * @param string|null $password

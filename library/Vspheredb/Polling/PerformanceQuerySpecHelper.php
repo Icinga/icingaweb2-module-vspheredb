@@ -10,11 +10,11 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 abstract class PerformanceQuerySpecHelper
 {
     /**
-     * @param string $objectType          'HostSystem', 'VirtualMachine'...
-     * @param array  $counters            [counterKey => name, ...]
-     * @param array  $objectWithInstances [vm-123 => [scsi0:0, ...], ...]. To test: * would be all instances
-     * @param int    $count               Defaults to 180. We have 1h in a 20s interval. 3600 / 20 = 180
-     * @param int    $interval            Defaults to 20s, "realtime"
+     * @param string $objectType 'HostSystem', 'VirtualMachine'...
+     * @param array $counters [counterKey => name, ...]
+     * @param array $objectWithInstances [vm-123 => [scsi0:0, ...], ...]. To test: * would be all instances
+     * @param int $count Defaults to 180. We have 1h in a 20s interval. 3600 / 20 = 180
+     * @param int $interval Defaults to 20s, "realtime"
      *
      * @return PerfQuerySpec[]
      */

@@ -75,7 +75,7 @@ class DbProcessRunner implements EventEmitterInterface
 
     /**
      * @param string $method
-     * @param array  $params
+     * @param array $params
      *
      * @return PromiseInterface
      */

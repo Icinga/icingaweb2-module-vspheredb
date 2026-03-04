@@ -57,7 +57,7 @@ class DbRunner
 
     /**
      * @param LoggerInterface $logger
-     * @param LoopInterface   $loop
+     * @param LoopInterface $loop
      */
     public function __construct(LoggerInterface $logger, LoopInterface $loop)
     {
@@ -198,8 +198,8 @@ class DbRunner
     }
 
     /**
-     * @param int    $vCenterId
-     * @param array  $result
+     * @param int $vCenterId
+     * @param array $result
      * @param string $taskLabel
      * @param string $storeClass
      * @param string $objectClass

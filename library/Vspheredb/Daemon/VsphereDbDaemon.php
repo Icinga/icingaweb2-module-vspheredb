@@ -182,8 +182,8 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     }
 
     /**
-     * @param string      $component
-     * @param string      $formerState
+     * @param string $component
+     * @param string $formerState
      * @param string|null $currentState
      *
      * @return void
@@ -433,8 +433,8 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     }
 
     /**
-     * @param ServerInfo    $server
-     * @param AboutInfo     $about
+     * @param ServerInfo $server
+     * @param AboutInfo $about
      * @param UuidInterface $uuid
      *
      * @return void
@@ -508,7 +508,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     }
 
     /**
-     * @param LoopInterface   $loop
+     * @param LoopInterface $loop
      * @param LoggerInterface $logger
      *
      * @return void

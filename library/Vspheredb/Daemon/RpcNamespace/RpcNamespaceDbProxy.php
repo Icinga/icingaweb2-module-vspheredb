@@ -34,7 +34,7 @@ class RpcNamespaceDbProxy
 
     /**
      * @param string $method
-     * @param array  $params
+     * @param array $params
      *
      * @return PromiseInterface
      */

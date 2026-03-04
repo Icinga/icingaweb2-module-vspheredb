@@ -16,8 +16,8 @@ class MappingHelper
      * and a key vars.disk.sda given as [ 'vars', 'disk', 'sda' ] this would
      * return { size => '255GB' }
      *
-     * @param object|string|null $val  The value to extract data from
-     * @param array       $keys A list of nested keys pointing to desired data
+     * @param object|string|null $val The value to extract data from
+     * @param array $keys A list of nested keys pointing to desired data
      *
      * @return mixed
      */

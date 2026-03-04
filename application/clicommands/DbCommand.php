@@ -64,7 +64,7 @@ class DbCommand extends Command
     /**
      * Prepares a JSON-RPC Connection on STDIN/STDOUT
      *
-     * @param LoopInterface  $loop
+     * @param LoopInterface $loop
      * @param JsonRpcHandler $handler
      *
      * @return JsonRpcConnection

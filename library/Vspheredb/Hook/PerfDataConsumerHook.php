@@ -32,7 +32,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
 
     /**
      * @param LoopInterface $loop
-     * @param array|object  $settings
+     * @param array|object $settings
      *
      * @return $this
      */
@@ -67,7 +67,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
 
     /**
      * @param string $name
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -107,7 +107,7 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
 
     /**
      * @param PerfdataConsumer $consumer
-     * @param LoopInterface    $loop
+     * @param LoopInterface $loop
      *
      * @return static
      */

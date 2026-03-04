@@ -33,7 +33,7 @@ class VCenterCleanup
     protected Zend_Db_Adapter_Abstract $db;
 
     /**
-     * @param Db  $connection
+     * @param Db $connection
      * @param int $vCenterId
      *
      * @throws InvalidArgumentException

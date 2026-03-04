@@ -21,7 +21,7 @@ final class ClientEncoder extends SoapClient
      * Encodes the given RPC function name and arguments as a SOAP request
      *
      * @param string $name
-     * @param array  $args
+     * @param array $args
      *
      * @return Request
      *

@@ -26,7 +26,7 @@ class RemoteClient
     protected ?PromiseInterface $pendingConnection = null;
 
     /**
-     * @param string        $path
+     * @param string $path
      * @param LoopInterface $loop
      */
     public function __construct(string $path, LoopInterface $loop)
@@ -36,7 +36,7 @@ class RemoteClient
     }
 
     /**
-     * @param string     $method
+     * @param string $method
      * @param array|null $params
      *
      * @return PromiseInterface
@@ -49,7 +49,7 @@ class RemoteClient
     }
 
     /**
-     * @param string     $method
+     * @param string $method
      * @param array|null $params
      *
      * @return PromiseInterface

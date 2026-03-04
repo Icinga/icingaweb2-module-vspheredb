@@ -68,10 +68,10 @@ class PerfDataSync implements DaemonTask
     protected bool $loadingWriterConfig = false;
 
     /**
-     * @param VCenter         $vCenter
-     * @param VsphereApi      $api
-     * @param CurlAsync       $curl
-     * @param LoopInterface   $loop
+     * @param VCenter $vCenter
+     * @param VsphereApi $api
+     * @param CurlAsync $curl
+     * @param LoopInterface $loop
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -194,10 +194,10 @@ class PerfDataSync implements DaemonTask
 
     /**
      * @param Zend_Db_Adapter_Abstract $db
-     * @param UuidInterface            $vCenterUuid
-     * @param PerformanceSet           $set
-     * @param CounterLookup            $counterLookup
-     * @param int|null                 $count
+     * @param UuidInterface $vCenterUuid
+     * @param PerformanceSet $set
+     * @param CounterLookup $counterLookup
+     * @param int|null $count
      *
      * @return void
      */
