@@ -31,22 +31,22 @@ abstract class KnownEvent implements JsonSerialization
     /** @var string The user who caused the event */
     public $userName;
 
-    /** @var string|null A formatted text message describing the event. The message may be localized.*/
+    /** @var ?string A formatted text message describing the event. The message may be localized.*/
     public $fullFormattedMessage;
 
-    /** @var ComputeResourceEventArgument|null */
+    /** @var ?ComputeResourceEventArgument */
     public $computeResource;
 
-    /** @var DatacenterEventArgument|null */
+    /** @var ?DatacenterEventArgument */
     public $datacenter;
 
     /** @var DatastoreEventArgument */
     public $ds;
 
-    /** @var HostEventArgument|null */
+    /** @var ?HostEventArgument */
     public $host;
 
-    /** @var VmEventArgument|null */
+    /** @var ?VmEventArgument */
     public $vm;
 
     protected $table;

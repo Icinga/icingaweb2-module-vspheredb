@@ -184,7 +184,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     /**
      * @param string $component
      * @param string $formerState
-     * @param string|null $currentState
+     * @param ?string $currentState
      *
      * @return void
      */
@@ -316,7 +316,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     protected function getApiState(): ?string
     {
@@ -324,7 +324,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     protected function getLocalDbState(): ?string
     {
@@ -735,7 +735,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     }
 
     /**
-     * @param array|null $config
+     * @param ?array $config
      *
      * @return void
      */

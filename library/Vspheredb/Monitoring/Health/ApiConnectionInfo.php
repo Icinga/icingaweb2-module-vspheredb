@@ -127,7 +127,7 @@ class ApiConnectionInfo implements JsonSerialization
      * @param string $server
      * @param int $serverId
      * @param int $vCenterId
-     * @param string|null $lastErrorMessage
+     * @param ?string $lastErrorMessage
      *
      * @throws InvalidArgumentException
      */

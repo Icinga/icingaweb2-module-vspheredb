@@ -115,7 +115,7 @@ class VCenter extends BaseDbObject
      * @param bool $enabled
      * @param bool $required
      *
-     * @return VCenterServer|null
+     * @return ?VCenterServer
      *
      * @throws NotFoundError
      */

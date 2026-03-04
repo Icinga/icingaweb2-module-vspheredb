@@ -249,7 +249,7 @@ class VsphereApi
 
     /**
      * @param ManagedObjectReference $object
-     * @param array|null $properties
+     * @param ?array $properties
      *
      * @return PromiseInterface<?ManagedObject>
      */
@@ -271,7 +271,7 @@ class VsphereApi
 
     /**
      * @param ManagedObjectReference $object
-     * @param array|null $properties
+     * @param ?array $properties
      *
      * @return PromiseInterface<?ManagedObject>
      */
@@ -308,7 +308,7 @@ class VsphereApi
 
     /**
      * @param ManagedObjectReference $object
-     * @param array|null $properties
+     * @param ?array $properties
      *
      * @return PromiseInterface<?ObjectContent>
      */

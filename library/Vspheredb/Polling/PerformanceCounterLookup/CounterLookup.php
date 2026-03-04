@@ -7,7 +7,7 @@ use Ramsey\Uuid\UuidInterface;
 interface CounterLookup
 {
     /**
-     * @param UuidInterface|null $vCenterUuid
+     * @param ?UuidInterface $vCenterUuid
      *
      * @return array
      */
@@ -16,7 +16,7 @@ interface CounterLookup
     /**
      * Hint: instance = '*' -> all instances, instance = '' -> aggregated
      *
-     * @param UuidInterface|null $vCenterUuid
+     * @param ?UuidInterface $vCenterUuid
      *
      * @return array
      */

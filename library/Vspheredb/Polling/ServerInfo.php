@@ -64,7 +64,7 @@ class ServerInfo implements JsonSerialization
      * @param string $key
      * @param null $default
      *
-     * @return mixed|null
+     * @return ?mixed
      */
     public function get(string $key, $default = null): mixed
     {

@@ -78,7 +78,7 @@ class VCenterShipMetricsForm extends ObjectForm
     }
 
     /**
-     * @return PerfdataConsumer|null
+     * @return ?PerfdataConsumer
      */
     protected function selectConsumer(): ?PerfdataConsumer
     {

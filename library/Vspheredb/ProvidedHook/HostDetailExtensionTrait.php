@@ -36,7 +36,7 @@ trait HostDetailExtensionTrait
      * @param object<IcingaDBHost|MonitoringHost> $host
      * @param string $customVar
      *
-     * @return string|null
+     * @return ?string
      */
     abstract protected function getCustomVar(object $host, string $customVar): ?string;
 

@@ -37,7 +37,7 @@ class RemoteClient
 
     /**
      * @param string $method
-     * @param array|null $params
+     * @param ?array $params
      *
      * @return PromiseInterface
      */
@@ -50,7 +50,7 @@ class RemoteClient
 
     /**
      * @param string $method
-     * @param array|null $params
+     * @param ?array $params
      *
      * @return PromiseInterface
      */

@@ -27,7 +27,7 @@ class ServerConnectionInfo
      * @param string $serverName
      * @param bool $enabled
      * @param bool $configured
-     * @param ApiConnectionInfo|null $apiConnection
+     * @param ?ApiConnectionInfo $apiConnection
      */
     public function __construct(
         string $serverName,
