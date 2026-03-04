@@ -17,7 +17,7 @@ trait AsyncControllerHelper
 
     /**
      * @param string $method
-     * @param array  $params
+     * @param array $params
      * @param ?float $timeout
      *
      * @return mixed

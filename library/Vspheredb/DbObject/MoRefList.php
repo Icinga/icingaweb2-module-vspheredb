@@ -13,7 +13,7 @@ abstract class MoRefList
     public const MEMBER_TABLE_NAME = 'unconfigured_table_name_object';
 
     /**
-     * @param VCenter                  $vCenter
+     * @param VCenter $vCenter
      * @param ManagedObjectReference[] $objects
      *
      * @return string
@@ -30,7 +30,7 @@ abstract class MoRefList
     }
 
     /**
-     * @param string  $checksum
+     * @param string $checksum
      * @param VCenter $vCenter
      *
      * @return bool
@@ -46,9 +46,9 @@ abstract class MoRefList
     }
 
     /**
-     * @param string                   $checksum
+     * @param string $checksum
      * @param ManagedObjectReference[] $objects
-     * @param VCenter                  $vCenter
+     * @param VCenter $vCenter
      *
      * @return void
      */
@@ -79,7 +79,7 @@ abstract class MoRefList
     }
 
     /**
-     * @param VCenter                  $vCenter
+     * @param VCenter $vCenter
      * @param ManagedObjectReference[] $objects
      *
      * @return string

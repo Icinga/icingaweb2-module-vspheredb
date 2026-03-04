@@ -19,7 +19,7 @@ class ConnectionState
     protected Adapter|Zend_Db_Adapter_Abstract $db;
 
     /**
-     * @param ApiConnectionInfo[]              $daemonApiConnections
+     * @param ApiConnectionInfo[] $daemonApiConnections
      * @param Zend_Db_Adapter_Abstract|Adapter $db
      */
     public function __construct(array $daemonApiConnections, Zend_Db_Adapter_Abstract|Adapter $db)

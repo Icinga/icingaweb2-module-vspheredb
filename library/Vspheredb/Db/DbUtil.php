@@ -31,7 +31,7 @@ class DbUtil
     }
 
     /**
-     * @param array|string|null        $binary
+     * @param array|string|null $binary
      * @param Zend_Db_Adapter_Abstract $db
      *
      * @return Zend_Db_Expr|Zend_Db_Expr[]|null
@@ -57,7 +57,7 @@ class DbUtil
 
     /**
      * @param array|string|null $binary
-     * @param Adapter           $db
+     * @param Adapter $db
      *
      * @return Expr|Expr[]|null
      */
@@ -79,7 +79,7 @@ class DbUtil
     }
 
     /**
-     * @param array|string|null                $binary
+     * @param array|string|null $binary
      * @param Zend_Db_Adapter_Abstract|Adapter $db
      *
      * @return Expr|Zend_Db_Expr|Expr[]|Zend_Db_Expr[]|null
@@ -96,8 +96,8 @@ class DbUtil
     }
 
     /**
-     * @param array                            $array
-     * @param string                           $method
+     * @param array $array
+     * @param string $method
      * @param Adapter|Zend_Db_Adapter_Abstract $db
      *
      * @return array

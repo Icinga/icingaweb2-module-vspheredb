@@ -89,7 +89,7 @@ class VCenterInfo
     }
 
     /**
-     * @param int                              $id
+     * @param int $id
      * @param Zend_Db_Adapter_Abstract|Adapter $db
      *
      * @return VCenterInfo

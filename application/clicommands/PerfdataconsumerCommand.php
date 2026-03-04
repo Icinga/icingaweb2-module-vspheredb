@@ -66,7 +66,7 @@ class PerfdataconsumerCommand extends Command
 
     /**
      * @param ServerRequest $request
-     * @param Form          $form
+     * @param Form $form
      *
      * @return bool
      */

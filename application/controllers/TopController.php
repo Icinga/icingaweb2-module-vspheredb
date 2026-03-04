@@ -110,7 +110,7 @@ class TopController extends Controller
     }
 
     /**
-     * @param int    $counterUuid
+     * @param int $counterUuid
      * @param string $agg
      *
      * @return array|null
@@ -182,10 +182,10 @@ class TopController extends Controller
     }
 
     /**
-     * @param string      $title
-     * @param array|null  $rows
+     * @param string $title
+     * @param array|null $rows
      * @param string|null $format
-     * @param string      $link
+     * @param string $link
      *
      * @return TopPerfTable
      */
