@@ -11,7 +11,7 @@ trait DetailSections
     /**
      * @param mixed $content
      *
-     * @return HtmlElement|null
+     * @return ?HtmlElement
      */
     protected function section(mixed $content): ?HtmlElement
     {

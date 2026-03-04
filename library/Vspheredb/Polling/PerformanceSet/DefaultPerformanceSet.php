@@ -6,16 +6,16 @@ use RuntimeException;
 
 abstract class DefaultPerformanceSet implements PerformanceSet
 {
-    /** @var string|null Name for this Performance Set */
+    /** @var ?string Name for this Performance Set */
     protected ?string $name = null;
 
-    /** @var string|null vmWare Object Type */
+    /** @var ?string vmWare Object Type */
     protected ?string $objectType = null;
 
-    /** @var string|null vmWare Counters Group */
+    /** @var ?string vmWare Counters Group */
     protected ?string $countersGroup = null;
 
-    /** @var string[]|null Required counters by name */
+    /** @var ?string[] Required counters by name */
     protected ?array $counters = null;
 
     public function getName(): string

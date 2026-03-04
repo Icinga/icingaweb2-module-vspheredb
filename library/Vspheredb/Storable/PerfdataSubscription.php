@@ -51,7 +51,7 @@ class PerfdataSubscription implements DbStorableInterface
     /**
      * @param VCenter $vCenter
      *
-     * @return PerfdataSubscription|null
+     * @return ?PerfdataSubscription
      */
     public static function optionallyLoadForVCenter(VCenter $vCenter, ZfDbStore $store)
     {

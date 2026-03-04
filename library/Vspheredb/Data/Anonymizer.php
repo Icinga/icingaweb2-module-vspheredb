@@ -11,9 +11,9 @@ class Anonymizer
     protected static AnonymizerHook|false|null $instance = null;
 
     /**
-     * @param string|null $string
+     * @param ?string $string
      *
-     * @return string|null
+     * @return ?string
      */
     public static function anonymizeString(?string $string): ?string
     {
@@ -25,9 +25,9 @@ class Anonymizer
     }
 
     /**
-     * @param string|null $string
+     * @param ?string $string
      *
-     * @return string|null
+     * @return ?string
      */
     public static function shuffleString(?string $string): ?string
     {
@@ -39,7 +39,7 @@ class Anonymizer
     }
 
     /**
-     * @return AnonymizerHook|null
+     * @return ?AnonymizerHook
      */
     protected static function instance(): ?AnonymizerHook
     {

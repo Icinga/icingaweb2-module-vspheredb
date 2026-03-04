@@ -54,7 +54,7 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
     }
 
     /**
-     * @param Db|null $db
+     * @param ?Db $db
      *
      * @return void
      */

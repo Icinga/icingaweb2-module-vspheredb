@@ -137,7 +137,7 @@ class VirtualMachine extends BaseDbObject
      * Can be used to avoid duplicate loading of the very same host. As of this
      * writing, this does NOT change VM properties.
      *
-     * @param HostSystem|null $host
+     * @param ?HostSystem $host
      *
      * @return void
      *
@@ -262,7 +262,7 @@ class VirtualMachine extends BaseDbObject
     }
 
     /**
-     * @param object|null $value
+     * @param ?object $value
      *
      * @return void
      */
@@ -332,7 +332,7 @@ class VirtualMachine extends BaseDbObject
      *   }
      * }]
      *
-     * @return array|null
+     * @return ?array
      */
     public function guestIpStack(): ?array
     {
@@ -358,7 +358,7 @@ class VirtualMachine extends BaseDbObject
     }
 
     /**
-     * @param object|null $value
+     * @param ?object $value
      */
     protected function setBootOptions(?object $value): void
     {

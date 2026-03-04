@@ -43,24 +43,24 @@ class AboutInfo
     /** @var string The complete product name, including the version information. */
     public $fullName;
 
-    /** @var string|null A globally unique identifier associated with this service instance */
+    /** @var ?string A globally unique identifier associated with this service instance */
     public $instanceUuid;
 
-    /** @var string|null The license product name */
+    /** @var ?string The license product name */
     public $licenseProductName;
 
-    /** @var string|null The license product version */
+    /** @var ?string The license product version */
     public $licenseProductVersion;
 
     /**
      * Build number for the current session's locale. Typically, this is a small
      * number reflecting a localization change from the normal product build.
      *
-     * @var string|null
+     * @var ?string
      */
     public $localeBuild;
 
-    /** @var string|null Version of the message catalog for the current session's locale */
+    /** @var ?string Version of the message catalog for the current session's locale */
     public $localeVersion;
 
     /** @var string Short form of the product name */

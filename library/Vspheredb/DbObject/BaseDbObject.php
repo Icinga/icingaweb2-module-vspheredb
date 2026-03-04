@@ -174,7 +174,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
      * @param mixed $value
      * @param VCenter $vCenter
      *
-     * @return string|null
+     * @return ?string
      */
     protected function createUuidForMoref(mixed $value, VCenter $vCenter): ?string
     {
@@ -190,7 +190,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     }
 
     /**
-     * @return ManagedObject|null
+     * @return ?ManagedObject
      *
      * @throws NotFoundError
      */
@@ -200,7 +200,7 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
     }
 
     /**
-     * @param ManagedObject|null $object
+     * @param ?ManagedObject $object
      *
      * @return void
      */

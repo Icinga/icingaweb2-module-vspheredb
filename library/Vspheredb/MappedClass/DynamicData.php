@@ -7,9 +7,9 @@ use AllowDynamicProperties;
 #[AllowDynamicProperties]
 class DynamicData
 {
-    /** @var DynamicProperty[]|null */
+    /** @var ?DynamicProperty[] */
     public $dynamicProperty;
 
-    /** @var string|null */
+    /** @var ?string */
     public $dynamicType;
 }

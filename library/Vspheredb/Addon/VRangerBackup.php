@@ -25,7 +25,7 @@ class VRangerBackup extends SimpleBackupTool
     }
 
     /**
-     * @param string|null $annotation
+     * @param ?string $annotation
      *
      * @return void
      */

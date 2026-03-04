@@ -11,7 +11,7 @@ abstract class SimpleBackupTool implements BackupTool
     public const PREFIX = 'no-such-prefix';
 
     /**
-     * @var array|null
+     * @var ?array
      */
     protected ?array $lastAttributes = null;
 
@@ -84,7 +84,7 @@ abstract class SimpleBackupTool implements BackupTool
     }
 
     /**
-     * @return array|null
+     * @return ?array
      */
     public function getAttributes(): ?array
     {
@@ -105,7 +105,7 @@ abstract class SimpleBackupTool implements BackupTool
     }
 
     /**
-     * @param string|null $annotation
+     * @param ?string $annotation
      *
      * @return void
      */

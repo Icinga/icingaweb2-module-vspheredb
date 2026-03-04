@@ -378,7 +378,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
     }
 
     /**
-     * @param array|null $uuids
+     * @param ?array $uuids
      *
      * @return $this
      */
@@ -390,7 +390,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
     }
 
     /**
-     * @param array|null $uuids
+     * @param ?array $uuids
      *
      * @return $this
      */

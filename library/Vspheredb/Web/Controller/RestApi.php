@@ -37,7 +37,7 @@ trait RestApi
     /**
      * @param Response $response
      * @param string $message
-     * @param int|null $code
+     * @param ?int $code
      *
      * @return void
      */

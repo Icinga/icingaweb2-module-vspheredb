@@ -50,9 +50,9 @@ class RpcNamespaceInfluxDb
 
     /**
      * @param string $baseUrl Base URL
-     * @param string|null $apiVersion v1/v2
-     * @param string|null $username username / organization
-     * @param string|null $password password / token
+     * @param ?string $apiVersion v1/v2
+     * @param ?string $username username / organization
+     * @param ?string $password password / token
      *
      * @return PromiseInterface
      */
@@ -69,9 +69,9 @@ class RpcNamespaceInfluxDb
 
     /**
      * @param string $baseUrl Base URL
-     * @param string|null $apiVersion v1/v2
-     * @param string|null $username username / organization
-     * @param string|null $password password / token
+     * @param ?string $apiVersion v1/v2
+     * @param ?string $username username / organization
+     * @param ?string $password password / token
      *
      * @return PromiseInterface
      */
@@ -113,9 +113,9 @@ class RpcNamespaceInfluxDb
 
     /**
      * @param string $baseUrl
-     * @param string|null $apiVersion
-     * @param string|null $username
-     * @param string|null $password
+     * @param ?string $apiVersion
+     * @param ?string $username
+     * @param ?string $password
      *
      * @return PromiseInterface
      */

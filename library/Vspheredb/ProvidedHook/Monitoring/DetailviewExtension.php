@@ -15,7 +15,7 @@ class DetailviewExtension extends DetailviewExtensionHook
     /**
      * @param MonitoredObject $object
      *
-     * @return ValidHtml|null
+     * @return ?ValidHtml
      */
     public function getHtmlForObject(MonitoredObject $object): ?ValidHtml
     {

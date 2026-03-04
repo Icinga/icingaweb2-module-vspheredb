@@ -33,7 +33,7 @@ class MonitoringConnection extends BaseDbObject
     /**
      * @param VCenter $vCenter
      *
-     * @return Ido|null
+     * @return ?Ido
      *
      * @throws NotFoundError
      */

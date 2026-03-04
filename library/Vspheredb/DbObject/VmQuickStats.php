@@ -58,7 +58,7 @@ class VmQuickStats extends BaseDbObject
         'summary.quickStats.uptimeSeconds'                => 'uptime'
     ];
 
-    /** @var static[]|null */
+    /** @var ?static[] */
     protected static ?array $preloadCache = null;
 
     /**

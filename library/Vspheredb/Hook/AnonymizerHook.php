@@ -5,16 +5,16 @@ namespace Icinga\Module\Vspheredb\Hook;
 abstract class AnonymizerHook
 {
     /**
-     * @param string|null $string
+     * @param ?string $string
      *
-     * @return string|null
+     * @return ?string
      */
     abstract public function anonymizeString(?string $string): ?string;
 
     /**
-     * @param string|null $string
+     * @param ?string $string
      *
-     * @return string|null
+     * @return ?string
      */
     abstract public function shuffleString(?string $string): ?string;
 }

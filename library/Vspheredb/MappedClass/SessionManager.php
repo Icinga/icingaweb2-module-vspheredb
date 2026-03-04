@@ -20,7 +20,7 @@ class SessionManager
      *
      * RequiredPrivilege: System.Anonymous
      *
-     * @var UserSession|null
+     * @var ?UserSession
      */
     public $currentSession;
 
@@ -47,7 +47,7 @@ class SessionManager
      *
      * RequiredPrivilege: System.Anonymous
      *
-     * @var array|null
+     * @var ?array
      */
     public $messageLocaleList;
 
@@ -56,7 +56,7 @@ class SessionManager
      *
      * RequiredPrivilege: Sessions.TerminateSession
      *
-     * @var UserSession[]|null
+     * @var ?UserSession[]
      */
     public $sessionList;
 
@@ -69,7 +69,7 @@ class SessionManager
      *
      * RequiredPrivilege: System.Anonymous
      *
-     * @var array|null
+     * @var ?array
      */
     public $supportedLocaleList;
 }

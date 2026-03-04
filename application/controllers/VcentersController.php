@@ -24,7 +24,7 @@ class VcentersController extends ObjectsController
     use AsyncControllerHelper;
 
     /**
-     * @return array|null
+     * @return ?array
      */
     protected function getConnectionsByVCenter(): ?array
     {

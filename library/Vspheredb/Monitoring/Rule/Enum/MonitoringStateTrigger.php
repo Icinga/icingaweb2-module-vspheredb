@@ -12,7 +12,7 @@ enum MonitoringStateTrigger: string
     /**
      * Allow to create a trigger out of null. Null leads to the IGNORE case.
      *
-     * @param string|null $from
+     * @param ?string $from
      *
      * @return self
      */

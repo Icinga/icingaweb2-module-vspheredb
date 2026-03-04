@@ -19,7 +19,7 @@ class BulkPathLookup
 
     /**
      * @param Db $db
-     * @param array|null $vCenterUuids
+     * @param ?array $vCenterUuids
      */
     public function __construct(Db $db, ?array $vCenterUuids = null)
     {
@@ -28,7 +28,7 @@ class BulkPathLookup
     }
 
     /**
-     * @param string|null $objectParent
+     * @param ?string $objectParent
      *
      * @return array
      */

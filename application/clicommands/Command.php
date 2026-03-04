@@ -163,7 +163,7 @@ class Command extends CliCommand
     /**
      * @param string $task
      * @param Exception|string $error
-     * @param string|null $subject
+     * @param ?string $subject
      *
      * @return void
      */

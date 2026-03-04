@@ -81,7 +81,7 @@ trait SingleObjectMonitoring
 
     /**
      * @param BaseDbObject $object
-     * @param bool|null $inspect
+     * @param ?bool $inspect
      *
      * @return Hint
      */
@@ -105,7 +105,7 @@ trait SingleObjectMonitoring
     }
 
     /**
-     * @param bool|null $inspect
+     * @param ?bool $inspect
      *
      * @return Link
      */
@@ -129,7 +129,7 @@ trait SingleObjectMonitoring
     }
 
     /**
-     * @param bool|null $inspect
+     * @param ?bool $inspect
      *
      * @return Link
      */

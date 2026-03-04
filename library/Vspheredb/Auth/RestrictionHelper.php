@@ -21,7 +21,7 @@ class RestrictionHelper
     /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
-    /** @var string[]|null */
+    /** @var ?string[] */
     protected ?array $restrictedVCenterUuids = null;
 
     /**

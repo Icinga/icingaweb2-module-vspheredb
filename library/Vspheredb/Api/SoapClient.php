@@ -39,10 +39,10 @@ class SoapClient
 
     /**
      * @param CurlAsync $curl
-     * @param string|null $wsdl
+     * @param ?string $wsdl
      * @param array $options
      * @param array $curlOptions
-     * @param LoggerInterface|null $logger
+     * @param ?LoggerInterface $logger
      *
      * @throws SoapFault
      */

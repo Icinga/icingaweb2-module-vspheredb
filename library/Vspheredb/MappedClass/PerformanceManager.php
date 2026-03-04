@@ -10,7 +10,7 @@ class PerformanceManager
     /** @var PerformanceDescription */
     public $description;
 
-    /** @var PerfInterval[]|null */
+    /** @var ?PerfInterval[] */
     public $historicalInterval;
 
     /** @var PerfCounterInfo[] */

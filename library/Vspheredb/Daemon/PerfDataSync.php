@@ -197,7 +197,7 @@ class PerfDataSync implements DaemonTask
      * @param UuidInterface $vCenterUuid
      * @param PerformanceSet $set
      * @param CounterLookup $counterLookup
-     * @param int|null $count
+     * @param ?int $count
      *
      * @return void
      */
@@ -254,7 +254,7 @@ class PerfDataSync implements DaemonTask
     }
 
     /**
-     * @param int|null $count
+     * @param ?int $count
      *
      * @return void
      */

@@ -40,7 +40,7 @@ class ConfigWatch
     protected ?LoopInterface $loop = null;
 
     /**
-     * @param string|null $dbResourceName
+     * @param ?string $dbResourceName
      */
     public function __construct(?string $dbResourceName = null)
     {
@@ -89,7 +89,7 @@ class ConfigWatch
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     protected function getResourceName(): ?string
     {
@@ -97,7 +97,7 @@ class ConfigWatch
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     protected function loadDbResourceName(): ?string
     {
@@ -107,9 +107,9 @@ class ConfigWatch
     }
 
     /**
-     * @param string|null $name
+     * @param ?string $name
      *
-     * @return array|null
+     * @return ?array
      */
     protected function loadDbConfigFromDisk(?string $name): ?array
     {

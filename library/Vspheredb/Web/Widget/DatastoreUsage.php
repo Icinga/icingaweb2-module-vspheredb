@@ -43,7 +43,7 @@ class DatastoreUsage extends BaseHtmlElement
 
     protected string $baseUrl = 'vspheredb/vm';
 
-    /** @var Link[]|null Array key is the VirtualMachine id */
+    /** @var ?Link[] Array key is the VirtualMachine id */
     protected ?array $diskLinks = null;
 
     public function __construct(Datastore $datastore)

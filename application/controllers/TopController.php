@@ -98,7 +98,7 @@ class TopController extends Controller
      * @param int $counterUuid
      * @param     $parentUuid
      *
-     * @return array|null
+     * @return ?array
      */
     protected function fetchTop(int $counterUuid, $parentUuid = null): ?array
     {
@@ -113,7 +113,7 @@ class TopController extends Controller
      * @param int $counterUuid
      * @param string $agg
      *
-     * @return array|null
+     * @return ?array
      */
     protected function fetchTopPerParent(int $counterUuid, string $agg): ?array
     {
@@ -183,8 +183,8 @@ class TopController extends Controller
 
     /**
      * @param string $title
-     * @param array|null $rows
-     * @param string|null $format
+     * @param ?array $rows
+     * @param ?string $format
      * @param string $link
      *
      * @return TopPerfTable

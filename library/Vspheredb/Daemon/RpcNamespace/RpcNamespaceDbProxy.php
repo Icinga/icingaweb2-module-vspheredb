@@ -23,7 +23,7 @@ class RpcNamespaceDbProxy
     }
 
     /**
-     * @param DbProcessRunner|null $runner
+     * @param ?DbProcessRunner $runner
      *
      * @return void
      */

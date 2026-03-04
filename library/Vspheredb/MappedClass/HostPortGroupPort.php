@@ -39,7 +39,7 @@ class HostPortGroupPort
      * - unknown          : This port group serves an entity of unspecified kind
      * - virtualMachine   : A virtual machine is connected to this port group
      *
-     * @var string|null
+     * @var ?string
      */
     public $type;
 }

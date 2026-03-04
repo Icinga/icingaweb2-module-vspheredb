@@ -49,7 +49,7 @@ class MetricAlarmExpression extends AlarmExpression
      * the red status is triggered. If unset, the red status is triggered
      * immediately when the red condition becomes true.
      *
-     * @var int|null
+     * @var ?int
      */
     public $redInterval;
 
@@ -70,7 +70,7 @@ class MetricAlarmExpression extends AlarmExpression
      * before the yellow status is triggered. If unset, the yellow status is
      * triggered immediately when the yellow condition becomes true.
      *
-     * @var int|null
+     * @var ?int
      */
     public $yellowInterval;
 }
