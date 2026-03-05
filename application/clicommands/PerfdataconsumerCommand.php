@@ -7,7 +7,7 @@ use gipfl\Web\Form;
 use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Web\Form\PerfdataConsumerForm;
-use RingCentral\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\ServerRequest;
 
 class PerfdataconsumerCommand extends Command
 {

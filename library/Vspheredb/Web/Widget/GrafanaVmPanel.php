@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 
-use function RingCentral\Psr7\build_query;
+use function GuzzleHttp\Psr7\build_query;
 
 /**
  * This is just an experiment. Disabled, as it is pretty slow
