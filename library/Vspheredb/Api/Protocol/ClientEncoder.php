@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Api\Protocol;
 
 use SoapClient;
-use RingCentral\Psr7\Request;
+use GuzzleHttp\Psr7\Request;
 use SoapFault;
 
 /**
