@@ -40,14 +40,10 @@ class RpcNamespaceLogger
             $this->logger->notice("Will change the log level to '$level'");
         }
         $this->logger->addFilter($newFilter);
-        $remove = [];
         foreach ($this->logger->getFilters() as $filter) {
             if ($filter instanceof LogLevelFilter && $filter !== $newFilter) {
-                $remove[] = $filter;
+                $this->logger->removeFilter($filter);
             }
-        }
-        foreach ($remove as $filter) {
-            $this->logger->removeFilter($filter);
         }
         if ($newFilter->wants('notice', '')) {
             $this->logger->notice("Changed log level to '$level'");

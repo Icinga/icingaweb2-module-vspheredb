@@ -42,7 +42,7 @@ class DaemonController extends Controller
 
     protected function prepareLogSettings()
     {
-        $logLevelForm = new LogLevelForm($this->remoteClient(), $this->loop());
+        $logLevelForm = new LogLevelForm($this->remoteClient(), $this->loop(), $this->db()->getDbAdapter());
         $logLevelForm->on($logLevelForm::ON_SUCCESS, function () {
             $this->redirectNow($this->url());
         });
