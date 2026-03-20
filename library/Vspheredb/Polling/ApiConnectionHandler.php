@@ -21,42 +21,45 @@ class ApiConnectionHandler implements EventEmitterInterface
     use EventEmitterTrait;
 
     public const ON_INITIALIZED_SERVER = 'initialized';
+
     public const ON_CONNECT = 'connection';
+
     public const ON_DISCONNECT = 'disconnect';
+
     protected const TIMEOUT_ON_FAILURE = 60;
 
     /** @var CurlAsync */
-    protected $curl;
+    protected CurlAsync $curl;
 
     /** @var LoggerInterface */
-    protected $parentLogger;
+    protected LoggerInterface $parentLogger;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /** @var ?LoopInterface */
-    protected $loop;
+    protected ?LoopInterface $loop = null;
 
     /** @var ServerSet */
-    protected $servers;
+    protected ServerSet $servers;
 
     /** @var ApiConnection[]  $vcenterId => ApiConnection */
-    protected $apiConnections = [];
+    protected array $apiConnections = [];
 
     /** @var array<int, array<int, ServerInfo>> [vcenterId => [serverId => ServerInfo, ...] */
-    protected $vCenterCandidates = [];
+    protected array $vCenterCandidates = [];
 
     /** @var array<int, Deferred> [serverId => Deferred] */
-    protected $initializations = [];
+    protected array $initializations = [];
 
     /** @var array<int, TimerInterface> key is the serverId */
-    protected $failing = [];
+    protected array $failing = [];
 
     /** @var array<int, string> key is the serverId */
-    protected $failingErrorMessages = [];
+    protected array $failingErrorMessages = [];
 
     /** @var ServerSet */
-    protected $appliedServers;
+    protected ServerSet $appliedServers;
 
     public function __construct(CurlAsync $curl, LoggerInterface $logger)
     {
@@ -66,7 +69,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         $this->appliedServers = $this->servers = new ServerSet();
     }
 
-    public function setServerSet(ServerSet $servers)
+    public function setServerSet(ServerSet $servers): void
     {
         if (!$servers->equals($this->servers)) {
             $this->servers = $servers;
@@ -111,10 +114,11 @@ class ApiConnectionHandler implements EventEmitterInterface
         return $connections;
     }
 
-    protected function applyServers(ServerSet $servers)
+    protected function applyServers(ServerSet $servers): void
     {
         if ($servers->equals($this->appliedServers)) {
             $this->logger->debug('Server Set is unchanged');
+
             return;
         }
         $vCenterCandidates = [];
@@ -142,7 +146,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         $this->removeObsoleteFailingServers();
     }
 
-    protected function startInitialization(ServerInfo $server)
+    protected function startInitialization(ServerInfo $server): void
     {
         $serverId = $server->getServerId();
         $this->initializations[$serverId] = $initialize = $this->initialize($server);
@@ -180,25 +184,20 @@ class ApiConnectionHandler implements EventEmitterInterface
                 });
         });
         $apiConnection->on(ApiConnection::ON_ERROR, function (ApiConnection $connection) use ($server, $deferred) {
+            $message = 'Initialization failed';
             if ($error = $connection->getLastErrorMessage()) {
-                $message = "Initialization failed: $error";
-            } else {
-                $message = 'Initialization failed';
+                $message .= ": $error";
             }
             $deferred->reject(new Exception($message));
             $this->setFailed($server, $message);
         });
-        $this->logger->notice(sprintf(
-            'initializing server %d: %s',
-            $server->getServerId(),
-            $server->getIdentifier()
-        ));
+        $this->logger->notice(sprintf('initializing server %d: %s', $server->getServerId(), $server->getIdentifier()));
         $apiConnection->run($this->loop);
 
         return $deferred;
     }
 
-    protected function launchNewlyConfiguredVCenters()
+    protected function launchNewlyConfiguredVCenters(): void
     {
         foreach ($this->vCenterCandidates as $vCenterId => $servers) {
             /** @var ServerInfo $server */
@@ -241,7 +240,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         }
     }
 
-    protected function setFailed(ServerInfo $server, ?string $message = 'unknown error')
+    protected function setFailed(ServerInfo $server, ?string $message = 'unknown error'): void
     {
         $serverId = $server->getServerId();
         $this->logger->warning(sprintf(
@@ -259,6 +258,7 @@ class ApiConnectionHandler implements EventEmitterInterface
                     'Not retrying %s, connection has been removed',
                     $server->getIdentifier()
                 ));
+
                 return;
             }
             $this->loop->cancelTimer($this->failing[$serverId]);
@@ -292,7 +292,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         return $list;
     }
 
-    protected function removeObsoleteFailingServers()
+    protected function removeObsoleteFailingServers(): void
     {
         $serverMap = $this->listAppliedServers();
         foreach ($this->failing as $serverId => $timer) {
@@ -305,7 +305,7 @@ class ApiConnectionHandler implements EventEmitterInterface
         }
     }
 
-    protected function removeUnConfiguredApiConnections()
+    protected function removeUnConfiguredApiConnections(): void
     {
         $remove = [];
         foreach ($this->apiConnections as $vCenterId => $connection) {
@@ -331,13 +331,13 @@ class ApiConnectionHandler implements EventEmitterInterface
         return new ApiConnection($this->curl, $server, $this->parentLogger);
     }
 
-    public function run(LoopInterface $loop)
+    public function run(LoopInterface $loop): void
     {
         $this->loop = $loop;
         $this->applyServers($this->servers);
     }
 
-    public function stop()
+    public function stop(): void
     {
         $this->logger->notice('Stopping API connection handler');
         $this->applyServers($this->servers = new ServerSet());

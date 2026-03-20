@@ -7,40 +7,43 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class HostSensorsTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table sensors-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected $searchColumns = [
         'name',
-        'sensor_type',
+        'sensor_type'
     ];
 
-    /** @var HostSystem */
-    protected $host;
+    /** @var ?HostSystem */
+    protected ?HostSystem $host = null;
 
-    protected $lastType;
+    protected ?string $lastType = null;
 
-    protected $summaries;
+    protected ?array $summaries = null;
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $this->renderTypeIfNew($row->sensor_type);
+
         return static::row([
             $this->renderHealthState($row->health_state),
             $row->name,
-            $this->renderCurrentMeasurement($row),
+            $this->renderCurrentMeasurement($row)
         ]);
     }
 
     /**
-     * @param $type
+     * @param string $type
      */
-    protected function renderTypeIfNew($type)
+    protected function renderTypeIfNew(string $type): void
     {
         if ($this->lastType !== $type) {
             $summary = $this->getSummaryByType($type);
@@ -54,10 +57,7 @@ class HostSensorsTable extends ZfQueryBasedTable
             }
 
             $this->nextHeader()->add(
-                $this::th($title, [
-                    'colspan' => 3,
-                    'class'   => 'table-header-day'
-                ])
+                $this::th($title, ['colspan' => 3, 'class' => 'table-header-day'])
             );
 
             $this->lastType = $type;
@@ -65,7 +65,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         }
     }
 
-    protected function makeHealthStateBadge($state, $count)
+    protected function makeHealthStateBadge(string $state, int $count): Link
     {
         return Link::create($count, '#', null, ['class' => ['state', $state]]);
     }
@@ -84,26 +84,21 @@ class HostSensorsTable extends ZfQueryBasedTable
         return $this->summaries[$type];
     }
 
-    protected function renderHealthState($state)
+    protected function renderHealthState(string $state): Icon
     {
-        switch ($state) {
-            case 'green':
-                return Icon::create('ok', ['class' => ['state', $state]]);
-            case 'red':
-            case 'yellow':
-                return Icon::create('attention-alt', ['class' => ['state', $state]]);
-            case 'unknown':
-                return Icon::create('help', ['class' => ['state gray']]);
-            default:
-                return $state;
-        }
+        return match ($state) {
+            'green'         => Icon::create('ok', ['class' => ['state', $state]]),
+            'red', 'yellow' => Icon::create('attention-alt', ['class' => ['state', $state]]),
+            'unknown'       => Icon::create('help', ['class' => ['state gray']]),
+            default         => $state
+        };
     }
 
     public function renderSummaries()
     {
     }
 
-    protected function renderCurrentMeasurement($row)
+    protected function renderCurrentMeasurement(object $row): string
     {
         if ($row->base_units === null) {
             return '-';
@@ -116,7 +111,7 @@ class HostSensorsTable extends ZfQueryBasedTable
         );
     }
 
-    public function filterHost(HostSystem $host)
+    public function filterHost(HostSystem $host): static
     {
         $this->host = $host;
 
@@ -126,22 +121,24 @@ class HostSensorsTable extends ZfQueryBasedTable
     /**
      * @return array
      */
-    public function fetchSummaries()
+    public function fetchSummaries(): array
     {
         // Well... ROLLUP would help.
         $db = $this->db();
 
         $sums = [];
-        $query = $db->select()->from(['hs' => 'host_sensor'], [
-            'sensor_type'  => 'sensor_type',
-            'health_state' => 'health_state',
-            'cnt'          => 'COUNT(*)',
-        ])
+        $query = $db->select()
+            ->from(['hs' => 'host_sensor'], [
+                'sensor_type'  => 'sensor_type',
+                'health_state' => 'health_state',
+                'cnt'          => 'COUNT(*)'
+            ])
             ->where('base_units IS NOT NULL')
             ->group('sensor_type')
             ->group('health_state')
             ->order('sensor_type')
             ->order('health_state');
+
         if ($this->host) {
             $query->where('host_uuid = ?', $this->host->get('uuid'));
         }
@@ -154,7 +151,7 @@ class HostSensorsTable extends ZfQueryBasedTable
                     'green' => 0,
                     'yellow' => 0,
                     'unknown' => 0,
-                    'red' => 0,
+                    'red' => 0
                 ];
             }
 
@@ -165,16 +162,17 @@ class HostSensorsTable extends ZfQueryBasedTable
     }
 
     /**
-     * @return \Zend_Db_Select
+     * @return Zend_Db_Select
      */
-    protected function prepareQuery()
+    protected function prepareQuery(): Zend_Db_Select
     {
-        $query = $this->db()->select()->from([
-            'hpd' => 'host_sensor'
-        ])->order('sensor_type')->order('name')->limit(1000);
-
-        $query->where('base_units IS NOT NULL');
-        // $query->where('health_state != ?', 'unknown');
+        $query = $this->db()->select()
+            ->from(['hpd' => 'host_sensor'])
+            ->order('sensor_type')
+            ->order('name')
+            ->limit(1000)
+            ->where('base_units IS NOT NULL');
+        //    ->where('health_state != ?', 'unknown');
 
         if ($this->host) {
             $query->where('host_uuid = ?', $this->host->get('uuid'));

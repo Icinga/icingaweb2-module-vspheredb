@@ -9,34 +9,35 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class OverviewTree extends BaseHtmlElement
 {
     use TranslationHelper;
 
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     /** @var RestrictionHelper */
-    protected $restrictionHelper;
+    protected RestrictionHelper $restrictionHelper;
 
     protected $tag = 'ul';
 
     protected $defaultAttributes = [
         'class'            => 'tree',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
-    protected $typeFilter;
+    protected ?string $typeFilter;
 
-    public function __construct(Db $db, RestrictionHelper $restrictionHelper, $typeFilter = null)
+    public function __construct(Db $db, RestrictionHelper $restrictionHelper, ?string $typeFilter = null)
     {
         $this->db = $db;
         $this->typeFilter = $typeFilter;
         $this->restrictionHelper = $restrictionHelper;
     }
 
-    public function renderContent()
+    public function renderContent(): string
     {
         $this->add(
             $this->dumpTree(
@@ -51,18 +52,18 @@ class OverviewTree extends BaseHtmlElement
         return parent::renderContent();
     }
 
-    protected function getTree()
+    protected function getTree(): array
     {
         $tree = [];
         $all = [];
         foreach ($this->fetchTree() as $item) {
-            if (
-                $this->typeFilter
-                && (string) $item->parent_object_type === 'Datacenter'
-                && $item->object_name !== $this->typeFilter
-            ) {
+//            if (
+//                $this->typeFilter
+//                && (string) $item->parent_object_type === 'Datacenter'
+//                && $item->object_name !== $this->typeFilter
+//            ) {
                 // continue; // see #260
-            }
+//            }
             $item->children = [];
 
             /** @var string $uuid */
@@ -81,37 +82,30 @@ class OverviewTree extends BaseHtmlElement
         return $tree;
     }
 
-    protected function fetchTree()
+    protected function fetchTree(): ?array
     {
         $db = $this->db->getDbAdapter();
-        $hostCnt = $db->select()->from('object', [
-            'cnt'         => 'COUNT(*)',
-            'parent_uuid' => 'parent_uuid'
-        ])->where('object_type = ?', 'HostSystem')->group('parent_uuid');
-        $vmCnt = $db->select()->from('object', [
-            'cnt'         => 'COUNT(*)',
-            'parent_uuid' => 'parent_uuid'
-        ])->where('object_type = ?', 'VirtualMachine')->group('parent_uuid');
-        $dsCnt = $db->select()->from('object', [
-            'cnt'         => 'COUNT(*)',
-            'parent_uuid' => 'parent_uuid'
-        ])->where('object_type = ?', 'Datastore')->group('parent_uuid');
-        $networkCnt = $db->select()->from('object', [
-            'cnt'         => 'COUNT(*)',
-            'parent_uuid' => 'parent_uuid'
-        ])->where('object_type = ?', 'DistributedVirtualSwitch')->group('parent_uuid');
+        $hostCnt = $db->select()
+            ->from('object', ['cnt' => 'COUNT(*)', 'parent_uuid' => 'parent_uuid'])
+            ->where('object_type = ?', 'HostSystem')
+            ->group('parent_uuid');
+        $vmCnt = $db->select()
+            ->from('object', ['cnt' => 'COUNT(*)', 'parent_uuid' => 'parent_uuid'])
+            ->where('object_type = ?', 'VirtualMachine')
+            ->group('parent_uuid');
+        $dsCnt = $db->select()
+            ->from('object', ['cnt' => 'COUNT(*)', 'parent_uuid' => 'parent_uuid'])
+            ->where('object_type = ?', 'Datastore')
+            ->group('parent_uuid');
+        $networkCnt = $db->select()
+            ->from('object', ['cnt' => 'COUNT(*)', 'parent_uuid' => 'parent_uuid'])
+            ->where('object_type = ?', 'DistributedVirtualSwitch')
+            ->group('parent_uuid');
 
         $main = $db->select()
-            ->from(['o' => 'object'], [
-                'o.*',
-                'parent_object_type' => 'po.object_type',
-            ])
+            ->from(['o' => 'object'], ['o.*', 'parent_object_type' => 'po.object_type'])
             ->joinLeft(['po' => 'object'], 'po.uuid = o.parent_uuid', [])
-            ->where(' o.object_type NOT IN (?)', [
-                'VirtualMachine',
-                'HostSystem',
-                'Datastore'
-            ]);
+            ->where(' o.object_type NOT IN (?)', ['VirtualMachine', 'HostSystem', 'Datastore']);
         $this->restrictionHelper->filterQuery($hostCnt);
         $this->restrictionHelper->filterQuery($vmCnt);
         $this->restrictionHelper->filterQuery($dsCnt);
@@ -123,7 +117,7 @@ class OverviewTree extends BaseHtmlElement
                 'cnt_host'    => 'hc.cnt',
                 'cnt_vm'      => 'vc.cnt',
                 'cnt_ds'      => 'dc.cnt',
-                'cnt_network' => 'nc.cnt',
+                'cnt_network' => 'nc.cnt'
             ])
             ->joinLeft(['vc' => $vmCnt], 'vc.parent_uuid = f.uuid', [])
             ->joinLeft(['hc' => $hostCnt], 'hc.parent_uuid = f.uuid', [])
@@ -135,54 +129,41 @@ class OverviewTree extends BaseHtmlElement
         return $this->db->getDbAdapter()->fetchAll($query);
     }
 
-    protected function dumpTree($tree, $level = 0)
+    protected function dumpTree(object $tree, int $level = 0): HtmlElement
     {
         $hasChildren = ! empty($tree->children);
         $type = $tree->object_type;
         $li = Html::tag('li');
-        if (! $hasChildren) {
-            $li->getAttributes()->add('class', 'collapsed');
-        }
 
         if ($hasChildren) {
             $li->add(Html::tag('span', ['class' => 'handle']));
+        } else {
+            $li->getAttributes()->add('class', 'collapsed');
         }
 
         if ($level === 0) {
-            $li->add(Html::tag('a', [
-                'name'  => $tree->object_name,
-                'class' => 'icon-globe'
-            ], $tree->object_name));
+            $li->add(Html::tag('a', ['name' => $tree->object_name, 'class' => 'icon-globe'], $tree->object_name));
         } else {
             $count = $tree->cnt_vm + $tree->cnt_host + $tree->cnt_ds;
-            if ($count) {
-                $label = sprintf('%s (%d)', $tree->object_name, $count);
-                // $label = sprintf('%s (%d VMs, %d Hosts)', $tree->object_name, $tree->cnt_vm, $tree->cnt_host);
-            } else {
-                $label = $tree->object_name;
-            }
-            $attributes = [
-                'class' => [$this->getClassByType($type), $tree->overall_status]
-            ];
+            $label = $count ? sprintf('%s (%d)', $tree->object_name, $count) : $tree->object_name;
+            $attributes = ['class' => [$this->getClassByType($type), $tree->overall_status]];
 
-            if ($count) {
-                $li->add(Link::create(
+            $link = $count
+                ? Link::create(
                     $label,
                     $tree->cnt_host > 0
                         ? 'vspheredb/hosts'
                         : ($tree->cnt_ds > 0 ? 'vspheredb/datastores' : 'vspheredb/vms'),
                     Util::uuidParams($tree->uuid),
                     $attributes
-                ));
-            } else {
-                $li->add(Html::tag('a', $attributes, $label));
-            }
+                )
+                : Html::tag('a', $attributes, $label);
+
+            $li->add($link);
         }
 
         if ($hasChildren) {
-            $li->add(
-                $ul = Html::tag('ul')
-            );
+            $li->add($ul = Html::tag('ul'));
             foreach ($tree->children as $child) {
                 $ul->add($this->dumpTree($child, $level + 1));
             }
@@ -198,27 +179,22 @@ class OverviewTree extends BaseHtmlElement
      */
     protected function getClassByType(string $type): string
     {
-        $typeClasses = [
-            'ComputeResource'        => 'cubes',
-            'ClusterComputeResource' => 'cubes',
-            'Datacenter'             => 'home',
-            'DistributedVirtualPortgroup' => 'plug',
-            'DistributedVirtualSwitch' => 'sitemap',
+        return 'icon-' . match ($type) {
+            'ComputeResource',
+            'ClusterComputeResource'         => 'cubes',
+            'Datacenter'                     => 'home',
+            'DistributedVirtualPortgroup'    => 'plug',
+            'DistributedVirtualSwitch',
             'VmwareDistributedVirtualSwitch' => 'sitemap',
-            'Datastore'              => 'database',
-            // 'DatastoreHostMount',
-            'Folder'                 => 'folder-empty',
-            'Network'                => 'arrows-cw',
-            'ResourcePool'           => 'chart-pie',
-            'StoragePod'             => 'cloud',
-            'HostSystem'             => 'host',
-            'VirtualApp'             => 'th-thumb-empty',
-            'VirtualMachine'         => 'service',
-        ];
-        if (isset($typeClasses[$type])) {
-            return 'icon-' . $typeClasses[$type];
-        } else {
-            return 'icon-attention-alt';
-        }
+            'Datastore'                      => 'database',
+            'Folder'                         => 'folder-empty',
+            'Network'                        => 'arrows-cw',
+            'ResourcePool'                   => 'chart-pie',
+            'StoragePod'                     => 'cloud',
+            'HostSystem'                     => 'host',
+            'VirtualApp'                     => 'th-thumb-empty',
+            'VirtualMachine'                 => 'service',
+            default                          => 'attention-alt'
+        };
     }
 }

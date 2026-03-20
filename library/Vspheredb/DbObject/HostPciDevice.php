@@ -2,11 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Exception\IcingaException;
+
 class HostPciDevice extends BaseDbObject
 {
-    protected $table = 'host_pci_device';
+    protected ?string $table = 'host_pci_device';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'id'              => null,
         'host_uuid'       => null,
         'bus'             => null,
@@ -20,14 +22,14 @@ class HostPciDevice extends BaseDbObject
         'vendor_name'     => null,
         'sub_vendor_id'   => null,
         'parent_bridge'   => null,
-        'vcenter_uuid'    => null,
+        'vcenter_uuid'    => null
     ];
 
-    protected $objectReferences = [
-        'host_uuid',
+    protected array $objectReferences = [
+        'host_uuid'
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'id'           => 'id',
         'bus'          => 'bus',
         'slot'         => 'slot',
@@ -39,12 +41,12 @@ class HostPciDevice extends BaseDbObject
         'vendorId'     => 'vendor_id',
         'vendorName'   => 'vendor_name',
         'subVendorId'  => 'sub_vendor_id',
-        'parentBridge' => 'parent_bridge',
+        'parentBridge' => 'parent_bridge'
     ];
 
-    protected $keyName = ['host_uuid', 'id'];
+    protected string|array|null $keyName = ['host_uuid', 'id'];
 
-    public function setMapped($properties, VCenter $vCenter)
+    public function setMapped(object $properties, VCenter $vCenter): static
     {
         $this->set('vcenter_uuid', $vCenter->get('uuid'));
 
@@ -58,6 +60,7 @@ class HostPciDevice extends BaseDbObject
                         var_dump(is_int($properties->$key));
                         var_dump($properties->$key);
                         var_dump($properties);
+
                         exit;
                     }
                 } else {
@@ -73,10 +76,12 @@ class HostPciDevice extends BaseDbObject
 
     /**
      * @param VCenter $vCenter
+     *
      * @return static[]
-     * @throws \Icinga\Exception\IcingaException
+     *
+     * @throws IcingaException
      */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
         $objects = static::loadAll(

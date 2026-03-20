@@ -2,12 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Clicommands;
 
+use Exception;
 use gipfl\Translation\StaticTranslator;
 use gipfl\Web\Form;
 use gipfl\ZfDbStore\ZfDbStore;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Web\Form\PerfdataConsumerForm;
-use GuzzleHttp\Psr7\ServerRequest;
 
 class PerfdataconsumerCommand extends Command
 {
@@ -17,8 +18,10 @@ class PerfdataconsumerCommand extends Command
      * USAGE
      *
      * icingacli vspheredb perfdataconsumer create <name> --implementation <name> [--disabled] [--other <settings>]
+     *
+     * @return void
      */
-    public function createAction()
+    public function createAction(): void
     {
         $name = $this->params->shift();
         if (strlen($name) === 0) {
@@ -34,7 +37,7 @@ class PerfdataconsumerCommand extends Command
             'name'           => $name,
             'enabled'        => $enabled ? 'y' : 'n',
             'implementation' => $implementation,
-            'submit'         => 'Create',
+            'submit'         => 'Create'
         ] + $this->params->getParams();
         if ($this->submitForm($params)) {
             echo "'$name' has been created\n";
@@ -44,7 +47,12 @@ class PerfdataconsumerCommand extends Command
         $this->fail("Creating '$name' failed for unknown reasons");
     }
 
-    protected function submitForm($params)
+    /**
+     * @param array $params
+     *
+     * @return bool
+     */
+    protected function submitForm(array $params): bool
     {
         StaticTranslator::setNoTranslator();
         $form = new PerfdataConsumerForm($this->loop(), $this->remoteClient(), $this->getStore());
@@ -56,10 +64,16 @@ class PerfdataconsumerCommand extends Command
         );
     }
 
-    protected function validateRequestWithForm(ServerRequest $request, Form $form)
+    /**
+     * @param ServerRequest $request
+     * @param Form $form
+     *
+     * @return bool
+     */
+    protected function validateRequestWithForm(ServerRequest $request, Form $form): bool
     {
         $success = false;
-        $form->on($form::ON_SUCCESS, function () use (&$success) {
+        $form->on($form::ON_SUBMIT, function () use (&$success) {
             $success = true;
         });
         $form->handleRequest($request);
@@ -84,18 +98,27 @@ class PerfdataconsumerCommand extends Command
         return $success;
     }
 
-    protected function wantErrorMessage($message)
+    /**
+     * @param Exception|string $message
+     *
+     * @return string
+     */
+    protected function wantErrorMessage(Exception|string $message): string
     {
-        if ($message instanceof \Exception) {
+        if ($message instanceof Exception) {
             return $message->getMessage();
         }
 
         return $message;
     }
 
-    protected function getStore()
+    /**
+     * @return ZfDbStore
+     */
+    protected function getStore(): ZfDbStore
     {
         $connection = ResourceFactory::create($this->Config()->get('db', 'resource'));
+
         return new ZfDbStore($connection->getDbAdapter());
     }
 }

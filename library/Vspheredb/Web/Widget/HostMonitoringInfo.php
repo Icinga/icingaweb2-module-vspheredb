@@ -9,7 +9,6 @@ use gipfl\Web\Widget\Hint;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
-use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 
 class HostMonitoringInfo extends HtmlDocument
@@ -17,13 +16,13 @@ class HostMonitoringInfo extends HtmlDocument
     use TranslationHelper;
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
-    /** @var mixed */
-    protected $info;
+    /** @var false|array|null */
+    protected false|array|null $info = null;
 
     /**
      * HostVirtualizationInfoTable constructor.
@@ -36,7 +35,7 @@ class HostMonitoringInfo extends HtmlDocument
         $this->vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         if ($info = $this->getInfo()) {
             $this->prepend(new SubTitle($this->translate('Monitoring'), 'binoculars'));
@@ -44,28 +43,24 @@ class HostMonitoringInfo extends HtmlDocument
         }
     }
 
-    public function hasInfo()
+    public function hasInfo(): bool
     {
         return $this->getInfo() !== false;
     }
 
-    protected function getInfo()
+    protected function getInfo(): false|array
     {
-        if ($this->info === null) {
-            $this->info = $this->prepareInfo();
-        }
+        $this->info ??= $this->prepareInfo();
 
         return $this->info;
     }
 
     /**
-     * @return array|false
+     * @return false|array
      */
-    protected function prepareInfo()
+    protected function prepareInfo(): false|array
     {
-        $host = $this->host;
-        $name = $host->get('host_name');
-        $statusRenderer = new IcingaHostStatusRenderer();
+        $name = $this->host->get('host_name');
 
         try {
             // $monitoring = MonitoringConnection::eventuallyLoadForVCenter($this->vCenter);
@@ -74,7 +69,7 @@ class HostMonitoringInfo extends HtmlDocument
                 $monitoringState = $monitoring->getHostState($name);
                 return [
                     // TODO: is_acknowledged, is_in_downtime
-                    $statusRenderer($monitoringState->current_state),
+                    (new IcingaHostStatusRenderer())($monitoringState->current_state),
                     ' ',
                     $monitoringState->output,
                     ' ',
@@ -85,16 +80,11 @@ class HostMonitoringInfo extends HtmlDocument
                         ['class' => 'icon-right-small']
                     )
                 ];
-            } else {
-                return false;
             }
+
+            return false;
         } catch (Exception $e) {
-            return [
-                Hint::error(
-                    $this->translate('Unable to check monitoring state: %s'),
-                    $e->getMessage()
-                )
-            ];
+            return [Hint::error($this->translate('Unable to check monitoring state: %s'), $e->getMessage())];
         }
     }
 }

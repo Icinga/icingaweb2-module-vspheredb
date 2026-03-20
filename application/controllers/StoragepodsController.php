@@ -10,7 +10,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class StoragepodsController extends ObjectsController
 {
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->addSingleTab($this->translate('Storage Pods'));
         $this->setAutorefreshInterval(15);

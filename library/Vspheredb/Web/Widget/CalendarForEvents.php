@@ -13,35 +13,31 @@ class CalendarForEvents extends HtmlDocument
     use TranslationHelper;
 
     /** @var VMotionHeatmap|AlarmHeatmap */
-    protected $calendars;
+    protected VMotionHeatmap|AlarmHeatmap $calendars;
 
     /** @var Url */
-    protected $baseUrl;
+    protected Url $baseUrl;
 
     /** @var int[] [r, g, b] */
-    protected $colors;
+    protected array $colors;
 
-    public function __construct($calendars, Url $baseUrl, array $colors)
+    public function __construct(VMotionHeatmap|AlarmHeatmap $calendars, Url $baseUrl, array $colors)
     {
         $this->calendars = $calendars;
         $this->baseUrl = $baseUrl;
         $this->colors = $colors;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $events = $this->calendars->getEvents();
         if (empty($events)) {
+            $maxPerDay = 0;
             $this->add(Hint::warning($this->translate('No events found')));
-            $maxPerDay = $total = 0;
         } else {
             $maxPerDay = max($events);
             $total = array_sum($events);
-            $this->add(Hint::ok(
-                $this->translate('%s events, max %s per day'),
-                $total,
-                $maxPerDay
-            ));
+            $this->add(Hint::ok($this->translate('%s events, max %s per day'), $total, $maxPerDay));
         }
 
         $eventsPerMonth = [];
@@ -49,9 +45,7 @@ class CalendarForEvents extends HtmlDocument
             $month = substr($day, 0, 7);
             $eventsPerMonth[$month][$day] = $count;
         }
-        $div = Html::tag('div', [
-            'class' => 'event-heatmap-calendars',
-        ]);
+        $div = Html::tag('div', ['class' => 'event-heatmap-calendars']);
 
         $months = $this->prepareMonthList();
         $colors = $this->colors;

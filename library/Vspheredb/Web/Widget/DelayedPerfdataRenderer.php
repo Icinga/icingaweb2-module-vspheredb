@@ -2,40 +2,40 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use ipl\Html\DeferredText;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
-use Icinga\Module\Vspheredb\Web\Table\TableColumn;
+use ipl\Html\DeferredText;
+use Zend_Db_Adapter_Abstract;
 
 class DelayedPerfdataRenderer
 {
-    protected $requiredVms = [];
+    protected array $requiredVms = [];
 
-    protected $perf;
+    protected ?array $perf = null;
 
-    protected $counters = [
+    protected array $counters = [
         526 => 'net.bytesRx',
         527 => 'net.bytesRx',
         171 => 'virtualDisk.numberReadAveraged',
-        172 => 'virtualDisk.numberWriteAveraged',
+        172 => 'virtualDisk.numberWriteAveraged'
     ];
 
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract */
+    protected Zend_Db_Adapter_Abstract $db;
 
-    public function __construct(\Zend_Db_Adapter_Abstract $db)
+    public function __construct(Zend_Db_Adapter_Abstract $db)
     {
         $this->db = $db;
     }
 
-    public function requireVm($uuid)
+    public function requireVm(string $uuid): void
     {
         $this->requiredVms[] = $uuid;
     }
 
     /**
-     * @return TableColumn
+     * @return SimpleColumn
      */
-    public function getDiskColumn()
+    public function getDiskColumn(): SimpleColumn
     {
         return (new SimpleColumn('disk_io_perf', '5x5min Disk I/O', 'o.uuid'))
             ->setRenderer(function ($row) {
@@ -46,9 +46,9 @@ class DelayedPerfdataRenderer
     }
 
     /**
-     * @return TableColumn
+     * @return SimpleColumn
      */
-    public function getNetColumn()
+    public function getNetColumn(): SimpleColumn
     {
         return (new SimpleColumn('network_io_perf', 'Network I/O (perf)', 'o.uuid'))
             ->setRenderer(function ($row) {
@@ -59,9 +59,9 @@ class DelayedPerfdataRenderer
     }
 
     /**
-     * @return TableColumn
+     * @return SimpleColumn
      */
-    public function getCurrentNetColumn()
+    public function getCurrentNetColumn(): SimpleColumn
     {
         return (new SimpleColumn('network_io', 'Network I/O', 'o.uuid'))
             ->setRenderer(function ($row) {
@@ -72,9 +72,9 @@ class DelayedPerfdataRenderer
     }
 
     /**
-     * @return TableColumn
+     * @return SimpleColumn
      */
-    public function getCurrentDiskColumn()
+    public function getCurrentDiskColumn(): SimpleColumn
     {
         return (new SimpleColumn('disk_io', 'Disk I/O', 'o.uuid'))
             ->setRenderer(function ($row) {
@@ -84,25 +84,23 @@ class DelayedPerfdataRenderer
             });
     }
 
-    protected function formatMicroSeconds($num)
+    protected function formatMicroSeconds(int $num): string
     {
         if ($num > 500) {
             return sprintf('%0.2Fms', $num / 1000);
-        } else {
-            return sprintf('%dµs', $num);
         }
+
+        return sprintf('%dµs', $num);
     }
 
-    protected function formatKiloBytesPerSecond($num)
+    protected function formatKiloBytesPerSecond(int $num): string
     {
         $num *= 8;
-        if ($num > 500000) {
-            return sprintf('%0.2F Gbit/s', $num / 1024 / 1024);
-        } elseif ($num > 500) {
-            return sprintf('%0.2F Mbit/s', $num / 1024);
-        } else {
-            return sprintf('%0.2F Kbit/s', $num);
-        }
+        return match (true) {
+            $num > 500000 => sprintf('%0.2F Gbit/s', $num / 1024 / 1024),
+            $num > 500    => sprintf('%0.2F Mbit/s', $num / 1024),
+            default       => sprintf('%0.2F Kbit/s', $num)
+        };
     }
 
     /**
@@ -118,16 +116,9 @@ class DelayedPerfdataRenderer
         return DeferredText::create(function () use ($uuid, $instance, $c1, $c2) {
             $in = explode(',', $this->getVmValues($uuid, $instance, $c1));
             $out = explode(',', $this->getVmValues($uuid, $instance, $c2));
-            if ($in[0] === '') {
-                $in = '-';
-            } else {
-                $in = $this->formatKiloBytesPerSecond(array_pop($in));
-            }
-            if ($out[0] === '') {
-                $out = '-';
-            } else {
-                $out = $this->formatKiloBytesPerSecond(array_pop($out));
-            }
+
+            $in = $in[0] === '' ? '-' : $this->formatKiloBytesPerSecond(array_pop($in));
+            $out = $out[0] === '' ? '-' : $this->formatKiloBytesPerSecond(array_pop($out));
 
             return sprintf('%s / %s', $in, $out);
         })->setEscaped();
@@ -160,9 +151,7 @@ class DelayedPerfdataRenderer
      */
     protected function getVmValues(string $name, string $instance, int $counter): ?array
     {
-        if ($this->perf === null) {
-            $this->perf = $this->fetchPerf();
-        }
+        $this->perf ??= $this->fetchPerf();
 
         if (
             array_key_exists($name, $this->perf)
@@ -170,12 +159,12 @@ class DelayedPerfdataRenderer
             && array_key_exists($counter, $this->perf[$name][$instance])
         ) {
             return $this->perf[$name][$instance][$counter];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
-    protected function fetchPerf()
+    protected function fetchPerf(): array
     {
         $db = $this->db;
 
@@ -184,16 +173,18 @@ class DelayedPerfdataRenderer
                 "COALESCE(value_minus3, '0')",
                 "COALESCE(value_minus2, '0')",
                 "COALESCE(value_minus1, '0')",
-                'value_last',
+                'value_last'
             ]) . ')';
 
-        $query = $db->select()->from('counter_300x5', [
-            'name' => 'object_uuid',
-            'instance',
-            'counter_key',
-            'value' => $values,
-            'value_last'
-        ])->where('object_uuid IN (?)', $this->requiredVms)
+        $query = $db->select()
+            ->from('counter_300x5', [
+                'name'  => 'object_uuid',
+                'instance',
+                'counter_key',
+                'value' => $values,
+                'value_last'
+            ])
+            ->where('object_uuid IN (?)', $this->requiredVms)
             ->where('instance IN (?)', ['', 'scsi0:0'])
             ->where('counter_key IN (?)', array_keys($this->counters));
 

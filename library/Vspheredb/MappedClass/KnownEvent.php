@@ -2,10 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
 use DateTime;
 use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use ReturnTypeWillChange;
 use Zend_Db_Adapter_Abstract as ZfDbAdapter;
+use Zend_Db_Adapter_Exception;
 
 /**
  * KnownEvent
@@ -13,7 +16,7 @@ use Zend_Db_Adapter_Abstract as ZfDbAdapter;
  * We use this as a base class for all vim.event.Event implementations
  * handled by us
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 abstract class KnownEvent implements JsonSerialization
 {
     /** @var int The parent or group ID */
@@ -28,22 +31,22 @@ abstract class KnownEvent implements JsonSerialization
     /** @var string The user who caused the event */
     public $userName;
 
-    /** @var string|null A formatted text message describing the event. The message may be localized.*/
+    /** @var ?string A formatted text message describing the event. The message may be localized.*/
     public $fullFormattedMessage;
 
-    /** @var ComputeResourceEventArgument|null */
+    /** @var ?ComputeResourceEventArgument */
     public $computeResource;
 
-    /** @var DatacenterEventArgument|null */
+    /** @var ?DatacenterEventArgument */
     public $datacenter;
 
     /** @var DatastoreEventArgument */
     public $ds;
 
-    /** @var HostEventArgument|null */
+    /** @var ?HostEventArgument */
     public $host;
 
-    /** @var VmEventArgument|null */
+    /** @var ?VmEventArgument */
     public $vm;
 
     protected $table;
@@ -58,7 +61,7 @@ abstract class KnownEvent implements JsonSerialization
             'ts_event_ms'    => $this->getTimestampMs(),
             'event_type'     => array_pop($classParts),
             'event_key'      => $this->key,
-            'event_chain_id' => $this->chainId,
+            'event_chain_id' => $this->chainId
         ];
         if (isset($this->fullFormattedMessage) && strlen($this->fullFormattedMessage)) {
             $data['full_message'] = $this->fullFormattedMessage;
@@ -69,17 +72,14 @@ abstract class KnownEvent implements JsonSerialization
 
     public function getTimestampMs()
     {
-        if ($this->timestampMs === null) {
-            $this->timestampMs = $this->timeStringToUnixMs($this->createdTime);
-        }
-
-        return $this->timestampMs;
+        return $this->timestampMs ??= $this->timeStringToUnixMs($this->createdTime);
     }
 
     /**
      * @param ZfDbAdapter $db
      * @param VCenter $vCenter
-     * @throws \Zend_Db_Adapter_Exception
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
     public function store(ZfDbAdapter $db, VCenter $vCenter)
     {
@@ -106,7 +106,7 @@ abstract class KnownEvent implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         // TODO: serialize without (un)serialize(), as this needs to work across nodes

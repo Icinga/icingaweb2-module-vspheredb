@@ -2,9 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class PerfQuerySpec
 {
     /** @var ManagedObject */
@@ -15,7 +16,7 @@ class PerfQuerySpec
      * to the first available counter. When a startTime is specified, the returned
      * samples do not include the sample at startTime.
      *
-     * @var string|null xsd:dateTime
+     * @var ?string xsd:dateTime
      */
     public $startTime;
 
@@ -25,7 +26,7 @@ class PerfQuerySpec
      * metric value. When an endTime is specified, the returned samples include
      * the sample at endTime.
      *
-     * @var string|null xsd:dateTime
+     * @var ?string xsd:dateTime
      */
     public $endTime;
 
@@ -37,7 +38,7 @@ class PerfQuerySpec
      * To obtain the greatest detail, use the provider’s refreshRate for this
      * property.
      *
-     * @var int|null
+     * @var ?int
      */
     public $intervalId;
 
@@ -50,13 +51,13 @@ class PerfQuerySpec
      * This property is ignored for historical statistics, and is not valid for
      * the QueryPerfComposite operation.
      *
-     * @var int|null
+     * @var ?int
      */
     public $maxSample;
 
-    /** @var string|null enum PerfFormat, 'normal' or 'csv' */
+    /** @var ?string enum PerfFormat, 'normal' or 'csv' */
     public $format;
 
-    /** @var PerfMetricId[]|null */
+    /** @var ?PerfMetricId[] */
     public $metricId;
 }

@@ -2,33 +2,35 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring;
 
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
+
 class CheckResultSet implements CheckResultInterface
 {
     public const NUMERATION_PREFIX = ' \\_ ';
 
     /** @var string */
-    protected $name;
+    protected string $name;
 
     /** @var CheckResultInterface[] */
-    protected $results = [];
+    protected array $results = [];
 
-    protected $prependedOutput = '';
+    protected string $prependedOutput = '';
 
     public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    public function addResult(CheckResultInterface $result)
+    public function addResult(CheckResultInterface $result): void
     {
         $this->results[] = $result;
     }
 
     public function getState(): CheckPluginState
     {
-        $state = new CheckPluginState();
+        $state = CheckPluginState::OK;
         foreach ($this->results as $result) {
-            $state->raiseState($result->getState());
+            $state = $state->raise($result->getState());
         }
 
         return $state;
@@ -39,10 +41,10 @@ class CheckResultSet implements CheckResultInterface
         return empty($this->results);
     }
 
-    public function getOutput($prefix = ''): string
+    public function getOutput(string $prefix = ''): string
     {
         $indent = strlen($prefix . self::NUMERATION_PREFIX . '[');
-        $lines = [sprintf('%s[%s] %s', $prefix, $this->getState()->getName(), $this->name)];
+        $lines = [sprintf('%s[%s] %s', $prefix, $this->getState()->name, $this->name)];
         if ($this->prependedOutput !== '') {
             $lines[] = $this->indent($this->prependedOutput, $indent - 4);
         }
@@ -57,7 +59,7 @@ class CheckResultSet implements CheckResultInterface
                     '%s%s[%s] %s',
                     $prefix,
                     self::NUMERATION_PREFIX,
-                    $result->getState()->getName(),
+                    $result->getState()->name,
                     $this->indentAllButFirstLine($result->getOutput(), $indent)
                 );
             }
@@ -66,7 +68,7 @@ class CheckResultSet implements CheckResultInterface
         return implode(PHP_EOL, $lines);
     }
 
-    public function prependOutput(string $output)
+    public function prependOutput(string $output): void
     {
         $this->prependedOutput .= $output;
     }
@@ -74,6 +76,7 @@ class CheckResultSet implements CheckResultInterface
     protected function indentAllButFirstLine(string $string, int $spaces): string
     {
         $lines = explode(PHP_EOL, rtrim($string));
+
         return array_shift($lines) . $this->indent(implode(PHP_EOL, $lines), $spaces);
     }
 
@@ -83,11 +86,7 @@ class CheckResultSet implements CheckResultInterface
         $output = '';
         $prefix = str_repeat(' ', $spaces);
         foreach ($lines as $line) {
-            if ($output === '') {
-                $output .= "$prefix$line";
-            } else {
-                $output .= "\n$prefix$line";
-            }
+            $output .= $output === '' ? "$prefix$line" : "\n$prefix$line";
         }
 
         return "$output"; // Hint: "$output\n" would be "correcter"

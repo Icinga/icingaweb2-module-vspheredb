@@ -2,20 +2,24 @@
 
 namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
+use gipfl\ZfDb\Exception\SelectException;
 use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\MappedClass\KnownEvent;
 use Icinga\Module\Vspheredb\SyncRelated\SyncHelper;
 use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use RuntimeException;
+use Zend_Db_Adapter_Abstract;
+use Zend_Db_Select_Exception;
 
 class VmEventHistorySyncStore extends SyncStore
 {
     use SyncHelper;
 
-    protected $lastEventKey;
-    protected $lastEventTimestamp;
+    protected ?int $lastEventKey = null;
 
-    public function store($result, $class, SyncStats $stats)
+    protected ?int $lastEventTimestamp = null;
+
+    public function store($result, $class, SyncStats $stats): void
     {
         if (empty($result)) {
             return;
@@ -25,7 +29,7 @@ class VmEventHistorySyncStore extends SyncStore
             $this->lastEventKey = $this->getLastEventKey();
             $this->lastEventTimestamp = $this->getLastEventTimeStamp();
             $stats->setFromApi(count($result));
-            foreach ($result as $key => $event) {
+            foreach ($result as $event) {
                 if (! isset($event->__class)) {
                     $this->logger->error(json_encode($event));
                     return;
@@ -70,31 +74,34 @@ class VmEventHistorySyncStore extends SyncStore
 
     /**
      * @return int
-     * @throws \Zend_Db_Select_Exception
-     * @throws \gipfl\ZfDb\Exception\SelectException
+     *
+     * @throws Zend_Db_Select_Exception
+     * @throws SelectException
      */
-    protected function getLastEventKey()
+    protected function getLastEventKey(): int
     {
         return static::selectLast($this->db, $this->vCenter->getUuid(), 'event_key');
     }
 
     /**
      * @return int
-     * @throws \Zend_Db_Select_Exception
-     * @throws \gipfl\ZfDb\Exception\SelectException
+     *
+     * @throws Zend_Db_Select_Exception
+     * @throws SelectException
      */
-    public function getLastEventTimeStamp()
+    public function getLastEventTimeStamp(): int
     {
         return static::selectLast($this->db, $this->vCenter->getUuid(), 'ts_event_ms');
     }
 
     /**
-     * @param $db
+     * @param Zend_Db_Adapter_Abstract $db
      * @param string $vCenterUuid
      * @param string $column
+     *
      * @return int
      */
-    public static function selectLast($db, $vCenterUuid, $column)
+    public static function selectLast(Zend_Db_Adapter_Abstract $db, $vCenterUuid, string $column): int
     {
         $union = $db->select()->union([
             'vmeh' => $db->select()->from(
@@ -104,7 +111,7 @@ class VmEventHistorySyncStore extends SyncStore
             'ah' => $db->select()->from(
                 'alarm_history',
                 [$column => "MAX($column)"]
-            )->where('vcenter_uuid = ?', $vCenterUuid),
+            )->where('vcenter_uuid = ?', $vCenterUuid)
         ], Select::SQL_UNION_ALL);
 
         return (int) $db->fetchOne(

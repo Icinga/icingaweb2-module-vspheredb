@@ -6,16 +6,18 @@ use gipfl\Json\JsonString;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\MappedClass\GuestNicInfo;
 use Icinga\Module\Vspheredb\Util;
+use InvalidArgumentException;
+use stdClass;
 
 class VirtualMachine extends BaseDbObject
 {
     use CustomValueSupport;
 
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'virtual_machine';
+    protected ?string $table = 'virtual_machine';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'              => null,
         'vcenter_uuid'      => null,
         'annotation'        => null,
@@ -48,23 +50,23 @@ class VirtualMachine extends BaseDbObject
         'cpu_hot_add_enabled'        => null,
         'memory_hot_add_enabled'     => null,
         'guest_ip_addresses'         => null,
-        'guest_ip_stack'             => null,
+        'guest_ip_stack'             => null
     ];
 
-    protected $objectReferences = [
+    protected array $objectReferences = [
         'runtime_host_uuid',
         'resource_pool_uuid'
     ];
 
-    protected $booleanProperties = [
+    protected array $booleanProperties = [
         'template',
         'online_standby',
         'paused',
         'cpu_hot_add_enabled',
-        'memory_hot_add_enabled',
+        'memory_hot_add_enabled'
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'config.annotation'          => 'annotation',
         // TODO: Delegate to vm_hardware sync?
         'config.hardware.memoryMB'   => 'hardware_memorymb',
@@ -97,12 +99,15 @@ class VirtualMachine extends BaseDbObject
         'config.cpuHotAddEnabled'    => 'cpu_hot_add_enabled',
         'config.memoryHotAddEnabled' => 'memory_hot_add_enabled',
         // 'runtime.bootTime' => 'runtime_last_boot_time',
-        // 'runtime.suspendTime' 'runtime_last_suspend_time',
+        // 'runtime.suspendTime' 'runtime_last_suspend_time'
     ];
 
     /** @var ?HostSystem */
-    protected $runtimeHost = null;
+    protected ?HostSystem $runtimeHost = null;
 
+    /**
+     * @return bool
+     */
     public function hasRuntimeHost(): bool
     {
         return $this->get('runtime_host_uuid') !== null;
@@ -110,7 +115,8 @@ class VirtualMachine extends BaseDbObject
 
     /**
      * @return HostSystem
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @throws NotFoundError
      */
     public function getRuntimeHost(): HostSystem
     {
@@ -122,11 +128,7 @@ class VirtualMachine extends BaseDbObject
             $this->runtimeHost = null;
         }
 
-        if ($this->runtimeHost === null) {
-            $this->runtimeHost = HostSystem::load($uuid, $this->connection);
-        }
-
-        return $this->runtimeHost;
+        return $this->runtimeHost ??= HostSystem::load($uuid, $this->connection);
     }
 
     /**
@@ -135,18 +137,22 @@ class VirtualMachine extends BaseDbObject
      * Can be used to avoid duplicate loading of the very same host. As of this
      * writing, this does NOT change VM properties.
      *
-     * @param HostSystem|null $host
+     * @param ?HostSystem $host
+     *
      * @return void
+     *
+     * @throws InvalidArgumentException
      */
-    public function setRuntimeHost(?HostSystem $host)
+    public function setRuntimeHost(?HostSystem $host): void
     {
         if ($host === null) {
             $this->runtimeHost = null;
+
             return;
         }
 
         if ($host->get('uuid') !== $this->get('runtime_host_uuid')) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Cannot set runtime host with UUID %s, expected %s',
                 Util::niceUuid($host->get('uuid')),
                 Util::niceUuid($this->get('runtime_host_uuid'))
@@ -157,15 +163,14 @@ class VirtualMachine extends BaseDbObject
     }
 
     /**
-     * @param $value
+     * @param string|bool|null $value
+     *
      * @return $this
      */
-    public function setPaused($value)
+    public function setPaused(string|bool|null $value): static
     {
         // powered off?
-        if ($value === null) {
-            $value = 'n';
-        }
+        $value ??= 'n';
 
         if (is_bool($value)) {
             $value = DbProperty::booleanToDb($value);
@@ -206,11 +211,16 @@ class VirtualMachine extends BaseDbObject
      *     'netBIOSConfig' => NULL,
      *     'network' => 'Demo LAN',
      *  }]
+     *
+     * @param ?object $value
+     *
+     * @return void
      */
-    public function setNet($value)
+    public function setNet(?object $value): void
     {
         if ($value === null || ! isset($value->GuestNicInfo)) {
             $this->set('guest_ip_addresses', null);
+
             return;
         }
         $addresses = [];
@@ -221,7 +231,7 @@ class VirtualMachine extends BaseDbObject
                 $addresses[$key] = (object) [
                     'connected' => $nic->connected,
                     'network'   => $nic->network,
-                    'addresses' => [],
+                    'addresses' => []
                 ];
             }
 
@@ -242,7 +252,7 @@ class VirtualMachine extends BaseDbObject
                         // * tentative    Indicates that the uniqueness of the address on the link
                         //                is presently being verified
                         // * unknown      Indicates that the status cannot be determined
-                        'state'        => property_exists($config, 'state') ? $config->state : null,
+                        'state'        => property_exists($config, 'state') ? $config->state : null
                     ];
                 }
             }
@@ -251,7 +261,12 @@ class VirtualMachine extends BaseDbObject
         $this->set('guest_ip_addresses', JsonString::encode((object) $addresses));
     }
 
-    public function setGuestIpStack($value)
+    /**
+     * @param ?object $value
+     *
+     * @return void
+     */
+    public function setGuestIpStack(?object $value): void
     {
         if ($value === null) {
             $this->set('guest_ip_stack', null);
@@ -316,6 +331,8 @@ class VirtualMachine extends BaseDbObject
      *     }]
      *   }
      * }]
+     *
+     * @return ?array
      */
     public function guestIpStack(): ?array
     {
@@ -327,7 +344,10 @@ class VirtualMachine extends BaseDbObject
         return JsonString::decode($value);
     }
 
-    public function guestIpAddresses(): \stdClass
+    /**
+     * @return stdClass
+     */
+    public function guestIpAddresses(): stdClass
     {
         $value = $this->get('guest_ip_addresses');
         if ($value === null) {
@@ -338,18 +358,17 @@ class VirtualMachine extends BaseDbObject
     }
 
     /**
-     * @param $value
+     * @param ?object $value
      */
-    protected function setBootOptions($value)
+    protected function setBootOptions(?object $value): void
     {
         if ($value === null) {
             return;
         }
-        if (property_exists($value, 'networkBootProtocol')) {
-            $this->set('boot_network_protocol', $value->networkBootProtocol);
-        } else {
-            $this->set('boot_network_protocol', null);
-        }
+        $this->set(
+            'boot_network_protocol',
+            property_exists($value, 'networkBootProtocol') ? $value->networkBootProtocol : null
+        );
 
         // bootOrder might be missing, should then default to disk, net
         if (property_exists($value, 'bootOrder')) {

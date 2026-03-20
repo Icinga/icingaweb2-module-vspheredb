@@ -14,8 +14,10 @@ class DaemonCommand extends Command
      * USAGE
      *
      * icingacli vsphere daemon run [--verbose|--debug]
+     *
+     * @return void
      */
-    public function runAction()
+    public function runAction(): void
     {
         $this->assertRequiredExtensionsAreLoaded();
         $this->assertNoVcenterParam();
@@ -30,7 +32,10 @@ class DaemonCommand extends Command
         $this->eventuallyStartMainLoop();
     }
 
-    protected function assertNoVcenterParam()
+    /**
+     * @return void
+     */
+    protected function assertNoVcenterParam(): void
     {
         if ($this->params->get('vCenterId')) {
             $this->fail(
@@ -40,7 +45,10 @@ class DaemonCommand extends Command
         }
     }
 
-    protected function assertRequiredExtensionsAreLoaded()
+    /**
+     * @return void
+     */
+    protected function assertRequiredExtensionsAreLoaded(): void
     {
         $required = ['soap', 'posix', 'pcntl'];
         $missing = [];

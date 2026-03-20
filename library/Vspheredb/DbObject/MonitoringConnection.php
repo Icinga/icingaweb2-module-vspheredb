@@ -3,17 +3,19 @@
 namespace Icinga\Module\Vspheredb\DbObject;
 
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Vspheredb\Ido;
 use RuntimeException;
+use Zend_Db_Adapter_Abstract;
 
 class MonitoringConnection extends BaseDbObject
 {
-    protected $keyName = 'id';
+    protected string|array|null $keyName = 'id';
 
-    protected $table = 'monitoring_connection';
+    protected ?string $table = 'monitoring_connection';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'id'                          => null,
         'vcenter_uuid'                => null,
         'priority'                    => null,
@@ -22,38 +24,43 @@ class MonitoringConnection extends BaseDbObject
         'host_property'               => null,
         'monitoring_host_property'    => null,
         'vm_property'                 => null,
-        'monitoring_vm_host_property' => null,
+        'monitoring_vm_host_property' => null
     ];
 
-    protected $monitoring;
+    /** @var ?Ido */
+    protected ?Ido $monitoring = null;
 
     /**
      * @param VCenter $vCenter
-     * @return Ido|null
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @return ?Ido
+     *
+     * @throws NotFoundError
      */
-    public static function eventuallyLoadForVCenter(VCenter $vCenter)
+    public static function eventuallyLoadForVCenter(VCenter $vCenter): ?Ido
     {
         $db = $vCenter->getConnection();
         if (static::exists($vCenter->getUuid(), $db)) {
-            return static::load(
-                $vCenter->getUuid(),
-                $db
-            )->getMonitoring();
-        } else {
-            return null;
+            return static::load($vCenter->getUuid(), $db)->getMonitoring();
         }
+
+        return null;
     }
 
-    public function getIdoDb()
+    /**
+     * @return Zend_Db_Adapter_Abstract
+     */
+    public function getIdoDb(): Zend_Db_Adapter_Abstract
     {
-        /** @var \Icinga\Data\Db\DbConnection $resource */
-        $resource = $this->getMonitoringBackend()->getResource();
-
-        return $resource->getDbAdapter();
+        return $this->getMonitoringBackend()->getResource()->getDbAdapter();
     }
 
-    public function getMonitoringBackend()
+    /**
+     * @return MonitoringBackend
+     *
+     * @throws RuntimeException
+     */
+    public function getMonitoringBackend(): MonitoringBackend
     {
         $this->assertIdo();
 
@@ -64,7 +71,12 @@ class MonitoringConnection extends BaseDbObject
         }
     }
 
-    protected function assertIdo()
+    /**
+     * @return void
+     *
+     * @throws RuntimeException
+     */
+    protected function assertIdo(): void
     {
         if ($this->get('source_type') !== 'ido') {
             throw new RuntimeException(sprintf(
@@ -77,12 +89,8 @@ class MonitoringConnection extends BaseDbObject
     /**
      * @return Ido
      */
-    public function getMonitoring()
+    public function getMonitoring(): Ido
     {
-        if ($this->monitoring === null) {
-            $this->monitoring = Ido::createByResourceName($this->get('source_resource_name'));
-        }
-
-        return $this->monitoring;
+        return $this->monitoring ??= Ido::createByResourceName($this->get('source_resource_name'));
     }
 }

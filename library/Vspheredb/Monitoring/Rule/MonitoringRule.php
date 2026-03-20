@@ -7,10 +7,10 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleSetDefiniti
 
 class MonitoringRule implements JsonSerialization
 {
-    protected $enabled = true;
+    protected bool $enabled = true;
 
     /** @var MonitoringRuleSetDefinition */
-    protected $definition;
+    protected MonitoringRuleSetDefinition $definition;
 
     public function __construct(MonitoringRuleSetDefinition $definition)
     {

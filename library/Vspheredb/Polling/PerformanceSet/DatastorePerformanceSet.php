@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Polling\PerformanceSet;
 
 class DatastorePerformanceSet extends DefaultPerformanceSet
 {
-    protected $name = 'Datastore';
-    protected $objectType = 'Datastore';
-    protected $countersGroup = 'datastore';
-    protected $counters = [
+    protected ?string $name = 'Datastore';
+
+    protected ?string $objectType = 'Datastore';
+
+    protected ?string $countersGroup = 'datastore';
+
+    protected ?array $counters = [
         'read',
         'write',
         'datastoreReadBytes',
@@ -15,6 +18,6 @@ class DatastorePerformanceSet extends DefaultPerformanceSet
         'datastoreReadIops',
         'datastoreWriteIops',
         'totalReadLatency',
-        'totalWriteLatency',
+        'totalWriteLatency'
     ];
 }

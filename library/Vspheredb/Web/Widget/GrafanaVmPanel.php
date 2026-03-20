@@ -14,16 +14,16 @@ use function GuzzleHttp\Psr7\build_query;
 class GrafanaVmPanel extends HtmlDocument
 {
     /** @var ManagedObject */
-    protected $object;
+    protected ManagedObject $object;
 
-    /** @var int */
-    protected $panels;
+    /** @var int[] */
+    protected array $panels;
 
-    /** @var string|null */
-    protected $interface;
+    /** @var ?string */
+    protected ?string $interface;
 
-    /** @var string|null */
-    protected $disk;
+    /** @var ?string */
+    protected ?string $disk;
 
     /**
      * @param ManagedObject $object
@@ -31,7 +31,7 @@ class GrafanaVmPanel extends HtmlDocument
      * @param ?string $interface
      * @param ?string $disk
      */
-    public function __construct(ManagedObject $object, array $panels, $interface = 'All', $disk = 'All')
+    public function __construct(ManagedObject $object, array $panels, ?string $interface = 'All', ?string $disk = 'All')
     {
         $this->object = $object;
         $this->panels = $panels;
@@ -39,7 +39,7 @@ class GrafanaVmPanel extends HtmlDocument
         $this->disk = $disk;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $width = floor(100 / count($this->panels));
         foreach ($this->panels as $id) {
@@ -47,21 +47,18 @@ class GrafanaVmPanel extends HtmlDocument
                 'src' => $this->panelUrl($id),
                 'width' => $width . '%',
                 'height' => 200,
-                'frameborder' => 0,
+                'frameborder' => 0
             ]));
         }
     }
 
-    protected function panelUrl($panelId)
+    protected function panelUrl(int $panelId): string
     {
         // &from=1636834148559&to=1636838149732
         $orgId = 1;
         $dsName = 'vSphereDB';
         $dashboard = 'Icinga-vSphereDB-VirtualMachineDetails';
-        $url = sprintf(
-            'https://grafana.example.com:3000/d-solo/%s/virtual-machine-details',
-            $dashboard
-        );
+        $url = sprintf('https://grafana.example.com:3000/d-solo/%s/virtual-machine-details', $dashboard);
 
         $params = [
             'orgId' => $orgId,
@@ -72,7 +69,7 @@ class GrafanaVmPanel extends HtmlDocument
             'theme' => 'light',
             'panelId' => $panelId,
             'from' => 1636834044566,
-            'to'   => 1636843374647,
+            'to'   => 1636843374647
         ];
 
         return $url . '?' . build_query($params);

@@ -10,38 +10,33 @@ class GuestToolsStatusRenderer extends Html
 {
     use TranslationHelper;
 
-    public function __invoke($state)
+    public function __invoke($state): Icon
     {
         if (is_object($state)) {
             $state = $state->guest_tools_status;
         }
-        switch ($state) {
-            case 'toolsNotInstalled':
-                return Icon::create('block', [
-                    'class' => 'red',
-                    'title' => $this->translate('Guest Tools are NOT installed'),
-                ]);
-            case 'toolsNotRunning':
-                return Icon::create('warning-empty', [
-                    'class' => 'red',
-                    'title' => $this->translate('Guest Tools are NOT running'),
-                ]);
-            case 'toolsOld':
-                return Icon::create('thumbs-down', [
-                    'class' => 'yellow',
-                    'title' => $this->translate('Guest Tools are outdated'),
-                ]);
-            case 'toolsOk':
-                return Icon::create('ok', [
-                    'class' => 'green',
-                    'title' => $this->translate('Guest Tools are up to date and running'),
-                ]);
-            case null:
-            default:
-                return Icon::create('help', [
-                    'class' => 'gray',
-                    'title' => $this->translate('Guest Tools status is now known'),
-                ]);
-        }
+
+        return match ($state) {
+            'toolsNotInstalled' => Icon::create('block', [
+                'class' => 'red',
+                'title' => $this->translate('Guest Tools are NOT installed')
+            ]),
+            'toolsNotRunning'   => Icon::create('warning-empty', [
+                'class' => 'red',
+                'title' => $this->translate('Guest Tools are NOT running')
+            ]),
+            'toolsOld'          => Icon::create('thumbs-down', [
+                'class' => 'yellow',
+                'title' => $this->translate('Guest Tools are outdated')
+            ]),
+            'toolsOk'           => Icon::create('ok', [
+                'class' => 'green',
+                'title' => $this->translate('Guest Tools are up to date and running')
+            ]),
+            default             => Icon::create('help', [
+                'class' => 'gray',
+                'title' => $this->translate('Guest Tools status is now known')
+            ])
+        };
     }
 }

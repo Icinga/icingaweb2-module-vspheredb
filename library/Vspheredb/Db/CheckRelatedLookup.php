@@ -8,18 +8,27 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
+use InvalidArgumentException;
 
 class CheckRelatedLookup
 {
     /** @var Db */
-    protected $connection;
+    protected Db $connection;
 
+    /**
+     * @param Db $connection
+     */
     public function __construct(Db $connection)
     {
         $this->connection = $connection;
     }
 
-    public function listNonGreenObjects($type)
+    /**
+     * @param string $type
+     *
+     * @return array
+     */
+    public function listNonGreenObjects(string $type): array
     {
         $db = $this->connection->getDbAdapter();
         $select = $db->select()
@@ -45,10 +54,12 @@ class CheckRelatedLookup
     /**
      * @param string $type
      * @param array $filter
+     *
      * @return BaseDbObject
+     *
      * @throws NotFoundError
      */
-    public function findOneBy($type, $filter)
+    public function findOneBy(string $type, array $filter): BaseDbObject
     {
         $result = $this->findBy($type, $filter);
 
@@ -70,9 +81,10 @@ class CheckRelatedLookup
     /**
      * @param string $type
      * @param array $filter
+     *
      * @return array
      */
-    private function findBy($type, $filter)
+    private function findBy(string $type, array $filter): array
     {
         $db = $this->connection->getDbAdapter();
         $class = static::getClassForType($type);
@@ -89,7 +101,7 @@ class CheckRelatedLookup
             }
             if ($value === null) {
                 $select->where($key);
-            } elseif (strpos($key, '?') === false) {
+            } elseif (! str_contains($key, '?')) {
                 $select->where("$key = ?", $value);
             } else {
                 $select->where($key, $value);
@@ -102,19 +114,17 @@ class CheckRelatedLookup
     /**
      * @param string $type
      *
-     * @return string
+     * @return class-string
+     *
+     * @throws InvalidArgumentException
      */
     private static function getClassForType(string $type): string
     {
-        $classes = [
+        return match ($type) {
             'VirtualMachine' => VirtualMachine::class,
             'HostSystem'     => HostSystem::class,
             'Datastore'      => Datastore::class,
-        ];
-        if (! isset($classes[$type])) {
-            throw new \InvalidArgumentException("'$type' is an unknown type");
-        }
-
-        return $classes[$type];
+            default          => throw new InvalidArgumentException("'$type' is an unknown type")
+        };
     }
 }

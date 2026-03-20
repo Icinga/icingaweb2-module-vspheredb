@@ -4,10 +4,13 @@ namespace Icinga\Module\Vspheredb\Polling\PerformanceSet;
 
 class HostNetworkPerformanceSet extends DefaultPerformanceSet
 {
-    protected $name = 'HostNetworkAdapter';
-    protected $objectType = 'HostSystem';
-    protected $countersGroup = 'net';
-    protected $counters = [
+    protected ?string $name = 'HostNetworkAdapter';
+
+    protected ?string $objectType = 'HostSystem';
+
+    protected ?string $countersGroup = 'net';
+
+    protected ?array $counters = [
         // averaged alternative: received, transmitted, usage
         // TODO: evaluate net.usage
         'bytesRx',
@@ -21,6 +24,6 @@ class HostNetworkPerformanceSet extends DefaultPerformanceSet
         'droppedRx',
         'droppedTx',
         'errorsRx',
-        'errorsTx',
+        'errorsTx'
     ];
 }

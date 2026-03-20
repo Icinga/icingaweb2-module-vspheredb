@@ -9,14 +9,12 @@ use ipl\Html\FormElement\SubmitElement;
 
 trait FormElementStealer
 {
-    protected $mainProperties = [];
+    protected array $mainProperties = [];
 
-    public function getValues()
+    public function getValues(): array
     {
         $values = parent::getValues();
-        $mainProperties = array_merge($this->mainProperties, [
-            'settings',
-        ]);
+        $mainProperties = array_merge($this->mainProperties, ['settings']);
         $finalValues = [];
         $settings = [];
         foreach ($values as $key => $value) {
@@ -31,7 +29,7 @@ trait FormElementStealer
         return $finalValues;
     }
 
-    protected function addButtons($final, $selectProperty)
+    protected function addButtons(bool $final, string $selectProperty): void
     {
         if ($final) {
             $submit = new SubmitElement('submit', [
@@ -45,7 +43,7 @@ trait FormElementStealer
             if ($this->isNew()) {
                 $back = new SubmitElement('btn_back', [
                     'label' => $this->translate('Back'),
-                    'formnovalidate' => true,
+                    'formnovalidate' => true
                 ]);
                 $deco->dd()->add($back);
                 $this->registerElement($back);
@@ -53,9 +51,7 @@ trait FormElementStealer
                     $this->setElementValue($selectProperty, null);
                 }
             } else {
-                $delete = new SubmitElement('btn_delete', [
-                    'label' => $this->translate('Delete')
-                ]);
+                $delete = new SubmitElement('btn_delete', ['label' => $this->translate('Delete')]);
                 $deco->dd()->add($delete);
                 $this->registerElement($delete);
                 if ($delete->hasBeenPressed()) {
@@ -64,13 +60,11 @@ trait FormElementStealer
                 }
             }
         } else {
-            $this->addElement('submit', 'next', [
-                'label' => $this->translate('Next')
-            ]);
+            $this->addElement('submit', 'next', ['label' => $this->translate('Next')]);
         }
     }
 
-    protected function addFormElementsFrom(Form $form)
+    protected function addFormElementsFrom(Form $form): void
     {
         foreach ($this->getElements() as $mainElement) {
             if (! $mainElement->isIgnored()) {

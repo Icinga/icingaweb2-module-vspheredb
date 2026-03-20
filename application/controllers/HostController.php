@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\HostHbaTable;
 use Icinga\Module\Vspheredb\Web\Table\HostPciDevicesTable;
 use Icinga\Module\Vspheredb\Web\Table\HostPhysicalNicTable;
@@ -17,29 +18,29 @@ use Icinga\Module\Vspheredb\Web\Table\Object\HostHardwareInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostSystemInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\HostVirtualizationInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VmsTable;
-use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
 use Icinga\Module\Vspheredb\Web\Widget\HostHeader;
 use Icinga\Module\Vspheredb\Web\Widget\HostMonitoringInfo;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 use Icinga\Module\Vspheredb\Web\Widget\TaggingDetails;
+use ipl\Html\Attributes;
 
 class HostController extends Controller
 {
     use DetailSections;
     use SingleObjectMonitoring;
 
-    /** @var HostHeader */
-    protected $hostHeader;
+    /** @var ?HostHeader */
+    protected ?HostHeader $hostHeader = null;
 
     /**
      * @throws MissingParameterException|NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $host = $this->addHost();
-        $this->content()->addAttributes(['class' => 'host-info']);
+        $this->content()->addAttributes(Attributes::create(['class' => 'host-info']));
         $vCenter = VCenter::load($host->get('vcenter_uuid'), $host->getConnection());
         $quickStats = HostQuickStats::loadFor($host);
         $this->addSections([
@@ -50,15 +51,14 @@ class HostController extends Controller
             new HostHardwareInfoTable($host, $quickStats),
             new HostMonitoringInfo($host),
             new HostPhysicalNicTable($host),
-            new HostHbaTable($host),
+            new HostHbaTable($host)
         ]);
     }
 
     /**
      * @throws MissingParameterException|NotFoundError
-
      */
-    public function vmsAction()
+    public function vmsAction(): void
     {
         $host = $this->addHost();
         $table = new VmsTable($this->db(), $this->url());
@@ -72,9 +72,8 @@ class HostController extends Controller
 
     /**
      * @throws MissingParameterException|NotFoundError
-
      */
-    public function sensorsAction()
+    public function sensorsAction(): void
     {
         $table = new HostSensorsTable($this->db());
         $table->filterHost($this->addHost());
@@ -83,9 +82,8 @@ class HostController extends Controller
 
     /**
      * @throws MissingParameterException|NotFoundError
-
      */
-    public function pcidevicesAction()
+    public function pcidevicesAction(): void
     {
         $table = new HostPciDevicesTable($this->db());
         $table->filterHost($this->addHost())->renderTo($this);
@@ -93,30 +91,30 @@ class HostController extends Controller
 
     /**
      * @throws MissingParameterException|NotFoundError
-
      */
-    public function eventsAction()
+    public function eventsAction(): void
     {
         $table = new EventHistoryTable($this->db());
         $table->filterHost($this->addHost())->renderTo($this);
     }
 
-    public function monitoringAction()
+    public function monitoringAction(): void
     {
         $this->showMonitoringDetails($this->addHost());
     }
 
     /**
      * @return HostSystem
+     *
      * @throws MissingParameterException|NotFoundError
      */
-    protected function addHost()
+    protected function addHost(): HostSystem
     {
         $host = HostSystem::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($host->get('vcenter_uuid'));
         $quickStats = HostQuickStats::loadFor($host);
         $this->controls()->add($this->hostHeader = new HostHeader($host, $quickStats));
-        $this->controls()->addAttributes(['class' => 'controls-with-object-header']);
+        $this->controls()->addAttributes(Attributes::create(['class' => 'controls-with-object-header']));
         $this->setTitle($host->object()->get('object_name'));
         $this->handleTabs($host);
 
@@ -125,9 +123,12 @@ class HostController extends Controller
 
     /**
      * @param HostSystem $host
+     *
+     * @return void
+     *
      * @throws MissingParameterException
      */
-    protected function handleTabs(HostSystem $host)
+    protected function handleTabs(HostSystem $host): void
     {
         $hexId = $this->params->getRequired('uuid');
         $this->tabs()->add('index', [

@@ -9,51 +9,51 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleDefinition 
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleSetDefinition as RuleSet;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\MonitoringStateTrigger;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ResultStatus;
 use InvalidArgumentException;
+use ipl\Html\Attributes;
 use ipl\Html\FormElement\NumberElement;
 use ipl\Html\FormElement\SelectElement;
 use ipl\Html\FormElement\TextElement;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use RuntimeException;
 
 class RuleForm extends Form
 {
     use TranslationHelper;
 
     public const NEXT_UUID = '00000000-0000-0000-0000-000000000000';
-    public const RESULT_CREATED    = 'created';
-    public const RESULT_MODIFIED   = 'modified';
-    public const RESULT_UNMODIFIED = 'unmodified';
-    public const RESULT_DELETED    = 'deleted';
+
+    /** @var ObjectType */
+    protected ObjectType $objectType;
 
     /** @var string */
-    protected $objectType;
-
-    /** @var string */
-    protected $binaryUuid;
+    protected string $binaryUuid;
 
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     /** @var InheritedSettings */
-    protected $inherited;
+    protected InheritedSettings $inherited;
 
-    /** @var MonitoringRuleSet|null */
-    protected $loadedSet;
+    /** @var ?MonitoringRuleSet */
+    protected ?MonitoringRuleSet $loadedSet;
 
-    /** @var string Any of self::RESULT_* */
-    protected $result;
+    /** @var ?ResultStatus Any of self::RESULT_* */
+    protected ?ResultStatus $result = null;
 
     public function __construct(
-        string $objectType,
+        ObjectType $objectType,
         string $binaryUuid,
         Db $db,
         InheritedSettings $inherited,
         ?MonitoringRuleSet $loadedSet = null
     ) {
         $this->addPluginLoader('element', '\\Icinga\\Module\\Vspheredb\\Monitoring\\Rule\\Form\\Element', 'Element');
-        $this->addAttributes(['class' => 'ruleform']);
+        $this->addAttributes(Attributes::create(['class' => 'ruleform']));
         $this->objectType = $objectType;
         $this->db = $db;
         $this->binaryUuid = $binaryUuid;
@@ -64,7 +64,7 @@ class RuleForm extends Form
         }
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $sets = RuleSetRegistry::default()->getSets();
         foreach ($sets as $set) {
@@ -108,16 +108,15 @@ class RuleForm extends Form
         $this->applyInheritedInfo();
     }
 
-    protected function addRule(RuleSet $set, Rule $rule, ?UuidInterface $instance = null)
+    protected function addRule(RuleSet $set, Rule $rule, ?UuidInterface $instance = null): void
     {
         if ($instance === null) {
             $this->add(Html::tag('h3', $rule->getLabel()));
         } else {
-            if ($instance->toString() === self::NEXT_UUID) {
-                $this->add(Html::tag('h3', $rule->getLabel() . sprintf(' (%s)', $this->translate('new instance'))));
-            } else {
-                $this->add(Html::tag('h3', $rule->getLabel() . sprintf(' (%s)', $instance->toString())));
-            }
+            $uuid = $instance->toString() === self::NEXT_UUID
+                ? $this->translate('new instance')
+                : $instance->toString();
+            $this->add(Html::tag('h3', $rule->getLabel() . sprintf(' (%s)', $uuid)));
         }
         $prefix = Settings::prefix($set, $rule, $instance);
         $this->addEnabledSetting($prefix);
@@ -128,7 +127,7 @@ class RuleForm extends Form
         }
     }
 
-    protected function createRuleElement($elementName, $definition)
+    protected function createRuleElement($elementName, $definition): void
     {
         $elementType = array_shift($definition);
         $options = array_shift($definition) ?: [];
@@ -140,14 +139,14 @@ class RuleForm extends Form
         }
     }
 
-    protected function applyInheritedInfo()
+    protected function applyInheritedInfo(): void
     {
         foreach ((array) $this->inherited->jsonSerialize() as $key => $value) {
             $this->setInheritedValue($key, $value, $this->inherited->getInheritedFromName($key));
         }
     }
 
-    protected function setInheritedValue($elementName, $value, $sourceName = null)
+    protected function setInheritedValue(string $elementName, mixed $value, ?string $sourceName = null): void
     {
         if ($this->getValue($elementName) !== null) {
             return;
@@ -178,7 +177,7 @@ class RuleForm extends Form
         }
     }
 
-    protected function assertValidateParameterName($name)
+    protected function assertValidateParameterName($name): void
     {
         if (! preg_match('/^[A-z]+[A-z0-9_]*$/', $name)) {
             throw new InvalidArgumentException("'$name' is not a valid parameter name");
@@ -230,8 +229,13 @@ class RuleForm extends Form
         return $result;
     }
 
-    protected function applyResultValue(&$values, $prefix, $key, $elementType, $storingPrefix = null)
-    {
+    protected function applyResultValue(
+        array &$values,
+        string $prefix,
+        string $key,
+        string $elementType,
+        ?string $storingPrefix = null
+    ): void {
         $storingKey = ($storingPrefix ?? $prefix) . $key;
         $key = $prefix . $key;
         $value = $this->getValue($key);
@@ -243,67 +247,61 @@ class RuleForm extends Form
         }
     }
 
-    protected function normalizeBoolean($value): ?bool
+    protected function normalizeBoolean(?string $value): ?bool
     {
-        switch ($value) {
-            case null:
-                return null;
-            case 'y':
-                return true;
-            case 'n':
-                return false;
-        }
-
-        throw new \RuntimeException("'$value' is not a valid boolean value");
+        return match ($value) {
+            null    => null,
+            'y'     => true,
+            'n'     => false,
+            default => throw new RuntimeException("'$value' is not a valid boolean value")
+        };
     }
 
-    protected function addEnabledSetting($prefix)
+    protected function addEnabledSetting(string $prefix): void
     {
         $elementName = $prefix . Settings::KEY_ENABLED;
         $this->addElement('boolean', $elementName, [
             'label'   => $this->translate('Enabled'),
-            // 'class' => 'autosubmit',
+            // 'class' => 'autosubmit'
         ]);
         $this->setInheritedValue($elementName, true);
     }
 
-    protected function addStateTriggerElement(string $name, $options = [])
+    protected function addStateTriggerElement(string $name, array $options = []): void
     {
         $selectOptions = [
             '' => $this->translate('Not configured / Inherited'),
-            MonitoringStateTrigger::IGNORE => $this->translate('Do nothing'),
-            MonitoringStateTrigger::RAISE_WARNING => $this->translate('Trigger a Warning state'),
-            MonitoringStateTrigger::RAISE_CRITICAL => $this->translate('Trigger a Critical state'),
-            MonitoringStateTrigger::RAISE_UNKNOWN => $this->translate('Trigger an Unknown state'),
+            MonitoringStateTrigger::IGNORE->value => $this->translate('Do nothing'),
+            MonitoringStateTrigger::RAISE_WARNING->value => $this->translate('Trigger a Warning state'),
+            MonitoringStateTrigger::RAISE_CRITICAL->value => $this->translate('Trigger a Critical state'),
+            MonitoringStateTrigger::RAISE_UNKNOWN->value => $this->translate('Trigger an Unknown state')
         ];
 
-        $this->addElement('select', $name, [
-            'options' => $selectOptions,
-        ] + $options);
+        $this->addElement('select', $name, ['options' => $selectOptions] + $options);
     }
 
     public function hasBeenCreated(): bool
     {
-        return $this->result === self::RESULT_CREATED;
+        return $this->result === ResultStatus::CREATED;
     }
 
     public function hasBeenModified(): bool
     {
-        return $this->result === self::RESULT_MODIFIED;
+        return $this->result === ResultStatus::MODIFIED;
     }
 
     public function hasNotBeenModified(): bool
     {
-        return $this->result === self::RESULT_UNMODIFIED;
+        return $this->result === ResultStatus::UNMODIFIED;
     }
 
     public function hasBeenDeleted(): bool
     {
-        return $this->result === self::RESULT_DELETED;
+        return $this->result === ResultStatus::DELETED;
     }
 
 
-    protected function onSuccess()
+    protected function onSuccess(): void
     {
         $values = $this->getNormalizedValues();
         $settings = new Settings($values);
@@ -311,23 +309,17 @@ class RuleForm extends Form
             $set = $this->loadedSet;
             $set->setSettings($settings);
         } else {
-            $set = new MonitoringRuleSet($this->binaryUuid, $this->objectType, $settings);
+            $set = new MonitoringRuleSet($this->binaryUuid, $this->objectType->value, $settings);
         }
         if (empty($values)) {
-            if ($set->delete($this->db)) {
-                $result = self::RESULT_DELETED;
-            } else {
-                $result = self::RESULT_UNMODIFIED; // No different message for now
-            }
+            $this->result = $set->delete($this->db) ? ResultStatus::DELETED : ResultStatus::UNMODIFIED;
         } else {
             if ($set->hasBeenLoadedFromDb()) {
-                $result = $set->store($this->db) ? self::RESULT_MODIFIED : self::RESULT_UNMODIFIED;
+                $this->result = $set->store($this->db) ? ResultStatus::MODIFIED : ResultStatus::UNMODIFIED;
             } else {
                 $set->store($this->db);
-                $result = self::RESULT_CREATED;
+                $this->result = ResultStatus::CREATED;
             }
         }
-
-        $this->result = $result;
     }
 }

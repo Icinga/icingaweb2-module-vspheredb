@@ -9,35 +9,32 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleSetDefiniti
 class MonitoringRuleSet
 {
     public const TABLE = 'monitoring_rule_set';
+
     public const NO_OBJECT = '';
 
     /** @var string */
-    protected $binaryUuid;
+    protected string $binaryUuid;
 
     /** @var string */
-    protected $objectFolder;
+    protected string $objectFolder;
 
     /** @var ?bool */
-    protected $enabled = null;
+    protected ?bool $enabled = null;
 
-    /** @var MonitoringRuleSetDefinition */
-    protected $definition;
+    /** @var ?MonitoringRuleSetDefinition */
+    protected ?MonitoringRuleSetDefinition $definition = null;
 
     /** @var Settings */
-    protected $settings;
+    protected Settings $settings;
 
-    protected $fromDb = false;
+    protected bool $fromDb = false;
 
-    protected static $preloadCache = null;
+    protected static ?array $preloadCache = null;
 
     public function __construct(string $binaryUuid, string $objectFolder, ?Settings $settings = null)
     {
         $this->binaryUuid = $binaryUuid;
-        if ($settings === null) {
-            $this->settings = new Settings();
-        } else {
-            $this->settings = $settings;
-        }
+        $this->settings = $settings ?? new Settings();
         $this->objectFolder = $objectFolder;
     }
 
@@ -64,27 +61,28 @@ class MonitoringRuleSet
         return null;
     }
 
-    protected static function makeKey($objectUuid, $objectFolder): string
+    protected static function makeKey(?string $objectUuid, string $objectFolder): string
     {
         // correct would be using UUID, but bin2hex() is faster, and this is internal only
-        return ($objectUuid === null ? 'null' : bin2hex($objectUuid))
-            . '|'
-            . json_encode($objectFolder);
+        return ($objectUuid === null ? 'null' : bin2hex($objectUuid)) . '|' . json_encode($objectFolder);
     }
 
-    public static function preloadAll(Db $connection)
+    public static function preloadAll(Db $connection): void
     {
         $db = $connection->getDbAdapter();
         self::$preloadCache = [];
         foreach ($db->fetchAll($db->select()->from(MonitoringRuleSet::TABLE)) as $row) {
             $uuid = $row->object_uuid;
             $folder = $row->object_folder;
-            self::$preloadCache[self::makeKey($uuid, $folder)]
-                = new static($uuid, $folder, Settings::fromSerialization(JsonString::decode($row->settings)));
+            self::$preloadCache[self::makeKey($uuid, $folder)] = new static(
+                $uuid,
+                $folder,
+                Settings::fromSerialization(JsonString::decode($row->settings))
+            );
         }
     }
 
-    public static function clearPreloadCache()
+    public static function clearPreloadCache(): void
     {
         self::$preloadCache = null;
     }
@@ -109,7 +107,7 @@ class MonitoringRuleSet
         $db->insert(MonitoringRuleSet::TABLE, [
             'object_uuid'   => $this->binaryUuid,
             'object_folder' => $this->objectFolder,
-            'settings'      => JsonString::encode($this->settings),
+            'settings'      => JsonString::encode($this->settings)
         ]);
         $this->fromDb = true;
 
@@ -121,10 +119,7 @@ class MonitoringRuleSet
         $existing = self::loadOptionalForUuid($this->binaryUuid, $this->objectFolder, $connection);
         $db = $connection->getDbAdapter();
         if ($existing) {
-            $rowCount = $db->delete(
-                MonitoringRuleSet::TABLE,
-                $this->createWhere($connection)
-            );
+            $rowCount = $db->delete(MonitoringRuleSet::TABLE, $this->createWhere($connection));
             $this->fromDb = false;
 
             return $rowCount > 0;
@@ -151,9 +146,9 @@ class MonitoringRuleSet
     }
 
     /**
-     * @return MonitoringRuleSetDefinition
+     * @return ?MonitoringRuleSetDefinition
      */
-    public function getDefinition(): MonitoringRuleSetDefinition
+    public function getDefinition(): ?MonitoringRuleSetDefinition
     {
         return $this->definition;
     }
@@ -168,6 +163,7 @@ class MonitoringRuleSet
 
     /**
      * @param Settings $settings
+     *
      * @return MonitoringRuleSet
      */
     public function setSettings(Settings $settings): MonitoringRuleSet

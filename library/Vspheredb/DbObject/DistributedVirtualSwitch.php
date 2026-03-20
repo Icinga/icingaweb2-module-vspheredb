@@ -10,11 +10,11 @@ use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
  */
 class DistributedVirtualSwitch extends BaseDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'distributed_virtual_switch';
+    protected ?string $table = 'distributed_virtual_switch';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'                 => null,
         'vcenter_uuid'         => null,
         'description'          => null,
@@ -23,10 +23,10 @@ class DistributedVirtualSwitch extends BaseDbObject
         'max_ports'            => null,
         'hostmembers_checksum' => null,
         'portgroups_checksum'  => null,
-        'vms_checksum'         => null,
+        'vms_checksum'         => null
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         // 'portgroup'           => 'portGroups',
         'config.description'     => 'description',
         // config.uuid?
@@ -35,18 +35,29 @@ class DistributedVirtualSwitch extends BaseDbObject
         'summary.numHosts'       => 'num_hosts',
         'config.numPorts'        => 'num_ports',
         'config.maxPorts'        => 'max_ports',
-        'config.uplinkPortgroup' => 'uplinkPortGroups',
+        'config.uplinkPortgroup' => 'uplinkPortGroups'
     ];
 
-    protected $unstoredPortGroupRefs;
+    /** @var ?array */
+    protected ?array $unstoredPortGroupRefs = null;
 
-    public function setUplinkPortGroups($portGroups)
+    /**
+     * @param array $portGroups
+     *
+     * @return void
+     */
+    public function setUplinkPortGroups(array $portGroups): void
     {
         var_dump('UPLINK');
         var_dump($portGroups);
     }
 
-    public function XXXXsetPortGroups($portGroups)
+    /**
+     * @param array $portGroups
+     *
+     * @return void
+     */
+    public function XXXXsetPortGroups(array $portGroups): void
     {
         $newSum = $this->calculateMorefsChecksum($portGroups);
         if ($this->get('portgroups_checksum') !== $newSum) {
@@ -56,35 +67,51 @@ class DistributedVirtualSwitch extends BaseDbObject
 
     /**
      * @param ManagedObjectReference[] $hostMembers
+     *
+     * @return void
      */
-    public function setHostMembers($hostMembers)
+    public function setHostMembers(array $hostMembers): void
     {
         var_dump('HOSTMEMBERS');
         var_dump($hostMembers);
-        return;
-        $newSum = $this->calculateMorefsChecksum($hostMembers);
-        if ($this->get('hostmembers_checksum') !== $newSum) {
-            $this->scheduleNewPortgroupRefs($hostMembers);
-        }
+
+//        return;
+//
+//        $newSum = $this->calculateMorefsChecksum($hostMembers);
+//        if ($this->get('hostmembers_checksum') !== $newSum) {
+//            $this->scheduleNewPortgroupRefs($hostMembers);
+//        }
     }
 
-    protected function scheduleNewPortgroupRefs($portGroups)
+    /**
+     * @param array $portGroups
+     *
+     * @return void
+     */
+    protected function scheduleNewPortgroupRefs(array $portGroups): void
     {
         $this->unstoredPortGroupRefs = $portGroups;
     }
 
-    protected function onStore()
+    protected function onStore(): void
     {
-        if (false && $this->unstoredPortGroupRefs) {
-            $this->replaceMoRefs(
-                $this->get('uuid'),
-                'distributed_switch_portgroup',
-                $this->unstoredPortGroupRefs
-            );
-        }
+//        if (false && $this->unstoredPortGroupRefs) {
+//            $this->replaceMoRefs(
+//                $this->get('uuid'),
+//                'distributed_switch_portgroup',
+//                $this->unstoredPortGroupRefs
+//            );
+//        }
     }
 
-    protected function replaceMoRefs($uuid, $table, $refs)
+    /**
+     * @param string $uuid
+     * @param string $table
+     * @param array $refs
+     *
+     * @return void
+     */
+    protected function replaceMoRefs(string $uuid, string $table, array $refs): void
     {
         // TODO: WHAAAAAAAAAAAAAAT?
         $vCenter = VCenter::loadWithAutoIncId(1, $this->getConnection());
@@ -101,7 +128,12 @@ class DistributedVirtualSwitch extends BaseDbObject
         }
     }
 
-    protected function calculateMorefsChecksum($moRefs)
+    /**
+     * @param array $moRefs
+     *
+     * @return string
+     */
+    protected function calculateMorefsChecksum(array $moRefs): string
     {
         $names = [];
         foreach ($moRefs as $moRef) {
@@ -109,6 +141,7 @@ class DistributedVirtualSwitch extends BaseDbObject
         }
 
         sort($names);
+
         return sha1(implode('|', $names), true);
     }
 }

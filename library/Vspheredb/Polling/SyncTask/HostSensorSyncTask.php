@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\HostSensorSyncStore;
 
 class HostSensorSyncTask extends SyncTask
 {
-    protected $label = 'Host Sensors';
-    protected $tableName = 'host_sensor';
-    protected $objectClass = HostSensor::class;
-    protected $selectSetClass = HostSystemSelectSet::class;
-    protected $propertySetClass = HostSensorsPropertySet::class;
-    protected $syncStoreClass = HostSensorSyncStore::class;
+    protected string $label = 'Host Sensors';
+
+    protected string $tableName = 'host_sensor';
+
+    protected string $objectClass = HostSensor::class;
+
+    protected string $selectSetClass = HostSystemSelectSet::class;
+
+    protected string $propertySetClass = HostSensorsPropertySet::class;
+
+    protected string $syncStoreClass = HostSensorSyncStore::class;
 }

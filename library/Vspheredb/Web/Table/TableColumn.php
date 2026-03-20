@@ -2,142 +2,150 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table;
 
+use Closure;
 use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
+use ipl\Html\ValidHtml;
 
 abstract class TableColumn
 {
-    /** @var string */
-    private $alias;
+    /** @var ?string */
+    private ?string $alias = null;
+
+    /** @var array|string|null */
+    private array|string|null $column = null;
+
+    /** @var ?string */
+    private ?string $title = null;
+
+    /** @var ?Closure */
+    private ?Closure $renderer = null;
+
+    /** @var array|string|null */
+    private array|string|null $sortExpression = null;
 
     /** @var string */
-    private $column;
+    private string $defaultSortDirection = 'ASC';
 
-    /** @var string */
-    private $title;
-
-    /** @var callable */
-    private $renderer;
-
-    /** @var string|null */
-    private $sortExpression;
-
-    /** @var string */
-    private $defaultSortDirection = 'ASC';
-
-    public function getRequiredDbColumns()
+    public function getRequiredDbColumns(): array
     {
         $column = $this->getColumn();
         if (is_array($column)) {
             return $column;
-        } else {
-            return [$this->getAlias() => $column];
         }
+
+        return [$this->getAlias() => $column];
     }
 
-    public function getMainColumnExpression()
+    public function getMainColumnExpression(): array|string|null
     {
         $column = $this->getColumn();
         if (is_array($column)) {
             return array_shift($column);
-        } else {
-            return $column;
         }
+
+        return $column;
     }
 
-    public function setRenderer($callback)
+    public function setRenderer(callable $callback): static
     {
-        $this->renderer = $callback;
+        $this->renderer = $callback(...);
 
         return $this;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getAlias()
+    public function getAlias(): ?string
     {
         return $this->alias;
     }
 
     /**
      * @param string $alias
+     *
      * @return $this
      */
-    public function setAlias($alias)
+    public function setAlias(string $alias): static
     {
         $this->alias = $alias;
+
         return $this;
     }
 
     /**
-     * @return string
+     * @return array|string|null
      */
-    public function getColumn()
+    public function getColumn(): array|string|null
     {
         return $this->column;
     }
 
     /**
-     * @param string $column
+     * @param array|string $column
+     *
      * @return TableColumn
      */
-    public function setColumn($column)
+    public function setColumn(array|string $column): static
     {
         $this->column = $column;
         return $this;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
      * @param string $title
+     *
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
+
         return $this;
     }
 
-    public function renderRow($row)
+    /**
+     * @param $row
+     *
+     * @return ValidHtml|HtmlDocument|mixed
+     */
+    public function renderRow($row): mixed
     {
-        if ($this->renderer === null) {
-            return Html::wantHtml($row->{$this->getAlias()});
-        } else {
-            $func = $this->renderer;
-
-            return $func($row);
-        }
+        return $this->renderer === null ? Html::wantHtml($row->{$this->getAlias()}) : ($this->renderer)($row);
     }
 
     /**
-     * @return null|string
+     * @return array|string|null
      */
-    public function getSortExpression()
+    public function getSortExpression(): array|string|null
     {
         if (null === $this->sortExpression) {
             $column = $this->getColumn();
             if (is_array($column)) {
                 return current($column);
-            } else {
-                return $column;
             }
-        } else {
-            return $this->sortExpression;
+
+            return $column;
         }
+
+        return $this->sortExpression;
     }
 
     /**
-     * @param null|string|array $sortExpression
+     * @param array|string|null $sortExpression
+     *
      * @return $this
      */
-    public function setSortExpression($sortExpression)
+    public function setSortExpression(array|string|null $sortExpression): static
     {
         $this->sortExpression = $sortExpression;
 
@@ -147,18 +155,20 @@ abstract class TableColumn
     /**
      * @return string
      */
-    public function getDefaultSortDirection()
+    public function getDefaultSortDirection(): string
     {
         return $this->defaultSortDirection;
     }
 
     /**
      * @param string $defaultSortDirection
+     *
      * @return $this
      */
-    public function setDefaultSortDirection($defaultSortDirection)
+    public function setDefaultSortDirection(string $defaultSortDirection): static
     {
         $this->defaultSortDirection = $defaultSortDirection;
+
         return $this;
     }
 }

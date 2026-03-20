@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\MappedClass;
 
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use ReturnTypeWillChange;
 
 // https://www.vmware.com/support/developer/converter-sdk/conv61_apireference/vmodl.query.PropertyCollector.ObjectContent.html
 
@@ -17,7 +18,7 @@ class ObjectContent
     /**
      * Properties for which values could not be retrieved and the associated fault
      *
-     * @var MissingProperty[]|null
+     * @var ?MissingProperty[]
      */
     public $missingSet;
 
@@ -31,7 +32,7 @@ class ObjectContent
     /**
      * Set of name-value pairs for the properties of the managed object
      *
-     * @var DynamicProperty[]|null
+     * @var ?DynamicProperty[]
      */
     public $propSet;
 
@@ -93,7 +94,7 @@ class ObjectContent
         return $obj;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $obj = [

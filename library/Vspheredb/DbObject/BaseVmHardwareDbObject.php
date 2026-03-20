@@ -4,9 +4,9 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 abstract class BaseVmHardwareDbObject extends BaseDbObject
 {
-    protected $keyName = ['vm_uuid', 'hardware_key'];
+    protected string|array|null $keyName = ['vm_uuid', 'hardware_key'];
 
-    public function setMapped($properties, VCenter $vCenter)
+    public function setMapped($properties, VCenter $vCenter): static
     {
         $properties = (object) $properties;
         $this->set('vcenter_uuid', $vCenter->get('uuid'));
@@ -31,11 +31,7 @@ abstract class BaseVmHardwareDbObject extends BaseDbObject
         return $this;
     }
 
-    /**
-     * @param VCenter $vCenter
-     * @return static[]
-     */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
         $objects = static::loadAll(

@@ -7,6 +7,7 @@ use gipfl\Format\LocalTimeFormat;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use gipfl\Translation\TranslationHelper;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 use ipl\Web\Compat\StyleWithNonce;
@@ -17,38 +18,38 @@ class CalendarMonthSummary extends Table
 
     protected $defaultAttributes = [
         'data-base-target' => '_next',
-        'class'            => 'calendar',
+        'class'            => 'calendar'
     ];
 
-    protected $today;
+    protected ?string $today = null;
 
-    protected $year;
+    protected int $year;
 
-    protected $month;
+    protected int $month;
 
-    protected $strMonth;
+    protected string $strMonth;
 
-    protected $strToday;
+    protected string $strToday;
 
-    protected $days = [];
+    protected array $days = [];
 
-    protected $calendar;
+    protected Calendar $calendar;
 
-    protected $showWeekNumbers = true;
+    protected bool $showWeekNumbers = true;
 
-    protected $showOtherMonth = false;
+    protected bool $showOtherMonth = false;
 
-    protected $showGrayFuture = true;
+    protected bool $showGrayFuture = true;
 
-    protected $title;
+    protected ?string $title = null;
 
-    protected $color = '255, 128, 0';
+    protected string $color = '255, 128, 0';
 
-    protected $forcedMax;
+    protected ?int $forcedMax = null;
 
-    protected $timeFormat;
+    protected LocalTimeFormat $timeFormat;
 
-    public function __construct($year, $month)
+    public function __construct(int $year, int $month)
     {
         $this->calendar = new Calendar();
         $this->year = $year;
@@ -58,24 +59,20 @@ class CalendarMonthSummary extends Table
         $this->timeFormat = new LocalTimeFormat();
     }
 
-    public function setRgb($red, $green, $blue)
+    public function setRgb(int $red, int $green, int $blue): static
     {
         $this->color = sprintf('%d, %d, %d', $red, $green, $blue);
 
         return $this;
     }
 
-    public function addEvents($events, Url $baseUrl)
+    public function addEvents(array $events, Url $baseUrl): static
     {
         if (empty($events)) {
             return $this;
         }
 
-        if ($this->forcedMax === null) {
-            $max = max($events);
-        } else {
-            $max = $this->forcedMax;
-        }
+        $max = $this->forcedMax ?? max($events);
 
         foreach ($events as $day => $count) {
             if (! $this->hasDay($day)) {
@@ -87,14 +84,14 @@ class CalendarMonthSummary extends Table
             $alpha = $count / $max;
 
             if ($alpha > 0.4) {
-                $link->addAttributes(['class' => 'color-white']);
+                $link->addAttributes(Attributes::create(['class' => 'color-white']));
             }
 
             $style = (new StyleWithNonce())
                 ->setModule('vspheredb')
                 ->addFor($link, ['background-color' => sprintf('rgba(%s, %.2F)', $this->color, $alpha)]);
 
-            $link->addAttributes(['title' => sprintf('%d events', $count)]);
+            $link->addAttributes(Attributes::create(['title' => sprintf('%d events', $count)]));
 
             $this->getDay($day)->setContent([$link, $style]);
         }
@@ -102,45 +99,38 @@ class CalendarMonthSummary extends Table
         return $this;
     }
 
-    public function markNow($now = null)
+    public function markNow(?int $now = null): static
     {
-        if ($now === null) {
-            $now = time();
-        }
-        $this->today = date('Y-m-d', $now);
+        $this->today = date('Y-m-d', $now ?? time());
 
         return $this;
     }
 
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    protected function getTitle()
+    protected function getTitle(): string
     {
-        if ($this->title === null) {
-            $this->title = $this->getMonthName() . ' ' . $this->year;
-        }
-
-        return $this->title;
+        return $this->title ??= $this->getMonthName() . ' ' . $this->year;
     }
 
-    public function forceMax($max)
+    public function forceMax(int $max): static
     {
         $this->forcedMax = $max;
 
         return $this;
     }
 
-    protected function getMonthAsTimestamp()
+    protected function getMonthAsTimestamp(): int
     {
         return strtotime($this->strMonth . '-01');
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->setCaption($this->getTitle());
         $this->getHeader()->add($this->createWeekdayHeader());
@@ -194,40 +184,38 @@ class CalendarMonthSummary extends Table
         $this->days[$day] = $td;
 
         if ($otherMonth) {
-            $td->addAttributes(['class' => 'other-month']);
+            $td->addAttributes(Attributes::create(['class' => 'other-month']));
         } elseif ($this->showGrayFuture && $day > $this->strToday) {
-            $td->addAttributes(['class' => 'future-day']);
+            $td->addAttributes(Attributes::create(['class' => 'future-day']));
         }
 
         // TODO: today VS strToday?!
         if ($day === $this->today) {
-            $td->addAttributes(['class' => 'today']);
+            $td->addAttributes(Attributes::create(['class' => 'today']));
         }
 
         return $td;
     }
 
 
-    protected function weekRow($cw)
+    protected function weekRow($cw): HtmlElement
     {
         $row = Table::tr();
 
         if ($this->showWeekNumbers) {
-            $row->add(Table::th(sprintf('%02d', $cw), [
-                'title' => sprintf($this->translate('Calendar Week %d'), $cw)
-            ]));
+            $row->add(Table::th(sprintf('%02d', $cw), ['title' => sprintf($this->translate('Calendar Week %d'), $cw)]));
         }
 
         return $row;
     }
 
-    protected function getMonthName()
+    protected function getMonthName(): string
     {
         return $this->timeFormat->getMonthName($this->getMonthAsTimestamp());
-        return date('F', $this->getMonthAsTimestamp());
+//        return date('F', $this->getMonthAsTimestamp());
     }
 
-    protected function createWeekdayHeader()
+    protected function createWeekdayHeader(): HtmlElement
     {
         $cols = $this->calendar->listShortWeekDayNames();
         if ($this->showWeekNumbers) {

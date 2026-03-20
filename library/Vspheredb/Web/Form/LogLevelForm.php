@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form\Feature\NextConfirmCancel;
 use gipfl\Web\InlineForm;
@@ -17,13 +18,13 @@ class LogLevelForm extends InlineForm
     use TranslationHelper;
 
     /** @var RemoteClient */
-    protected $client;
+    protected RemoteClient $client;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
-    /** @var boolean */
-    protected $talkedToSocket;
+    /** @var ?bool */
+    protected ?bool $talkedToSocket = null;
 
     public function __construct(RemoteClient $client, LoopInterface $loop)
     {
@@ -31,18 +32,19 @@ class LogLevelForm extends InlineForm
         $this->loop = $loop;
     }
 
-    public function talkedToSocket()
+    public function talkedToSocket(): ?bool
     {
         return $this->talkedToSocket;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         try {
             $currentLevel = await($this->client->request('logger.getLogLevel'));
             $this->talkedToSocket = true;
-        } catch (\Exception $e) {
+        } catch (Exception) {
             $this->talkedToSocket = false;
+
             return;
         }
 
@@ -56,17 +58,17 @@ class LogLevelForm extends InlineForm
         $toggle->showWithConfirm(new SelectElement('log_level', [
             'options'  => ['' => $this->translate('- please choose -')] + $this->listLogLevels(),
             'required' => true,
-            'value'    => $currentLevel,
+            'value'    => $currentLevel
         ]));
         $toggle->addToForm($this);
     }
 
-    protected function onSuccess()
+    protected function onSuccess(): void
     {
         await($this->client->request('logger.setLogLevel', ['level' => $this->getValue('log_level')]));
     }
 
-    protected function listLogLevels()
+    protected function listLogLevels(): array
     {
         $levels = [
             LogLevel::EMERGENCY,
@@ -76,7 +78,7 @@ class LogLevelForm extends InlineForm
             LogLevel::WARNING,
             LogLevel::NOTICE,
             LogLevel::INFO,
-            LogLevel::DEBUG,
+            LogLevel::DEBUG
         ];
 
         return array_combine($levels, $levels);

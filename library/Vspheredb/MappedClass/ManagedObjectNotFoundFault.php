@@ -2,10 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * Unused?
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class ManagedObjectNotFoundFault
 {
 }

@@ -6,25 +6,27 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\ZfDb\Adapter\Adapter;
 use Icinga\Module\Vspheredb\Db\DbUtil;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Adapter_Abstract;
 
 class PathLookup
 {
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    /** @var Zend_Db_Adapter_Abstract|Adapter */
+    protected Zend_Db_Adapter_Abstract|Adapter $db;
 
     /**
-     * @param Adapter|\Zend_Db_Adapter_Abstract $db
+     * @param Zend_Db_Adapter_Abstract|Adapter $db
      */
-    public function __construct($db)
+    public function __construct(Zend_Db_Adapter_Abstract|Adapter $db)
     {
         $this->db = $db;
     }
 
     /**
-     * @param $uuid
+     * @param string $uuid
+     *
      * @return string|Link
      */
-    public function linkToObject($uuid)
+    public function linkToObject(string $uuid): Link|string
     {
         if (empty($uuid)) {
             return '-';
@@ -34,39 +36,31 @@ class PathLookup
             ->from(['o' => 'object'], ['object_name', 'object_type'])
             ->where('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db));
 
-        $row = $this->db->fetchRow($query);
-        if ($row) {
+        if ($row = $this->db->fetchRow($query)) {
             return Link::create(
                 $row->object_name,
                 $this->getBaseUrlByType($row->object_type),
                 ['uuid' => Uuid::fromBytes($uuid)->toString()],
                 ['data-base-target' => '_next']
             );
-        } else {
-            return '-';
         }
+
+        return '-';
     }
 
-    protected function getBaseUrlByType($type): string
+    protected function getBaseUrlByType(string $type): string
     {
-        switch ($type) {
-            case 'Datastore':
-                return 'vspheredb/datastore';
-            case 'HostSystem':
-                return 'vspheredb/host';
-            case 'VirtualMachine':
-                return 'vspheredb/vm';
-            case 'ClusterComputeResource':
-            case 'ComputeResource':
-                return 'vspheredb/hosts';
-            case 'Datacenter':
-            case 'Folder':
-            default:
-                return 'vspheredb/vms';
-        }
+        return match ($type) {
+            'Datastore'       => 'vspheredb/datastore',
+            'HostSystem'      => 'vspheredb/host',
+            'VirtualMachine'  => 'vspheredb/vm',
+            'ClusterComputeResource',
+            'ComputeResource' => 'vspheredb/hosts',
+            default           => 'vspheredb/vms'
+        };
     }
 
-    public function getObjectName($uuid): string
+    public function getObjectName(string $uuid): string
     {
         $query = $this->db->select()
             ->from(['o' => 'object'], 'object_name')
@@ -75,7 +69,7 @@ class PathLookup
         return $this->db->fetchOne($query);
     }
 
-    public function getObjectNames($uuids): array
+    public function getObjectNames(array $uuids): array
     {
         if (empty($uuids)) {
             return [];
@@ -89,12 +83,12 @@ class PathLookup
         return $this->db->fetchPairs($query);
     }
 
-    public function listFoldersBelongingTo($uuid): array
+    public function listFoldersBelongingTo(string $uuid): array
     {
         return array_merge($this->listChildFoldersFor($uuid), [$uuid]);
     }
 
-    public function listChildFoldersFor($uuid): array
+    public function listChildFoldersFor(string $uuid): array
     {
         $folders = [];
         $puuid = $uuid;
@@ -108,22 +102,19 @@ class PathLookup
         return $folders;
     }
 
-    protected function fetchChildFolderListFor($uuid): array
+    protected function fetchChildFolderListFor(string $uuid): array
     {
-        $query = $this->db->select()->from('object', 'uuid')
+        $query = $this->db->select()
+            ->from('object', 'uuid')
             ->where('parent_uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db))
             ->where('object_type NOT IN (?)', ['HostSystem', 'VirtualMachine']);
 
         return $this->db->fetchCol($query);
     }
 
-    public function listPathTo($uuid, $includeSelf = true): array
+    public function listPathTo(string $uuid, bool $includeSelf = true): array
     {
-        if ($includeSelf) {
-            $parents = [$uuid];
-        } else {
-            $parents = [];
-        }
+        $parents = $includeSelf ? [$uuid] : [];
 
         $puuid = $uuid;
         while ($puuid = $this->fetchParentForId($puuid)) {
@@ -139,11 +130,6 @@ class PathLookup
             ->from('object', 'parent_uuid')
             ->where('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $this->db));
 
-        $parent = $this->db->fetchOne($query);
-        if ($parent) {
-            return $parent;
-        } else {
-            return null;
-        }
+        return $this->db->fetchOne($query) ?: null;
     }
 }

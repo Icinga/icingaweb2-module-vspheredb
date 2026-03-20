@@ -2,18 +2,19 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
+use Exception;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
-use Exception;
 use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
-use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\NetBackup;
+use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
+use Icinga\Module\Vspheredb\Db\DbConnection;
 use Icinga\Module\Vspheredb\DbObject\MonitoringConnection;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
@@ -28,16 +29,17 @@ use Icinga\Module\Vspheredb\Web\Widget\Link\VmrcLink;
 use Icinga\Module\Vspheredb\Web\Widget\Renderer\GuestToolsVersionRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class VmEssentialInfoTable extends NameValueTable
 {
     use TranslationHelper;
 
     /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -46,22 +48,23 @@ class VmEssentialInfoTable extends NameValueTable
         $this->vCenter = VCenter::load($vm->get('vcenter_uuid'), $vm->getConnection());
     }
 
-    protected function getDb()
+    protected function getDb(): ?DbConnection
     {
         return $this->vm->getConnection();
     }
 
     /**
-     * @param $annotation
-     * @return string|\ipl\Html\HtmlElement
+     * @param string $annotation
+     *
+     * @return string|HtmlElement
      */
-    protected function formatAnnotation($annotation)
+    protected function formatAnnotation(string $annotation): HtmlElement|string
     {
         $tools = [
             new IbmSpectrumProtect(),
             new NetBackup(),
             new VeeamBackup(),
-            new VRangerBackup(),
+            new VRangerBackup()
         ];
         foreach ($tools as $tool) {
             if ($tool instanceof SimpleBackupTool) {
@@ -71,26 +74,19 @@ class VmEssentialInfoTable extends NameValueTable
 
         $annotation = trim($annotation);
 
-        if (strpos($annotation, "\n") === false) {
+        if (! str_contains($annotation, "\n")) {
             return $annotation;
-        } else {
-            return Html::tag('pre', null, $annotation);
         }
+
+        return Html::tag('pre', null, $annotation);
     }
 
-    /**
-     * @throws \Icinga\Exception\NotFoundError
-     */
-    protected function assemble()
+    protected function assemble(): void
     {
         $vm = $this->vm;
-        $uuid = $vm->get('uuid');
         $this->addNameValueRow($this->translate('Tools'), $this->prepareTools($vm));
         if ($annotation = $vm->get('annotation')) {
-            $this->addNameValueRow(
-                $this->translate('Annotation'),
-                $this->formatAnnotation($annotation)
-            );
+            $this->addNameValueRow($this->translate('Annotation'), $this->formatAnnotation($annotation));
         }
 
         if ($guestName = $vm->get('guest_full_name')) {
@@ -119,8 +115,8 @@ class VmEssentialInfoTable extends NameValueTable
             $this->translate('Guest Hostname') => $vm->get('guest_host_name') ?: '-',
             $this->translate('Guest IP') => $vm->get('guest_ip_address') ?: '-',
             $this->translate('Guest OS') => $guest,
-            $this->translate('Guest Utilities') => $guestInfo,
-            // $this->translate('Test') => $this->getMonitoringInfo($vm),
+            $this->translate('Guest Utilities') => $guestInfo
+            // $this->translate('Test') => $this->getMonitoringInfo($vm)
         ]);
         $quickStats = VmQuickStats::loadFor($vm);
         if ($vm->get('runtime_power_state') === 'poweredOn') {
@@ -131,8 +127,8 @@ class VmEssentialInfoTable extends NameValueTable
                     DateFormatter::formatDuration($uptime),
                     $uptime < 900 ? Icon::create('warning-empty', [
                         'class' => ['state', 'yellow'],
-                        'title' => $this->translate('System booted recently'),
-                    ]) : null,
+                        'title' => $this->translate('System booted recently')
+                    ]) : null
                 ]
             );
         }
@@ -147,13 +143,13 @@ class VmEssentialInfoTable extends NameValueTable
                 Link::create(
                     $this->translate('VMotion attempt(s)'),
                     'vspheredb/vm/events',
-                    Util::uuidParams($uuid)
+                    Util::uuidParams($vm->get('uuid'))
                 )
             )
         );
     }
 
-    protected function prepareTools(VirtualMachine $vm)
+    protected function prepareTools(VirtualMachine $vm): Hint|array
     {
         $tools = [];
 
@@ -163,7 +159,7 @@ class VmEssentialInfoTable extends NameValueTable
         }
         $tools[] = new VmrcLink($this->vCenter, $vm, 'VMRC');
         $tools[] = ' ';
-        if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
+        if (version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
             $tools[] = new Html5UiLink($this->vCenter, $vm, 'HTML5 UI');
             $tools[] = ' ';
         }
@@ -172,7 +168,7 @@ class VmEssentialInfoTable extends NameValueTable
         return $tools;
     }
 
-    protected function getGuestToolsVersionInfo($vm)
+    protected function getGuestToolsVersionInfo(VirtualMachine $vm): string|array
     {
         $info = $vm->get('guest_tools_version');
         if ($info === null) {
@@ -190,8 +186,7 @@ class VmEssentialInfoTable extends NameValueTable
                 )
             )];
         } else {
-            $renderer = new GuestToolsVersionRenderer();
-            $info = $renderer($info);
+            $info = (new GuestToolsVersionRenderer())($info);
         }
 
         return $info;
@@ -199,9 +194,10 @@ class VmEssentialInfoTable extends NameValueTable
 
     /**
      * @param VirtualMachine $vm
-     * @return array|null
+     *
+     * @return array
      */
-    protected function getMonitoringInfo(VirtualMachine $vm)
+    protected function getMonitoringInfo(VirtualMachine $vm): array
     {
         $name = $vm->get('guest_host_name');
         $statusRenderer = new IcingaHostStatusRenderer();
@@ -222,11 +218,9 @@ class VmEssentialInfoTable extends NameValueTable
                         ['class' => 'icon-right-small']
                     )
                 ];
-            } else {
-                return [Html::sprintf(
-                    "There is no monitored Host mapped to this VM"
-                )];
             }
+
+            return [Html::sprintf("There is no monitored Host mapped to this VM")];
         } catch (Exception $e) {
             return [
                 Hint::error(

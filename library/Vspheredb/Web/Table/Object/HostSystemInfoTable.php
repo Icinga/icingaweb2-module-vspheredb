@@ -16,19 +16,20 @@ use Icinga\Module\Vspheredb\Web\Widget\Link\Html5UiLink;
 use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class HostSystemInfoTable extends NameValueTable
 {
     use TranslationHelper;
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
     /** @var HostQuickStats */
-    protected $quickStats;
+    protected HostQuickStats $quickStats;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(HostSystem $host, HostQuickStats $quickStats, VCenter $vCenter)
     {
@@ -37,7 +38,7 @@ class HostSystemInfoTable extends NameValueTable
         $this->vCenter = $vCenter;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->prepend(new SubTitle($this->translate('System Information'), 'host'));
         $host = $this->host;
@@ -52,45 +53,46 @@ class HostSystemInfoTable extends NameValueTable
             $this->translate('Service Tag')  => $this->getFormattedServiceTag($host),
             $this->translate('BIOS Version') => new BiosInfo($host),
             $this->translate('Uptime')       => $this->showUptime($this->quickStats->get('uptime')),
-            $this->translate('System UUID')  => Html::tag('pre', Anonymizer::shuffleString($host->get('sysinfo_uuid'))),
+            $this->translate('System UUID')  => Html::tag('pre', Anonymizer::shuffleString($host->get('sysinfo_uuid')))
         ]);
     }
 
-    protected function showUptime($uptime)
+    protected function showUptime($uptime): array
     {
         return [
             DateFormatter::formatDuration($uptime),
             $uptime < 900 ? Icon::create('warning-empty', [
                 'class' => ['state', 'yellow'],
-                'title' => $this->translate('System booted recently'),
-            ]) : null,
+                'title' => $this->translate('System booted recently')
+            ]) : null
         ];
     }
 
     /**
      * @param HostSystem $host
-     * @return \ipl\Html\HtmlElement|mixed
+     *
+     * @return HtmlElement|mixed
      */
-    protected function getFormattedServiceTag(HostSystem $host)
+    protected function getFormattedServiceTag(HostSystem $host): mixed
     {
         if ($tag = $host->get('service_tag')) {
             $tag = Anonymizer::shuffleString($tag);
         }
         if ($this->host->get('sysinfo_vendor') === 'Dell Inc.') {
             return $this->linkToDellSupport($tag);
-        } else {
-            return $tag;
         }
+
+        return $tag;
     }
 
-    protected function prepareTools(HostSystem $host)
+    protected function prepareTools(HostSystem $host): Hint|array
     {
         $tools = [];
 
         if ($this->vCenter->getFirstServer(false, false) === null) {
             return Hint::warning($this->translate('There is no configured connection for this vCenter'));
         }
-        if (\version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
+        if (version_compare($this->vCenter->get('api_version'), '6.5', '>=')) {
             $tools[] = new Html5UiLink($this->vCenter, $host, 'HTML5 UI');
             $tools[] = ' ';
         }
@@ -99,7 +101,7 @@ class HostSystemInfoTable extends NameValueTable
         return $tools;
     }
 
-    protected function renderVendorModel($vendor, $model)
+    protected function renderVendorModel(?string $vendor, ?string $model): array|string|null
     {
         if ($url = $this->findVendorModel($vendor, $model)) {
             if (is_array($url)) {
@@ -134,9 +136,9 @@ class HostSystemInfoTable extends NameValueTable
      * @param ?string $vendor
      * @param ?string $model
      *
-     * @return ?string
+     * @return array|string|null
      */
-    protected function findVendorModel(?string $vendor, ?string $model): ?string
+    protected function findVendorModel(?string $vendor, ?string $model): array|string|null
     {
         $images = include __DIR__ . '/known-vendor-model-images.php';
         if ($vendor === null || $model === null) {
@@ -147,7 +149,7 @@ class HostSystemInfoTable extends NameValueTable
         }
         if (isset($images[$vendor])) {
             foreach ($images[$vendor] as $pattern => $url) {
-                if (substr($pattern, 0, 1) === '/' && preg_match($pattern, $model)) {
+                if (str_starts_with($pattern, '/') && preg_match($pattern, $model)) {
                     return $url;
                 }
             }
@@ -156,27 +158,22 @@ class HostSystemInfoTable extends NameValueTable
         return null;
     }
 
-    protected function linkToDellSupport($serviceTag)
+    protected function linkToDellSupport(?string $serviceTag): HtmlElement|string
     {
         if ($serviceTag === null) {
             return '-';
         }
-        $urlPattern = 'http://www.dell.com/support/home/product-support/servicetag/%s/drivers';
 
-        $url = sprintf(
-            $urlPattern,
-            strtolower($serviceTag)
-        );
+        $attributes = [
+            'href'   => sprintf(
+                'http://www.dell.com/support/home/product-support/servicetag/%s/drivers',
+                strtolower($serviceTag)
+            ),
+            'target' => '_blank',
+            'title'  => $this->translate('Dell Support Page'),
+            'rel'    => 'noreferrer'
+        ];
 
-        return Html::tag(
-            'a',
-            [
-                'href'   => $url,
-                'target' => '_blank',
-                'title'  => $this->translate('Dell Support Page'),
-                'rel'    => 'noreferrer'
-            ],
-            $serviceTag
-        );
+        return Html::tag('a', $attributes, $serviceTag);
     }
 }

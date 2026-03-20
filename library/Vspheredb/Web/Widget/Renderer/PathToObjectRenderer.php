@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget\Renderer;
 
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
+use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -12,35 +13,32 @@ use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Util;
 use InvalidArgumentException;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class PathToObjectRenderer
 {
-    protected $classLinkMap = [
+    protected array $classLinkMap = [
         VirtualMachine::class => 'vspheredb/vms',
         HostSystem::class     => 'vspheredb/hosts',
-        Datastore::class      => 'vspheredb/datastores',
+        Datastore::class      => 'vspheredb/datastores'
     ];
 
-    public static function render(BaseDbObject $object)
+    public static function render(BaseDbObject $object): HtmlElement
     {
-        $instance = new static();
-
-        return $instance($object);
+        return (new static())($object);
     }
 
-    public function __invoke(BaseDbObject $object)
+    public function __invoke(BaseDbObject $object): HtmlElement
     {
         $uuid = $object->get('uuid');
-        /** @var \Icinga\Module\Vspheredb\Db $connection */
+        /** @var Db $connection */
         $connection = $object->getConnection();
         $lookup =  new PathLookup($connection->getDbAdapter());
-        $class = \get_class($object);
+        $class = get_class($object);
         if (isset($this->classLinkMap[$class])) {
             $baseUrl = $this->classLinkMap[$class];
         } else {
-            throw new InvalidArgumentException(
-                "PathToObjectRenderer doesn't support $class"
-            );
+            throw new InvalidArgumentException("PathToObjectRenderer doesn't support $class");
         }
         $path = Html::tag('span', ['class' => 'dc-path']);
         $parts = [];
@@ -55,8 +53,7 @@ class PathToObjectRenderer
                 ['data-base-target' => '_main']
             );
         }
-        $path->add($parts);
 
-        return $path;
+        return $path->add($parts);
     }
 }

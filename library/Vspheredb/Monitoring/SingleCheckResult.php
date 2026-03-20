@@ -2,13 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring;
 
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
+
 class SingleCheckResult implements CheckResultInterface
 {
     /** @var CheckPluginState */
-    protected $state;
+    protected CheckPluginState $state;
 
     /** @var string */
-    protected $output;
+    protected string $output;
 
     public function __construct(CheckPluginState $state, string $output)
     {

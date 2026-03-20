@@ -5,7 +5,6 @@ namespace Icinga\Module\Vspheredb\Web\Form;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
-use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use ipl\Html\FormElement\SubmitElement;
 
@@ -15,26 +14,22 @@ class VCenterServerForm extends Form
 
     public const UNCHANGED_PASSWORD = '__UNCHANGED__';
 
-    protected $objectClassName = VCenterServer::class;
+    /** @var ?VCenterServer */
+    protected ?VCenterServer $object = null;
 
-    /** @var VCenterServer */
-    protected $object;
+    protected Db $db;
 
-    protected $db;
-
-    protected $deleted = false;
+    protected bool $deleted = false;
 
     public function __construct(Db $db)
     {
         $this->db = $db;
     }
 
-    public function assemble()
+    protected function assemble(): void
     {
         if (! class_exists('SoapClient')) {
-            $this->addMessage($this->translate(
-                'The PHP SOAP extension (php-soap) is not installed/enabled'
-            ));
+            $this->addMessage($this->translate('The PHP SOAP extension (php-soap) is not installed/enabled'));
 
             return;
         }
@@ -49,31 +44,27 @@ class VCenterServerForm extends Form
                 . ' HTTP(s) ports'
             ),
             'class' => 'autofocus',
-            'required' => true,
+            'required' => true
         ]);
 
         $this->addElement('select', 'scheme', [
             'label' => $this->translate('Protocol'),
-            'description' => $this->translate(
-                'Whether to use encryption when talking to your vCenter'
-            ),
+            'description' => $this->translate('Whether to use encryption when talking to your vCenter'),
             'multiOptions' => [
                 'https' => $this->translate('HTTPS (strongly recommended)'),
-                'http'  => $this->translate('HTTP (this is plaintext!)'),
+                'http'  => $this->translate('HTTP (this is plaintext!)')
             ],
             'class' => 'autosubmit',
             'value' => 'https',
-            'required' => true,
+            'required' => true
         ]);
 
         $ssl = $this->getValue('scheme', 'https') === 'https';
         $this->addElement('boolean', 'enabled', [
             'label'       => $this->translate('Enabled'),
-            'description' => $this->translate(
-                'Whether the background daemon should actively poll this node.'
-            ),
+            'description' => $this->translate('Whether the background daemon should actively poll this node.'),
             'required'    => true,
-            'value'       => 'y',
+            'value'       => 'y'
         ]);
 
         if ($ssl) {
@@ -84,38 +75,31 @@ class VCenterServerForm extends Form
                     . ' been signed by a trusted CA. This is strongly recommended.'
                 ),
                 'required'    => true,
-                'value'       => 'y',
+                'value'       => 'y'
             ]);
             $this->addElement('boolean', 'ssl_verify_host', [
                 'label'       => $this->translate('Verify Host'),
                 'description' => $this->translate(
-                    'Whether we should check that the certificate matches the'
-                    . 'configured host'
+                    'Whether we should check that the certificate matches the configured host'
                 ),
                 'value'       => 'y',
-                'required'    => true,
+                'required'    => true
             ]);
         }
 
         $this->addElement('text', 'username', [
             'label'       => $this->translate('Username'),
-            'description' => $this->translate(
-                'Will be used for SOAP authentication against your vCenter'
-            ),
-            'required'    => true,
+            'description' => $this->translate('Will be used for SOAP authentication against your vCenter'),
+            'required'    => true
         ]);
 
-        if ($this->isNew()) {
-            $this->addElement('password', 'password', [
-                'label' => $this->translate('Password'),
-                'required' => true,
-            ]);
-        } else {
-            $this->addElement('password', 'password', [
-                'label' => $this->translate('Password'),
-                'placeholder' => $this->translate('(keep as stored)'),
-            ]);
-        }
+        $this->addElement(
+            'password',
+            'password',
+            ['label' => $this->translate('Password')] + ($this->isNew()
+                ? ['required' => true]
+                : ['placeholder' => $this->translate('(keep as stored)')])
+        );
 
         $this->addElement('select', 'proxy_type', [
             'label' => $this->translate('Proxy'),
@@ -126,7 +110,7 @@ class VCenterServerForm extends Form
             'multiOptions' => [
                 '' => $this->translate('- please choose -'),
                 'HTTP' => $this->translate('HTTP proxy'),
-                'SOCKS5' => $this->translate('SOCKS5 proxy'),
+                'SOCKS5' => $this->translate('SOCKS5 proxy')
             ],
             'class' => 'autosubmit'
         ]);
@@ -136,21 +120,18 @@ class VCenterServerForm extends Form
         if ($proxyType) {
             $this->addElement('text', 'proxy_address', [
                 'label' => $this->translate('Proxy Address'),
-                'description' => $this->translate(
-                    'Hostname, IP or <host>:<port>'
-                ),
-                'required' => true,
+                'description' => $this->translate('Hostname, IP or <host>:<port>'),
+                'required' => true
             ]);
             if ($proxyType === 'HTTP') {
                 $this->addElement('text', 'proxy_user', [
                     'label' => $this->translate('Proxy Username'),
                     'description' => $this->translate(
-                        'In case your proxy requires authentication, please'
-                        . ' configure this here'
-                    ),
+                        'In case your proxy requires authentication, please configure this here'
+                    )
                 ]);
 
-                $passRequired = $this->getValue('proxy_user') !== null && \strlen($this->getValue('proxy_user')) > 0;
+                $passRequired = $this->getValue('proxy_user') !== null && strlen($this->getValue('proxy_user')) > 0;
 
                 $this->addElement('password', 'proxy_pass', [
                     'label' => $this->translate('Proxy Password'),
@@ -164,9 +145,7 @@ class VCenterServerForm extends Form
             'label' => $this->isNew() ? $this->translate('Create') : $this->translate('Store')
         ]);
         if (! $this->isNew()) {
-            $buttons[] = $deleteButton = new SubmitElement('btn_delete', [
-                'label' => $this->translate('Delete')
-            ]);
+            $buttons[] = $deleteButton = new SubmitElement('btn_delete', ['label' => $this->translate('Delete')]);
         } else {
             $deleteButton = null;
         }
@@ -180,12 +159,12 @@ class VCenterServerForm extends Form
         }
     }
 
-    public function isNew()
+    public function isNew(): bool
     {
         return $this->object === null || ! $this->object->hasBeenLoadedFromDb();
     }
 
-    public function getValues()
+    public function getValues(): array
     {
         $values = parent::getValues();
         if (! $this->isNew()) {
@@ -200,14 +179,14 @@ class VCenterServerForm extends Form
         return $values;
     }
 
-    public function setObject(VCenterServer $object)
+    public function setObject(VCenterServer $object): static
     {
         $this->object = $object;
         $properties = $object->getProperties();
-        if ($properties['password'] !== null && \strlen($properties['password'])) {
+        if ($properties['password'] !== null && strlen($properties['password'])) {
             $properties['password'] = self::UNCHANGED_PASSWORD;
         }
-        if ($properties['proxy_pass'] !== null && \strlen($properties['proxy_pass'])) {
+        if ($properties['proxy_pass'] !== null && strlen($properties['proxy_pass'])) {
             $properties['proxy_pass'] = self::UNCHANGED_PASSWORD;
         }
         $this->populate($properties);
@@ -216,25 +195,19 @@ class VCenterServerForm extends Form
     }
 
     /**
-     * @return BaseDbObject
+     * @return VCenterServer
      */
-    public function getObject()
+    public function getObject(): VCenterServer
     {
-        if ($this->object === null) {
-            /** @var BaseDbObject $class */
-            $class = $this->objectClassName;
-            $this->object = $class::create([], $this->db);
-        }
-
-        return $this->object;
+        return $this->object ??= VCenterServer::create([], $this->db);
     }
 
-    public function hasBeenDeleted()
+    public function hasBeenDeleted(): bool
     {
         return $this->deleted;
     }
 
-    public function onSuccess()
+    protected function onSuccess(): void
     {
         $this->getObject()->setProperties($this->getValues());
     }

@@ -2,12 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * UserSession
  *
  * Information about a current user session
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class UserSession
 {
     /** @var int (long) Number of API invocations since the session started */

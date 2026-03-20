@@ -6,16 +6,18 @@ use gipfl\Json\JsonSerialization;
 use gipfl\Json\JsonString;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use InvalidArgumentException;
+use stdClass;
 
 use function array_key_exists;
 
 class ServerInfo implements JsonSerialization
 {
     /** @var array */
-    protected $properties;
+    protected array $properties;
 
     /**
      * ServerInfo constructor.
+     *
      * @param array $properties
      */
     public function __construct(array $properties)
@@ -45,6 +47,7 @@ class ServerInfo implements JsonSerialization
 
     /**
      * @param VCenterServer $server
+     *
      * @return static
      */
     public static function fromServer(VCenterServer $server): ServerInfo
@@ -61,28 +64,25 @@ class ServerInfo implements JsonSerialization
      * @param string $key
      * @param null $default
      *
-     * @return mixed|null
+     * @return ?mixed
      */
     public function get(string $key, $default = null): mixed
     {
         if (array_key_exists($key, $this->properties)) {
-            if ($this->properties[$key] === null) {
-                return $default;
-            } else {
-                return $this->properties[$key];
-            }
+            return $this->properties[$key] === null ? $default : $this->properties[$key];
         }
 
         throw new InvalidArgumentException("Trying to access invalid property: '$key'");
     }
 
-    public function jsonSerialize(): \stdClass
+    public function jsonSerialize(): stdClass
     {
         ksort($this->properties);
+
         return (object) $this->properties;
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
         return sprintf(
             '%s://%s',

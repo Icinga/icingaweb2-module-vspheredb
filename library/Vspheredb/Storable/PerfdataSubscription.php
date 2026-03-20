@@ -8,6 +8,7 @@ use gipfl\ZfDbStore\DbStorableInterface;
 use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 
 class PerfdataSubscription implements DbStorableInterface
 {
@@ -15,19 +16,19 @@ class PerfdataSubscription implements DbStorableInterface
         set as parentSet;
     }
 
-    protected $tableName = 'perfdata_subscription';
+    protected string $tableName = 'perfdata_subscription';
 
-    protected $keyProperty = 'uuid';
+    protected string $keyProperty = 'uuid';
 
-    protected $defaultProperties = [
+    protected array $defaultProperties = [
         'uuid'          => null,
         'consumer_uuid' => null,
         'vcenter_uuid'  => null,
         'settings'      => null,
-        'enabled'       => null,
+        'enabled'       => null
     ];
 
-    public function set($property, $value)
+    public function set($property, $value): bool
     {
         if ($property === 'consumer') {
             $property = 'consumer_uuid';
@@ -49,7 +50,8 @@ class PerfdataSubscription implements DbStorableInterface
 
     /**
      * @param VCenter $vCenter
-     * @return PerfdataSubscription|null
+     *
+     * @return ?PerfdataSubscription
      */
     public static function optionallyLoadForVCenter(VCenter $vCenter, ZfDbStore $store)
     {
@@ -64,7 +66,7 @@ class PerfdataSubscription implements DbStorableInterface
         }
 
         if (count($uuids) > 1) {
-            throw new \RuntimeException('More then one consumer per vCenter is currently not supported');
+            throw new RuntimeException('More then one consumer per vCenter is currently not supported');
         }
 
         return static::load($store, $uuids[0]);

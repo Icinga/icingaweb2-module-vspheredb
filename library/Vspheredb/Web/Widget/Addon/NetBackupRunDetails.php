@@ -28,6 +28,7 @@ class NetBackupRunDetails extends NameValueTable
                 $this->translate('Excluded'),
                 $this->translate('This VM has been excluded from Backup')
             );
+
             return;
         }
         if (isset($attributes['Job name'])) {
@@ -56,17 +57,15 @@ class NetBackupRunDetails extends NameValueTable
         }
     }
 
-    protected function renderBackupHost($name)
+    protected function renderBackupHost(string $name): Link|string
     {
         try {
             // TODO: this is ugly.
             $lookup = new CheckRelatedLookup(Db::newConfiguredInstance());
-            $vm = $lookup->findOneBy('VirtualMachine', [
-                'guest_host_name' => $name
-            ]);
+            $vm = $lookup->findOneBy('VirtualMachine', ['guest_host_name' => $name]);
 
             return Link::create($name, 'vspheredb/vm', Util::uuidParams($vm->get('uuid')));
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             return $name;
         }
     }

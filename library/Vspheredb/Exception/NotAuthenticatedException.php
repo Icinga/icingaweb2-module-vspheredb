@@ -4,5 +4,6 @@ namespace Icinga\Module\Vspheredb\Exception;
 
 class NotAuthenticatedException extends VmwareException
 {
-    public $paths;
+    /** @var ?array */
+    public ?array $paths = null;
 }

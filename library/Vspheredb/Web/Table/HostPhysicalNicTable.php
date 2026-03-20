@@ -3,25 +3,29 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Table\ZfQueryBasedTable;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Widget\MacAddress;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use Zend_Db_Select;
 
 class HostPhysicalNicTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => 'common-table',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     /** @var HostSystem */
-    protected $host;
+    protected HostSystem $host;
 
-    /** @var string */
-    protected $moref;
+    /** @var ?string */
+    protected ?string $moref = null;
 
     public function __construct(HostSystem $host)
     {
@@ -29,7 +33,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         $this->moref = $this->host->object()->get('moref');
         parent::__construct($host->getConnection());
 
-        $this->prepend(new SubTitle(\sprintf(
+        $this->prepend(new SubTitle(sprintf(
             $this->translate('Network Interfaces (%s)'),
             // Hint: we could also count given NICs, but this helps to spot
             // eventual inconsistencies
@@ -37,7 +41,7 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         ), 'sitemap'));
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $attributes = [];
         if ($row->link_speed_mb === null) {
@@ -46,12 +50,12 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         return $this::row([$this->formatSimple($row)], $attributes);
     }
 
-    protected function formatSimple($row)
+    protected function formatSimple(object $row): FormattedString
     {
         if ($row->link_speed_mb === null) {
             $speedInfo = $this->translate('Link is down');
         } else {
-            $speedInfo = \sprintf(
+            $speedInfo = sprintf(
                 '%s %s',
                 Format::linkSpeedMb($row->link_speed_mb),
                 $row->link_duplex === 'y'
@@ -70,11 +74,10 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
         );
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['hpn' => 'host_physical_nic'],
-            [
+        return $this->db()->select()
+            ->from(['hpn' => 'host_physical_nic'], [
                 'hpn.nic_key',
                 'hpn.auto_negotiate_supported',
                 'hpn.device',
@@ -82,10 +85,8 @@ class HostPhysicalNicTable extends ZfQueryBasedTable
                 'hpn.link_speed_mb',
                 'hpn.link_duplex',
                 'hpn.mac_address',
-                'hpn.pci',
-            ]
-        )->where('hpn.host_uuid = ?', $this->host->get('uuid'))->order('hpn.device ASC');
-
-        return $query;
+                'hpn.pci'
+            ])
+            ->where('hpn.host_uuid = ?', $this->host->get('uuid'))->order('hpn.device ASC');
     }
 }

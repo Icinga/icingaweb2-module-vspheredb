@@ -9,22 +9,18 @@ use React\ChildProcess\Process;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
 
-use function React\Promise\resolve;
-
 class IcingaCliRpc extends IcingaCli
 {
-    /** @var IcingaCliRunner */
-    protected $runner;
+    /** @var ?JsonRpcConnection */
+    protected ?JsonRpcConnection $rpc = null;
 
-    /** @var JsonRpcConnection */
-    protected $rpc;
+    /** @var ?Deferred */
+    protected ?Deferred $waitingForRpc = null;
 
-    /** @var Deferred */
-    protected $waitingForRpc;
-
-    protected $arguments = [];
-
-    protected function init()
+    /**
+     * @return void
+     */
+    protected function init(): void
     {
         $this->on('start', function (Process $process) {
             $netString = new StreamWrapper(
@@ -32,9 +28,7 @@ class IcingaCliRpc extends IcingaCli
                 $process->stdin
             );
             $netString->on('error', function (Exception $e) {
-                if ($this->waitingForRpc) {
-                    $this->waitingForRpc->reject($e);
-                }
+                $this->waitingForRpc?->reject($e);
                 $this->emit('error', [$e]);
             });
             $this->rpc = new JsonRpcConnection($netString);
@@ -48,7 +42,7 @@ class IcingaCliRpc extends IcingaCli
     /**
      * @return PromiseInterface <Connection>
      */
-    public function rpc()
+    public function rpc(): PromiseInterface
     {
         if (! $this->waitingForRpc) {
             $this->waitingForRpc = new Deferred();

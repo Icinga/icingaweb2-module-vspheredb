@@ -4,16 +4,17 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 use DateTime;
 use Icinga\Module\Vspheredb\MappedClass\ClusterDasFdmHostState;
+use stdClass;
 
 class HostSystem extends BaseDbObject
 {
     use CustomValueSupport;
 
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'host_system';
+    protected ?string $table = 'host_system';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'                    => null,
         'vcenter_uuid'            => null,
         'host_name'               => null,
@@ -35,10 +36,10 @@ class HostSystem extends BaseDbObject
         'hardware_num_nic'        => null,
         'runtime_power_state'     => null,
         'das_host_state'          => null,
-        'custom_values'           => null,
+        'custom_values'           => null
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         // config.fileSystemVolume.mountInfo
         'name'                              => 'host_name',
         'summary.config.product.apiVersion' => 'product_api_version',
@@ -60,10 +61,13 @@ class HostSystem extends BaseDbObject
         'summary.hardware.cpuMhz'           => 'hardware_cpu_mhz',
         'summary.hardware.cpuModel'         => 'hardware_cpu_model',
         'summary.hardware.numHBAs'          => 'hardware_num_hba',
-        'summary.hardware.numNics'          => 'hardware_num_nic',
+        'summary.hardware.numNics'          => 'hardware_num_nic'
     ];
 
-    public function countVms()
+    /**
+     * @return string
+     */
+    public function countVms(): string
     {
         $db = $this->getDb();
         return $db->fetchOne(
@@ -73,7 +77,7 @@ class HostSystem extends BaseDbObject
         );
     }
 
-    public function setMapped($properties, VCenter $vCenter)
+    public function setMapped(object $properties, VCenter $vCenter): static
     {
         $otherInfo = $properties->{'summary.hardware.otherIdentifyingInfo'};
         if (property_exists($otherInfo, 'HostSystemIdentificationInfo')) {
@@ -95,7 +99,12 @@ class HostSystem extends BaseDbObject
         return parent::setMapped($properties, $vCenter);
     }
 
-    protected function setOtherIdentifyingInfo($infos)
+    /**
+     * @param mixed $infos
+     *
+     * @return void
+     */
+    protected function setOtherIdentifyingInfo(mixed $infos): void
     {
         foreach ($infos as $info) {
             if ($info->identifierType->key === 'ServiceTag') {
@@ -107,17 +116,22 @@ class HostSystem extends BaseDbObject
         }
     }
 
-    protected function setDasHostState($state = null)
+    /**
+     * @param ClusterDasFdmHostState|stdClass|null $state
+     *
+     * @return void
+     */
+    protected function setDasHostState(ClusterDasFdmHostState|stdClass|null $state = null): void
     {
-        if ($state === null) {
-            $this->set('das_host_state', null);
-        } else {
-            /** @var ClusterDasFdmHostState|\stdClass $state */
-            $this->set('das_host_state', $state->state);
-        }
+        $this->set('das_host_state', $state?->state);
     }
 
-    protected function formatBiosReleaseDate($date)
+    /**
+     * @param string $date
+     *
+     * @return string
+     */
+    protected function formatBiosReleaseDate(string $date): string
     {
         return (new DateTime($date))->format('Y-m-d H:i:s');
     }

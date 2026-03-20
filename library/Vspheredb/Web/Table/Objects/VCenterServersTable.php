@@ -6,13 +6,18 @@ use Evenement\EventEmitterInterface;
 use Evenement\EventEmitterTrait;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
 use Icinga\Module\Vspheredb\Web\Form\DisableServerForm;
 use Icinga\Module\Vspheredb\Web\Form\EnableServerForm;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
+use ipl\Html\Attributes;
 use ipl\Html\Html;
-use Psr\Http\Message\RequestInterface;
+use ipl\Html\HtmlElement;
+use ipl\Html\Text;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend_Db_Select;
 
 class VCenterServersTable extends BaseTable implements EventEmitterInterface
 {
@@ -20,16 +25,16 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
 
     public const ON_FORM_ACTION = 'formAction';
 
-    protected $request;
+    protected ?ServerRequestInterface $request = null;
 
-    protected $serverConnections;
+    protected ?array $serverConnections = null;
 
-    public function setRequest(RequestInterface $request)
+    public function setRequest(ServerRequestInterface $request): void
     {
         $this->request = $request;
     }
 
-    public function setServerConnections($connections)
+    public function setServerConnections(?array $connections): void
     {
         $this->serverConnections = $connections;
     }
@@ -42,35 +47,22 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
      */
     protected function getConnectionStatusIcon(int $serverId, bool $enabled): Icon
     {
-        if (isset($this->serverConnections[$serverId])) {
-            $conn = end($this->serverConnections[$serverId]);
-            switch ($conn->state) {
-                case ApiConnection::STATE_CONNECTED:
-                    return Icon::create('ok');
-                case ApiConnection::STATE_LOGIN:
-                case ApiConnection::STATE_INIT:
-                    return Icon::create('spinner');
-                case ApiConnection::STATE_FAILING:
-                    return Icon::create('warning-empty');
-                case ApiConnection::STATE_STOPPING:
-                    return Icon::create('cancel');
-            }
-
-            return Icon::create('off');
-        } else {
-            if ($enabled) {
-                return Icon::create('help');
-            } else {
-                return Icon::create('off');
-            }
+        if (! isset($this->serverConnections[$serverId])) {
+            return $enabled ? Icon::create('help') : Icon::create('off');
         }
+
+        return match (end($this->serverConnections[$serverId])->state) {
+            ApiConnection::STATE_CONNECTED                        => Icon::create('ok'),
+            ApiConnection::STATE_LOGIN, ApiConnection::STATE_INIT => Icon::create('spinner'),
+            ApiConnection::STATE_FAILING                          => Icon::create('warning-empty'),
+            ApiConnection::STATE_STOPPING                         => Icon::create('cancel'),
+            default                                               => Icon::create('off')
+        };
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
-        $this->addAttributes([
-            'class' => 'table-vcenter-servers',
-        ]);
+        $this->addAttributes(Attributes::create(['class' => 'table-vcenter-servers']));
         $this->addAvailableColumns([
             (new SimpleColumn('server', $this->translate('Server'), [
                 'id'       => 'vcs.id',
@@ -78,44 +70,41 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
                 'username' => 'vcs.username',
                 'scheme'   => 'vcs.scheme',
                 'enabled'  => 'vcs.enabled',
-                'vcenter'  => 'vc.name',
-            ]))->setRenderer(function ($row) {
-                $td = Html::tag('td', ['class' => 'column-server']);
-                $td->add(Link::create($this->makeUrl($row), 'vspheredb/vcenter/server', ['id' => $row->id]));
-                $td->add(Html::tag('br'));
-                $td->add($row->vcenter);
+                'vcenter'  => 'vc.name'
+            ]))
+                ->setRenderer(function ($row) {
+                    return Html::tag('td', ['class' => 'column-server'])
+                        ->addHtml(
+                            Link::create($this->makeUrl($row), 'vspheredb/vcenter/server', ['id' => $row->id]),
+                            Html::tag('br'),
+                            new Text($row->vcenter)
+                        );
+                })
+                ->setDefaultSortDirection('DESC'),
+            (new SimpleColumn('enabled', $this->translate('Status'), ['vcs.enabled', 'vcs.id']))
+                ->setRenderer(function ($row) {
+                    $form = $row->enabled === 'y'
+                        ? new DisableServerForm($row->id, $this->db())
+                        : new EnableServerForm($row->id, $this->db());
 
-                return $td;
-            })->setDefaultSortDirection('DESC'),
-            (new SimpleColumn('enabled', $this->translate('Status'), [
-                'vcs.enabled',
-                'vcs.id',
-            ]))->setRenderer(function ($row) {
-                if ($row->enabled === 'y') {
-                    $form = new DisableServerForm($row->id, $this->db());
-                } else {
-                    $form = new EnableServerForm($row->id, $this->db());
-                }
-                $form->addAttributes([
-                    'data-base-target' => '_self'
-                ]);
-                $form->on($form::ON_SUCCESS, function () {
-                    $this->emit(self::ON_FORM_ACTION);
-                });
-                $form->handleRequest($this->request);
-                $form->ensureAssembled();
-                $td = Html::tag('td', [
-                    'class' => 'column-enabled'
-                ], $form);
-                if ($this->serverConnections !== null) {
-                    $td->add([' ', $this->getConnectionStatusIcon($row->id, $row->enabled === 'y'), ' ']);
-                }
-                return $td;
-            }),
+                    $form->addAttributes(Attributes::create(['data-base-target' => '_self']))
+                        ->on($form::ON_SUBMIT, function () {
+                            $this->emit(self::ON_FORM_ACTION);
+                        })
+                        ->handleRequest($this->request)
+                        ->ensureAssembled();
+
+                    $td = Html::tag('td', ['class' => 'column-enabled'], $form);
+                    if ($this->serverConnections !== null) {
+                        $td->add([' ', $this->getConnectionStatusIcon($row->id, $row->enabled === 'y'), ' ']);
+                    }
+
+                    return $td;
+                })
         ]);
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $tr = parent::renderRow($row);
         if ($row->enabled === 'n') {
@@ -125,26 +114,15 @@ class VCenterServersTable extends BaseTable implements EventEmitterInterface
         return $tr;
     }
 
-    protected function makeUrl($row)
+    protected function makeUrl(object $row): string
     {
-        return sprintf(
-            '%s://%s@%s',
-            $row->scheme,
-            rawurlencode($row->username),
-            $row->host
-        );
+        return sprintf('%s://%s@%s', $row->scheme, rawurlencode($row->username), $row->host);
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            ['vcs' => 'vcenter_server'],
-            $this->getRequiredDbColumns()
-        )->joinLeft(
-            ['vc' => 'vcenter'],
-            // 'vc.instance_uuid = vcs.vcenter_uuid',
-            'vc.id = vcs.vcenter_id',
-            []
-        );
+        return $this->db()->select()
+            ->from(['vcs' => 'vcenter_server'], $this->getRequiredDbColumns())
+            ->joinLeft(['vc' => 'vcenter'], /* 'vc.instance_uuid = vcs.vcenter_uuid',*/ 'vc.id = vcs.vcenter_id', []);
     }
 }

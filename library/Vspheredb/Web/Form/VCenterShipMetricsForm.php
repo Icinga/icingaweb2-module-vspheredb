@@ -21,19 +21,19 @@ class VCenterShipMetricsForm extends ObjectForm
 
     public const ON_DELETE = 'delete';
 
-    protected $class = PerfdataSubscription::class;
+    protected ?string $class = PerfdataSubscription::class;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
-    /** @var PerfdataConsumer[] */
-    protected $consumers;
+    /** @var ?PerfdataConsumer[] */
+    protected ?array $consumers = null;
 
     /** @var RemoteClient */
-    protected $remoteClient;
+    protected RemoteClient $remoteClient;
 
     /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
     public function __construct(ZfDbStore $store, VCenter $vCenter, RemoteClient $client, LoopInterface $loop)
     {
@@ -44,10 +44,13 @@ class VCenterShipMetricsForm extends ObjectForm
         $this->populate($vCenter->getProperties());
     }
 
-    protected function fetchConsumers()
+    /**
+     * @return PerfdataConsumer[]
+     */
+    protected function fetchConsumers(): array
     {
         $db = $this->vCenter->getConnection()->getDbAdapter();
-        /** @var PerfdataConsumer $consumers */
+        /** @var PerfdataConsumer[] $consumers */
         $consumers = [];
         foreach ($db->fetchAll($db->select()->from('perfdata_consumer')) as $row) {
             $consumers[Uuid::fromBytes($row->uuid)->toString()] = PerfdataConsumer::create((array) $row);
@@ -56,17 +59,12 @@ class VCenterShipMetricsForm extends ObjectForm
         return $consumers;
     }
 
-    protected function enumConsumers($consumers)
+    protected function enumConsumers($consumers): array
     {
-        $result = [];
-        foreach ($consumers as $uuid => $consumer) {
-            $result[$uuid] = $consumer->get('name');
-        }
-
-        return $result;
+        return array_map(fn ($consumer) => $consumer->get('name'), $consumers);
     }
 
-    public function assemble()
+    protected function assemble(): void
     {
         $this->add(Html::tag('h3', $this->translate('Ship Performance Data')));
         if ($this->object instanceof PerfdataSubscription && !$this->hasBeenSent()) {
@@ -80,16 +78,12 @@ class VCenterShipMetricsForm extends ObjectForm
     }
 
     /**
-     * @return PerfdataConsumer|null
+     * @return ?PerfdataConsumer
      */
-    protected function selectConsumer()
+    protected function selectConsumer(): ?PerfdataConsumer
     {
         $consumers = $this->fetchConsumers();
-        if ($this->object) {
-            $consumer = Uuid::fromBytes($this->object->get('consumer_uuid'))->toString();
-        } else {
-            $consumer = null;
-        }
+        $consumer = $this->object ? Uuid::fromBytes($this->object->get('consumer_uuid'))->toString() : null;
         $this->addElement('select', 'consumer', [
             'label' => $this->translate('Consumer'),
             'options' => ['' => $this->translate('- please choose -')] + $this->enumConsumers($consumers),
@@ -99,11 +93,9 @@ class VCenterShipMetricsForm extends ObjectForm
             ),
             'required' => true,
             'value' => $consumer,
-            'class' => 'autosubmit',
+            'class' => 'autosubmit'
         ]);
-        $this->addHidden('enabled', [
-            'value' => 'y'
-        ]);
+        $this->addHidden('enabled', ['value' => 'y']);
 
         $value = $this->getValue('consumer') ?? '';
         if (isset($consumers[$value])) {
@@ -113,7 +105,7 @@ class VCenterShipMetricsForm extends ObjectForm
         return null;
     }
 
-    protected function addConsumerConfig($consumer)
+    protected function addConsumerConfig($consumer): void
     {
         $instance = PerfDataConsumerHook::createConsumerInstance($consumer, $this->loop);
         if ($form = $instance->getSubscriptionForm($this->remoteClient)) {
@@ -121,7 +113,7 @@ class VCenterShipMetricsForm extends ObjectForm
         }
     }
 
-    public function isValidEvent($event)
+    public function isValidEvent($event): bool
     {
         if ($event === self::ON_DELETE) {
             return true;
@@ -130,7 +122,7 @@ class VCenterShipMetricsForm extends ObjectForm
         return parent::isValidEvent($event);
     }
 
-    public function createObject()
+    public function createObject(): mixed
     {
         $object = parent::createObject();
         $object->set('vcenter_uuid', $this->vCenter->get('instance_uuid'));

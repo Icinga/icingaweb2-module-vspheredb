@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class HostPhysicalNicPropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             PropertySpec::create('HostSystem', [
-                'config.network.pnic',
+                'config.network.pnic'
             ])
         ];
     }

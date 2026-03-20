@@ -8,6 +8,7 @@ use Icinga\Module\Vspheredb\Sync\VcenterSyncState;
 use Icinga\Module\Vspheredb\WebUtil;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 
 class VCenterSyncInfo extends BaseHtmlElement
 {
@@ -18,7 +19,7 @@ class VCenterSyncInfo extends BaseHtmlElement
     protected $defaultAttributes = ['class' => 'health'];
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)
     {
@@ -59,19 +60,17 @@ class VCenterSyncInfo extends BaseHtmlElement
         }
     }
 
-    protected function getVersionInfoString()
+    protected function getVersionInfoString(): string
     {
-        $c = $this->vCenter;
-
         return sprintf(
             '%s %s build-%s',
-            $c->get('api_type'),
-            $c->get('version'),
-            $c->get('build')
+            $this->vCenter->get('api_type'),
+            $this->vCenter->get('version'),
+            $this->vCenter->get('build')
         );
     }
 
-    protected function healthDiv($state, $content = null)
+    protected function healthDiv(string $state, $content = null): HtmlElement
     {
         return Html::tag('div', ['class' => ['health', $state]], $content);
     }

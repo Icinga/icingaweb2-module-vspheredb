@@ -7,10 +7,10 @@ use Icinga\Module\Vspheredb\Db;
 class RuleSetLoader
 {
     /** @var MonitoringRulesTree */
-    protected $tree;
+    protected MonitoringRulesTree $tree;
 
     /** @var Db */
-    protected $db;
+    protected Db $db;
 
     public function __construct(MonitoringRulesTree $tree, Db $db)
     {

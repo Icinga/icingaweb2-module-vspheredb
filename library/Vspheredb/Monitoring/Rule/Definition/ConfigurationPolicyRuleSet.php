@@ -4,9 +4,7 @@ namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
 class ConfigurationPolicyRuleSet extends MonitoringRuleSetDefinition
 {
-    public const RULE_CLASSES = [
-        GuestUtilitiesRuleDefinition::class,
-    ];
+    public const RULE_CLASSES = [GuestUtilitiesRuleDefinition::class];
 
     public function getLabel(): string
     {

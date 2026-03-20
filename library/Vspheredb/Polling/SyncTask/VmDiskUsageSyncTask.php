@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\VmDiskUsageSyncStore;
 
 class VmDiskUsageSyncTask extends SyncTask
 {
-    protected $label = 'VM Disk Usage';
-    protected $tableName = 'vm_disk_usage';
-    protected $objectClass = VmDiskUsage::class;
-    protected $selectSetClass = VirtualMachineSelectSet::class;
-    protected $propertySetClass = VmDiskUsagePropertySet::class;
-    protected $syncStoreClass = VmDiskUsageSyncStore::class;
+    protected string $label = 'VM Disk Usage';
+
+    protected string $tableName = 'vm_disk_usage';
+
+    protected string $objectClass = VmDiskUsage::class;
+
+    protected string $selectSetClass = VirtualMachineSelectSet::class;
+
+    protected string $propertySetClass = VmDiskUsagePropertySet::class;
+
+    protected string $syncStoreClass = VmDiskUsageSyncStore::class;
 }

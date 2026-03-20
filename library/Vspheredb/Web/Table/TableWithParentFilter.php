@@ -4,5 +4,5 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 interface TableWithParentFilter
 {
-    public function filterParentUuids(array $uuids);
+    public function filterParentUuids(array $uuids): static;
 }

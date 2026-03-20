@@ -17,19 +17,19 @@ use Icinga\Module\Vspheredb\Web\Tabs\ConfigTabs;
 use Icinga\Module\Vspheredb\Web\Tabs\VCenterTabs;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Web\Notification;
-use ipl\Html\Html;
+use ipl\Html\Contract\Form;
 use Ramsey\Uuid\Uuid;
 
 class PerfdataController extends Controller
 {
     use AsyncControllerHelper;
 
-    public function init()
+    public function init(): void
     {
         $this->assertPermission('vspheredb/admin');
     }
 
-    public function countersAction()
+    public function countersAction(): void
     {
         $vCenter = $this->requireVCenter();
         $this->tabs(new VCenterTabs($vCenter))->activate('perfcounters');
@@ -47,14 +47,14 @@ class PerfdataController extends Controller
         $table->renderTo($this);
     }
 
-    public function consumersAction()
+    public function consumersAction(): void
     {
         $this->setAutorefreshInterval(10);
         $this->tabs(new ConfigTabs())->activate('perfdata');
         $this->addTitle($this->translate('Performance Data Consumers'));
         $this->actions()->add(Link::create($this->translate('Add'), 'vspheredb/perfdata/consumer', null, [
             'data-base-target' => '_next',
-            'class'            => 'icon-plus',
+            'class'            => 'icon-plus'
         ]));
         $table = new PerfDataConsumerTable($this->db()->getDbAdapter());
         if (count($table) === 0) {
@@ -64,20 +64,20 @@ class PerfdataController extends Controller
         $table->renderTo($this);
     }
 
-    public function consumerAction()
+    public function consumerAction(): void
     {
         $store = new ZfDbStore($this->db()->getDbAdapter());
         $form = new PerfdataConsumerForm($this->loop(), $this->remoteClient(), $store);
-        $form->on($form::ON_DELETE, function () {
+        $form->on(PerfdataConsumerForm::ON_DELETE, function () {
             Notification::success($this->translate('Performance Data Consumer has been removed'));
             $this->redirectNow('vspheredb/perfdata/consumers');
         });
-        $form->on(PerfdataConsumerForm::ON_SUCCESS, function (PerfdataConsumerForm $form) {
-            if ($form->wasNew()) {
-                Notification::success($this->translate('Performance Data Consumer has been created'));
-            } else {
-                Notification::success($this->translate('Performance Data Consumer has been updated'));
-            }
+        $form->on(Form::ON_SUBMIT, function (PerfdataConsumerForm $form) {
+            Notification::success(
+                $form->wasNew()
+                    ? $this->translate('Performance Data Consumer has been created')
+                    : $this->translate('Performance Data Consumer has been updated')
+            );
             $this->redirectNow(Url::fromPath('vspheredb/perfdata/consumer', [
                 'uuid' => Uuid::fromBytes($form->getObject()->get('uuid'))->toString()
             ]));

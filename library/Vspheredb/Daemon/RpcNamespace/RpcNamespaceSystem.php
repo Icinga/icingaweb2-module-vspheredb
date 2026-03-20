@@ -10,7 +10,7 @@ class RpcNamespaceSystem
     /**
      * @return object
      */
-    public function cpuCountersRequest()
+    public function cpuCountersRequest(): object
     {
         return (object) Cpu::getCounters();
     }
@@ -18,7 +18,7 @@ class RpcNamespaceSystem
     /**
      * @return object
      */
-    public function interfaceCountersRequest()
+    public function interfaceCountersRequest(): object
     {
         return (object) Network::getInterfaceCounters();
     }

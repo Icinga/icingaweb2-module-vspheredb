@@ -8,9 +8,9 @@ use ipl\Html\DeferredText;
 
 trait UuidLinkHelper
 {
-    protected $requiredUuids = [];
+    protected array $requiredUuids = [];
 
-    protected $fetchedUuids;
+    protected ?array $fetchedUuids = null;
 
     /**
      * @param ?string $uuid
@@ -42,32 +42,26 @@ trait UuidLinkHelper
             );
         });
 
-        return $result->setEscaped(true);
+        return $result->setEscaped();
     }
 
-    protected function getUuidBaseUrl($uuid)
+    protected function getUuidBaseUrl($uuid): ?string
     {
-        $type = $this->getUuidProperty($uuid, 'object_type');
-
-        switch ($type) {
-            case 'HostSystem':
-                return 'vspheredb/host';
-            case 'VirtualMachine':
-                return 'vspheredb/vm';
-            case 'Datastore':
-                return 'vspheredb/datastore';
-            default:
-                return null;
-        }
+        return match ($this->getUuidProperty($uuid, 'object_type')) {
+            'HostSystem'     => 'vspheredb/host',
+            'VirtualMachine' => 'vspheredb/vm',
+            'Datastore'      => 'vspheredb/datastore',
+            default          => null
+        };
     }
 
     /**
      * @param ?string $uuid
-     * @param $property
+     * @param string $property
      *
      * @return string
      */
-    protected function getUuidProperty(?string $uuid, $property): string
+    protected function getUuidProperty(?string $uuid, string $property): string
     {
         if ($uuid === null) {
             return '[NULL]';
@@ -79,21 +73,22 @@ trait UuidLinkHelper
 
         if (array_key_exists($uuid, $this->fetchedUuids)) {
             return $this->fetchedUuids[$uuid]->$property;
-        } else {
-            return '[UNKNOWN]' . $uuid;
         }
+
+        return '[UNKNOWN]' . $uuid;
     }
 
-    protected function fetchUuidObjectDetails()
+    protected function fetchUuidObjectDetails(): void
     {
-        if (method_exists($this, 'db')) {
-            /** @var \Zend_Db_Adapter_Abstract $db */
-            $db = $this->db();
-        } else {
+        if (! method_exists($this, 'db')) {
             $this->fetchedUuids = [];
 
             return;
         }
+
+        /** @var Zend_Db_Adapter_Abstract $db */
+        $db = $this->db();
+
         if (empty($this->requiredUuids)) {
             $this->fetchedUuids = [];
 

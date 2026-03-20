@@ -10,7 +10,7 @@ use Zend_Controller_Response_Exception;
 
 trait RestApi
 {
-    protected function downloadJson(Response $response, $object, $filename)
+    protected function downloadJson(Response $response, array|object $object, string $filename): void
     {
         if (!$this->hasPermission('vspheredb/export')) {
             $this->sendJsonError($this->getResponse(), 'vspheredb/export permissions required', 403);
@@ -22,7 +22,7 @@ trait RestApi
         $this->sendJson($response, $object);
     }
 
-    protected function sendJson(Response $response, $object)
+    protected function sendJson(Response $response, array|object $object): void
     {
         $response->setHeader('Content-Type', 'application/json', true);
         $this->_helper->layout()->disableLayout();
@@ -37,13 +37,15 @@ trait RestApi
     /**
      * @param Response $response
      * @param string $message
-     * @param int|null $code
+     * @param ?int $code
+     *
+     * @return void
      */
-    protected function sendJsonError(Response $response, $message, $code = null)
+    protected function sendJsonError(Response $response, string $message, ?int $code = null): void
     {
         if ($code !== null) {
             try {
-                $response->setHttpResponseCode((int) $code);
+                $response->setHttpResponseCode($code);
             } catch (Zend_Controller_Response_Exception $e) {
                 throw new InvalidArgumentException($e->getMessage(), 0, $e);
             }

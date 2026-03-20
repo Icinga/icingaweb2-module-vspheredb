@@ -8,11 +8,11 @@ abstract class MonitoringRuleSetDefinition
 {
     use TranslationHelper;
 
-    /** @var string[]|MonitoringRuleDefinition[] Type hint, these are class names */
+    /** @var class-string<MonitoringRuleDefinition>[] */
     public const RULE_CLASSES = [];
 
-    /** @var MonitoringRuleDefinition[]|null */
-    protected $rules = null;
+    /** @var ?MonitoringRuleDefinition[] */
+    protected ?array $rules = null;
 
     /**
      * @return MonitoringRuleDefinition[]
@@ -30,6 +30,7 @@ abstract class MonitoringRuleSetDefinition
     }
 
     abstract public function getLabel(): string;
+
     abstract public static function getIdentifier(): string;
 
     /**

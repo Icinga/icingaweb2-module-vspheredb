@@ -6,11 +6,11 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class HostSensorsPropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             PropertySpec::create('HostSystem', [
-                'runtime.healthSystemRuntime.systemHealthInfo.numericSensorInfo',
+                'runtime.healthSystemRuntime.systemHealthInfo.numericSensorInfo'
             ])
         ];
     }

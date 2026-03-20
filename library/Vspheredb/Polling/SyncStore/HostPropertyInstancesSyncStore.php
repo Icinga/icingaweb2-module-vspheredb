@@ -10,19 +10,21 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    protected $baseKey = 'undefined.property';
-    protected $keyProperty = 'undefinedKeyProperty';
-    protected $dbKeyProperty = 'undefinedKeyProperty';
-    protected $instanceClass = 'undefinedInstanceClass';
+    protected string $baseKey = 'undefined.property';
 
-    public function store($result, $class, SyncStats $stats)
+    protected string $keyProperty = 'undefinedKeyProperty';
+
+    protected string $dbKeyProperty = 'undefinedKeyProperty';
+
+    protected string $instanceClass = 'undefinedInstanceClass';
+
+    public function store($result, $class, SyncStats $stats): void
     {
         $connection = $this->vCenter->getConnection();
         $dbObjects = $class::loadAllForVCenter($this->vCenter);
 
         $baseKey = $this->baseKey;
         $keyProperty = $this->keyProperty;
-        /** @var string $dbKeyProperty */
         $dbKeyProperty = $this->dbKeyProperty;
         $instanceClass = $this->instanceClass;
 
@@ -30,13 +32,9 @@ abstract class HostPropertyInstancesSyncStore extends SyncStore
         foreach ($result as $object) {
             $object = (object) $object;
             // Hint: this is now dealt with by makeBinaryGlobalMoRefUuid()
-            if ($object->obj instanceof ManagedObjectReference) {
-                $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid($object->obj);
-            } else {
-                $uuid = $this->vCenter->makeBinaryGlobalMoRefUuid(
-                    ManagedObjectReference::fromSerialization($object->obj)
-                );
-            }
+            $uuid = $object->obj instanceof ManagedObjectReference
+                ? $this->vCenter->makeBinaryGlobalMoRefUuid($object->obj)
+                : $this->vCenter->makeBinaryGlobalMoRefUuid(ManagedObjectReference::fromSerialization($object->obj));
             if (! isset($object->$baseKey) || ! property_exists($object->$baseKey, $instanceClass)) {
                 // No instance information for this host
                 continue;

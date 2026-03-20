@@ -6,23 +6,23 @@ use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\FilterHostParentForm;
 use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
-use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Widget\CalendarForEvents;
 use Icinga\Module\Vspheredb\Web\Widget\VMotionHeatmap;
 use Ramsey\Uuid\Uuid;
 
 class EventsController extends Controller
 {
-    public function init()
+    public function init(): void
     {
         $this->assertPermission('vspheredb/admin');
         parent::init();
         $this->handleTabs();
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->actions()->add(Link::create(
             $this->translate('Calendar'),
@@ -30,7 +30,7 @@ class EventsController extends Controller
             $this->url()->getParams()->toArray(false),
             [
                 'class' => 'icon-calendar',
-                'data-base-target' => '_main',
+                'data-base-target' => '_main'
             ]
         ));
 
@@ -62,7 +62,10 @@ class EventsController extends Controller
         $table->renderTo($this);
     }
 
-    protected function addFilterForm()
+    /**
+     * @return FilterHostParentForm
+     */
+    protected function addFilterForm(): FilterHostParentForm
     {
         $form = new FilterHostParentForm($this->db());
         $form->handleRequest($this->getServerRequest());
@@ -71,7 +74,7 @@ class EventsController extends Controller
         return $form;
     }
 
-    public function heatmapAction()
+    public function heatmapAction(): void
     {
         $this->actions()->add(Link::create(
             $this->translate('Table'),
@@ -79,7 +82,7 @@ class EventsController extends Controller
             $this->url()->getParams()->toArray(false),
             [
                 'class' => 'icon-th-list',
-                'data-base-target' => '_main',
+                'data-base-target' => '_main'
             ]
         ));
 
@@ -97,7 +100,10 @@ class EventsController extends Controller
         $this->content()->add(new CalendarForEvents($heatMap, $baseUrl, $form->getColors()));
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $params = [];
         if ($day = $this->params->get('day')) {
@@ -108,7 +114,7 @@ class EventsController extends Controller
         }
         $tabs = $this->tabs()->add('events', [
             'label' => $this->translate('Events'),
-            'url'   => $this->url(),
+            'url'   => $this->url()
         ])->add('alarms', [
             'label' => $this->translate('Alarms'),
             'url'   => $alarmsUrl,

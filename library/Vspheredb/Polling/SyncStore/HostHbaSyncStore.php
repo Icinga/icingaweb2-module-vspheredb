@@ -4,8 +4,11 @@ namespace Icinga\Module\Vspheredb\Polling\SyncStore;
 
 class HostHbaSyncStore extends HostPropertyInstancesSyncStore
 {
-    protected $baseKey = 'config.storageDevice.hostBusAdapter';
-    protected $keyProperty = 'key';
-    protected $dbKeyProperty = 'hba_key';
-    protected $instanceClass = 'HostHostBusAdapter';
+    protected string $baseKey = 'config.storageDevice.hostBusAdapter';
+
+    protected string $keyProperty = 'key';
+
+    protected string $dbKeyProperty = 'hba_key';
+
+    protected string $instanceClass = 'HostHostBusAdapter';
 }

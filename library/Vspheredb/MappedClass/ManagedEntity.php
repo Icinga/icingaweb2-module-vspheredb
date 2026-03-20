@@ -2,9 +2,10 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class ManagedEntity
 {
     /**

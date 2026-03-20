@@ -7,6 +7,7 @@ use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
+use RuntimeException;
 
 use function in_array;
 
@@ -14,10 +15,13 @@ abstract class MonitoringRuleDefinition
 {
     use TranslationHelper;
 
+    /** @var ObjectType[] */
     public const SUPPORTED_OBJECT_TYPES = [];
 
     abstract public function getLabel(): string;
+
     abstract public static function getIdentifier(): string;
+
     abstract public function getParameters(): array;
 
     public static function isMultiInstanceRule(): bool
@@ -25,7 +29,7 @@ abstract class MonitoringRuleDefinition
         return false;
     }
 
-    public static function supportsObjectType(string $objectType): bool
+    public static function supportsObjectType(ObjectType $objectType): bool
     {
         return in_array($objectType, static::SUPPORTED_OBJECT_TYPES, true);
     }
@@ -33,6 +37,7 @@ abstract class MonitoringRuleDefinition
     /**
      * @param BaseDbObject $object
      * @param Settings $settings
+     *
      * @return SingleCheckResult[]
      */
     public function checkObject(BaseDbObject $object, Settings $settings): array
@@ -60,14 +65,14 @@ abstract class MonitoringRuleDefinition
         return [];
     }
 
-    protected function assertSupportedObject($object)
+    protected function assertSupportedObject($object): void
     {
-        $type = ObjectType::getDbClassType(get_class($object));
+        $type = ObjectType::fromDbObject($object);
         if (!static::supportsObjectType($type)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 "'%s' is not supported. Supported: %s",
-                $type,
-                implode(', ', static::SUPPORTED_OBJECT_TYPES)
+                $type->value,
+                implode(', ', array_map(fn (ObjectType $t) => $t->value, static::SUPPORTED_OBJECT_TYPES))
             ));
         }
     }

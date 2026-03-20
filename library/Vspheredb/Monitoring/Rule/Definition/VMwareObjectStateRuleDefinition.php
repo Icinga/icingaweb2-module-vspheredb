@@ -14,7 +14,7 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
     public const SUPPORTED_OBJECT_TYPES = [
         ObjectType::HOST_SYSTEM,
         ObjectType::VIRTUAL_MACHINE,
-        ObjectType::DATASTORE,
+        ObjectType::DATASTORE
     ];
 
     public static function getIdentifier(): string
@@ -32,15 +32,13 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
         try {
             $color = $object->object()->get('overall_status');
             $message = $this->getStatusMessageForColor($color);
-        } catch (NotFoundError $e) {
+        } catch (NotFoundError) {
             $color = 'gray';
             $message = 'Could not find the related Managed Object, please check my vCenter permissions';
         }
-        $state = MonitoringStateTrigger::getMonitoringState($settings->get("trigger_on_$color"));
+        $state = MonitoringStateTrigger::nullableFrom($settings->get("trigger_on_$color"))->monitoringState();
 
-        return [
-            new SingleCheckResult($state, $message)
-        ];
+        return [new SingleCheckResult($state, $message)];
     }
 
     protected function getStatusMessageForColor($color): string
@@ -56,9 +54,9 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
     public function getInternalDefaults(): array
     {
         return [
-            'trigger_on_gray'   => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_yellow' => MonitoringStateTrigger::RAISE_WARNING,
-            'trigger_on_red'    => MonitoringStateTrigger::RAISE_CRITICAL
+            'trigger_on_gray'   => MonitoringStateTrigger::RAISE_CRITICAL->value,
+            'trigger_on_yellow' => MonitoringStateTrigger::RAISE_WARNING->value,
+            'trigger_on_red'    => MonitoringStateTrigger::RAISE_CRITICAL->value
         ];
     }
 
@@ -66,15 +64,15 @@ class VMwareObjectStateRuleDefinition extends MonitoringRuleDefinition
     {
         return [
             'trigger_on_yellow' => ['state_trigger', [
-                'label' => $this->translate('When VMware shows YELLOW'),
+                'label' => $this->translate('When VMware shows YELLOW')
             ]],
             'trigger_on_gray' => ['state_trigger', [
                 'label' => $this->translate('When VMware shows GRAY'),
                 'description' => $this->translate('VM might be unreachable')
             ]],
             'trigger_on_red' => ['state_trigger', [
-                'label' => $this->translate('When VMware shows RED'),
-            ]],
+                'label' => $this->translate('When VMware shows RED')
+            ]]
         ];
     }
 }

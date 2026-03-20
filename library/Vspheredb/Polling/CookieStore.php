@@ -13,18 +13,18 @@ use function unlink;
 class CookieStore
 {
     /** @var string */
-    private $cacheDir;
+    private string $cacheDir;
 
     /** @var string */
-    private $cookieFile;
+    private string $cookieFile;
 
     /** @var array */
-    private $cookies = [];
+    private array $cookies = [];
 
     /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
-    public function __construct($cacheDir, ServerInfo $serverInfo, LoggerInterface $logger)
+    public function __construct(string $cacheDir, ServerInfo $serverInfo, LoggerInterface $logger)
     {
         $this->cacheDir = $cacheDir;
         $this->logger = $logger;
@@ -37,12 +37,12 @@ class CookieStore
     /**
      * @return bool
      */
-    public function hasCookies()
+    public function hasCookies(): bool
     {
-        return !empty($this->cookies);
+        return ! empty($this->cookies);
     }
 
-    public function setCookies(array $cookies)
+    public function setCookies(array $cookies): void
     {
         if ($cookies !== $this->cookies) {
             $this->logger->notice('Cookies changed, storing new ones');
@@ -54,7 +54,7 @@ class CookieStore
     /**
      * Discard our Cookie
      */
-    public function forgetCookies()
+    public function forgetCookies(): void
     {
         $this->cookies = [];
         if (file_exists($this->cookieFile)) {
@@ -62,7 +62,7 @@ class CookieStore
         }
     }
 
-    public function getCookies()
+    public function getCookies(): false|array
     {
         if (file_exists($this->cookieFile . '.fake')) {
             return file($this->cookieFile . '.fake', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

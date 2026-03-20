@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Feature\NextConfirmCancel;
@@ -11,7 +12,6 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
-use Ramsey\Uuid\Uuid;
 use React\EventLoop\LoopInterface;
 
 use function React\Async\await;
@@ -23,17 +23,16 @@ class DeleteVCenterForm extends Form
     protected $defaultDecoratorClass = null;
 
     /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     /** @var RemoteClient */
-    protected $client;
+    protected RemoteClient $client;
 
     /** @var LoopInterface */
-    protected $loop;
-    /**
-     * @var Db
-     */
-    protected $db;
+    protected LoopInterface $loop;
+
+    /** @var Db */
+    protected Db $db;
 
     public function __construct(Db $db, VCenter $vCenter, RemoteClient $client, LoopInterface $loop)
     {
@@ -43,7 +42,7 @@ class DeleteVCenterForm extends Form
         $this->loop = $loop;
     }
 
-    public function assemble()
+    protected function assemble(): void
     {
         $this->add(Html::tag('h3', $this->translate('Delete this vCenter')));
         $this->add(Hint::warning($this->translate(
@@ -62,19 +61,19 @@ class DeleteVCenterForm extends Form
         ))->addToForm($this);
     }
 
-    public function onSuccess()
+    protected function onSuccess(): void
     {
         $db = $this->db->getDbAdapter();
         // Delete the connection first.
         $db->delete('vcenter_server', $db->quoteInto('vcenter_id = ?', (int) $this->vCenter->get('id')));
 
         try {
-            if (await($this->client->request('db.deleteVcenter', [$this->vCenter->get('id')]))) {
-                Notification::success($this->translate('vCenter data cleanup has been launched'));
-            } else {
-                Notification::success($this->translate('Failed to trigger vCenter data cleanup'));
-            }
-        } catch (\Exception $e) {
+            Notification::success(
+                await($this->client->request('db.deleteVcenter', [$this->vCenter->get('id')]))
+                    ? $this->translate('vCenter data cleanup has been launched')
+                    : $this->translate('Failed to trigger vCenter data cleanup')
+            );
+        } catch (Exception $e) {
             Notification::error($e->getMessage());
         }
     }

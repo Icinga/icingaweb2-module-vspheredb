@@ -3,6 +3,8 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use Icinga\Authentication\Auth;
+use Icinga\Exception\MissingParameterException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualPortgroup;
 use Icinga\Module\Vspheredb\Web\Controller\ObjectsController;
 use Icinga\Module\Vspheredb\Web\Table\Objects\NetworkAdaptersTable;
@@ -12,10 +14,10 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 class PortgroupController extends ObjectsController
 {
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->setAutorefreshInterval(15);
         $table = new NetworkAdaptersTable($this->db(), $this->url());

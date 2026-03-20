@@ -8,7 +8,7 @@ use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
-use Icinga\Module\Vspheredb\Monitoring\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\MonitoringStateTrigger;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
@@ -19,7 +19,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
 {
     public const SUPPORTED_OBJECT_TYPES = [
         ObjectType::HOST_SYSTEM,
-        ObjectType::VIRTUAL_MACHINE,
+        ObjectType::VIRTUAL_MACHINE
     ];
 
     public static function getIdentifier(): string
@@ -37,9 +37,7 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         if ($object instanceof VirtualMachine) {
             $what = 'Virtual Machine';
             if ($object->get('template') === 'y') {
-                return [
-                    new SingleCheckResult(new CheckPluginState(), 'This is a VM template')
-                ];
+                return [new SingleCheckResult(CheckPluginState::OK, 'This is a VM template')];
             }
         } elseif ($object instanceof HostSystem) {
             $what = 'Host System';
@@ -48,19 +46,15 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         }
 
         $powerState = $object->get('runtime_power_state');
-        if ($powerState === 'poweredOn') {
-            $state = new CheckPluginState(CheckPluginState::OK);
-        } else {
-            $state = MonitoringStateTrigger::getMonitoringState($settings->get("trigger_on_$powerState"));
-        }
+        $state = $powerState === 'poweredOn'
+            ? CheckPluginState::OK
+            : MonitoringStateTrigger::nullableFrom($settings->get("trigger_on_$powerState"))->monitoringState();
         $message = $this->getStatusMessageForPowerState($powerState, $what);
 
-        $results = [
-            new SingleCheckResult($state, $message)
-        ];
+        $results = [new SingleCheckResult($state, $message)];
 
         if ($powerState === 'poweredOn') {
-            $uptimeState = new CheckPluginState();
+            $uptimeState = CheckPluginState::OK;
             if ($object instanceof HostSystem) {
                 $stats = HostQuickStats::loadFor($object);
             } else {
@@ -75,13 +69,13 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
 
             foreach (
                 [
-                'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING,
-                'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL,
+                    'warning_for_uptime_less_than_seconds'  => CheckPluginState::WARNING->value,
+                    'critical_for_uptime_less_than_seconds' => CheckPluginState::CRITICAL->value
                 ] as $setting => $errorState
             ) {
                 $min = $settings->get($setting);
                 if ($min) {
-                    $this->checkMin($uptimeState, $uptime, $min, $errorState, $info);
+                    $uptimeState = $this->checkMin($uptimeState, $uptime, $min, $errorState, $info);
                 }
             }
 
@@ -91,13 +85,13 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
             }
             foreach (
                 [
-                 'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING,
-                 'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL,
+                    'warning_for_uptime_greater_than_days'  => CheckPluginState::WARNING->value,
+                    'critical_for_uptime_greater_than_days' => CheckPluginState::CRITICAL->value
                 ] as $setting => $errorState
             ) {
                 $min = $settings->get($setting);
                 if ($min) {
-                    $this->checkMax($uptimeState, $uptime, $min * 86400, $errorState, $info);
+                    $uptimeState = $this->checkMax($uptimeState, $uptime, $min * 86400, $errorState, $info);
                 }
             }
 
@@ -113,49 +107,56 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
         return $results;
     }
 
-    protected function checkMax(CheckPluginState $uptimeState, $value, $threshold, $errorState, &$info)
-    {
-        if ($threshold) {
-            if ($value >= $threshold) {
-                $uptimeState->raiseState($errorState);
-                $info = sprintf('>= %s ago', DateFormatter::formatDuration($threshold));
-            }
+    protected function checkMax(
+        CheckPluginState $uptimeState,
+        int $value,
+        int $threshold,
+        int $errorState,
+        ?string &$info
+    ): CheckPluginState {
+        if ($value >= $threshold) {
+            $info = sprintf('>= %s ago', DateFormatter::formatDuration($threshold));
+
+            return $uptimeState->raise(CheckPluginState::from($errorState));
         }
+
+        return $uptimeState;
     }
 
-    protected function checkMin(CheckPluginState $uptimeState, $value, $threshold, $errorState, &$info)
-    {
-        if ($threshold) {
-            if ($value < $threshold) {
-                $uptimeState->raiseState($errorState);
-                $info = sprintf('less than %s ago', DateFormatter::formatDuration($threshold));
-            }
+    protected function checkMin(
+        CheckPluginState $uptimeState,
+        int $value,
+        int $threshold,
+        int $errorState,
+        ?string &$info
+    ): CheckPluginState {
+        if ($value < $threshold) {
+            $info = sprintf('less than %s ago', DateFormatter::formatDuration($threshold));
+
+            return $uptimeState->raise(CheckPluginState::from($errorState));
         }
+
+        return $uptimeState;
     }
 
-    protected function getStatusMessageForPowerState($state, $what): string
+    protected function getStatusMessageForPowerState(string $state, string $what): string
     {
-        switch ($state) {
-            case 'poweredOff':
-                return "$what has been powered off";
-            case 'suspended':
-                return "$what has been suspended";
-            case 'unknown':
-                return "$what power state is unknown, might be disconnected";
-            case 'poweredOn':
-                return "$what is powered on";
-        }
-
-        throw new InvalidArgumentException("'$state' is not a known power state");
+        return match ($state) {
+            'poweredOff' => "$what has been powered off",
+            'suspended'  => "$what has been suspended",
+            'unknown'    => "$what power state is unknown, might be disconnected",
+            'poweredOn'  => "$what is powered on",
+            default      => throw new InvalidArgumentException("'$state' is not a known power state")
+        };
     }
 
     public function getInternalDefaults(): array
     {
         return [
-            'trigger_on_poweredOff' => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_suspended'  => MonitoringStateTrigger::RAISE_CRITICAL,
-            'trigger_on_unknown'    => MonitoringStateTrigger::RAISE_UNKNOWN,
-            'warning_for_uptime_less_than' => 900,
+            'trigger_on_poweredOff'        => MonitoringStateTrigger::RAISE_CRITICAL->value,
+            'trigger_on_suspended'         => MonitoringStateTrigger::RAISE_CRITICAL->value,
+            'trigger_on_unknown'           => MonitoringStateTrigger::RAISE_UNKNOWN->value,
+            'warning_for_uptime_less_than' => 900
         ];
     }
 
@@ -163,31 +164,31 @@ class PowerStateRuleDefinition extends MonitoringRuleDefinition
     {
         return [
             'trigger_on_poweredOff' => ['state_trigger', [
-                'label' => $this->translate('When powered off'),
+                'label' => $this->translate('When powered off')
             ]],
             'trigger_on_suspended' => ['state_trigger', [
-                'label' => $this->translate('When suspended'),
+                'label' => $this->translate('When suspended')
             ]],
             'trigger_on_unknown' => ['state_trigger', [
                 'label'       => $this->translate('When unknown'),
-                'description' => $this->translate('Might be disconnected'),
+                'description' => $this->translate('Might be disconnected')
             ]],
             'warning_for_uptime_less_than' => ['number', [
                 'label'       => $this->translate('Raise WARNING for uptime less than'),
-                'description' => $this->translate('Please provide the uptime in seconds'),
+                'description' => $this->translate('Please provide the uptime in seconds')
             ]],
             'critical_for_uptime_less_than' => ['number', [
                 'label'       => $this->translate('Raise CRITICAL for uptime less than'),
-                'description' => $this->translate('Please provide the uptime in seconds'),
+                'description' => $this->translate('Please provide the uptime in seconds')
             ]],
             'warning_for_uptime_greater_than_days' => ['number', [
                 'label'       => $this->translate('Raise WARNING for uptime greater than'),
-                'description' => $this->translate('Please provide the uptime in days'),
+                'description' => $this->translate('Please provide the uptime in days')
             ]],
             'critical_for_uptime_greater_than_days' => ['number', [
                 'label'       => $this->translate('Raise CRITICAL for uptime greater than'),
-                'description' => $this->translate('Please provide the uptime in days'),
-            ]],
+                'description' => $this->translate('Please provide the uptime in days')
+            ]]
         ];
     }
 }

@@ -2,19 +2,21 @@
 
 namespace Icinga\Module\Vspheredb\DbObject;
 
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\DbObject as VspheredbDbObject;
 use Icinga\Module\Vspheredb\Db\DbUtil;
+use Icinga\Module\Vspheredb\Exception\DuplicateKeyException;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
 class ManagedObject extends VspheredbDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'object';
+    protected ?string $table = 'object';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'           => null,
         'vcenter_uuid'   => null,
         'moref'          => null,
@@ -23,33 +25,33 @@ class ManagedObject extends VspheredbDbObject
         'overall_status' => null,
         'level'          => null,
         'parent_uuid'    => null,
-        'tags'           => null,
+        'tags'           => null
     ];
 
-    /** @var ManagedObject */
-    private $parent;
+    /** @var ?ManagedObject */
+    private ?ManagedObject $parent = null;
 
     /**
      * @param string $uuid
      * @param Db $connection
+     *
      * @return static
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @throws NotFoundError
      */
     public static function loadWithUuid(string $uuid, Db $connection): ManagedObject
     {
-        if (strlen($uuid) === 16) {
-            $uuid = Uuid::fromBytes($uuid);
-        } else {
-            $uuid = Uuid::fromString($uuid);
-        }
+        $uuid = strlen($uuid) === 16 ? Uuid::fromBytes($uuid) : Uuid::fromString($uuid);
 
         return static::load($uuid->getBytes(), $connection);
     }
 
     /**
-     * @throws \Icinga\Module\Vspheredb\Exception\DuplicateKeyException
+     * @returns void
+     *
+     * @throws DuplicateKeyException
      */
-    protected function beforeStore()
+    protected function beforeStore(): void
     {
         if (null !== $this->parent) {
             $this->parent->store();
@@ -62,30 +64,38 @@ class ManagedObject extends VspheredbDbObject
         $this->set('level', $this->calculateLevel());
     }
 
-    public function getBinaryUuid()
+    /**
+     * @return mixed
+     */
+    public function getBinaryUuid(): mixed
     {
         return $this->get('uuid');
     }
 
-    public function setParent(ManagedObject $object)
+    /**
+     * @param ManagedObject $object
+     *
+     * @return $this
+     */
+    public function setParent(ManagedObject $object): static
     {
         $this->parent = $object;
         // Hint: parent change hasn't been detected otherwise.
         // TODO: check whether change detection is still fine
-        if ($object->hasBeenLoadedFromDb()) {
-            $this->set('parent_uuid', $object->get('uuid'));
-        } else {
-            $this->set('parent_uuid', 'NOT YET, SETTING A TOO LONG STRING');
-        }
+        $this->set(
+            'parent_uuid',
+            $object->hasBeenLoadedFromDb() ? $object->get('uuid') : 'NOT YET, SETTING A TOO LONG STRING'
+        );
 
         return $this;
     }
 
     /**
      * @param VCenter $vCenter
+     *
      * @return static[]
      */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
 
@@ -100,7 +110,10 @@ class ManagedObject extends VspheredbDbObject
         );
     }
 
-    public function getNumericLevel()
+    /**
+     * @return int
+     */
+    public function getNumericLevel(): int
     {
         $level = $this->get('level');
         if ($level === null) {
@@ -110,18 +123,22 @@ class ManagedObject extends VspheredbDbObject
         return (int) $level;
     }
 
-    public function calculateLevel()
+    /**
+     * @return int
+     */
+    public function calculateLevel(): int
     {
-        if ($this->parent === null) {
-            return 0;
-        } else {
-            return $this->parent->calculateLevel() + 1;
-        }
+        return $this->parent === null ? 0 : $this->parent->calculateLevel() + 1;
     }
 
-    protected function isBinaryColumn($column)
+    /**
+     * @param string $column
+     *
+     * @return bool
+     */
+    protected function isBinaryColumn(string $column): bool
     {
-        if ($column === 'uuid' || substr($column, -5) === '_uuid') {
+        if ($column === 'uuid' || str_ends_with($column, '_uuid')) {
             return true;
         }
 

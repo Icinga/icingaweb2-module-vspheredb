@@ -2,64 +2,54 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\DbObject\DistributedVirtualPortgroup;
+use Zend_Db_Select;
 
 class NetworkAdaptersTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/vm';
+    protected ?string $baseUrl = 'vspheredb/vm';
 
-    /** @var DistributedVirtualPortgroup|null */
-    protected $portGroup;
+    /** @var ?DistributedVirtualPortgroup */
+    protected ?DistributedVirtualPortgroup $portGroup = null;
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['vm' => 'virtual_machine'],
-            'o.uuid = vm.uuid',
-            []
-        )->join(
-            ['vh' => 'vm_hardware'],
-            'vh.vm_uuid = vm.uuid',
-            []
-        )->join(
-            ['vna' => 'vm_network_adapter'],
-            'vna.vm_uuid = vh.vm_uuid AND vna.hardware_key = vh.hardware_key',
-            []
-        );
+        $query = $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])
+            ->join(['vh' => 'vm_hardware'], 'vh.vm_uuid = vm.uuid', [])
+            ->join(
+                ['vna' => 'vm_network_adapter'],
+                'vna.vm_uuid = vh.vm_uuid AND vna.hardware_key = vh.hardware_key',
+                []
+            );
 
         if ($this->portGroup) {
-            $query->where(
-                'portgroup_uuid = ?',
-                $this->portGroup->get('uuid')
-            );
+            $query->where('portgroup_uuid = ?', $this->portGroup->get('uuid'));
         }
 
         return $query;
     }
 
-    public function filterPortGroup(DistributedVirtualPortgroup $portGroup)
+    public function filterPortGroup(DistributedVirtualPortgroup $portGroup): static
     {
         $this->portGroup = $portGroup;
 
         return $this;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
             $this->createColumn('port_key', $this->translate('Port'), 'vna.port_key'),
             $this->createObjectNameColumn(),
-            $this->createColumn('label', $this->translate('Interface'), [
-                'vh.label',
-            ]),
+            $this->createColumn('label', $this->translate('Interface'), ['vh.label'])
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'port_key',

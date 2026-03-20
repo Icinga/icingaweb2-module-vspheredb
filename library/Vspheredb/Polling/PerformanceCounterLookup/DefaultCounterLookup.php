@@ -2,30 +2,32 @@
 
 namespace Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup;
 
-use gipfl\ZfDb\Adapter\Adapter;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
+use Zend_Db_Adapter_Abstract;
+use Zend_Db_Select;
 
 abstract class DefaultCounterLookup implements CounterLookup
 {
     /**
-     * @var Adapter|\Zend_Db_Adapter_Abstract
+     * @var Zend_Db_Adapter_Abstract
      */
-    protected $db;
+    protected Zend_Db_Adapter_Abstract $db;
 
-    protected $tagColumns;
+    /** @var ?string[] */
+    protected ?array $tagColumns = null;
 
-    protected $objectKey;
+    protected ?string $objectKey = null;
 
-    protected $instanceKey;
+    protected ?string $instanceKey = null;
 
-    protected $staticInstanceKey;
+    protected ?string $staticInstanceKey = null;
 
     /**
-     * @param Adapter|\Zend_Db_Adapter_Abstract $db
+     * @param Zend_Db_Adapter_Abstract $db
      */
-    public function __construct($db)
+    public function __construct(Zend_Db_Adapter_Abstract $db)
     {
         $this->db = $db;
     }
@@ -65,27 +67,21 @@ abstract class DefaultCounterLookup implements CounterLookup
     {
         if ($this->hasInstanceKey()) {
             return static::explodeInstances($this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid)));
-        } else {
-            return $this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid));
         }
+
+        return $this->db->fetchPairs($this->prepareInstancesQuery($vCenterUuid));
     }
 
-    abstract protected function prepareBaseQuery(UuidInterface $vCenterUuid);
+    abstract protected function prepareBaseQuery(UuidInterface $vCenterUuid): Zend_Db_Select;
 
-    abstract protected function prepareInstancesQuery(UuidInterface $vCenterUuid);
+    abstract protected function prepareInstancesQuery(UuidInterface $vCenterUuid): Zend_Db_Select;
 
     protected static function explodeInstances($queryResult): array
     {
-        $result = [];
-
-        foreach ($queryResult as $key => $value) {
-            $result[$key] = explode(',', $value);
-        }
-
-        return $result;
+        return array_map(fn ($value) => explode(',', $value), $queryResult);
     }
 
-    protected function getTagColumns()
+    protected function getTagColumns(): array
     {
         if ($this->tagColumns === null) {
             throw $this->missingPropertyError('tagColumns');
@@ -94,7 +90,7 @@ abstract class DefaultCounterLookup implements CounterLookup
         return $this->tagColumns;
     }
 
-    protected function getObjectKey()
+    protected function getObjectKey(): string
     {
         if ($this->objectKey === null) {
             throw $this->missingPropertyError('objectKey');
@@ -103,7 +99,7 @@ abstract class DefaultCounterLookup implements CounterLookup
         return $this->objectKey;
     }
 
-    protected function getInstanceKey()
+    protected function getInstanceKey(): string
     {
         if ($this->instanceKey === null) {
             throw $this->missingPropertyError('instanceKey');
@@ -112,10 +108,10 @@ abstract class DefaultCounterLookup implements CounterLookup
         return $this->instanceKey;
     }
 
-    protected function convertResultRowUuidsToText($row)
+    protected function convertResultRowUuidsToText($row): void
     {
         foreach (array_keys((array) $row) as $key) {
-            if ($key === 'uuid' || substr($key, -5) === '_uuid') {
+            if ($key === 'uuid' || str_ends_with($key, '_uuid')) {
                 if (strlen($row->$key) === 16) {
                     $row->$key = Uuid::fromBytes($row->$key)->toString();
                 }

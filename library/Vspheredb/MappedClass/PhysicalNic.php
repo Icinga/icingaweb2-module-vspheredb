@@ -2,7 +2,9 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
-#[\AllowDynamicProperties]
+use AllowDynamicProperties;
+
+#[AllowDynamicProperties]
 class PhysicalNic
 {
     /**
@@ -44,7 +46,7 @@ class PhysicalNic
      * The current link state of the physical network adapter. If this object
      * is not set, then the link is down.
      *
-     * @var PhysicalNicLinkInfo|null
+     * @var ?PhysicalNicLinkInfo
      */
     public $linkSpeed;
 
