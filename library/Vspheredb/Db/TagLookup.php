@@ -50,9 +50,9 @@ class TagLookup
                 $result[$category->get('name')] = $tag->get('name');
             } else {
                 if (isset($result[$category->get('name')])) {
-                    $result[$category->get('name')] = [$tag->get('name')];
-                } else {
                     $result[$category->get('name')][] = $tag->get('name');
+                } else {
+                    $result[$category->get('name')] = [$tag->get('name')];
                 }
             }
         }
