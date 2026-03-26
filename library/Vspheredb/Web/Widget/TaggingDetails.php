@@ -52,6 +52,7 @@ class TaggingDetails extends HtmlDocument
             ->join(['tt' => TaggingTag::TABLE], 'tt.category_uuid = tc.uuid', [])
             ->join(['tot' => TaggingObjectTag::TABLE], 'tot.tag_uuid = tt.uuid', [])
             ->where('tot.object_uuid = ?', $object->get('uuid'))
+            ->group('tc.uuid')
             ->order('tc.name');
         $this->categories = TaggingCategory::loadAll($connection, $where);
         // $this->setDemoTags();
