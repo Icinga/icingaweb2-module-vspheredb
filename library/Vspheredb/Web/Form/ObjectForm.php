@@ -6,13 +6,13 @@ use gipfl\ZfDbStore\Store;
 use Icinga\Authentication\Auth;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\Web\Form;
 use gipfl\ZfDbStore\StorableInterface;
 
 abstract class ObjectForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var Store */
     protected $store;

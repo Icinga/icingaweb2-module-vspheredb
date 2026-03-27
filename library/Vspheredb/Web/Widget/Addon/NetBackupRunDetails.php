@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Web\Widget\Addon;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\NotFoundError;
@@ -11,10 +10,11 @@ use Icinga\Module\Vspheredb\Addon\NetBackup;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Db\CheckRelatedLookup;
 use Icinga\Module\Vspheredb\Util;
+use ipl\I18n\Translation;
 
 class NetBackupRunDetails extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /**
      * @param NetBackup $details

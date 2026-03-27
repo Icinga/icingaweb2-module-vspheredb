@@ -6,14 +6,14 @@ use gipfl\Calendar\Calendar;
 use gipfl\Format\LocalTimeFormat;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
-use gipfl\Translation\TranslationHelper;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
+use ipl\I18n\Translation;
 use ipl\Web\Compat\StyleWithNonce;
 
 class CalendarMonthSummary extends Table
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $defaultAttributes = [
         'data-base-target' => '_next',

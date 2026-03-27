@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\Web\Form\Decorator\DdDtDecorator;
 use gipfl\ZfDbStore\Store;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
@@ -14,7 +14,7 @@ use React\EventLoop\LoopInterface;
 class PerfdataConsumerForm extends ObjectForm
 {
     use FormElementStealer;
-    use TranslationHelper;
+    use Translation;
 
     public const ON_DELETE = 'delete';
 

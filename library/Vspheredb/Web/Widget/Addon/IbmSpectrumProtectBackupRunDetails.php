@@ -2,15 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget\Addon;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Util\Format;
+use ipl\I18n\Translation;
 
 class IbmSpectrumProtectBackupRunDetails extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /**
      * IbmSpectrumProtectBackupRunDetails constructor.

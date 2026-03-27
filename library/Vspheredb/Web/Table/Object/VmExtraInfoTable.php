@@ -2,16 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class VmExtraInfoTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VirtualMachine */
     protected $vm;

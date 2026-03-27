@@ -3,15 +3,15 @@
 namespace Icinga\Module\Vspheredb\Monitoring\Rule;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
+use ipl\I18n\Translation;
 
 class MonitoringRulesTreeRenderer extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $tag = 'ul';
 

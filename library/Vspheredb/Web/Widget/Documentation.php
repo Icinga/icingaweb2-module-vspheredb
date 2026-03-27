@@ -3,12 +3,12 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
+use ipl\I18n\Translation;
 
 use function preg_replace;
 use function rawurlencode;
@@ -16,7 +16,7 @@ use function rawurlencode;
 // Stolen from Icinga Director, removed module-specific logic
 class Documentation
 {
-    use TranslationHelper;
+    use Translation;
 
     protected const PUBLIC_URL_MAP = [
         'vspheredb' => 'icinga-vsphere-integration',

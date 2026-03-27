@@ -5,7 +5,6 @@ namespace Icinga\Module\Vspheredb\Web\Form;
 use Exception;
 use gipfl\DbMigration\Migrations;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Widget\Hint;
 use Icinga\Application\Config;
@@ -13,10 +12,11 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class ChooseDbResourceForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     private $config;
 

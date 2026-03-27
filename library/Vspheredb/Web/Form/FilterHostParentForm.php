@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
+use ipl\I18n\Translation;
 
 class FilterHostParentForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $useFormName = false;
     protected $useCsrf = false;

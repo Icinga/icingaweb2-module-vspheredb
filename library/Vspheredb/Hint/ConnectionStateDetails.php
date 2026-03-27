@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Hint;
 
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 
 class ConnectionStateDetails
 {
-    use TranslationHelper;
+    use Translation;
 
     protected static $instance;
 

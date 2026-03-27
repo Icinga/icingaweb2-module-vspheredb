@@ -3,15 +3,15 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\I18n\Translation;
 
 class HostVmsInfoTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var HostSystem */
     protected $host;
