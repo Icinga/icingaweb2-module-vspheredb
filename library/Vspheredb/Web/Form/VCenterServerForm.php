@@ -2,16 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenterServer;
 use ipl\Html\FormElement\SubmitElement;
+use ipl\I18n\Translation;
 
 class VCenterServerForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     public const UNCHANGED_PASSWORD = '__UNCHANGED__';
 

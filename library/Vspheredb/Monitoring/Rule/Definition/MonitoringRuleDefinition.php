@@ -2,17 +2,17 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
 use Icinga\Module\Vspheredb\Monitoring\SingleCheckResult;
+use ipl\I18n\Translation;
 
 use function in_array;
 
 abstract class MonitoringRuleDefinition
 {
-    use TranslationHelper;
+    use Translation;
 
     public const SUPPORTED_OBJECT_TYPES = [];
 

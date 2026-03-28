@@ -11,7 +11,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\QueryParams;
 use Icinga\Web\Notification;
 use InvalidArgumentException;
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\Web\Form;
 use ipl\Html\FormElement\SubmitElement;
 use ipl\Html\Html;
@@ -19,7 +19,7 @@ use Ramsey\Uuid\Uuid;
 
 class MonitoringConnectionForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $db;
     protected bool $hasBeenDeleted = false;

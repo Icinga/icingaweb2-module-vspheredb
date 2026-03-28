@@ -6,14 +6,14 @@ use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 
 class AdditionalTableActions
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var Auth */
     protected $auth;

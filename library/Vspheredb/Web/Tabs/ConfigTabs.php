@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
 use Icinga\Module\Vspheredb\Db;
 
 class ConfigTabs extends Tabs
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var Db|null  */
     protected $connection;

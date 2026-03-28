@@ -4,17 +4,17 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use DateTime;
 use Exception;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Application\Benchmark;
 use Icinga\Module\Vspheredb\Api;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\CompactInOutSparkline;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class VmLiveCountersTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VirtualMachine */
     protected $vm;

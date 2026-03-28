@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
 use Icinga\Authentication\Auth;
@@ -10,7 +10,7 @@ use Icinga\Module\Vspheredb\Db;
 
 class MainTabs extends Tabs
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var Db|null  */
     protected $connection;

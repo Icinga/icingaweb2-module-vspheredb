@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use gipfl\Translation\TranslationHelper;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 use ipl\Web\Compat\StyleWithNonce;
 
 class UsageBar extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $tag = 'div';
 

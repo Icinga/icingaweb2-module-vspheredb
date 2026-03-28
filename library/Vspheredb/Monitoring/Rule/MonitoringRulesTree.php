@@ -2,13 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule;
 
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
+use ipl\I18n\Translation;
 
 class MonitoringRulesTree
 {
-    use TranslationHelper;
+    use Translation;
 
     public const ROOT_OBJECT_TYPE = 'root';
 

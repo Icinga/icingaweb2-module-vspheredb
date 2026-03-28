@@ -3,14 +3,14 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use gipfl\DbMigration\Migrations;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Widget\Hint;
 use Icinga\Web\Notification;
+use ipl\I18n\Translation;
 
 class ApplyMigrationsForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var  Migrations */
     protected $migrations;

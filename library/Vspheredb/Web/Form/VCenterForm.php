@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class VCenterForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VCenter */
     protected $vCenter;

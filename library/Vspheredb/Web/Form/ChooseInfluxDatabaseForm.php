@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
@@ -10,6 +9,7 @@ use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Web\Notification;
 use ipl\Html\FormElement\BaseFormElement;
 use ipl\Html\FormElement\SelectElement;
+use ipl\I18n\Translation;
 use React\EventLoop\LoopInterface;
 
 use function React\Async\await;
@@ -17,7 +17,7 @@ use function React\Promise\Timer\timeout;
 
 class ChooseInfluxDatabaseForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var LoopInterface */
     protected $loop;

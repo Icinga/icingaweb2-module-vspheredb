@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\IcingaWeb2\Icon;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
@@ -16,10 +15,11 @@ use Icinga\Module\Vspheredb\Web\Widget\Link\Html5UiLink;
 use Icinga\Module\Vspheredb\Web\Widget\Link\MobLink;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class HostSystemInfoTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var HostSystem */
     protected $host;

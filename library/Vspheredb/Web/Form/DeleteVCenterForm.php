@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Feature\NextConfirmCancel;
 use gipfl\Web\Widget\Hint;
@@ -11,6 +10,7 @@ use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
 use React\EventLoop\LoopInterface;
 
@@ -18,7 +18,7 @@ use function React\Async\await;
 
 class DeleteVCenterForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $defaultDecoratorClass = null;
 

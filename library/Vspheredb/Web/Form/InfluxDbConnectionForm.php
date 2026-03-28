@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use gipfl\Web\Form\Element\TextWithActionButton;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use ipl\Html\FormElement\SelectElement;
+use ipl\I18n\Translation;
 use React\EventLoop\LoopInterface;
 
 use function React\Async\await;
@@ -14,7 +14,7 @@ use function React\Promise\Timer\timeout;
 
 class InfluxDbConnectionForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     public const INFLUXDB_MIN_SUPPORTED_VERSION = '1.6.0';
 

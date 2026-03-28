@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
@@ -19,10 +18,11 @@ use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\Renderer\PathToObjectRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class VmLocationInfoTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VirtualMachine */
     protected $vm;

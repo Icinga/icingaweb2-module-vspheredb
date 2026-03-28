@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\Json\JsonString;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -14,11 +13,12 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
 
 class TaggingDetails extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var HostSystem|VirtualMachine */
     protected $object;

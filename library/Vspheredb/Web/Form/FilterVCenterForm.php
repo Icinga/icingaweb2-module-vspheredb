@@ -2,15 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Form\Element\VCenterSelection;
+use ipl\I18n\Translation;
 
 class FilterVCenterForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var Auth */
     protected $auth;

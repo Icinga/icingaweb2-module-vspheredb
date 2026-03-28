@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\Tabs;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
 
 class VCenterTabs extends Tabs
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VCenter */
     protected $vCenter;
