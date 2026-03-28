@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -12,10 +11,11 @@ use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\Web\Widget\Link\VCenterLink;
 use Icinga\Module\Vspheredb\Web\Widget\Renderer\PathToObjectRenderer;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
+use ipl\I18n\Translation;
 
 class HostVirtualizationInfoTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var HostSystem */
     protected $host;

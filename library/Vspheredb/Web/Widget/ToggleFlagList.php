@@ -4,14 +4,14 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
-use gipfl\Translation\TranslationHelper;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 use Zend_Db_Select as DbSelect;
 
 abstract class ToggleFlagList extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $tag = 'li';
 

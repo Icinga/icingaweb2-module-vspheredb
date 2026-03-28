@@ -3,17 +3,17 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
+use ipl\I18n\Translation;
 use ipl\Web\Compat\StyleWithNonce;
 
 class DatastoreUsage extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $tag = 'div';
 

@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\SimpleBackupTool;
@@ -17,7 +17,7 @@ use ipl\Html\HtmlDocument;
 
 class CustomValueDetails extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var HostSystem|VirtualMachine */
     protected $object;

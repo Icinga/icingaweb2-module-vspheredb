@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\MonitoringRuleDefinition as Rule;
@@ -14,12 +13,13 @@ use ipl\Html\FormElement\NumberElement;
 use ipl\Html\FormElement\SelectElement;
 use ipl\Html\FormElement\TextElement;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 class RuleForm extends Form
 {
-    use TranslationHelper;
+    use Translation;
 
     public const NEXT_UUID = '00000000-0000-0000-0000-000000000000';
     public const RESULT_CREATED    = 'created';

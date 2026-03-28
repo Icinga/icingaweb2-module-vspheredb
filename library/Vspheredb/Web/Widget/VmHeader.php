@@ -3,16 +3,16 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Icon;
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class VmHeader extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VirtualMachine */
     protected $vm;

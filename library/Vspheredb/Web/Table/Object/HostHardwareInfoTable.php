@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\HostQuickStats;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -10,10 +9,11 @@ use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class HostHardwareInfoTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var HostSystem */
     protected $host;

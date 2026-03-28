@@ -12,11 +12,12 @@ use Icinga\Module\Vspheredb\Web\Form\EnableServerForm;
 use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use ipl\Html\Html;
+use ipl\Stdlib\Events;
 use Psr\Http\Message\RequestInterface;
 
-class VCenterServersTable extends BaseTable implements EventEmitterInterface
+class VCenterServersTable extends BaseTable
 {
-    use EventEmitterTrait;
+    use Events;
 
     public const ON_FORM_ACTION = 'formAction';
 

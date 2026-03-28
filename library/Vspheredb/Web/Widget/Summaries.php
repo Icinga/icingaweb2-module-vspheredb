@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Table\Objects\ObjectsTable;
@@ -16,7 +16,7 @@ use Zend_Db_Select_Exception;
 
 class Summaries extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $tag = 'div';
 

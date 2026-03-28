@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
 
 class VCenterInfoTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $vcenter;
 
