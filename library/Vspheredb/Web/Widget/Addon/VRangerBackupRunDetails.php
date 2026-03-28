@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget\Addon;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Addon\VRangerBackup;
+use ipl\I18n\Translation;
 
 class VRangerBackupRunDetails extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /**
      * @param VRangerBackup $details

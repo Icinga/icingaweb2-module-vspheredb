@@ -3,7 +3,6 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\Json\JsonString;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Table\NameValueTable;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
@@ -14,11 +13,12 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
 
 class TaggingDetails extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var HostSystem|VirtualMachine */
     protected $object;
@@ -52,6 +52,7 @@ class TaggingDetails extends HtmlDocument
             ->join(['tt' => TaggingTag::TABLE], 'tt.category_uuid = tc.uuid', [])
             ->join(['tot' => TaggingObjectTag::TABLE], 'tot.tag_uuid = tt.uuid', [])
             ->where('tot.object_uuid = ?', $object->get('uuid'))
+            ->group('tc.uuid')
             ->order('tc.name');
         $this->categories = TaggingCategory::loadAll($connection, $where);
         // $this->setDemoTags();

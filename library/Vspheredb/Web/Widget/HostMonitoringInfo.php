@@ -4,17 +4,17 @@ namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use Exception;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Widget\Hint;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\I18n\Translation;
 
 class HostMonitoringInfo extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var HostSystem */
     protected $host;

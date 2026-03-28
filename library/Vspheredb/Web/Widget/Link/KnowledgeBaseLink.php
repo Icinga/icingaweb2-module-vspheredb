@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget\Link;
 
-use gipfl\Translation\TranslationHelper;
 use ipl\Html\BaseHtmlElement;
+use ipl\I18n\Translation;
 
 class KnowledgeBaseLink extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $tag = 'a';
 

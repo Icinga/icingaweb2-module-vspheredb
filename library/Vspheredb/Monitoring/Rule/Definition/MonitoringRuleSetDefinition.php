@@ -2,11 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring\Rule\Definition;
 
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 
 abstract class MonitoringRuleSetDefinition
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var string[]|MonitoringRuleDefinition[] Type hint, these are class names */
     public const RULE_CLASSES = [];

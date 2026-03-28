@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget\Vm;
 
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Addon\BackupTool;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\NetBackup;
@@ -12,10 +11,11 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\I18n\Translation;
 
 class BackupToolInfo extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VirtualMachine */
     protected $vm;

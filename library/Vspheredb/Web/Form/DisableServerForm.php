@@ -2,13 +2,13 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Form\Feature\NextConfirmCancel;
 use gipfl\Web\InlineForm;
+use ipl\I18n\Translation;
 
 class DisableServerForm extends InlineForm
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $serverId;
 
