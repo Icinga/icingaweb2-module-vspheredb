@@ -3,6 +3,8 @@
 namespace Icinga\Module\Vspheredb\Web\Widget\Vm;
 
 use Icinga\Module\Vspheredb\Addon\BackupTool;
+use Icinga\Module\Vspheredb\Addon\CohesityBackup;
+use Icinga\Module\Vspheredb\Addon\DellNetworker;
 use Icinga\Module\Vspheredb\Addon\IbmSpectrumProtect;
 use Icinga\Module\Vspheredb\Addon\NetBackup;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
@@ -55,6 +57,8 @@ class BackupToolInfo extends HtmlDocument
     protected function getBackupTools()
     {
         return [
+            new CohesityBackup(),
+            new DellNetworker(),
             new IbmSpectrumProtect(),
             new NetBackup(),
             new VeeamBackup(),
