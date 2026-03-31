@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget\Addon;
 
-use gipfl\Translation\TranslationHelper;
 use gipfl\IcingaWeb2\Widget\NameValueTable;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
+use ipl\I18n\Translation;
 
 class VeeamBackupRunDetails extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /**
      * VeeamBackupRunDetails constructor.

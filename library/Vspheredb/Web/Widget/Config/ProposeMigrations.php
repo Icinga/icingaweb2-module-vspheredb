@@ -4,12 +4,12 @@ namespace Icinga\Module\Vspheredb\Web\Widget\Config;
 
 use Exception;
 use gipfl\DbMigration\Migrations;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Widget\Hint;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Web\Form\ApplyMigrationsForm;
 use ipl\Html\HtmlDocument;
+use ipl\I18n\Translation;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -25,7 +25,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class ProposeMigrations extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var Db */
     protected $db;

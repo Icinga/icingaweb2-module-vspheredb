@@ -3,16 +3,16 @@
 namespace Icinga\Module\Vspheredb\Web\Widget\Link;
 
 use gipfl\IcingaWeb2\Icon;
-use gipfl\Translation\TranslationHelper;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\I18n\Translation;
 
 class VmrcLink extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $vCenter;
 

@@ -3,13 +3,13 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Icon;
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class ServiceTagRenderer extends Html
 {
-    use TranslationHelper;
+    use Translation;
 
     public function __invoke($host)
     {

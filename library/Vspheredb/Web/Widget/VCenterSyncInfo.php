@@ -2,16 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\Sync\VcenterSyncState;
 use Icinga\Module\Vspheredb\WebUtil;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class VCenterSyncInfo extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     protected $tag = 'div';
 

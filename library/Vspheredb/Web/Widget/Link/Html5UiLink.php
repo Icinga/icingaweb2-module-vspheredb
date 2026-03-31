@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget\Link;
 
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use ipl\Html\BaseHtmlElement;
+use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
@@ -16,7 +16,7 @@ use function sprintf;
 
 class Html5UiLink extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     public const QUERYSTRING = '/ui/#?extensionId=%s&objectId=%s&navigator=%s';
     public const QUERYSTRING_LEGACY = [

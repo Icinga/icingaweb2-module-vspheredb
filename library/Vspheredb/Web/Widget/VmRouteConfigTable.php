@@ -2,14 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use ipl\Html\HtmlDocument;
 use ipl\Html\Table;
+use ipl\I18n\Translation;
 
 class VmRouteConfigTable extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VirtualMachine */
     protected $object;

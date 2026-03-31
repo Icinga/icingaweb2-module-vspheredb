@@ -3,7 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Form;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\ZfDbStore\ZfDbStore;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
@@ -17,7 +17,7 @@ use React\EventLoop\LoopInterface;
 class VCenterShipMetricsForm extends ObjectForm
 {
     use FormElementStealer;
-    use TranslationHelper;
+    use Translation;
 
     public const ON_DELETE = 'delete';
 

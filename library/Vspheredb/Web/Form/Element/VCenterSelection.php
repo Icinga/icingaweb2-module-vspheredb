@@ -2,16 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form\Element;
 
-use gipfl\Translation\TranslationHelper;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Auth\RestrictionHelper;
 use Icinga\Module\Vspheredb\Db;
 use ipl\Html\FormElement\SelectElement;
+use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
 
 class VCenterSelection extends SelectElement
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var Db */
     protected $connection;

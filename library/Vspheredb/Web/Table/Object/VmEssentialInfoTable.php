@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb\Web\Table\Object;
 
 use gipfl\IcingaWeb2\Icon;
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
+use ipl\I18n\Translation;
 use gipfl\Web\Table\NameValueTable;
 use Exception;
 use gipfl\Web\Widget\Hint;
@@ -31,7 +31,7 @@ use ipl\Html\Html;
 
 class VmEssentialInfoTable extends NameValueTable
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VirtualMachine */
     protected $vm;

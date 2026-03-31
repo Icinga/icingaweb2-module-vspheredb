@@ -3,16 +3,16 @@
 namespace Icinga\Module\Vspheredb\Web;
 
 use gipfl\IcingaWeb2\Link;
-use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\Auth\RestrictionHelper;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Util;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 
 class OverviewTree extends BaseHtmlElement
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var Db */
     protected $db;

@@ -3,14 +3,14 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Url;
-use gipfl\Translation\TranslationHelper;
 use gipfl\Web\Widget\Hint;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\I18n\Translation;
 
 class CalendarForEvents extends HtmlDocument
 {
-    use TranslationHelper;
+    use Translation;
 
     /** @var VMotionHeatmap|AlarmHeatmap */
     protected $calendars;
