@@ -56,7 +56,7 @@ class PerfdataConsumerForm extends ObjectForm
         $this->addButtons(isset($implementation), 'implementation');
     }
 
-    public function isValidEvent($event)
+    public function isValidEvent($event): bool
     {
         if ($event === self::ON_DELETE) {
             return true;
