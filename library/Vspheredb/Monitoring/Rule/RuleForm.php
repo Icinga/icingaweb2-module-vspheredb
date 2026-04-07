@@ -170,7 +170,7 @@ class RuleForm extends Form
             } elseif ($optionValue === false) {
                 $optionValue = 'n';
             }
-            $element->getOption(null)->setContent(
+            $element->getOption('')->setContent(
                 implode(',', $element->getOption($optionValue)->getContent()) . $suffix
             );
         } elseif ($element instanceof TextElement || $element instanceof NumberElement) {
