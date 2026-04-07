@@ -178,7 +178,7 @@ class InfluxDbConnectionForm extends Form
         }
         $element = $this->getElement('api_version');
         assert($element instanceof SelectElement);
-        $autoOption = $element->getOption(null);
+        $autoOption = $element->getOption('');
         $autoOption->setLabel(\sprintf(
             $this->translate('Autodetect: %s API, Version is %s'),
             $apiVersion,
