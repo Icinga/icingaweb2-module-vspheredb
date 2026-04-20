@@ -124,8 +124,8 @@ class VCenterServerForm extends Form
                 . ' choose it\'s protocol right here'
             ),
             'multiOptions' => [
-                null     => $this->translate('- please choose -'),
-                'HTTP'   => $this->translate('HTTP proxy'),
+                '' => $this->translate('- please choose -'),
+                'HTTP' => $this->translate('HTTP proxy'),
                 'SOCKS5' => $this->translate('SOCKS5 proxy'),
             ],
             'class' => 'autosubmit'

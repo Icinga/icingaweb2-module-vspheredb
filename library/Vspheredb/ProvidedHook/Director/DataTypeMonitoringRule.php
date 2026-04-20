@@ -26,8 +26,7 @@ class DataTypeMonitoringRule extends DataTypeHook
             $options[$set->getLabel()] = $current;
         }
         return $form->createElement('select', $name, [
-            'multiOptions' => [null => $form->translate('- please choose -')] +
-                $options,
+            'multiOptions' => ['' => $form->translate('- please choose -')] + $options,
         ]);
     }
 }

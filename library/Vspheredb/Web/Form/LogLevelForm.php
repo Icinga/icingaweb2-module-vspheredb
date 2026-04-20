@@ -54,7 +54,7 @@ class LogLevelForm extends InlineForm
             NextConfirmCancel::buttonCancel($this->translate('Cancel'))
         );
         $toggle->showWithConfirm(new SelectElement('log_level', [
-            'options'  => [null => $this->translate('- please choose -')] + $this->listLogLevels(),
+            'options'  => ['' => $this->translate('- please choose -')] + $this->listLogLevels(),
             'required' => true,
             'value'    => $currentLevel,
         ]));

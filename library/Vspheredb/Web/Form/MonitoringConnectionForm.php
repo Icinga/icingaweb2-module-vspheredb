@@ -362,8 +362,6 @@ class MonitoringConnectionForm extends Form
 
     protected function optionalEnum($values): array
     {
-        return [
-            null => $this->translate('- please choose -'),
-        ] + $values;
+        return ['' => $this->translate('- please choose -')] + $values;
     }
 }

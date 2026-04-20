@@ -57,7 +57,7 @@ class FilterHostParentForm extends Form
 
         $this->addElement('select', 'type', [
             'options' => [
-                null => $this->translate('- filter by event type -')
+                '' => $this->translate('- filter by event type -')
             ] + array_combine($vMotionEvents, $vMotionEvents)
                 + array_combine($otherKnownEvents, $otherKnownEvents),
             'class' => 'autosubmit',
@@ -69,9 +69,7 @@ class FilterHostParentForm extends Form
             $this->registerElement($element);
         } else {
             $this->addElement('select', 'parent', [
-                'options' => [
-                        null => $this->translate('- filter by parent -')
-                    ] + $parents,
+                'options' => ['' => $this->translate('- filter by parent -')] + $parents,
                 'class' => 'autosubmit',
             ]);
         }

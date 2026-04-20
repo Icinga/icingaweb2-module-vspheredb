@@ -58,7 +58,7 @@ class InfluxDbConnectionForm extends Form
                 'InfluxDB API version, autodetect should work fine'
             ),
             'options' => [
-                null => $this->translate('Autodetect'),
+                '' => $this->translate('Autodetect'),
                 'v1' => 'v1',
                 'v2' => 'v2',
             ],
@@ -177,7 +177,7 @@ class InfluxDbConnectionForm extends Form
         }
         $element = $this->getElement('api_version');
         assert($element instanceof SelectElement);
-        $autoOption = $element->getOption(null);
+        $autoOption = $element->getOption('');
         $autoOption->setLabel(\sprintf(
             $this->translate('Autodetect: %s API, Version is %s'),
             $apiVersion,

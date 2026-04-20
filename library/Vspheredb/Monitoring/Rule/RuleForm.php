@@ -170,7 +170,7 @@ class RuleForm extends Form
             } elseif ($optionValue === false) {
                 $optionValue = 'n';
             }
-            $element->getOption(null)->setContent(
+            $element->getOption('')->setContent(
                 implode(',', $element->getOption($optionValue)->getContent()) . $suffix
             );
         } elseif ($element instanceof TextElement || $element instanceof NumberElement) {
@@ -270,7 +270,7 @@ class RuleForm extends Form
     protected function addStateTriggerElement(string $name, $options = [])
     {
         $selectOptions = [
-            null => $this->translate('Not configured / Inherited'),
+            '' => $this->translate('Not configured / Inherited'),
             MonitoringStateTrigger::IGNORE => $this->translate('Do nothing'),
             MonitoringStateTrigger::RAISE_WARNING => $this->translate('Trigger a Warning state'),
             MonitoringStateTrigger::RAISE_CRITICAL => $this->translate('Trigger a Critical state'),
