@@ -41,6 +41,10 @@ Please make sure that you choose `utf8mb4` as an encoding.
 Installation
 ------------
 
+> **Note:** This module is also available as the `icinga-vspheredb` package
+> via the [Icinga package repository](https://packages.icinga.com).
+> If you installed via package, you can skip the script below.
+
 ### SELinux notice
 
 When installing the module on a system with SELinux enabled,
