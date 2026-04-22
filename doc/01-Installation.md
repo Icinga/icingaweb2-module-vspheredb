@@ -41,6 +41,10 @@ Please make sure that you choose `utf8mb4` as an encoding.
 Installation
 ------------
 
+> **Note:** This module is also available as the `icinga-vspheredb` package
+> via the [Icinga package repository](https://packages.icinga.com).
+> If you installed via package, you can skip the script below.
+
 ### SELinux notice
 
 When installing the module on a system with SELinux enabled,
@@ -58,7 +62,7 @@ existing module installation will be replaced, so this can be used for upgrades 
 
 ```shell
 # You can customize these settings, but we suggest to stick with our defaults:
-MODULE_VERSION="1.8.0"
+MODULE_VERSION="1.8.2"
 DAEMON_USER="icingavspheredb"
 DAEMON_GROUP="icingaweb2"
 ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"

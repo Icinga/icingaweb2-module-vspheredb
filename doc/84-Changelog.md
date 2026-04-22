@@ -1,6 +1,69 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.8.2
+------
+
+This is a maintenance release that fixes PHP 8.5 deprecation warnings caused by
+using `null` as an array offset, and an incompatibility with IPL HTML in
+`SelectElement::getOption()` calls.
+
+### Upgrading
+
+Packages are available as `icinga-vspheredb`. If you missed the packages
+introduced with v1.8.0, consider switching to them now. For non-package
+installations, please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/21?closed=1)
+
+### PHP Support
+* FIX: No longer using `null` as array offset, which is deprecated in PHP 8.5
+
+### IPL Compatibility
+* FIX: `SelectElement::getOption()` now receives an empty string instead of
+  `null` for the placeholder option (#621)
+
+v1.8.1
+------
+
+This is a maintenance release that ships several bug fixes. Disk-usage bars are
+correctly rendered again, multiple tags from the same category are now properly
+imported and displayed, and a threshold-logic bug in Monitoring Rules has been
+corrected. An abandoned third-party HTTP library has been replaced, resolving
+compatibility errors on newer PHP versions
+
+### Upgrading
+
+Packages are available as `icinga-vspheredb`. If you missed the packages
+introduced with v1.8.0, consider switching to them now. For non-package
+installations, please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/20?closed=1)
+
+### UI
+* FIX: Disk-usage bars are no longer misplaced (#603)
+* FIX: Multiple tags from the same category are now correctly displayed (#614)
+
+### Monitoring Rules
+* FIX: "Best wins" logic now correctly activates when either the absolute or the
+  percentage limit fires, not only when both fire at the same time (#601)
+
+### vSphere API
+* FIX: `diskObjectId` is now preserved during synchronization, enabling `vm_disk`
+  record creation (#606)
+* FIX: Replaced the abandoned `RingCentral` HTTP library with `GuzzleHttp`,
+  resolving compatibility errors on newer PHP versions (#602)
+
+### Integrations
+* FIX: Multiple tags from the same category are now correctly imported (#614)
+
+### Internals
+* Adapt to IPL strict typing in forms and i18n helpers (#617)
+
 v1.8.0
 ------
 
@@ -19,7 +82,9 @@ Monitoring Rules got some attention.
 
 ### Upgrading
 
-Please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+Starting with this release, we provide packages as `icinga-vspheredb`. For
+non-package installations, please check our
+[Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
 
 ### Fixed issues
 * You can find issues and feature requests related to this release on our
