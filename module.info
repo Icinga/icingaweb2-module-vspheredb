@@ -1,5 +1,5 @@
 Name: vSphereDB
-Version: 1.8.2
+Version: 1.8.3
 Depends: incubator (>=0.23.0)
 Description: Icinga vSphere® Integration
  This module replicates your most important vCenter configuration items. It
