@@ -1,6 +1,27 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.8.3
+------
+
+This is a maintenance release that ships a compatibility shim for the `Boolean`
+form element, avoiding a fatal declaration incompatibility between
+`gipfl/translation` and `ipl/i18n` on strict PHP setups.
+
+### Upgrading
+
+Packages are available as `icinga-vspheredb`. If you missed the packages
+introduced with v1.8.0, consider switching to them now. For non-package
+installations, please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/22?closed=1)
+
+### IPL Compatibility
+* FIX: A local `Boolean` compat shim is now preloaded to prevent a fatal
+  declaration incompatibility between `gipfl/translation` and `ipl/i18n` (#626)
+
 v1.8.2
 ------
 
