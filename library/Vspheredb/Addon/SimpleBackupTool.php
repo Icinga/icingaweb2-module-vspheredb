@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\Addon;
 
+use gipfl\IcingaWeb2\Widget\NameValueTable;
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\DbObject\CustomValues;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use RuntimeException;
@@ -159,5 +161,31 @@ abstract class SimpleBackupTool implements BackupTool
         foreach ($this->getCustomValues() as $name) {
             $values->remove($name);
         }
+    }
+
+    /**
+     * Returns a generic info renderer for backup tools.
+     * Override this method for custom rendering.
+     *
+     * @return NameValueTable|null
+     */
+    public function getInfoRenderer()
+    {
+        $attributes = $this->getAttributes();
+
+        if ($attributes === null) {
+            return null;
+        }
+
+        $table = new NameValueTable();
+
+        foreach ($attributes as $key => $value) {
+            if (is_int($value) && preg_match('/time/i', $key)) {
+                $value = DateFormatter::formatDateTime($value);
+            }
+            $table->addNameValueRow($key, $value);
+        }
+
+        return $table;
     }
 }
