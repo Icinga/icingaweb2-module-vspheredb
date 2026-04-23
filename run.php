@@ -5,6 +5,8 @@ use Icinga\Module\Vspheredb\Application\DependencyChecker;
 use Icinga\Module\Vspheredb\ProvidedHook\Director\DataTypeMonitoringRule;
 use Icinga\Module\Vspheredb\ProvidedHook\Vspheredb\PerfDataConsumerInfluxDb;
 
+require_once __DIR__ . '/library/compat/Boolean.php';
+
 /** @var $this \Icinga\Application\Modules\Module */
 $checker = new DependencyChecker($this->app);
 if (! $checker->satisfiesDependencies($this)) {
