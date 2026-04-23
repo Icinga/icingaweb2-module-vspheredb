@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2025 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 CREATE INDEX host_name ON host_system (host_name);
 CREATE INDEX template ON virtual_machine (template);
 CREATE INDEX vcenter_uuid ON datastore (vcenter_uuid);

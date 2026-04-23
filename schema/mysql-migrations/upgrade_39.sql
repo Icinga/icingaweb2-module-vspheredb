@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 CREATE TABLE host_hba (
   host_uuid VARBINARY(20) NOT NULL,
   hba_key VARCHAR(64) NOT NULL,

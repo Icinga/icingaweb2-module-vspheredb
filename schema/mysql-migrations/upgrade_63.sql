@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2025 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 CREATE TABLE tagging_category (
   uuid VARBINARY(16) NOT NULL,
   vcenter_uuid VARBINARY(16) NOT NULL,
