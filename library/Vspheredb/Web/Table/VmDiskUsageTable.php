@@ -77,7 +77,9 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         }
 
         $free = Format::bytes($row->free_space)
-            . sprintf(' (%0.3f%%)', ($row->free_space / $row->capacity) * 100);
+            . ($row->capacity > 0
+                ? sprintf(' (%0.3f%%)', ($row->free_space / $row->capacity) * 100)
+                : ' (n/a)');
 
         $tr = $this::tr([
             $this::td($caption, [

@@ -106,8 +106,11 @@ class MonitoringRulesTree
     public function getInheritedSettingsFor(BaseDbObject $object): InheritedSettings
     {
         $uuid = $object->object()->get('parent_uuid');
-        $parents = [$uuid, ...$this->listParentUuidsFor($uuid)];
-
+        if ($uuid === null) {
+            $parents = [MonitoringRuleSet::NO_OBJECT];
+        } else {
+            $parents = [$uuid, ...$this->listParentUuidsFor($uuid)];
+        }
         return InheritedSettings::loadForUuids($parents, $this, $this->db);
     }
 
