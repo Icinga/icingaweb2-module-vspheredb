@@ -37,6 +37,9 @@ class DiskUsageRuleDefinition extends MonitoringRuleDefinition
 
     protected function checkDisk($disk, Settings $settings): ?SingleCheckResult
     {
+        if ((int) $disk->capacity === 0) {
+            return null;
+        }
         if ($filter = $settings->get('disk_path_filter')) {
             if (!$this->filterMatchesPath($filter, $disk->disk_path)) {
                 return null;

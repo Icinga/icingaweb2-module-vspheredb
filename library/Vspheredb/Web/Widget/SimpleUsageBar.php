@@ -33,7 +33,9 @@ class SimpleUsageBar extends BaseHtmlElement
 
     protected function assemble()
     {
-        $usedPercent = $this->used / $this->total;
+        $usedPercent = ($this->total > 0)
+            ? $this->used / $this->total
+            : 0;
 
         $bar = Html::tag('span', [
             'href' => '#',
