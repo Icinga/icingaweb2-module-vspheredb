@@ -22,12 +22,7 @@ class CurlOptions
     public static function forServerInfo(ServerInfo $server): array
     {
         $host = $server->get('host');
-        if (preg_match('/^(.+?):(\d{1,5})$/', $host, $match)) {
-            $port = (int) $match[2];
-        } else {
-            $port = null;
-        }
-        $options = [CURLOPT_HTTPHEADER => ['Expect:', 'User-Agent: Icinga-vSphereDB/1.8']];
+        $port = preg_match('/^(.+?):(\d{1,5})$/', $host, $match) ? (int) $match[2] : null;
         $options[CURLOPT_HTTPHEADER] = ['Expect:', 'User-Agent: Icinga-vSphereDB/1.8'];
 
         if ($proxyType = $server->get('proxy_type')) {
