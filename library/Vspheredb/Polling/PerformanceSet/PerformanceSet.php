@@ -7,20 +7,20 @@ interface PerformanceSet
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @return string
      */
-    public function getObjectType();
+    public function getObjectType(): string;
 
     /**
      * @return string
      */
-    public function getCountersGroup();
+    public function getCountersGroup(): string;
 
     /**
      * @return string[]
      */
-    public function getCounters();
+    public function getCounters(): array;
 }

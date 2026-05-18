@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * The HostProxySwitch is a software entity which represents the component of a
  * DistributedVirtualSwitch on a particular host.
@@ -10,7 +12,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * a vSphere distributed switch. The host proxy switch replicates the networking
  * configuration set on the vSphere distributed switch to the particular host.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class HostProxySwitch
 {
     /**

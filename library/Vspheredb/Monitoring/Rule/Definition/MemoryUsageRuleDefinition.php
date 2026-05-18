@@ -9,12 +9,13 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\Settings;
+use InvalidArgumentException;
 
 class MemoryUsageRuleDefinition extends MonitoringRuleDefinition
 {
     public const SUPPORTED_OBJECT_TYPES = [
         ObjectType::HOST_SYSTEM,
-        ObjectType::VIRTUAL_MACHINE,
+        ObjectType::VIRTUAL_MACHINE
     ];
 
     public static function getIdentifier(): string
@@ -34,7 +35,12 @@ class MemoryUsageRuleDefinition extends MonitoringRuleDefinition
         ];
     }
 
-    protected function getUsedMemory(BaseDbObject $quickStats)
+    /**
+     * @param BaseDbObject $quickStats
+     *
+     * @return int
+     */
+    protected function getUsedMemory(BaseDbObject $quickStats): int
     {
         if ($quickStats instanceof VmQuickStats) {
             return $quickStats->get('host_memory_usage_mb') * MemoryUsageHelper::MEGA_BYTE;
@@ -53,7 +59,7 @@ class MemoryUsageRuleDefinition extends MonitoringRuleDefinition
             $quickStats = VmQuickStats::loadFor($object);
             $capacity = $object->get('hardware_memorymb') * MemoryUsageHelper::MEGA_BYTE;
         } else {
-            throw new \InvalidArgumentException('Cannot load QuickStats for ' . get_class($object));
+            throw new InvalidArgumentException('Cannot load QuickStats for ' . get_class($object));
         }
         $used = $this->getUsedMemory($quickStats);
         $free = $capacity - $used;

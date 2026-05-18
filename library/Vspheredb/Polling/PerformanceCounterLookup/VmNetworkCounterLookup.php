@@ -3,12 +3,15 @@
 namespace Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup;
 
 use Ramsey\Uuid\UuidInterface;
+use Zend_Db_Select;
 
 class VmNetworkCounterLookup extends DefaultCounterLookup
 {
-    protected $objectKey = 'vm_moref';
-    protected $instanceKey = 'interface_hardware_key';
-    protected $tagColumns = [
+    protected ?string $objectKey = 'vm_moref';
+
+    protected ?string $instanceKey = 'interface_hardware_key';
+
+    protected ?array $tagColumns = [
         'vm_uuid'                => 'o.uuid',
         'vm_moref'               => 'o.moref',
         'vm_name'                => 'o.object_name',
@@ -16,22 +19,22 @@ class VmNetworkCounterLookup extends DefaultCounterLookup
         'interface_hardware_key' => 'vna.hardware_key',
         // 'parent_name'     => 'po.object_name',
         'interface_label'        => 'vh.label',
-        // 'portgroup_name'  => 'pgo.object_name',
+        // 'portgroup_name'  => 'pgo.object_name'
     ];
 
-    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
                 'o.moref',
-                'hardware_key' => "GROUP_CONCAT(vna.hardware_key SEPARATOR ',')",
+                'hardware_key' => "GROUP_CONCAT(vna.hardware_key SEPARATOR ',')"
             ])
             ->group('vm.uuid')
             ->order('vm.runtime_host_uuid')
             ->order('vna.hardware_key');
     }
 
-    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])

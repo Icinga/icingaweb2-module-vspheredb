@@ -8,9 +8,11 @@ use React\Promise\PromiseInterface;
 
 class TaggingTagSyncTask extends TaggingSyncTask
 {
-    protected $label = 'Tags';
-    protected $tableName = TaggingTag::TABLE;
-    protected $objectClass = TaggingTag::class;
+    protected string $label = 'Tags';
+
+    protected string $tableName = TaggingTag::TABLE;
+
+    protected string $objectClass = TaggingTag::class;
 
     public function run(RestApi $api): PromiseInterface
     {

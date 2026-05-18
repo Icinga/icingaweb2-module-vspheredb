@@ -7,9 +7,11 @@ use Icinga\Module\Vspheredb\Data\Anonymizer;
 use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\I18n\Translation;
 use ipl\Web\Compat\StyleWithNonce;
+use Zend_Db_Adapter_Abstract;
 
 class DatastoreUsage extends BaseHtmlElement
 {
@@ -22,61 +24,52 @@ class DatastoreUsage extends BaseHtmlElement
         'data-base-target' => '_next'
     ];
 
-    /** @var Datastore */
-    protected $datastore;
+    protected Datastore $datastore;
 
-    /** @var \Zend_Db_Adapter_Abstract */
-    protected $db;
+    protected ?Zend_Db_Adapter_Abstract $db;
 
-    /** @var string */
-    protected $uuid;
+    protected ?string $uuid = null;
 
-    /** @var int */
-    protected $capacity;
+    protected int $capacity;
 
-    /** @var int */
-    protected $uncommitted;
+    protected int $uncommitted;
 
-    protected $gotPercent = 0;
+    protected float $gotPercent = 0;
 
-    protected $baseUrl = 'vspheredb/vm';
+    protected string $baseUrl = 'vspheredb/vm';
 
-    /** @var Link[] Array key is the VirtualMachine id */
-    protected $diskLinks;
+    /** @var ?Link[] Array key is the VirtualMachine id */
+    protected ?array $diskLinks = null;
 
     public function __construct(Datastore $datastore)
     {
-        $this->datastore   = $datastore;
-        $this->uuid        = $datastore->get('uuid');
-        $this->capacity    = (int) $datastore->get('capacity');
+        $this->datastore = $datastore;
+        $this->uuid = $datastore->get('uuid');
+        $this->capacity = (int) $datastore->get('capacity');
         $this->uncommitted = (int) $datastore->get('uncommitted');
         $this->db = $datastore->getDb();
     }
 
-    public function setCapacity($capacity)
+    public function setCapacity(int $capacity): static
     {
         $this->capacity = $capacity;
+
         return $this;
     }
 
-    public function setBaseUrl($url)
+    public function setBaseUrl(string $url): static
     {
         $this->baseUrl = $url;
 
         return $this;
     }
 
-    public function loadAllVmDisks()
+    public function loadAllVmDisks(): static
     {
         $query = $this->db->select()
-            ->from(
-                ['vdu' => 'vm_datastore_usage'],
-                ['o.uuid', 'o.object_name', 'vdu.committed', 'vdu.uncommitted']
-            )->join(
-                ['o' => 'object'],
-                'o.uuid = vdu.vm_uuid',
-                []
-            )->where('vdu.datastore_uuid = ?', $this->datastore->get('uuid'))
+            ->from(['vdu' => 'vm_datastore_usage'], ['o.uuid', 'o.object_name', 'vdu.committed', 'vdu.uncommitted'])
+            ->join(['o' => 'object'], 'o.uuid = vdu.vm_uuid', [])
+            ->where('vdu.datastore_uuid = ?', $this->datastore->get('uuid'))
             // ->order('o.object_name');
             ->order('vdu.committed DESC');
 
@@ -117,7 +110,7 @@ class DatastoreUsage extends BaseHtmlElement
         return $this;
     }
 
-    public function addDiskFromDbRow($row)
+    public function addDiskFromDbRow(object $row): static
     {
         $info = $this->makeDisk($row);
         if ($info !== null) {
@@ -127,20 +120,19 @@ class DatastoreUsage extends BaseHtmlElement
         return $this;
     }
 
-    public function addFreeDatastoreSpace()
+    public function addFreeDatastoreSpace(): static
     {
         if ($this->capacity === 0) {
             return $this;
         }
-        $title = sprintf('Free space');
+        $title = 'Free space';
         $free = $this->datastore->get('free_space');
         if ($this->uncommitted < $free) {
             $class = 'free';
         } elseif ($this->uncommitted > 2 * $this->capacity) {
-            $title = sprintf('Committed space');
+            $title = 'Committed space';
             $class = 'free overcommitted-twice';
         } else {
-            $title = sprintf('Free space');
             $class = 'free overcommitted';
         }
 
@@ -154,25 +146,19 @@ class DatastoreUsage extends BaseHtmlElement
                 ['class' => 'unknown']
             );
         }
-        $this->addVmDisk(
-            $title,
-            $percent,
-            null,
-            ['class' => $class]
-        );
 
-        return $this;
+        return $this->addVmDisk($title, $percent, null, ['class' => $class]);
     }
 
     /**
-     * @param $title
-     * @param $percent
+     * @param string $title
+     * @param float $percent
      * @param ?string $vmUuid
      * @param array $attributes
      *
      * @return $this
      */
-    public function addVmDisk($title, $percent, ?string $vmUuid = null, array $attributes = []): static
+    public function addVmDisk(string $title, float $percent, ?string $vmUuid = null, array $attributes = []): static
     {
         if ($vmUuid) {
             $url = $this->baseUrl;
@@ -195,7 +181,7 @@ class DatastoreUsage extends BaseHtmlElement
             ->setModule('vspheredb')
             ->addFor($link, ['width' => sprintf('%.3F%%; ', $percent)]);
 
-        $link->addAttributes($attributes);
+        $link->addAttributes(Attributes::create($attributes));
 
         if ($vmUuid) {
             $alpha = (20 + (crc32(sha1($vmUuid . $this->uuid)) % 60)) / 100;
@@ -203,12 +189,11 @@ class DatastoreUsage extends BaseHtmlElement
             $style->addFor($link, ['background-color' => $color]);
             $this->diskLinks[$vmUuid] = $link;
         }
-        $this->add([$link, $style]);
 
-        return $this;
+        return $this->add([$link, $style]);
     }
 
-    protected function makeDisk($dbRow)
+    protected function makeDisk(object $dbRow): ?object
     {
         $size = $dbRow->committed + $dbRow->uncommitted;
         if ($size === 0) {
@@ -216,17 +201,15 @@ class DatastoreUsage extends BaseHtmlElement
         }
 
         $share = (object) [
-            'vm_uuid' => $dbRow->uuid,
-            'name'  => $dbRow->object_name,
-            'size'  => $size,
-            'used'  => $dbRow->committed,
+            'vm_uuid'             => $dbRow->uuid,
+            'name'                => $dbRow->object_name,
+            'size'                => $size,
+            'used'                => $dbRow->committed,
             'used_percent'        => ($dbRow->committed / $size) * 100,
             'datastore_percent'   => ($dbRow->committed / $this->capacity) * 100,
             'uncommitted'         => $dbRow->uncommitted,
-            'uncommitted_percent' => $this->uncommitted > 0
-                ? ($dbRow->uncommitted / $this->uncommitted) * 100
-                : 0,
-            'extra-class' => null,
+            'uncommitted_percent' => $this->uncommitted > 0 ? ($dbRow->uncommitted / $this->uncommitted) * 100 : 0,
+            'extra-class'         => null
         ];
         $share->title = sprintf(
             '%s (%.2f%% of %s) used by %s',
@@ -239,7 +222,7 @@ class DatastoreUsage extends BaseHtmlElement
         return $share;
     }
 
-    protected function bytes($bytes)
+    protected function bytes(int $bytes): string
     {
         return Format::bytes($bytes, Format::STANDARD_IEC);
     }

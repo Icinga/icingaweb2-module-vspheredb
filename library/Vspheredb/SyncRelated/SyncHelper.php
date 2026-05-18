@@ -3,18 +3,18 @@
 namespace Icinga\Module\Vspheredb\SyncRelated;
 
 use Exception;
-use gipfl\ZfDb\Adapter\Adapter;
 use Icinga\Module\Vspheredb\Db\DbObject;
 use Icinga\Module\Vspheredb\DbObject\BaseDbObject;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
+use Zend_Db_Adapter_Abstract;
 
 trait SyncHelper
 {
     /**
-     * @param \Zend_Db_Adapter_Abstract $db
-     * @param $callback
+     * @param Zend_Db_Adapter_Abstract $db
+     * @param callable $callback
      */
-    protected static function runAsTransaction($db, $callback)
+    protected static function runAsTransaction(Zend_Db_Adapter_Abstract $db, callable $callback): void
     {
         $db->beginTransaction();
         try {
@@ -32,13 +32,21 @@ trait SyncHelper
     }
 
     /**
-     * @param Adapter|\Zend_Db_Adapter_Abstract $db
+     * @param Zend_Db_Adapter_Abstract $db
      * @param DbObject[] $dbObjects
      * @param array $apiObjects
      * @param SyncStats $stats
+     *
+     * @return void
+     *
+     * @throws Exception
      */
-    protected function storeSyncObjects($db, array $dbObjects, array $apiObjects, SyncStats $stats)
-    {
+    protected function storeSyncObjects(
+        Zend_Db_Adapter_Abstract $db,
+        array $dbObjects,
+        array $apiObjects,
+        SyncStats $stats
+    ): void {
         $create = [];
         self::runAsTransaction($db, function () use ($apiObjects, &$dbObjects, $stats, &$create) {
             $modify = [];
@@ -73,14 +81,16 @@ trait SyncHelper
     }
 
     /**
-     * @param string $class
+     * @param class-string<BaseDbObject> $class
      * @param string $table
      * @param VCenter $vCenter
+     *
+     * @return array
+     *
      * @return BaseDbObject[]
      */
-    protected static function loadAllForVCenter($class, $table, VCenter $vCenter)
+    protected static function loadAllForVCenter(string $class, string $table, VCenter $vCenter): array
     {
-        /** @var string|BaseDbObject $class */
         return $class::loadAll(
             $vCenter->getConnection(),
             $vCenter->getDb()

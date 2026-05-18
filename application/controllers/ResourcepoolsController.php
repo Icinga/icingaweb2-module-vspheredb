@@ -10,7 +10,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class ResourcepoolsController extends ObjectsController
 {
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->addSingleTab($this->translate('Resource Pools'));
         $table = new ResourcePoolsTable($this->db(), $this->url());

@@ -3,28 +3,29 @@
 namespace Icinga\Module\Vspheredb\Polling\PerformanceCounterLookup;
 
 use Ramsey\Uuid\UuidInterface;
+use Zend_Db_Select;
 
 class VmCounterLookup extends DefaultCounterLookup
 {
-    protected $objectKey = 'vm_moref';
+    protected ?string $objectKey = 'vm_moref';
 
-    protected $tagColumns = [
+    protected ?array $tagColumns = [
         'vm_uuid' => 'o.uuid',
         'vm_name' => 'o.object_name',
         'vm_guest_host_name' => 'vm.guest_host_name',
-        'vm_moref' => 'o.moref',
+        'vm_moref' => 'o.moref'
     ];
 
-    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null)
+    protected function prepareInstancesQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
     {
         return $this->prepareBaseQuery($vCenterUuid)
             ->columns([
                 'o.moref',
-                'nix' => '(NULL)',
+                'nix' => '(NULL)'
             ]);
     }
 
-    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null)
+    protected function prepareBaseQuery(?UuidInterface $vCenterUuid = null): Zend_Db_Select
     {
         $query = $this->db->select()->from(['o' => 'object'], [])
             ->join(['vm' => 'virtual_machine'], 'o.uuid = vm.uuid', [])

@@ -9,6 +9,7 @@ use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
+use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmEssentialInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmExtraInfoTable;
 use Icinga\Module\Vspheredb\Web\Table\Object\VmLocationInfoTable;
@@ -16,7 +17,6 @@ use Icinga\Module\Vspheredb\Web\Table\VmDatastoresTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDisksTable;
 use Icinga\Module\Vspheredb\Web\Table\VmDiskUsageTable;
 use Icinga\Module\Vspheredb\Web\Table\VmNetworkAdapterTable;
-use Icinga\Module\Vspheredb\Web\Table\EventHistoryTable;
 use Icinga\Module\Vspheredb\Web\Table\VmSnapshotTable;
 use Icinga\Module\Vspheredb\Web\Widget\CustomValueDetails;
 use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
@@ -25,6 +25,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Vm\BackupToolInfo;
 use Icinga\Module\Vspheredb\Web\Widget\VmHardwareTree;
 use Icinga\Module\Vspheredb\Web\Widget\VmHeader;
 use Icinga\Module\Vspheredb\Web\Widget\VmRouteConfigTable;
+use ipl\Html\Attributes;
 
 class VmController extends Controller
 {
@@ -35,12 +36,10 @@ class VmController extends Controller
      * @throws MissingParameterException
      * @throws NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $vm = $this->addVm();
-        $this->content()->addAttributes([
-            'class' => 'vm-info'
-        ]);
+        $this->content()->addAttributes(Attributes::create(['class' => 'vm-info']));
         $vCenter = VCenter::load($vm->get('vcenter_uuid'), $vm->getConnection());
         $this->addSections([
             new VmEssentialInfoTable($vm),
@@ -54,26 +53,26 @@ class VmController extends Controller
             new VmDiskUsageTable($vm),
             new VmSnapshotTable($vm),
             new BackupToolInfo($vm),
-            new VmExtraInfoTable($vm),
+            new VmExtraInfoTable($vm)
         ]);
     }
 
     /**
      * @throws MissingParameterException|NotFoundError
      */
-    public function hardwareAction()
+    public function hardwareAction(): void
     {
         $vm = $this->addVm();
         $this->content()->add([
             new SubTitle($this->translate('Hardware'), 'print'),
-            new VmHardwareTree($vm),
+            new VmHardwareTree($vm)
         ]);
     }
 
     /**
      * @throws MissingParameterException|NotFoundError
      */
-    public function eventsAction()
+    public function eventsAction(): void
     {
         $table = new EventHistoryTable($this->db());
         $table->filterVm($this->addVm())->renderTo($this);
@@ -82,35 +81,39 @@ class VmController extends Controller
     /**
      * @throws MissingParameterException|NotFoundError
      */
-    public function alarmsAction()
+    public function alarmsAction(): void
     {
         $table = new AlarmHistoryTable($this->db());
         $table->filterEntityUuid($this->addVm()->get('uuid'))->renderTo($this);
     }
 
-    public function monitoringAction()
+    public function monitoringAction(): void
     {
         $this->showMonitoringDetails($this->addVm());
     }
 
     /**
      * @return VirtualMachine
+     *
      * @throws MissingParameterException
      * @throws NotFoundError
      */
-    protected function addVm()
+    protected function addVm(): VirtualMachine
     {
         $vm = VirtualMachine::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($vm->get('vcenter_uuid'));
         $this->controls()->add(new VmHeader($vm, VmQuickStats::loadFor($vm)));
-        $this->controls()->addAttributes(['class' => 'controls-with-object-header']);
+        $this->controls()->addAttributes(Attributes::create(['class' => 'controls-with-object-header']));
         $this->setTitle($vm->object()->get('object_name'));
         $this->handleTabs();
 
         return $vm;
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $params = ['uuid' => $this->params->get('uuid')];
         $this->tabs()->add('index', [

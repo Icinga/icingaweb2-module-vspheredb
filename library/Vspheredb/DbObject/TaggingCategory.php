@@ -5,26 +5,28 @@ namespace Icinga\Module\Vspheredb\DbObject;
 class TaggingCategory extends BaseDbObject
 {
     public const TABLE = 'tagging_category';
-    protected $keyName = 'uuid';
-    protected $table = self::TABLE;
 
-    protected $defaultProperties = [
+    protected string|array|null $keyName = 'uuid';
+
+    protected ?string $table = self::TABLE;
+
+    protected ?array $defaultProperties = [
         'uuid'             => null,
         'vcenter_uuid'     => null,
         'id'               => null,
         'name'             => null,
         'cardinality'      => null,
         'description'      => null,
-        'associable_types' => null,
+        'associable_types' => null
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'uuid'             => 'uuid',
         'id'               => 'id',
         'name'             => 'name',
         'cardinality'      => 'cardinality',
         'description'      => 'description',
-        'associable_types' => 'associable_types',
+        'associable_types' => 'associable_types'
     ];
 
     public function cardinalityIsSingle(): bool

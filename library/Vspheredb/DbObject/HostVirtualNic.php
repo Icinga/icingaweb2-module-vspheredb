@@ -4,11 +4,11 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class HostVirtualNic extends BaseVmHardwareDbObject
 {
-    protected $keyName = ['host_uuid', 'nic_key'];
+    protected string|array|null $keyName = ['host_uuid', 'nic_key'];
 
-    protected $table = 'host_virtual_nic';
+    protected ?string $table = 'host_virtual_nic';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'host_uuid'              => null,
         'nic_key'                => null,
         'net_stack_instance_key' => null,
@@ -31,10 +31,10 @@ class HostVirtualNic extends BaseVmHardwareDbObject
         // pinnedPnic?
         'device'                 => null,
         'tso_enabled'            => null,
-        'vcenter_uuid'           => null,
+        'vcenter_uuid'           => null
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'device'                      => 'device',
         'port'                        => 'port',
         'portgroup'                   => 'portgroup',
@@ -52,6 +52,6 @@ class HostVirtualNic extends BaseVmHardwareDbObject
         'spec.distributedVirtualPort.ip.ipV6Config.origin'     => 'ipv6_origin',
         */
         'spec.mac'        => 'mac_address',
-        'spec.distributedVirtualPort.tsoEnabled' => 'tso_enabled',
+        'spec.distributedVirtualPort.tsoEnabled' => 'tso_enabled'
     ];
 }

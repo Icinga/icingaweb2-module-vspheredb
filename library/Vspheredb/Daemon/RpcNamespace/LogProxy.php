@@ -6,17 +6,24 @@ use Psr\Log\LoggerInterface;
 
 class LogProxy
 {
-    /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    protected $prefix;
+    protected string $prefix = '';
 
+    /**
+     * @param LoggerInterface $logger
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
-    public function setPrefix($prefix)
+    /**
+     * @param string $prefix
+     *
+     * @return $this
+     */
+    public function setPrefix(string $prefix): static
     {
         $this->prefix = $prefix;
 
@@ -27,8 +34,10 @@ class LogProxy
      * @param string $level
      * @param string $message
      * @param array $context
+     *
+     * @return void
      */
-    public function logNotification($level, $message, $context = [])
+    public function logNotification(string $level, string $message, array $context = []): void
     {
         $this->logger->log($level, $this->prefix . $message, $context);
     }

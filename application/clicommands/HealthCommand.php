@@ -8,7 +8,10 @@ class HealthCommand extends Command
 {
     use CheckPluginHelper;
 
-    public function checkAction()
+    /**
+     * @return void
+     */
+    public function checkAction(): void
     {
         $this->run(function () {
             $this->addProblem('UNKNOWN', 'Please use `icingacli vspheredb check vcenterconnection`');

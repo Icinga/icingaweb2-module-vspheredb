@@ -3,15 +3,15 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\IcingaWeb2\Link;
-use Icinga\Module\Vspheredb\Db;
+use Icinga\Module\Vspheredb\Db\DbConnection;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\PathLookup;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\I18n\Translation;
-use Ramsey\Uuid\Uuid;
 
 class VmHardwareTree extends BaseHtmlElement
 {
@@ -21,25 +21,24 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected $defaultAttributes = [
         'class'            => 'tree',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
     protected $tree;
 
-    /** @var VirtualMachine */
-    protected $vm;
+    protected VirtualMachine $vm;
 
-    protected $devices = [];
+    protected array $devices = [];
 
-    protected $parents = [];
+    protected array $parents = [];
 
-    protected $children = [];
+    protected array $children = [];
 
-    protected $disks = [];
+    protected array $disks = [];
 
-    protected $nics = [];
+    protected array $nics = [];
 
-    protected $diskPerf;
+    protected ?array $diskPerf = null;
 
     public function __construct(VirtualMachine $vm)
     {
@@ -47,14 +46,14 @@ class VmHardwareTree extends BaseHtmlElement
     }
 
     /**
-     * @return Db
+     * @return DbConnection
      */
-    protected function getDb()
+    protected function getDb(): DbConnection
     {
         return $this->vm->getConnection();
     }
 
-    protected function fetchDisks()
+    protected function fetchDisks(): void
     {
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
@@ -69,7 +68,7 @@ class VmHardwareTree extends BaseHtmlElement
         }
     }
 
-    protected function fetchNics()
+    protected function fetchNics(): void
     {
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
@@ -84,7 +83,7 @@ class VmHardwareTree extends BaseHtmlElement
         }
     }
 
-    protected function fetchHardware()
+    protected function fetchHardware(): void
     {
         $this->fetchDisks();
         $this->fetchNics();
@@ -107,7 +106,7 @@ class VmHardwareTree extends BaseHtmlElement
         }
     }
 
-    protected function renderDisk($disk, $device, $controller)
+    protected function renderDisk(object $disk, object $device, object $controller): array
     {
         $lookup = new PathLookup($this->getDb()->getDbAdapter());
         $result = [];
@@ -139,57 +138,40 @@ class VmHardwareTree extends BaseHtmlElement
             $result[] = Format::bytes($disk->capacity);
         }
 
-        if (false && array_key_exists($scsi, $this->diskPerf)) {
-            $result[] = new CompactInOutSparkline(
-                $this->diskPerf[$scsi][171],
-                $this->diskPerf[$scsi][172]
-            );
-        }
-
         return $result;
     }
 
-    protected function renderNic($nic, $device, $controller)
+    protected function renderNic(object $nic, object $device, object $controller): Link|array
     {
-        $desc = $device->label;
-
         $parts[] = $nic->mac_address;
         if ($device->summary !== $device->label) {
-            // $parts[] = $device->summary;
+             $parts[] = $device->summary;
         }
 
-        $desc = $desc . ': ' . implode(', ', $parts);
+        $result = Link::create(
+            $device->label . ': ' . implode(', ', $parts),
+            '#',
+            null,
+            ['class' => 'icon-sitemap']
+        );
 
-        $result = Link::create($desc, '#', null, [
-            'class' => 'icon-sitemap',
-        ]);
-
-        if ($nic->portgroup_uuid === null) {
-            return $result;
-        } else {
-            return [$result, $this->linkToPortGroup($nic->portgroup_uuid)];
-        }
+        return $nic->portgroup_uuid === null ? $result : [$result, $this->linkToPortGroup($nic->portgroup_uuid)];
     }
 
-    protected function linkToPortGroup($uuid)
+    protected function linkToPortGroup($uuid): string
     {
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
         $info = $db->fetchRow(
-            $db->select()->from(
-                ['o' => 'object'],
-                [
+            $db->select()
+                ->from(['o' => 'object'], [
                     'uuid'        => 'o.uuid',
                     'object_name' => 'o.object_name',
-                    'cnt_nics'    => 'COUNT(*)',
-                ]
-            )->join(
-                ['vna' => 'vm_network_adapter'],
-                'vna.portgroup_uuid = o.uuid',
-                []
-            )
-            ->where('o.uuid = ?', $connection->quoteBinary($uuid))
-            ->group('o.uuid')
+                    'cnt_nics'    => 'COUNT(*)'
+                ])
+                ->join(['vna' => 'vm_network_adapter'], 'vna.portgroup_uuid = o.uuid', [])
+                ->where('o.uuid = ?', $connection->quoteBinary($uuid))
+                ->group('o.uuid')
         );
 
         if (false === $info) {
@@ -197,16 +179,9 @@ class VmHardwareTree extends BaseHtmlElement
         }
 
         return sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics);
-
-        // TODO:
-        return Link::create(
-            sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics),
-            'vspheredb/portgroup',
-            Util::uuidParams($info->uuid)
-        );
     }
 
-    protected function fetchDiskPerf()
+    protected function fetchDiskPerf(): array
     {
         $connection = $this->getDb();
         $db = $connection->getDbAdapter();
@@ -216,16 +191,18 @@ class VmHardwareTree extends BaseHtmlElement
             "COALESCE(value_minus3, '0')",
             "COALESCE(value_minus2, '0')",
             "COALESCE(value_minus1, '0')",
-            'value_last',
+            'value_last'
         ]) . ')';
 
-        $query = $db->select()->from('counter_300x5', [
-            // 'name' => 'object_uuid',
-            'instance',
-            'counter_key',
-            'value' => $values,
-        ])->where('object_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
-        ->where('counter_key IN (?)', [171, 172]);
+        $query = $db->select()
+            ->from('counter_300x5', [
+                // 'name' => 'object_uuid',
+                'instance',
+                'counter_key',
+                'value' => $values
+            ])
+            ->where('object_uuid = ?', $connection->quoteBinary($this->vm->get('uuid')))
+            ->where('counter_key IN (?)', [171, 172]);
 
         $rows = $db->fetchAll($query);
         $result = [];
@@ -238,13 +215,13 @@ class VmHardwareTree extends BaseHtmlElement
     }
 
 
-    public function assemble()
+    protected function assemble(): void
     {
         $this->fetchHardware();
         $this->add($this->renderNodes($this->parents));
     }
 
-    protected function renderNodes($nodes, $level = 0)
+    protected function renderNodes(array $nodes, int $level = 0): HtmlElement|array
     {
         $result = [];
         foreach ($nodes as $child) {
@@ -253,12 +230,12 @@ class VmHardwareTree extends BaseHtmlElement
 
         if ($level === 0) {
             return $result;
-        } else {
-            return Html::tag('ul', null, $result);
         }
+
+        return Html::tag('ul', null, $result);
     }
 
-    protected function renderNode($device, $level = 0)
+    protected function renderNode(object $device, int $level = 0): HtmlElement
     {
         /** @var int $key */
         $key = $device->hardware_key;
@@ -271,7 +248,7 @@ class VmHardwareTree extends BaseHtmlElement
 
         // TODO: get serious:
         // $isNic = array_key_exists($key, $this->nics
-        $isNic = strpos($desc, 'Network') === 0;
+        $isNic = str_starts_with($desc, 'Network');
 
         if ($isDisk) {
             $class = 'icon-database';
@@ -282,12 +259,11 @@ class VmHardwareTree extends BaseHtmlElement
         }
 
         $li = Html::tag('li');
-        if (! $hasChildren) {
-            $li->getAttributes()->add('class', 'collapsed');
-        }
 
         if ($hasChildren) {
             $li->add(Html::tag('span', ['class' => 'handle']));
+        } else {
+            $li->getAttributes()->add('class', 'collapsed');
         }
 
         /** @var int|string $controllerKey */
@@ -295,11 +271,11 @@ class VmHardwareTree extends BaseHtmlElement
         if ($isDisk) {
             $li->add($this->renderDisk($this->disks[$key], $device, $this->devices[$controllerKey]));
         } elseif ($isNic) {
-            if (array_key_exists($key, $this->nics)) {
-                $li->add($this->renderNic($this->nics[$key], $device, $this->devices[$controllerKey]));
-            } else {
-                $li->add(Link::create($desc, '#', null, ['class' => $class, 'title' => 'No more details available']));
-            }
+            $li->add(
+                array_key_exists($key, $this->nics)
+                    ? $this->renderNic($this->nics[$key], $device, $this->devices[$controllerKey])
+                    : Link::create($desc, '#', null, ['class' => $class, 'title' => 'No more details available'])
+            );
         } else {
             $li->add(Link::create($desc, '#', null, ['class' => $class]));
         }

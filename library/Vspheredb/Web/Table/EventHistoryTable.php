@@ -11,33 +11,37 @@ use Icinga\Module\Vspheredb\DbObject\Datastore;
 use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\Util;
+use ipl\Html\Attributes;
 use ipl\Html\DeferredText;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Zend_Db_Select;
 
 class EventHistoryTable extends ZfQueryBasedTable
 {
     protected $defaultAttributes = [
         'class' => ['common-table', 'event-history-table'],
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
-    protected $requiredUuids = [];
+    protected array $requiredUuids = [];
 
-    protected $vMotionEvents = [
+    protected array $vMotionEvents = [
         'VmFailedMigrateEvent',
         'MigrationEvent',
         'VmBeingMigratedEvent',
         'VmBeingHotMigratedEvent',
         'VmEmigratingEvent',
-        'VmMigratedEvent',
+        'VmMigratedEvent'
     ];
 
-    protected $otherKnownEvents = [
+    protected array $otherKnownEvents = [
         'VmStartingEvent',
         'VmPoweredOnEvent',
         'VmStoppingEvent',
@@ -54,24 +58,19 @@ class EventHistoryTable extends ZfQueryBasedTable
         'VmCloneFailedEvent'
     ];
 
-    protected $fetchedUuids;
+    protected ?array $fetchedUuids = null;
 
-    /** @var Datastore */
-    protected $datastore;
+    protected ?Datastore $datastore = null;
 
-    /** @var HostSystem */
-    protected $host;
+    protected ?HostSystem $host = null;
 
-    /** @var VirtualMachine */
-    protected $vm;
+    protected ?VirtualMachine $vm = null;
 
-    /** @var string */
-    protected $eventType;
+    protected string|array|null $eventType = null;
 
-    /** @var ?UuidInterface */
-    protected $parent;
+    protected ?UuidInterface $parent = null;
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $this->renderDayIfNew($row->ts_event_ms / 1000);
         $content = [];
@@ -96,113 +95,57 @@ class EventHistoryTable extends ZfQueryBasedTable
         } elseif (in_array($row->event_type, $this->otherKnownEvents)) {
             $content[] = new HtmlString(nl2br(new Text($row->full_message)));
         }
-        $tr = $this::row([
-            $content,
-            DateFormatter::formatTime($row->ts_event_ms / 1000)
-        ]);
+        $tr = $this::row([$content, DateFormatter::formatTime($row->ts_event_ms / 1000)]);
 
-        switch ($row->event_type) {
-            case 'VmFailedMigrateEvent':
-            case 'VmBeingClonedNoFolderEvent':
-            case 'VmCloneFailedEvent':
-                $tr->addAttributes([
-                    'class' => 'state migration-failed',
-                ]);
-                break;
-            case 'DrsVmMigratedEvent':
-            case 'VmMigratedEvent':
-                $tr->addAttributes([
-                    'class' => 'state migrated',
-                ]);
-                break;
-            case 'VmBeingMigratedEvent':
-            case 'VmBeingHotMigratedEvent':
-                $tr->addAttributes([
-                    'class' => 'state migrating',
-                ]);
-                break;
-            case 'VmEmigratingEvent':
-                $tr->addAttributes([
-                    'class' => 'state emigrating',
-                ]);
-                break;
-            case 'VmResettingEvent':
-            case 'VmPoweredOffEvent':
-                $tr->addAttributes([
-                    'class' => 'state poweredOff',
-                ]);
-                break;
-            case 'VmStartingEvent':
-                $tr->addAttributes([
-                    'class' => 'state starting',
-                ]);
-                break;
-            case 'VmPoweredOnEvent':
-                $tr->addAttributes([
-                    'class' => 'state poweredOn',
-                ]);
-                break;
-            case 'VmStoppingEvent':
-                $tr->addAttributes([
-                    'class' => 'state stopping',
-                ]);
-                break;
-            case 'VmSuspendedEvent':
-                $tr->addAttributes([
-                    'class' => 'event suspended',
-                ]);
-                break;
-            case 'VmReconfiguredEvent':
-            case 'VmClonedEvent':
-            case 'VmBeingClonedEvent':
-                $tr->addAttributes([
-                    'class' => 'event reconfigured',
-                ]);
-                break;
-            case 'VmBeingCreatedEvent':
-            case 'VmBeingDeployedEvent':
-                $tr->addAttributes([
-                    'class' => 'event being-created',
-                ]);
-                break;
-            case 'VmCreatedEvent':
-                $tr->addAttributes([
-                    'class' => 'event created',
-                ]);
-                break;
-            default:
-                $tr->add($this::td(Html::tag('pre', null, print_r($row, 1))));
+        $class = match ($row->event_type) {
+            'VmFailedMigrateEvent', 'VmBeingClonedNoFolderEvent', 'VmCloneFailedEvent' => 'state migration-failed',
+            'DrsVmMigratedEvent', 'VmMigratedEvent'                                    => 'state migrated',
+            'VmBeingMigratedEvent', 'VmBeingHotMigratedEvent'                          => 'state migrating',
+            'VmEmigratingEvent'                                                        => 'state emigrating',
+            'VmResettingEvent', 'VmPoweredOffEvent'                                    => 'state poweredOff',
+            'VmStartingEvent'                                                          => 'state starting',
+            'VmPoweredOnEvent'                                                         => 'state poweredOn',
+            'VmStoppingEvent'                                                          => 'state stopping',
+            'VmSuspendedEvent'                                                         => 'event suspended',
+            'VmReconfiguredEvent', 'VmClonedEvent', 'VmBeingClonedEvent'               => 'event reconfigured',
+            'VmBeingCreatedEvent', 'VmBeingDeployedEvent'                              => 'event being-created',
+            'VmCreatedEvent'                                                           => 'event created',
+            default                                                                    => null
+        };
+
+        if ($class !== null) {
+            $tr->addAttributes(Attributes::create(['class' => $class]));
+        } else {
+            $tr->add($this::td(Html::tag('pre', null, print_r($row, 1))));
         }
 
-        $tr->addAttributes([
-            'title' => sprintf('%s (%s)', $row->full_message, $row->event_type)
-        ]);
-
-        return $tr;
+        return $tr->addAttributes(
+            Attributes::create(['title' => sprintf('%s (%s)', $row->full_message, $row->event_type)])
+        );
     }
 
-    public function filterVm(VirtualMachine $vm)
+    public function filterVm(VirtualMachine $vm): static
     {
         $this->vm = $vm;
 
         return $this;
     }
 
-    public function filterHost(HostSystem $host)
+    public function filterHost(HostSystem $host): static
     {
         $this->host = $host;
 
         return $this;
     }
 
-    public function filterDatastore(Datastore $datastore)
+    public function filterDatastore(Datastore $datastore): static
     {
         $this->datastore = $datastore;
 
         return $this;
     }
 
-    public function filterEventType($type)
+    public function filterEventType(string|array|null $type): static
     {
         if (is_array($type)) {
             $this->eventType = $type;
@@ -213,7 +156,7 @@ class EventHistoryTable extends ZfQueryBasedTable
         return $this;
     }
 
-    public function filterParent($uuid)
+    public function filterParent(?string $uuid): static
     {
         if ($uuid !== null && strlen($uuid)) {
             $this->parent = Uuid::fromString($uuid);
@@ -239,12 +182,12 @@ class EventHistoryTable extends ZfQueryBasedTable
 
         if (array_key_exists($uuid, $this->fetchedUuids)) {
             return $this->fetchedUuids[$uuid];
-        } else {
-            return '[UNKNOWN]';
         }
+
+        return '[UNKNOWN]';
     }
 
-    protected function fetchUuidNames()
+    protected function fetchUuidNames(): void
     {
         $db = $this->db();
         if (empty($this->requiredUuids)) {
@@ -260,30 +203,30 @@ class EventHistoryTable extends ZfQueryBasedTable
         );
     }
 
-    protected function timeSince($ms)
+    protected function timeSince(int $ms): ?string
     {
         return DateFormatter::timeAgo($ms);
     }
 
     /**
-     * @return \Zend_Db_Select
+     * @return Zend_Db_Select
      */
-    protected function prepareQuery()
+    protected function prepareQuery(): Zend_Db_Select
     {
-        $query = $this->db()->select()->from([
-            'vh' => 'vm_event_history'
-        ], [
-            'vh.ts_event_ms',
-            'vh.event_type',
-            'vh.vm_uuid',
-            'vh.host_uuid',
-            'vh.user_name',
-            'vh.datastore_uuid',
-            'vh.destination_host_uuid',
-            'vh.destination_datastore_uuid',
-            'vh.full_message',
-            'vh.fault_reason',
-        ])->order('ts_event_ms DESC');
+        $query = $this->db()->select()
+            ->from(['vh' => 'vm_event_history'], [
+                'vh.ts_event_ms',
+                'vh.event_type',
+                'vh.vm_uuid',
+                'vh.host_uuid',
+                'vh.user_name',
+                'vh.datastore_uuid',
+                'vh.destination_host_uuid',
+                'vh.destination_datastore_uuid',
+                'vh.full_message',
+                'vh.fault_reason'
+            ])
+            ->order('ts_event_ms DESC');
 
         if (is_string($this->eventType) && strlen($this->eventType)) {
             $query->where('event_type = ?', $this->eventType);
@@ -294,8 +237,8 @@ class EventHistoryTable extends ZfQueryBasedTable
         if ($this->parent !== null) {
             $query->join(
                 ['o' => 'object'],
-                '(o.uuid = vh.vm_uuid OR o.uuid = vh.host_uuid OR o.uuid = vh.datastore_uuid)'
-                . ' AND o.parent_uuid = ' . DbUtil::quoteBinaryCompat($this->parent->getBytes(), $this->db()),
+                '(o.uuid = vh.vm_uuid OR o.uuid = vh.host_uuid OR o.uuid = vh.datastore_uuid) AND o.parent_uuid = '
+                . DbUtil::quoteBinaryCompat($this->parent->getBytes(), $this->db()),
                 []
             );
         }
@@ -317,13 +260,13 @@ class EventHistoryTable extends ZfQueryBasedTable
         return $query;
     }
 
-    protected function deferredVMotionPath($row)
+    protected function deferredVMotionPath(object $row): DeferredText
     {
         $properties = [
             'host_uuid',
             'destination_host_uuid',
             'datastore_uuid',
-            'destination_datastore_uuid',
+            'destination_datastore_uuid'
         ];
         foreach ($properties as $property) {
             if ($row->$property !== null) {
@@ -331,11 +274,7 @@ class EventHistoryTable extends ZfQueryBasedTable
             }
         }
 
-        $content = new DeferredText(function () use ($row) {
-            return $this->showMotionPath($row);
-        });
-
-        return $content->setEscaped();
+        return (new DeferredText(fn() => $this->showMotionPath($row)))->setEscaped();
     }
 
     /**
@@ -347,18 +286,15 @@ class EventHistoryTable extends ZfQueryBasedTable
     {
         $this->requiredUuids[$uuid ?? ''] = $uuid;
 
-        $content = new DeferredText(function () use ($uuid) {
-            return $this->getUuidName($uuid);
-        });
-
-        return $content->setEscaped();
+        return (new DeferredText(fn() => $this->getUuidName($uuid)))->setEscaped();
     }
 
     /**
-     * @param $row
+     * @param object $row
+     *
      * @return HtmlDocument
      */
-    protected function showMotionPath($row)
+    protected function showMotionPath(object $row): HtmlDocument
     {
         $html = new HtmlDocument();
         if ($row->host_uuid !== $row->destination_host_uuid) {
@@ -393,10 +329,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showHostToHostMigration($row)
+    protected function showHostToHostMigration(object $row): FormattedString
     {
         if ($row->event_type === 'VmEmigratingEvent') {
             return Html::sprintf(
@@ -408,29 +345,30 @@ class EventHistoryTable extends ZfQueryBasedTable
                 ),
                 Icon::create('right-big')
             );
-        } else {
-            return Html::sprintf(
-                '%s %s %s',
-                Link::create(
-                    $this->getUuidName($row->host_uuid),
-                    'vspheredb/host',
-                    ['uuid' => Util::niceUuid($row->host_uuid)]
-                ),
-                Icon::create('right-big'),
-                Link::create(
-                    $this->getUuidName($row->destination_host_uuid),
-                    'vspheredb/host',
-                    ['uuid' => Util::niceUuid($row->destination_host_uuid)]
-                )
-            );
         }
+
+        return Html::sprintf(
+            '%s %s %s',
+            Link::create(
+                $this->getUuidName($row->host_uuid),
+                'vspheredb/host',
+                ['uuid' => Util::niceUuid($row->host_uuid)]
+            ),
+            Icon::create('right-big'),
+            Link::create(
+                $this->getUuidName($row->destination_host_uuid),
+                'vspheredb/host',
+                ['uuid' => Util::niceUuid($row->destination_host_uuid)]
+            )
+        );
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showDatastoreToDatastoreMigration($row)
+    protected function showDatastoreToDatastoreMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s %s',
@@ -449,10 +387,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showToDatastoreMigration($row)
+    protected function showToDatastoreMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s',
@@ -466,10 +405,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showFromDatastoreMigration($row)
+    protected function showFromDatastoreMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s',
@@ -483,10 +423,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showToHostMigration($row)
+    protected function showToHostMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s',
@@ -500,10 +441,11 @@ class EventHistoryTable extends ZfQueryBasedTable
     }
 
     /**
-     * @param $row
-     * @return \ipl\Html\FormattedString
+     * @param object $row
+     *
+     * @return FormattedString
      */
-    protected function showFromHostMigration($row)
+    protected function showFromHostMigration(object $row): FormattedString
     {
         return Html::sprintf(
             '%s %s',

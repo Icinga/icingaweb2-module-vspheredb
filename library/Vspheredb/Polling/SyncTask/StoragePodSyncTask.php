@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 
 class StoragePodSyncTask extends SyncTask
 {
-    protected $label = 'Storage Pods';
-    protected $tableName = 'storage_pod';
-    protected $objectClass = StoragePod::class;
-    protected $selectSetClass = StoragePodSelectSet::class;
-    protected $propertySetClass = StoragePodPropertySet::class;
-    protected $syncStoreClass = ObjectSyncStore::class;
+    protected string $label = 'Storage Pods';
+
+    protected string $tableName = 'storage_pod';
+
+    protected string $objectClass = StoragePod::class;
+
+    protected string $selectSetClass = StoragePodSelectSet::class;
+
+    protected string $propertySetClass = StoragePodPropertySet::class;
+
+    protected string $syncStoreClass = ObjectSyncStore::class;
 }

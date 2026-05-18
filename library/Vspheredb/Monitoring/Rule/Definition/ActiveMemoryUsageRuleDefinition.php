@@ -7,9 +7,7 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 
 class ActiveMemoryUsageRuleDefinition extends MemoryUsageRuleDefinition
 {
-    public const SUPPORTED_OBJECT_TYPES = [
-        ObjectType::VIRTUAL_MACHINE,
-    ];
+    public const SUPPORTED_OBJECT_TYPES = [ObjectType::VIRTUAL_MACHINE];
 
     public static function getIdentifier(): string
     {
@@ -21,7 +19,7 @@ class ActiveMemoryUsageRuleDefinition extends MemoryUsageRuleDefinition
         return $this->translate('Active Memory Usage');
     }
 
-    protected function getUsedMemory(BaseDbObject $quickStats)
+    protected function getUsedMemory(BaseDbObject $quickStats): int
     {
         return $quickStats->get('guest_memory_usage_mb') * MemoryUsageHelper::MEGA_BYTE;
     }

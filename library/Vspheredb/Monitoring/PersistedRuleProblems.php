@@ -12,9 +12,12 @@ use Icinga\Module\Vspheredb\DbObject\HostSystem;
 use Icinga\Module\Vspheredb\DbObject\ManagedObject;
 use Icinga\Module\Vspheredb\DbObject\VirtualMachine;
 use Icinga\Module\Vspheredb\DbObject\VmQuickStats;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\CheckPluginState;
+use Icinga\Module\Vspheredb\Monitoring\Rule\Enum\ObjectType;
 use Icinga\Module\Vspheredb\Monitoring\Rule\MonitoringRuleSet;
 use Icinga\Module\Vspheredb\Util;
 use Throwable;
+use Zend_Db_Adapter_Exception;
 
 class PersistedRuleProblems
 {
@@ -41,13 +44,13 @@ class PersistedRuleProblems
         $objects = ManagedObject::loadAll($this->db, null, 'uuid');
         $datastores = Datastore::loadAll($this->db, null, 'uuid');
         $this->presetManagedObjects($datastores, $objects);
-        $this->checkObjects($datastores, 'datastore');
+        $this->checkObjects($datastores, ObjectType::DATASTORE);
         unset($datastores);
 
         HostQuickStats::preloadAll($this->db);
         $hosts = HostSystem::loadAll($this->db, null, 'uuid');
         $this->presetManagedObjects($hosts, $objects);
-        $this->checkObjects($hosts, 'host');
+        $this->checkObjects($hosts, ObjectType::HOST_SYSTEM);
 
         VmQuickStats::preloadAll($this->db);
         // TODO: Preload Disk Usage and Snapshots
@@ -70,7 +73,7 @@ class PersistedRuleProblems
                 $vm->setManagedObject($objects[$uuid]);
             }
         }
-        $this->checkObjects($vms, 'vm');
+        $this->checkObjects($vms, ObjectType::VIRTUAL_MACHINE);
 
         unset($objects);
         unset($hosts);
@@ -115,10 +118,13 @@ class PersistedRuleProblems
 
     /**
      * @param BaseDbObject[] $objects
+     * @param ObjectType $folderType
+     *
      * @return void
-     * @throws \Zend_Db_Adapter_Exception
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
-    protected function checkObjects(array $objects, $folderType)
+    protected function checkObjects(array $objects, ObjectType $folderType): void
     {
         $runner = new CheckRunner($this->db);
         $runner->preloadTreeFor($folderType);
@@ -145,7 +151,7 @@ class PersistedRuleProblems
         }
     }
 
-    protected function rememberCheckedObjects($checked)
+    protected function rememberCheckedObjects(array $checked): void
     {
         foreach ($checked as $uuid => $names) {
             foreach ($names as $name => $true) {
@@ -156,8 +162,10 @@ class PersistedRuleProblems
 
     /**
      * @param array<string,array<string,CheckResultSet>> $results
+     *
      * @return array
-     * @throws \Zend_Db_Adapter_Exception
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
     protected function processCheckedObjects(array $results): array
     {
@@ -167,48 +175,48 @@ class PersistedRuleProblems
         foreach ($results as $uuid => $objectResults) {
             foreach ($objectResults as $name => $resultSet) {
                 $now = Util::currentTimestamp();
-                $state = $resultSet->getState()->getName();
+                $state = $resultSet->getState();
                 $checked[$uuid][$name] = true;
                 if (isset($current[$uuid][$name])) {
                     $formerRow = $current[$uuid][$name];
                     $formerState = $formerRow->current_state;
-                    if ($formerState === $state) {
+                    if ($formerState === $state->name) {
                         continue;
                     }
                     $where = $db->quoteInto('uuid = ?', DbUtil::quoteBinaryCompat($uuid, $db))
                         . $db->quoteInto(' AND rule_name = ?', $name);
-                    if ($state === CheckPluginState::NAME_OK) {
+                    if ($state === CheckPluginState::OK) {
                         $db->delete(self::TABLE, $where);
                     } else {
                         $db->update(self::TABLE, [
-                            'current_state' => $state,
-                            'ts_changed_ms' => $now,
+                            'current_state' => $state->name,
+                            'ts_changed_ms' => $now
                         ], $where);
                     }
                     $db->insert(self::HISTORY_TABLE, [
                         'uuid'           => $uuid,
-                        'current_state'  => $state,
+                        'current_state'  => $state->name,
                         'former_state'   => $formerState,
                         'rule_name'      => $name,
                         'ts_changed_ms'  => $now,
-                        'output'         => $resultSet->getOutput(),
+                        'output'         => $resultSet->getOutput()
                     ]);
-                } elseif ($state !== CheckPluginState::NAME_OK) {
+                } elseif ($state !== CheckPluginState::OK) {
                     $db->insert(self::TABLE, [
                         'uuid'           => $uuid,
-                        'current_state'  => $state,
+                        'current_state'  => $state->name,
                         'rule_name'      => $name,
                         'ts_created_ms'  => $now,
-                        'ts_changed_ms'  => $now,
+                        'ts_changed_ms'  => $now
                     ]);
                     // emit new problem
                     $db->insert(self::HISTORY_TABLE, [
                         'uuid'           => $uuid,
-                        'current_state'  => $state,
-                        'former_state'   => CheckPluginState::NAME_OK, // null?
+                        'current_state'  => $state->name,
+                        'former_state'   => CheckPluginState::OK->name, // null?
                         'rule_name'      => $name,
                         'ts_changed_ms'  => $now,
-                        'output'         => $resultSet->getOutput(),
+                        'output'         => $resultSet->getOutput()
                     ]);
                 }
             }
@@ -217,7 +225,7 @@ class PersistedRuleProblems
         return $checked;
     }
 
-    protected function dropObsoleteRows()
+    protected function dropObsoleteRows(): void
     {
         $db = $this->db->getDbAdapter();
         $db->beginTransaction();
@@ -233,11 +241,11 @@ class PersistedRuleProblems
                         $db->delete(self::TABLE, $where);
                         $db->insert(self::HISTORY_TABLE, [
                             'uuid'           => $uuid,
-                            'current_state'  => CheckPluginState::NAME_OK,
+                            'current_state'  => CheckPluginState::OK->name,
                             'former_state'   => $row->current_state,
                             'rule_name'      => $name,
                             'ts_changed_ms'  => $now,
-                            'output'         => null,
+                            'output'         => null
                         ]);
                     }
                 }
@@ -254,7 +262,7 @@ class PersistedRuleProblems
         }
     }
 
-    protected function deleteOutdatedHistoryRows()
+    protected function deleteOutdatedHistoryRows(): void
     {
         $db = $this->db->getDbAdapter();
         $expiration = 86400 * 90;

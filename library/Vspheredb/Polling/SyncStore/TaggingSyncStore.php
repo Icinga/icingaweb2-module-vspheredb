@@ -10,7 +10,7 @@ class TaggingSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $result = self::wantBinaryUuids($result);
         $dbObjects = $class::loadAllForVCenter($this->vCenter);
@@ -21,9 +21,7 @@ class TaggingSyncStore extends SyncStore
             if (array_key_exists($idx, $dbObjects)) {
                 $dbObject = $dbObjects[$idx];
             } else {
-                $dbObjects[$idx] = $dbObject = $class::create([
-                    'vcenter_uuid' => $vCenterUuid
-                ], $connection);
+                $dbObjects[$idx] = $dbObject = $class::create(['vcenter_uuid' => $vCenterUuid], $connection);
             }
             $dbObject->setMapped($object, $this->vCenter);
         }

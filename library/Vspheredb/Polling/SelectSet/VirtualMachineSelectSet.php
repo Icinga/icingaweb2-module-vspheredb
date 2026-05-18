@@ -6,15 +6,15 @@ class VirtualMachineSelectSet implements SelectSet
 {
     public const TRAVERSE_VIRTUAL_APP = 'TraverseVirtualApp';
 
-    public static function create()
+    public static function create(): array
     {
         return [
             GenericSpec::traverseFolder([
                 self::TRAVERSE_VIRTUAL_APP,
-                GenericSpec::TRAVERSE_DC_VIRTUAL_MACHINES,
+                GenericSpec::TRAVERSE_DC_VIRTUAL_MACHINES
             ]),
             GenericSpec::traverseDatacenterVirtualMachines(),
-            GenericSpec::traverse(self::TRAVERSE_VIRTUAL_APP, 'VirtualApp', 'vm'),
+            GenericSpec::traverse(self::TRAVERSE_VIRTUAL_APP, 'VirtualApp', 'vm')
         ];
     }
 }

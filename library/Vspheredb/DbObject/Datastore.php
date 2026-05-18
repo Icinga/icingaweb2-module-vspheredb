@@ -4,11 +4,11 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class Datastore extends BaseDbObject
 {
-    protected $keyName = 'uuid';
+    protected string|array|null $keyName = 'uuid';
 
-    protected $table = 'datastore';
+    protected ?string $table = 'datastore';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'uuid'                   => null,
         'vcenter_uuid'           => null,
         'maintenance_mode'       => null,
@@ -18,16 +18,16 @@ class Datastore extends BaseDbObject
         'uncommitted'            => null,
         'is_accessible'          => null,
         'multiple_host_access'   => null,
-        'ts_last_forced_refresh' => null,
+        'ts_last_forced_refresh' => null
     ];
 
-    protected $booleanProperties = [
+    protected array $booleanProperties = [
         'is_accessible',
         'multiple_host_access',
         'ssd'
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'summary.maintenanceMode'    => 'maintenance_mode', // "normal"
         'summary.accessible'         => 'is_accessible',
         'summary.freeSpace'          => 'free_space',

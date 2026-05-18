@@ -5,6 +5,7 @@ namespace Icinga\Module\Vspheredb\Web\Form\Element;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Auth\RestrictionHelper;
 use Icinga\Module\Vspheredb\Db;
+use ipl\Html\Attributes;
 use ipl\Html\FormElement\SelectElement;
 use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
@@ -13,13 +14,11 @@ class VCenterSelection extends SelectElement
 {
     use Translation;
 
-    /** @var Db */
-    protected $connection;
+    protected Db $connection;
 
-    /** @var Auth */
-    protected $auth;
+    protected Auth $auth;
 
-    protected $optional = false;
+    protected bool $optional = false;
 
     public function __construct(Db $connection, Auth $auth, $required = false, $name = 'vcenter', $attributes = null)
     {
@@ -27,19 +26,19 @@ class VCenterSelection extends SelectElement
         $this->auth = $auth;
         parent::__construct($name, $attributes);
         $enum = $this->enumVCenters();
-        $this->addAttributes([
-            'options' => $required ? $enum : ['' => $this->translate('All vCenters'),] + $enum,
-            'class' => 'autosubmit',
-        ]);
+        $this->addAttributes(Attributes::create([
+            'options' => $required ? $enum : ['' => $this->translate('All vCenters')] + $enum,
+            'class' => 'autosubmit'
+        ]));
     }
 
-    protected function enumVCenters()
+    protected function enumVCenters(): array
     {
         $db = $this->connection->getDbAdapter();
         $pairs = $db->fetchPairs(
             $db->select()->from(['vc' => 'vcenter'], [
                 'uuid' => 'LOWER(HEX(vc.instance_uuid))',
-                'name' => "vc.name || ' (' || REPLACE(vc.api_name, 'VMware ', '') || ')'",
+                'name' => "vc.name || ' (' || REPLACE(vc.api_name, 'VMware ', '') || ')'"
             ])->order('vc.name')
         );
         $enum = [];

@@ -11,15 +11,20 @@ namespace Icinga\Module\Vspheredb\Monitoring\Health;
  */
 class ServerConnectionInfo
 {
-    /** @var ?ApiConnectionInfo */
-    public $apiConnection = null;
-    /** @var bool */
-    public $enabled;
-    /** @var string */
-    public $serverName;
-    /** @var bool */
-    protected $configured;
+    public ?ApiConnectionInfo $apiConnection = null;
 
+    public bool $enabled;
+
+    public string $serverName;
+
+    protected bool $configured;
+
+    /**
+     * @param string $serverName
+     * @param bool $enabled
+     * @param bool $configured
+     * @param ?ApiConnectionInfo $apiConnection
+     */
     public function __construct(
         string $serverName,
         bool $enabled,
@@ -34,12 +39,17 @@ class ServerConnectionInfo
 
     /**
      * @param ?ApiConnectionInfo $apiConnection
+     *
+     * @return void
      */
     public function setApiConnection(?ApiConnectionInfo $apiConnection): void
     {
         $this->apiConnection = $apiConnection;
     }
 
+    /**
+     * @return string
+     */
     public function getState(): string
     {
         if ($this->enabled) {
@@ -53,6 +63,9 @@ class ServerConnectionInfo
         return 'disabled';
     }
 
+    /**
+     * @return string
+     */
     public function getIcingaState(): string
     {
         if ($this->enabled) {

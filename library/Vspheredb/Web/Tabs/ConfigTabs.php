@@ -2,17 +2,16 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use ipl\I18n\Translation;
-use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
+use gipfl\IcingaWeb2\Widget\Tabs;
 use Icinga\Module\Vspheredb\Db;
+use ipl\I18n\Translation;
 
 class ConfigTabs extends Tabs
 {
     use Translation;
 
-    /** @var Db|null  */
-    protected $connection;
+    protected ?Db $connection;
 
     public function __construct(?Db $connection = null)
     {
@@ -21,14 +20,14 @@ class ConfigTabs extends Tabs
         $this->assemble();
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         if ($this->connection) {
             $migrations = Db::migrationsForDb($this->connection);
         } else {
             try {
                 $migrations = Db::migrationsForDb(Db::newConfiguredInstance());
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $migrations = null;
             }
         }
@@ -36,23 +35,23 @@ class ConfigTabs extends Tabs
         if ($migrations && $migrations->hasSchema()) {
             $this->add('servers', [
                 'label' => $this->translate('Servers'),
-                'url' => 'vspheredb/configuration/servers',
+                'url'   => 'vspheredb/configuration/servers'
             ]);
             $this->add('perfdata', [
                 'label' => $this->translate('Performance Data'),
-                'url'   => 'vspheredb/perfdata/consumers',
+                'url'   => 'vspheredb/perfdata/consumers'
             ]);
 
             // Disable Tab unless #160 is ready
             $this->add('monitoring', [
                 'label' => $this->translate('Monitoring'),
-                'url' => 'vspheredb/configuration/monitoring',
+                'url'   => 'vspheredb/configuration/monitoring'
             ]);
         }
 
         $this->add('database', [
             'label' => $this->translate('Database'),
-            'url'   => 'vspheredb/configuration/database',
+            'url'   => 'vspheredb/configuration/database'
         ]);
     }
 }

@@ -9,13 +9,13 @@ class Severity
     protected static $colorToStateMap = [
         'green'  => 'Normal',
         'yellow' => 'Warning',
-        'red'    => 'Alert',
+        'red'    => 'Alert'
     ];
 
     protected static $stateToColorMap = [
         'Normal'  => 'green',
         'Warning' => 'yellow',
-        'Alert'   => 'red',
+        'Alert'   => 'red'
     ];
 
     /**
@@ -29,9 +29,9 @@ class Severity
     {
         if (array_key_exists($color, self::$colorToStateMap)) {
             return self::$colorToStateMap[$color];
-        } else {
-            throw new ProgrammingError('Color expected, got "%s"', $color);
         }
+
+        throw new ProgrammingError('Color expected, got "%s"', $color);
     }
 
     /**
@@ -45,8 +45,8 @@ class Severity
     {
         if (array_key_exists($severity, self::$stateToColorMap)) {
             return self::$stateToColorMap[$severity];
-        } else {
-            throw new ProgrammingError('Severity expected, got "%s"', $severity);
         }
+
+        throw new ProgrammingError('Severity expected, got "%s"', $severity);
     }
 }

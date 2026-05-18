@@ -13,9 +13,7 @@ class UsageSummary extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = [
-        'class' => 'usage-summary-widget'
-    ];
+    protected $defaultAttributes = ['class' => 'usage-summary-widget'];
 
     public function __construct(ResourceUsage $usate)
     {
@@ -27,13 +25,13 @@ class UsageSummary extends BaseHtmlElement
                 Html::tag('div', $attr, $this->smallUnit(Format::mhz($usate->usedMhz))),
                 Html::tag('span', $this->translate('Total') . ': ' . Format::mhz($usate->totalMhz)),
                 (new CpuUsage($usate->usedMhz, $usate->totalMhz))->showLabels(false),
-                $this->translate('CPU'),
+                $this->translate('CPU')
             ]),
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(Format::mBytes($usate->usedMb))),
                 Html::tag('span', $this->translate('Total') . ': ' . Format::mBytes($usate->totalMb)),
                 (new MemoryUsage($usate->usedMb, $usate->totalMb))->showLabels(false),
-                $this->translate('Memory'),
+                $this->translate('Memory')
             ]),
             Html::tag('div', $attrBox, [
                 Html::tag('div', $attr, $this->smallUnit(
@@ -43,24 +41,20 @@ class UsageSummary extends BaseHtmlElement
                     'span',
                     $this->translate('Total') . ': ' . Format::mBytes($usate->dsCapacity / $mb)
                 ),
-                (new MemoryUsage(
-                    ($usate->dsCapacity - $usate->dsFreeSpace) / $mb,
-                    $usate->dsCapacity / $mb
-                ))->showLabels(false),
+                (new MemoryUsage(($usate->dsCapacity - $usate->dsFreeSpace) / $mb, $usate->dsCapacity / $mb))
+                    ->showLabels(false),
                 $this->translate('Storage')
-            ]),
+            ])
         ]);
     }
 
-    protected function smallUnit($string)
+    protected function smallUnit(string $string): array
     {
         $parts = explode(' ', $string, 2);
-        if (count($parts) < 2) {
-            return [$parts[0], null];
-        }
+
         return [
             $parts[0],
-            Html::tag('span', ['class' => 'unit'], $parts[1])
+            count($parts) < 2 ? null : Html::tag('span', ['class' => 'unit'], $parts[1])
         ];
     }
 }

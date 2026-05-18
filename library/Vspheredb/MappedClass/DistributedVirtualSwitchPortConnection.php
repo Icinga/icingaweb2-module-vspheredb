@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * The DistributedVirtualSwitchPortConnection data object represents a connection
  * or association between a DistributedVirtualPortgroup or a DistributedVirtualPort
@@ -11,7 +13,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * - Host virtual NIC (HostVirtualNic)
  * - Physical NIC (HostNetworkInfo.pnic)
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class DistributedVirtualSwitchPortConnection
 {
     /**

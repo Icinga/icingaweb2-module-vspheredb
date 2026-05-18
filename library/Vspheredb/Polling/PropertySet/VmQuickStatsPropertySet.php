@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class VmQuickStatsPropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             PropertySpec::create('VirtualMachine', [
@@ -29,7 +29,7 @@ class VmQuickStatsPropertySet implements PropertySet
                 'summary.quickStats.staticCpuEntitlement',
                 'summary.quickStats.staticMemoryEntitlement',
                 'summary.quickStats.swappedMemory',
-                'summary.quickStats.uptimeSeconds',
+                'summary.quickStats.uptimeSeconds'
             ])
         ];
     }

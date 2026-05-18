@@ -16,7 +16,7 @@ class AlarmInfo
      */
     public $alarm;
 
-    /** @var int|null The event ID that records the alarm creation */
+    /** @var ?int The event ID that records the alarm creation */
     public $creationEventId;
 
     /**

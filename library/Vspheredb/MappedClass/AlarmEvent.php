@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
 
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use Zend_Db_Adapter_Abstract as ZfDbAdapter;
+use Zend_Db_Adapter_Exception;
 
 abstract class AlarmEvent extends KnownEvent
 {
@@ -19,7 +20,8 @@ abstract class AlarmEvent extends KnownEvent
     /**
      * @param ZfDbAdapter $db
      * @param VCenter $vCenter
-     * @throws \Zend_Db_Adapter_Exception
+     *
+     * @throws Zend_Db_Adapter_Exception
      */
     public function store(ZfDbAdapter $db, VCenter $vCenter)
     {
@@ -27,9 +29,11 @@ abstract class AlarmEvent extends KnownEvent
 
         // TODO: don't do so if it is old
         if (isset($this->to) && isset($this->entity)) {
-            $db->update('object', [
-                'overall_status' => $this->to
-            ], $db->quoteInto('uuid = ?', $vCenter->makeBinaryGlobalUuid($this->entity->entity->_)));
+            $db->update(
+                'object',
+                ['overall_status' => $this->to],
+                $db->quoteInto('uuid = ?', $vCenter->makeBinaryGlobalUuid($this->entity->entity->_))
+            );
         }
     }
 

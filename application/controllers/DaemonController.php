@@ -2,26 +2,28 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Exception;
 use gipfl\IcingaWeb2\Icon;
 use gipfl\Json\JsonString;
 use gipfl\Web\Widget\Hint;
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Vspheredb\Web\Form\LogLevelForm;
-use Icinga\Module\Vspheredb\Web\Form\RestartDaemonForm;
 use Icinga\Module\Vspheredb\Format;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Form\LogLevelForm;
+use Icinga\Module\Vspheredb\Web\Form\RestartDaemonForm;
 use Icinga\Module\Vspheredb\Web\Table\VsphereApiConnectionTable;
 use Icinga\Module\Vspheredb\Web\Tabs\MainTabs;
 use Icinga\Module\Vspheredb\WebUtil;
 use Icinga\Web\Notification;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 
 class DaemonController extends Controller
 {
     use AsyncControllerHelper;
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->setAutorefreshInterval(30);
@@ -40,7 +42,10 @@ class DaemonController extends Controller
         ]);
     }
 
-    protected function prepareLogSettings()
+    /**
+     * @return ?array
+     */
+    protected function prepareLogSettings(): ?array
     {
         $logLevelForm = new LogLevelForm($this->remoteClient(), $this->loop());
         $logLevelForm->on($logLevelForm::ON_SUCCESS, function () {
@@ -54,7 +59,10 @@ class DaemonController extends Controller
         return null;
     }
 
-    protected function prepareDaemonInfo()
+    /**
+     * @return Hint|array
+     */
+    protected function prepareDaemonInfo(): Hint|array
     {
         $db = $this->db()->getDbAdapter();
         $daemon = $db->fetchRow(
@@ -70,22 +78,26 @@ class DaemonController extends Controller
                     "Daemon keep-alive is outdated in our database, last refresh was %s",
                     WebUtil::timeAgo($daemon->ts_last_refresh / 1000)
                 ));
-            } else {
-                $restartForm = new RestartDaemonForm($this->remoteClient(), $this->loop());
-                $restartForm->on($restartForm::ON_SUCCESS, function () {
-                    Notification::success('Daemon has been asked to restart');
-                    $this->redirectNow($this->url());
-                });
-                $restartForm->handleRequest($this->getServerRequest());
-
-                return [$restartForm, $this->prepareProcessTable(JsonString::decode($daemon->process_info))];
             }
-        } else {
-            return Hint::error($this->translate('Daemon is either not running or not connected to the Database'));
+            $restartForm = new RestartDaemonForm($this->remoteClient(), $this->loop());
+            $restartForm->on($restartForm::ON_SUBMIT, function () {
+                Notification::success('Daemon has been asked to restart');
+                $this->redirectNow($this->url());
+            });
+            $restartForm->handleRequest($this->getServerRequest());
+
+            return [$restartForm, $this->prepareProcessTable(JsonString::decode($daemon->process_info))];
         }
+
+        return Hint::error($this->translate('Daemon is either not running or not connected to the Database'));
     }
 
-    protected function prepareProcessTable($processes)
+    /**
+     * @param mixed $processes
+     *
+     * @return Table
+     */
+    protected function prepareProcessTable(mixed $processes): Table
     {
         $table = new Table();
         foreach ($processes as $pid => $process) {
@@ -103,7 +115,10 @@ class DaemonController extends Controller
         return $table;
     }
 
-    protected function prepareLogWindow()
+    /**
+     * @return HtmlElement
+     */
+    protected function prepareLogWindow(): HtmlElement
     {
         $db = $this->db()->getDbAdapter();
         $lineCount = 1000;
@@ -115,20 +130,19 @@ class DaemonController extends Controller
         $logWindow = Html::tag('div', ['class' => 'logWindow'], $log);
         foreach ($logLines as $line) {
             $ts = $line->ts_create / 1000;
-            if ($ts + 3600 * 16 < time()) {
-                $tsFormatted = DateFormatter::formatDateTime($ts);
-            } else {
-                $tsFormatted = DateFormatter::formatTime($ts);
-            }
-            $log->add(Html::tag('div', [
-                'class' => $line->level
-            ], "$tsFormatted: " . $line->message));
+            $tsFormatted = $ts + 3600 * 16 < time()
+                ? DateFormatter::formatDateTime($ts)
+                : DateFormatter::formatTime($ts);
+            $log->add(Html::tag('div', ['class' => $line->level], "$tsFormatted: " . $line->message));
         }
 
         return $logWindow;
     }
 
-    protected function prepareCurlInfoTable()
+    /**
+     * @return Hint|Table|string
+     */
+    protected function prepareCurlInfoTable(): Hint|Table|string
     {
         try {
             $table = new Table();
@@ -205,27 +219,34 @@ class DaemonController extends Controller
         */
     }
 
-    protected function prepareVsphereConnectionTable()
+    /**
+     * @return Hint|VsphereApiConnectionTable
+     */
+    protected function prepareVsphereConnectionTable(): Hint|VsphereApiConnectionTable
     {
         try {
-            $table = new VsphereApiConnectionTable(array_map(function ($row) {
-                return [
+            $table = new VsphereApiConnectionTable(array_map(
+                fn($row) => [
                     'vCenterId' => $row->vCenterId,
                     'server'    => $row->server,
-                    'state'     =>  $row->state . (isset($row->lastErrorMessage) ? ': ' . $row->lastErrorMessage : ''),
-                ];
-            }, $this->syncRpcCall('vsphere.getApiConnections')));
+                    'state'     => $row->state . (isset($row->lastErrorMessage) ? ': ' . $row->lastErrorMessage : '')
+                ],
+                $this->syncRpcCall('vsphere.getApiConnections')
+            ));
             if ($table->count() === 0) {
                 return Hint::info($this->translate('The vSphereDB Daemon is currently not polling any vCenter'));
             }
 
             return $table;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return Hint::error($exception->getMessage());
         }
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $action = $this->getRequest()->getControllerName();
         $tabs = $this->tabs(new MainTabs($this->Auth(), $this->db()));

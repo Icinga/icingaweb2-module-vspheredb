@@ -4,11 +4,11 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class HostPhysicalNic extends BaseVmHardwareDbObject
 {
-    protected $keyName = ['host_uuid', 'nic_key'];
+    protected string|array|null $keyName = ['host_uuid', 'nic_key'];
 
-    protected $table = 'host_physical_nic';
+    protected ?string $table = 'host_physical_nic';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'host_uuid'                => null,
         'nic_key'                  => null,
         'auto_negotiate_supported' => null,
@@ -18,21 +18,21 @@ class HostPhysicalNic extends BaseVmHardwareDbObject
         'link_duplex'              => null,
         'mac_address'              => null,
         'pci'                      => null,
-        'vcenter_uuid'             => null,
+        'vcenter_uuid'             => null
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'device'                 => 'device',
         'driver'                 => 'driver',
         'pci'                    => 'pci',
         'linkSpeed.speedMb'      => 'link_speed_mb',
         'linkSpeed.duplex'       => 'link_duplex',
         'mac'                    => 'mac_address',
-        'autoNegotiateSupported' => 'auto_negotiate_supported',
+        'autoNegotiateSupported' => 'auto_negotiate_supported'
     ];
 
-    protected $booleanProperties = [
+    protected array $booleanProperties = [
         'auto_negotiate_supported',
-        'link_duplex',
+        'link_duplex'
     ];
 }

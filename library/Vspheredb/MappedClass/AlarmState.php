@@ -15,7 +15,7 @@ class AlarmState
      * Flag to indicate if the alarm's actions have been acknowledged for the
      * associated ManagedEntity
      *
-     * @var bool|null
+     * @var ?bool
      */
     public $acknowledged;
 
@@ -23,7 +23,7 @@ class AlarmState
      * The user who acknowledged this triggering. If the triggering has not been
      * acknowledged, then the value is not valid
      *
-     * @var string|null
+     * @var ?string
      */
     public $acknowledgedByUser;
 
@@ -56,7 +56,7 @@ class AlarmState
      *
      * Since vSphere API 6.0
      *
-     * @var int|null
+     * @var ?int
      */
     public $eventKey;
 

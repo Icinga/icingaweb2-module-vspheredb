@@ -9,9 +9,11 @@ use React\Promise\PromiseInterface;
 
 class VmEventHistorySyncTask extends SyncTask implements StandaloneTask
 {
-    protected $label = 'Events';
-    protected $tableName = 'vm_event_history';
-    protected $syncStoreClass = VmEventHistorySyncStore::class;
+    protected string $label = 'Events';
+
+    protected string $tableName = 'vm_event_history';
+
+    protected string $syncStoreClass = VmEventHistorySyncStore::class;
 
     public function run(VsphereApi $api, LoggerInterface $logger): PromiseInterface
     {

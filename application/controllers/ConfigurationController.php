@@ -2,17 +2,20 @@
 
 namespace Icinga\Module\Vspheredb\Controllers;
 
+use Exception;
 use gipfl\IcingaWeb2\Link;
 use gipfl\Web\Widget\Hint;
 use Icinga\Module\Vspheredb\Db;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
+use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Form\ChooseDbResourceForm;
 use Icinga\Module\Vspheredb\Web\Form\MonitoringConnectionForm;
 use Icinga\Module\Vspheredb\Web\Table\MonitoredObjectMappingTable;
 use Icinga\Module\Vspheredb\Web\Table\Objects\VCenterServersTable;
 use Icinga\Module\Vspheredb\Web\Tabs\ConfigTabs;
-use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Notification;
+use ipl\Html\Contract\Form;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
 
@@ -21,13 +24,13 @@ class ConfigurationController extends Controller
     use AsyncControllerHelper;
     use RpcServerUpdateHelper;
 
-    public function init()
+    public function init(): void
     {
         $this->assertPermission('vspheredb/admin');
         parent::init();
     }
 
-    public function databaseAction()
+    public function databaseAction(): void
     {
         $this->addTitle($this->translate('vSphereDB Database Configuration'));
         $this->tabs(new ConfigTabs())->activate('database');
@@ -53,6 +56,7 @@ class ConfigurationController extends Controller
                     'The database has no vSphereDB schema. Waiting for the Background Daemon'
                     . ' to initialize the database'
                 )));
+
                 return;
             }
 
@@ -61,6 +65,7 @@ class ConfigurationController extends Controller
                     'The database has pending DB migrations. Please restart the Background'
                     . ' daemon to apply them'
                 )));
+
                 return;
             }
 
@@ -76,9 +81,9 @@ class ConfigurationController extends Controller
     }
 
     /**
-     * @throws \Icinga\Security\SecurityException
+     * @throws SecurityException
      */
-    public function serversAction()
+    public function serversAction(): void
     {
         $this->tabs(new ConfigTabs($this->db()))->activate('servers');
         $this->setAutorefreshInterval(10);
@@ -91,18 +96,13 @@ class ConfigurationController extends Controller
             $connections = $this->mapServerConnectionsToId($this->syncRpcCall('vsphere.getApiConnections'));
             foreach ($connections as $conns) {
                 foreach ($conns as $conn) {
-                    if (
-                        in_array($conn->state, [
-                        ApiConnection::STATE_INIT,
-                        ApiConnection::STATE_LOGIN,
-                        ])
-                    ) {
+                    if (in_array($conn->state, [ApiConnection::STATE_INIT, ApiConnection::STATE_LOGIN])) {
                         $this->setAutorefreshInterval(5);
                     }
                 }
             }
             $this->setAutorefreshInterval(5);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $connections = null;
             $this->content()->add(
                 Hint::warning($this->translate('Got no connection information. Is the Damon running?'))
@@ -123,7 +123,12 @@ class ConfigurationController extends Controller
         }
     }
 
-    protected function mapServerConnectionsToId($connections)
+    /**
+     * @param mixed $connections
+     *
+     * @return array
+     */
+    protected function mapServerConnectionsToId(mixed $connections): array
     {
         $connectionsByServer = [];
         foreach ((array) $connections as $id => $connection) {
@@ -138,7 +143,7 @@ class ConfigurationController extends Controller
         return $connectionsByServer;
     }
 
-    public function monitoringAction()
+    public function monitoringAction(): void
     {
         $this->tabs(new ConfigTabs($this->db()))->activate('monitoring');
         $this->actions()->add(Link::create(
@@ -147,7 +152,7 @@ class ConfigurationController extends Controller
             null,
             [
                 'class'            => 'icon-plus',
-                'data-base-target' => '_next',
+                'data-base-target' => '_next'
             ]
         ));
         $this->addTitle($this->translate('Monitoring Integration'));
@@ -159,13 +164,11 @@ class ConfigurationController extends Controller
             $this->content()->add($wrapper);
             $table->renderTo($this);
         } else {
-            $this->content()->add(Hint::warning($this->translate(
-                'No integration has been configured'
-            )));
+            $this->content()->add(Hint::warning($this->translate('No integration has been configured')));
         }
     }
 
-    public function monitoringconfigAction()
+    public function monitoringconfigAction(): void
     {
         $id = $this->params->get('id');
         if ($id) {
@@ -182,7 +185,7 @@ class ConfigurationController extends Controller
         }
 
         $form = new MonitoringConnectionForm($this->db());
-        $form->on(MonitoringConnectionForm::ON_SUCCESS, function (MonitoringConnectionForm $form) {
+        $form->on(Form::ON_SUBMIT, function (MonitoringConnectionForm $form) {
             // TODO: created, modified, nothing, %s
             // $this->getViewRenderer()->disable();
             $this->redirectNow($this->url()->with('id', $form->getId()));

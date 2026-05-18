@@ -2,10 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * Specification for an individual physical NIC
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class DistributedVirtualSwitchHostMemberPnicSpec
 {
     /**

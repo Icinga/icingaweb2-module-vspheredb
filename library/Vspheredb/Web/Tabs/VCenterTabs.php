@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
 use gipfl\IcingaWeb2\Widget\Tabs;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Module\Vspheredb\DbObject\VCenter;
 use ipl\I18n\Translation;
 use Ramsey\Uuid\Uuid;
@@ -11,8 +12,7 @@ class VCenterTabs extends Tabs
 {
     use Translation;
 
-    /** @var VCenter */
-    protected $vCenter;
+    protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)
     {
@@ -21,21 +21,21 @@ class VCenterTabs extends Tabs
         $this->assemble();
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $hexUuid = Uuid::fromBytes($this->vCenter->getUuid())->toString();
         $this->add('vcenter', [
-            'label' => $this->translate('vCenter'),
-            'url'   => 'vspheredb/vcenter',
-            'urlParams' => ['vcenter' => $hexUuid],
+            'label'     => $this->translate('vCenter'),
+            'url'       => 'vspheredb/vcenter',
+            'urlParams' => ['vcenter' => $hexUuid]
         ])->add('clusters', [
-            'label' => $this->translate('Clusters'),
-            'url'   => 'vspheredb/resources/clusters',
-            'urlParams' => ['vcenter' => $hexUuid],
+            'label'     => $this->translate('Clusters'),
+            'url'       => 'vspheredb/resources/clusters',
+            'urlParams' => ['vcenter' => $hexUuid]
         ])->add('perfcounters', [
-            'label' => $this->translate('Counters'),
-            'url'   => 'vspheredb/perfdata/counters',
-            'urlParams' => ['vcenter' => $hexUuid],
+            'label'     => $this->translate('Counters'),
+            'url'       => 'vspheredb/perfdata/counters',
+            'urlParams' => ['vcenter' => $hexUuid]
         ]);
     }
 }

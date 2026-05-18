@@ -3,61 +3,46 @@
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
 use gipfl\IcingaWeb2\Link;
+use gipfl\ZfDb\Select;
 use Icinga\Module\Vspheredb\Format;
+use Icinga\Module\Vspheredb\Web\Table\SimpleColumn;
 use Icinga\Module\Vspheredb\Web\Widget\CpuUsage;
 use Icinga\Module\Vspheredb\Web\Widget\MemoryUsage;
 use ipl\Html\Html;
 use Ramsey\Uuid\Uuid;
+use Zend_Db_Select;
 
 abstract class HostSummaryTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/computeresource';
+    protected ?string $baseUrl = 'vspheredb/computeresource';
 
-    protected $baseUrlHosts = 'vspheredb/hosts';
+    protected string $baseUrlHosts = 'vspheredb/hosts';
 
-    protected $searchColumns = [
-        'name',
-    ];
+    protected $searchColumns = ['name'];
 
-    protected $groupByAlias = 'name';
+    protected string $groupByAlias = 'name';
 
-    protected $nameColumn;
+    protected ?string $nameColumn = null;
 
-    protected $groupBy;
+    protected ?string $groupBy = null;
 
-    abstract protected function getFilterParams($row);
+    abstract protected function getFilterParams(object $row): array;
 
-    abstract protected function getGroupingTitle();
+    abstract protected function getGroupingTitle(): string;
 
-    protected function prepareUnGroupedQuery()
+    protected function prepareUnGroupedQuery(): Select|Zend_Db_Select
     {
-        return $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->join(
-            ['ho' => 'object'],
-            'ho.parent_uuid = o.uuid',
-            []
-        )->join(
-            ['h' => 'host_system'],
-            'ho.uuid = h.uuid',
-            []
-        )->join(
-            ['hqs' => 'host_quick_stats'],
-            'hqs.uuid = h.uuid',
-            []
-        )->where('h.runtime_power_state = ?', 'poweredOn');
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->join(['ho' => 'object'], 'ho.parent_uuid = o.uuid', [])
+            ->join(['h' => 'host_system'], 'ho.uuid = h.uuid', [])
+            ->join(['hqs' => 'host_quick_stats'], 'hqs.uuid = h.uuid', [])
+            ->where('h.runtime_power_state = ?', 'poweredOn');
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
         $query = $this->prepareUnGroupedQuery();
-        if ($this->parentUuids) {
-            $query->where('o.uuid IN (?)', $this->parentUuids);
-        }
-        if ($this->filterVCenter) {
-            $query->where('o.vcenter_uuid = ?', $this->filterVCenter->getUuid());
-        }
 
         if ($this->groupBy !== null) {
             $query->group($this->groupBy);
@@ -66,11 +51,11 @@ abstract class HostSummaryTable extends ObjectsTable
         return $query;
     }
 
-    protected function createGroupingColumn()
+    protected function createGroupingColumn(): SimpleColumn
     {
         return $this->createColumn($this->groupByAlias, $this->getGroupingTitle(), [
             'name'         => $this->nameColumn,
-            'uuid'         => $this->groupBy,
+            'uuid'         => $this->groupBy
         ] + $this->getHostCountColumns())->setRenderer(function ($row) {
             $link = Link::create(
                 $row->{$this->groupByAlias},
@@ -82,106 +67,109 @@ abstract class HostSummaryTable extends ObjectsTable
             return [
                 $this->getExtraIcons($row),
                 $link,
-                $this->renderHostSummaries($row),
+                $this->renderHostSummaries($row)
             ];
         });
     }
 
-    protected function getExtraIcons($row)
+    protected function getExtraIcons(object $row)
     {
     }
 
-    protected function hasChosenColumn($name)
+    protected function hasChosenColumn(string $name): bool
     {
         return in_array($name, $this->getChosenColumnNames());
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createGroupingColumn(),
-            $this->createColumn('cnt_hosts', $this->translate('Hosts'), 'COUNT(*)')
-                ->setRenderer(function ($row) {
-                    return Html::tag('td', ['class' => 'text-right'], $row->cnt_hosts);
-                })
-                ->setDefaultSortDirection('DESC'),
-            $this->createColumn(
-                'hosts_status',
-                $this->translate('Hosts Status'),
-                $this->getHostCountColumns()
-            )->setRenderer(function ($row) {
-                $result = [];
-                $uuid = Uuid::fromBytes($row->uuid)->toString();
-                foreach (['green', 'gray', 'yellow', 'red'] as $state) {
-                    $column = "hosts_cnt_overall_$state";
-                    if ($row->$column > 0) {
-                        $result[] = Link::create($row->$column, $this->baseUrlHosts, [
-                            'vcenter'        => $uuid,
-                            'overall_status' => $state
-                        ], ['class' => ['state', $state]]);
-                    }
-                }
 
-                if (empty($result)) {
-                    return '-';
-                } else {
+            $this->createColumn('cnt_hosts', $this->translate('Hosts'), 'COUNT(*)')
+                ->setRenderer(fn($row) => Html::tag('td', ['class' => 'text-right'], $row->cnt_hosts))
+                ->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('hosts_status', $this->translate('Hosts Status'), $this->getHostCountColumns())
+                ->setRenderer(function ($row) {
+                    $result = [];
+                    $uuid = Uuid::fromBytes($row->uuid)->toString();
+                    foreach (['green', 'gray', 'yellow', 'red'] as $state) {
+                        $column = "hosts_cnt_overall_$state";
+                        if ($row->$column > 0) {
+                            $result[] = Link::create($row->$column, $this->baseUrlHosts, [
+                                'vcenter'        => $uuid,
+                                'overall_status' => $state
+                            ], ['class' => ['state', $state]]);
+                        }
+                    }
+
+                    if (empty($result)) {
+                        return '-';
+                    }
+
                     return $result;
-                }
-            })->setSortExpression([
-                "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
-                "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
-                "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
-                "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
-            ])->setDefaultSortDirection('DESC'),
+                })
+                ->setSortExpression([
+                    "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
+                    "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
+                    "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
+                    "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)"
+                ])
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('cpu', $this->translate('CPU'), [
                 'used_mhz'  => 'SUM(hqs.overall_cpu_usage)',
-                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)',
-            ])->setRenderer(function ($row) {
-                $bar = new CpuUsage($row->used_mhz, $row->total_mhz);
-                if ($this->hasChosenColumn('overall_cpu_usage') || $this->hasChosenColumn('hardware_cpu_mhz')) {
-                    $bar->showLabels(false);
-                }
-                return $bar;
-            })->setSortExpression(
-                'SUM(hqs.overall_cpu_usage) / SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
-            )->setDefaultSortDirection('DESC'),
-            $this->createColumn('overall_cpu_usage', $this->translate('Used'), 'SUM(hqs.overall_cpu_usage)')
+                'total_mhz' => 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
+            ])
                 ->setRenderer(function ($row) {
-                    return Format::mhz($row->overall_cpu_usage);
-                })->setDefaultSortDirection('DESC'),
+                    $bar = new CpuUsage($row->used_mhz, $row->total_mhz);
+                    if ($this->hasChosenColumn('overall_cpu_usage') || $this->hasChosenColumn('hardware_cpu_mhz')) {
+                        $bar->showLabels(false);
+                    }
+
+                    return $bar;
+                })
+                ->setSortExpression('SUM(hqs.overall_cpu_usage) / SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)')
+                ->setDefaultSortDirection('DESC'),
+
+            $this->createColumn('overall_cpu_usage', $this->translate('Used'), 'SUM(hqs.overall_cpu_usage)')
+                ->setRenderer(fn($row) => Format::mhz($row->overall_cpu_usage))
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn(
                 'hardware_cpu_mhz',
                 $this->translate('Capacity'),
                 'SUM(h.hardware_cpu_cores * h.hardware_cpu_mhz)'
-            )->setRenderer(function ($row) {
-                return Format::mhz($row->hardware_cpu_mhz);
-            })->setDefaultSortDirection('DESC'),
+            )
+                ->setRenderer(fn($row) => Format::mhz($row->hardware_cpu_mhz))
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('hardware_cpu_cores', $this->translate('Cores'), 'SUM(h.hardware_cpu_cores)')
-                ->setRenderer(function ($row) {
-                    return Html::tag('td', ['class' => 'text-right'], $row->hardware_cpu_cores);
-                })
+                ->setRenderer(fn($row) => Html::tag('td', ['class' => 'text-right'], $row->hardware_cpu_cores))
                 ->setDefaultSortDirection('DESC'),
 
             $this->createColumn('memory', $this->translate('Memory'), [
                 'used_mb'  => 'SUM(hqs.overall_memory_usage_mb)',
-                'total_mb' => 'SUM(h.hardware_memory_size_mb)',
-            ])->setRenderer(function ($row) {
-                $bar = new MemoryUsage($row->used_mb, $row->total_mb);
-                if ($this->hasChosenColumn('overall_memory_usage') || $this->hasChosenColumn('hardware_memorymb')) {
-                    $bar->showLabels(false);
-                }
-                return $bar;
-            })->setSortExpression(
-                'AVG(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)'
-            )->setDefaultSortDirection('DESC'),
+                'total_mb' => 'SUM(h.hardware_memory_size_mb)'
+            ])
+                ->setRenderer(function ($row) {
+                    $bar = new MemoryUsage($row->used_mb, $row->total_mb);
+                    if ($this->hasChosenColumn('overall_memory_usage') || $this->hasChosenColumn('hardware_memorymb')) {
+                        $bar->showLabels(false);
+                    }
+                    return $bar;
+                })
+                ->setSortExpression('AVG(hqs.overall_memory_usage_mb / h.hardware_memory_size_mb)')
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('overall_memory_usage', $this->translate('Used'), 'SUM(hqs.overall_memory_usage_mb)')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->overall_memory_usage);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::mBytes($row->overall_memory_usage))
+                ->setDefaultSortDirection('DESC'),
+
             $this->createColumn('hardware_memorymb', $this->translate('Capacity'), 'SUM(h.hardware_memory_size_mb)')
-                ->setRenderer(function ($row) {
-                    return Format::mBytes($row->hardware_memorymb);
-                })->setDefaultSortDirection('DESC'),
+                ->setRenderer(fn($row) => Format::mBytes($row->hardware_memorymb))
+                ->setDefaultSortDirection('DESC')
 
             /*
              // Not yet, this was an early prototype based no monitoring vars
@@ -198,18 +186,18 @@ abstract class HostSummaryTable extends ObjectsTable
         ]);
     }
 
-    protected function getHostCountColumns()
+    protected function getHostCountColumns(): array
     {
         return [
-            'hosts_cnt' => 'COUNT(*)',
+            'hosts_cnt'                => 'COUNT(*)',
             'hosts_cnt_overall_gray'   => "SUM(CASE WHEN ho.overall_status = 'gray' THEN 1 ELSE 0 END)",
             'hosts_cnt_overall_green'  => "SUM(CASE WHEN ho.overall_status = 'green' THEN 1 ELSE 0 END)",
             'hosts_cnt_overall_yellow' => "SUM(CASE WHEN ho.overall_status = 'yellow' THEN 1 ELSE 0 END)",
-            'hosts_cnt_overall_red'    => "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)",
+            'hosts_cnt_overall_red'    => "SUM(CASE WHEN ho.overall_status = 'red' THEN 1 ELSE 0 END)"
         ];
     }
 
-    protected function renderHostSummaries($row)
+    protected function renderHostSummaries(object $row): ?array
     {
         $params = $this->getFilterParams($row);
 
@@ -231,9 +219,12 @@ abstract class HostSummaryTable extends ObjectsTable
             foreach (['red', 'yellow', 'gray', 'green'] as $state) {
                 $column = "hosts_cnt_overall_$state";
                 if ($row->$column > 0) {
-                    $result[] = Link::create($row->$column, 'vspheredb/hosts', $params + [
-                            'overall_status' => $state
-                        ], ['class' => ['state', $state]]);
+                    $result[] = Link::create(
+                        $row->$column,
+                        'vspheredb/hosts',
+                        $params + ['overall_status' => $state],
+                        ['class' => ['state', $state]]
+                    );
                 }
             }
         }
@@ -241,13 +232,14 @@ abstract class HostSummaryTable extends ObjectsTable
         if (empty($result)) {
             return null;
         }
+
         return [
             Html::tag('br'),
-            Html::tag('small', $result),
+            Html::tag('small', $result)
         ];
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             $this->groupByAlias,

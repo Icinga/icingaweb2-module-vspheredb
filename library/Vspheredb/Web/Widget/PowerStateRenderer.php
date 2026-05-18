@@ -15,9 +15,10 @@ class PowerStateRenderer extends Html
         if (is_object($state)) {
             $state = $state->runtime_power_state;
         }
+
         return Icon::create('off', [
             'title' => $this->getPowerStateDescription($state),
-            'class' => [ 'state', $state ]
+            'class' => ['state', $state]
         ]);
     }
 
@@ -28,18 +29,20 @@ class PowerStateRenderer extends Html
      */
     public function getPowerStateDescription(string $state): string
     {
-        $descriptions = [
+        $result = match ($state) {
             'poweredOn'  => $this->translate('Powered on'),
             'poweredOff' => $this->translate('Powered off'),
             'suspended'  => $this->translate('Suspended'),
             'standby'    => $this->translate('Standby'),
             'unknown'    => $this->translate('Power state is unknown (disconnected?)'),
-        ];
+            default      => null
+        };
 
-        if (! array_key_exists($state, $descriptions)) {
+        if ($result === null) {
             var_dump($state);
             return 'nono';
         }
-        return $descriptions[$state];
+
+        return $result;
     }
 }

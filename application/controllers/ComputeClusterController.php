@@ -3,23 +3,26 @@
 namespace Icinga\Module\Vspheredb\Controllers;
 
 use Icinga\Authentication\Auth;
+use Icinga\Exception\MissingParameterException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Module\Vspheredb\DbObject\ComputeCluster;
 use Icinga\Module\Vspheredb\Web\Controller;
 use Icinga\Module\Vspheredb\Web\Table\Objects\HostsTable;
 use Icinga\Module\Vspheredb\Web\Widget\AdditionalTableActions;
 use Icinga\Module\Vspheredb\Web\Widget\ComputeClusterHeader;
 use Icinga\Module\Vspheredb\Web\Widget\Summaries;
+use ipl\Html\Attributes;
 
 class ComputeClusterController extends Controller
 {
     /**
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $computeCluster = $this->addComputeCluster();
-        $this->content()->addAttributes(['class' => 'host-info']);
+        $this->content()->addAttributes(Attributes::create(['class' => 'host-info']));
         $table = new HostsTable($this->db(), $this->url());
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
@@ -32,10 +35,11 @@ class ComputeClusterController extends Controller
 
     /**
      * @return ComputeCluster
-     * @throws \Icinga\Exception\MissingParameterException
-     * @throws \Icinga\Exception\NotFoundError
+     *
+     * @throws MissingParameterException
+     * @throws NotFoundError
      */
-    protected function addComputeCluster()
+    protected function addComputeCluster(): ComputeCluster
     {
         $computeCluster = ComputeCluster::loadWithUuid($this->params->getRequired('uuid'), $this->db());
         $this->getRestrictionHelper()->assertAccessToVCenterUuidIsGranted($computeCluster->get('vcenter_uuid'));
@@ -48,9 +52,12 @@ class ComputeClusterController extends Controller
 
     /**
      * @param ComputeCluster $computeCluster
-     * @throws \Icinga\Exception\MissingParameterException
+     *
+     * @return void
+     *
+     * @throws MissingParameterException
      */
-    protected function handleTabs(ComputeCluster $computeCluster)
+    protected function handleTabs(ComputeCluster $computeCluster): void
     {
         $hexId = $this->params->getRequired('uuid');
         $this->tabs()->add('index', [

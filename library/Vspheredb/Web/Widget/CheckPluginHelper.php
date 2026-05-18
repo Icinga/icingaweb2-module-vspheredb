@@ -11,11 +11,11 @@ class CheckPluginHelper
     public static function colorizeOutput(string $output): HtmlString
     {
         $pattern = '/\[(OK|WARNING|CRITICAL|UNKNOWN)]\s/';
-        $safeString = (new Text($output))->render();
-        $safeString = preg_replace_callback($pattern, function ($match) {
-            $state = strtolower($match[1]);
-            return Html::tag('span', ['class' => ['check-result', "state-$state"]], $match[1]) . ' ';
-        }, $safeString);
+        $safeString = preg_replace_callback($pattern, fn($match) => Html::tag(
+            'span',
+            ['class' => ['check-result', 'state-' . strtolower($match[1])]],
+            $match[1]
+        ) . ' ', (new Text($output))->render());
         return new HtmlString($safeString);
     }
 }

@@ -2,11 +2,14 @@
 
 namespace Icinga\Module\Vspheredb\Web\Table\Objects;
 
+use gipfl\ZfDb\Select;
+use Zend_Db_Select;
+
 class DatacentersTable extends ObjectsTable
 {
-    protected $baseUrl = 'vspheredb/vms?showDescendants';
+    protected ?string $baseUrl = 'vspheredb/vms?showDescendants';
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->addAvailableColumns([
             $this->createOverallStatusColumn(),
@@ -14,21 +17,18 @@ class DatacentersTable extends ObjectsTable
         ]);
     }
 
-    public function getDefaultColumnNames()
+    public function getDefaultColumnNames(): array
     {
         return [
             'overall_status',
-            'object_name',
+            'object_name'
         ];
     }
 
-    public function prepareQuery()
+    public function prepareQuery(): Select|Zend_Db_Select
     {
-        $query = $this->db()->select()->from(
-            ['o' => 'object'],
-            $this->getRequiredDbColumns()
-        )->where('object_type = ?', 'Datacenter');
-
-        return $query;
+        return $this->db()->select()
+            ->from(['o' => 'object'], $this->getRequiredDbColumns())
+            ->where('object_type = ?', 'Datacenter');
     }
 }

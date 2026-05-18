@@ -2,13 +2,11 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use ipl\I18n\Translation;
-use gipfl\Web\Form\Decorator\DdDtDecorator;
 use gipfl\ZfDbStore\Store;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use Icinga\Module\Vspheredb\Hook\PerfDataConsumerHook;
 use Icinga\Module\Vspheredb\Storable\PerfdataConsumer;
-use ipl\Html\FormElement\SubmitElement;
+use ipl\I18n\Translation;
 use React\EventLoop\LoopInterface;
 
 class PerfdataConsumerForm extends ObjectForm
@@ -18,13 +16,11 @@ class PerfdataConsumerForm extends ObjectForm
 
     public const ON_DELETE = 'delete';
 
-    protected $class = PerfdataConsumer::class;
+    protected ?string $class = PerfdataConsumer::class;
 
-    /** @var RemoteClient */
-    protected $client;
+    protected RemoteClient $client;
 
-    /** @var LoopInterface */
-    protected $loop;
+    protected LoopInterface $loop;
 
     public function __construct(LoopInterface $loop, RemoteClient $client, Store $store)
     {
@@ -33,17 +29,17 @@ class PerfdataConsumerForm extends ObjectForm
         parent::__construct($store);
     }
 
-    public function assemble()
+    protected function assemble(): void
     {
         $this->addElement('text', 'name', [
             'label'       => $this->translate('Name'),
             'required'    => true,
-            'description' => $this->translate('Arbitrary unique name for this Performance Data Consumer'),
+            'description' => $this->translate('Arbitrary unique name for this Performance Data Consumer')
         ]);
         $this->addElement('boolean', 'enabled', [
             'label' => $this->translate('Enabled'),
             'value' => 'y',
-            'required' => true,
+            'required' => true
         ]);
         if ($this->object instanceof PerfdataConsumer && !$this->hasBeenSent()) {
             $this->populate((array) $this->object->settings());
@@ -56,7 +52,7 @@ class PerfdataConsumerForm extends ObjectForm
         $this->addButtons(isset($implementation), 'implementation');
     }
 
-    public function isValidEvent($event)
+    public function isValidEvent($event): bool
     {
         if ($event === self::ON_DELETE) {
             return true;
@@ -65,7 +61,7 @@ class PerfdataConsumerForm extends ObjectForm
         return parent::isValidEvent($event);
     }
 
-    protected function selectImplementation()
+    protected function selectImplementation(): ?string
     {
         if (! $this->isNew()) {
             return $this->object->get('implementation');
@@ -74,13 +70,13 @@ class PerfdataConsumerForm extends ObjectForm
             'label'    => $this->translate('Implementation'),
             'options'  => ['' => $this->translate('- please choose -')] + PerfDataConsumerHook::enum(),
             'required' => true,
-            'class'    => 'autosubmit',
+            'class'    => 'autosubmit'
         ]);
 
         return $this->getValue('implementation');
     }
 
-    protected function addImplementation($implementation)
+    protected function addImplementation(string $implementation): void
     {
         /** @var PerfDataConsumerHook $instance */
         $class = PerfDataConsumerHook::getClass($implementation);
@@ -89,6 +85,7 @@ class PerfdataConsumerForm extends ObjectForm
                 $this->translate('There is no such PerfdataConsumer: %s'),
                 $implementation
             ));
+
             return;
         }
         $instance = new $class();

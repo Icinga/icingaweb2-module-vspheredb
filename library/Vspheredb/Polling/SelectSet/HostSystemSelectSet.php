@@ -11,15 +11,15 @@ class HostSystemSelectSet implements SelectSet
     /**
      * @return TraversalSpec[]
      */
-    public static function create()
+    public static function create(): array
     {
         return [
             GenericSpec::traverseFolder([
                 GenericSpec::TRAVERSE_DC_HOST_SYSTEMS,
-                self::TRAVERSE_COMPUTE_RESOURCES,
+                self::TRAVERSE_COMPUTE_RESOURCES
             ]),
             GenericSpec::traverseDatacenterHosts(),
-            GenericSpec::traverse(self::TRAVERSE_COMPUTE_RESOURCES, 'ComputeResource', 'host'),
+            GenericSpec::traverse(self::TRAVERSE_COMPUTE_RESOURCES, 'ComputeResource', 'host')
         ];
     }
 }

@@ -19,27 +19,24 @@ class ConfigWatch
 
     public const ON_CONFIG = 'dbConfig';
 
-    /** @var string */
-    protected $configFile;
+    protected string $configFile;
 
-    /** @var string */
-    protected $resourceConfigFile;
+    protected ?string $resourceConfigFile = null;
 
-    /** @var string|null */
-    protected $dbResourceName;
+    protected ?string $dbResourceName = null;
 
-    /** @var array|null */
-    protected $resourceConfig;
+    protected ?array $resourceConfig = null;
 
-    protected $interval = 3;
+    protected int $interval = 3;
 
-    /** @var TimerInterface */
-    protected $timer;
+    protected ?TimerInterface $timer = null;
 
-    /** @var LoopInterface */
-    protected $loop;
+    protected ?LoopInterface $loop = null;
 
-    public function __construct($dbResourceName = null)
+    /**
+     * @param ?string $dbResourceName
+     */
+    public function __construct(?string $dbResourceName = null)
     {
         $this->configFile = Config::module('vspheredb')->getConfigFile();
         if ($dbResourceName === null) {
@@ -51,8 +48,10 @@ class ConfigWatch
 
     /**
      * @param LoopInterface $loop
+     *
+     * @return void
      */
-    public function run(LoopInterface $loop)
+    public function run(LoopInterface $loop): void
     {
         $this->loop = $loop;
         $check = function () {
@@ -62,7 +61,10 @@ class ConfigWatch
         $loop->futureTick($check);
     }
 
-    public function stop()
+    /**
+     * @return void
+     */
+    public function stop(): void
     {
         if ($this->timer) {
             $this->loop->cancelTimer($this->timer);
@@ -70,33 +72,40 @@ class ConfigWatch
         }
     }
 
-    protected function checkForFreshConfig()
+    /**
+     * @return void
+     */
+    protected function checkForFreshConfig(): void
     {
         if ($this->configHasBeenChanged()) {
             $this->emit(self::ON_CONFIG, [$this->resourceConfig]);
         }
     }
 
-    protected function getResourceName()
+    /**
+     * @return ?string
+     */
+    protected function getResourceName(): ?string
     {
-        if ($this->dbResourceName) {
-            return $this->dbResourceName;
-        } else {
-            return $this->loadDbResourceName();
-        }
+        return $this->dbResourceName ?: $this->loadDbResourceName();
     }
 
-    protected function loadDbResourceName()
+    /**
+     * @return ?string
+     */
+    protected function loadDbResourceName(): ?string
     {
         $parsed = @parse_ini_file($this->configFile, true);
-        if (isset($parsed['db']['resource'])) {
-            return $parsed['db']['resource'];
-        } else {
-            return null;
-        }
+
+        return $parsed['db']['resource'] ?? null;
     }
 
-    protected function loadDbConfigFromDisk($name)
+    /**
+     * @param ?string $name
+     *
+     * @return ?array
+     */
+    protected function loadDbConfigFromDisk(?string $name): ?array
     {
         if ($name === null) {
             return null;
@@ -108,20 +117,23 @@ class ConfigWatch
             ksort($section);
 
             return $section;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
-    protected function configHasBeenChanged()
+    /**
+     * @return bool
+     */
+    protected function configHasBeenChanged(): bool
     {
         $resource = $this->loadDbConfigFromDisk($this->loadDbResourceName());
         if ($resource !== $this->resourceConfig) {
             $this->resourceConfig = $resource;
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }

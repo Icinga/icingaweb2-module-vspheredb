@@ -3,52 +3,58 @@
 namespace Icinga\Module\Vspheredb\SyncRelated;
 
 use gipfl\Json\JsonSerialization;
+use ReturnTypeWillChange;
 
 class SyncStats implements JsonSerialization
 {
-    protected $created = 0;
-    protected $modified = 0;
-    protected $deleted = 0;
-    protected $totalFromApi = 0;
-    protected $totalFromDb = 0;
-    protected $label;
+    protected int $created = 0;
 
-    public function __construct($label)
+    protected int $modified = 0;
+
+    protected int $deleted = 0;
+
+    protected int $totalFromApi = 0;
+
+    protected int $totalFromDb = 0;
+
+    protected string $label;
+
+    public function __construct(string $label)
     {
         $this->label = $label;
     }
 
-    public function setFromApi($count)
+    public function setFromApi($count): void
     {
         $this->totalFromApi = $count;
     }
 
-    public function setFromDb($count)
+    public function setFromDb($count): void
     {
         $this->totalFromDb = $count;
     }
 
-    public function incCreated($count = 1)
+    public function incCreated($count = 1): void
     {
         $this->created += $count;
     }
 
-    public function incModified($count = 1)
+    public function incModified($count = 1): void
     {
         $this->modified += $count;
     }
 
-    public function incDeleted($count = 1)
+    public function incDeleted($count = 1): void
     {
         $this->deleted += $count;
     }
 
-    public function hasChanges()
+    public function hasChanges(): bool
     {
         return $this->created > 0 || $this->modified > 0 || $this->deleted > 0;
     }
 
-    public function getLogMessage()
+    public function getLogMessage(): string
     {
         return sprintf(
             "%s: %d new, %d modified, %d deleted (got %d from DB, %d from API)",
@@ -61,7 +67,7 @@ class SyncStats implements JsonSerialization
         );
     }
 
-    public static function fromSerialization($any)
+    public static function fromSerialization($any): static
     {
         $self = new static($any->label);
         $self->created      = $any->created;
@@ -73,8 +79,11 @@ class SyncStats implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    #[ReturnTypeWillChange]
+    /**
+     * @return object
+     */
+    public function jsonSerialize(): object
     {
         return (object) [
             'label'        => $this->label,
@@ -82,7 +91,7 @@ class SyncStats implements JsonSerialization
             'modified'     => $this->modified,
             'deleted'      => $this->deleted,
             'totalFromApi' => $this->totalFromApi,
-            'totalFromDb'  => $this->totalFromDb,
+            'totalFromDb'  => $this->totalFromDb
         ];
     }
 }

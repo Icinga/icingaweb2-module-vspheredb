@@ -2,13 +2,15 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
 use gipfl\Json\JsonSerialization;
+use ReturnTypeWillChange;
 
 /**
  *
  * https://pubs.vmware.com/vsphere-6-5/topic/com.vmware.wssdk.apiref.doc/vim.PerformanceManager.MetricSeriesCSV.html
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class PerfMetricSeriesCSV implements JsonSerialization
 {
     /** @var PerfMetricId */
@@ -26,12 +28,12 @@ class PerfMetricSeriesCSV implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object) [
             'id'    => $this->id,
-            'value' => $this->value,
+            'value' => $this->value
         ];
     }
 }

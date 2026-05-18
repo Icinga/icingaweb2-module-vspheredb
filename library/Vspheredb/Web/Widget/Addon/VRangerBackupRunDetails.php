@@ -22,7 +22,7 @@ class VRangerBackupRunDetails extends NameValueTable
             $this->translate('Result')        => $attributes['Result'],
             $this->translate('Last Run Time') => DateFormatter::formatDateTime($attributes['Time']),
             $this->translate('Type')          => $attributes['Type'],
-            $this->translate('Repository')    => $attributes['Repository'],
+            $this->translate('Repository')    => $attributes['Repository']
         ]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * The HostMultipathInfo data object describes the multipathing policy configuration to determine the storage failover
  * policies for a SCSI logical unit. The multipathing policy configuration operates on SCSI logical units and the paths
@@ -15,7 +17,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * object, only native multipathing exists. That means for these hosts, the MultipathInfo object contains the complete
  * set of LUNs and paths on the LUNs available on the host.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class HostMultipathInfo extends DynamicData
 {
     /**

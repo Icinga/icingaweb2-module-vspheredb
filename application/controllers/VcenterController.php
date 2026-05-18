@@ -20,7 +20,9 @@ use Icinga\Module\Vspheredb\Web\Widget\SubTitle;
 use Icinga\Module\Vspheredb\Web\Widget\UsageSummary;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterHeader;
 use Icinga\Module\Vspheredb\Web\Widget\VCenterSummaries;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Notification;
+use ipl\Html\Contract\Form;
 use Ramsey\Uuid\Uuid;
 
 class VcenterController extends Controller
@@ -28,7 +30,7 @@ class VcenterController extends Controller
     use AsyncControllerHelper;
     use RpcServerUpdateHelper;
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $vCenter = $this->requireVCenter();
         $this->tabs(new VCenterTabs($vCenter))->activate('vcenter');
@@ -53,7 +55,7 @@ class VcenterController extends Controller
         $this->content()->add(new VCenterSummaries($vCenter));
     }
 
-    public function editAction()
+    public function editAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $vCenter = $this->requireVCenter();
@@ -75,7 +77,7 @@ class VcenterController extends Controller
         };
 
         $form = new VCenterForm($vCenter);
-        $form->on(VCenterForm::ON_SUCCESS, $success);
+        $form->on(Form::ON_SUBMIT, $success);
         $form->handleRequest($this->getServerRequest());
         $this->content()->add($form);
 
@@ -84,7 +86,7 @@ class VcenterController extends Controller
         if ($subscription = PerfdataSubscription::optionallyLoadForVCenter($vCenter, $store)) {
             $form->setObject($subscription);
         }
-        $form->on(VCenterShipMetricsForm::ON_SUCCESS, function () {
+        $form->on(Form::ON_SUBMIT, function () {
             $this->redirectNow($this->getOriginalUrl());
         });
         $form->on(VCenterShipMetricsForm::ON_DELETE, function () {
@@ -94,7 +96,7 @@ class VcenterController extends Controller
         $this->content()->add($form);
 
         $form = new DeleteVCenterForm($this->db(), $vCenter, $this->remoteClient(), $this->loop());
-        $form->on(DeleteVCenterForm::ON_SUCCESS, function () use ($vCenter) {
+        $form->on(Form::ON_SUBMIT, function () use ($vCenter) {
             $this->redirectNow('vspheredb/vcenters');
         });
         $form->handleRequest($this->getServerRequest());
@@ -102,9 +104,9 @@ class VcenterController extends Controller
     }
 
     /**
-     * @throws \Icinga\Security\SecurityException
+     * @throws SecurityException
      */
-    public function serverAction()
+    public function serverAction(): void
     {
         $this->assertPermission('vspheredb/admin');
         $this->addSingleTab($this->translate('vCenter Server'));
@@ -116,14 +118,12 @@ class VcenterController extends Controller
             $this->addTitle($this->translate('Create a new vCenter/ESXi-Connection'));
         }
 
-        $form->on(VCenterServerForm::ON_SUCCESS, function (VCenterServerForm $form) {
+        $form->on(Form::ON_SUBMIT, function (VCenterServerForm $form) {
             $object = $form->getObject();
             if ($object->hasBeenModified()) {
-                $msg = sprintf(
-                    $object->hasBeenLoadedFromDb()
-                        ? $this->translate('The Connection has successfully been stored')
-                        : $this->translate('A new Connection has successfully been created')
-                );
+                $msg = $object->hasBeenLoadedFromDb()
+                    ? $this->translate('The Connection has successfully been stored')
+                    : $this->translate('A new Connection has successfully been created');
                 $object->store();
                 $msg .= '. ' . $this->sendServerInfoToSocket();
             } else {
@@ -140,7 +140,10 @@ class VcenterController extends Controller
         }
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $action = $this->getRequest()->getActionName();
         $tabs = $this->tabs(new MainTabs($this->Auth(), $this->db()));

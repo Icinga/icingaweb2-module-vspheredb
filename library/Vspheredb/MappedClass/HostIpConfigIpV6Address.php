@@ -31,7 +31,7 @@ class HostIpConfigIpV6Address
      * The ipv6 address. When DHCP is enabled, this property reflects the
      * current IP configuration and cannot be set
      *
-     * @var string|null
+     * @var ?string
      */
     public $ipAddress;
 

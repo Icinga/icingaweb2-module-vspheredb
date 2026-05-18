@@ -3,6 +3,7 @@
 namespace Icinga\Module\Vspheredb\Web\Widget\Addon;
 
 use gipfl\IcingaWeb2\Widget\NameValueTable;
+use gipfl\Translation\TranslationHelper;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Vspheredb\Addon\VeeamBackup;
 use ipl\I18n\Translation;
@@ -13,6 +14,7 @@ class VeeamBackupRunDetails extends NameValueTable
 
     /**
      * VeeamBackupRunDetails constructor.
+     *
      * @param VeeamBackup $details
      */
     public function __construct(VeeamBackup $details)
@@ -23,7 +25,7 @@ class VeeamBackupRunDetails extends NameValueTable
             $this->translate('Job name')      => $attributes['Job name'],
             $this->translate('Last Run Time') => DateFormatter::formatDateTime($attributes['Time']),
             $this->translate('Backup host')   => $attributes['Backup host'],
-            $this->translate('Backup folder') => $attributes['Backup folder'],
+            $this->translate('Backup folder') => $attributes['Backup folder']
         ]);
     }
 }

@@ -32,7 +32,7 @@ class EventAlarmExpression extends AlarmExpression
      *
      * Either eventType or eventTypeId must be set.
      *
-     * @var string|null
+     * @var ?string
      */
     public $eventTypeId;
 

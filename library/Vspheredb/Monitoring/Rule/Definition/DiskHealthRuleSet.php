@@ -6,7 +6,7 @@ class DiskHealthRuleSet extends MonitoringRuleSetDefinition
 {
     public const RULE_CLASSES = [
         SnapshotsRuleDefinition::class,
-        DiskUsageRuleDefinition::class,
+        DiskUsageRuleDefinition::class
     ];
 
     public function getLabel(): string

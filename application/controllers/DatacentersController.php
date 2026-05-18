@@ -10,7 +10,7 @@ use Icinga\Module\Vspheredb\Web\Widget\Summaries;
 
 class DatacentersController extends ObjectsController
 {
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->addSingleTab($this->translate('Datacenters'));
         $table = new DatacentersTable($this->db(), $this->url());

@@ -2,35 +2,33 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
-use gipfl\ZfDbStore\Store;
-use Icinga\Authentication\Auth;
-use Ramsey\Uuid\Uuid;
-use RuntimeException;
-use ipl\I18n\Translation;
 use gipfl\Web\Form;
 use gipfl\ZfDbStore\StorableInterface;
+use gipfl\ZfDbStore\Store;
+use Icinga\Authentication\Auth;
+use ipl\I18n\Translation;
+use Ramsey\Uuid\Uuid;
+use RuntimeException;
 
 abstract class ObjectForm extends Form
 {
     use Translation;
 
-    /** @var Store */
-    protected $store;
+    protected Store $store;
 
-    /** @var StorableInterface */
-    protected $object;
+    protected ?StorableInterface $object = null;
 
-    protected $class;
+    /** @var ?class-string */
+    protected ?string $class = null;
 
-    protected $wasNew = true;
+    protected bool $wasNew = true;
 
     public function __construct(Store $store)
     {
         $this->store = $store;
-        $this->setMethod('POST');
     }
 
-    public function setObject(StorableInterface $object)
+    public function setObject(StorableInterface $object): static
     {
         $this->object = $object;
         $this->populate($object->getProperties());
@@ -42,41 +40,38 @@ abstract class ObjectForm extends Form
     /**
      * @return ?StorableInterface
      */
-    public function getObject()
+    public function getObject(): ?StorableInterface
     {
         return $this->object;
     }
 
-    public function wasNew()
+    public function wasNew(): bool
     {
         return $this->wasNew;
     }
 
-    public function isNew()
+    public function isNew(): bool
     {
-        return $this->object === null || $this->object->isNew();
+        return $this->object?->isNew() ?? true;
     }
 
-    protected function getObjectClass()
+    protected function getObjectClass(): string
     {
         if ($this->class === null) {
-            throw new RuntimeException(sprintf(
-                'ObjectForm %s defined no $class',
-                get_class($this)
-            ));
+            throw new RuntimeException(sprintf('ObjectForm %s defined no $class', get_class($this)));
         }
 
         return $this->class;
     }
 
-    protected static function now()
+    protected static function now(): float
     {
         $time = explode(' ', microtime());
 
         return round(1000 * ((int)$time[1] + (float)$time[0]));
     }
 
-    public function onSuccess()
+    protected function onSuccess(): void
     {
         if ($this->object) {
             $object = $this->object;
@@ -94,7 +89,7 @@ abstract class ObjectForm extends Form
         $this->store->store($object);
     }
 
-    protected function createObject()
+    protected function createObject(): mixed
     {
         /** @var StorableInterface $class Not really an object, it's a class name */
         $class = $this->getObjectClass();

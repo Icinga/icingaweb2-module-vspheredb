@@ -4,9 +4,9 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class VmHardware extends BaseVmHardwareDbObject
 {
-    protected $table = 'vm_hardware';
+    protected ?string $table = 'vm_hardware';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'vm_uuid'        => null,
         'hardware_key'   => null,
         'bus_number'     => null,
@@ -14,18 +14,18 @@ class VmHardware extends BaseVmHardwareDbObject
         'controller_key' => null,
         'label'          => null,
         'summary'        => null,
-        'vcenter_uuid'   => null,
+        'vcenter_uuid'   => null
     ];
 
-    protected $objectReferences = [
-        'vm_uuid',
+    protected array $objectReferences = [
+        'vm_uuid'
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'deviceInfo.label'   => 'label',
         'deviceInfo.summary' => 'summary',
         'busNumber'          => 'bus_number',
         'unitNumber'         => 'unit_number',
-        'controllerKey'      => 'controller_key',
+        'controllerKey'      => 'controller_key'
     ];
 }

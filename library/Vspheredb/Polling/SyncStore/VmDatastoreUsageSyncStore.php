@@ -10,6 +10,8 @@ use Icinga\Module\Vspheredb\SyncRelated\SyncStats;
 use Icinga\Module\Vspheredb\Util;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
 use Psr\Log\LoggerInterface;
+use React\Promise\PromiseInterface;
+use Zend_Db_Adapter_Abstract;
 
 use function React\Promise\all;
 use function React\Promise\resolve;
@@ -20,7 +22,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
 
     // Refresh outdated VMs -> before and after?
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $vCenter = $this->vCenter;
         $vCenterUuid = $vCenter->getUuid();
@@ -35,11 +37,9 @@ class VmDatastoreUsageSyncStore extends SyncStore
             if (! isset($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'})) {
                 continue;
             }
-            if (isset($map->{'storage.timestamp'})) {
-                $timestamp = Util::timeStringToUnixMs($map->{'storage.timestamp'});
-            } else {
-                $timestamp = null;
-            }
+            $timestamp = isset($map->{'storage.timestamp'})
+                ? Util::timeStringToUnixMs($map->{'storage.timestamp'})
+                : null;
             foreach ($map->{'storage.perDatastoreUsage'}->{'VirtualMachineUsageOnDatastore'} as $usage) {
                 $dsUuid = $vCenter->makeBinaryGlobalMoRefUuid($usage->datastore);
                 $key = "$vmUuid$dsUuid";
@@ -47,7 +47,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
                     'committed'   => $usage->committed,
                     'uncommitted' => $usage->uncommitted,
                     'unshared'    => $usage->unshared,
-                    'ts_updated'  => $timestamp,
+                    'ts_updated'  => $timestamp
                 ];
                 $seen[$key] = $key;
                 if (array_key_exists($key, $dbObjects)) {
@@ -65,7 +65,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
         $this->storeSyncObjects($connection->getDbAdapter(), $dbObjects, $seen, $stats);
     }
 
-    public static function fetchOutdatedVms(VCenter $vCenter, $lastRefreshSecondsAgo = 1800, $cntMax = null)
+    public static function fetchOutdatedVms(VCenter $vCenter, $lastRefreshSecondsAgo = 1800, $cntMax = null): array
     {
         $db = $vCenter->getDb();
         $vCenterUuid = $vCenter->get('uuid');
@@ -75,7 +75,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
 
         $query = $db->select()->from(['o' => 'object'], [
             'moref'       => 'o.moref',
-            'object_name' => 'o.object_name',
+            'object_name' => 'o.object_name'
         ])->join(
             ['vm' => 'virtual_machine'],
             "vm.uuid = o.uuid AND vm.template = 'n' AND vm.runtime_power_state = 'poweredOn'",
@@ -98,7 +98,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
         return $db->fetchPairs($query);
     }
 
-    public static function refreshOutdatedVms(VsphereApi $api, $vms, LoggerInterface $logger)
+    public static function refreshOutdatedVms(VsphereApi $api, $vms, LoggerInterface $logger): PromiseInterface
     {
         if (empty($vms)) {
             return resolve(null);
@@ -117,7 +117,7 @@ class VmDatastoreUsageSyncStore extends SyncStore
         return all($pending);
     }
 
-    protected function makeWhere(\Zend_Db_Adapter_Abstract $db, $vmUuid, $dsUuid)
+    protected function makeWhere(Zend_Db_Adapter_Abstract $db, $vmUuid, $dsUuid): string
     {
         return $db->quoteInto('vm_uuid = ?', $vmUuid)
             . $db->quoteInto(' AND datastore_uuid = ?', $dsUuid);

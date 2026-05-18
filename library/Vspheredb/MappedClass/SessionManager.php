@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * SessionManager
  *
@@ -9,7 +11,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * clients, determining which clients are currently logged on, and forcing
  * clients to log off.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class SessionManager
 {
     /**
@@ -18,7 +20,7 @@ class SessionManager
      *
      * RequiredPrivilege: System.Anonymous
      *
-     * @var UserSession|null
+     * @var ?UserSession
      */
     public $currentSession;
 
@@ -45,7 +47,7 @@ class SessionManager
      *
      * RequiredPrivilege: System.Anonymous
      *
-     * @var array|null
+     * @var ?array
      */
     public $messageLocaleList;
 
@@ -54,7 +56,7 @@ class SessionManager
      *
      * RequiredPrivilege: Sessions.TerminateSession
      *
-     * @var UserSession[]|null
+     * @var ?UserSession[]
      */
     public $sessionList;
 
@@ -67,7 +69,7 @@ class SessionManager
      *
      * RequiredPrivilege: System.Anonymous
      *
-     * @var array|null
+     * @var ?array
      */
     public $supportedLocaleList;
 }

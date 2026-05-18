@@ -4,47 +4,45 @@ namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Link;
 use Icinga\Module\Vspheredb\Util;
+use ipl\Html\Attributes;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 
 class TopPerfTable extends Table
 {
     protected $defaultAttributes = [
         'class' => 'common-table table-row-selectable',
-        'data-base-target' => '_next',
+        'data-base-target' => '_next'
     ];
 
-    public function __construct($title, $rows, $format, $link)
+    public function __construct(string $title, ?array $rows, ?string $format, string $link)
     {
         $this->getHeader()->add(Table::tr([
             Table::th($title),
-            Table::th('5x5min')->addAttributes(['class' => 'sparkline-header']),
-            Table::th('Last 5min')->addAttributes(['class' => 'last-5min-header'])
+            Table::th('5x5min')->addAttributes(Attributes::create(['class' => 'sparkline-header'])),
+            Table::th('Last 5min')->addAttributes(Attributes::create(['class' => 'last-5min-header']))
         ]));
         foreach ($rows as $row) {
             $this->getBody()->add(Table::row([
                 $this->$link($row),
                 $this->makeSparkLine($row),
-                $format ? $this->$format($row->value_last) : $row->value_last,
+                $format ? $this->$format($row->value_last) : $row->value_last
             ]));
         }
     }
 
-    protected function createVmLink($row)
+    protected function createVmLink(object $row): Link
     {
         $name = $row->object_name;
         if (property_exists($row, 'instance') && strlen($row->instance)) {
             $name .= ': ' . $row->instance;
         }
 
-        return Link::create(
-            $name,
-            'vspheredb/vm',
-            Util::uuidParams($row->object_uuid)
-        );
+        return Link::create($name, 'vspheredb/vm', Util::uuidParams($row->object_uuid));
     }
 
-    protected function createTopForParentLink($row)
+    protected function createTopForParentLink(object $row): Link
     {
         return Link::create(
             $row->object_name,
@@ -53,35 +51,33 @@ class TopPerfTable extends Table
         );
     }
 
-    protected function formatMicroSeconds($num)
+    protected function formatMicroSeconds(int $num): string
     {
         if ($num > 500) {
             return sprintf('%0.2Fms', $num / 1000);
-        } else {
-            return sprintf('%dµs', $num);
         }
+
+        return sprintf('%dµs', $num);
     }
 
-    protected function formatKiloBytesPerSecond($num)
+    protected function formatKiloBytesPerSecond(int $num): string
     {
         $num *= 8;
-        if ($num > 500000) {
-            return sprintf('%0.2F Gbit/s', $num / 1024 / 1024);
-        } elseif ($num > 500) {
-            return sprintf('%0.2F Mbit/s', $num / 1024);
-        } else {
-            return sprintf('%0.2F Kbit/s', $num);
-        }
+        return match (true) {
+            $num > 500000 => sprintf('%0.2F Gbit/s', $num / 1024 / 1024),
+            $num > 500    => sprintf('%0.2F Mbit/s', $num / 1024),
+            default       => sprintf('%0.2F Kbit/s', $num)
+        };
     }
 
-    protected function makeSparkLine($row)
+    protected function makeSparkLine($row): HtmlElement
     {
         $values = [
             $row->value_minus4,
             $row->value_minus3,
             $row->value_minus2,
             $row->value_minus1,
-            $row->value_last,
+            $row->value_last
         ];
 
         return Html::tag('span', [

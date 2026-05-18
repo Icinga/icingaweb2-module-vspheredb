@@ -41,33 +41,28 @@ class InfluxConnectionForVcenterLoader
             PerfdataConsumer::create((array) $row),
             $loop
         );
-        switch ($instance->getSetting('api_version')) {
-            case 'v1':
-                $influxDb = resolve(new InfluxDbConnectionV1(
-                    $curl,
-                    $instance->getSetting('base_url'),
-                    $instance->getSetting('username'),
-                    $instance->getSetting('password')
-                ));
-                break;
-            case 'v2':
-                $influxDb = resolve(new InfluxDbConnectionV2(
-                    $curl,
-                    $instance->getSetting('base_url'),
-                    $instance->getSetting('username'),
-                    $instance->getSetting('password')
-                    // $instance->getSetting('organization'),
-                    // $instance->getSetting('token')
-                ));
-                break;
-            default:
-                $influxDb = InfluxDbConnectionFactory::create(
-                    $curl,
-                    $instance->getSetting('base_url'),
-                    $instance->getSetting('username'),
-                    $instance->getSetting('password')
-                );
-        }
+        $influxDb = match ($instance->getSetting('api_version')) {
+            'v1'    => resolve(new InfluxDbConnectionV1(
+                $curl,
+                $instance->getSetting('base_url'),
+                $instance->getSetting('username'),
+                $instance->getSetting('password')
+            )),
+            'v2'    => resolve(new InfluxDbConnectionV2(
+                $curl,
+                $instance->getSetting('base_url'),
+                $instance->getSetting('username'),
+                $instance->getSetting('password')
+                // $instance->getSetting('organization'),
+                // $instance->getSetting('token')
+            )),
+            default => InfluxDbConnectionFactory::create(
+                $curl,
+                $instance->getSetting('base_url'),
+                $instance->getSetting('username'),
+                $instance->getSetting('password')
+            ),
+        };
 
         return $influxDb->then(function (InfluxDbConnection $influxDb) use ($vCenterSettings, $loop) {
             $influxDbWriter = new ChunkedInfluxDbWriter(

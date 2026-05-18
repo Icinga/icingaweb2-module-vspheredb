@@ -6,6 +6,7 @@ use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\Polling\ApiConnection;
 use Icinga\Module\Vspheredb\Polling\ServerInfo;
 use InvalidArgumentException;
+use stdClass;
 
 class ApiConnectionInfo implements JsonSerialization
 {
@@ -16,22 +17,26 @@ class ApiConnectionInfo implements JsonSerialization
         ApiConnection::STATE_FAILING   => 'CRITICAL',
         ApiConnection::STATE_STOPPED   => 'WARNING',
         ApiConnection::STATE_STOPPING  => 'WARNING',
-        'unknown' => 'CRITICAL',
+        'unknown'                      => 'CRITICAL'
     ];
 
-    /** @var string */
-    public $state;
-    /** @var string */
-    public $server;
-    /** @var int */
-    public $serverId;
-    /** @var int */
-    public $vCenterId;
-    /** @var ?int */
-    public $connectionId;
-    /** @var ?string */
-    public $lastErrorMessage = null;
+    public string $state;
 
+    public string $server;
+
+    public int $serverId;
+
+    public int $vCenterId;
+
+    public ?int $connectionId = null;
+
+    public ?string $lastErrorMessage = null;
+
+    /**
+     * @param ApiConnection $connection
+     *
+     * @return ApiConnectionInfo
+     */
     public static function fromConnectionInfo(ApiConnection $connection): ApiConnectionInfo
     {
         $server = $connection->getServerInfo();
@@ -47,7 +52,7 @@ class ApiConnectionInfo implements JsonSerialization
         return $info;
     }
 
-    public static function fromSerialization($any): ApiConnectionInfo
+    public static function fromSerialization(mixed $any): ApiConnectionInfo
     {
         $self = new ApiConnectionInfo(
             $any->state,
@@ -64,6 +69,12 @@ class ApiConnectionInfo implements JsonSerialization
         return $self;
     }
 
+    /**
+     * @param ServerInfo $server
+     * @param string $message
+     *
+     * @return ApiConnectionInfo
+     */
     public static function failingConnectionForServer(ServerInfo $server, string $message): ApiConnectionInfo
     {
         return new ApiConnectionInfo(
@@ -75,18 +86,24 @@ class ApiConnectionInfo implements JsonSerialization
         );
     }
 
+    /**
+     * @return string
+     */
     public function getIcingaState(): string
     {
         return self::STATE_MAP[$this->state];
     }
 
-    public function jsonSerialize(): \stdClass
+    /**
+     * @return stdClass
+     */
+    public function jsonSerialize(): stdClass
     {
         $self = (object) [
             'state' => $this->state,
             'server' => $this->server,
             'serverId' => $this->serverId,
-            'vCenterId' => $this->vCenterId,
+            'vCenterId' => $this->vCenterId
         ];
 
         if ($this->lastErrorMessage) {
@@ -99,6 +116,15 @@ class ApiConnectionInfo implements JsonSerialization
         return $self;
     }
 
+    /**
+     * @param string $state
+     * @param string $server
+     * @param int $serverId
+     * @param int $vCenterId
+     * @param ?string $lastErrorMessage
+     *
+     * @throws InvalidArgumentException
+     */
     protected function __construct(
         string $state,
         string $server,

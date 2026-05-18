@@ -3,18 +3,25 @@
 namespace Icinga\Module\Vspheredb\Web\Widget;
 
 use gipfl\Json\JsonSerialization;
+use ReturnTypeWillChange;
 
 class ResourceUsage implements JsonSerialization
 {
-    public $usedMhz;
-    public $totalMhz;
-    public $usedMb;
-    public $totalMb;
-    public $dsCapacity;
-    public $dsFreeSpace;
-    public $dsUncommitted;
+    public ?int $usedMhz = null;
 
-    public static function fromSerialization($any)
+    public ?int $totalMhz = null;
+
+    public ?int $usedMb = null;
+
+    public ?int $totalMb = null;
+
+    public ?int $dsCapacity = null;
+
+    public ?int $dsFreeSpace = null;
+
+    public ?int $dsUncommitted = null;
+
+    public static function fromSerialization($any): static
     {
         $self = new static();
         $self->usedMhz       = $any->used_mhz;
@@ -28,8 +35,8 @@ class ResourceUsage implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    #[ReturnTypeWillChange]
+    public function jsonSerialize(): array
     {
         return [
             'used_mhz'        => $this->usedMhz,
@@ -38,7 +45,7 @@ class ResourceUsage implements JsonSerialization
             'total_mb'        => $this->totalMb,
             'ds_capacity'     => $this->dsCapacity,
             'ds_free_space'   => $this->dsFreeSpace,
-            'ds_uncommitted'  => $this->dsUncommitted,
+            'ds_uncommitted'  => $this->dsUncommitted
         ];
     }
 }

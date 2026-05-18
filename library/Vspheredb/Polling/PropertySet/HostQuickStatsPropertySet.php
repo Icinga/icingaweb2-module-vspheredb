@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class HostQuickStatsPropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             PropertySpec::create('HostSystem', [
@@ -14,7 +14,7 @@ class HostQuickStatsPropertySet implements PropertySet
                 'summary.quickStats.distributedMemoryFairness',
                 'summary.quickStats.overallCpuUsage',
                 'summary.quickStats.overallMemoryUsage',
-                'summary.quickStats.uptime',
+                'summary.quickStats.uptime'
             ])
         ];
     }

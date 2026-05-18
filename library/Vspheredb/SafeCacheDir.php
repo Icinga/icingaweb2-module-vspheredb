@@ -6,30 +6,25 @@ use RuntimeException;
 
 class SafeCacheDir
 {
-    protected static $currentUser;
+    protected static ?string $currentUser = null;
 
     /**
      * @return string
      */
-    public static function getDirectory()
+    public static function getDirectory(): string
     {
-        $directory = sprintf(
-            '%s/%s-%s',
-            sys_get_temp_dir(),
-            'iwebVsphere',
-            static::getCurrentUsername()
-        );
-
+        $directory = sprintf('%s/%s-%s', sys_get_temp_dir(), 'iwebVsphere', static::getCurrentUsername());
         static::claimDirectory($directory);
 
         return $directory;
     }
 
     /**
-     * @param $directory
+     * @param string $directory
+     *
      * @return string
      */
-    public static function getSubDirectory($directory)
+    public static function getSubDirectory(string $directory): string
     {
         $subDir = static::getDirectory() . "/$directory";
         static::claimDirectory($subDir);
@@ -38,9 +33,9 @@ class SafeCacheDir
     }
 
     /**
-     * @param $directory
+     * @param string $directory
      */
-    protected static function claimDirectory($directory)
+    protected static function claimDirectory(string $directory): void
     {
         if (file_exists($directory)) {
             if (static::uidToName(fileowner($directory)) !== static::getCurrentUsername()) {
@@ -52,35 +47,31 @@ class SafeCacheDir
             }
         } else {
             if (! @mkdir($directory, 0700)) {
-                throw new RuntimeException(sprintf(
-                    'Could not create %s',
-                    $directory
-                ));
+                throw new RuntimeException(sprintf('Could not create %s', $directory));
             }
         }
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    protected static function getCurrentUsername()
+    protected static function getCurrentUsername(): string
     {
         if (static::$currentUser === null) {
             if (function_exists('posix_geteuid')) {
                 static::$currentUser = static::uidToName(posix_geteuid());
             } else {
-                throw new RuntimeException(
-                    'POSIX methods not available, is php-posix installed and enabled?'
-                );
+                throw new RuntimeException('POSIX methods not available, is php-posix installed and enabled?');
             }
         }
 
         return static::$currentUser;
     }
 
-    protected static function uidToName($uid)
+    protected static function uidToName(int $uid): string
     {
         $info = posix_getpwuid($uid);
+
         return $info['name'];
     }
 }

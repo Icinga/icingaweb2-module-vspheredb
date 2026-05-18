@@ -6,7 +6,7 @@ use Icinga\Module\Vspheredb\MappedClass\PropertySpec;
 
 class VirtualMachinePropertySet implements PropertySet
 {
-    public static function create()
+    public static function create(): array
     {
         return [
             PropertySpec::create('VirtualMachine', [
@@ -44,7 +44,7 @@ class VirtualMachinePropertySet implements PropertySet
                 'config.cpuHotAddEnabled',
                 'config.memoryHotAddEnabled',
                 // 'runtime.bootTime',
-                // 'runtime.suspendTime',
+                // 'runtime.suspendTime'
             ])
         ];
     }

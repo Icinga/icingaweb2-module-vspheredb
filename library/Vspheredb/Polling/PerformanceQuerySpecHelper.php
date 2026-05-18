@@ -11,19 +11,20 @@ abstract class PerformanceQuerySpecHelper
 {
     /**
      * @param string $objectType 'HostSystem', 'VirtualMachine'...
-     * @param array $counters  [counterKey => name, ...]
-     * @param $objectWithInstances [vm-123 => [scsi0:0, ...], ...]. To test: * would be all instances
+     * @param array $counters [counterKey => name, ...]
+     * @param array $objectWithInstances [vm-123 => [scsi0:0, ...], ...]. To test: * would be all instances
      * @param int $count Defaults to 180. We have 1h in a 20s interval. 3600 / 20 = 180
      * @param int $interval Defaults to 20s, "realtime"
+     *
      * @return PerfQuerySpec[]
      */
     public static function prepareQuerySpec(
-        $objectType,
-        $counters,
-        $objectWithInstances,
-        $count = 180,
-        $interval = 20
-    ) {
+        string $objectType,
+        array $counters,
+        array $objectWithInstances,
+        int $count = 180,
+        int $interval = 20
+    ): array {
         $duration = $interval * ($count);
         $now = floor(time() / $interval) * $interval;
         $start = Util::makeDateTime($now - $duration);

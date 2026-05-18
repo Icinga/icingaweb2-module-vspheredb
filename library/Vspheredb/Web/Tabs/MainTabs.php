@@ -2,21 +2,19 @@
 
 namespace Icinga\Module\Vspheredb\Web\Tabs;
 
-use ipl\I18n\Translation;
-use gipfl\IcingaWeb2\Widget\Tabs;
 use Exception;
+use gipfl\IcingaWeb2\Widget\Tabs;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Vspheredb\Db;
+use ipl\I18n\Translation;
 
 class MainTabs extends Tabs
 {
     use Translation;
 
-    /** @var Db|null  */
-    protected $connection;
+    protected ?Db $connection;
 
-    /** @var Auth */
-    protected $auth;
+    protected Auth $auth;
 
     public function __construct(Auth $auth, ?Db $connection = null)
     {
@@ -26,14 +24,14 @@ class MainTabs extends Tabs
         $this->assemble();
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         if ($this->connection) {
             $connection = $this->connection;
         } else {
             try {
                 $connection = Db::newConfiguredInstance();
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $connection = null;
             }
         }
@@ -44,8 +42,8 @@ class MainTabs extends Tabs
 
             if ($migrations->hasSchema()) {
                 $this->add('vcenters', [
-                    'label'     => $this->translate('vCenters'),
-                    'url'       => 'vspheredb/vcenters',
+                    'label' => $this->translate('vCenters'),
+                    'url'   => 'vspheredb/vcenters'
                 ]);
             }
         } else {
@@ -55,7 +53,7 @@ class MainTabs extends Tabs
         if ($isAdmin && $migrations && $migrations->hasSchema()) {
             $this->add('daemon', [
                 'label' => $this->translate('Daemon'),
-                'url' => 'vspheredb/daemon',
+                'url'   => 'vspheredb/daemon'
             ]);
         }
     }

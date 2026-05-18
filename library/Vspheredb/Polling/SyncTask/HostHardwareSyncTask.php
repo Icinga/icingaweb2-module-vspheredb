@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\HostHardwareSyncStore;
 
 class HostHardwareSyncTask extends SyncTask
 {
-    protected $label = 'Host Hardware';
-    protected $tableName = 'host_pci_device';
-    protected $objectClass = HostPciDevice::class;
-    protected $selectSetClass = HostSystemSelectSet::class;
-    protected $propertySetClass = HostHardwarePropertySet::class;
-    protected $syncStoreClass = HostHardwareSyncStore::class;
+    protected string $label = 'Host Hardware';
+
+    protected string $tableName = 'host_pci_device';
+
+    protected string $objectClass = HostPciDevice::class;
+
+    protected string $selectSetClass = HostSystemSelectSet::class;
+
+    protected string $propertySetClass = HostHardwarePropertySet::class;
+
+    protected string $syncStoreClass = HostHardwareSyncStore::class;
 }

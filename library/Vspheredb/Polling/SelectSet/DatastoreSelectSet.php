@@ -6,15 +6,15 @@ class DatastoreSelectSet implements SelectSet
 {
     public const TRAVERSE_STORAGE_POD = 'TraverseStoragePod';
 
-    public static function create()
+    public static function create(): array
     {
         return [
             GenericSpec::traverseFolder([
                 GenericSpec::TRAVERSE_DC_DATA_STORES,
-                self::TRAVERSE_STORAGE_POD,
+                self::TRAVERSE_STORAGE_POD
             ]),
             GenericSpec::traverseDatacenterDataStores(),
-            GenericSpec::traverse(self::TRAVERSE_STORAGE_POD, 'StoragePod', 'childEntity'),
+            GenericSpec::traverse(self::TRAVERSE_STORAGE_POD, 'StoragePod', 'childEntity')
         ];
     }
 }

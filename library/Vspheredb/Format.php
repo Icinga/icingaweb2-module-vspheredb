@@ -4,7 +4,7 @@ namespace Icinga\Module\Vspheredb;
 
 class Format
 {
-    public static function bytes($value): string
+    public static function bytes(float|int $value): string
     {
         $base = 1024;
         $units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
@@ -30,52 +30,45 @@ class Format
         return sprintf('%s%s %s', $sign, $output, $units[$pow]);
     }
 
-    public static function mBytes($value): string
+    public static function mBytes(float|int|null $value): string
     {
         return static::bytes($value * 1024 * 1024);
     }
 
-    public static function linkSpeedMb($mb): string
+    public static function linkSpeedMb(int $mb): string
     {
-        if ($mb >= 1000000) {
-            return sprintf('%.3G TBit/s', $mb / 1000000);
-        } elseif ($mb >= 1000) {
-            return sprintf('%.3G GBit/s', $mb / 1000);
-        } else {
-            return sprintf('%.3G MBit/s', $mb);
-        }
+        return match (true) {
+            $mb >= 1000000 => sprintf('%.3G TBit/s', $mb / 1000000),
+            $mb >= 1000    => sprintf('%.3G GBit/s', $mb / 1000),
+            default        => sprintf('%.3G MBit/s', $mb)
+        };
     }
 
-    public static function mhz($mhz): string
+    public static function mhz(?int $mhz): string
     {
         if ($mhz === null) {
             return '-';
         }
         $sign = $mhz < 0 ? '-' : '';
         $mhz = abs($mhz);
-        if ($mhz >= 1000000) {
-            return $sign . sprintf('%.3G THz', $mhz / 1000000);
-        } elseif ($mhz >= 1000) {
-            return $sign . sprintf('%.3G GHz', $mhz / 1000);
-        } else {
-            return $sign . sprintf('%.3G MHz', $mhz);
-        }
+
+        return $sign . match (true) {
+            $mhz >= 1000000 => sprintf('%.3G THz', $mhz / 1000000),
+            $mhz >= 1000    => sprintf('%.3G GHz', $mhz / 1000),
+            default         => sprintf('%.3G MHz', $mhz)
+        };
     }
 
     public static function mhzWithSeparateUnit($mhz): array
     {
         $sign = $mhz < 0 ? '-' : '';
         $mhz = abs($mhz);
-        if ($mhz > 1000000) {
-            $unit = 'THz';
-            $value = $mhz / 1000000;
-        } elseif ($mhz > 1000) {
-            $unit = 'GHz';
-            $value = $mhz / 1000;
-        } else {
-            $unit = 'MHz';
-            $value = $mhz;
-        }
+
+        [$unit, $value] = match (true) {
+            $mhz >= 1000000 => ['THz', $mhz / 1000000],
+            $mhz >= 1000    => ['GHz', $mhz / 1000],
+            default         => ['MHz', $mhz]
+        };
 
         return [$sign . sprintf('%.3G', $value), $unit];
     }

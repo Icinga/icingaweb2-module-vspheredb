@@ -5,21 +5,21 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use gipfl\IcingaWeb2\Link;
 use gipfl\IcingaWeb2\Url;
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Controller;
+use Icinga\Module\Vspheredb\Web\Table\AlarmHistoryTable;
 use Icinga\Module\Vspheredb\Web\Widget\AlarmHeatmap;
 use Icinga\Module\Vspheredb\Web\Widget\CalendarForEvents;
 
 class AlarmsController extends Controller
 {
-    public function init()
+    public function init(): void
     {
         $this->assertPermission('vspheredb/admin');
         parent::init();
         $this->handleTabs();
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->actions()->add(Link::create(
             $this->translate('Calendar'),
@@ -27,7 +27,7 @@ class AlarmsController extends Controller
             $this->url()->getParams()->toArray(false),
             [
                 'class' => 'icon-calendar',
-                'data-base-target' => '_main',
+                'data-base-target' => '_main'
             ]
         ));
         $day = $this->params->shift('day');
@@ -49,7 +49,7 @@ class AlarmsController extends Controller
         $table->renderTo($this);
     }
 
-    public function heatmapAction()
+    public function heatmapAction(): void
     {
         $this->actions()->add(Link::create(
             $this->translate('Table'),
@@ -57,7 +57,7 @@ class AlarmsController extends Controller
             $this->url()->getParams()->toArray(false),
             [
                 'class' => 'icon-th-list',
-                'data-base-target' => '_main',
+                'data-base-target' => '_main'
             ]
         ));
         $this->addTitle($this->translate('Alarm Heatmap'));
@@ -68,7 +68,10 @@ class AlarmsController extends Controller
         $this->content()->add(new CalendarForEvents($heatMap, $baseUrl, [255, 0, 0]));
     }
 
-    protected function handleTabs()
+    /**
+     * @return void
+     */
+    protected function handleTabs(): void
     {
         $params = [];
         if ($day = $this->params->get('day')) {

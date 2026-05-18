@@ -3,12 +3,14 @@
 namespace Icinga\Module\Vspheredb\Web\Table;
 
 use gipfl\IcingaWeb2\Icon;
+use ipl\Html\Attributes;
+use ipl\Html\HtmlElement;
 
 class ControlSocketConnectionsTable extends ArrayTable
 {
     protected $searchColumns = [
         'username',
-        'socket',
+        'socket'
     ];
 
     /* Sample Row:
@@ -31,7 +33,7 @@ class ControlSocketConnectionsTable extends ArrayTable
     }
     */
 
-    protected $myPid;
+    protected int $myPid;
 
     public function __construct($rows)
     {
@@ -39,15 +41,13 @@ class ControlSocketConnectionsTable extends ArrayTable
         $this->myPid = posix_getpid();
     }
 
-    public function renderRow($row)
+    public function renderRow($row): HtmlElement
     {
         $tr = $this::row([
             [
-                $row->direction === 'in' ? Icon::create('endtime', [
-                    'title' => $this->translate('Incoming connection'),
-                ]) : Icon::create('starttime', [
-                    'title' => $this->translate('Outgoing connection'),
-                ]),
+                $row->direction === 'in'
+                    ? Icon::create('endtime', ['title' => $this->translate('Incoming connection')])
+                    : Icon::create('starttime', ['title' => $this->translate('Outgoing connection')]),
                 ' ',
                 $row->socket
             ],
@@ -55,18 +55,18 @@ class ControlSocketConnectionsTable extends ArrayTable
             $row->pid
         ]);
         if ($row->pid === $this->myPid) {
-            $tr->addAttributes(['class' => 'control-socket-connections-table-row']);
+            $tr->addAttributes(Attributes::create(['class' => 'control-socket-connections-table-row']));
         }
 
         return $tr;
     }
 
-    public function getColumnsToBeRendered()
+    public function getColumnsToBeRendered(): array
     {
         return [
             $this->translate('Socket'),
             $this->translate('User'),
-            $this->translate('Client PID'),
+            $this->translate('Client PID')
         ];
     }
 }

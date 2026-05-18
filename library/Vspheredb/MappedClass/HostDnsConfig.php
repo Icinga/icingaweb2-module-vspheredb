@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
+
 /**
  * This data object type describes the DNS configuration
  *
@@ -13,7 +15,7 @@ namespace Icinga\Module\Vspheredb\MappedClass;
  * The address can also consist of the symbol '::' to represent multiple 16-bit
  * groups of contiguous 0's only once in an address as described in RFC 2373.
  */
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class HostDnsConfig
 {
     /**

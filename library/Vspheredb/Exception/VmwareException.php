@@ -4,6 +4,7 @@ namespace Icinga\Module\Vspheredb\Exception;
 
 use Exception;
 use Icinga\Module\Vspheredb\MappedClass\MissingProperty;
+use RuntimeException;
 
 class VmwareException extends Exception
 {
@@ -12,11 +13,13 @@ class VmwareException extends Exception
 
     /**
      * @param MissingProperty[] $missingSet
+     *
+     * @return VmwareException|RuntimeException
      */
-    public static function forMissingSet($missingSet)
+    public static function forMissingSet(array $missingSet): VmwareException|RuntimeException
     {
         if (empty($missingSet)) {
-            return new \RuntimeException('Trying to create an Exception for an empty missing set');
+            return new RuntimeException('Trying to create an Exception for an empty missing set');
         }
         $paths = [];
         foreach ($missingSet as $missingProperty) {

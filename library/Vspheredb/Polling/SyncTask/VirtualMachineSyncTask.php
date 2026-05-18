@@ -9,10 +9,15 @@ use Icinga\Module\Vspheredb\Polling\SyncStore\ObjectSyncStore;
 
 class VirtualMachineSyncTask extends SyncTask
 {
-    protected $label = 'Virtual Machines';
-    protected $tableName = 'virtual_machine';
-    protected $objectClass = VirtualMachine::class;
-    protected $selectSetClass = VirtualMachineSelectSet::class;
-    protected $propertySetClass = VirtualMachinePropertySet::class;
-    protected $syncStoreClass = ObjectSyncStore::class;
+    protected string $label = 'Virtual Machines';
+
+    protected string $tableName = 'virtual_machine';
+
+    protected string $objectClass = VirtualMachine::class;
+
+    protected string $selectSetClass = VirtualMachineSelectSet::class;
+
+    protected string $propertySetClass = VirtualMachinePropertySet::class;
+
+    protected string $syncStoreClass = ObjectSyncStore::class;
 }

@@ -4,9 +4,9 @@ namespace Icinga\Module\Vspheredb\DbObject;
 
 class HostSensor extends BaseDbObject
 {
-    protected $table = 'host_sensor';
+    protected ?string $table = 'host_sensor';
 
-    protected $defaultProperties = [
+    protected ?array $defaultProperties = [
         'name'            => null,
         'host_uuid'       => null,
         'health_state'    => null,
@@ -15,27 +15,32 @@ class HostSensor extends BaseDbObject
         'base_units'      => null,
         'rate_units'      => null,
         'sensor_type'     => null,
-        'vcenter_uuid'    => null,
+        'vcenter_uuid'    => null
     ];
 
-    protected $objectReferences = [
-        'host_uuid',
+    protected array $objectReferences = [
+        'host_uuid'
     ];
 
-    protected $propertyMap = [
+    protected array $propertyMap = [
         'name'           => 'name',
         'healthState'    => 'health_state',
         'currentReading' => 'current_reading',
         'unitModifier'   => 'unit_modifier',
         'baseUnits'      => 'base_units',
         'rateUnits'      => 'rate_units',
-        'sensorType'     => 'sensor_type',
+        'sensorType'     => 'sensor_type'
     ];
 
     // TODO: HostNumericSensorInfo has 'id' since v6.5
-    protected $keyName = ['host_uuid', 'name'];
+    protected string|array|null $keyName = ['host_uuid', 'name'];
 
-    public function setName($value)
+    /**
+     * @param string $value
+     *
+     * @return static
+     */
+    public function setName(string $value): static
     {
         // name has the form "description --- state/identifier"
         // TODO: strip the identifier once we changed the key to 'id'
@@ -43,25 +48,17 @@ class HostSensor extends BaseDbObject
         // $value = \preg_replace('/\s---\s.+$/', '', $value);
         if ($value === $this->get('name')) {
             return $this;
-        } else {
-            return $this->reallySet('name', $value);
         }
+
+        return $this->reallySet('name', $value);
     }
 
-    public function setHealth_state($healthState) // phpcs:ignore
+    public function setHealth_state($healthState): void // phpcs:ignore
     {
-        if (is_object($healthState)) {
-            $this->reallySet('health_state', lcfirst($healthState->key));
-        } else {
-            $this->reallySet('health_state', $healthState);
-        }
+        $this->reallySet('health_state', is_object($healthState) ? lcfirst($healthState->key) : $healthState);
     }
 
-    /**
-     * @param VCenter $vCenter
-     * @return static[]
-     */
-    public static function loadAllForVCenter(VCenter $vCenter)
+    public static function loadAllForVCenter(VCenter $vCenter): array
     {
         $dummy = new static();
         $objects = static::loadAll(

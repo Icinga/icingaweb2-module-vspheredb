@@ -2,10 +2,12 @@
 
 namespace Icinga\Module\Vspheredb\MappedClass;
 
+use AllowDynamicProperties;
 use gipfl\Json\JsonSerialization;
 use Icinga\Module\Vspheredb\VmwareDataType\ManagedObjectReference;
+use ReturnTypeWillChange;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 class PerfEntityMetricCSV implements JsonSerialization
 {
     /** @var ManagedObjectReference */
@@ -29,13 +31,13 @@ class PerfEntityMetricCSV implements JsonSerialization
         return $self;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object) [
             'entity'        => $this->entity,
             'sampleInfoCSV' => $this->sampleInfoCSV,
-            'value'         => $this->value,
+            'value'         => $this->value
         ];
     }
 }

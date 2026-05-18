@@ -13,7 +13,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
 {
     use SyncHelper;
 
-    public function store($result, $class, SyncStats $stats)
+    public function store($result, $class, SyncStats $stats): void
     {
         $connection = $this->vCenter->getConnection();
         $vCenter = $this->vCenter;
@@ -47,6 +47,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
                     $fetched[$uuid],
                     Uuid::fromBytes($uuid)->toString()
                 ));
+
                 return;
             }
             $fetched[$uuid] = $name;
@@ -67,7 +68,7 @@ class ManagedObjectReferenceSyncStore extends SyncStore
                     'object_name'    => $name,
                     'object_type'    => $moRef->type,
                     'overall_status' => $obj->overallStatus,
-                    'tags'           => JsonString::encode($tags),
+                    'tags'           => JsonString::encode($tags)
                 ], $connection);
             }
             if (property_exists($obj, 'parent')) {
@@ -78,23 +79,18 @@ class ManagedObjectReferenceSyncStore extends SyncStore
         }
 
         if (! empty($vmUuidsWithNoParent)) {
-            $this->logger->debug(\sprintf(
+            $this->logger->debug(sprintf(
                 'There are %d VMs without parent',
-                \count($vmUuidsWithNoParent)
+                count($vmUuidsWithNoParent)
             ));
         }
 
         /** @var string $parentName */
         foreach ($idToParent as $uuid => $parentName) {
             if (array_key_exists($parentName, $nameUuids)) {
-                $objects[$uuid]->setParent(
-                    $objects[$nameUuids[$parentName]]
-                );
+                $objects[$uuid]->setParent($objects[$nameUuids[$parentName]]);
             } else {
-                $this->logger->error(sprintf(
-                    "Could not find parent $parentName for %s",
-                    $fetched[$uuid]
-                ));
+                $this->logger->error(sprintf("Could not find parent $parentName for %s", $fetched[$uuid]));
             }
         }
 

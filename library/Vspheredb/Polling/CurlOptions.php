@@ -16,31 +16,14 @@ class CurlOptions
     /** @var array */
     public const PROXY_TYPES = [
         'HTTP'   => CURLPROXY_HTTP,
-        'SOCKS5' => CURLPROXY_SOCKS5,
+        'SOCKS5' => CURLPROXY_SOCKS5
     ];
 
-    public static function forServerInfo(ServerInfo $server)
+    public static function forServerInfo(ServerInfo $server): array
     {
         $host = $server->get('host');
-        if (preg_match('/^(.+?):(\d{1,5})$/', $host, $match)) {
-            $host = $match[1];
-            $port = (int) $match[2];
-        } else {
-            $port = null;
-        }
-        $options = [
-            CURLOPT_HTTPHEADER => [
-                // Host header disabled for now, see #496
-                // "Host: $host",
-                'Expect:',
-                'User-Agent: Icinga-vSphereDB/1.8',
-            ]
-        ];
-
-        // Unused, we're authenticating via SOAP
-        // if (null !== ($username = $server->get('username'))) {
-        //     $options[CURLOPT_USERPWD] = sprintf('%s:%s', $username, $server->get('password'));
-        // }
+        $port = preg_match('/^(.+?):(\d{1,5})$/', $host, $match) ? (int) $match[2] : null;
+        $options[CURLOPT_HTTPHEADER] = ['Expect:', 'User-Agent: Icinga-vSphereDB/1.8'];
 
         if ($proxyType = $server->get('proxy_type')) {
             // TODO: Depending on the PHP and Curl version, we might want to support HTTPS proxies
@@ -70,7 +53,7 @@ class CurlOptions
         return $options;
     }
 
-    protected static function wantCurlProxyType($type)
+    protected static function wantCurlProxyType(int|string $type): int
     {
         if (is_int($type)) {
             if (in_array($type, self::PROXY_TYPES, true)) {
