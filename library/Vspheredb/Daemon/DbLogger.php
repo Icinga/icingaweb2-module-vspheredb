@@ -22,22 +22,16 @@ class DbLogger implements LogWriterWithContext, EventEmitterInterface
 
     public const ERROR_PREFIX_LENGTH = 17;
 
-    /** @var string */
     protected string $instance;
 
-    /** @var ?Zend_Db_Adapter_Abstract */
     protected ?Zend_Db_Adapter_Abstract $db = null;
 
-    /** @var SplStack */
     protected SplStack $queue;
 
-    /** @var string */
     protected string $fqdn;
 
-    /** @var int */
     protected int $pid;
 
-    /** @var ?int */
     protected ?int $lastTs = null;
 
     /**

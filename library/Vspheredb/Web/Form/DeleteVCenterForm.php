@@ -22,16 +22,12 @@ class DeleteVCenterForm extends Form
 
     protected $defaultDecoratorClass = null;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
-    /** @var RemoteClient */
     protected RemoteClient $client;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
-    /** @var Db */
     protected Db $db;
 
     public function __construct(Db $db, VCenter $vCenter, RemoteClient $client, LoopInterface $loop)

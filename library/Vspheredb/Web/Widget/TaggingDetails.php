@@ -18,7 +18,6 @@ class TaggingDetails extends HtmlDocument
 {
     use Translation;
 
-    /** @var HostSystem|VirtualMachine */
     protected HostSystem|VirtualMachine $object;
 
     /** @var TaggingTag[] */

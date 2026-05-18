@@ -7,7 +7,6 @@ use ipl\Html\HtmlDocument;
 
 class BiosInfo extends HtmlDocument
 {
-    /** @var HostSystem */
     protected HostSystem $host;
 
     public function __construct(HostSystem $host)

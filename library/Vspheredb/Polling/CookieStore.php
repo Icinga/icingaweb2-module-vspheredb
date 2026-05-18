@@ -12,16 +12,12 @@ use function unlink;
 
 class CookieStore
 {
-    /** @var string */
     private string $cacheDir;
 
-    /** @var string */
     private string $cookieFile;
 
-    /** @var array */
     private array $cookies = [];
 
-    /** @var LoggerInterface */
     private LoggerInterface $logger;
 
     public function __construct(string $cacheDir, ServerInfo $serverInfo, LoggerInterface $logger)

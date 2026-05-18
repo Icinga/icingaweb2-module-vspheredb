@@ -15,10 +15,8 @@ class OverviewTree extends BaseHtmlElement
 {
     use Translation;
 
-    /** @var Db */
     protected Db $db;
 
-    /** @var RestrictionHelper */
     protected RestrictionHelper $restrictionHelper;
 
     protected $tag = 'ul';

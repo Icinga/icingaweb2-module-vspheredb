@@ -8,7 +8,6 @@ use Zend_Db_Select as ZfSelect;
 
 class VMotionHeatmap
 {
-    /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
     protected ?ZfSelect $query = null;

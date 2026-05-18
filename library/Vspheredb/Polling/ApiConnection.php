@@ -38,40 +38,28 @@ class ApiConnection implements EventEmitterInterface
 
     public const STATE_FAILING = 'failing';
 
-    /** @var CurlAsync */
     protected CurlAsync $curl;
 
-    /** @var ?LoopInterface */
     protected ?LoopInterface $loop = null;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var ?TimerInterface */
     protected ?TimerInterface $scheduledPollerStartup = null;
 
-    /** @var ServerInfo */
     protected ServerInfo $serverInfo;
 
-    /** @var ?string */
     protected ?string $wsdlFile = null;
 
-    /** @var ?VsphereApi */
     protected ?VsphereApi $api = null;
 
-    /** @var ?bool */
     protected ?bool $stopping = null;
 
-    /** @var ?PromiseInterface */
     protected ?PromiseInterface $loginPromise = null;
 
-    /** @var ?PromiseInterface */
     protected ?PromiseInterface $wsdlPromise = null;
 
-    /** @var ?TimerInterface */
     protected ?TimerInterface $sessionChecker = null;
 
-    /** @var ?string */
     protected ?string $lastErrorMessage = null;
 
     public function __construct(CurlAsync $curl, ServerInfo $serverInfo, LoggerInterface $logger)

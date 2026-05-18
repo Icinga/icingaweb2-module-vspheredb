@@ -12,7 +12,6 @@ use function array_key_exists;
 
 class ServerInfo implements JsonSerialization
 {
-    /** @var array */
     protected array $properties;
 
     /**

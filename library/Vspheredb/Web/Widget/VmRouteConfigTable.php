@@ -11,7 +11,6 @@ class VmRouteConfigTable extends HtmlDocument
 {
     use Translation;
 
-    /** @var VirtualMachine */
     protected VirtualMachine $object;
 
     public function __construct(VirtualMachine $object)

@@ -12,17 +12,14 @@ use ipl\Html\HtmlDocument;
 
 class HostHeader extends BaseHtmlElement
 {
-    /** @var HostSystem */
     protected HostSystem $host;
 
-    /** @var ?HtmlDocument */
     protected ?HtmlDocument $icons = null;
 
     protected $tag = 'div';
 
     protected $defaultAttributes = ['class' => 'host-header'];
 
-    /** @var HostQuickStats */
     protected HostQuickStats $quickStats;
 
     public function __construct(HostSystem $host, HostQuickStats $quickStats)

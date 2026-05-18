@@ -20,22 +20,16 @@ class ApiConnectionInfo implements JsonSerialization
         'unknown'                      => 'CRITICAL'
     ];
 
-    /** @var string */
     public string $state;
 
-    /** @var string */
     public string $server;
 
-    /** @var int */
     public int $serverId;
 
-    /** @var int */
     public int $vCenterId;
 
-    /** @var ?int */
     public ?int $connectionId = null;
 
-    /** @var ?string */
     public ?string $lastErrorMessage = null;
 
     /**

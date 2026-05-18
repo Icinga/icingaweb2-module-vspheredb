@@ -15,10 +15,8 @@ class VmHeader extends BaseHtmlElement
 {
     use Translation;
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
-    /** @var VmQuickStats */
     protected VmQuickStats $quickStats;
 
     protected $tag = 'div';

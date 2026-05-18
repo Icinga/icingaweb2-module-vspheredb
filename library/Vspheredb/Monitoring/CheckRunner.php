@@ -24,19 +24,14 @@ class CheckRunner
 
     public const RULE_NAME_PARAMETER = 'rule';
 
-    /** @var Db */
     protected Db $db;
 
-    /** @var Screen */
     protected Screen $screen;
 
-    /** @var ?string */
     protected ?string $ruleSetName = null;
 
-    /** @var ?string */
     protected ?string $ruleName = null;
 
-    /** @var bool */
     protected bool $inspect = false;
 
     protected array $preloadedTrees = [];

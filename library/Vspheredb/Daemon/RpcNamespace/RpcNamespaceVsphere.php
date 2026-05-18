@@ -8,7 +8,6 @@ use Icinga\Module\Vspheredb\Polling\ServerSet;
 
 class RpcNamespaceVsphere
 {
-    /** @var ApiConnectionHandler */
     protected ApiConnectionHandler $apiConnectionHandler;
 
     /**

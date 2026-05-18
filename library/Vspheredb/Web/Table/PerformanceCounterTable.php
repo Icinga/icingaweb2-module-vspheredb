@@ -9,7 +9,6 @@ use Zend_Db_Select;
 
 class PerformanceCounterTable extends BaseTable
 {
-    /** @var ?VCenter */
     protected ?VCenter $vCenter;
 
     protected $searchColumns = [

@@ -35,10 +35,8 @@ class VmEssentialInfoTable extends NameValueTable
 {
     use Translation;
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     public function __construct(VirtualMachine $vm)

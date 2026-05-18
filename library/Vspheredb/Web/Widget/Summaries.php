@@ -23,15 +23,12 @@ class Summaries extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'object-summaries'];
 
-    /** @var ?ZfSelect */
     protected ?ZfSelect $query = null;
 
     protected ?object $stats = null;
 
-    /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
-    /** @var Url */
     protected Url $baseUrl;
 
     protected bool $wantsPowerState = false;

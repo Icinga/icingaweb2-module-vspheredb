@@ -14,22 +14,16 @@ class VCenterInfo
 {
     // Hint: these should become readonly properties
 
-    /** @var ?string */
     public ?string $uuid = null;
 
-    /** @var ?int */
     public ?int $id = null;
 
-    /** @var ?string */
     public ?string $name = null;
 
-    /** @var ?string */
     public ?string $software = null;
 
-    /** @var ?string */
     public ?string $softwareName = null;
 
-    /** @var ?string */
     public ?string $softwareVersion = null;
 
     /**

@@ -23,22 +23,17 @@ use function React\Promise\resolve;
 
 class RestApi
 {
-    /** @var CurlAsync */
     protected CurlAsync $curl;
 
-    /** @var CookieStore */
     protected CookieStore $sidStore;
 
-    /** @var ServerInfo */
     protected ServerInfo $server;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
     /** @var array[] */
     protected array $curlOptions;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     public function __construct(

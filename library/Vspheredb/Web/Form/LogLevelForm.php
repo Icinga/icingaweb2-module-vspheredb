@@ -17,13 +17,10 @@ class LogLevelForm extends InlineForm
 {
     use Translation;
 
-    /** @var RemoteClient */
     protected RemoteClient $client;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
-    /** @var ?bool */
     protected ?bool $talkedToSocket = null;
 
     public function __construct(RemoteClient $client, LoopInterface $loop)

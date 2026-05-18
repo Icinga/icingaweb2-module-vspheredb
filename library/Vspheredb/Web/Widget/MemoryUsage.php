@@ -7,7 +7,6 @@ use ipl\Html\BaseHtmlElement;
 
 class MemoryUsage extends UsageBar
 {
-    /** @var int|float|null */
     protected int|float|null $usedHost;
 
     protected array $colors = [

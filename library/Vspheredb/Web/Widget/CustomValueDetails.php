@@ -17,7 +17,6 @@ class CustomValueDetails extends HtmlDocument
 {
     use Translation;
 
-    /** @var HostSystem|VirtualMachine */
     protected HostSystem|VirtualMachine $object;
 
     public function __construct(HostSystem|VirtualMachine $object)

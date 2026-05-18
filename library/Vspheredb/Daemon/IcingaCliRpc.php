@@ -11,10 +11,8 @@ use React\Promise\PromiseInterface;
 
 class IcingaCliRpc extends IcingaCli
 {
-    /** @var ?JsonRpcConnection */
     protected ?JsonRpcConnection $rpc = null;
 
-    /** @var ?Deferred */
     protected ?Deferred $waitingForRpc = null;
 
     /**

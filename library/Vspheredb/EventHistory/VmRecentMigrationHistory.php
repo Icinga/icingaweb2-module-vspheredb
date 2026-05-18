@@ -8,10 +8,8 @@ use Zend_Db_Adapter_Abstract;
 
 class VmRecentMigrationHistory
 {
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
-    /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
     /**

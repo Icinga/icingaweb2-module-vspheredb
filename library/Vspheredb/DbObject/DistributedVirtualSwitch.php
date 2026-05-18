@@ -38,7 +38,6 @@ class DistributedVirtualSwitch extends BaseDbObject
         'config.uplinkPortgroup' => 'uplinkPortGroups'
     ];
 
-    /** @var ?array */
     protected ?array $unstoredPortGroupRefs = null;
 
     /**

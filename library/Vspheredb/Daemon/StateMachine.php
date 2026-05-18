@@ -6,7 +6,6 @@ use RuntimeException;
 
 trait StateMachine
 {
-    /** @var ?string */
     private ?string $currentState = null;
 
     /** @var array [fromState][toState] = [callback, ...] */

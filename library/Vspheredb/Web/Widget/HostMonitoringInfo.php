@@ -15,13 +15,10 @@ class HostMonitoringInfo extends HtmlDocument
 {
     use Translation;
 
-    /** @var HostSystem */
     protected HostSystem $host;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
-    /** @var false|array|null */
     protected false|array|null $info = null;
 
     /**

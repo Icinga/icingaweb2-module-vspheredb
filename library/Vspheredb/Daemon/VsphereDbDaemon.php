@@ -62,52 +62,37 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     public const STATE_FAILED   = 'failed';
     public const STATE_IDLE     = 'idle';
 
-    /** @var ?LoopInterface */
     private ?LoopInterface $loop = null;
 
-    /** @var ?array */
     protected ?array $dbConfig = null;
 
-    /** @var ?Db */
     protected ?Db $connection = null;
 
-    /** @var ?object */
     protected ?object $processInfo = null;
 
-    /** @var int */
     protected int $delayOnFailed = 5;
 
-    /** @var ?NotifySystemD */
     protected ?NotifySystemD $systemd = null;
 
-    /** @var ?DbLogger */
     protected ?DbLogger $dbLogger = null;
 
-    /** @var ?RemoteApi */
     protected ?RemoteApi $remoteApi = null;
 
-    /** @var ?RemoteClient */
     protected ?RemoteClient $remoteClient = null;
 
-    /** @var ?CurlAsync */
     protected ?CurlAsync $curl = null;
 
-    /** @var ?ApiConnectionHandler */
     protected ?ApiConnectionHandler $apiConnectionHandler = null;
 
-    /** @var ?DbProcessRunner */
     protected ?DbProcessRunner $dbRunner = null;
 
-    /** @var ?DaemonState */
     protected ?DaemonState $daemonState = null;
 
-    /** @var bool */
     protected bool $dbIsReady = false;
 
     /** @var array [splhash(ApiConnection) => [ Task, ... ]] */
     protected array $runningTasks = [];
 
-    /** @var ?ConfigWatch */
     protected ?ConfigWatch $configWatch = null;
 
     /** @var array<string, string> */

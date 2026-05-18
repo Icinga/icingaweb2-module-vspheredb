@@ -44,22 +44,16 @@ use function React\Promise\resolve;
 
 class PerfDataSync implements DaemonTask
 {
-    /** @var VCenter */
     protected VCenter $vCenter;
 
-    /** @var VsphereApi */
     protected VsphereApi $api;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var CurlAsync */
     protected CurlAsync $curl;
 
-    /** @var ?ChunkedInfluxDbWriter */
     protected ?ChunkedInfluxDbWriter $influxDbWriter = null;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
     /** @var TimerInterface[]  */

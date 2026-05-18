@@ -12,19 +12,14 @@ class MonitoringRuleSet
 
     public const NO_OBJECT = '';
 
-    /** @var string */
     protected string $binaryUuid;
 
-    /** @var string */
     protected string $objectFolder;
 
-    /** @var ?bool */
     protected ?bool $enabled = null;
 
-    /** @var ?MonitoringRuleSetDefinition */
     protected ?MonitoringRuleSetDefinition $definition = null;
 
-    /** @var Settings */
     protected Settings $settings;
 
     protected bool $fromDb = false;

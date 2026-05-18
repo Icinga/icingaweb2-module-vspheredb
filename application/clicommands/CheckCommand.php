@@ -29,7 +29,6 @@ class CheckCommand extends Command
 {
     use CheckPluginHelper;
 
-    /** @var ?Db */
     protected ?Db $db = null;
 
     /**

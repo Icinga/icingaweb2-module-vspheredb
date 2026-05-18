@@ -12,7 +12,6 @@ class VCenterTabs extends Tabs
 {
     use Translation;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)

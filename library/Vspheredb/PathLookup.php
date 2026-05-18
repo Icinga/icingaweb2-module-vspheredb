@@ -10,7 +10,6 @@ use Zend_Db_Adapter_Abstract;
 
 class PathLookup
 {
-    /** @var Zend_Db_Adapter_Abstract|Adapter */
     protected Zend_Db_Adapter_Abstract|Adapter $db;
 
     /**

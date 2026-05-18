@@ -7,7 +7,6 @@ use Icinga\Module\Vspheredb\Hook\AnonymizerHook;
 
 class Anonymizer
 {
-    /** @var AnonymizerHook|false|null */
     protected static AnonymizerHook|false|null $instance = null;
 
     /**

@@ -19,7 +19,6 @@ class DelayedPerfdataRenderer
         172 => 'virtualDisk.numberWriteAveraged'
     ];
 
-    /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
     public function __construct(Zend_Db_Adapter_Abstract $db)

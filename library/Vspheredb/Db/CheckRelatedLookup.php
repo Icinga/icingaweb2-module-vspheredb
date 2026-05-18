@@ -12,7 +12,6 @@ use InvalidArgumentException;
 
 class CheckRelatedLookup
 {
-    /** @var Db */
     protected Db $connection;
 
     /**

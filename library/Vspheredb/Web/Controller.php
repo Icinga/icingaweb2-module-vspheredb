@@ -15,10 +15,8 @@ use Zend_Controller_Response_Abstract as ZfResponse;
 
 class Controller extends CompatController
 {
-    /** @var ?Db */
     private ?Db $db = null;
 
-    /** @var ?RestrictionHelper */
     private ?RestrictionHelper $restrictionHelper = null;
 
     public function __construct(ZfRequest $request, ZfResponse $response, array $invokeArgs = array())

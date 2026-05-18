@@ -9,22 +9,16 @@ use ipl\Html\ValidHtml;
 
 abstract class TableColumn
 {
-    /** @var ?string */
     private ?string $alias = null;
 
-    /** @var array|string|null */
     private array|string|null $column = null;
 
-    /** @var ?string */
     private ?string $title = null;
 
-    /** @var ?Closure */
     private ?Closure $renderer = null;
 
-    /** @var array|string|null */
     private array|string|null $sortExpression = null;
 
-    /** @var string */
     private string $defaultSortDirection = 'ASC';
 
     public function getRequiredDbColumns(): array

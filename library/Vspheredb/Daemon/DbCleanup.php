@@ -10,7 +10,6 @@ class DbCleanup
 {
     protected Adapter|Zend_Db_Adapter_Abstract $db;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
     /**

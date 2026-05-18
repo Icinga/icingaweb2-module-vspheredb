@@ -20,16 +20,12 @@ class VmDisksTable extends ZfQueryBasedTable
 
     protected $parentIds;
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
-    /** @var ?string */
     protected ?string $uuid = null;
 
-    /** @var ?string */
     protected ?string $moref = null;
 
-    /** @var OverallStatusRenderer */
     protected OverallStatusRenderer $renderStatus;
 
     protected bool $withPerfImages = false;

@@ -17,10 +17,8 @@ class HostVirtualizationInfoTable extends NameValueTable
 {
     use Translation;
 
-    /** @var HostSystem */
     protected HostSystem $host;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     /**

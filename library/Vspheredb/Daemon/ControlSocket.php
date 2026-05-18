@@ -16,13 +16,10 @@ class ControlSocket implements EventEmitterInterface
 {
     use EventEmitterTrait;
 
-    /** @var string */
     protected string $path;
 
-    /** @var ?LoopInterface */
     protected ?LoopInterface $loop = null;
 
-    /** @var ?UnixServer */
     protected ?UnixServer $server = null;
 
     /**

@@ -23,13 +23,11 @@ use Zend_Db_Select;
  */
 abstract class DbObject
 {
-    /** @var ?DbConnection $connection */
     protected ?DbConnection $connection = null;
 
     /** @var ?string Table name. MUST be set when extending this class */
     protected ?string $table = null;
 
-    /** @var ?Zend_Db_Adapter_Abstract */
     protected ?Zend_Db_Adapter_Abstract $db = null;
 
     /**
@@ -64,7 +62,6 @@ abstract class DbObject
     /** @var bool forbid updates to autoinc values */
     protected bool $protectAutoinc = true;
 
-    /** @var array */
     protected array $binaryProperties = [];
 
     /**

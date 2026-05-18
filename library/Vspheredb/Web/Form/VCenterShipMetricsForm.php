@@ -23,16 +23,13 @@ class VCenterShipMetricsForm extends ObjectForm
 
     protected ?string $class = PerfdataSubscription::class;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     /** @var ?PerfdataConsumer[] */
     protected ?array $consumers = null;
 
-    /** @var RemoteClient */
     protected RemoteClient $remoteClient;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
     public function __construct(ZfDbStore $store, VCenter $vCenter, RemoteClient $client, LoopInterface $loop)

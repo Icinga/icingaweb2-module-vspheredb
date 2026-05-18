@@ -20,13 +20,10 @@ use React\Stream\WritableResourceStream;
 
 class Command extends CliCommand
 {
-    /** @var bool */
     private bool $loopStarted = false;
 
-    /** @var ?Logger */
     protected ?Logger $logger = null;
 
-    /** @var ?RemoteClient */
     protected ?RemoteClient $remoteClient = null;
 
     public function init(): void

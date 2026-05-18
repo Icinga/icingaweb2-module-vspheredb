@@ -21,7 +21,6 @@ class HostPciDevicesTable extends ZfQueryBasedTable
         'device_name'
     ];
 
-    /** @var ?HostSystem */
     protected ?HostSystem $host = null;
 
     public function getColumnsToBeRendered(): array

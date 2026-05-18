@@ -6,10 +6,8 @@ use Psr\Log\LoggerInterface;
 
 class LogProxy
 {
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var string */
     protected string $prefix = '';
 
     /**

@@ -14,16 +14,13 @@ abstract class ObjectForm extends Form
 {
     use Translation;
 
-    /** @var Store */
     protected Store $store;
 
-    /** @var ?StorableInterface */
     protected ?StorableInterface $object = null;
 
     /** @var ?class-string */
     protected ?string $class = null;
 
-    /** @var bool */
     protected bool $wasNew = true;
 
     public function __construct(Store $store)

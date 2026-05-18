@@ -15,7 +15,6 @@ class ObjectSyncStore extends SyncStore
 
     public const CUSTOM_VALUE_KEY = 'summary.customValue';
 
-    /** @var ?array */
     protected ?array $customFieldsMap;
 
     public function __construct(

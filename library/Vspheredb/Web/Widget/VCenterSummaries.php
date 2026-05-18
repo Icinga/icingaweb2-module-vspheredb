@@ -19,7 +19,6 @@ class VCenterSummaries extends BaseHtmlElement
         'data-base-target' => '_next'
     ];
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)

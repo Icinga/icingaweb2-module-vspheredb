@@ -9,13 +9,10 @@ use Zend_Db_Adapter_Abstract;
 
 abstract class SyncStore
 {
-    /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
     /**

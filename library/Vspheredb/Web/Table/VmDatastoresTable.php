@@ -22,13 +22,10 @@ class VmDatastoresTable extends ZfQueryBasedTable
 
     protected $parentIds;
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
-    /** @var ?string */
     protected ?string $uuid = null;
 
-    /** @var OverallStatusRenderer */
     protected OverallStatusRenderer $renderStatus;
 
     public function __construct(VirtualMachine $vm)

@@ -8,7 +8,6 @@ use ReturnTypeWillChange;
 
 class CustomValues implements JsonSerializable
 {
-    /** @var array */
     protected array $values = [];
 
     /**

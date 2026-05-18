@@ -12,10 +12,8 @@ class MainTabs extends Tabs
 {
     use Translation;
 
-    /** @var ?Db */
     protected ?Db $connection;
 
-    /** @var Auth */
     protected Auth $auth;
 
     public function __construct(Auth $auth, ?Db $connection = null)

@@ -6,13 +6,10 @@ use React\ChildProcess\Process;
 
 class IcingaCliRunner
 {
-    /** @var string */
     protected string $binary;
 
-    /** @var ?string */
     protected ?string $cwd = null;
 
-    /** @var ?array */
     protected ?array $env = null;
 
     /**

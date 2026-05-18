@@ -44,7 +44,6 @@ class Html5UiLink extends BaseHtmlElement
         VirtualMachine::class => 'vsphere.core.vm.summary'
     ];
 
-    /** @var ?BaseDbObject */
     protected ?BaseDbObject $object = null;
 
     public $tag = 'a';

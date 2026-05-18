@@ -16,13 +16,10 @@ class AdditionalTableActions
 {
     use Translation;
 
-    /** @var Auth */
     protected Auth $auth;
 
-    /** @var Url */
     protected Url $url;
 
-    /** @var BaseTable */
     protected BaseTable $table;
 
     public function __construct(BaseTable $table, Auth $auth, Url $url)

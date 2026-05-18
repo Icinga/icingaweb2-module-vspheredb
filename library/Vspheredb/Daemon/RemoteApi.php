@@ -34,22 +34,16 @@ class RemoteApi implements EventEmitterInterface
 {
     use EventEmitterTrait;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
-    /** @var ?ControlSocket */
     protected ?ControlSocket $controlSocket = null;
 
-    /** @var ApiConnectionHandler */
     protected ApiConnectionHandler $apiConnectionHandler;
 
-    /** @var CurlAsync */
     protected CurlAsync $curl;
 
-    /** @var RpcNamespaceDbProxy */
     protected RpcNamespaceDbProxy $rpcNamespaceRpcProxy;
 
     /**

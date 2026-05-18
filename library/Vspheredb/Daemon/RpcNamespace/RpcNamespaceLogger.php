@@ -8,7 +8,6 @@ use gipfl\Log\LogLevel;
 
 class RpcNamespaceLogger
 {
-    /** @var Logger */
     protected Logger $logger;
 
     /**

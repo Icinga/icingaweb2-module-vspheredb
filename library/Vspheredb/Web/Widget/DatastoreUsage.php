@@ -24,19 +24,14 @@ class DatastoreUsage extends BaseHtmlElement
         'data-base-target' => '_next'
     ];
 
-    /** @var Datastore */
     protected Datastore $datastore;
 
-    /** @var ?Zend_Db_Adapter_Abstract */
     protected ?Zend_Db_Adapter_Abstract $db;
 
-    /** @var ?string */
     protected ?string $uuid = null;
 
-    /** @var int */
     protected int $capacity;
 
-    /** @var int */
     protected int $uncommitted;
 
     protected float $gotPercent = 0;

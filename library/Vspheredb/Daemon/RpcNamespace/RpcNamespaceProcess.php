@@ -12,7 +12,6 @@ class RpcNamespaceProcess implements EventEmitterInterface
 
     public const ON_RESTART = 'restart';
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
     /**

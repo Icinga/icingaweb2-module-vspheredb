@@ -105,9 +105,7 @@ class ImportSource extends ImportSourceHook implements TableWithVCenterFilter, T
         'path'                 => '(NULL)'
     ];
 
-    /** @var ?array */
     protected ?array $parentFilterUuids = null;
-    /** @var ?array */
     protected ?array $vCenterFilterUuids = null;
 
     public function getName(): string

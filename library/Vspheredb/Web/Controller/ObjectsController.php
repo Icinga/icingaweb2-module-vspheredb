@@ -21,13 +21,10 @@ class ObjectsController extends Controller
 {
     use RestApi;
 
-    /** @var array */
     protected array $otherTabActions = [];
 
-    /** @var ?PathLookup */
     protected ?PathLookup $pathLookup = null;
 
-    /** @var ?FilterVCenterForm */
     protected ?FilterVCenterForm $vCenterFilterForm = null;
 
     protected function linkBackToOverview($type): static

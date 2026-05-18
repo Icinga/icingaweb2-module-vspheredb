@@ -12,7 +12,6 @@ class IbmSpectrumProtect implements BackupTool
 
     public const CLOSE_TAG = '</Last Backup>';
 
-    /** @var ?array */
     protected ?array $lastAttributes = null;
 
     /**

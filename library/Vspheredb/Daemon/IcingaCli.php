@@ -12,12 +12,10 @@ class IcingaCli
 {
     use EventEmitterTrait;
 
-    /** @var IcingaCliRunner */
     protected IcingaCliRunner $runner;
 
     protected array $arguments = [];
 
-    /** @var ?LoopInterface */
     protected ?LoopInterface $loop = null;
 
     public function __construct(?IcingaCliRunner $runner = null)

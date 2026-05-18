@@ -25,10 +25,8 @@ class VmDiskUsageTable extends ZfQueryBasedTable
 
     protected int $totalFree = 0;
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
-    /** @var ?string */
     protected ?string $uuid = null;
 
     private object $root;

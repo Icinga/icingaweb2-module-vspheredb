@@ -8,13 +8,10 @@ use RuntimeException;
 
 class BulkPathLookup
 {
-    /** @var Db */
     protected Db $db;
 
-    /** @var ?array */
     protected ?array $nodes = null;
 
-    /** @var ?array */
     protected ?array $vCenterFilterUuids;
 
     /**

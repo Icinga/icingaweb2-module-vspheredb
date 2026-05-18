@@ -19,24 +19,18 @@ class ConfigWatch
 
     public const ON_CONFIG = 'dbConfig';
 
-    /** @var string */
     protected string $configFile;
 
-    /** @var ?string */
     protected ?string $resourceConfigFile = null;
 
-    /** @var ?string */
     protected ?string $dbResourceName = null;
 
-    /** @var ?array */
     protected ?array $resourceConfig = null;
 
     protected int $interval = 3;
 
-    /** @var ?TimerInterface */
     protected ?TimerInterface $timer = null;
 
-    /** @var ?LoopInterface */
     protected ?LoopInterface $loop = null;
 
     /**

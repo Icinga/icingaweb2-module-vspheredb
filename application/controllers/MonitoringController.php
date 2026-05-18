@@ -31,7 +31,6 @@ class MonitoringController extends Controller
 {
     use AsyncControllerHelper;
 
-    /** @var ?FilterVCenterForm */
     protected ?FilterVCenterForm $vCenterFilterForm = null;
 
     public function init(): void

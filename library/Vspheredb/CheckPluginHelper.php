@@ -13,7 +13,6 @@ use Throwable;
 
 trait CheckPluginHelper
 {
-    /** @var int */
     protected int $state = 0;
 
     protected $sortingState;
@@ -22,7 +21,6 @@ trait CheckPluginHelper
 
     protected AnsiScreen|Screen|null $outputScreen = null;
 
-    /** @var array */
     protected array $nameStateMap = [
         'OK'       => 0,
         'WARNING'  => 1,
@@ -30,7 +28,6 @@ trait CheckPluginHelper
         'UNKNOWN'  => 3
     ];
 
-    /** @var array */
     protected array $stateNameMap = [
         'OK',
         'WARNING',
@@ -45,10 +42,8 @@ trait CheckPluginHelper
         'UNKNOWN'  => 'purple'
     ];
 
-    /** @var array */
     protected array $messages = [];
 
-    /** @var ?string */
     protected ?string $message = null;
 
     /**

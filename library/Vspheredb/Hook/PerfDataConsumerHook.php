@@ -21,13 +21,10 @@ abstract class PerfDataConsumerHook implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
-    /** @var array */
     protected array $settings = [];
 
-    /** @var array */
     protected array $queue = [];
 
     /**

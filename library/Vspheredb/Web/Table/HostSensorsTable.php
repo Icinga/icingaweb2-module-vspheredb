@@ -22,7 +22,6 @@ class HostSensorsTable extends ZfQueryBasedTable
         'sensor_type'
     ];
 
-    /** @var ?HostSystem */
     protected ?HostSystem $host = null;
 
     protected ?string $lastType = null;

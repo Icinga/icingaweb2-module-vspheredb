@@ -11,7 +11,6 @@ class ConfigTabs extends Tabs
 {
     use Translation;
 
-    /** @var ?Db */
     protected ?Db $connection;
 
     public function __construct(?Db $connection = null)

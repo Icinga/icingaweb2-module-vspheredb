@@ -23,7 +23,6 @@ use SoapFault;
  */
 class SoapClient
 {
-    /** @var array */
     protected array $curlOptions;
 
     private CurlAsync $curl;
@@ -32,7 +31,6 @@ class SoapClient
 
     private ClientDecoder $decoder;
 
-    /** @var ?CookieStore */
     protected ?CookieStore $cookieStore = null;
 
     protected LoggerInterface $logger;

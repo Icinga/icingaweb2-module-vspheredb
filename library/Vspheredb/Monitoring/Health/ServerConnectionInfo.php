@@ -11,16 +11,12 @@ namespace Icinga\Module\Vspheredb\Monitoring\Health;
  */
 class ServerConnectionInfo
 {
-    /** @var ?ApiConnectionInfo */
     public ?ApiConnectionInfo $apiConnection = null;
 
-    /** @var bool */
     public bool $enabled;
 
-    /** @var string */
     public string $serverName;
 
-    /** @var bool */
     protected bool $configured;
 
     /**

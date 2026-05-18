@@ -19,16 +19,12 @@ class VmsOnDatastoreTable extends ZfQueryBasedTable
 {
     protected $searchColumns = ['object_name'];
 
-    /** @var ?Datastore */
     protected ?Datastore $datastore = null;
 
-    /** @var ?string */
     protected ?string $uuid = null;
 
-    /** @var ?int */
     protected ?int $capacity = null;
 
-    /** @var ?int */
     protected ?int $uncommitted = null;
 
     public static function create(Datastore $datastore): VmsOnDatastoreTable

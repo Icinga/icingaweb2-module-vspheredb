@@ -18,10 +18,8 @@ class PerfdataConsumerForm extends ObjectForm
 
     protected ?string $class = PerfdataConsumer::class;
 
-    /** @var RemoteClient */
     protected RemoteClient $client;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
     public function __construct(LoopInterface $loop, RemoteClient $client, Store $store)

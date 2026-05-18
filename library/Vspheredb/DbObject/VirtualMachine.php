@@ -102,7 +102,6 @@ class VirtualMachine extends BaseDbObject
         // 'runtime.suspendTime' 'runtime_last_suspend_time'
     ];
 
-    /** @var ?HostSystem */
     protected ?HostSystem $runtimeHost = null;
 
     /**

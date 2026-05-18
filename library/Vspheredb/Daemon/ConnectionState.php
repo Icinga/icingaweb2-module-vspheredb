@@ -12,10 +12,8 @@ use Zend_Db_Adapter_Abstract;
 
 class ConnectionState
 {
-    /** @var array */
     protected array $daemonApiConnections;
 
-    /** @var Adapter|Zend_Db_Adapter_Abstract */
     protected Adapter|Zend_Db_Adapter_Abstract $db;
 
     /**

@@ -8,7 +8,6 @@ use Zend_Db_Adapter_Abstract;
 
 class Ido
 {
-    /** @var ?Zend_Db_Adapter_Abstract */
     protected ?Zend_Db_Adapter_Abstract $db = null;
 
     protected function __construct()

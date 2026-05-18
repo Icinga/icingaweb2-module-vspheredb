@@ -43,37 +43,28 @@ use function React\Promise\resolve;
 
 class VsphereApi
 {
-    /** @var ServerInfo */
     protected ServerInfo $server;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var CurlAsync */
     private CurlAsync $curl;
 
     /** @var SoapClient */
     private $soapClient;
 
-    /** @var ManagedObjectReference */
     private ManagedObjectReference $serviceInstanceRef;
 
-    /** @var ?string */
     private ?string $initialWsdlFile;
 
     /** @var ServiceContent */
     private $serviceInstance;
 
-    /** @var CookieStore */
     private CookieStore $cookieStore;
 
-    /** @var LoopInterface */
     private LoopInterface $loop;
 
-    /** @var ?ManagedObjectReference */
     private ?ManagedObjectReference $eventCollector = null;
 
-    /** @var ?int */
     private ?int $lastEventTimestamp = null;
 
     public function __construct(

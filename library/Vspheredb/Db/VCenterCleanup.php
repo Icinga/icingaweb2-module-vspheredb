@@ -14,22 +14,16 @@ use Zend_Db_Adapter_Abstract;
 
 class VCenterCleanup
 {
-    /** @var Db */
     protected Db $connection;
 
-    /** @var int */
     protected int $vCenterId;
 
-    /** @var array */
     protected array $scheduledQueries = [];
 
-    /** @var string */
     protected string $vCenterUuid;
 
-    /** @var ?Deferred */
     protected ?Deferred $deferred = null;
 
-    /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
     /**

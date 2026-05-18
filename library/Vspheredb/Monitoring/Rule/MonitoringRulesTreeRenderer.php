@@ -20,7 +20,6 @@ class MonitoringRulesTreeRenderer extends BaseHtmlElement
         'data-base-target' => '_next'
     ];
 
-    /** @var MonitoringRulesTree */
     protected MonitoringRulesTree $tree;
 
     protected string $url;

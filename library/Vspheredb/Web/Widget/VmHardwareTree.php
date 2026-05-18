@@ -26,7 +26,6 @@ class VmHardwareTree extends BaseHtmlElement
 
     protected $tree;
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
     protected array $devices = [];

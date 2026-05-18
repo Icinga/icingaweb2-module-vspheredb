@@ -25,7 +25,6 @@ class MonitoringRuleProblematicObjectTable extends ZfQueryBasedTable
 
     protected string $rule;
 
-    /** @var CheckRunner */
     protected CheckRunner $runner;
 
     protected VCenter $vCenter;

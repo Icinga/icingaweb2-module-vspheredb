@@ -13,16 +13,12 @@ use function React\Promise\resolve;
 
 class RemoteClient
 {
-    /** @var string */
     protected string $path;
 
-    /** @var ?JsonRpcConnection */
     protected ?JsonRpcConnection $connection = null;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
-    /** @var ?PromiseInterface */
     protected ?PromiseInterface $pendingConnection = null;
 
     /**

@@ -26,10 +26,8 @@ trait HostDetailExtensionTrait
 {
     use Translation;
 
-    /** @var ?Db */
     protected ?Db $db = null;
 
-    /** @var ?CheckRelatedLookup */
     protected ?CheckRelatedLookup $lookup = null;
 
     /**

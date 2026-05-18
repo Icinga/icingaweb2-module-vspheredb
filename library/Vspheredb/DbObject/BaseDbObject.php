@@ -17,19 +17,14 @@ abstract class BaseDbObject extends VspheredbDbObject implements JsonSerializati
 {
     protected string|array|null $keyName = 'id';
 
-    /** @var ?ManagedObject */
     private ?ManagedObject $object = null;
 
-    /** @var array */
     protected array $propertyMap = [];
 
-    /** @var array */
     protected array $objectReferences = [];
 
-    /** @var array */
     protected array $booleanProperties = [];
 
-    /** @var array */
     protected array $dateTimeProperties = [];
 
     /**

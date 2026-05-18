@@ -21,15 +21,12 @@ class VmNetworkAdapterTable extends ZfQueryBasedTable
         'data-base-target' => '_next'
     ];
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
-    /** @var ?string */
     protected ?string $moref;
 
     protected bool $withPerfImages = false;
 
-    /** @var stdClass */
     protected stdClass $ipAddresses;
 
     public function __construct(VirtualMachine $vm)

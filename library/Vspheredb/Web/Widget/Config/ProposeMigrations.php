@@ -28,13 +28,10 @@ class ProposeMigrations extends HtmlDocument
 {
     use Translation;
 
-    /** @var Db */
     protected Db $db;
 
-    /** @var ServerRequestInterface */
     protected ServerRequestInterface $request;
 
-    /** @var Auth */
     protected Auth $auth;
 
     protected string $requiredPermission = 'vspheredb/admin';

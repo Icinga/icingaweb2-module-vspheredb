@@ -10,10 +10,8 @@ use stdClass;
 
 class TagLookup
 {
-    /** @var Db */
     protected Db $db;
 
-    /** @var array */
     protected array $assignments;
 
     /** @var TaggingTag[] */

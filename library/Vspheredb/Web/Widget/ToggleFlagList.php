@@ -16,16 +16,12 @@ abstract class ToggleFlagList extends BaseHtmlElement
 
     protected $tag = 'li';
 
-    /** @var Url */
     private Url $url;
 
-    /** @var string */
     private string $param;
 
-    /** @var ?DbSelect */
     private ?DbSelect $originalQuery = null;
 
-    /** @var ?DbSelect */
     private ?DbSelect $query = null;
 
     protected string $iconMain = 'angle-double-down';

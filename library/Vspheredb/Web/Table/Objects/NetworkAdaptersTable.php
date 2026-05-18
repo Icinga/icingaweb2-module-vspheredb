@@ -10,7 +10,6 @@ class NetworkAdaptersTable extends ObjectsTable
 {
     protected ?string $baseUrl = 'vspheredb/vm';
 
-    /** @var ?DistributedVirtualPortgroup */
     protected ?DistributedVirtualPortgroup $portGroup = null;
 
     public function prepareQuery(): Select|Zend_Db_Select

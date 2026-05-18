@@ -8,10 +8,8 @@ use RuntimeException;
 
 class RpcNamespaceDbProxy
 {
-    /** @var ?DbProcessRunner */
     protected ?DbProcessRunner $runner = null;
 
-    /** @var string */
     protected string $prefix;
 
     /**

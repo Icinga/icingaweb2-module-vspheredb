@@ -7,7 +7,6 @@ use Icinga\Module\Vspheredb\Web\Table\BaseTable;
 
 class ToggleTableColumns extends ToggleFlagList
 {
-    /** @var BaseTable */
     protected BaseTable $table;
 
     protected string $iconMain = 'th-list';

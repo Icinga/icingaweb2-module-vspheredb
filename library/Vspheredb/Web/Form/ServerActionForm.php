@@ -15,10 +15,8 @@ class ServerActionForm extends InlineForm
     /** @var ?string Set to either 'enable' or 'disable' */
     protected ?string $serverAction = null;
 
-    /** @var int */
     protected int $serverId;
 
-    /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
     public function __construct(int $serverId, Zend_Db_Adapter_Abstract $db)

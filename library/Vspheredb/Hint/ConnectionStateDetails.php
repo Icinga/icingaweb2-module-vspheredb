@@ -8,7 +8,6 @@ class ConnectionStateDetails
 {
     use Translation;
 
-    /** @var ?ConnectionStateDetails */
     protected static ?ConnectionStateDetails $instance = null;
 
     /**

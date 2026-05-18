@@ -44,16 +44,13 @@ use function React\Promise\resolve;
 
 class ObjectSync implements DaemonTask
 {
-    /** @var VCenter */
     protected VCenter $vCenter;
 
-    /** @var VsphereApi */
     protected VsphereApi $api;
 
     /** @var LoopInterface */
     protected $loop;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
     /** @var string[] */
@@ -98,16 +95,12 @@ class ObjectSync implements DaemonTask
     /** @var PromiseInterface[] */
     protected array $runningTasks = [];
 
-    /** @var bool */
     protected bool $ready = false;
 
-    /** @var DbProcessRunner */
     protected DbProcessRunner $dbRunner;
 
-    /** @var RestApi */
     protected RestApi $restApi;
 
-    /** @var bool */
     protected bool $logTaskNames = false;
 
     /**

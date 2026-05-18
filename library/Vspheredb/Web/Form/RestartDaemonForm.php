@@ -14,10 +14,8 @@ class RestartDaemonForm extends InlineForm
 {
     use Translation;
 
-    /** @var RemoteClient */
     protected RemoteClient $client;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
     public function __construct(RemoteClient $client, LoopInterface $loop)

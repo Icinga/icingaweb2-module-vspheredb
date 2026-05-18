@@ -18,10 +18,8 @@ class HostHbaTable extends ZfQueryBasedTable
         'data-base-target' => '_next'
     ];
 
-    /** @var HostSystem */
     protected HostSystem $host;
 
-    /** @var ?string */
     protected ?string $moref = null;
 
     public function __construct(HostSystem $host)

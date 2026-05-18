@@ -42,7 +42,6 @@ class WsdlLoader
 
     protected LoggerInterface $logger;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
     protected string $cacheDir;
@@ -56,7 +55,6 @@ class WsdlLoader
     /** @var PromiseInterface[] */
     protected array $pending = [];
 
-    /** @var ?Deferred */
     protected ?Deferred $deferred = null;
 
     public function __construct(string $cacheDir, LoggerInterface $logger, ServerInfo $server, CurlAsync $curl)

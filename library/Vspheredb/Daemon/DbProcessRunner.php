@@ -24,22 +24,16 @@ class DbProcessRunner implements EventEmitterInterface
 {
     use EventEmitterTrait;
 
-    /** @var ?LoopInterface $loop */
     protected ?LoopInterface $loop = null;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var ?JsonRpcConnection */
     protected ?JsonRpcConnection $rpc = null;
 
-    /** @var ?LogProxy */
     protected ?LogProxy $logProxy = null;
 
-    /** @var ?Process */
     protected ?Process $process = null;
 
-    /** @var array */
     protected array $queue = [];
 
     /**

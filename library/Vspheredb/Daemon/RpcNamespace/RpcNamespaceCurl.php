@@ -6,7 +6,6 @@ use gipfl\Curl\CurlAsync;
 
 class RpcNamespaceCurl
 {
-    /** @var CurlAsync */
     protected CurlAsync $curl;
 
     /**

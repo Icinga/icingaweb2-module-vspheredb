@@ -8,7 +8,6 @@ class CheckResultSet implements CheckResultInterface
 {
     public const NUMERATION_PREFIX = ' \\_ ';
 
-    /** @var string */
     protected string $name;
 
     /** @var CheckResultInterface[] */

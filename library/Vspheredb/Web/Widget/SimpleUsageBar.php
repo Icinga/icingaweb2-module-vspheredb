@@ -15,13 +15,10 @@ class SimpleUsageBar extends BaseHtmlElement
         'data-base-target' => '_next'
     ];
 
-    /** @var int */
     protected int $used;
 
-    /** @var int */
     protected int $total;
 
-    /** @var string */
     protected string $title;
 
     public function __construct(int $used, int $total, string $title)

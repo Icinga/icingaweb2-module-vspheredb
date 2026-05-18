@@ -27,19 +27,14 @@ class RuleForm extends Form
 
     public const NEXT_UUID = '00000000-0000-0000-0000-000000000000';
 
-    /** @var ObjectType */
     protected ObjectType $objectType;
 
-    /** @var string */
     protected string $binaryUuid;
 
-    /** @var Db */
     protected Db $db;
 
-    /** @var InheritedSettings */
     protected InheritedSettings $inherited;
 
-    /** @var ?MonitoringRuleSet */
     protected ?MonitoringRuleSet $loadedSet;
 
     /** @var ?ResultStatus Any of self::RESULT_* */

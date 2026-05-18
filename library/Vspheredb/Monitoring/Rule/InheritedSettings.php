@@ -7,7 +7,6 @@ use Icinga\Module\Vspheredb\Monitoring\Rule\Definition\RuleSetRegistry;
 
 class InheritedSettings extends Settings
 {
-    /** @var MonitoringRulesTree */
     protected MonitoringRulesTree $tree;
 
     protected array $inheritedFromUuids = [];

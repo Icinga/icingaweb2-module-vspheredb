@@ -12,7 +12,6 @@ class ApplyMigrationsForm extends Form
 {
     use Translation;
 
-    /** @var  Migrations */
     protected Migrations $migrations;
 
     public function __construct(Migrations $migrations)

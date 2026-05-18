@@ -15,10 +15,8 @@ class HostHardwareInfoTable extends NameValueTable
 {
     use Translation;
 
-    /** @var HostSystem */
     protected HostSystem $host;
 
-    /** @var HostQuickStats */
     protected HostQuickStats $quickStats;
 
     public function __construct(HostSystem $host, HostQuickStats $quickStats)

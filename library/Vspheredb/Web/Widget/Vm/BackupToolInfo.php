@@ -17,7 +17,6 @@ class BackupToolInfo extends HtmlDocument
 {
     use Translation;
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
     public function __construct(VirtualMachine $vm)

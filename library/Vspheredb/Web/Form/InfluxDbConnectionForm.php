@@ -20,7 +20,6 @@ class InfluxDbConnectionForm extends Form
 
     public const INFLUXDB_MIN_SUPPORTED_VERSION = '1.6.0';
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
     protected ?string $detectedApiVersion = null;
@@ -29,7 +28,6 @@ class InfluxDbConnectionForm extends Form
 
     protected ?TextWithActionButton $baseUrlElement = null;
 
-    /** @var RemoteClient */
     protected RemoteClient $client;
 
     protected bool $checkedNow = false;

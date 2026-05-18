@@ -8,7 +8,6 @@ use ipl\Html\HtmlDocument;
 
 class VCenterHeader extends HtmlDocument
 {
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)

@@ -18,7 +18,6 @@ class VmSnapshotTable extends ZfQueryBasedTable
         'data-base-target' => '_next'
     ];
 
-    /** @var VirtualMachine */
     protected VirtualMachine $vm;
 
     public function __construct(VirtualMachine $vm)

@@ -28,19 +28,14 @@ class ApiConnectionHandler implements EventEmitterInterface
 
     protected const TIMEOUT_ON_FAILURE = 60;
 
-    /** @var CurlAsync */
     protected CurlAsync $curl;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $parentLogger;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var ?LoopInterface */
     protected ?LoopInterface $loop = null;
 
-    /** @var ServerSet */
     protected ServerSet $servers;
 
     /** @var ApiConnection[]  $vcenterId => ApiConnection */
@@ -58,7 +53,6 @@ class ApiConnectionHandler implements EventEmitterInterface
     /** @var array<int, string> key is the serverId */
     protected array $failingErrorMessages = [];
 
-    /** @var ServerSet */
     protected ServerSet $appliedServers;
 
     public function __construct(CurlAsync $curl, LoggerInterface $logger)

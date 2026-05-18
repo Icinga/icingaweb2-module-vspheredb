@@ -15,10 +15,8 @@ use Zend_Db_Select;
 
 class RestrictionHelper
 {
-    /** @var Auth */
     protected Auth $auth;
 
-    /** @var Zend_Db_Adapter_Abstract */
     protected Zend_Db_Adapter_Abstract $db;
 
     /** @var ?string[] */

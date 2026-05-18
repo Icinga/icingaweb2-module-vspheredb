@@ -18,7 +18,6 @@ class VCenterSyncInfo extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'health'];
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     public function __construct(VCenter $vCenter)

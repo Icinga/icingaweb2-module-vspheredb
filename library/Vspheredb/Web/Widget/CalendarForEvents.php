@@ -12,10 +12,8 @@ class CalendarForEvents extends HtmlDocument
 {
     use Translation;
 
-    /** @var VMotionHeatmap|AlarmHeatmap */
     protected VMotionHeatmap|AlarmHeatmap $calendars;
 
-    /** @var Url */
     protected Url $baseUrl;
 
     /** @var int[] [r, g, b] */

@@ -60,19 +60,14 @@ class EventHistoryTable extends ZfQueryBasedTable
 
     protected ?array $fetchedUuids = null;
 
-    /** @var ?Datastore */
     protected ?Datastore $datastore = null;
 
-    /** @var ?HostSystem */
     protected ?HostSystem $host = null;
 
-    /** @var ?VirtualMachine */
     protected ?VirtualMachine $vm = null;
 
-    /** @var string|array|null */
     protected string|array|null $eventType = null;
 
-    /** @var ?UuidInterface */
     protected ?UuidInterface $parent = null;
 
     public function renderRow($row): HtmlElement

@@ -13,16 +13,13 @@ use function GuzzleHttp\Psr7\build_query;
  */
 class GrafanaVmPanel extends HtmlDocument
 {
-    /** @var ManagedObject */
     protected ManagedObject $object;
 
     /** @var int[] */
     protected array $panels;
 
-    /** @var ?string */
     protected ?string $interface;
 
-    /** @var ?string */
     protected ?string $disk;
 
     /**

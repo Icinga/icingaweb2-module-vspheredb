@@ -9,7 +9,6 @@ class MonitoringRule implements JsonSerialization
 {
     protected bool $enabled = true;
 
-    /** @var MonitoringRuleSetDefinition */
     protected MonitoringRuleSetDefinition $definition;
 
     public function __construct(MonitoringRuleSetDefinition $definition)

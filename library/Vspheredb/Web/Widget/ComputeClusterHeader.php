@@ -9,7 +9,6 @@ use ipl\Html\HtmlDocument;
 
 class ComputeClusterHeader extends HtmlDocument
 {
-    /** @var ComputeCluster */
     protected ComputeCluster $computeCluster;
 
     public function __construct(ComputeCluster $computeCluster)

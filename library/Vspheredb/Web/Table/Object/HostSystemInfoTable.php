@@ -22,13 +22,10 @@ class HostSystemInfoTable extends NameValueTable
 {
     use Translation;
 
-    /** @var HostSystem */
     protected HostSystem $host;
 
-    /** @var HostQuickStats */
     protected HostQuickStats $quickStats;
 
-    /** @var VCenter */
     protected VCenter $vCenter;
 
     public function __construct(HostSystem $host, HostQuickStats $quickStats, VCenter $vCenter)

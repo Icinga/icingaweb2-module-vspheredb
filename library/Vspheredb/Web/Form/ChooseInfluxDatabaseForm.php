@@ -20,16 +20,12 @@ class ChooseInfluxDatabaseForm extends Form
 {
     use Translation;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
-    /** @var array|null|false */
     protected array|null|false $dbList = null;
 
-    /** @var RemoteClient */
     protected RemoteClient $client;
 
-    /** @var PerfDataConsumerHook */
     protected PerfDataConsumerHook $hook;
 
     public function __construct(LoopInterface $loop, RemoteClient $client, PerfDataConsumerHook $hook)

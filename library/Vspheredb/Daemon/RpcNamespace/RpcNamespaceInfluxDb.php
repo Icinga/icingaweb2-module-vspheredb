@@ -15,13 +15,10 @@ use function React\Promise\resolve;
 
 class RpcNamespaceInfluxDb
 {
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var CurlAsync */
     protected CurlAsync $curl;
 
     /**

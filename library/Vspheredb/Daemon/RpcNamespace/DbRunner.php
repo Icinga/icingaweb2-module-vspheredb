@@ -32,22 +32,16 @@ use function React\Promise\resolve;
  */
 class DbRunner
 {
-    /** @var LoggerInterface */
     protected LoggerInterface $logger;
 
-    /** @var ?Db */
     protected ?Db $connection = null;
 
-    /** @var ?Zend_Db_Adapter_Abstract */
     protected ?Zend_Db_Adapter_Abstract $db = null;
 
-    /** @var ?VCenterCleanup */
     protected ?VCenterCleanup $runningVcenterDeletion = null;
 
-    /** @var LoopInterface */
     protected LoopInterface $loop;
 
-    /** @var array */
     protected array $vCenters = [];
 
     /**

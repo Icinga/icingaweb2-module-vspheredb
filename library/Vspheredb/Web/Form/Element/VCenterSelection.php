@@ -14,10 +14,8 @@ class VCenterSelection extends SelectElement
 {
     use Translation;
 
-    /** @var Db */
     protected Db $connection;
 
-    /** @var Auth */
     protected Auth $auth;
 
     protected bool $optional = false;

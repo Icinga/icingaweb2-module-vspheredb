@@ -9,13 +9,10 @@ use Zend_Db_Adapter_Abstract;
 
 class ResourceUsageLoader
 {
-    /** @var ?UuidInterface */
     protected ?UuidInterface $vCenterUuid = null;
 
-    /** @var Adapter|Zend_Db_Adapter_Abstract */
     protected Adapter|Zend_Db_Adapter_Abstract $db;
 
-    /** @var ?array */
     protected ?array $parentUuids = null;
 
     /**

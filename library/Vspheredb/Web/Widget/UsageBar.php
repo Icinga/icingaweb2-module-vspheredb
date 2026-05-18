@@ -18,10 +18,8 @@ class UsageBar extends BaseHtmlElement
 
     protected array $colors = ['used' => 'rgba(0, 149, 191, 0.75)'];
 
-    /** @var int|float|null */
     protected int|float|null $used;
 
-    /** @var int|float|null */
     protected int|float|null $capacity;
 
     protected ?Closure $formatter = null;

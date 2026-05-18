@@ -14,7 +14,6 @@ class VCenterServerForm extends Form
 
     public const UNCHANGED_PASSWORD = '__UNCHANGED__';
 
-    /** @var ?VCenterServer */
     protected ?VCenterServer $object = null;
 
     protected Db $db;

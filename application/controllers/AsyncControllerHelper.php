@@ -12,7 +12,6 @@ use function React\Promise\Timer\timeout;
 
 trait AsyncControllerHelper
 {
-    /** @var ?RemoteClient */
     protected ?RemoteClient $remoteClient = null;
 
     /**

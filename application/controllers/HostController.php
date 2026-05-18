@@ -31,7 +31,6 @@ class HostController extends Controller
     use DetailSections;
     use SingleObjectMonitoring;
 
-    /** @var ?HostHeader */
     protected ?HostHeader $hostHeader = null;
 
     /**

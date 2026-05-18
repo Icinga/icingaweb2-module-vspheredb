@@ -15,13 +15,10 @@ class FilterVCenterForm extends Form
 
     protected $method = 'GET';
 
-    /** @var Auth */
     protected Auth $auth;
 
-    /** @var Db */
     protected Db $connection;
 
-    /** @var Zend_Db_Adapter_Abstract  */
     protected Zend_Db_Adapter_Abstract $db;
 
     protected $useFormName = false;

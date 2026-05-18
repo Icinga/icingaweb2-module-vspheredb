@@ -28,7 +28,6 @@ class ManagedObject extends VspheredbDbObject
         'tags'           => null
     ];
 
-    /** @var ?ManagedObject */
     private ?ManagedObject $parent = null;
 
     /**

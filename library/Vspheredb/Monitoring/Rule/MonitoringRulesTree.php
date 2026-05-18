@@ -13,19 +13,14 @@ class MonitoringRulesTree
 
     public const ROOT_OBJECT_TYPE = 'root';
 
-    /** @var ?Db */
     protected ?Db $db;
 
-    /** @var string */
     protected string $baseObjectFolderName;
 
-    /** @var ?array */
     protected ?array $fetchedTree = null;
 
-    /** @var ?array */
     protected ?array $configList = null;
 
-    /** @var ?array */
     protected ?array $allNodes = null;
 
     public function __construct(Db $db, string $baseObjectFolderName)

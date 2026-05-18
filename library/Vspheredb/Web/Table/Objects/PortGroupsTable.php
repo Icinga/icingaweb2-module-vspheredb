@@ -12,7 +12,6 @@ class PortGroupsTable extends ObjectsTable
 {
     protected ?string $baseUrl = 'vspheredb/portgroup';
 
-    /** @var ?DistributedVirtualSwitch */
     protected ?DistributedVirtualSwitch $switch = null;
 
     public function prepareQuery(): Select|Zend_Db_Select
