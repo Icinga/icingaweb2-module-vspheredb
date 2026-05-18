@@ -138,13 +138,6 @@ class VmHardwareTree extends BaseHtmlElement
             $result[] = Format::bytes($disk->capacity);
         }
 
-//        if (false && array_key_exists($scsi, $this->diskPerf)) {
-//            $result[] = new CompactInOutSparkline(
-//                $this->diskPerf[$scsi][171],
-//                $this->diskPerf[$scsi][172]
-//            );
-//        }
-
         return $result;
     }
 
@@ -186,13 +179,6 @@ class VmHardwareTree extends BaseHtmlElement
         }
 
         return sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics);
-
-        // TODO:
-//        return Link::create(
-//            sprintf('%s (%d NICs)', $info->object_name, $info->cnt_nics),
-//            'vspheredb/portgroup',
-//            Util::uuidParams($info->uuid)
-//        );
     }
 
     protected function fetchDiskPerf(): array

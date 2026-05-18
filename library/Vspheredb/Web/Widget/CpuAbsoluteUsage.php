@@ -20,9 +20,6 @@ class CpuAbsoluteUsage extends BaseHtmlElement
     {
         $class = null;
         if ($cores !== null) {
-//            if (false) {
-//                $this->add(Html::tag('span', ['class' => 'cpu-count'], sprintf($this->translate('%d CPUs'), $cores)));
-//            }
             $usedPerCore = $mhz / $cores;
             if ($usedPerCore / $perCore > 0.7) {
                 $class = 'critical';

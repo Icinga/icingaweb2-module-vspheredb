@@ -212,7 +212,6 @@ class CalendarMonthSummary extends Table
     protected function getMonthName(): string
     {
         return $this->timeFormat->getMonthName($this->getMonthAsTimestamp());
-//        return date('F', $this->getMonthAsTimestamp());
     }
 
     protected function createWeekdayHeader(): HtmlElement

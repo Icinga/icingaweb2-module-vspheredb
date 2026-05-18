@@ -52,19 +52,6 @@ class DistributedVirtualSwitch extends BaseDbObject
     }
 
     /**
-     * @param array $portGroups
-     *
-     * @return void
-     */
-    public function XXXXsetPortGroups(array $portGroups): void
-    {
-        $newSum = $this->calculateMorefsChecksum($portGroups);
-        if ($this->get('portgroups_checksum') !== $newSum) {
-            $this->scheduleNewPortgroupRefs($portGroups);
-        }
-    }
-
-    /**
      * @param ManagedObjectReference[] $hostMembers
      *
      * @return void
@@ -73,13 +60,6 @@ class DistributedVirtualSwitch extends BaseDbObject
     {
         var_dump('HOSTMEMBERS');
         var_dump($hostMembers);
-
-//        return;
-//
-//        $newSum = $this->calculateMorefsChecksum($hostMembers);
-//        if ($this->get('hostmembers_checksum') !== $newSum) {
-//            $this->scheduleNewPortgroupRefs($hostMembers);
-//        }
     }
 
     /**
@@ -90,17 +70,6 @@ class DistributedVirtualSwitch extends BaseDbObject
     protected function scheduleNewPortgroupRefs(array $portGroups): void
     {
         $this->unstoredPortGroupRefs = $portGroups;
-    }
-
-    protected function onStore(): void
-    {
-//        if (false && $this->unstoredPortGroupRefs) {
-//            $this->replaceMoRefs(
-//                $this->get('uuid'),
-//                'distributed_switch_portgroup',
-//                $this->unstoredPortGroupRefs
-//            );
-//        }
     }
 
     /**

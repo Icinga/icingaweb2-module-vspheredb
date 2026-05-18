@@ -23,24 +23,12 @@ class CurlOptions
     {
         $host = $server->get('host');
         if (preg_match('/^(.+?):(\d{1,5})$/', $host, $match)) {
-            // $host = $match[1];
             $port = (int) $match[2];
         } else {
             $port = null;
         }
-        $options = [
-            CURLOPT_HTTPHEADER => [
-                // Host header disabled for now, see #496
-                // "Host: $host",
-                'Expect:',
-                'User-Agent: Icinga-vSphereDB/1.8'
-            ]
-        ];
-
-        // Unused, we're authenticating via SOAP
-        // if (null !== ($username = $server->get('username'))) {
-        //     $options[CURLOPT_USERPWD] = sprintf('%s:%s', $username, $server->get('password'));
-        // }
+        $options = [CURLOPT_HTTPHEADER => ['Expect:', 'User-Agent: Icinga-vSphereDB/1.8']];
+        $options[CURLOPT_HTTPHEADER] = ['Expect:', 'User-Agent: Icinga-vSphereDB/1.8'];
 
         if ($proxyType = $server->get('proxy_type')) {
             // TODO: Depending on the PHP and Curl version, we might want to support HTTPS proxies
