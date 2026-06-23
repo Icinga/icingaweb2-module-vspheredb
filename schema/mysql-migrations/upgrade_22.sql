@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2020 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 CREATE TABLE host_physical_nic (
   host_uuid VARBINARY(20) NOT NULL,
   nic_key VARCHAR(64) NOT NULL,

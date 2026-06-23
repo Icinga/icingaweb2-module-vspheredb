@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2023 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 ALTER TABLE compute_resource
   MODIFY COLUMN effective_cpu_mhz INT UNSIGNED NULL DEFAULT NULL,
   MODIFY COLUMN effective_memory_size_mb BIGINT(20) UNSIGNED NULL DEFAULT NULL,

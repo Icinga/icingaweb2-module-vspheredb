@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2023 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 DROP TABLE vcenter_event_history_collector;
 
 INSERT INTO vspheredb_schema_migration

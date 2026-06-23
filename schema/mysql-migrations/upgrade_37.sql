@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 CREATE TABLE monitoring_rule_set (
   object_uuid VARBINARY(20) NOT NULL, -- DataCenter or Folder
   object_folder ENUM('root', 'vm', 'host', 'datastore') NOT NULL,

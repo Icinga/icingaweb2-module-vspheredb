@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2023 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 DELETE FROM vspheredb_daemonlog;
 
 ALTER TABLE vspheredb_daemonlog

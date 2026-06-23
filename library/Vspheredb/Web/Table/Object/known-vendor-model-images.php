@@ -1,5 +1,8 @@
 <?php
 
+// SPDX-FileCopyrightText: 2021 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 return [
     'Cisco Systems Inc' => [
         'UCSB-B200-M4' => 'https://www.cisco.com/content/dam/en/us/products/servers-unified-computing/'

@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 CREATE TABLE host_monitoring_hoststate (
   host_uuid VARBINARY(16) NOT NULL,
   ido_connection_id INT(10) UNSIGNED NOT NULL,
