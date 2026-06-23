@@ -121,7 +121,7 @@ class VCenterShipMetricsForm extends ObjectForm
         }
     }
 
-    public function isValidEvent($event)
+    public function isValidEvent($event): bool
     {
         if ($event === self::ON_DELETE) {
             return true;
