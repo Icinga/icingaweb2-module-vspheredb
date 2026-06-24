@@ -79,15 +79,15 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             $this->root = $row;
         }
 
-        $free = Format::bytes($row->free_space)
-            . sprintf(' (%0.3f%%)', ($row->free_space / $row->capacity) * 100);
-
         $tr = $this::tr([
             $this::td($caption, [
                 'title' => $caption
             ]),
             $this::td(Format::bytes($row->capacity), ['class' => 'vm-disk-usage-capacity']),
-            $this::td($free, ['class' => 'vm-disk-usage-free']),
+            $this::td(
+                $this->renderFreeSpace($row->free_space, $row->capacity),
+                ['class' => 'vm-disk-usage-free']
+            ),
             $this::td($this->makeDisk($row), ['class' => 'vm-disk-usage-usage'])
         ]);
 
@@ -133,11 +133,13 @@ class VmDiskUsageTable extends ZfQueryBasedTable
             return;
         }
 
-        $free = Format::bytes($this->totalFree) . sprintf(' (%0.3f%%)', ($this->totalFree / $this->totalSize) * 100);
         $this->getFooter()->add($this::tr([
             $this::th(Html::tag('strong', null, $this->translate('Total'))),
             $this::th(Format::bytes($this->totalSize), ['class' => 'vm-disk-usage-capacity']),
-            $this::th($free, ['class' => 'vm-disk-usage-free']),
+            $this::th(
+                $this->renderFreeSpace($this->totalFree, $this->totalSize),
+                ['class' => 'vm-disk-usage-free']
+            ),
             $this::th($this->makeDisk((object) [
                 'disk_path' => $this->translate('Total'),
                 'capacity'  => $this->totalSize,
@@ -156,6 +158,21 @@ class VmDiskUsageTable extends ZfQueryBasedTable
         $used = $disk->capacity - $disk->free_space;
 
         return new SimpleUsageBar($used, $disk->capacity, $disk->disk_path);
+    }
+
+    /**
+     * @param int|float $freeSpace
+     * @param int|float $capacity
+     * @return string Formatted free space with percentage, or "(n/a)" when capacity is zero
+     */
+    protected function renderFreeSpace(int|float $freeSpace, int|float $capacity): string
+    {
+        $free = Format::bytes($freeSpace);
+        if ($capacity > 0) {
+            return $free . sprintf(' (%0.3f%%)', ($freeSpace / $capacity) * 100);
+        }
+
+        return $free . ' (n/a)';
     }
 
     public function prepareQuery()
