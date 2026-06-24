@@ -33,7 +33,7 @@ class SimpleUsageBar extends BaseHtmlElement
 
     protected function assemble()
     {
-        $usedPercent = $this->used / $this->total;
+        $usedPercent = $this->getUsedPercent();
 
         $bar = Html::tag('span', [
             'href' => '#',
@@ -46,5 +46,17 @@ class SimpleUsageBar extends BaseHtmlElement
             ->addFor($bar, ['width' => sprintf('%0.3F%%', $usedPercent * 100)]);
 
         $this->add([$bar, $style]);
+    }
+
+    /**
+     * @return float Used fraction in [0, 1]; returns 0.0 when total is zero
+     */
+    protected function getUsedPercent(): float
+    {
+        if ($this->total > 0) {
+            return $this->used / $this->total;
+        }
+
+        return 0.0;
     }
 }
