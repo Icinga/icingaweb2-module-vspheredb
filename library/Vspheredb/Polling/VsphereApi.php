@@ -204,7 +204,7 @@ class VsphereApi
             $this->cookieStore->forgetCookies();
         }, function () {
             $this->cookieStore->forgetCookies();
-            return resolve();
+            return resolve(null);
         });
     }
 
@@ -227,7 +227,7 @@ class VsphereApi
         return $this->getServiceInstance()
             ->then(function (ServiceContent $serviceContent) use ($property, $method, $arguments) {
                 if (!isset($serviceContent->$property)) {
-                    return reject("ServiceInstance has no '$property'");
+                    return reject(new Exception("ServiceInstance has no '$property'"));
                 }
                 $ref = $serviceContent->$property;
                 if (! $ref instanceof ManagedObjectReference) {

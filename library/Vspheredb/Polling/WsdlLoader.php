@@ -9,12 +9,12 @@ use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
+use RuntimeException;
 use SoapClient;
 use SoapFault;
 
 use function file_exists;
 use function file_put_contents;
-use function React\Promise\reject;
 use function unlink;
 
 class WsdlLoader
@@ -88,7 +88,7 @@ class WsdlLoader
             $pending = $this->pending;
             $this->deferred = null;
             $this->pending = [];
-            $deferred->reject();
+            $deferred->reject(new RuntimeException());
             foreach ($pending as $promise) {
                 $promise->cancel();
             }

@@ -146,7 +146,7 @@ class ObjectSync implements DaemonTask
         }
         $this->runningTasks = [];
 
-        return resolve();
+        return resolve(null);
     }
 
     protected function initialize()
@@ -265,7 +265,7 @@ class ObjectSync implements DaemonTask
                     $task->getLabel()
                 ));
                 unset($this->runningTasks[$idx]);
-                return resolve();
+                return resolve(null);
             }
             $task->tweakResult($result);
 
@@ -285,7 +285,7 @@ class ObjectSync implements DaemonTask
                 if ($this->logTaskNames) {
                     $this->logger->debug("Task done '$label'");
                 }
-                return resolve();
+                return resolve(null);
             }, function (Exception $e) use ($idx) {
                 unset($this->runningTasks[$idx]);
                 $this->logger->error('Failed to process Task result: ' . $e->getMessage());
@@ -316,7 +316,7 @@ class ObjectSync implements DaemonTask
     {
         return $this->api->fetchCustomFieldsManager()->then(function (?CustomFieldsManager $manager = null) {
             if ($manager === null) {
-                return resolve();
+                return resolve(null);
             }
 
             return $this->dbRunner->request('db.setCustomFieldsMap', [

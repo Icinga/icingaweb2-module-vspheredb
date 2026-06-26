@@ -360,7 +360,7 @@ class DbRunner
                 $deferred->resolve(null);
             });
         } else {
-            return resolve();
+            return resolve(null);
         }
 
         return $deferred->promise();

@@ -14,15 +14,11 @@ use gipfl\SystemD\systemd;
 use Icinga\Cli\Command as CliCommand;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
-use React\EventLoop\Factory as Loop;
-use React\EventLoop\LoopInterface;
+use React\EventLoop\Loop;
 use React\Stream\WritableResourceStream;
 
 class Command extends CliCommand
 {
-    /** @var LoopInterface */
-    private $loop;
-
     private $loopStarted = false;
 
     protected $logger;
@@ -39,11 +35,7 @@ class Command extends CliCommand
 
     protected function loop()
     {
-        if ($this->loop === null) {
-            $this->loop = Loop::create();
-        }
-
-        return $this->loop;
+        return Loop::get();
     }
 
     protected function eventuallyStartMainLoop()

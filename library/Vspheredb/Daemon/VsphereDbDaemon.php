@@ -125,7 +125,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->initializeDbProcess();
         $this->keepRefreshingServerConfig();
         $this->daemonState->setState(self::STATE_IDLE);
-        return resolve();
+        return resolve(null);
     }
 
     protected function initializeDaemonState()
@@ -336,7 +336,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         } catch (\Exception $e) {
             $this->logger->error('Failed to stop vSphereDbDaemon: ' . $e->getMessage());
         }
-        return resolve();
+        return resolve(null);
     }
 
     protected function detectProcessInfo()
@@ -526,7 +526,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->logger->notice('[db] sending DB config to child process');
         if (! $this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_READY) {
             $this->logger->warning('[db] DB runner is NOT ready, not sending config');
-            return resolve();
+            return resolve(null);
         }
         if ($this->dbConfig === null) {
             return $this->dbRunner->request('db.clearDbConfig')->then(function () {

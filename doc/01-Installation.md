@@ -6,6 +6,8 @@ Requirements
 
 * Icinga Web 2 (&gt;= 2.10)
 * PHP (&gt;= 7.4 or 8.x - 64bit only)
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) ≥ 0.19.2
+* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) ≥ 0.15.3
 * php-soap
 * php-pcntl (might already be built into your PHP binary)
 * php-posix (on RHEL/CentOS this is php-process, or rh-php7x-php-process)
@@ -58,7 +60,7 @@ existing module installation will be replaced, so this can be used for upgrades 
 
 ```shell
 # You can customize these settings, but we suggest to stick with our defaults:
-MODULE_VERSION="1.8.3"
+MODULE_VERSION="1.8.4"
 DAEMON_USER="icingavspheredb"
 DAEMON_GROUP="icingaweb2"
 ICINGAWEB_MODULEPATH="/usr/share/icingaweb2/modules"
