@@ -8,6 +8,7 @@ namespace Icinga\Module\Vspheredb;
 use Exception;
 use gipfl\Cli\Screen;
 use Icinga\Module\Vspheredb\Clicommands\Command;
+use Icinga\Module\Vspheredb\Daemon\PromiseUtil;
 use Icinga\Module\Vspheredb\Data\Anonymizer;
 use InvalidArgumentException;
 use React\Promise\PromiseInterface;
@@ -75,14 +76,17 @@ trait CheckPluginHelper
             }
 
             if ($result instanceof PromiseInterface) {
-                $result->then(function () {
-                    // All done
-                }, function (Exception $e) {
-                    $this->addProblem('UNKNOWN', $e->getMessage());
-                    $this->showOptionalTrace($e);
-                })->finally(function () {
-                    $this->shutdown();
-                });
+                PromiseUtil::finally(
+                    $result->then(function () {
+                        // All done
+                    }, function (Exception $e) {
+                        $this->addProblem('UNKNOWN', $e->getMessage());
+                        $this->showOptionalTrace($e);
+                    }),
+                    function () {
+                        $this->shutdown();
+                    }
+                );
             } else {
                 $this->shutdown();
             }
