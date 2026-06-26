@@ -5,6 +5,8 @@
 
 namespace Icinga\Module\Vspheredb\Monitoring;
 
+use Icinga\Module\Vspheredb\Daemon\PromiseUtil;
+
 class CheckPlugin
 {
     /** @var array */
@@ -34,15 +36,18 @@ class CheckPlugin
             }
 
             if ($result instanceof PromiseInterface) {
-                $result->then(function () {
-                    echo "as\n";
-                }, function (Exception $e) {
-                    var_dump('whut');
-                    $this->addProblem('UNKNOWN', $e->getMessage());
-                })->finally(function () {
-                    var_dump('Shut after res');
-                    $this->shutdown();
-                });
+                PromiseUtil::finally(
+                    $result->then(function () {
+                        echo "as\n";
+                    }, function (Exception $e) {
+                        var_dump('whut');
+                        $this->addProblem('UNKNOWN', $e->getMessage());
+                    }),
+                    function () {
+                        var_dump('Shut after res');
+                        $this->shutdown();
+                    }
+                );
             } else {
                 $this->shutdown();
             }
