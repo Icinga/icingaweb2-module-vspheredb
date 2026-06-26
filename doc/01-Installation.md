@@ -6,7 +6,7 @@ Requirements
 
 * Icinga Web 2 (&gt;= 2.10)
 * PHP (&gt;= 7.4 or 8.x - 64bit only)
-* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) ≥ 0.19.2
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) ≥ 0.15.0
 * [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) ≥ 0.15.3
 * php-soap
 * php-pcntl (might already be built into your PHP binary)
