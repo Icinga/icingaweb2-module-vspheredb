@@ -1,6 +1,50 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.8.4
+------
+
+This is a maintenance release that fixes daemon startup failures on current PHP
+and dependency stacks. It updates the module for ReactPHP Promise version 3
+compatibility, which will be required by the upcoming Icinga PHP Library 1.0.0
+release, while keeping ReactPHP Promise version 2 supported. It also fixes
+rendering and monitoring rule errors around zero-capacity disks and root
+objects.
+
+### Upgrading
+
+Packages are available as `icinga-vspheredb`. If you missed the packages
+introduced with v1.8.0, consider switching to them now. For non-package
+installations, please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/23?closed=1)
+
+### PHP Support
+* FIX: `SoapClient::__doRequest()` overrides now accept the new optional
+  `$uriParserClass` argument, preventing daemon startup failures on PHP 8.5
+  (#640)
+
+### Dependencies
+* The Icinga PHP Library and Icinga PHP Thirdparty runtime dependencies are now
+  declared, and the ReactPHP Promise version 3 compatibility fixes extracted
+  from #609 plus the Promise cleanup compatibility helper keep the daemon and
+  check helpers working with both ReactPHP Promise version 2 and 3 for the
+  upcoming Icinga PHP Library 1.0.0 release (#642, #643)
+
+### UI
+* FIX: Guest disk rows, table footers and usage bars now handle zero-capacity
+  disks without division-by-zero errors (#639)
+
+### Monitoring Rules
+* FIX: Root objects without a parent UUID now inherit global monitoring rules
+  without triggering a PHP 8 TypeError (#639)
+
+### Internals
+* Removed unused event loop state after moving to the current ReactPHP event
+  loop API (#612)
+
 v1.8.3
 ------
 
