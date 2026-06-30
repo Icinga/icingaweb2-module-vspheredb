@@ -31,11 +31,29 @@ class RemoteClient
         $this->loop = $loop;
     }
 
+    /**
+     * @param string $method
+     * @param mixed $params
+     *
+     * @return \React\Promise\PromiseInterface<mixed>
+     */
     public function request($method, $params = null)
     {
         return $this->connection()->then(function (JsonRpcConnection $connection) use ($method, $params) {
             return $connection->request($method, $params);
         });
+    }
+
+    /**
+     * Close the JSON-RPC connection and deregister its event loop watchers
+     *
+     * @return void
+     */
+    public function close(): void
+    {
+        if ($this->connection !== null) {
+            $this->connection->close();
+        }
     }
 
     public function notify($method, $params = null)

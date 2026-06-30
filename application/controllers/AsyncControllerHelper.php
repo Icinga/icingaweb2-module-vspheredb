@@ -17,9 +17,25 @@ trait AsyncControllerHelper
     /** @var RemoteClient */
     protected $remoteClient;
 
+    /**
+     * Call the daemon synchronously and close the RPC connection afterwards
+     *
+     * The socket is closed in finally so ReactPHP does not keep an active
+     * stream watcher after the awaited request has completed.
+     *
+     * @param string $method
+     * @param mixed[] $params
+     * @param int $timeout
+     *
+     * @return mixed
+     */
     protected function syncRpcCall($method, $params = [], $timeout = 30)
     {
-        return await(timeout($this->remoteClient()->request($method, $params), $timeout));
+        try {
+            return await(timeout($this->remoteClient()->request($method, $params), $timeout));
+        } finally {
+            $this->remoteClient()->close();
+        }
     }
 
     /**
