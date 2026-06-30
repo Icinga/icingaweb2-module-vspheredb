@@ -123,4 +123,3 @@ class VmsController extends ObjectsController
         $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machines with Snapshots'));
     }
 }
-
