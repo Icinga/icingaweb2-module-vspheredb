@@ -96,6 +96,8 @@ class VmsController extends ObjectsController
     {
         $this->handleTabs();
         $urlParams = $this->getParentParamsToPreserve();
+        $filterVdi = $this->params->get('filter_vdi', '0');
+
         $this->actions()->add([
             Link::create(
                 $this->translate('Disk Usage'),
@@ -109,8 +111,16 @@ class VmsController extends ObjectsController
                 $urlParams,
                 ['class' => 'icon-left-small']
             ),
+            Link::create(
+                $filterVdi === '1' ? $this->translate('Show All VMs') : $this->translate('Hide VDI, Templates & Off'),
+                'vspheredb/vms/snapshot',
+                array_merge($urlParams, ['filter_vdi' => $filterVdi === '1' ? '0' : '1']),
+                ['class' => 'icon-filter']
+            )
         ]);
+
         $table = new VmsSnapshotsTable($this->db(), $this->url());
+
         (new AdditionalTableActions($table, Auth::getInstance(), $this->url()))
             ->appendTo($this->actions());
         $this->showTable($table, 'vspheredb/vms', $this->translate('Virtual Machines with Snapshots'));
