@@ -1,5 +1,5 @@
 Name: vSphereDB
-Version: 1.8.4
+Version: 1.8.5
 Depends: incubator (>=0.23.0)
 Requires:
   Libraries: icinga-php-library (>=0.15.0), icinga-php-thirdparty (>=0.15.3)
