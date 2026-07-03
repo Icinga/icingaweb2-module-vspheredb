@@ -1,6 +1,28 @@
 <a id="Changelog"></a>Changelog
 ===============================
 
+v1.8.5
+------
+
+This is a bugfix release that closes synchronous controller RPC connections
+after daemon calls complete. This prevents ReactPHP from keeping stale stream
+watchers registered after the awaited response has been handled.
+
+### Upgrading
+
+Packages are available as `icinga-vspheredb`. If you missed the packages
+introduced with v1.8.0, consider switching to them now. For non-package
+installations, please check our [Upgrade Script](01-Installation.md#modul-installation-or-upgrade).
+
+### Fixed issues
+* You can find issues and feature requests related to this release on our
+  [roadmap](https://github.com/Icinga/icingaweb2-module-vspheredb/milestone/24?closed=1)
+
+### Daemon
+* FIX: Synchronous controller RPC calls now close the daemon RPC connection
+  after receiving the response, preventing request shutdown from blocking on
+  stale ReactPHP stream watchers (#644)
+
 v1.8.4
 ------
 
