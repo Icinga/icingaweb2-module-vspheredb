@@ -18,10 +18,11 @@ trait AsyncControllerHelper
     protected $remoteClient;
 
     /**
-     * Call the daemon synchronously and close the RPC connection afterwards
+     * Call the daemon synchronously
      *
-     * The socket is closed in finally so ReactPHP does not keep an active
-     * stream watcher after the awaited request has completed.
+     * The RPC connection is shared by all calls made while handling a single
+     * request and is closed once, on shutdown, so that ReactPHP does not keep
+     * an active stream watcher after the response has been sent.
      *
      * @param string $method
      * @param mixed[] $params
@@ -31,11 +32,7 @@ trait AsyncControllerHelper
      */
     protected function syncRpcCall($method, $params = [], $timeout = 30)
     {
-        try {
-            return await(timeout($this->remoteClient()->request($method, $params), $timeout));
-        } finally {
-            $this->remoteClient()->close();
-        }
+        return await(timeout($this->remoteClient()->request($method, $params), $timeout));
     }
 
     /**
@@ -45,6 +42,11 @@ trait AsyncControllerHelper
     {
         if ($this->remoteClient === null) {
             $this->remoteClient = new RemoteClient(Configuration::getSocketPath(), $this->loop());
+            register_shutdown_function(function () {
+                if ($this->remoteClient !== null) {
+                    $this->remoteClient->close();
+                }
+            });
         }
 
         return $this->remoteClient;
