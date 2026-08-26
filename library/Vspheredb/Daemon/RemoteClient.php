@@ -47,6 +47,10 @@ class RemoteClient
     /**
      * Close the JSON-RPC connection and deregister its event loop watchers
      *
+     * The pending connection is reset unconditionally: a failed connect leaves
+     * $connection null while its rejected promise is still stored, and handing
+     * that promise to the next call would resolve a connection that is gone.
+     *
      * @return void
      */
     public function close(): void
@@ -54,6 +58,7 @@ class RemoteClient
         if ($this->connection !== null) {
             $this->connection->close();
         }
+        $this->pendingConnection = null;
     }
 
     public function notify($method, $params = null)
