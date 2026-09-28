@@ -203,7 +203,13 @@ class RestApi
                     return true;
                 }
 
-                return reject(new RuntimeException('REST API Authentication failed: ' . $result->getStatusCode()));
+                $message = sprintf(
+                    'REST API Authentication failed for %s: %d',
+                    $this->server->get('host'),
+                    $result->getStatusCode()
+                );
+
+                return reject(new RuntimeException($message));
             });
     }
 
