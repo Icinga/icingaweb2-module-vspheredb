@@ -47,6 +47,10 @@ class RemoteClient
     /**
      * Close the JSON-RPC connection and deregister its event loop watchers
      *
+     * Also forget the pending connection. It may still hold the settled promise
+     * of this connection or of a failed attempt, and reusing it would fail the
+     * next request instead of connecting again.
+     *
      * @return void
      */
     public function close(): void
@@ -54,6 +58,7 @@ class RemoteClient
         if ($this->connection !== null) {
             $this->connection->close();
         }
+        $this->pendingConnection = null;
     }
 
     public function notify($method, $params = null)
