@@ -612,6 +612,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             return;
         }
         $config = new ConfigWatch();
+        $config->setLogger($this->logger);
         $config->on(ConfigWatch::ON_CONFIG, function ($config) {
             $this->onDbConfig($config);
         });

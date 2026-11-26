@@ -5,10 +5,16 @@
 
 namespace Icinga\Module\Vspheredb\Daemon;
 
+use ErrorException;
 use Evenement\EventEmitterTrait;
 use Icinga\Application\Config;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use React\EventLoop\LoopInterface;
 use React\EventLoop\TimerInterface;
+use TypeError;
 
 /**
  * ConfigWatch
@@ -16,9 +22,10 @@ use React\EventLoop\TimerInterface;
  * Checks every 3 seconds for changed DB resource configuration. Emits a
  * 'dbConfig' event in case this happens.
  */
-class ConfigWatch
+class ConfigWatch implements LoggerAwareInterface
 {
     use EventEmitterTrait;
+    use LoggerAwareTrait;
 
     public const ON_CONFIG = 'dbConfig';
 
@@ -28,11 +35,12 @@ class ConfigWatch
     /** @var string */
     protected $resourceConfigFile;
 
-    /** @var string|null */
-    protected $dbResourceName;
+    protected ?string $dbResourceName;
 
     /** @var array|null */
     protected $resourceConfig;
+
+    protected ?string $lastReadError = null;
 
     protected $interval = 3;
 
@@ -42,14 +50,16 @@ class ConfigWatch
     /** @var LoopInterface */
     protected $loop;
 
-    public function __construct($dbResourceName = null)
+    /**
+     * Create a new ConfigWatch
+     *
+     * @param ?string $dbResourceName Fixed resource name, or null to read it from the module configuration
+     */
+    public function __construct(?string $dbResourceName = null)
     {
-        $this->configFile = Config::module('vspheredb')->getConfigFile();
-        if ($dbResourceName === null) {
-            $this->resourceConfigFile = Config::app('resources')->getConfigFile();
-        } else {
-            $this->dbResourceName = $dbResourceName;
-        }
+        $this->configFile = Config::resolvePath('modules/vspheredb/config.ini');
+        $this->resourceConfigFile = Config::resolvePath('resources.ini');
+        $this->dbResourceName = $dbResourceName;
     }
 
     /**
@@ -80,45 +90,73 @@ class ConfigWatch
         }
     }
 
-    protected function getResourceName()
+    /**
+     * Get the configured database resource name
+     *
+     * @return ?string The explicit or current configured name, or null when no name is configured
+     *
+     * @throws ConfigurationError If the module configuration cannot be parsed
+     * @throws NotReadableError If the module configuration cannot be read
+     */
+    protected function getResourceName(): ?string
     {
-        if ($this->dbResourceName) {
-            return $this->dbResourceName;
-        } else {
-            return $this->loadDbResourceName();
-        }
+        return $this->dbResourceName ?? Config::fromIni($this->configFile)->get('db', 'resource');
     }
 
-    protected function loadDbResourceName()
-    {
-        $parsed = @parse_ini_file($this->configFile, true);
-        if (isset($parsed['db']['resource'])) {
-            return $parsed['db']['resource'];
-        } else {
-            return null;
-        }
-    }
-
-    protected function loadDbConfigFromDisk($name)
+    /**
+     * Load the named database resource from disk
+     *
+     * @param ?string $name Database resource name
+     *
+     * @return ?array<string, mixed> Configuration ordered by option name, or null when the resource is absent
+     *
+     * @throws ConfigurationError If the resource file cannot be parsed
+     * @throws NotReadableError If the resource file cannot be read
+     */
+    protected function loadDbConfigFromDisk(?string $name): ?array
     {
         if ($name === null) {
             return null;
         }
 
-        $parsed = @parse_ini_file($this->resourceConfigFile, true);
-        if (isset($parsed[$name])) {
-            $section = $parsed[$name];
-            ksort($section);
-
-            return $section;
-        } else {
+        $config = Config::fromIni($this->resourceConfigFile);
+        if (! $config->hasSection($name)) {
             return null;
         }
+
+        $section = $config->getSection($name)->toArray();
+        ksort($section);
+
+        return $section;
     }
 
-    protected function configHasBeenChanged()
+    /**
+     * Check whether the database resource changed and record the new configuration
+     *
+     * Read and parse failures leave the last configuration active while polling continues.
+     * Repeated failures are logged once until the next successful poll.
+     *
+     * @return bool Whether a successful read changed the stored configuration
+     */
+    protected function configHasBeenChanged(): bool
     {
-        $resource = $this->loadDbConfigFromDisk($this->loadDbResourceName());
+        $file = $this->configFile;
+        try {
+            $name = $this->getResourceName();
+            $file = $this->resourceConfigFile;
+            $resource = $this->loadDbConfigFromDisk($name);
+        } catch (ConfigurationError | ErrorException | NotReadableError | TypeError $e) {
+            $operation = $e instanceof ConfigurationError || $e instanceof TypeError ? 'parse' : 'read';
+            $message = sprintf('[configwatch] Cannot %s INI file "%s"', $operation, $file);
+            if ($message !== $this->lastReadError && $this->logger !== null) {
+                $this->logger->error($message);
+                $this->lastReadError = $message;
+            }
+
+            return false;
+        }
+
+        $this->lastReadError = null;
         if ($resource !== $this->resourceConfig) {
             $this->resourceConfig = $resource;
 
