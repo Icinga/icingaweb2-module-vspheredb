@@ -8,9 +8,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use React\EventLoop\Loop;
-
-use function React\Async\await;
-use function React\Promise\Timer\timeout;
+use Throwable;
 
 trait AsyncControllerHelper
 {
@@ -20,19 +18,17 @@ trait AsyncControllerHelper
     /**
      * Call the daemon synchronously
      *
-     * All calls made while handling one request share the same RPC connection.
-     * A shutdown function closes it so that ReactPHP keeps no stream watcher
-     * active after the response has been sent.
-     *
      * @param string $method
      * @param mixed[] $params
-     * @param int $timeout
+     * @param float $timeout Timeout in seconds
      *
      * @return mixed
+     *
+     * @throws Throwable If the call fails
      */
-    protected function syncRpcCall($method, $params = [], $timeout = 30)
+    protected function syncRpcCall($method, $params = [], $timeout = RemoteClient::DEFAULT_REQUEST_TIMEOUT)
     {
-        return await(timeout($this->remoteClient()->request($method, $params), $timeout));
+        return $this->remoteClient()->requestSync($method, $params, $timeout);
     }
 
     /**

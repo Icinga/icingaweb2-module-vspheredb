@@ -5,33 +5,31 @@
 
 namespace Icinga\Module\Vspheredb\Web\Form;
 
+use Exception;
 use gipfl\Web\Form\Feature\NextConfirmCancel;
 use gipfl\Web\InlineForm;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use ipl\Html\FormElement\SelectElement;
 use ipl\I18n\Translation;
 use Psr\Log\LogLevel;
-use React\EventLoop\LoopInterface;
-
-use function React\Async\await;
 
 class LogLevelForm extends InlineForm
 {
     use Translation;
 
-    /** @var RemoteClient */
-    protected $client;
-
-    /** @var LoopInterface */
-    protected $loop;
+    protected RemoteClient $client;
 
     /** @var boolean */
     protected $talkedToSocket;
 
-    public function __construct(RemoteClient $client, LoopInterface $loop)
+    /**
+     * Create a new LogLevelForm
+     *
+     * @param RemoteClient $client The controller's daemon RPC client
+     */
+    public function __construct(RemoteClient $client)
     {
         $this->client = $client;
-        $this->loop = $loop;
     }
 
     public function talkedToSocket()
@@ -42,9 +40,9 @@ class LogLevelForm extends InlineForm
     protected function assemble()
     {
         try {
-            $currentLevel = await($this->client->request('logger.getLogLevel'));
+            $currentLevel = $this->client->requestSync('logger.getLogLevel');
             $this->talkedToSocket = true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->talkedToSocket = false;
             return;
         }
@@ -66,7 +64,7 @@ class LogLevelForm extends InlineForm
 
     protected function onSuccess()
     {
-        await($this->client->request('logger.setLogLevel', ['level' => $this->getValue('log_level')]));
+        $this->client->requestSync('logger.setLogLevel', ['level' => $this->getValue('log_level')]);
     }
 
     protected function listLogLevels()

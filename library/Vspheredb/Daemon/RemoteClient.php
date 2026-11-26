@@ -10,11 +10,17 @@ use gipfl\Protocol\NetString\StreamWrapper;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\UnixConnector;
+use Throwable;
 
+use function React\Async\await;
 use function React\Promise\resolve;
+use function React\Promise\Timer\timeout;
 
 class RemoteClient
 {
+    /** @var int Default synchronous request timeout in seconds */
+    public const DEFAULT_REQUEST_TIMEOUT = 30;
+
     protected $path;
 
     /** @var ?JsonRpcConnection */
@@ -43,6 +49,36 @@ class RemoteClient
         return $this->connection()->then(function (JsonRpcConnection $connection) use ($method, $params) {
             return $connection->request($method, $params);
         });
+    }
+
+    /**
+     * Call the daemon synchronously
+     *
+     * Successful calls reuse the connection. A failed call closes it before
+     * propagating the failure so a later call can reconnect. Call close() when
+     * finished with the client.
+     *
+     * Use the default ReactPHP loop for synchronous calls.
+     *
+     * @param string $method
+     * @param mixed $params
+     * @param float $timeout Timeout in seconds
+     *
+     * @return mixed
+     *
+     * @throws Throwable If the call fails
+     */
+    public function requestSync($method, $params = null, $timeout = self::DEFAULT_REQUEST_TIMEOUT)
+    {
+        try {
+            return await(timeout($this->request($method, $params), $timeout));
+        } catch (Throwable $e) {
+            // The first call can fail before the event loop starts. Its shutdown
+            // callback would then start the loop while the socket is still open.
+            $this->close();
+
+            throw $e;
+        }
     }
 
     /**
