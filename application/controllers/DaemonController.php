@@ -50,7 +50,7 @@ class DaemonController extends Controller
             $this->redirectNow($this->url());
         });
         $logLevelForm->handleRequest($this->getServerRequest());
-        if ($logLevelForm->talkedToSocket()) {
+        if ($logLevelForm->talkedToSocket() || $logLevelForm->hasBeenSent()) {
             return [$this->translate('Log level') . ': ', $logLevelForm];
         }
 

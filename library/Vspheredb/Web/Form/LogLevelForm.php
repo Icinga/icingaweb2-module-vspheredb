@@ -44,6 +44,14 @@ class LogLevelForm extends InlineForm
             $this->talkedToSocket = true;
         } catch (Exception $e) {
             $this->talkedToSocket = false;
+            // A matching POST without a submit button would otherwise be treated as submitted.
+            $this->setSubmitted(false);
+
+            if ($this->hasBeenSent()) {
+                $this->addMessage($e->getMessage());
+                $this->onError();
+            }
+
             return;
         }
 
