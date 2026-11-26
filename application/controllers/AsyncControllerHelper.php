@@ -8,9 +8,7 @@ namespace Icinga\Module\Vspheredb\Controllers;
 use Icinga\Module\Vspheredb\Configuration;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use React\EventLoop\Loop;
-
-use function React\Async\await;
-use function React\Promise\Timer\timeout;
+use Throwable;
 
 trait AsyncControllerHelper
 {
@@ -18,24 +16,19 @@ trait AsyncControllerHelper
     protected $remoteClient;
 
     /**
-     * Call the daemon synchronously and close the RPC connection afterwards
-     *
-     * The socket is closed in finally so ReactPHP does not keep an active
-     * stream watcher after the awaited request has completed.
+     * Call the daemon synchronously
      *
      * @param string $method
      * @param mixed[] $params
-     * @param int $timeout
+     * @param float $timeout Timeout in seconds
      *
      * @return mixed
+     *
+     * @throws Throwable If the call fails
      */
-    protected function syncRpcCall($method, $params = [], $timeout = 30)
+    protected function syncRpcCall($method, $params = [], $timeout = RemoteClient::DEFAULT_REQUEST_TIMEOUT)
     {
-        try {
-            return await(timeout($this->remoteClient()->request($method, $params), $timeout));
-        } finally {
-            $this->remoteClient()->close();
-        }
+        return $this->remoteClient()->requestSync($method, $params, $timeout);
     }
 
     /**
@@ -45,6 +38,13 @@ trait AsyncControllerHelper
     {
         if ($this->remoteClient === null) {
             $this->remoteClient = new RemoteClient(Configuration::getSocketPath(), $this->loop());
+            // On shutdown, React resumes the event loop that the first await()
+            // suspended. That loop blocks while the socket is open. Shutdown
+            // functions run in registration order, so register this one before
+            // the first await() to close the socket before the loop resumes.
+            register_shutdown_function(function (): void {
+                $this->remoteClient->close();
+            });
         }
 
         return $this->remoteClient;

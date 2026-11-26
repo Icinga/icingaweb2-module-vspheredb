@@ -10,19 +10,26 @@ use gipfl\Protocol\NetString\StreamWrapper;
 use React\EventLoop\LoopInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\UnixConnector;
+use Throwable;
 
+use function React\Async\await;
 use function React\Promise\resolve;
+use function React\Promise\Timer\timeout;
 
 class RemoteClient
 {
+    /** @var int Default synchronous request timeout in seconds */
+    public const DEFAULT_REQUEST_TIMEOUT = 30;
+
     protected $path;
 
-    /** @var JsonRpcConnection */
+    /** @var ?JsonRpcConnection */
     protected $connection;
 
     /** @var LoopInterface */
     protected $loop;
 
+    /** @var ?\React\Promise\PromiseInterface<JsonRpcConnection> */
     protected $pendingConnection;
 
     public function __construct($path, LoopInterface $loop)
@@ -45,14 +52,51 @@ class RemoteClient
     }
 
     /**
+     * Call the daemon synchronously
+     *
+     * Successful calls reuse the connection. A failed call closes it before
+     * propagating the failure so a later call can reconnect. Call close() when
+     * finished with the client.
+     *
+     * Use the default ReactPHP loop for synchronous calls.
+     *
+     * @param string $method
+     * @param mixed $params
+     * @param float $timeout Timeout in seconds
+     *
+     * @return mixed
+     *
+     * @throws Throwable If the call fails
+     */
+    public function requestSync($method, $params = null, $timeout = self::DEFAULT_REQUEST_TIMEOUT)
+    {
+        try {
+            return await(timeout($this->request($method, $params), $timeout));
+        } catch (Throwable $e) {
+            // The first call can fail before the event loop starts. Its shutdown
+            // callback would then start the loop while the socket is still open.
+            $this->close();
+
+            throw $e;
+        }
+    }
+
+    /**
      * Close the JSON-RPC connection and deregister its event loop watchers
+     *
+     * The next request opens a new connection. Calling this method again has no
+     * effect.
      *
      * @return void
      */
     public function close(): void
     {
-        if ($this->connection !== null) {
-            $this->connection->close();
+        $connection = $this->connection;
+        $this->connection = null;
+        $this->pendingConnection = null;
+
+        if ($connection !== null) {
+            $connection->close();
         }
     }
 
@@ -79,19 +123,33 @@ class RemoteClient
     protected function connect()
     {
         $connector = new UnixConnector($this->loop);
-        $connected = function (ConnectionInterface $connection) {
+        $connected = function (ConnectionInterface $connection): JsonRpcConnection {
             $jsonRpc = new JsonRpcConnection(new StreamWrapper($connection));
             $this->connection = $jsonRpc;
-            $this->pendingConnection = null;
-            $connection->on('close', function () {
-                $this->connection = null;
+            $connection->on('close', function () use ($jsonRpc): void {
+                // A late close event of an old socket must not drop its replacement.
+                if ($this->connection === $jsonRpc) {
+                    $this->connection = null;
+                    $this->pendingConnection = null;
+                }
             });
 
             return $jsonRpc;
         };
 
-        return $this->pendingConnection = $connector
+        $pendingConnection = $connector
             ->connect('unix://' . $this->path)
             ->then($connected);
+        // UnixConnector may settle synchronously. Store the promise before
+        // attaching the cleanup, so the cleanup cannot run before the store.
+        $this->pendingConnection = $pendingConnection;
+        $clearPendingConnection = function () use ($pendingConnection): void {
+            if ($this->pendingConnection === $pendingConnection) {
+                $this->pendingConnection = null;
+            }
+        };
+        $pendingConnection->then($clearPendingConnection, $clearPendingConnection);
+
+        return $pendingConnection;
     }
 }

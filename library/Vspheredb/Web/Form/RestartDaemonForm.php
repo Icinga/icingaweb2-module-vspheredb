@@ -9,24 +9,21 @@ use gipfl\Web\Form\Feature\NextConfirmCancel;
 use gipfl\Web\InlineForm;
 use Icinga\Module\Vspheredb\Daemon\RemoteClient;
 use ipl\I18n\Translation;
-use React\EventLoop\LoopInterface;
-
-use function React\Async\await;
 
 class RestartDaemonForm extends InlineForm
 {
     use Translation;
 
-    /** @var RemoteClient */
-    protected $client;
+    protected RemoteClient $client;
 
-    /** @var LoopInterface */
-    protected $loop;
-
-    public function __construct(RemoteClient $client, LoopInterface $loop)
+    /**
+     * Create a new RestartDaemonForm
+     *
+     * @param RemoteClient $client The controller's daemon RPC client
+     */
+    public function __construct(RemoteClient $client)
     {
         $this->client = $client;
-        $this->loop = $loop;
     }
 
     protected function assemble()
@@ -42,6 +39,6 @@ class RestartDaemonForm extends InlineForm
 
     protected function onSuccess()
     {
-        await($this->client->request('process.restart'));
+        $this->client->requestSync('process.restart');
     }
 }
