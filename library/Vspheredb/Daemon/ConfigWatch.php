@@ -63,16 +63,27 @@ class ConfigWatch implements LoggerAwareInterface
     }
 
     /**
-     * @param LoopInterface $loop
+     * Poll immediately and continue polling until stopped
+     *
+     * @param LoopInterface $loop Event loop for the polls
+     * @return void
      */
     public function run(LoopInterface $loop)
     {
+        if ($this->timer !== null) {
+            return;
+        }
+
         $this->loop = $loop;
-        $check = function () {
-            $this->checkForFreshConfig();
+        $check = function (TimerInterface $timer) {
+            if ($timer === $this->timer) {
+                $this->checkForFreshConfig();
+            }
         };
-        $this->timer = $loop->addPeriodicTimer($this->interval, $check);
-        $loop->futureTick($check);
+        $this->timer = $timer = $loop->addPeriodicTimer($this->interval, $check);
+        $loop->futureTick(function () use ($check, $timer) {
+            $check($timer);
+        });
     }
 
     public function stop()

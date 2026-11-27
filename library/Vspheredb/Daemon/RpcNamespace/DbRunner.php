@@ -86,8 +86,6 @@ class DbRunner
     public function setDbConfigRequest($config)
     {
         try {
-            $this->vCenters = [];
-            $this->vCenterSyncStores = [];
             Process::setTitle('Icinga::vSphereDB::DB::connecting');
             $this->connect($config);
             $deferred = new Deferred();
@@ -96,7 +94,7 @@ class DbRunner
                 $this->applyMigrations()->then(function () use ($deferred) {
                     try {
                         $this->requireCleanup()->runForStartup();
-                        $this->setProcessReadyTitle();
+                        $this->refreshProcessTitle();
                     } catch (Exception $e) {
                         Process::setTitle('Icinga::vSphereDB::DB::failing');
                         $deferred->reject($e);
@@ -114,9 +112,16 @@ class DbRunner
         }
     }
 
-    protected function setProcessReadyTitle()
+    /**
+     * Show whether the subprocess has a database connection
+     *
+     * @return void
+     */
+    protected function refreshProcessTitle()
     {
-        Process::setTitle('Icinga::vSphereDB::DB::connected');
+        Process::setTitle(
+            $this->connection === null ? 'Icinga::vSphereDB::DB::idle' : 'Icinga::vSphereDB::DB::connected'
+        );
     }
 
     /**
@@ -129,11 +134,14 @@ class DbRunner
     }
 
     /**
-     * @return bool
+     * Close the database connection and discard cached objects that reference it
+     *
+     * @return true
      */
     public function clearDbConfigRequest()
     {
         $this->disconnect();
+        $this->refreshProcessTitle();
         return true;
     }
 
@@ -207,7 +215,7 @@ class DbRunner
                 $e->getLine()
             ));
         }
-        $this->setProcessReadyTitle();
+        $this->refreshProcessTitle();
 
         return $stats;
     }
@@ -258,7 +266,7 @@ class DbRunner
         $this->runningVcenterDeletion = new VCenterCleanup($this->connection, $vCenterId);
         $this->runningVcenterDeletion->run()->then(function () {
             $this->runningVcenterDeletion = null;
-            $this->setProcessReadyTitle();
+            $this->refreshProcessTitle();
         }, function (Exception $e) {
             $this->runningVcenterDeletion = null;
             $this->logger->error('db.deleteVcenter: ' . $e->getMessage());
@@ -299,6 +307,9 @@ class DbRunner
      */
     protected function requireVCenter(int $id): VCenter
     {
+        if ($this->connection === null) {
+            throw new RuntimeException('Unable to load vCenter, have no DB connection');
+        }
         if (! isset($this->vCenters[$id])) {
             $this->vCenters[$id] = VCenter::loadWithAutoIncId($id, $this->connection);
         }
@@ -319,8 +330,15 @@ class DbRunner
         $this->db->getConnection();
     }
 
+    /**
+     * Discard all cached data that could reuse the connection and close it
+     *
+     * @return void
+     */
     protected function disconnect()
     {
+        $this->vCenters = [];
+        $this->vCenterSyncStores = [];
         if ($this->connection) {
             $this->connection->getDbAdapter()->closeConnection();
             $this->connection = null;
