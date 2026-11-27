@@ -12,11 +12,19 @@ use Icinga\Module\Vspheredb\Util;
 class VmsSnapshotsTable extends ObjectsTable
 {
     protected $baseUrl = 'vspheredb/vm';
+    
+    protected $vmsRequestUrl;
 
     protected $searchColumns = [
         'object_name',
         'guest_host_name',
     ];
+
+    public function __construct($db, $url = null)
+    {
+        $this->vmsRequestUrl = $url;
+        parent::__construct($db, $url);
+    }
 
     public function filterHost($uuid)
     {
@@ -72,6 +80,21 @@ class VmsSnapshotsTable extends ObjectsTable
             'vms.vm_uuid = vm.uuid',
             []
         )->group('vm.uuid');
+
+        $urlFilter = '0';
+        if ($this->vmsRequestUrl !== null) {
+            $urlFilter = $this->vmsRequestUrl->getParam('filter_vdi', '0');
+        }
+
+        if ($urlFilter === '1') {
+            $query->where("vm.template = 'n' OR vm.template = 0");
+            $query->where("vm.runtime_power_state != 'poweredOff'");
+            $query->where("LOWER(o.object_name) NOT LIKE 'cp-template-%'");
+            $query->where("LOWER(o.object_name) NOT LIKE 'cp-replica-%'");
+            $query->where("LOWER(o.object_name) NOT LIKE '%-vdi-%'");
+            $query->where("LOWER(o.object_name) NOT LIKE '%-gis-%'");
+            $query->where("LOWER(o.object_name) NOT LIKE '%horizon%'");
+        }
 
         return $query;
     }
