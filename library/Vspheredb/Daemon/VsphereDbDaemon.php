@@ -40,6 +40,7 @@ use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use React\EventLoop\LoopInterface;
+use React\EventLoop\TimerInterface;
 use React\Stream\Util as StreamUtil;
 use RuntimeException;
 
@@ -101,7 +102,11 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
     /** @var DaemonState */
     protected $daemonState;
 
-    protected $dbIsReady = false;
+    protected ?TimerInterface $dbProcessRetry = null;
+
+    protected ?RetryUnless $localDbRetry = null;
+
+    protected ?TimerInterface $dbStateRefresh = null;
 
     /** @var array [splhash(ApiConnection) => [ Task, ... ]] */
     protected $runningTasks = [];
@@ -168,6 +173,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
 
     protected function onComponentChange($component, $formerState, $currentState)
     {
+        if ($this->daemonState->getState() === self::STATE_STOPPING) {
+            return;
+        }
+
         $this->logger->debug("[$component] component changed from $formerState to $currentState");
         if ($this->daemonState->getComponentState($component) !== $currentState) {
             $this->logger->warning(sprintf(
@@ -179,19 +188,18 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         }
         if ($component === self::COMPONENT_DB) {
             if ($formerState === self::STATE_READY) {
-                $this->stopConfigWatch();
                 $this->stopComponent(self::COMPONENT_API);
                 $this->stopComponent(self::COMPONENT_LOCALDB);
-            } elseif ($currentState === self::STATE_IDLE) {
-                $this->runConfigWatch();
-            } elseif ($currentState === self::STATE_READY) {
+            }
+            if ($currentState === self::STATE_READY && $this->getDbState() === self::STATE_READY) {
                 $this->setLocalDbState(self::STATE_STARTING);
             }
-            if ($currentState === self::STATE_FAILED) {
-                $this->loop->addTimer(10, function () {
-                    $this->stopDbProcess();
-                    $this->stopConfigWatch();
-                    if ($this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_FAILED) {
+            if ($currentState === self::STATE_FAILED && $this->dbProcessRetry === null) {
+                $this->stopConfigWatch();
+                $this->dbProcessRetry = $this->loop->addTimer(10, function () {
+                    $this->dbProcessRetry = null;
+                    if ($this->getDbState() === self::STATE_FAILED) {
+                        $this->stopDbProcess();
                         $this->initializeDbProcess();
                     }
                 });
@@ -203,23 +211,35 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             }
             switch ($currentState) {
                 case self::STATE_STARTING:
-                    $this->reconnectToDb();
+                    if (
+                        $this->getLocalDbState() === self::STATE_STARTING
+                        && $this->getDbState() === self::STATE_READY
+                    ) {
+                        $this->reconnectToDb();
+                    }
                     break;
                 case self::STATE_FAILED:
+                    $this->stopLocalDbRetry();
                     $this->logger->error('Failed. Will try to reconnect to the Database');
                     $this->eventuallyDisconnectFromDb();
                     $delay = $this->delayOnFailed;
                     $this->logger->warning("Failed. Reconnecting in {$delay}s");
                     $this->loop->addTimer($delay, function () {
-                        if ($this->getLocalDbState() === self::STATE_FAILED) {
+                        if (
+                            $this->getLocalDbState() === self::STATE_FAILED
+                            && $this->getDbState() === self::STATE_READY
+                        ) {
                             $this->setLocalDbState(self::STATE_STARTING);
                         }
                     });
                     break;
                 case self::STATE_READY:
-                    $this->setApiState(self::STATE_STARTING);
+                    if ($this->canRunApi()) {
+                        $this->setApiState(self::STATE_STARTING);
+                    }
                     break;
                 case self::STATE_STOPPING:
+                    $this->stopLocalDbRetry();
                     $this->eventuallyDisconnectFromDb();
                     $this->stopComponent(self::COMPONENT_API);
                     $this->setLocalDbState(self::STATE_STOPPED);
@@ -227,6 +247,14 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             }
         }
         if ($component === self::COMPONENT_API) {
+            // A configuration change can make a queued API transition obsolete.
+            if (
+                in_array($currentState, [self::STATE_STARTING, self::STATE_READY], true)
+                && ($this->getApiState() !== $currentState || ! $this->canRunApi())
+            ) {
+                return;
+            }
+
             switch ($currentState) {
                 case self::STATE_STARTING:
                     $this->apiConnectionHandler->run($this->loop);
@@ -234,7 +262,9 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                     break;
                 case self::STATE_READY:
                     $this->refreshConfiguredServers();
-                    $this->daemonState->setState(self::STATE_READY);
+                    if ($this->canRunApi()) {
+                        $this->daemonState->setState(self::STATE_READY);
+                    }
                     break;
                 case self::STATE_FAILED:
                     $this->logger->error('[api] failed');
@@ -275,6 +305,16 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->daemonState->setComponentState(self::COMPONENT_API, $state);
     }
 
+    /**
+     * Get the state of the database subprocess
+     *
+     * @return string
+     */
+    protected function getDbState(): string
+    {
+        return $this->daemonState->getComponentState(self::COMPONENT_DB);
+    }
+
     protected function getApiState()
     {
         return $this->daemonState->getComponentState(self::COMPONENT_API);
@@ -285,36 +325,70 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         return $this->daemonState->getComponentState(self::COMPONENT_LOCALDB);
     }
 
+    /**
+     * Check whether both database connections are ready for API work
+     *
+     * @return bool
+     */
+    protected function canRunApi(): bool
+    {
+        return $this->getDbState() === self::STATE_READY && $this->getLocalDbState() === self::STATE_READY;
+    }
+
+    /**
+     * Start the subprocess and watch configuration once its RPC connection is ready
+     *
+     * @return void
+     */
     protected function initializeDbProcess()
     {
         $dbRunner = new DbProcessRunner($this->logger);
+        $this->dbRunner = $dbRunner;
         $this->setDbState(self::STATE_STARTING);
-        $dbRunner->on('error', function (Exception $e) {
-            $this->dbIsReady = false;
-            $this->loop->futureTick(function () {
-                $this->setDbState(self::STATE_FAILED);
-            });
-            $this->logger->error('DB runner is failing: ' . $e->getMessage());
-        });
-        $dbRunner->run($this->loop)->then(function () use ($dbRunner) {
-            $this->dbRunner = $dbRunner;
-            if ($this->remoteApi) {
-                $this->remoteApi->setDbProcessRunner($dbRunner);
+        $failed = function (Exception $e) use ($dbRunner) {
+            if ($this->dbRunner !== $dbRunner || $this->getDbState() === self::STATE_FAILED) {
+                return;
             }
-            $this->loop->futureTick(function () {
+
+            $this->logger->error('DB runner is failing: ' . $e->getMessage());
+            $this->setDbState(self::STATE_FAILED);
+        };
+        $dbRunner->on('error', $failed);
+        try {
+            $started = $dbRunner->run($this->loop);
+        } catch (Exception $e) {
+            $failed($e);
+            return;
+        }
+        $started->then(function () use ($dbRunner) {
+            $this->loop->futureTick(function () use ($dbRunner) {
+                if ($this->dbRunner !== $dbRunner || $this->getDbState() !== self::STATE_STARTING) {
+                    return;
+                }
+
+                if ($this->remoteApi) {
+                    $this->remoteApi->setDbProcessRunner($dbRunner);
+                }
                 $this->setDbState(self::STATE_IDLE);
+                $this->runConfigWatch();
             });
-        });
+        }, $failed);
     }
 
+    /**
+     * Detach the current subprocess before stopping it so its callbacks have no effect
+     *
+     * @return void
+     */
     protected function stopDbProcess()
     {
         if ($this->dbRunner) {
-            $this->dbRunner->stop();
+            $dbRunner = $this->dbRunner;
             $this->dbRunner = null;
             if ($this->remoteApi) {
                 $this->remoteApi->setDbProcessRunner(null);
             }
+            $dbRunner->stop();
         }
     }
 
@@ -334,7 +408,13 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         try {
             $this->daemonState->setState(self::STATE_STOPPING);
             $this->logger->notice('Stopping vSphereDbDaemon');
-            $this->dbRunner->stop();
+            $this->stopConfigWatch();
+            if ($this->dbProcessRetry !== null) {
+                $this->loop->cancelTimer($this->dbProcessRetry);
+                $this->dbProcessRetry = null;
+            }
+            $this->stopLocalDbRetry();
+            $this->stopDbProcess();
             $this->eventuallyDisconnectFromDb();
         } catch (\Exception $e) {
             $this->logger->error('Failed to stop vSphereDbDaemon: ' . $e->getMessage());
@@ -498,14 +578,16 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $this->runningTasks = [];
     }
 
+    /**
+     * Check the local schema and refresh the daemon record while connected
+     *
+     * @return void
+     */
     protected function onConnected()
     {
         $fail = function (Exception $e) {
             $this->logger->error($e->getMessage());
             $this->setLocalDbState(self::STATE_FAILED);
-        };
-        $refresh = function () {
-            $this->refreshMyState();
         };
         try {
             if ($this->hasSchema()) {
@@ -518,10 +600,10 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             $fail($e);
         }
 
-        RetryUnless::failing($refresh)
-            ->setInterval(5)
-            ->run($this->loop)
-            ->then($fail);
+        $this->dbStateRefresh = $this->loop->addPeriodicTimer(5, function () {
+            $this->refreshMyState();
+        });
+        $this->refreshMyState();
     }
 
     protected function hasSchema()
@@ -529,44 +611,50 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         return (Db::migrationsForDb($this->connection))->hasSchema();
     }
 
-    protected function sendDbConfigToRunner()
-    {
-        $this->logger->notice('[db] sending DB config to child process');
-        if (! $this->daemonState->getComponentState(self::COMPONENT_DB) === self::STATE_READY) {
-            $this->logger->warning('[db] DB runner is NOT ready, not sending config');
-            return resolve(null);
-        }
-        if ($this->dbConfig === null) {
-            return $this->dbRunner->request('db.clearDbConfig')->then(function () {
-                $this->setDbState(self::STATE_STOPPED);
-            }, function (Exception $e) {
-                $this->logger->error('[db] clearing DB config failed: ' . $e->getMessage());
-                $this->setDbState(self::STATE_FAILED);
-            });
-        } else {
-            return $this->dbRunner->request('db.setDbConfig', [
-                'config' => $this->dbConfig
-            ]);
-        }
-    }
-
+    /**
+     * Retry the local connection while the subprocess has applied the database configuration
+     *
+     * @return void
+     */
     protected function reconnectToDb()
     {
+        if ($this->localDbRetry !== null) {
+            return;
+        }
+
         if ($this->connection !== null) {
             $this->eventuallyDisconnectFromDb();
             $this->logger->notice('[localdb] reconnecting');
         }
         $this->setLocalDbState(self::STATE_STARTING);
-        RetryUnless::succeeding(function () {
-            if ($this->dbConfig === null) {
+        $retry = RetryUnless::succeeding(function () {
+            if ($this->dbConfig === null || $this->getDbState() !== self::STATE_READY) {
                 throw new RuntimeException('Got no valid DB configuration');
             }
 
             return $this->connectToDb($this->dbConfig);
-        })->slowDownAfter(5, 15)->run($this->loop)->then(function (Db $connection) {
+        })->slowDownAfter(5, 15);
+        $this->localDbRetry = $retry;
+        $retry->run($this->loop)->then(function (Db $connection) {
+            $this->localDbRetry = null;
             $this->connection = $connection;
             $this->onConnected();
+        }, function () {
+            // Stopping the local connection cancels pending retries.
         });
+    }
+
+    /**
+     * Cancel pending local connection attempts, including the first scheduled attempt
+     *
+     * @return void
+     */
+    protected function stopLocalDbRetry(): void
+    {
+        if ($this->localDbRetry !== null) {
+            $this->localDbRetry->pause()->cancel();
+            $this->localDbRetry = null;
+        }
     }
 
     protected function connectToDb($config)
@@ -581,16 +669,32 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         return $connection;
     }
 
+    /**
+     * Stop local status refreshes and close the local database connection if it exists
+     *
+     * @param bool $refresh Whether to update the daemon record before closing the connection
+     *
+     * @return void
+     */
     protected function eventuallyDisconnectFromDb($refresh = true)
     {
+        if ($this->dbStateRefresh !== null) {
+            $this->loop->cancelTimer($this->dbStateRefresh);
+            $this->dbStateRefresh = null;
+        }
+
         if ($this->connection !== null) {
+            $this->dbLogger->setDb(null);
             try {
                 if ($refresh) {
                     $this->refreshMyState(false);
                 }
                 $this->connection->getDbAdapter()->closeConnection();
 
-                if ($this->daemonState->getState() === self::STATE_STOPPING) {
+                if (
+                    $this->daemonState->getState() === self::STATE_STOPPING
+                    || $this->getLocalDbState() === self::STATE_STOPPING
+                ) {
                     $this->logger->notice('[localdb] database connection has been closed');
                 } else {
                     $this->logger->error('[localdb] database connection has been closed');
@@ -602,7 +706,6 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
                 );
             }
             $this->connection = null;
-            $this->dbLogger->setDb(null);
         }
     }
 
@@ -612,6 +715,7 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
             return;
         }
         $config = new ConfigWatch();
+        $config->setLogger($this->logger);
         $config->on(ConfigWatch::ON_CONFIG, function ($config) {
             $this->onDbConfig($config);
         });
@@ -619,30 +723,64 @@ class VsphereDbDaemon implements DaemonTask, SystemdAwareTask, LoggerAwareInterf
         $config->run($this->loop);
     }
 
-    protected function onDbConfig($config)
+    /**
+     * Record the latest watched configuration and apply it when the subprocess can accept it
+     *
+     * @param ?array<string, mixed> $config Database configuration or null when the resource is absent
+     *
+     * @return void
+     */
+    protected function onDbConfig(?array $config): void
     {
+        $this->dbConfig = $config;
         if ($config === null) {
-            $this->setDbState('config error');
-            if ($this->dbConfig === null) {
-                $this->logger->error('[configwatch] Got no valid DB configuration');
-                return;
-            } else {
-                $this->logger->error('[configwatch] There is no longer a valid DB configuration');
-                $this->dbConfig = $config;
-                $sent = $this->sendDbConfigToRunner();
-            }
+            $this->logger->warning('[configwatch] There is no longer a valid DB configuration');
         } else {
             $this->logger->notice('[configwatch] DB configuration loaded');
-            $this->dbConfig = $config;
-            $sent = $this->sendDbConfigToRunner();
         }
-        $sent->then(function () {
-            $this->stopComponent(self::COMPONENT_API);
-            $this->setDbState(self::STATE_READY);
-        }, function (Exception $e) {
-            $this->logger->error('[configwatch] Sending DB Config failed: ' . $e->getMessage());
+        if (in_array($this->getDbState(), [self::STATE_IDLE, self::STATE_READY], true)) {
+            $this->applyDbConfig();
+        }
+    }
+
+    /**
+     * Apply one configuration at a time and wait for the subprocess before starting the local database
+     *
+     * @return void
+     */
+    protected function applyDbConfig(): void
+    {
+        $dbRunner = $this->dbRunner;
+        $config = $this->dbConfig;
+        $this->daemonState->setState(self::STATE_IDLE);
+        $this->setDbState(self::STATE_STARTING);
+        $failed = function (Exception $e) use ($dbRunner) {
+            if ($this->dbRunner !== $dbRunner || $this->getDbState() !== self::STATE_STARTING) {
+                return;
+            }
+
+            $this->logger->error('[configwatch] Applying DB configuration failed: ' . $e->getMessage());
             $this->setDbState(self::STATE_FAILED);
-        });
+        };
+        try {
+            $this->logger->debug('[db] Sending DB configuration to child process');
+            $sent = $config === null
+                ? $dbRunner->request('db.clearDbConfig')
+                : $dbRunner->request('db.setDbConfig', ['config' => $config]);
+        } catch (RuntimeException $e) {
+            $failed($e);
+            return;
+        }
+        $sent->then(function () use ($dbRunner, $config) {
+            if ($this->dbRunner !== $dbRunner || $this->getDbState() !== self::STATE_STARTING) {
+                return;
+            }
+            if ($this->dbConfig !== $config) {
+                $this->applyDbConfig();
+            } else {
+                $this->setDbState($config === null ? self::STATE_IDLE : self::STATE_READY);
+            }
+        }, $failed);
     }
 
     protected function stopConfigWatch()
