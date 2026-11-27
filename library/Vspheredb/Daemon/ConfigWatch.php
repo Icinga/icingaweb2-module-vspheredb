@@ -29,12 +29,6 @@ class ConfigWatch implements LoggerAwareInterface
 
     public const ON_CONFIG = 'dbConfig';
 
-    /** @var string */
-    protected $configFile;
-
-    /** @var string */
-    protected $resourceConfigFile;
-
     protected ?string $dbResourceName;
 
     /** @var array|null */
@@ -57,8 +51,6 @@ class ConfigWatch implements LoggerAwareInterface
      */
     public function __construct(?string $dbResourceName = null)
     {
-        $this->configFile = Config::resolvePath('modules/vspheredb/config.ini');
-        $this->resourceConfigFile = Config::resolvePath('resources.ini');
         $this->dbResourceName = $dbResourceName;
     }
 
@@ -111,7 +103,7 @@ class ConfigWatch implements LoggerAwareInterface
      */
     protected function getResourceName(): ?string
     {
-        return $this->dbResourceName ?? Config::fromIni($this->configFile)->get('db', 'resource');
+        return $this->dbResourceName ?? Config::module('vspheredb', 'config', true)->get('db', 'resource');
     }
 
     /**
@@ -130,7 +122,7 @@ class ConfigWatch implements LoggerAwareInterface
             return null;
         }
 
-        $config = Config::fromIni($this->resourceConfigFile);
+        $config = Config::app('resources', true);
         if (! $config->hasSection($name)) {
             return null;
         }
@@ -151,10 +143,10 @@ class ConfigWatch implements LoggerAwareInterface
      */
     protected function configHasBeenChanged(): bool
     {
-        $file = $this->configFile;
+        $file = 'modules/vspheredb/config.ini';
         try {
             $name = $this->getResourceName();
-            $file = $this->resourceConfigFile;
+            $file = 'resources.ini';
             $resource = $this->loadDbConfigFromDisk($name);
         } catch (ConfigurationError | ErrorException | NotReadableError | TypeError $e) {
             $operation = $e instanceof ConfigurationError || $e instanceof TypeError ? 'parse' : 'read';
